@@ -132,6 +132,27 @@
   footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted);font-size:13px}
   .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
+  /* MODAL */
+  .modal{position:fixed;inset:0;background:rgba(5,5,10,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal.open{display:flex}
+  .modal-card{background:linear-gradient(145deg,#15151f,#0d0d14);border:1px solid var(--line);border-radius:22px;padding:36px;width:100%;max-width:480px;position:relative}
+  .modal-card h3{margin:0 0 6px;font-size:26px;letter-spacing:-.02em}
+  .modal-card .sub{margin:0 0 22px;color:var(--muted);font-size:14px;max-width:none}
+  .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;font-size:18px;display:grid;place-items:center}
+  .modal-close:hover{color:var(--ink);border-color:#3a3a4e}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}
+  .field input, .field select, .field textarea{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:inherit;font-size:14px;outline:none;transition:border-color .15s}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .submit-btn{width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#0b0b10;font-weight:700;font-size:15px;border:none;cursor:pointer;margin-top:8px;transition:transform .1s}
+  .submit-btn:hover{transform:translateY(-1px)}
+  .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .msg{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13px;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:rgba(195,255,54,.08);color:#c9f76a;border:1px solid rgba(195,255,54,.25)}
+  .msg.err{background:rgba(255,107,107,.08);color:#ffa0a0;border:1px solid rgba(255,107,107,.25)}
+
   /* RESPONSIVE */
   @media(max-width:1024px){
     .hero-grid{grid-template-columns:1fr}
@@ -161,7 +182,7 @@
       <a href="#tools">Stack</a>
       <a href="#capstone">Capstone</a>
     </div>
-    <a class="cta" href="#enroll">Enroll →</a>
+    <a class="cta" href="#" onclick="openModal();return false;">Enroll →</a>
   </div>
 </nav>
 
@@ -392,6 +413,39 @@
   </div>
 </section>
 
+<!-- REGISTRATION MODAL -->
+<div class="modal" id="regModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3>Join the cohort</h3>
+    <p class="sub">Cohort 01 starts <b style="color:var(--ink)">May 15, 2026</b>. 40 seats. We'll email you a magic link to confirm.</p>
+    <form id="regForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@college.edu" /></div>
+      <div class="row2">
+        <div class="field"><label>Full name</label><input type="text" name="full_name" required /></div>
+        <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91…" /></div>
+      </div>
+      <div class="field"><label>College</label><input type="text" name="college" required /></div>
+      <div class="row2">
+        <div class="field"><label>Year</label>
+          <select name="year" required>
+            <option value="">Select</option>
+            <option value="3">3rd year</option>
+            <option value="4">4th year</option>
+            <option value="2">2nd year</option>
+            <option value="pg">PG</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>GitHub</label><input type="text" name="github_username" placeholder="optional" /></div>
+      </div>
+      <div class="field"><label>Why this cohort?</label><textarea name="motivation" rows="2" placeholder="One line is fine"></textarea></div>
+      <button type="submit" class="submit-btn" id="submitBtn">Send magic link →</button>
+      <div class="msg" id="regMsg"></div>
+    </form>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer id="enroll">
   <div class="wrap foot">
@@ -400,5 +454,100 @@
   </div>
 </footer>
 
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const SUPABASE_URL = 'https://qvqlpcnvculkrjpkdrwi.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_7XyW7RHJ28PBk_1HD1FsbQ_LIbvkJUY';
+  const COHORT_SLUG = 'cohort-01';
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  window.openModal = () => document.getElementById('regModal').classList.add('open');
+  window.closeModal = () => document.getElementById('regModal').classList.remove('open');
+  document.getElementById('regModal').addEventListener('click', e => {
+    if (e.target.id === 'regModal') closeModal();
+  });
+
+  const form = document.getElementById('regForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('regMsg');
+
+  function showMsg(text, kind) {
+    msg.textContent = text;
+    msg.className = 'msg show ' + kind;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    msg.className = 'msg';
+
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      const { data: cohort, error: cohortErr } = await supabase
+        .from('cohorts').select('id').eq('slug', COHORT_SLUG).single();
+      if (cohortErr) throw cohortErr;
+
+      const { error: otpErr } = await supabase.auth.signInWithOtp({
+        email: data.email,
+        options: {
+          emailRedirectTo: window.location.href,
+          data: {
+            full_name: data.full_name,
+            pending_registration: {
+              cohort_id: cohort.id,
+              college: data.college,
+              year: data.year,
+              phone: data.phone,
+              github_username: data.github_username,
+              motivation: data.motivation,
+            },
+          },
+        },
+      });
+      if (otpErr) throw otpErr;
+
+      showMsg('Check your email for a magic link to finish signing up.', 'ok');
+      btn.textContent = 'Sent ✓';
+    } catch (err) {
+      console.error(err);
+      showMsg(err.message || 'Something went wrong. Try again.', 'err');
+      btn.disabled = false;
+      btn.textContent = 'Send magic link →';
+    }
+  });
+
+  // Finalize registration after magic link redirect
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event !== 'SIGNED_IN' || !session) return;
+    const meta = session.user.user_metadata || {};
+    const pending = meta.pending_registration;
+    if (!pending) return;
+
+    await supabase.from('profiles').upsert({
+      id: session.user.id,
+      full_name: meta.full_name,
+      college: pending.college,
+      year: pending.year,
+      phone: pending.phone,
+      github_username: pending.github_username,
+      updated_at: new Date().toISOString(),
+    });
+
+    await supabase.from('registrations').upsert({
+      user_id: session.user.id,
+      cohort_id: pending.cohort_id,
+      motivation: pending.motivation,
+      status: 'pending',
+    }, { onConflict: 'user_id,cohort_id' });
+
+    await supabase.auth.updateUser({ data: { pending_registration: null } });
+
+    openModal();
+    showMsg("You're in. We'll email cohort details soon.", 'ok');
+  });
+</script>
 </body>
 </html>
