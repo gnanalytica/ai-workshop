@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
+  .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;margin-bottom:32px}
+  .pbar{height:8px;background:#0a0a12;border-radius:999px;overflow:hidden;margin-top:14px}
+  .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7affb4);transition:width .3s}
+  .pstats{display:flex;justify-content:space-between;font-size:13px;margin-top:10px;color:var(--muted)}
+  .week-block{margin-bottom:28px}
+  .week-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+  .week-head .wn{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.15em}
+  .week-head h3{margin:0;font-size:20px;letter-spacing:-.02em}
+  .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .day-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .15s}
+  .day-item:hover{border-color:#3a3a4e}
+  .day-item.done{background:rgba(195,255,54,.06);border-color:rgba(195,255,54,.3)}
+  .checkbox{width:22px;height:22px;border:2px solid var(--line);border-radius:7px;display:grid;place-items:center;flex-shrink:0;transition:all .15s}
+  .day-item.done .checkbox{background:var(--accent);border-color:var(--accent)}
+  .checkbox svg{opacity:0;transition:opacity .15s}
+  .day-item.done .checkbox svg{opacity:1}
+  .day-body{flex:1;min-width:0}
+  .day-n{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.12em}
+  .day-t{font-size:14px;font-weight:500;margin-top:2px;letter-spacing:-.01em}
+  .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
+  .signout:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE (sign in) -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Student login</div>
+    <h2>Sign in to track your progress</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Use the same email you registered with. We'll send you a magic link.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<main class="wrap" id="dash" style="display:none">
+  <div class="hero-row">
+    <div>
+      <div class="kicker">Welcome back</div>
+      <h1 id="hiName">—</h1>
+      <div class="muted" style="font-size:14px" id="cohortInfo">—</div>
+    </div>
+    <div id="regStatus"></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="margin:0">Your journey</h2>
+      <div class="mono" style="font-size:13px;color:var(--muted)"><span id="pct">0</span>% complete</div>
+    </div>
+    <div class="pbar"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+    <div class="pstats"><span><b id="doneCount" style="color:var(--ink)">0</b> of 30 days done</span><span id="streak">—</span></div>
+  </div>
+
+  <div id="weeksContainer"></div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { DAYS, WEEK_TITLES } from './assets/days.js';
+
+  const $ = (id) => document.getElementById(id);
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    await loadDashboard(session.user);
+  }
+
+  function showGate() {
+    $('gate').style.display = 'grid';
+    $('dash').style.display = 'none';
+    $('signoutBtn').style.display = 'none';
+  }
+
+  function showDash() {
+    $('gate').style.display = 'none';
+    $('dash').style.display = 'block';
+    $('signoutBtn').style.display = 'inline-block';
+  }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn');
+    const msg = $('loginMsg');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.href },
+    });
+    if (error) {
+      msg.className = 'msg show err';
+      msg.textContent = error.message;
+      btn.disabled = false;
+      btn.textContent = 'Send magic link →';
+    } else {
+      msg.className = 'msg show ok';
+      msg.textContent = 'Check your email for the link.';
+      btn.textContent = 'Sent ✓';
+    }
+  });
+
+  $('signoutBtn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    location.reload();
+  });
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) loadDashboard(session.user);
+    if (event === 'SIGNED_OUT') showGate();
+  });
+
+  async function loadDashboard(user) {
+    showDash();
+    const [profileRes, cohortRes] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', user.id).single(),
+      supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single(),
+    ]);
+    const profile = profileRes.data;
+    const cohort = cohortRes.data;
+
+    $('hiName').textContent = profile?.full_name || user.email;
+    $('cohortInfo').textContent = `${cohort.name} · ${cohort.starts_on} → ${cohort.ends_on}`;
+
+    const { data: reg } = await supabase.from('registrations')
+      .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).maybeSingle();
+    renderRegStatus(reg);
+
+    const { data: progress } = await supabase.from('lab_progress')
+      .select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id);
+    const doneSet = new Set((progress || []).map(p => p.day_number));
+
+    renderProgress(doneSet);
+    renderWeeks(user, cohort, doneSet);
+  }
+
+  function renderRegStatus(reg) {
+    const el = $('regStatus');
+    if (!reg) { el.innerHTML = '<span class="tag tag-cancel">not registered</span>'; return; }
+    const map = {
+      pending: '<span class="tag tag-pend">pending review</span>',
+      confirmed: '<span class="tag tag-ok">confirmed ✓</span>',
+      waitlist: '<span class="tag tag-wait">waitlisted</span>',
+      cancelled: '<span class="tag tag-cancel">cancelled</span>',
+    };
+    el.innerHTML = map[reg.status] || '';
+  }
+
+  function renderProgress(doneSet) {
+    const done = doneSet.size;
+    const pct = Math.round((done / 30) * 100);
+    $('doneCount').textContent = done;
+    $('pct').textContent = pct;
+    $('pbarFill').style.width = pct + '%';
+    $('streak').textContent = done === 30 ? 'Completed 🏆' : `${30 - done} days to go`;
+  }
+
+  function renderWeeks(user, cohort, doneSet) {
+    const container = $('weeksContainer');
+    container.innerHTML = '';
+    for (let w = 1; w <= 4; w++) {
+      const days = DAYS.filter(d => d.w === w);
+      const block = document.createElement('div');
+      block.className = 'week-block';
+      block.innerHTML = `
+        <div class="week-head"><span class="wn">WEEK ${String(w).padStart(2,'0')}</span><h3>${WEEK_TITLES[w]}</h3></div>
+        <div class="day-grid">
+          ${days.map(d => `
+            <div class="day-item ${doneSet.has(d.n) ? 'done' : ''}" data-day="${d.n}">
+              <div class="checkbox"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="#0b0b10" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="day-body">
+                <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
+                <div class="day-t">${d.title}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+      container.appendChild(block);
+    }
+    container.querySelectorAll('.day-item').forEach(el => {
+      el.addEventListener('click', () => toggleDay(user, cohort, el, doneSet));
+    });
+  }
+
+  async function toggleDay(user, cohort, el, doneSet) {
+    const day = parseInt(el.dataset.day, 10);
+    const isDone = doneSet.has(day);
+    el.classList.toggle('done');
+    if (isDone) {
+      doneSet.delete(day);
+      await supabase.from('lab_progress').delete()
+        .eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', day);
+    } else {
+      doneSet.add(day);
+      await supabase.from('lab_progress').insert({
+        user_id: user.id, cohort_id: cohort.id, day_number: day,
+      });
+    }
+    renderProgress(doneSet);
+  }
+
+  init();
+</script>
+</body>
+</html>
