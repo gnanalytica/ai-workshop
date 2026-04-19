@@ -647,11 +647,12 @@
       updated_at: new Date().toISOString(),
     });
 
+    // Auto-confirm if a valid enrollment code was used.
     await supabase.from('registrations').upsert({
       user_id: session.user.id,
       cohort_id: pending.cohort_id,
       motivation: pending.motivation,
-      status: 'pending',
+      status: pending.code_id ? 'confirmed' : 'pending',
     }, { onConflict: 'user_id,cohort_id' });
 
     if (pending.code_id) {

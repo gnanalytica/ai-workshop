@@ -93,6 +93,7 @@
       <h2 style="margin:0 0 8px">Finish enrolling</h2>
       <p class="muted" style="font-size:14px;margin:0 0 20px">You're signed in but haven't joined Cohort 01 yet. Fill in a few details and you're in.</p>
       <form id="enrollForm">
+        <div class="field"><label>Enrollment code</label><input type="text" name="code" required placeholder="Ask your cohort host" style="text-transform:uppercase" /></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="field"><label>Full name</label><input type="text" name="full_name" required /></div>
           <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91…" /></div>
@@ -300,13 +301,32 @@
       });
       if (pErr) return fail(pErr);
 
+      // Validate enrollment code → auto-confirm
+      const codeRaw = (data.code || '').trim().toUpperCase();
+      let autoConfirm = false;
+      let codeId = null;
+      if (codeRaw) {
+        const { data: codeRow } = await supabase
+          .from('enrollment_codes').select('*').eq('code', codeRaw).maybeSingle();
+        if (!codeRow) return fail({ message: 'Invalid enrollment code.' });
+        if (codeRow.expires_at && new Date(codeRow.expires_at) < new Date()) return fail({ message: 'Code has expired.' });
+        if (codeRow.max_uses && codeRow.used_count >= codeRow.max_uses) return fail({ message: 'Code reached its use limit.' });
+        if (codeRow.cohort_id && codeRow.cohort_id !== cohort.id) return fail({ message: 'Code is for a different cohort.' });
+        autoConfirm = true;
+        codeId = codeRow.id;
+      }
+
       const { error: rErr } = await supabase.from('registrations').insert({
         user_id: user.id,
         cohort_id: cohort.id,
         motivation: data.motivation,
-        status: 'pending',
+        status: autoConfirm ? 'confirmed' : 'pending',
       });
       if (rErr) return fail(rErr);
+
+      if (codeId) {
+        await supabase.rpc('increment_code_use', { code_id: codeId }).catch(() => {});
+      }
 
       msg.className = 'msg show ok';
       msg.textContent = "You're in. We'll email cohort details soon.";
