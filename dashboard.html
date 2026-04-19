@@ -77,6 +77,38 @@
     <div class="pstats"><span><b id="doneCount" style="color:var(--ink)">0</b> of 30 days done</span><span id="streak">—</span></div>
   </div>
 
+  <!-- ENROLL CARD: shown only when signed in but not registered for cohort -->
+  <div id="enrollCard" style="display:none">
+    <div class="progress-wrap" style="border-color:rgba(195,255,54,.3);background:linear-gradient(145deg,rgba(195,255,54,.04),#14141c)">
+      <div class="kicker">One step left</div>
+      <h2 style="margin:0 0 8px">Finish enrolling</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 20px">You're signed in but haven't joined Cohort 01 yet. Fill in a few details and you're in.</p>
+      <form id="enrollForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label>Full name</label><input type="text" name="full_name" required /></div>
+          <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91…" /></div>
+        </div>
+        <div class="field"><label>College</label><input type="text" name="college" required /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label>Year</label>
+            <select name="year" required>
+              <option value="">Select</option>
+              <option value="3">3rd year</option>
+              <option value="4">4th year</option>
+              <option value="2">2nd year</option>
+              <option value="pg">PG</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>GitHub</label><input type="text" name="github_username" placeholder="optional" /></div>
+        </div>
+        <div class="field"><label>Why this cohort?</label><textarea name="motivation" rows="2" placeholder="One line is fine"></textarea></div>
+        <button type="submit" class="submit-btn" id="enrollBtn">Enroll me →</button>
+        <div class="msg" id="enrollMsg"></div>
+      </form>
+    </div>
+  </div>
+
   <div id="weeksContainer"></div>
 </main>
 
@@ -153,6 +185,7 @@
     const { data: reg } = await supabase.from('registrations')
       .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).maybeSingle();
     renderRegStatus(reg);
+    toggleEnrollCard(user, cohort, profile, reg);
 
     const { data: progress } = await supabase.from('lab_progress')
       .select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id);
@@ -160,6 +193,59 @@
 
     renderProgress(doneSet);
     renderWeeks(user, cohort, doneSet);
+  }
+
+  function toggleEnrollCard(user, cohort, profile, reg) {
+    const card = $('enrollCard');
+    if (reg) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    // Prefill known fields
+    const form = $('enrollForm');
+    if (profile?.full_name) form.full_name.value = profile.full_name;
+    if (profile?.phone) form.phone.value = profile.phone;
+    if (profile?.college) form.college.value = profile.college;
+    if (profile?.year) form.year.value = profile.year;
+    if (profile?.github_username) form.github_username.value = profile.github_username;
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $('enrollBtn');
+      const msg = $('enrollMsg');
+      btn.disabled = true;
+      btn.textContent = 'Enrolling…';
+      msg.className = 'msg';
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      const { error: pErr } = await supabase.from('profiles').upsert({
+        id: user.id,
+        full_name: data.full_name,
+        college: data.college,
+        year: data.year,
+        phone: data.phone,
+        github_username: data.github_username,
+        updated_at: new Date().toISOString(),
+      });
+      if (pErr) return fail(pErr);
+
+      const { error: rErr } = await supabase.from('registrations').insert({
+        user_id: user.id,
+        cohort_id: cohort.id,
+        motivation: data.motivation,
+        status: 'pending',
+      });
+      if (rErr) return fail(rErr);
+
+      msg.className = 'msg show ok';
+      msg.textContent = "You're in. We'll email cohort details soon.";
+      setTimeout(() => loadDashboard(user), 900);
+
+      function fail(err) {
+        msg.className = 'msg show err';
+        msg.textContent = err.message || 'Something went wrong.';
+        btn.disabled = false;
+        btn.textContent = 'Enroll me →';
+      }
+    };
   }
 
   function renderRegStatus(reg) {
