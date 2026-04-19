@@ -40,17 +40,17 @@ Two checkpoints you'll hear a lot about:
 
 Everything in between is scaffolding to get you there.
 
-### Today's agenda (≈ 2 hours total)
+### Today's 1-hour live session
 
 | Block | Time | What |
 |---|---|---|
-| Welcome + course tour | 15 min | We're doing right now. You're in it. |
-| Read below | 25 min | What AI is and what AI isn't (the 10-point split) |
-| Watch Karpathy (first 30 min) | 30 min | The clearest AI explainer ever filmed |
-| Hands-on lab | 30 min | Three AI tools, one prompt, spot the differences |
-| Reflection + assignment | 20 min | 150 words, no AI help, no perfection needed |
+| Welcome + course tour | 10 min | Roadmap + what demo day looks like |
+| Mini-lecture: What AI is vs isn't | 20 min | The 5+5 split |
+| Live lab: 3 tools, 1 prompt | 15 min | We do task 1 together, you finish the rest |
+| Q&A + discussion | 15 min | Bring questions and observations |
 
-**Homework tonight**: finish the Karpathy video, submit reflection before tomorrow 11am.
+**Before class** (10 min): skim the roadmap table above so you know where we're going.
+**After class** (~30 min tonight): finish reading below + watch the first 30 min of Karpathy's video + write your 150-word reflection.
 
 ## Read: What AI is — and what AI isn't
 

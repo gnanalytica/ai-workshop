@@ -1,7 +1,7 @@
 ---
-reading_time: 14 min
+reading_time: 12 min
 tldr: "A week of theory means nothing without a personal stack. Today you build yours — and steal your classmates' best tricks."
-tags: ["foundations", "theory"]
+tags: ["foundations", "kickoff"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Show-and-tell: 2-minute AI win", "url": "https://claude.ai/"}
 prompt_of_the_day: "Act as my blunt AI coach. Here are three prompts I wrote this week: {{prompt1}} / {{prompt2}} / {{prompt3}}. For each, give me one sharper rewrite and one reason mine was weak."
@@ -13,7 +13,25 @@ resources: [{"title": "Build a Personal AI Stack (essay)", "url": "https://www.o
 
 ## Intro
 
-Week 1 is done. You've met AI's brain, its cousins, its manners, and its failures. Today you convert five days of input into one page of personal output: your AI Stack v1. Plus, you steal the best tricks from the room — because 30 students' experiments in a week is 150 experiments, and you only saw 5 of them.
+Week 1 — done. Five days ago you only had ChatGPT. Today you know the difference between closed and open, you've used Indian AI, you've made a model hallucinate on purpose, you've got a personal prompt library, and you've written your red lines. **You now know more about how AI actually works than 90% of people on LinkedIn posting about it.**
+
+Today we turn five days of input into one page of output: your AI Stack v1. Plus — we steal the best tricks from the room. Because 30 students running experiments for a week = 150 experiments, and you only saw 5 of them.
+
+> 🧠 **Quick glossary**
+> - **Personal AI stack** = a 1-page doc listing your tools, prompts, red lines, and next bet.
+> - **Show-and-tell** = a class ritual where everyone shares a 2-min win. You learn more from 30 wins than 1 lecture.
+> - **Trick stealing** = encouraged. This is a cohort, not an exam.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Week 1 recap + the one-page map | 10 min | Five days in five lines |
+| Show-and-tell round — 2-min per student | 30 min | Everyone shares one AI win from the week |
+| Vote: Most Useful / Creative / Surprising | 5 min | Light competition, bragging rights |
+| Q&A + Week 2 preview | 15 min | What to expect starting Monday |
+
+**After class** (45 min this weekend): finalise your Personal AI Stack v1 PDF (the big weekly deliverable).
 
 ## Read: What we learned — the one-page map
 
@@ -25,7 +43,7 @@ Day 4: Ethics + AI failures                → hallucination, bias, privacy, red
 Day 5: Show-and-tell + personal stack      → today
 ```
 
-Zoom out and you see the pattern: we went from *"what is this machine"* to *"how do I speak to it"* to *"what can go wrong"* to *"what's my personal relationship with it."* That's not an accident — that's the only sensible order.
+Zoom out and you see the pattern: we went from *"what is this machine"* to *"how do I speak to it"* to *"what can go wrong"* to *"what's my personal relationship with it."* That's not an accident — it's the only sensible order.
 
 ### The myth of the "AI hack"
 
@@ -42,7 +60,7 @@ The students who win with AI aren't the ones who discover secret prompts. They'r
 
 ### Pattern recognition across the cohort
 
-Over the past four days you've watched your classmates use AI for different things. If this class is like every cohort before it, the uses clustered into five buckets:
+Over the past four days you watched your classmates use AI for different things. If this class is like every cohort before it, the uses clustered into five buckets:
 
 1. **Study & notes** — summarising, flashcards, concept explanations
 2. **Career & writing** — resumes, cover letters, LinkedIn, emails
@@ -50,7 +68,7 @@ Over the past four days you've watched your classmates use AI for different thin
 4. **Life admin** — travel planning, budgets, messages, translation
 5. **Creative** — writing, art, music, roleplay
 
-Worked example. Take Priya — 3rd-year Civil, CGPA 7.2, no coding interest. Her Week-1 wins looked nothing like a CS major's. She used Claude to turn her grandmother's handwritten recipes into a blog, used Sarvam to translate them into Kannada, and used ChatGPT to design Instagram captions. She's not "behind" — she's ahead, because she built an AI workflow that actually fits *her* life. Your stack should fit yours, not somebody else's.
+**Worked example.** Priya — 3rd-year Civil, CGPA 7.2, no coding interest. Her Week-1 wins looked nothing like a CS major's. She used Claude to turn her grandmother's handwritten recipes into a blog, used Sarvam to translate them into Kannada, and used ChatGPT to design Instagram captions. She's not "behind" — she's ahead, because she built an AI workflow that actually fits *her* life. Your stack should fit yours, not somebody else's.
 
 ### The "personal AI stack" — what it actually is
 
@@ -72,7 +90,7 @@ You'll revise this stack every Sunday for the next four weeks. By Day 30 you'll 
 
 ## Watch: Instructor's hidden-gem prompts
 
-Short compilation of 5-7 prompts the instructor uses daily that you won't see in any guide. Edge cases, weird tricks, format hacks.
+A short compilation of 5-7 prompts your instructor uses daily that you won't see in any guide. Edge cases, weird tricks, format hacks.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
@@ -84,7 +102,7 @@ Watch for:
 
 ## Lab: 2-minute pitch — your best AI win of the week
 
-45 minutes total — most of it is listening.
+This IS the live class today. Most of the hour is listening to each other. 30 classmates × 2 min = 60 min of collective wisdom.
 
 1. Before class, pick your single best AI moment from Days 1-4. Could be a great prompt, a surprise answer, a hallucination you caught, a translation that nailed it, a small workflow that saved you an hour.
 2. Prepare a 2-minute pitch with three parts: (a) what the task was, (b) what you did, (c) why it worked (or why it surprisingly didn't).
@@ -95,7 +113,7 @@ Watch for:
 7. As a group, vote on three categories: *Most Useful, Most Creative, Most Surprising.* Winners get bragging rights and a mention in next week's intro.
 8. End of class: everyone shares their "stolen trick" with the person they took it from and thanks them. (Small ritual. Builds the room.)
 
-Artifact: your 2-minute pitch delivered, plus the cohort tricks doc you took notes in.
+**Artifact**: your 2-minute pitch delivered, plus the cohort tricks doc you took notes in.
 
 ## Quiz
 
@@ -105,7 +123,7 @@ Four synthesis questions pulling across all five days — a little tokens, a lit
 
 This is the big one. Submit by Sunday night.
 
-**Week 1 reflection + Personal AI Stack v1 — one single PDF, 1-2 pages max.**
+**Week 1 reflection + Personal AI Stack v1 — one single PDF, 1–2 pages max.**
 
 Structure:
 1. **Reflection (200 words):** What shifted in how you see AI this week? Be specific — name one belief you had on Day 0 that's now gone.
@@ -114,7 +132,7 @@ Structure:
 4. **My Red Lines:** your Day 4 essay, condensed to 3-5 bullets.
 5. **My Next Bet:** one sentence — the specific AI skill you want to own by Day 30.
 
-Submit as PDF in the class channel. We'll read them, and the instructor will pick 3-5 stacks to feature (anonymously if you prefer) in Week 2 Day 1. You'll update this stack every Sunday for the rest of the workshop.
+Submit as PDF via the dashboard. The instructor will pick 3-5 stacks to feature (anonymously if you prefer) in Week 2 Day 1. You'll update this stack every Sunday for the rest of the workshop.
 
 ## Discuss: Live session prompts
 

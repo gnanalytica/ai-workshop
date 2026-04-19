@@ -1,6 +1,6 @@
 ---
 reading_time: 14 min
-tldr: "Open models are closing the gap with GPT-4, and the next decade of AI won't be written only in San Francisco."
+tldr: "Open models are closing the gap with GPT-4, and the next decade of AI won't be written only in San Francisco — it'll be written in Hangzhou, Paris, and Bengaluru."
 tags: ["foundations", "theory"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Three models, two tasks, one winner", "url": "https://lmarena.ai/"}
@@ -13,7 +13,26 @@ resources: [{"title": "HuggingFace Open LLM Leaderboard", "url": "https://huggin
 
 ## Intro
 
-Yesterday you met three American chatbots. Today you meet twenty more — Chinese, Indian, European, tiny, huge. The world of AI is much bigger than ChatGPT, and knowing that gives you options most of your classmates don't have.
+Yesterday you met three American chatbots. Today you meet twenty more — Chinese, Indian, European, tiny, huge. Here's the secret your LinkedIn feed won't tell you: most of the real progress in AI right now is happening *outside* OpenAI. Once you know this landscape, you stop being a ChatGPT user and start being an AI professional.
+
+> 🧠 **Quick glossary for today**
+> - **Model** = the AI itself (a huge file of numbers + a little code to run it).
+> - **Weights** = the "numbers" part. The brain.
+> - **Open weights** = the brain file is public. Anyone can download and run it.
+> - **Closed weights** = the brain file is private. You only talk to it via the company's website/API.
+> - **Fine-tune** = teach an open model new tricks with your own data. (We'll do this Week 3.)
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap Day 1 + hook | 5 min | One-liner: "LLM = well-read autocomplete" |
+| Mini-lecture: closed vs open + Indian AI | 20 min | Model families tour |
+| Live lab: Task A together | 20 min | Reasoning task across 3 open models |
+| Q&A + discussion | 15 min | What surprised you? |
+
+**Before class** (10 min): skim the table below about why open matters.
+**After class** (~30 min tonight): finish Task B of the lab (Indian-language apology), submit the 1-page comparison doc.
 
 ## Read: Closed vs open — and why "open" is the word that matters
 
@@ -54,7 +73,7 @@ For two years now, Chinese labs have been the most prolific *open* releasers on 
 
 India is building AI. Not importing it. Three names to memorise:
 
-- **Sarvam AI** — Bengaluru. Founded 2023. Indian-language specialists. Their models handle Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia in ways GPT-4 still fumbles. **Meesho** uses Sarvam to power its voice assistant for sellers who don't read English — this is real deployment, not a demo.
+- **Sarvam AI** — Bengaluru. Founded 2023. Indian-language specialists. Their models handle Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia in ways GPT-4 still fumbles. **Meesho** uses Sarvam to power its voice assistant for sellers who don't read English — real deployment, not a demo.
 - **BharatGPT** (by CoRover) — a voice-and-text conversational platform already running inside Indian Railways' "AskDISHA" assistant, handling millions of queries in 14+ Indian languages.
 - **Krutrim** (Ola) — funded by Bhavish Aggarwal. Building a full-stack Indian AI — from silicon to model. Aggressive, ambitious, worth watching.
 
@@ -64,7 +83,7 @@ Worked example — why Indian models matter. Ask GPT-4: *"Translate 'The mess fo
 
 ## Watch: HuggingFace Hub tour + India AI snapshot
 
-I'll record a 12-minute screencast walking through the HuggingFace hub and the Sarvam playground. Goal: you should be able to find any open model in under 30 seconds after watching this.
+A 12-minute screencast walking through the HuggingFace hub and the Sarvam playground. Goal: you should be able to find any open model in under 30 seconds after watching this.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
@@ -74,20 +93,20 @@ Watch for:
 - The "Spaces" tab — try models in-browser, zero install
 - The difference between "Instruct" and "Base" versions
 
-## Lab: Three models, two tasks, one winner
+## Lab: Three models, two tasks, one winner (pair-friendly)
 
-40 minutes. You'll put three open models head-to-head on two realistic tasks.
+40 minutes. Put three open models head-to-head on two realistic tasks. Works best in pairs — one drives, one observes, swap at the halfway mark.
 
-1. Open LM Arena (`lmarena.ai`). Click "Direct Chat" and pick any model from the dropdown — start with `qwen2.5-72b-instruct`.
+1. Open LM Arena (`lmarena.ai`). Click "Direct Chat" and pick `qwen2.5-72b-instruct` from the dropdown.
 2. Open Sarvam.ai playground in a second tab. Sign up with phone/email.
 3. Open a third tab with any one of: DeepSeek chat, Kimi chat, or GLM chat.
 4. **Task A (reasoning):** *"I have ₹50,000 for a 5-day trip. Goa, Manali, or Meghalaya? Pick one and give me a day-by-day budget breakdown."* Paste into all three.
 5. **Task B (Indian language):** *"Write a 100-word WhatsApp apology to my mom in [your mother tongue] for not calling her in 2 weeks. Make it sound like a college student, not a greeting card."* Paste into all three.
 6. Create a 1-page Google Doc with a 3×2 table: rows are models, columns are tasks. Paste outputs.
-7. Write one sentence per cell: *"This was good / bad because…"*.
+7. Write one sentence per cell: *"This was good / bad because…"*
 8. Declare a winner per task at the bottom. Note whether the "winner" is the same for both tasks. (Spoiler: it usually isn't.)
 
-Artifact: 1-page comparison doc. Submit as PDF.
+**Artifact**: 1-page comparison doc. Submit as PDF via the dashboard.
 
 ## Quiz
 
