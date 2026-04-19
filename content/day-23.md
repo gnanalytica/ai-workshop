@@ -17,6 +17,27 @@ Until now every LLM call you have made has been a one-shot: prompt in, text out.
 
 This is the day the gap between "AI is cool" and "AI gets things done" closes. You will build a three-tool LangGraph agent, trace its reasoning, hit one of its predictable failure modes, and fix it. You will also plug your first MCP server into Cursor or Claude and understand why every AI vendor in 2026 speaks MCP natively.
 
+### Quick glossary
+
+- **Agent** — a model in a loop with tools and a goal, deciding what to do next from observations.
+- **ReAct loop** — the Reason + Act pattern: thought → action → observation → repeat.
+- **Tool use** — named, described, schema'd functions the model can call mid-loop.
+- **MCP** — Model Context Protocol; the USB-C cable standard for connecting models to tools and data.
+- **LangGraph** — a graph-based agent framework with first-class state, nodes, and conditional edges.
+- **CrewAI** — a role-based multi-agent framework for sequential assembly-line workflows.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | From one-shot prompts to loops that take action |
+| Mini-lecture | 20 min | ReAct, tool contracts, predictable agent break-modes, MCP as USB-C |
+| Live lab     | 20 min | Build a 3-tool LangGraph agent; wire an MCP server into Cursor or Claude |
+| Q&A + discussion | 15 min | The MCP server you would publish next |
+
+**Before class** (~10 min): install Python + LangGraph, have a Claude or OpenAI API key handy, and install Cursor or Claude Desktop for the MCP half.
+**After class** (~30 min tonight): export one successful trace and one failed trace, apply a loop-fix, and submit the repo plus the one-paragraph writeup of the fix.
+
 ## Read: ReAct, tool-use, planning loops, and MCP
 
 ### The ReAct loop — reason plus act

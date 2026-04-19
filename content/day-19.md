@@ -15,6 +15,25 @@ resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/s
 
 You've noticed the pattern by now: every time you open a new chat, you re-explain your project. The stack, the folder layout, the naming rules, "don't use class components", "we prefer pytest". That's wasted energy. Today we fix it permanently with **context engineering** — the shift from one-off prompts to reusable instruction files the AI reads automatically.
 
+> 🧠 **Quick glossary for today**
+> - **CLAUDE.md** = a markdown file Claude Code auto-reads when it opens your project. Your AI "onboarding doc".
+> - **AGENTS.md** = the vendor-neutral version (Codex, Cursor, Aider, etc.) — same idea, wider audience.
+> - **Context engineering** = designing what the AI *already knows* before you type a prompt.
+> - **Slash command** = a saved prompt you trigger with `/name` in Claude Code (lives in `.claude/commands/`).
+> - **Hook** = a script the harness runs automatically on events like PreToolUse / PostToolUse / Stop.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | Prompting is what you say; context engineering is what the AI already knows |
+| Mini-lecture | 20 min | CLAUDE.md vs AGENTS.md, the 8-section template, slash commands, hooks |
+| Live lab | 20 min | Scaffold a starter CLAUDE.md for your capstone in Claude Code, together |
+| Q&A + discussion | 15 min | Which single rule will save you the most hours? |
+
+**Before class** (~10 min): open your capstone folder (or create one + `git init`) so Claude Code has something to read.
+**After class** (~30 min tonight): polish CLAUDE.md + AGENTS.md, add 3 slash commands (`/review`, `/plan`, `/explain`), commit, and post a before/after example to the cohort channel.
+
 ## Read: From prompting to context engineering
 
 **The shift in one sentence.** Prompting is what you say. Context engineering is what the AI *already knows* before you say anything.

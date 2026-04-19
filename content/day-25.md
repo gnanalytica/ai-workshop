@@ -17,6 +17,26 @@ Five days ago your capstone was a spec. Today it demos to a panel. This is Ideat
 
 Today's reading is about demo craft: the 30-second hook, the 2-minute story, the 30-second ask, and the harder work of hearing critique without flinching and without capitulating.
 
+### Quick glossary
+
+- **Mini-demo** — a 3-minute live product walk-through plus 1-minute Q&A to a peer panel.
+- **Pitch arc** — 30-second hook, 2-minute story with live demo, 30-second specific ask.
+- **Panel Q&A** — the rotating peer panel that scores clarity, demo craft, and shape-of-problem.
+- **Critique vs feedback** — signal (specific, real), taste (preference), or confused (communication miss) — each needs a different response.
+- **Rotation** — groups cycle so every team sees and critiques different demos.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Opening + format recap | 5 min  | Rules: 3-min demo, 1-min Q&A per team |
+| Mini-demos (rotating) | 40 min | ≈6 teams × 6 min total each |
+| Panel feedback + vote | 10 min | Peers score: clarity, demo craft, shape-of-problem |
+| Closing + week wrap | 5 min  | What's ahead next week |
+
+**Before class** (~10 min): rehearse your 3-min demo out loud once, test your live URL on a friend's phone.
+**After class** (~30 min tonight): file the weekly deliverable: demo recording + 3 peer critiques received.
+
 ## Read: Demo craft, critique handling, and turning feedback into action
 
 ### Why demos matter more than decks

@@ -15,6 +15,26 @@ resources: [{"name": "Qwen 2.5 1.5B", "url": "https://ollama.com/library/qwen2.5
 
 Yesterday you learned the rails. Today you drive. We put a real LLM on your laptop — yes, even a 4GB college laptop — and layer prompting patterns that bigger models can't brute-force their way past. Then we do something 90% of builders skip: we measure. Evals turn "sounds good" into "provably better".
 
+> 🧠 **Quick glossary for today**
+> - **Quantization** = compressing model weights to 4 or 8 bits so they fit on your laptop.
+> - **GGUF** = the packaged single-file format for quantized models (used by Ollama, llama.cpp).
+> - **Evals** = a repeatable test of a prompt against a fixed dataset, scored automatically.
+> - **LangSmith / Langfuse** = platforms that log + score every LLM call you make.
+> - **CoT** = Chain-of-Thought; telling the model to "think step by step" before answering.
+> - **Structured JSON** = forcing the model to return valid JSON matching a schema instead of free text.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | Why run an LLM locally when Groq is free? |
+| Mini-lecture | 20 min | Quantization, prompt patterns (CoT, self-critique, few-shot, JSON), what an eval actually is |
+| Live lab | 20 min | Install Ollama, pull a 1–3B model, log a first trace in Langfuse together |
+| Q&A + discussion | 15 min | When did small beat big? Which prompt pattern moved the number most? |
+
+**Before class** (~10 min): check your laptop RAM and skim the model-size table so you know which GGUF to pull.
+**After class** (~30 min tonight): finish the 10-row eval set for your capstone task, run all three prompt variants, and post win rates to the cohort channel.
+
 ## Read: Local LLMs, prompting patterns, and evals
 
 Let's unpack three ideas that make you dangerous: quantization (so models fit on your laptop), prompt patterns (so small models punch above their weight), and evals (so you know which prompt actually works).

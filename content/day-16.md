@@ -15,6 +15,27 @@ resources: [{"name": "GitHub Skills (free interactive)", "url": "https://skills.
 
 Welcome to Week 4. Until now you've been a power user of AI. This week you become a builder — but still without writing code yourself. Today we learn the four rails every software project runs on: **Git, GitHub, localhost, and APIs**. You will click, fork, read, and poke. No typing code. By the end you will be able to read a repo like you read a book, and talk to any API on the internet.
 
+> 🧠 **Quick glossary for today**
+> - **Git** = a time machine for files; tracks every change as a commit.
+> - **Branch** = a parallel universe of your code where you experiment safely.
+> - **PR / Pull Request** = "please merge my branch" — a proposal with a diff attached.
+> - **Localhost** = your own laptop acting as a server (`127.0.0.1`).
+> - **Port** = a numbered door on localhost (3000, 8080, 11434…).
+> - **REST API** = a URL contract; send JSON, get JSON, using verbs like GET/POST.
+> - **JSON** = key-value data in curly braces; how 99% of APIs speak.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | Why every AI builder needs Git, GitHub, localhost, APIs |
+| Mini-lecture | 20 min | The four rails — commits, forks, ports, status codes |
+| Live lab | 20 min | Fork Ollama + hit 3 public APIs in Hoppscotch together |
+| Q&A + discussion | 15 min | Which rail felt most foreign? Share weird status codes |
+
+**Before class** (~10 min): create a GitHub account with your college email and skim a README of any repo you're curious about.
+**After class** (~30 min tonight): finish the Hoppscotch API calls, open one draft issue on a repo you care about, and paste your 3 links in the cohort channel.
+
 ## Read: The four rails — Git, GitHub, localhost, APIs
 
 Every AI project you will ever touch sits on top of four ideas. If you understand these four, the rest of the stack becomes readable. If you don't, every tutorial feels like hieroglyphics.

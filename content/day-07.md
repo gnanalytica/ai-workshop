@@ -15,6 +15,25 @@ resources: [{"name": "Perplexity Pro Search docs", "url": "https://www.perplexit
 
 Yesterday you built a thinking partner. Today you give it a library card. By the end of today, you will never again start a capstone idea with a raw Google search. You will start with a research brief, grounded in citations, that took you 20 minutes instead of two afternoons.
 
+> 🧠 **Quick glossary**
+> - **Grounding** = every sentence the model writes must map back to a retrieved source (no invented facts).
+> - **Citations** = the little [1][2][3] markers you should always click to verify.
+> - **Pro Search / Deep Research** = multi-step agent runs that decompose a question into sub-queries and synthesize.
+> - **Hallucination** = the model stating something false with confidence. Use the 4-step check.
+> - **Audio Overview** = NotebookLM's auto-generated podcast with two AI hosts discussing your sources.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Keyword search vs grounded answer — why Google is not enough |
+| Mini-lecture | 20 min | Perplexity + NotebookLM + Deep Research — when to use which |
+| Live lab     | 20 min | Ship a 1-page research brief on your capstone domain |
+| Q&A + discussion | 15 min | Trusting the machine — citations, disagreements, dropped claims |
+
+**Before class** (~10 min): pick one capstone domain and write a one-line problem statement.
+**After class** (~30 min tonight): finalize `brief-<topic>.md` with 5+ inline citations and post the NotebookLM audio overview to the cohort channel.
+
 ## Read: Search is dead. Long live grounded research.
 
 For twenty years, research meant: Google, click ten blue links, skim ten tabs, take notes. The bottleneck was not finding information; it was synthesizing it. In 2026 that synthesis step is free.

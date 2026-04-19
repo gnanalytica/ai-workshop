@@ -15,6 +15,26 @@ resources: [{"name": "Latent Space", "url": "https://www.latent.space"}, {"name"
 
 Morning lecture is short because the habit you build this afternoon matters more than any single technique from this cohort. Two days until demo. After demo, the field moves on without you — unless you have a pipeline. Today you build that pipeline.
 
+### Quick glossary
+
+- **arxiv** — the open preprint server where most AI papers land first (cs.LG, cs.AI, cs.CL).
+- **Newsletter** — a curated weekly email digest; one good one replaces 50 hours of Twitter.
+- **Signal pipeline** — your personal filtered set of sources that keeps you current in under 45 min/week.
+- **Paper-skim** — the 3-minute read: abstract, last figure/table, conclusion.
+- **Thought leader** — a practitioner whose takes are worth tracking (e.g., Karpathy, Nathan Lambert, swyx).
+- **Firehose** — the unfiltered stream (raw arxiv, all of X); useful only when hunting, dangerous as a habit.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Light lecture | 20 min | Channels, the 3-minute paper skim, hype-vs-substance red flags |
+| Studio work on capstone | 30 min | Pick your 5 sources + calendar the Friday slot; then back to capstone |
+| Share + Q&A | 10 min | 1-liner per team: your 5 picks and the one source you'll never miss |
+
+**Before class** (~10 min): list your role, goals, and current knowledge gaps so you can pick sources that actually fit you.
+**After class** (~30 min tonight): subscribe to your 5 picks, post your Signal Pipeline doc in the cohort channel, and continue capstone build — two days from demo.
+
 ## Read: The Signal Pipeline (650 words)
 
 The AI field ships faster than you can read. A new frontier model every six weeks, a new agent framework every Tuesday, a thousand arxiv papers a day. If you try to read everything, you read nothing. If you read nothing, you are six months stale in six weeks.

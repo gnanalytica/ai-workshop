@@ -15,6 +15,26 @@ resources: [{"name": "n8n templates gallery", "url": "https://n8n.io/workflows/"
 
 Here's the under-appreciated truth about AI in 2026: the biggest ROI isn't chatbots — it's **automation**. Ninety percent of the value showing up in real offices is "AI + API + trigger" flows that replace some human clicking the same buttons every morning. Today we build one. Then we teach a browser agent to handle the tasks no API exists for.
 
+> 🧠 **Quick glossary for today**
+> - **Webhook** = a URL that external services POST to when something happens (a form fills, a PR opens).
+> - **Trigger** = whatever kicks a workflow off — schedule, webhook, new email, DB change.
+> - **Automation** = trigger → data fetch → AI step → output, composed visually in n8n/Make/Zapier.
+> - **Browser agent** = an AI that operates a real browser by seeing + clicking like a human (browser-use, Claude computer-use).
+> - **Firecrawl** = "give me a URL, get back clean markdown" — handles JS-rendered pages for RAG ingestion.
+> - **Scraping** = pulling data off web pages when no API exists (last resort after APIs).
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | The real AI ROI isn't chat — it's trigger → AI → action |
+| Mini-lecture | 20 min | n8n anatomy, the triage-bot flow, when to reach for browser-use, Firecrawl + Jina Reader |
+| Live lab | 20 min | Build one n8n flow (trigger + API + AI + output) together |
+| Q&A + discussion | 15 min | What manual task is first on the chopping block? |
+
+**Before class** (~10 min): sign up for n8n.cloud free tier and pick one boring task you actually do every week.
+**After class** (~30 min tonight): finish the n8n flow, wire up one browser-use automation you hate doing manually, record a 60-second Loom, and post it to the cohort channel.
+
 ## Read: APIs, n8n, and browser agents
 
 **Automation is the 80% practical use case.** Ask any working professional where AI is actually saving them time this year. It's rarely "I had a deep chat with Claude". It's "every morning at 9 AM, an agent reads yesterday's support tickets, tags them by priority and topic, drafts responses for the routine ones, and posts a summary to Slack." That's not a chatbot. It's a **workflow**: trigger → data fetch → AI reasoning → action.

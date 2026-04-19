@@ -17,6 +17,27 @@ Welcome to launch week. Today's short lecture leaves you the afternoon for capst
 
 Every shipped AI product eventually meets a hostile user, a biased dataset, or a regulator. You are shipping in four days. Better to find your failure modes now than on stage.
 
+### Quick glossary
+
+- **Red-team** — adversarial testing where you try to break your own system before a real attacker does.
+- **Prompt injection** — a malicious instruction smuggled into user input or retrieved data that hijacks the model's behavior.
+- **Jailbreak** — a prompt that tricks the model into ignoring its safety rules (e.g., DAN, grandma exploit).
+- **EU AI Act** — the 2024 EU law that tiers AI systems by risk and imposes obligations on high-risk and general-purpose models.
+- **DPDP** — India's Digital Personal Data Protection Act (2023); consent and purpose-limitation for personal data.
+- **Deepfake** — AI-generated audio/video that impersonates a real person convincingly.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | A real AI incident from the past 7 days |
+| Mini-lecture | 20 min | Ethics as engineering — the 5 safety patterns + regulation in one slide |
+| Live lab     | 20 min | Run Garak's promptinject + dan probes against a capstone |
+| Q&A + discussion | 15 min | Your riskiest assumption, workshopped live |
+
+**Before class** (~10 min): skim the "When AI Goes Wrong" field guide below and have your capstone endpoint (or prompt) ready to point Garak at.
+**After class** (~30 min tonight): finish the red-team lab on your own capstone, log 3 failure modes with screenshots, and write the 3 concrete fixes with deploy ETAs before Day 30.
+
 ## Read: When AI Goes Wrong — A Field Guide
 
 AI failure is not hypothetical anymore. Here are the cases you should know by heart before you demo.

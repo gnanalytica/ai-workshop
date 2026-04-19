@@ -15,6 +15,27 @@ resources: [{"name": "llms.txt standard", "url": "https://llmstxt.org"}, {"name"
 
 Yesterday you built a v0 on your laptop. Today it goes on the internet. A capstone that only runs on localhost is a demo of your patience, not your product. By the end of today you will have a live URL, a token-cost worksheet that tells you how much 10, 100, and 1000 users will cost you per month, a trust-audited UI, and an llms.txt file so the AI search engines of 2026 can cite you correctly.
 
+### Quick glossary
+
+- **Cold start** — the first-request latency penalty on serverless platforms; what users judge you on.
+- **Cost-per-user** — interactions × (input_tokens × input_price + output_tokens × output_price), monthly.
+- **GEO (Generative Engine Optimization)** — the craft of getting cited by ChatGPT, Perplexity, Claude, Gemini.
+- **llms.txt** — a single markdown file at your domain root that tells LLMs what your site is about.
+- **Schema.org** — JSON-LD structured markup that LLMs read preferentially because it's trustworthy.
+- **Trust UX** — the six-part stack: streaming, uncertainty, citations, stop, undo, error recovery.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Localhost is not a product — today it goes live |
+| Mini-lecture | 20 min | Cold starts, vendor lock-in, cost-per-user math, trust stack, GEO |
+| Live lab     | 20 min | Deploy to Vercel, compute cost-per-user, audit trust stack, publish llms.txt |
+| Q&A + discussion | 15 min | The cost number that shocked you |
+
+**Before class** (~10 min): have your capstone repo pushed to GitHub, Vercel and Supabase accounts ready, and the model pricing pages open in tabs.
+**After class** (~30 min tonight): submit the live URL, finish the token-cost worksheet at 10/100/1000 users, publish and verify `yoursite.com/llms.txt`, and add Schema.org JSON-LD to your landing page.
+
 ## Read: Shipping, cost math, trust UX, and getting cited by AI
 
 ### Free-tier survival and cold starts

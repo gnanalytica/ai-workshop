@@ -17,6 +17,27 @@ Today is the day you stop being a typist and start being a director. Week 5 is a
 
 This is also a checkpoint. By the end of the day you submit a local prototype and a 200-word "director's commentary" explaining the prompts you wrote, the fights you had with the model, and the one moment you almost gave up. That reflection is the deliverable — the code is just evidence.
 
+### Quick glossary
+
+- **Vibe-coding** — directing an AI to write code from intent, not typing it yourself.
+- **Spec** — the four-part brief (context, invariants, task, acceptance) you hand the model.
+- **Director-not-typist** — the mindset flip: compress intent into English, don't compile English into code.
+- **Iteration loop** — spec → code → review → iterate, repeated in short turns.
+- **Context (CLAUDE.md)** — the persistent project brief the model reads every session.
+- **Scaffolding** — boilerplate, CRUD, CSS, tests — low-cost surface where long-leash agents shine.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Week 5 kickoff — from typist to director |
+| Mini-lecture | 20 min | The 4-part spec, tight vs long leash, debugging AI output |
+| Live lab     | 20 min | Vibe-code a v0 slice of your capstone — spec, diff, review, iterate |
+| Q&A + discussion | 15 min | Where vibe coding broke today and why |
+
+**Before class** (~10 min): open your capstone repo, confirm your Day 19 CLAUDE.md is current, pick one small end-to-end slice you want to ship first.
+**After class** (~30 min tonight): finish 5–8 iteration turns on your v0, commit after each accepted diff, record the 90-second screen capture, and write the 200-word director's commentary.
+
 ## Read: Director vs Typist — the mindset shift that unlocks AI-first building
 
 Every engineer who is still slow with AI tools in 2026 is stuck in typist mode. A typist reads a Stack Overflow answer, retypes it into their editor, runs it, and debugs line by line. A typist thinks in characters. A director thinks in intent, constraints, and acceptance criteria. The director writes a spec, hands it to a capable junior (the model), reads the output critically, and redirects. The director never touches the keyboard to write code — but they do touch it to write specs, reviews, and rejections.

@@ -15,6 +15,25 @@ resources: [{"name": "The Mom Test — Rob Fitzpatrick (book)", "url": "https://
 
 Most founders' user interviews are a slow way to hear themselves think. They ask leading questions, get polite lies, and walk away more confident and less informed. Today you learn the opposite: how to ask so badly about your idea that the user cannot help telling the truth. You will also plan and execute real interviews before Day 15.
 
+> 🧠 **Quick glossary**
+> - **The Mom Test** = a technique for asking about users' *lives* (facts, past behaviour) rather than your *idea* (opinions, futures), so even your mom can't lie to you.
+> - **Leading question** = a question that signals the answer you want ("Would you love an app that…?") — it poisons the data.
+> - **JTBD (Jobs To Be Done)** = the real "job" a user hires a product for — find it by asking what they did last time the problem hit.
+> - **Affinity mapping** = clustering raw interview quotes by theme on a board until patterns surface.
+> - **Synthesis** = turning 10 interviews into 3 insights a team can actually act on.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | The cost of a polite lie — why most user interviews produce garbage |
+| Mini-lecture | 20 min | Mom Test rules, JTBD framing, and how to listen for what isn't said |
+| Live lab     | 20 min | Paired interview drill — one classmate, 8 minutes, no pitching |
+| Q&A + discussion | 15 min | Debrief quotes, catch leading questions, extract the real job |
+
+**Before class** (~10 min): draft 5 interview questions for your capstone user — NO questions about your idea.
+**After class** (~30 min tonight): run one real interview before Day 15, write up quotes + one JTBD insight, submit notes via dashboard.
+
 ## Read: The Mom Test, JTBD, and listening for what is not said
 
 Rob Fitzpatrick's *The Mom Test* starts from a simple premise: even your mom will lie to you about your business idea, not out of malice but out of love. So stop asking people if they like your idea. Instead, ask about their life. His three rules:

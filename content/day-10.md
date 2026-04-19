@@ -15,6 +15,26 @@ resources: [{"name": "Heilmeier Catechism", "url": "https://www.darpa.mil"}, {"n
 
 Checkpoint day. You have touched a dozen tools in nine days. Today the workshop changes gears: from exposure to commitment. By 9 pm you will have a locked capstone one-pager and a team of two or three. Everything in Weeks 3 and 4 is built on what you decide today.
 
+> 🧠 **Quick glossary**
+> - **Capstone** = the one thing you'll build and demo live on Day 30.
+> - **Heilmeier Catechism** = DARPA's 9 ruthless questions every project must answer in 2 lines each.
+> - **3-filter test** = Real user? Small scope? You care? Three yeses = ship.
+> - **Non-goals** = the "won't build" list — the most important section of your one-pager.
+> - **Steelman** = the strongest honest version of an argument, made before critiquing it.
+
+### Today's 1-hour live session — ideathon format
+
+| Block | Time | What |
+|---|---|---|
+| Kickoff + rules | 5 min  | Set expectations, team size (2–3), time limits, non-goals matter |
+| Brainstorm (solo, silent) | 10 min | Fill a scoping worksheet — 5 ideas, no filter |
+| Shape in pairs | 15 min | Run top 3 ideas through Heilmeier + 3-filter test with a partner |
+| Pitches (rotating groups, 2 min each) | 20 min | Everyone pitches — partner asks one Heilmeier question per idea |
+| Vote + form teams | 10 min | Commit to a capstone team + problem, start the one-pager |
+
+**Before class** (~10 min): come with 2–3 capstone ideas on paper — hostel life, placement pain, family problems all fair game.
+**After class** (~30 min tonight): lock your capstone one-pager and submit via dashboard with the tag `#milestone-1`.
+
 ## Read: How to pick a capstone worth four weeks
 
 **Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.

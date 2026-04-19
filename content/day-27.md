@@ -15,6 +15,26 @@ resources: [{"name": "Artificial Analysis", "url": "https://artificialanalysis.a
 
 Short morning, long afternoon. By noon you should know exactly which model your capstone runs on and why — with receipts. The rest is build time. Today's lecture: how to read a leaderboard without being fooled by one.
 
+### Quick glossary
+
+- **Benchmark** — a standardized test (dataset + scoring rules) used to compare models.
+- **LM Arena** — lmarena.ai; humans vote blind between two model outputs, producing an Elo ranking.
+- **MMLU** — Massive Multitask Language Understanding; 57-subject multiple-choice; now mostly saturated.
+- **GPQA** — Graduate-level Google-Proof Q&A; hard science, low contamination.
+- **Contamination** — the benchmark leaked into training data, so the model "knows the test."
+- **Elo score** — chess-style rating used on LM Arena to rank models by head-to-head human preference.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Light lecture | 20 min | Benchmark literacy — what's saturated, what's contamination-resistant, how to read a release |
+| Studio work on capstone | 30 min | Pick primary + fallback model on Artificial Analysis, side-by-side on LM Arena; instructor roams |
+| Share + Q&A | 10 min | 1-liner per team: which model you picked and why |
+
+**Before class** (~10 min): list your capstone's latency, cost, and context-window constraints, and have 5 real capstone prompts ready to paste into LM Arena.
+**After class** (~30 min tonight): ship the 1-page model card (chosen model + why + fallback + cost per 1k tokens) and continue capstone build.
+
 ## Read: The Benchmark Literacy Crash Course (600 words)
 
 Every model launch comes with a chart. Every chart makes that model look like the best. Your job is to see through the chart.

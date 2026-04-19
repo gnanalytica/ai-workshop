@@ -15,6 +15,26 @@ resources: [{"name": "LlamaIndex + Ollama tutorial", "url": "https://docs.llamai
 
 An LLM alone knows a lot about the world but nothing about *your* world — your PDFs, your notes, your company docs. Today we fix that. You'll learn embeddings (coordinates for meaning), build a RAG bot on your own documents, and meet GraphRAG — the technique that beats chunking when your data has structure.
 
+> 🧠 **Quick glossary for today**
+> - **Embedding** = a vector of numbers that captures the meaning of a piece of text.
+> - **Vector DB** = a database that stores embeddings and finds nearest neighbours fast (pgvector, Chroma, Qdrant).
+> - **Cosine similarity** = the closeness score between two embeddings (−1 to 1; >0.8 is "very close").
+> - **RAG** = Retrieval-Augmented Generation: ingest → retrieve → generate from *your* docs.
+> - **Knowledge graph** = a database of entities (nodes) and relationships (edges) for multi-hop questions.
+> - **Chunk** = a 300–800 token slice of a document with some overlap to its neighbour.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | Why the LLM doesn't know about *your* PDFs |
+| Mini-lecture | 20 min | Embeddings, cosine similarity, RAG in 3 steps, when GraphRAG beats chunking |
+| Live lab | 20 min | Upload capstone PDFs to NotebookLM + sketch a pgvector schema together |
+| Q&A + discussion | 15 min | Which 5 questions failed, and was it chunking or retrieval? |
+
+**Before class** (~10 min): gather 5–20 real PDFs for your capstone (lecture notes, research papers, internal docs) in one folder.
+**After class** (~30 min tonight): ship a working RAG bot that answers 5 questions from your own PDFs; tune one knob (chunk size, top-K, or embedder) and post the before/after.
+
 ## Read: Embeddings, RAG, and when graphs beat chunks
 
 **Embeddings are coordinates for meaning.** Take any piece of text — a sentence, a paragraph, a whole doc — and an **embedding model** turns it into a list of numbers called a vector, usually 384, 768, or 1536 dimensions long. The magic property: sentences with similar meaning end up close in this high-dimensional space. "The cat sat on the mat" and "A feline rested on the rug" will be neighbours, even though they share almost no words. "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess" will be near each other too.

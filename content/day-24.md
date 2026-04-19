@@ -17,6 +17,28 @@ Yesterday one agent in a loop. Today multiple agents that talk to each other. Yo
 
 By the end of today you have a workflow where one agent delegates to another, with a diagram that explains the handoff clearly enough that a teammate could modify it.
 
+### Quick glossary
+
+- **Multi-agent** — separation of concerns: narrow roles, small toolsets, clear inputs and outputs.
+- **Supervisor** — a boss agent that delegates to workers and decides the next step.
+- **Swarm** — peer-to-peer handoffs between agents without a central supervisor.
+- **Skills** — packaged, auto-loaded instruction bundles that teach a Claude agent a specific task.
+- **Plugins** — installable bundles of skills, commands, hooks, and MCP servers shipped as one unit.
+- **Handoff** — the function an agent calls to transfer control to another agent.
+- **Orchestration** — how agents, handoffs, and state compose into a workflow.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | One bloated agent vs two narrow ones |
+| Mini-lecture | 20 min | Supervisor, swarm, hierarchical; Swarm's two primitives; Skills and Plugins |
+| Live lab     | 20 min | Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm |
+| Q&A + discussion | 15 min | When did one agent become two in your capstone |
+
+**Before class** (~10 min): pick one capstone task that naturally splits in two (researcher+writer, planner+coder, intake+responder) and stub the two system prompts.
+**After class** (~30 min tonight): run three test cases with tracing on, export the traces, draw the handoff diagram, and submit the repo with your one-paragraph rationale.
+
 ## Read: Orchestration patterns, Swarm minimalism, Skills, and Plugins
 
 ### Why multi-agent at all

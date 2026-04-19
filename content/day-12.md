@@ -15,6 +15,25 @@ resources: [{"name": "IDEO Design Kit — Methods", "url": "https://www.designki
 
 Design thinking has a reputation problem. It has been diluted into colourful sticky notes, two-hour "workshops," and the smug sense that wandering around a whiteboard counts as work. It does not. Done properly, design thinking is a hard, iterative discipline that alternates between opening up ideas and ruthlessly closing them. Today you run the real version on your own capstone.
 
+> 🧠 **Quick glossary**
+> - **Design thinking** = a five-stage loop (empathize → define → ideate → prototype → test) for solving fuzzy human problems.
+> - **Divergent thinking** = open the funnel — generate many options without judging.
+> - **Convergent thinking** = close the funnel — cut ruthlessly to the strongest option.
+> - **Prototype** = the cheapest possible thing you can put in front of a user to learn something true.
+> - **HMW ("How Might We")** = the reframing question that turns a defined problem into fuel for ideation.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Why sticky-note theatre fails — design thinking as discipline, not décor |
+| Mini-lecture | 20 min | The five stages and the specific trap inside each |
+| Live lab     | 20 min | Run one diverge → converge cycle on a volunteer's capstone |
+| Q&A + discussion | 15 min | Where does your process cheat? |
+
+**Before class** (~10 min): list 3 assumptions you're making about your capstone user that you have NOT verified.
+**After class** (~30 min tonight): map all five design-thinking stages onto your capstone in FigJam and submit the link.
+
 ## Read: The five stages, and the traps inside each one
 
 Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype, Test**. The linear diagrams lie — you will bounce between them many times before shipping. What matters is not the order but the *rhythm* inside each stage: diverge (widen the possibility space), then converge (commit to one thing and move on). Skipping either half is the most common failure.

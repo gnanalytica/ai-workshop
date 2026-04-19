@@ -15,6 +15,25 @@ resources: [{"name": "Donella Meadows — Leverage Points essay", "url": "https:
 
 Every capstone problem lives inside a system — a tangle of feedback loops, incentives, and delays. If you intervene at the wrong point, the system absorbs your fix and snaps back. Today you diagram the system around your problem, find a leverage point, and compress the whole thing into a 60-second pitch sharp enough that a stranger at a conference can repeat it.
 
+> 🧠 **Quick glossary**
+> - **Causal loop** = a diagram of variables connected by arrows showing how changes feed back on themselves (reinforcing or balancing).
+> - **Leverage point** = the spot in a system where a small, well-placed push produces outsized change (Donella Meadows' list).
+> - **SCQA** = Situation → Complication → Question → Answer — McKinsey's skeleton for any crisp pitch.
+> - **Pixar pitch** = "Once upon a time… every day… one day… because of that… until finally…" — story arc in six beats.
+> - **Narrative arc** = the shape of tension and release that makes a pitch land instead of flatline.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Your capstone doesn't live in a vacuum — it lives in a system |
+| Mini-lecture | 20 min | Causal loops, Meadows' leverage points, SCQA and the Pixar pitch |
+| Live lab     | 20 min | Draw one causal-loop diagram on a volunteer's capstone, find the leverage point |
+| Q&A + discussion | 15 min | Where's the real leverage? Where are you just treating symptoms? |
+
+**Before class** (~10 min): jot 5 variables (people, incentives, delays) that surround your capstone problem.
+**After class** (~30 min tonight): finalise your causal-loop diagram + a 60-second SCQA pitch and submit both via the dashboard.
+
 ## Read: Loops, leverage points, and stories that stick
 
 **Why systems thinking, now?** By Day 13 you have heard users describe their pain. Pain is a *symptom*. Systems thinking asks what *pattern of relationships* produces the pain — and which point in that pattern is worth intervening in. Most capstones fail not because the solution is bad but because it intervenes at a weak leverage point. A stronger diagram saves you weeks.

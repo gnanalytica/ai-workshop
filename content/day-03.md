@@ -15,6 +15,25 @@ resources: [{"title": "Chain-of-Thought paper", "url": "https://arxiv.org/abs/22
 
 The difference between a student who gets 3x output from AI and one who gives up saying "AI is mid" — is not intelligence. It's prompt craft. Today you learn the only framework you'll ever need, and a small taste of what's coming in Week 3: *context engineering.*
 
+> 🧠 **Quick glossary**
+> - **Prompt** = the instruction you give the AI. Everything you type is a prompt.
+> - **Context** = extra info you give the AI beyond the instruction (your notes, a file, a role).
+> - **Zero-shot** = ask without examples ("summarise this").
+> - **Few-shot** = give 2–3 examples inside the prompt so AI mimics the pattern.
+> - **Chain-of-thought (CoT)** = ask AI to "think step by step" before answering.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Yesterday's AI stack — today, how to actually *talk* to it |
+| Mini-lecture | 20 min | The CREATE framework + zero-shot vs few-shot vs chain-of-thought |
+| Live lab     | 20 min | Iterate one real prompt five times — watch quality climb |
+| Q&A + discussion | 15 min | Which CREATE letter do you skip — and what's it costing you? |
+
+**Before class** (~10 min): skim the main read section below.
+**After class** (~30 min tonight): finish the 5-version prompt iteration lab and start your personal prompt library with its first entry.
+
 ## Read: CREATE — the only prompt framework you need
 
 Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.

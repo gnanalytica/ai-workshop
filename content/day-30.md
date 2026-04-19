@@ -21,6 +21,26 @@ Look around your cohort channel right now. Every one of those names put in the h
 
 Today is short on lecture and long on you. Let's go.
 
+### Quick glossary
+
+- **Demo day** — the live, time-boxed showcase where each team pitches their capstone to a panel.
+- **Panel** — instructor + 2 guest judges; they ask the sharp questions and hand out awards.
+- **Certificate** — auto-issued at /certificate.html when your 30/30 checkpoint completes today.
+- **Showcase** — the public cohort gallery at /showcase.html where your live URL lives on.
+- **Alumni channel** — the post-cohort community you join the moment you graduate.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Instructor opening + cohort celebration | 5 min | One sentence per team |
+| Live demos to panel (rotating) | 40 min | ≈6 teams × 6 min each |
+| Panel Q&A + awards | 10 min | Certificate auto-issued on completion |
+| Closing + what's next | 5 min | Alumni channel, showcase links, goodbyes |
+
+**Before class** (~10 min): test your live URL on a fresh browser, confirm your pre-recorded backup plays, and say your hook out loud once.
+**After class** (~30 min tonight): share your certificate + showcase link on LinkedIn (cohort tag: #GnanalyticaAIWorkshop).
+
 ## Read: Go Time (400 words)
 
 The structure you have rehearsed works. Trust it.

@@ -15,6 +15,25 @@ resources: [{"name": "Google AI Studio", "url": "https://aistudio.google.com"}, 
 
 Pixels used to be expensive. Designers charged for posters, film crews charged for videos, and a 10-second animation cost a weekend. Today you will make both in 45 minutes, for the capstone idea you have been sharpening. Day 10 is the ideathon; your pitch deserves to look real.
 
+> 🧠 **Quick glossary**
+> - **Diffusion** = the model starts from pure noise and denoises step by step, guided by your prompt, until an image appears.
+> - **Negative prompt** = a field where you list what you do NOT want (e.g., "no text, no extra fingers").
+> - **Image-to-video** = start from a still image instead of plain text — far more controllable than text-to-video.
+> - **C2PA** = invisible provenance tags most platforms embed to mark AI-generated media.
+> - **Edit-by-reference** = upload a photo and generate consistent variations from it (Nano Banana's superpower).
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Pixels are free — so what becomes scarce? |
+| Mini-lecture | 20 min | Diffusion intuition + the six-slot image prompt + 2026 tool landscape |
+| Live lab     | 20 min | Ship 1 poster (Nano Banana / Firefly) + 1 ten-second video (Kling) |
+| Q&A + discussion | 15 min | Taste, slop, and labeling AI-generated media |
+
+**Before class** (~10 min): lock your capstone working title and pick two colors for your poster palette.
+**After class** (~30 min tonight): post your final poster PNG + 10-second MP4 + one-line tagline to the cohort showcase.
+
 ## Read: Diffusion, prompts, and the state of video in 2026
 
 **A one-paragraph mental model of diffusion.** Most modern image generators are diffusion models. During training, the model sees millions of image-caption pairs and learns to turn clear images into noise, step by step. To generate, it runs the process in reverse: start from pure noise, denoise one step at a time, guided by your text prompt, until a coherent image emerges. You do not need the math. You need the intuition: the model is a sculptor removing noise until your prompt appears. Your prompt is the chisel. Video models do the same trick across time — they denoise frames that are consistent with each other.

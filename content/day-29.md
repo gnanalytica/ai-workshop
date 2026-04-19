@@ -17,6 +17,26 @@ One day out. Today is not for new features. Today is for rehearsal. Every past c
 
 Say this out loud: "I will not add a feature today." Good. Now let's make your existing capstone look like it was built by a team of five.
 
+### Quick glossary
+
+- **Dry-run** — a full end-to-end rehearsal of your demo, timed, recorded, watched back.
+- **Stage craft** — voice, eyes, pauses, pacing; the non-product half of a demo.
+- **Hook / story / ask** — the three beats of a 4-minute demo: 30 sec / 2 min / 30 sec.
+- **Critique** — specific, line-level feedback: what to cut, rewrite, sharpen.
+- **Showcase page** — the public /showcase.html entry with your live URL, tagline, and screenshot.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Setup | 5 min  | Projector/screen share, order of rehearsal |
+| Full dry-run (rotating) | 30 min | Each team runs their demo end-to-end |
+| Peer + instructor feedback | 15 min | What to fix in next 24h |
+| Showcase polish Q&A | 10 min | Showcase page, assets, final checks |
+
+**Before class** (~10 min): have your demo URL loaded in one tab and your pre-recorded backup in a second tab; hook, story, and ask written out as three paragraphs.
+**After class** (~30 min tonight): apply the 3 line-level fixes from feedback, re-record the final rehearsal video, confirm your showcase entry is live with opt-in ON, and sleep early — demo day tomorrow.
+
 ## Read: Stage-craft for Four-Minute Demos (550 words)
 
 A demo is not a product walkthrough. It's a story with a product in it. Four minutes, three beats: hook, story, ask.

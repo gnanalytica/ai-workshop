@@ -15,6 +15,24 @@ resources: [{"name": "Sprint — Jake Knapp (book)", "url": "https://www.thespri
 
 This is Capstone Milestone 2 — checkpoint day. By the end of today you will have a locked, one-page spec for your capstone, a set of wireframes that show the core flow, and a public commitment to the cohort. Nothing here is decorative. Whatever you lock tonight is what you build next week.
 
+> 🧠 **Quick glossary**
+> - **Design sprint** = a time-boxed, structured build cycle (GV's 5-day version, compressed here) that forces a decision and a prototype by the end.
+> - **MVP (Minimum Viable Product)** = the smallest thing that delivers the core value — nothing decorative, nothing "nice to have".
+> - **Scope** = the boundary line around what you *will* build — and, more importantly, what you *won't*.
+> - **Wireframe** = a low-fidelity sketch of screens and flow, focused on structure not styling.
+> - **Feature freeze** = the moment you stop adding, lock the spec, and commit to shipping what's already listed.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Check-in + today's goal | 5 min  | Confirm deliverable by end of class: locked 1-page spec + wireframes |
+| Studio work (heads-down build) | 45 min | Instructor roams, unblocks, reviews specs and wireframes 1:1 |
+| Quick share + blockers logged | 10 min | 1-line-per-team share, what's stuck, what's locked |
+
+**Before class** (~10 min): bring your Day 11-14 artifacts (problem statement, interview insights, causal loop, pitch) — all in one doc.
+**After class** (~30 min tonight): lock your 1-page spec + wireframes and submit via dashboard (this is a cohort milestone).
+
 ## Read: The 1-day sprint, what "shipped" means, and the discipline of the spec
 
 Jake Knapp's *Sprint* compresses months of product argument into five days. You do not have five days. You have one. The good news: a compressed sprint still captures 80% of the value if you are ruthless about scope. Here is the 1-day version, sized for your capstone.

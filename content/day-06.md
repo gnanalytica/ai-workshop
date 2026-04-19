@@ -15,6 +15,25 @@ resources: [{"name": "Claude Projects guide", "url": "https://claude.ai"}, {"nam
 
 Welcome to Week 2. Last week you learned what AI is; this week you will touch everything. Today's job is the most important of the week: stop using one chatbot as a search engine and start using five of them as thinking partners. By Friday you will pick a capstone; today you build the tool that will help you pick it.
 
+> 🧠 **Quick glossary**
+> - **Custom Instructions / System Prompt** = a rule you set once that applies to every chat.
+> - **Memory** = the model writes down facts about you as you chat (ChatGPT Memory, Gemini Saved Info).
+> - **Projects** = a pinned workspace with reference files + system prompt (Claude Projects, ChatGPT GPTs, Gemini Gems).
+> - **Context window** = how much text the model can "see" in one chat.
+> - **Jarvis** = your personal Claude Project loaded with your resume, goals, and constraints.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Why one chat window is not enough — the five-personality map |
+| Mini-lecture | 20 min | Custom Instructions, Memory, Projects — the three features that change everything |
+| Live lab     | 20 min | Build your Jarvis in Claude Projects — upload resume + capstone ideas |
+| Q&A + discussion | 15 min | Which model is your default, and what did Memory unlock |
+
+**Before class** (~10 min): have your resume PDF, transcript, and 5 capstone ideas ready to upload.
+**After class** (~30 min tonight): finish the 3-model comparison, post screenshots of your Claude Project + 3 best chats to the cohort channel.
+
 ## Read: Five models, five personalities
 
 The big frontier chat models look identical from the outside. They all have a text box. But in 2026, the gap between the best answer and the average answer is almost entirely about knowing which model to ask, how to set it up, and how to talk to it. Most students give up on "AI" after three mediocre ChatGPT replies. The actual reason the reply was mediocre is that they asked the wrong model, with no context, in one line.

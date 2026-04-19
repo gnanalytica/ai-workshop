@@ -15,6 +15,25 @@ resources: [{"name": "The Heilmeier Catechism (DARPA)", "url": "https://www.darp
 
 You picked your capstone on Day 10. Today we stress-test how you describe it. Most capstones fail not because the tech is hard, but because the problem statement was fuzzy on day one and the fuzziness compounded for four weeks. A sharp problem statement is leverage: it forces honest scope, kills bad features early, and makes every later decision easier.
 
+> 🧠 **Quick glossary**
+> - **Problem statement** = a one-sentence description of who hurts, where, and why it matters — written before any solution.
+> - **Heilmeier Catechism** = nine blunt questions (what are you trying to do, why is it hard, who cares, what's new) that force clarity on any project.
+> - **"How Might We" (HMW)** = a reframing trick that turns a complaint into a solvable, open-ended design question.
+> - **5 Whys** = ask "why?" five times in a row to drill from symptom to root cause.
+> - **JTBD (Jobs To Be Done)** = the "job" the user hires your product to do — the underlying motivation, not the feature.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Day 10 capstone pick → why the statement matters more than the tech |
+| Mini-lecture | 20 min | Heilmeier, HMW, 5 Whys, JTBD — and the traps in each |
+| Live lab     | 20 min | Rewrite one volunteer's capstone statement three times, live |
+| Q&A + discussion | 15 min | Stress-test statements, call out fuzziness |
+
+**Before class** (~10 min): write your current capstone problem in one sentence — exactly as you'd say it to a stranger.
+**After class** (~30 min tonight): finish the three rewrites of your statement and paste the final version into the dashboard.
+
 ## Read: Why a crisp problem statement is half the work
 
 Walk into any product review at a well-run company and you will notice something: the first ten minutes are not about solutions. They are about re-stating the problem. People argue over a single verb. They replace "help users find things" with "reduce time-to-first-relevant-result for new users on mobile." That fight is the work. Everything downstream — architecture, model choice, UX, metrics — is just execution of whatever was agreed upon in those first ten minutes.

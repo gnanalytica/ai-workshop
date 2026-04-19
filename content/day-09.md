@@ -15,6 +15,25 @@ resources: [{"name": "Gamma templates", "url": "https://gamma.app"}, {"name": "E
 
 Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build the pitch materials and the voice to deliver it. Meetings, decks, voices, avatars — four categories that used to take a week. You will do all four in 45 minutes and still have time for dinner.
 
+> 🧠 **Quick glossary**
+> - **Whisper** = OpenAI's open-source speech-to-text model; free, private, runs locally.
+> - **Deck-gen** = AI tools (Gamma, Tome) that turn a paragraph into a structured slide deck.
+> - **Voice cloning** = generating unlimited speech in a voice from ~30 seconds of reference audio (ElevenLabs).
+> - **AI avatar** = a photorealistic talking head synced to generated speech (HeyGen).
+> - **Speaker notes** = the off-slide text you say aloud — where detail lives, not on the slide.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Four categories that used to take a week — done in one hour |
+| Mini-lecture | 20 min | Otter/Whisper, Gamma + Napkin, ElevenLabs, HeyGen — when and why |
+| Live lab     | 20 min | Build a 5-slide deck + record a 30-second AI-avatar intro |
+| Q&A + discussion | 15 min | Voice, face, trust — should pitches be labeled as AI? |
+
+**Before class** (~10 min): have a one-paragraph description of your capstone idea ready to feed Otter/Gamma.
+**After class** (~30 min tonight): post your 5-slide deck PDF + 30-second MP4 + one-line self-review to the cohort channel.
+
 ## Read: Talk, listen, present — all automated
 
 **Transcription: Whisper vs Otter, open vs closed.** The baseline has shifted. In 2026, transcribing any meeting or lecture is effectively free and surprisingly accurate, even in Indian English with code-mixing. Two paths:

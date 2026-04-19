@@ -15,6 +15,25 @@ resources: [{"title": "Why LLMs Hallucinate (OpenAI paper)", "url": "https://ope
 
 Every tool of power has a dark side. Cars kill, electricity electrocutes, the internet trolls. AI's dark side is more subtle — it lies without malice, it reflects bias it didn't choose, and it forgets nothing you tell it. Today is the day you stop being naive.
 
+> 🧠 **Quick glossary**
+> - **Hallucination** = when AI confidently makes up facts that sound true but aren't.
+> - **Bias** = the model reflecting skewed patterns from its internet training data (gender, race, geography).
+> - **Jailbreak** = a clever prompt trick that bypasses the model's safety guardrails.
+> - **Deepfake** = AI-generated fake video, image, or voice of a real person.
+> - **Red-team** = deliberately attacking a model to find where it breaks — so you can defend against it.
+
+### Today's 1-hour live session
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Yesterday you learned to prompt — today, why prompting alone isn't enough |
+| Mini-lecture | 20 min | The six failure modes: hallucination, bias, privacy, deepfakes, copyright, jailbreaks |
+| Live lab     | 20 min | Red-team three models — make each one hallucinate on purpose |
+| Q&A + discussion | 15 min | Share your personal AI red line + debate one from a peer |
+
+**Before class** (~10 min): skim the main read section below.
+**After class** (~30 min tonight): finish the 3-hallucination screenshot doc and write your 250-word "My personal AI red line" essay.
+
 ## Read: The six failure modes every user must know
 
 ### 1. Hallucination — confident lies
