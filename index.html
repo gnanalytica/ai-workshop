@@ -240,30 +240,30 @@
       <div class="week w1">
         <div class="bar"></div>
         <div class="w-n">WEEK 01 · DAYS 1–7</div>
-        <h3 class="w-t">Foundations &amp; GenAI</h3>
-        <p class="w-d">How LLMs actually work, embeddings, tokenization, prompting as a craft, and the open-source model landscape.</p>
-        <div class="w-tags"><span class="mini">Theory</span><span class="mini">Prompting</span><span class="mini">Ollama</span></div>
+        <h3 class="w-t">Think</h3>
+        <p class="w-d">Mindset and muscle: problem framing, design thinking, user empathy, systems and computational thinking. No AI — yet.</p>
+        <div class="w-tags"><span class="mini">Design</span><span class="mini">Framing</span><span class="mini">Systems</span></div>
       </div>
       <div class="week w2">
         <div class="bar"></div>
         <div class="w-n">WEEK 02 · DAYS 8–14</div>
-        <h3 class="w-t">Vibe Coding &amp; Building</h3>
-        <p class="w-d">Shipping real apps with AI pair programmers, RAG pipelines, local inference and production-grade infra basics.</p>
-        <div class="w-tags"><span class="mini">Hands-on</span><span class="mini">RAG</span><span class="mini">Cursor</span></div>
+        <h3 class="w-t">Make</h3>
+        <p class="w-d">Programming fluency, the web mental model, APIs, data literacy, git — and your first AI pair programmer at the end.</p>
+        <div class="w-tags"><span class="mini">Python</span><span class="mini">Web</span><span class="mini">Data</span></div>
       </div>
       <div class="week w3">
         <div class="bar"></div>
         <div class="w-n">WEEK 03 · DAYS 15–21</div>
-        <h3 class="w-t">Agentic AI Systems</h3>
-        <p class="w-d">Multi-agent workflows, tool use, MCP servers, browser automation and evaluation — the new frontier.</p>
-        <div class="w-tags"><span class="mini">Agents</span><span class="mini">MCP</span><span class="mini">LangGraph</span></div>
+        <h3 class="w-t">AI core</h3>
+        <p class="w-d">What AI actually is, how LLMs work, running models locally, prompting as a craft, embeddings, RAG, fine-tuning vs prompting.</p>
+        <div class="w-tags"><span class="mini">LLMs</span><span class="mini">Prompting</span><span class="mini">RAG</span></div>
       </div>
       <div class="week w4">
         <div class="bar"></div>
         <div class="w-n">WEEK 04 · DAYS 22–30</div>
-        <h3 class="w-t">Strategy, Design &amp; Capstone</h3>
-        <p class="w-d">Product thinking, AI for marketing, presentations, ethics — then build, demo and ship your capstone.</p>
-        <div class="w-tags"><span class="mini">Product</span><span class="mini">Pitch</span><span class="mini">Capstone</span></div>
+        <h3 class="w-t">Agentic, product &amp; capstone</h3>
+        <p class="w-d">From chatbots to agents, MCP, UX-for-AI, product thinking, storytelling — then build, demo and ship your capstone.</p>
+        <div class="w-tags"><span class="mini">Agents</span><span class="mini">Product</span><span class="mini">Capstone</span></div>
       </div>
     </div>
   </div>
@@ -285,7 +285,10 @@
       </div>
     </div>
 
-    <!-- WEEK 1 -->
+    <div id="dailyBreakdown"></div>
+
+    <!-- Legacy hardcoded breakdown (hidden; kept for reference, removed via CSS) -->
+    <div style="display:none">
     <h3 style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:40px 0 16px">Week 01 — Foundations &amp; GenAI</h3>
     <div class="days">
       <div class="day"><div class="d-num">Day<b>01</b></div><div><div class="d-title">What AI actually is (and isn't)</div><div class="d-desc">Map the field: ML → DL → Transformers → LLMs → Agents. Hype vs reality, where we are in 2026.</div><div class="d-chips"><span class="chip c-theory">Theory</span><span class="chip c-discuss">Discussion</span></div></div></div>
@@ -333,6 +336,7 @@
       <div class="day"><div class="d-num">Day<b>28</b></div><div><div class="d-title">Capstone build day I</div><div class="d-desc">Focused build with live mentor support. Ship the ugly v0, then iterate.</div><div class="d-chips"><span class="chip c-hands">Hands-on</span></div></div></div>
       <div class="day"><div class="d-num">Day<b>29</b></div><div><div class="d-title">Capstone build day II &amp; polish</div><div class="d-desc">Feature freeze by noon, polish + pitch prep after. Dress rehearsal.</div><div class="d-chips"><span class="chip c-hands">Hands-on</span></div></div></div>
       <div class="day"><div class="d-num">Day<b>30</b></div><div><div class="d-title">Demo Day 🚀</div><div class="d-desc">Live demos to a panel of founders/engineers. Awards, feedback, what's next for each team.</div><div class="d-chips"><span class="chip c-discuss">Discussion</span></div></div></div>
+    </div>
     </div>
   </div>
 </section>
@@ -476,6 +480,26 @@
   </div>
 </footer>
 
+<script type="module">
+  // Render curriculum from days.js
+  import { DAYS, WEEK_TITLES } from './assets/days.js';
+  const breakdown = document.getElementById('dailyBreakdown');
+  if (breakdown) {
+    const html = [1,2,3,4].map(w => {
+      const days = DAYS.filter(d => d.w === w);
+      return `
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:${w===1?'40px':'56px'} 0 16px">Week 0${w} — ${WEEK_TITLES[w]}</h3>
+        <div class="days">
+          ${days.map(d => `
+            <div class="day">
+              <div class="d-num">Day<b>${String(d.n).padStart(2,'0')}</b></div>
+              <div><div class="d-title">${d.title}</div></div>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+    breakdown.innerHTML = html;
+  }
+</script>
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
