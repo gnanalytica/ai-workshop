@@ -85,7 +85,7 @@
       <a href="#timeline">Activity timeline</a>
     </div>
     <section id="progress" class="sec"><h2>Progress grid</h2><div class="day-grid-30" id="dGrid"></div></section>
-    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
+    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Kudos</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
     <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
     <section id="notes" class="sec"><h2>Reading notes</h2><div id="notesList"></div></section>
     <section id="timeline" class="sec"><h2>Activity timeline</h2><div id="timelineList"></div></section>
@@ -179,13 +179,21 @@
     }).join('');
 
     const subsMap = new Map((subs.data || []).map(s => [s.assignments.id, s]));
+    const subIds = (subs.data || []).map(s => s.id).filter(Boolean);
+    const kudosMap = new Map();
+    if (subIds.length) {
+      const { data: kc } = await supabase.from('kudos_counts').select('submission_id,count').in('submission_id', subIds);
+      (kc || []).forEach(k => kudosMap.set(k.submission_id, k.count));
+    }
     $('subsRows').innerHTML = (assignments.data || []).sort((a,b) => a.day_number - b.day_number).map(a => {
       const s = subsMap.get(a.id);
       const status = s ? s.status : (a.due_at && new Date(a.due_at) < new Date() ? 'overdue' : 'not started');
       const score = s?.score != null ? `${s.score}/${a.points}` : '—';
       const submitted = s?.submitted_at ? new Date(s.submitted_at).toLocaleDateString() : '—';
       const view = s?.content_url ? `<a href="${esc(s.content_url)}" target="_blank" style="color:var(--accent)">Open</a>` : (s?.content_text ? `<span title="${esc(s.content_text.slice(0,200))}">text ✎</span>` : '');
-      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${view}</td></tr>`;
+      const kcount = s?.id ? (kudosMap.get(s.id) || 0) : 0;
+      const kCell = kcount > 0 ? `<span style="color:#c9f76a;font-family:'JetBrains Mono',monospace;font-size:12px">👏 ${kcount}</span>` : '—';
+      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td>${kCell}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${view}</td></tr>`;
     }).join('');
 
     const qaMap = new Map();

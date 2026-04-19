@@ -191,6 +191,30 @@
   .asgn-form input:focus,.asgn-form textarea:focus{border-color:var(--accent)}
   .asgn-submit{padding:10px 18px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13.5px;border:none;cursor:pointer;font-family:inherit;align-self:flex-start}
   .asgn-note{font-size:12px;color:var(--muted);font-style:italic}
+  /* stuck widget */
+  .stuck-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(56,189,248,.08);color:#7dd5ff;border:1px solid rgba(56,189,248,.28);font-size:13px;cursor:pointer;font-family:inherit;font-weight:500}
+  .stuck-btn:hover{background:rgba(56,189,248,.14)}
+  .stuck-state{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;font-size:13px;font-family:inherit;font-weight:500}
+  .stuck-state.queued{background:rgba(56,189,248,.1);color:#7dd5ff;border:1px solid rgba(56,189,248,.3)}
+  .stuck-state.helping{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.35)}
+  .stuck-state .cancel{background:transparent;border:1px solid currentColor;color:inherit;padding:3px 10px;border-radius:999px;font-size:11.5px;cursor:pointer;font-family:inherit;opacity:.8}
+  .stuck-state .cancel:hover{opacity:1}
+  .stuck-modal-back{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;place-items:center;z-index:100;padding:20px}
+  .stuck-modal-back.show{display:grid}
+  .stuck-modal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;max-width:440px;width:100%}
+  .stuck-modal h3{margin:0 0 8px;font-size:18px;letter-spacing:-.01em}
+  .stuck-modal p{margin:0 0 14px;color:var(--muted);font-size:13.5px;line-height:1.5}
+  .stuck-modal textarea{width:100%;min-height:90px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:inherit;font-size:14px;line-height:1.5;resize:vertical;outline:none;box-sizing:border-box}
+  .stuck-modal textarea:focus{border-color:var(--accent)}
+  .stuck-modal-acts{display:flex;gap:10px;margin-top:14px;justify-content:flex-end}
+  .stuck-modal .btn-cancel{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
+  .stuck-modal .btn-submit{padding:8px 16px;border-radius:999px;background:var(--accent);border:none;color:var(--cta-ink);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+  /* pair card */
+  .pair-card{display:flex;gap:14px;align-items:center;padding:14px 18px;background:linear-gradient(145deg,rgba(195,255,54,.08),rgba(195,255,54,.02));border:1px solid rgba(195,255,54,.4);border-radius:14px}
+  .pair-card .pl{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .pair-card .pn{font-weight:600;font-size:15px;letter-spacing:-.01em}
+  .pair-card .pm{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .pair-card .pgh{font-size:12px;color:var(--accent-4)}
   .asgn-done{padding:14px 16px;border:1px solid rgba(195,255,54,.3);background:rgba(195,255,54,.05);border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
   .asgn-done-left{display:flex;flex-direction:column;gap:4px}
   .asgn-done-tag{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.12em;color:#c9f76a;text-transform:uppercase}
@@ -360,6 +384,8 @@
       <h1 class="lesson-title" id="lessonTitle">—</h1>
       <p class="lesson-tag" id="weekTitle">—</p>
       <div class="live-row" id="liveRow"></div>
+      <div id="pairCard" style="margin-top:16px"></div>
+      <div id="stuckWidget" style="margin-top:12px"></div>
     </header>
 
     <div id="metaHeader"></div>
@@ -395,6 +421,19 @@
     <nav class="pager" id="pager"></nav>
   </div>
 </main>
+
+<!-- Stuck modal -->
+<div class="stuck-modal-back" id="stuckModal">
+  <div class="stuck-modal">
+    <h3>🆘 I'm stuck</h3>
+    <p>Let an instructor know. Optional short message — what's blocking you?</p>
+    <textarea id="stuckMsg" placeholder="e.g., can't get the API key to work, or just confused about prompts…"></textarea>
+    <div class="stuck-modal-acts">
+      <button class="btn-cancel" id="stuckCancel">Cancel</button>
+      <button class="btn-submit" id="stuckSubmit">Submit</button>
+    </div>
+  </div>
+</div>
 
 <!-- Locked view -->
 <main class="lesson-shell" id="lockedView" style="display:none;grid-template-columns:1fr;max-width:720px">
@@ -666,6 +705,115 @@
 
     // Scrollspy for TOC
     setupScrollspy(modules);
+
+    // Mount stuck-queue widget + pair card
+    mountStuckWidget({ user, cohort });
+    mountPairCard({ user, cohort });
+  }
+
+  // ---------- Stuck queue widget ----------
+  function mountStuckWidget(ctx) {
+    const host = document.getElementById('stuckWidget');
+    if (!host) return;
+    let current = null;
+    let chan = null;
+
+    function paint() {
+      if (!current || current.status === 'resolved') {
+        host.innerHTML = `<button class="stuck-btn" id="stuckOpen">🆘 I'm stuck</button>`;
+        document.getElementById('stuckOpen').addEventListener('click', openModal);
+      } else if (current.status === 'pending') {
+        host.innerHTML = `<span class="stuck-state queued">🆘 In queue · waiting for instructor <button class="cancel" data-act="cancel">Cancel</button></span>`;
+      } else if (current.status === 'helping') {
+        host.innerHTML = `<span class="stuck-state helping">✋ Instructor is helping! <button class="cancel" data-act="resolve">Mark resolved</button></span>`;
+      }
+      host.querySelectorAll('button[data-act]').forEach(b => b.addEventListener('click', async () => {
+        if (!current) return;
+        const act = b.dataset.act;
+        if (act === 'cancel') {
+          await supabase.from('stuck_queue').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', current.id);
+        } else if (act === 'resolve') {
+          await supabase.from('stuck_queue').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', current.id);
+        }
+        current = null; paint();
+      }));
+    }
+
+    async function load() {
+      const { data } = await supabase.from('stuck_queue')
+        .select('*').eq('user_id', ctx.user.id).eq('cohort_id', ctx.cohort.id).eq('day_number', n)
+        .in('status', ['pending','helping'])
+        .order('created_at', { ascending: false }).limit(1).maybeSingle();
+      current = data || null;
+      paint();
+    }
+
+    function subscribe() {
+      if (chan) supabase.removeChannel(chan);
+      chan = supabase.channel('stuck-self-' + ctx.user.id + '-' + n)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'stuck_queue', filter: `user_id=eq.${ctx.user.id}` }, (payload) => {
+          const row = payload.new || payload.old;
+          if (!row || row.cohort_id !== ctx.cohort.id || row.day_number !== n) return;
+          load();
+        }).subscribe();
+    }
+
+    function openModal() {
+      const back = document.getElementById('stuckModal');
+      const ta = document.getElementById('stuckMsg');
+      ta.value = '';
+      back.classList.add('show');
+      document.getElementById('stuckCancel').onclick = () => back.classList.remove('show');
+      document.getElementById('stuckSubmit').onclick = async () => {
+        const btn = document.getElementById('stuckSubmit');
+        btn.disabled = true;
+        const { data, error } = await supabase.from('stuck_queue').insert({
+          user_id: ctx.user.id, cohort_id: ctx.cohort.id, day_number: n,
+          message: ta.value.trim() || null, status: 'pending',
+        }).select().single();
+        btn.disabled = false;
+        if (error) { alert('Could not submit: ' + error.message); return; }
+        current = data;
+        back.classList.remove('show');
+        paint();
+      };
+    }
+
+    load();
+    subscribe();
+  }
+
+  // ---------- Pair match card ----------
+  async function mountPairCard(ctx) {
+    const host = document.getElementById('pairCard');
+    if (!host) return;
+    const { data: rows } = await supabase.from('pair_matches')
+      .select('*').eq('cohort_id', ctx.cohort.id).eq('day_number', n)
+      .or(`user_a.eq.${ctx.user.id},user_b.eq.${ctx.user.id}`);
+    const row = (rows || [])[0];
+    if (!row) { host.innerHTML = ''; return; }
+    const partnerId = row.user_a === ctx.user.id ? row.user_b : row.user_a;
+    if (!partnerId) {
+      host.innerHTML = `<div class="pair-card">
+        <div>
+          <div class="pl">Pair · Day ${pad(n)}</div>
+          <div class="pn">You're flying solo for this round</div>
+          <div class="pm">Odd number today — join any pair in the chat or ask an instructor.</div>
+        </div>
+      </div>`;
+      return;
+    }
+    const { data: p } = await supabase.from('profiles').select('full_name,college,year,github_username').eq('id', partnerId).maybeSingle();
+    const bits = [p?.college, p?.year && `Year ${p.year}`].filter(Boolean).join(' · ');
+    const gh = p?.github_username ? `<div class="pgh">github.com/${escapeHtml(p.github_username)}</div>` : '';
+    host.innerHTML = `<div class="pair-card">
+      <div>
+        <div class="pl">Pair · Day ${pad(n)}</div>
+        <div class="pn">You're paired with <strong>${escapeHtml(p?.full_name || 'a fellow student')}</strong> today.</div>
+        <div class="pm">${escapeHtml(bits || 'Introduce yourself in the chat.')}</div>
+        ${gh}
+      </div>
+    </div>`;
   }
 
   // ---------- Module rendering ----------

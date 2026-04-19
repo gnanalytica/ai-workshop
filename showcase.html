@@ -73,6 +73,12 @@
 
   footer.site-ft{margin-top:80px;border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:13px;text-align:center}
   footer.site-ft a{color:var(--ink);border-bottom:1px solid var(--line)}
+  .kudos-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .kudos-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12.5px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .kudos-btn:hover{border-color:rgba(195,255,54,.35);color:var(--ink)}
+  .kudos-btn.on{background:rgba(195,255,54,.12);border-color:rgba(195,255,54,.5);color:#c9f76a}
+  .kudos-btn .n{font-family:"JetBrains Mono",monospace;font-weight:600}
+  .kudos-btn[disabled]{cursor:default;opacity:.75}
 </style>
 </head>
 <body>
@@ -193,6 +199,20 @@
     const daysCompleted = progressRes.data?.days_completed || 0;
     const submissions = subsRes.data || [];
     const isSelf = session?.user?.id === userId;
+    const viewerId = session?.user?.id || null;
+
+    // Kudos: load counts + viewer's own claps
+    const subIds = submissions.map(s => s.id || s.submission_id).filter(Boolean);
+    const kudosCount = new Map();
+    const viewerKudos = new Set();
+    if (subIds.length) {
+      const { data: counts } = await supabase.from('kudos_counts').select('submission_id,count').in('submission_id', subIds);
+      (counts || []).forEach(c => kudosCount.set(c.submission_id, c.count));
+      if (viewerId) {
+        const { data: mine } = await supabase.from('kudos').select('submission_id').eq('from_user', viewerId).in('submission_id', subIds);
+        (mine || []).forEach(k => viewerKudos.add(k.submission_id));
+      }
+    }
 
     // derive week titles map and day titles
     const dayTitleMap = new Map(DAYS.map(d => [d.n, d]));
@@ -271,6 +291,19 @@
             const meta = dayTitleMap.get(s.day_number);
             const title = s.assignment_title || meta?.title || `Day ${s.day_number}`;
             const statusCls = s.status === 'graded' ? 'status-graded' : 'status-submitted';
+            const sid = s.id || s.submission_id;
+            const kCount = kudosCount.get(sid) || 0;
+            const kOn = viewerKudos.has(sid);
+            let kudosHtml = '';
+            if (sid && !isSelf) {
+              if (viewerId) {
+                kudosHtml = `<button class="kudos-btn ${kOn ? 'on' : ''}" data-sid="${escapeHtml(sid)}" data-to="${escapeHtml(userId)}" aria-pressed="${kOn}">👏 <span class="n">${kCount}</span></button>`;
+              } else {
+                kudosHtml = `<button class="kudos-btn" disabled title="Sign in to cheer">👏 <span class="n">${kCount}</span> · Sign in to cheer</button>`;
+              }
+            } else if (sid && isSelf) {
+              kudosHtml = `<span class="kudos-btn" style="cursor:default">👏 <span class="n">${kCount}</span></span>`;
+            }
             return `
               <div class="subcard">
                 <div class="day-n">DAY ${String(s.day_number).padStart(2,'0')}</div>
@@ -283,6 +316,7 @@
                     ${s.status ? `<span class="status-pill ${statusCls}">${escapeHtml(s.status)}</span>` : ''}
                   </span>
                 </div>
+                ${kudosHtml ? `<div class="kudos-row">${kudosHtml}</div>` : ''}
               </div>`;
           }).join('')}
         </div>
@@ -290,6 +324,35 @@
     `;
 
     if (isSelf) wireSelfToggle(userId, profile.cohort_id);
+    wireKudos(viewerId);
+  }
+
+  function wireKudos(viewerId) {
+    document.querySelectorAll('.kudos-btn[data-sid]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!viewerId || btn.disabled) return;
+        const sid = btn.dataset.sid;
+        const toUser = btn.dataset.to;
+        const nEl = btn.querySelector('.n');
+        const wasOn = btn.classList.contains('on');
+        btn.disabled = true;
+        let n = parseInt(nEl.textContent, 10) || 0;
+        if (wasOn) {
+          const { error } = await supabase.from('kudos').delete()
+            .eq('from_user', viewerId).eq('submission_id', sid);
+          if (!error) { btn.classList.remove('on'); nEl.textContent = Math.max(0, n - 1); }
+          else alert(error.message);
+        } else {
+          const { error } = await supabase.from('kudos').insert({
+            from_user: viewerId, to_user: toUser, submission_id: sid,
+          });
+          if (!error) { btn.classList.add('on'); nEl.textContent = n + 1; }
+          else alert(error.message);
+        }
+        btn.disabled = false;
+        btn.setAttribute('aria-pressed', btn.classList.contains('on'));
+      });
+    });
   }
 
   async function wireSelfToggle(userId, cohortId) {

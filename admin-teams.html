@@ -127,6 +127,20 @@
       <tbody id="unassignedRows"></tbody>
     </table>
   </div>
+
+  <div class="section-head" style="margin-top:48px">
+    <h2>Pair matching</h2>
+    <div class="muted" style="font-size:13px">Shuffle confirmed students into pairs for a specific day.</div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Day</label>
+      <select id="pairDaySel" style="background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none"></select>
+      <button class="cta" id="pairGenBtn">Generate pairs for Day</button>
+      <button class="btn-sm danger" id="pairClearBtn" style="margin-left:auto">Clear pairs for Day</button>
+    </div>
+    <div id="pairList" style="margin-top:14px;display:flex;flex-direction:column;gap:6px"></div>
+  </div>
 </main>
 
 <!-- NEW/EDIT TEAM MODAL -->
@@ -160,6 +174,7 @@
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { DAYS } from './assets/days.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -504,6 +519,90 @@
   function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
   let toastTimer;
   function toast(text){ const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 1800); }
+
+  // ---------- Pair matching ----------
+  $('pairDaySel').innerHTML = DAYS.map(d => `<option value="${d.n}">Day ${String(d.n).padStart(2,'0')} · ${esc(d.title)}</option>`).join('');
+  $('pairDaySel').addEventListener('change', renderPairs);
+
+  async function renderPairs() {
+    const day = parseInt($('pairDaySel').value, 10);
+    if (!COHORT_ID || !day) return;
+    const { data: pairs } = await supabase.from('pair_matches')
+      .select('*').eq('cohort_id', COHORT_ID).eq('day_number', day)
+      .order('created_at', { ascending: true });
+    const host = $('pairList');
+    if (!pairs || !pairs.length) { host.innerHTML = `<div class="muted" style="font-size:13px;font-style:italic">No pairs generated for Day ${day} yet.</div>`; return; }
+    const ids = new Set();
+    pairs.forEach(p => { if (p.user_a) ids.add(p.user_a); if (p.user_b) ids.add(p.user_b); });
+    const missing = [...ids].filter(id => !PROFILES.has(id));
+    if (missing.length) {
+      const { data: ps } = await supabase.from('profiles').select('id,full_name,college').in('id', missing);
+      (ps || []).forEach(p => PROFILES.set(p.id, p));
+    }
+    host.innerHTML = pairs.map((p, i) => {
+      const a = PROFILES.get(p.user_a); const b = p.user_b ? PROFILES.get(p.user_b) : null;
+      const an = a?.full_name || '—';
+      const bn = b ? (b.full_name || '—') : '<em style="color:var(--muted)">solo (no partner)</em>';
+      return `<div style="padding:8px 12px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:32px">#${i+1}</span>
+        <span>${esc(an)} <span class="muted">↔</span> ${bn}</span>
+      </div>`;
+    }).join('');
+  }
+
+  $('pairGenBtn').addEventListener('click', async () => {
+    const day = parseInt($('pairDaySel').value, 10);
+    if (!COHORT_ID || !day) return;
+    const btn = $('pairGenBtn');
+    btn.disabled = true; btn.textContent = 'Generating…';
+    try {
+      const { data: existing } = await supabase.from('pair_matches')
+        .select('user_a,user_b').eq('cohort_id', COHORT_ID).eq('day_number', day);
+      const already = new Set();
+      (existing || []).forEach(p => { if (p.user_a) already.add(p.user_a); if (p.user_b) already.add(p.user_b); });
+      const pool = REGISTRATIONS.map(r => r.user_id).filter(id => !already.has(id));
+      // Fisher-Yates shuffle
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const createdBy = session?.user?.id || null;
+      const rows = [];
+      for (let i = 0; i < pool.length; i += 2) {
+        rows.push({
+          cohort_id: COHORT_ID, day_number: day,
+          user_a: pool[i], user_b: pool[i + 1] || null,
+          created_by: createdBy,
+        });
+      }
+      if (!rows.length) { toast('No new students to pair'); return; }
+      const { error } = await supabase.from('pair_matches').insert(rows);
+      if (error) { alert('Could not generate: ' + error.message); return; }
+      toast(`${rows.length} pair${rows.length===1?'':'s'} created`);
+      await renderPairs();
+    } finally {
+      btn.disabled = false; btn.textContent = 'Generate pairs for Day';
+    }
+  });
+
+  $('pairClearBtn').addEventListener('click', async () => {
+    const day = parseInt($('pairDaySel').value, 10);
+    if (!COHORT_ID || !day) return;
+    if (!confirm(`Clear all pair matches for Day ${day}?`)) return;
+    const { error } = await supabase.from('pair_matches').delete()
+      .eq('cohort_id', COHORT_ID).eq('day_number', day);
+    if (error) { alert(error.message); return; }
+    toast('Pairs cleared');
+    await renderPairs();
+  });
+
+  // Re-render pairs when cohort changes or initial load completes
+  document.getElementById('cohortSel').addEventListener('change', () => setTimeout(renderPairs, 400));
+  const _pairInitIv = setInterval(() => {
+    if (COHORT_ID) { clearInterval(_pairInitIv); renderPairs(); }
+  }, 300);
+  setTimeout(() => clearInterval(_pairInitIv), 15000);
 
   init();
 </script>
