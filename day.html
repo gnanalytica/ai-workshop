@@ -571,11 +571,11 @@
         </div>`;
     }
     // Week outcome banner
-    const weekOutcome = WEEK_OUTCOMES[day.w];
+    const weekOutcome = WEEK_OUTCOMES[dayMeta.w];
     if (weekOutcome) {
       $('weekOutcome').innerHTML = `
         <div class="week-outcome">
-          <div class="wo-kicker">Week ${String(day.w).padStart(2,'0')} outcome</div>
+          <div class="wo-kicker">Week ${String(dayMeta.w).padStart(2,'0')} outcome</div>
           <div class="wo-text">${escapeHtml(weekOutcome)}</div>
         </div>`;
     }
