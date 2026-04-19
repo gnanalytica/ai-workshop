@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student · Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .pg-hdr{display:flex;justify-content:space-between;align-items:end;margin:24px 0 18px;gap:16px;flex-wrap:wrap}
+  .pg-hdr h1{margin:0;font-size:34px;letter-spacing:-.02em}
+  .kv{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:var(--muted);margin-top:6px}
+  .kv b{color:var(--ink);font-weight:500}
+  .tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:20px 0 18px;flex-wrap:wrap}
+  .tabs a{padding:10px 14px;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;text-decoration:none}
+  .tabs a.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .sec{scroll-margin-top:90px;margin-bottom:36px}
+  .sec h2{font-size:20px;letter-spacing:-.01em;margin:0 0 12px}
+  .day-grid-30{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:10px}
+  .dsq{aspect-ratio:1;border-radius:8px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);position:relative;cursor:default}
+  .dsq.done{background:rgba(195,255,54,.15);border-color:rgba(195,255,54,.5);color:var(--ink)}
+  .dsq.has-notes::after{content:"•";position:absolute;top:2px;right:6px;color:var(--accent);font-size:16px;line-height:1}
+  .picker{display:flex;flex-direction:column;gap:8px;max-width:480px}
+  .picker a{padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);display:flex;justify-content:space-between;align-items:center;font-size:14px}
+  .picker a:hover{border-color:var(--accent)}
+  .note-row{padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:13.5px}
+  .note-row .nhd{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card"><h2 style="text-align:center">Not authorized</h2></div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div id="studentPicker" style="display:none">
+    <div style="margin:24px 0 10px"><div class="kicker">Pick a student</div><h1>Students in this cohort</h1></div>
+    <div id="pickerList" class="picker"></div>
+  </div>
+
+  <div id="studentDetail" style="display:none">
+    <div class="pg-hdr">
+      <div>
+        <div class="kicker">Student drill-down</div>
+        <h1 id="sName">—</h1>
+        <div class="kv" id="sMeta"></div>
+      </div>
+      <div style="text-align:right">
+        <div class="mono" style="font-size:13px;color:var(--muted)"><b id="sDone" style="color:var(--ink)">0</b> / 30 days</div>
+        <div class="pbar" style="width:220px;margin-top:6px"><div class="pbar-fill" id="sBar" style="width:0%"></div></div>
+        <div id="sStatus" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="tabs">
+      <a href="#progress" class="active">Progress</a>
+      <a href="#subs">Submissions</a>
+      <a href="#quizzes">Quiz attempts</a>
+      <a href="#notes">Reading notes</a>
+      <a href="#timeline">Activity timeline</a>
+    </div>
+    <section id="progress" class="sec"><h2>Progress grid</h2><div class="day-grid-30" id="dGrid"></div></section>
+    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
+    <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
+    <section id="notes" class="sec"><h2>Reading notes</h2><div id="notesList"></div></section>
+    <section id="timeline" class="sec"><h2>Activity timeline</h2><div id="timelineList"></div></section>
+  </div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { DAYS } from './assets/days.js';
+  const $ = (id) => document.getElementById(id);
+  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html');
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    const { data: p } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
+    if (!p?.is_admin) return show('denied');
+    show('panel');
+    const params = new URLSearchParams(location.search);
+    const u = params.get('u');
+    if (u) loadStudent(u); else loadPicker();
+  }
+  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('loginBtn'); btn.disabled = true; btn.textContent = 'Sending…';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    $('loginMsg').className = 'msg show ' + (error ? 'err' : 'ok');
+    $('loginMsg').textContent = error ? error.message : 'Check your email.';
+    btn.textContent = error ? 'Send magic link →' : 'Sent ✓';
+    if (!error) btn.disabled = false;
+  });
+  $('signoutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
+  supabase.auth.onAuthStateChange((e, s) => { if (e === 'SIGNED_IN' && s) init(); if (e === 'SIGNED_OUT') show('gate'); });
+
+  async function loadPicker() {
+    $('studentPicker').style.display = 'block';
+    $('studentDetail').style.display = 'none';
+    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    const { data: regs } = await supabase.from('registrations').select('user_id,status').eq('cohort_id', cohort.id);
+    const ids = (regs || []).map(r => r.user_id);
+    const { data: profiles } = await supabase.from('profiles').select('id,full_name,college,year').in('id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']);
+    const nameMap = new Map((profiles||[]).map(p => [p.id, p]));
+    $('pickerList').innerHTML = (regs || []).map(r => {
+      const p = nameMap.get(r.user_id) || {};
+      return `<a href="?u=${esc(r.user_id)}"><span>${esc(p.full_name || '—')} · <span class="muted">${esc(p.college || '')}</span></span><span class="tag tag-pend">${esc(r.status)}</span></a>`;
+    }).join('') || `<p class="muted">No registrations yet.</p>`;
+  }
+
+  async function loadStudent(userId) {
+    $('studentPicker').style.display = 'none';
+    $('studentDetail').style.display = 'block';
+    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    const [profile, reg, progress, subs, assignments, attempts, quizzes] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+      supabase.from('registrations').select('*').eq('user_id', userId).eq('cohort_id', cohort.id).maybeSingle(),
+      supabase.from('lab_progress').select('*').eq('user_id', userId).eq('cohort_id', cohort.id),
+      supabase.from('submissions').select('*, assignments!inner(id,day_number,title,points,cohort_id)').eq('user_id', userId).eq('assignments.cohort_id', cohort.id),
+      supabase.from('assignments').select('id,day_number,title,points').eq('cohort_id', cohort.id),
+      supabase.from('quiz_attempts').select('*, quizzes!inner(day_number,title,cohort_id)').eq('user_id', userId).eq('quizzes.cohort_id', cohort.id),
+      supabase.from('quizzes').select('id,day_number,title').eq('cohort_id', cohort.id),
+    ]);
+    const p = profile.data || {};
+    $('sName').textContent = p.full_name || '—';
+    $('sMeta').innerHTML = `
+      <span>College: <b>${esc(p.college || '—')}</b></span>
+      <span>Year: <b>${esc(p.year || '—')}</b></span>
+      <span>GitHub: <b>${p.github_username ? `<a href="https://github.com/${esc(p.github_username)}" target="_blank" style="color:var(--accent)">@${esc(p.github_username)}</a>` : '—'}</b></span>
+      <span><a href="showcase.html?u=${esc(userId)}" style="color:var(--accent)">View showcase →</a></span>`;
+
+    const done = (progress.data || []).length;
+    $('sDone').textContent = done;
+    $('sBar').style.width = (done / 30 * 100) + '%';
+    if (reg.data) {
+      const map = { pending:'tag-pend', confirmed:'tag-ok', waitlist:'tag-wait', cancelled:'tag-cancel' };
+      $('sStatus').innerHTML = `<span class="tag ${map[reg.data.status] || 'tag-pend'}">${esc(reg.data.status)}</span>`;
+    }
+
+    const doneMap = new Map((progress.data || []).map(l => [l.day_number, l]));
+    $('dGrid').innerHTML = DAYS.map(d => {
+      const lp = doneMap.get(d.n);
+      const cls = 'dsq ' + (lp ? 'done ' : '') + (lp?.notes ? 'has-notes' : '');
+      const title = `Day ${d.n}: ${d.title}${lp?.notes ? ' · Note: ' + lp.notes.slice(0,100) : ''}`;
+      return `<div class="${cls}" title="${esc(title)}">${String(d.n).padStart(2,'0')}</div>`;
+    }).join('');
+
+    const subsMap = new Map((subs.data || []).map(s => [s.assignments.id, s]));
+    $('subsRows').innerHTML = (assignments.data || []).sort((a,b) => a.day_number - b.day_number).map(a => {
+      const s = subsMap.get(a.id);
+      const status = s ? s.status : (a.due_at && new Date(a.due_at) < new Date() ? 'overdue' : 'not started');
+      const score = s?.score != null ? `${s.score}/${a.points}` : '—';
+      const submitted = s?.submitted_at ? new Date(s.submitted_at).toLocaleDateString() : '—';
+      const view = s?.content_url ? `<a href="${esc(s.content_url)}" target="_blank" style="color:var(--accent)">Open</a>` : (s?.content_text ? `<span title="${esc(s.content_text.slice(0,200))}">text ✎</span>` : '');
+      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${view}</td></tr>`;
+    }).join('');
+
+    const qaMap = new Map();
+    (attempts.data || []).forEach(qa => {
+      const k = qa.quizzes.day_number;
+      const prev = qaMap.get(k);
+      if (!prev || new Date(qa.completed_at) > new Date(prev.completed_at)) qaMap.set(k, qa);
+    });
+    $('qRows').innerHTML = (quizzes.data || []).sort((a,b) => a.day_number - b.day_number).map(q => {
+      const a = qaMap.get(q.day_number);
+      return `<tr><td>${q.day_number}</td><td>${esc(q.title)}</td><td>${a?.score ?? '—'}</td><td>${a ? (a.passed ? '✓' : '—') : '—'}</td><td class="muted" style="font-size:12px">${a?.completed_at ? new Date(a.completed_at).toLocaleDateString() : '—'}</td></tr>`;
+    }).join('');
+
+    const notes = (progress.data || []).filter(lp => lp.notes).sort((a,b) => a.day_number - b.day_number);
+    $('notesList').innerHTML = notes.length
+      ? notes.map(lp => `<div class="note-row"><div class="nhd">DAY ${String(lp.day_number).padStart(2,'0')} · ${esc(DAYS.find(d => d.n === lp.day_number)?.title || '')}</div>${esc(lp.notes)}</div>`).join('')
+      : `<p class="muted">No notes yet.</p>`;
+
+    const events = [];
+    if (reg.data) events.push({ t: reg.data.created_at, desc: `Registered (status: ${reg.data.status})` });
+    (progress.data || []).forEach(l => events.push({ t: l.completed_at, desc: `Completed Day ${l.day_number}` }));
+    (subs.data || []).forEach(s => events.push({ t: s.submitted_at, desc: `Submitted Day ${s.assignments.day_number} — ${s.assignments.title}` }));
+    (attempts.data || []).forEach(qa => events.push({ t: qa.completed_at, desc: `Scored ${qa.score}% on Day ${qa.quizzes.day_number} quiz${qa.passed ? ' · passed' : ''}` }));
+    events.sort((a,b) => new Date(b.t) - new Date(a.t));
+    $('timelineList').innerHTML = events.length
+      ? events.map(e => `<div class="note-row"><div class="nhd">${new Date(e.t).toLocaleString()}</div>${esc(e.desc)}</div>`).join('')
+      : `<p class="muted">No activity yet.</p>`;
+  }
+
+  // Tab active state
+  document.querySelectorAll('.tabs a').forEach(a => a.addEventListener('click', () => {
+    document.querySelectorAll('.tabs a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  }));
+
+  init();
+</script>
+</body>
+</html>

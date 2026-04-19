@@ -76,7 +76,6 @@ Two reasons. First, **temperature** — a dial that controls randomness. Tempera
 Andrej Karpathy co-founded OpenAI and led AI at Tesla. This is the clearest intro in the world. Watch the first 30 minutes today — rest across the week.
 
 https://www.youtube.com/embed/zjkBMFhNj_g
-<!-- TODO: replace video -->
 
 Watch for:
 - The "two files" analogy (weights + run-code)
