@@ -2,7 +2,7 @@
 reading_time: 15 min
 tldr: "Welcome. Today you start. In 30 days you'll ship your own AI thing — on demo day, live, to real humans. Let's go."
 tags: ["foundations", "kickoff"]
-video: https://www.youtube.com/embed/zjkBMFhNj_g
+video: https://www.youtube.com/embed/iR2O2GPbB0E
 lab: {"title": "Same prompt, three brains", "url": "https://chat.openai.com/"}
 prompt_of_the_day: "You are my {{subject}} TA. Explain {{topic}} to a 3rd-year college student in 5 bullets, one analogy from hostel life, and one mistake students usually make."
 tools_hands_on: [{"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}, {"name": "Gemini", "url": "https://gemini.google.com/"}]
@@ -113,16 +113,18 @@ One line to hold: **tokenise → weigh → attend → predict → repeat.** That
 
 Two reasons. **Temperature** — a dial that controls randomness. Temperature 0 = always pick the top guess. Temperature 1 = mix it up. Most chatbots run ~0.7. And **different models have different weights** — ChatGPT, Claude, Gemini read roughly the same internet but were trained differently. Three toppers, same syllabus, different essays.
 
-## Watch: Karpathy's "Intro to LLMs" (first 30 min today)
+## Watch: IBM's "What are Large Language Models?" (7 min)
 
-Andrej Karpathy co-founded OpenAI and led AI at Tesla. This is the clearest intro in the world. Watch the first 30 minutes today — the rest across the week.
+IBM's Martin Keen draws on a whiteboard and explains LLMs without a single buzzword. If you want just one video on Day 1, this is it. Short, clear, no hype.
 
-https://www.youtube.com/embed/zjkBMFhNj_g
+https://www.youtube.com/embed/iR2O2GPbB0E
 
 Watch for:
-- The "two files" analogy (weights + run-code)
-- Why training costs millions but running is cheap
-- The "dream" explanation of hallucination
+- The analogy that unlocks why LLMs feel smart
+- Why "large" is doing more work than "language" in the name
+- One honest limitation he names that half the internet ignores
+
+**Want more depth later?** Karpathy's "Intro to LLMs" (1 hr, linked in Reference) is the deepest beginner-friendly walkthrough — watch any time this week.
 
 ## Lab: Same prompt, three brains (30 min, optionally in pairs)
 
