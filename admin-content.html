@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin · Content · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .header-row{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0 8px}
+  .cohort-picker{display:flex;gap:10px;align-items:center}
+  .cohort-picker select,
+  .bulk-select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .cohort-picker select{min-width:240px}
+  .layout{display:grid;grid-template-columns:360px 1fr;gap:20px;margin:20px 0}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+  .picker-wrap{display:flex;flex-direction:column;gap:14px}
+  .picker-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .picker-head h3{margin:0;font-size:14px;font-weight:600;letter-spacing:-.005em}
+  .bulk-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .bulk-btn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer}
+  .bulk-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .bulk-btn.primary{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
+  .bulk-btn:disabled{opacity:.55;cursor:not-allowed}
+  .days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .day-cell{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;cursor:pointer;display:flex;flex-direction:column;gap:4px;position:relative;transition:.12s}
+  .day-cell:hover{border-color:rgba(195,255,54,.35)}
+  .day-cell.active{border-color:var(--accent);background:rgba(195,255,54,.06)}
+  .day-cell .dn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em}
+  .day-cell .dt{font-size:11.5px;font-weight:500;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .dots{position:absolute;top:7px;right:8px;display:flex;gap:4px}
+  .dot-mini{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;background:#1a1a24;border:1px solid var(--line);color:var(--muted)}
+  .dot-mini.on{background:var(--accent);border-color:var(--accent);color:#0b0b10}
+  .week-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin:10px 0 4px;font-family:'JetBrains Mono',monospace}
+  .week-label:first-child{margin-top:0}
+
+  .panel-col{display:flex;flex-direction:column;gap:16px}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:1280px){.panels{grid-template-columns:1fr}}
+  .card h3{margin:0 0 10px;font-size:15px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .card .sub{font-size:12px;color:var(--muted);margin:-4px 0 10px}
+  .inline-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
+  .btn.danger:hover{border-color:#ef4444;color:#ef4444}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+
+  .form label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px}
+  .form input[type=text], .form input[type=number], .form input[type=datetime-local],
+  .form select, .form textarea{
+    background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+    color:var(--ink);font-family:inherit;font-size:12.5px;outline:none;width:100%;box-sizing:border-box
+  }
+  .form textarea{resize:vertical;min-height:60px;font-size:12px}
+  .form .row{display:flex;gap:10px;margin-bottom:10px}
+  .form .row > *{flex:1}
+  .form .field{margin-bottom:10px}
+
+  .q-list{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .q-item{border:1px solid var(--line);border-radius:10px;padding:12px;background:#0a0a12}
+  .q-item.invalid{border-color:#ef4444}
+  .q-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .q-head .qn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:28px}
+  .q-head .arrows{display:flex;gap:4px;margin-left:auto}
+  .ico-btn{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit}
+  .ico-btn:hover{color:var(--accent);border-color:var(--accent)}
+  .ico-btn.x:hover{color:#ef4444;border-color:#ef4444}
+  .opt-list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .opt-row{display:flex;gap:8px;align-items:center}
+  .opt-row input[type=text]{flex:1}
+  .opt-row label{display:flex;align-items:center;gap:4px;margin:0;text-transform:none;letter-spacing:0;font-size:11.5px;color:var(--ink);white-space:nowrap}
+  .hint{font-size:11.5px;color:var(--muted);font-style:italic;padding:6px 0}
+  .addq{margin-top:6px}
+
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+  .stat{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .stat .n{font-size:18px;font-weight:700;letter-spacing:-.02em}
+  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+
+  table.mini{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  table.mini th, table.mini td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.mini th{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:500}
+  table.mini tr:last-child td{border-bottom:none}
+  table.mini .pill{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  table.mini .pill.pass{border-color:#86efac;color:#86efac}
+  table.mini .pill.fail{border-color:#ef4444;color:#ef4444}
+  table.mini input, table.mini select, table.mini textarea{
+    background:#0a0a12;border:1px solid var(--line);border-radius:6px;padding:4px 6px;
+    color:var(--ink);font-family:inherit;font-size:11.5px;outline:none;width:100%;box-sizing:border-box
+  }
+  table.mini textarea{min-height:36px;resize:vertical}
+
+  .empty{padding:18px;border:1px dashed var(--line);border-radius:10px;text-align:center;color:var(--muted);font-size:13px}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--accent);color:var(--ink);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;transform:translateY(6px);transition:.18s;z-index:999}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast.err{border-color:#ef4444}
+
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px}
+  .modal.show{display:flex}
+  .modal-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:420px;width:100%}
+  .modal-card h3{margin:0 0 10px;font-size:16px}
+  .modal-card .muted{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+
+  .small{font-size:11.5px;color:var(--muted)}
+  .accent-serif{font-family:'Instrument Serif',serif;font-weight:400;font-style:italic;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only admin accounts can access this page.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- DENIED -->
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Not authorized</h2>
+      <p>You're signed in but not an admin. Ask an existing admin to flip <code>profiles.is_admin = true</code> for your account.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div class="header-row">
+    <div>
+      <div class="kicker" id="cohortKicker">Content</div>
+      <h1 style="margin:6px 0 0">Quizzes <span class="accent-serif">&amp;</span> assignments</h1>
+    </div>
+    <div class="cohort-picker">
+      <label class="muted" style="font-size:12px">Cohort</label>
+      <select id="cohortSel"></select>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="picker-wrap">
+      <div class="picker-head">
+        <h3>Pick a day</h3>
+        <div class="bulk-actions">
+          <button class="bulk-btn" id="dupBtn" disabled>Duplicate from…</button>
+          <button class="bulk-btn" id="clearBtn" disabled>Clear day</button>
+        </div>
+      </div>
+      <div id="daysContainer"></div>
+      <div class="small" id="legend">
+        <span class="dot-mini on">Q</span> quiz exists &nbsp;·&nbsp; <span class="dot-mini on">A</span> assignment exists
+      </div>
+    </div>
+
+    <div class="panel-col">
+      <div id="dayHeader" class="small">Select a day to begin.</div>
+      <div class="panels" id="panels" style="display:none">
+        <div class="card" id="quizCard"></div>
+        <div class="card" id="assignCard"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Duplicate modal -->
+<div class="modal" id="dupModal">
+  <div class="modal-card">
+    <h3>Duplicate from day</h3>
+    <p class="muted">Copy quiz and assignment from another day into day <span id="dupTargetDay"></span>. Existing content on the target day will be replaced.</p>
+    <div class="form">
+      <label>Source day</label>
+      <select id="dupSrc" class="bulk-select" style="width:100%"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="dupCancel">Cancel</button>
+      <button class="btn primary" id="dupConfirm">Duplicate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear modal -->
+<div class="modal" id="clearModal">
+  <div class="modal-card">
+    <h3>Clear day</h3>
+    <p class="muted">Delete the quiz and assignment on day <span id="clearTargetDay"></span>? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn" id="clearCancel">Cancel</button>
+      <button class="btn danger" id="clearConfirm">Delete both</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { DAYS, WEEK_TITLES } from './assets/days.js';
+
+  const $ = (id) => document.getElementById(id);
+  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-content.html');
+
+  let COHORTS = [];
+  let CURRENT_COHORT = null;
+  let QUIZZES = new Map();      // day_number -> quiz row
+  let ASSIGNMENTS = new Map();  // day_number -> assignment row
+  let SELECTED_DAY = null;
+
+  // edit state per day
+  let quizDraft = null;
+  let assignDraft = null;
+  let editingQuiz = false;
+  let editingAssign = false;
+
+  // ---------- AUTH GATE (mirrors admin-schedule.html) ----------
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    await checkAdmin(session.user);
+  }
+  function showGate() { $('gate').style.display = 'grid'; $('denied').style.display = 'none'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'none'; }
+  function showDenied() { $('gate').style.display = 'none'; $('denied').style.display = 'grid'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'inline-block'; }
+  function showPanel() { $('gate').style.display = 'none'; $('denied').style.display = 'none'; $('panel').style.display = 'block'; $('signoutBtn').style.display = 'inline-block'; }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'); const msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
+    else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
+  });
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
+    if (event === 'SIGNED_OUT') showGate();
+  });
+
+  async function checkAdmin(user) {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!profile?.is_admin) return showDenied();
+    showPanel();
+    await loadCohorts();
+  }
+
+  // ---------- DATA ----------
+  async function loadCohorts() {
+    const { data, error } = await supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    if (error) { toast(error.message, 'err'); return; }
+    COHORTS = data || [];
+    const sel = $('cohortSel');
+    sel.innerHTML = COHORTS.map(c => `<option value="${c.id}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
+    const def = COHORTS.find(c => c.slug === COHORT_SLUG) || COHORTS[0];
+    if (!def) { toast('No cohorts found.', 'err'); return; }
+    sel.value = def.id;
+    sel.addEventListener('change', () => loadContent(sel.value));
+    await loadContent(def.id);
+  }
+
+  async function loadContent(cohortId) {
+    CURRENT_COHORT = COHORTS.find(c => c.id === cohortId);
+    $('cohortKicker').textContent = CURRENT_COHORT ? `${CURRENT_COHORT.name} · starts ${CURRENT_COHORT.starts_on || '—'}` : 'Content';
+
+    const [qres, ares] = await Promise.all([
+      supabase.from('quizzes').select('*').eq('cohort_id', cohortId),
+      supabase.from('assignments').select('*').eq('cohort_id', cohortId),
+    ]);
+    if (qres.error) { toast(qres.error.message, 'err'); return; }
+    if (ares.error) { toast(ares.error.message, 'err'); return; }
+    QUIZZES = new Map((qres.data || []).map(r => [r.day_number, r]));
+    ASSIGNMENTS = new Map((ares.data || []).map(r => [r.day_number, r]));
+    renderDaysPicker();
+    if (SELECTED_DAY) selectDay(SELECTED_DAY);
+  }
+
+  // ---------- DAY PICKER ----------
+  function renderDaysPicker() {
+    const weeks = [1,2,3,4].map(w => {
+      const days = DAYS.filter(d => d.w === w);
+      const cells = days.map(d => {
+        const hasQ = QUIZZES.has(d.n);
+        const hasA = ASSIGNMENTS.has(d.n);
+        const active = SELECTED_DAY === d.n ? 'active' : '';
+        return `
+          <div class="day-cell ${active}" data-day="${d.n}">
+            <div class="dots">
+              <span class="dot-mini ${hasQ?'on':''}" title="${hasQ?'Quiz exists':'No quiz'}">Q</span>
+              <span class="dot-mini ${hasA?'on':''}" title="${hasA?'Assignment exists':'No assignment'}">A</span>
+            </div>
+            <div class="dn">DAY ${String(d.n).padStart(2,'0')}</div>
+            <div class="dt">${esc(d.title)}</div>
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="week-label">Week ${w} · ${esc(WEEK_TITLES[w] || '')}</div>
+        <div class="days-grid">${cells}</div>
+      `;
+    }).join('');
+    $('daysContainer').innerHTML = weeks;
+    $('daysContainer').querySelectorAll('[data-day]').forEach(el => {
+      el.addEventListener('click', () => selectDay(Number(el.dataset.day)));
+    });
+  }
+
+  function selectDay(n) {
+    SELECTED_DAY = n;
+    editingQuiz = false; editingAssign = false;
+    quizDraft = null; assignDraft = null;
+    renderDaysPicker();
+    const d = DAYS.find(x => x.n === n);
+    $('dayHeader').innerHTML = d
+      ? `<span class="kicker" style="display:inline-block;margin:0 10px 0 0">DAY ${String(n).padStart(2,'0')}</span> <strong>${esc(d.title)}</strong>`
+      : '';
+    $('panels').style.display = 'grid';
+    $('dupBtn').disabled = false;
+    $('clearBtn').disabled = !(QUIZZES.has(n) || ASSIGNMENTS.has(n));
+    renderQuizCard();
+    renderAssignCard();
+  }
+
+  // ---------- QUIZ CARD ----------
+  function renderQuizCard() {
+    const card = $('quizCard');
+    const q = QUIZZES.get(SELECTED_DAY);
+    if (editingQuiz) {
+      const draft = quizDraft || {
+        title: '', passing_score: 70, questions: []
+      };
+      card.innerHTML = `
+        <h3>Quiz editor <span class="inline-actions">
+          <button class="btn" data-act="cancelQuiz">Cancel</button>
+          <button class="btn primary" data-act="saveQuiz">Save quiz</button>
+        </span></h3>
+        <div class="sub">Day ${SELECTED_DAY}</div>
+        <div class="form">
+          <div class="row">
+            <div class="field"><label>Title</label><input type="text" id="qTitle" value="${esc(draft.title || '')}" /></div>
+            <div class="field" style="flex:0 0 140px"><label>Passing score</label><input type="number" id="qPass" min="0" max="100" value="${Number(draft.passing_score ?? 70)}" /></div>
+          </div>
+          <label>Questions</label>
+          <div class="q-list" id="qList"></div>
+          <div class="addq"><button class="btn" data-act="addQ">+ Add question</button></div>
+        </div>
+        <div class="msg" id="qMsg" style="margin-top:10px"></div>
+      `;
+      renderQuestionsEditor(draft.questions || []);
+      card.querySelector('[data-act=cancelQuiz]').addEventListener('click', () => { editingQuiz = false; quizDraft = null; renderQuizCard(); });
+      card.querySelector('[data-act=saveQuiz]').addEventListener('click', saveQuiz);
+      card.querySelector('[data-act=addQ]').addEventListener('click', () => { pullDraftFromDom(); quizDraft.questions.push(newQuestion()); renderQuizCard(); });
+      ['qTitle','qPass'].forEach(id => card.querySelector('#'+id).addEventListener('input', pullDraftFromDom));
+      return;
+    }
+
+    if (!q) {
+      card.innerHTML = `
+        <h3>Quiz</h3>
+        <div class="empty">No quiz for day ${SELECTED_DAY}.</div>
+        <div style="margin-top:12px"><button class="btn primary" id="newQuizBtn">+ Create quiz</button></div>
+      `;
+      card.querySelector('#newQuizBtn').addEventListener('click', () => {
+        const d = DAYS.find(x => x.n === SELECTED_DAY);
+        quizDraft = { title: d ? `Day ${SELECTED_DAY} · ${d.title}` : `Day ${SELECTED_DAY} quiz`, passing_score: 70, questions: [newQuestion()] };
+        editingQuiz = true;
+        renderQuizCard();
+      });
+      return;
+    }
+
+    const qs = Array.isArray(q.questions) ? q.questions : [];
+    card.innerHTML = `
+      <h3>Quiz <span class="inline-actions">
+        <button class="btn" data-act="editQuiz">Edit</button>
+        <button class="btn danger" data-act="delQuiz">Delete</button>
+      </span></h3>
+      <div class="sub">${esc(q.title || '')}</div>
+      <div class="stats-row">
+        <div class="stat"><div class="n">${qs.length}</div><div class="l">Questions</div></div>
+        <div class="stat"><div class="n">${Number(q.passing_score ?? 0)}</div><div class="l">Pass score</div></div>
+        <div class="stat"><div class="n" id="qAttN">—</div><div class="l">Attempts</div></div>
+      </div>
+      <div id="qAttemptsWrap"></div>
+    `;
+    card.querySelector('[data-act=editQuiz]').addEventListener('click', () => {
+      quizDraft = JSON.parse(JSON.stringify({ title: q.title, passing_score: q.passing_score, questions: qs }));
+      editingQuiz = true;
+      renderQuizCard();
+    });
+    card.querySelector('[data-act=delQuiz]').addEventListener('click', () => deleteQuiz(q.id));
+    loadQuizAttempts(q.id);
+  }
+
+  function newQuestion() {
+    return { q: '', type: 'single', options: [{ text: '', correct: false }, { text: '', correct: false }], explanation: '' };
+  }
+
+  function renderQuestionsEditor(questions) {
+    const wrap = $('qList');
+    wrap.innerHTML = questions.map((q, i) => questionRowHtml(q, i, questions.length)).join('');
+    wrap.querySelectorAll('[data-qi]').forEach(row => wireQuestionRow(row));
+  }
+
+  function questionRowHtml(q, i, total) {
+    const isText = q.type === 'text';
+    const opts = isText ? '' : `
+      <label>Options</label>
+      <div class="opt-list">
+        ${(q.options || []).map((o, oi) => `
+          <div class="opt-row" data-oi="${oi}">
+            <input type="text" data-opt-text value="${esc(o.text || '')}" placeholder="Option ${oi+1}" />
+            <label><input type="checkbox" data-opt-correct ${o.correct ? 'checked' : ''} /> correct</label>
+            <button class="ico-btn x" data-act="opt-del" title="Remove option">×</button>
+            <button class="ico-btn" data-act="opt-up" title="Move up">↑</button>
+            <button class="ico-btn" data-act="opt-dn" title="Move down">↓</button>
+          </div>
+        `).join('')}
+      </div>
+      <div style="margin-top:6px"><button class="btn" data-act="opt-add">+ Add option</button></div>
+    `;
+    const hint = isText ? `<div class="hint">Free-text answer. Use the explanation below as the model answer / grading hint.</div>` : '';
+    return `
+      <div class="q-item" data-qi="${i}">
+        <div class="q-head">
+          <span class="qn">Q${i+1}</span>
+          <select data-q-type style="max-width:130px">
+            <option value="single" ${q.type==='single'?'selected':''}>Single</option>
+            <option value="multi" ${q.type==='multi'?'selected':''}>Multi</option>
+            <option value="text" ${q.type==='text'?'selected':''}>Text</option>
+          </select>
+          <div class="arrows">
+            <button class="ico-btn" data-act="q-up" ${i===0?'disabled':''}>↑</button>
+            <button class="ico-btn" data-act="q-dn" ${i===total-1?'disabled':''}>↓</button>
+            <button class="ico-btn x" data-act="q-del">Remove</button>
+          </div>
+        </div>
+        <div class="field"><label>Question</label><input type="text" data-q-text value="${esc(q.q || '')}" placeholder="Question text" /></div>
+        ${opts}
+        ${hint}
+        <div class="field" style="margin-top:8px"><label>Explanation / hint</label><textarea data-q-exp rows="2" placeholder="Short explanation shown after attempt…">${esc(q.explanation || '')}</textarea></div>
+      </div>
+    `;
+  }
+
+  function wireQuestionRow(row) {
+    const i = Number(row.dataset.qi);
+    row.querySelector('[data-q-type]').addEventListener('change', (e) => {
+      pullDraftFromDom();
+      quizDraft.questions[i].type = e.target.value;
+      if (e.target.value === 'text') quizDraft.questions[i].options = [];
+      else if (!quizDraft.questions[i].options || quizDraft.questions[i].options.length === 0) {
+        quizDraft.questions[i].options = [{text:'',correct:false},{text:'',correct:false}];
+      }
+      renderQuizCard();
+    });
+    row.querySelector('[data-act=q-up]')?.addEventListener('click', () => { pullDraftFromDom(); if (i>0) { const a = quizDraft.questions; [a[i-1],a[i]] = [a[i],a[i-1]]; renderQuizCard(); }});
+    row.querySelector('[data-act=q-dn]')?.addEventListener('click', () => { pullDraftFromDom(); const a = quizDraft.questions; if (i<a.length-1) { [a[i+1],a[i]] = [a[i],a[i+1]]; renderQuizCard(); }});
+    row.querySelector('[data-act=q-del]')?.addEventListener('click', () => { pullDraftFromDom(); quizDraft.questions.splice(i,1); renderQuizCard(); });
+    row.querySelector('[data-act=opt-add]')?.addEventListener('click', () => { pullDraftFromDom(); quizDraft.questions[i].options.push({text:'',correct:false}); renderQuizCard(); });
+    row.querySelectorAll('[data-oi]').forEach(orow => {
+      const oi = Number(orow.dataset.oi);
+      orow.querySelector('[data-act=opt-del]').addEventListener('click', () => { pullDraftFromDom(); quizDraft.questions[i].options.splice(oi,1); renderQuizCard(); });
+      orow.querySelector('[data-act=opt-up]').addEventListener('click', () => { pullDraftFromDom(); const a = quizDraft.questions[i].options; if (oi>0) { [a[oi-1],a[oi]] = [a[oi],a[oi-1]]; renderQuizCard(); }});
+      orow.querySelector('[data-act=opt-dn]').addEventListener('click', () => { pullDraftFromDom(); const a = quizDraft.questions[i].options; if (oi<a.length-1) { [a[oi+1],a[oi]] = [a[oi],a[oi+1]]; renderQuizCard(); }});
+    });
+  }
+
+  function pullDraftFromDom() {
+    if (!quizDraft) return;
+    const titleEl = document.getElementById('qTitle');
+    const passEl = document.getElementById('qPass');
+    if (titleEl) quizDraft.title = titleEl.value;
+    if (passEl) quizDraft.passing_score = Number(passEl.value) || 0;
+    const rows = document.querySelectorAll('#qList [data-qi]');
+    rows.forEach(row => {
+      const i = Number(row.dataset.qi);
+      const q = quizDraft.questions[i];
+      if (!q) return;
+      q.q = row.querySelector('[data-q-text]').value;
+      q.type = row.querySelector('[data-q-type]').value;
+      q.explanation = row.querySelector('[data-q-exp]').value;
+      if (q.type !== 'text') {
+        const opts = [];
+        row.querySelectorAll('[data-oi]').forEach(orow => {
+          opts.push({
+            text: orow.querySelector('[data-opt-text]').value,
+            correct: orow.querySelector('[data-opt-correct]').checked,
+          });
+        });
+        q.options = opts;
+      } else {
+        q.options = [];
+      }
+    });
+  }
+
+  async function saveQuiz() {
+    pullDraftFromDom();
+    const msg = $('qMsg');
+    msg.className = 'msg';
+    if (!quizDraft.title?.trim()) { msg.className = 'msg show err'; msg.textContent = 'Title is required.'; return; }
+    if (!quizDraft.questions.length) { msg.className = 'msg show err'; msg.textContent = 'Add at least one question.'; return; }
+    // validate
+    document.querySelectorAll('.q-item').forEach(el => el.classList.remove('invalid'));
+    for (let i=0;i<quizDraft.questions.length;i++) {
+      const q = quizDraft.questions[i];
+      if (!q.q.trim()) { flagQ(i, 'Question text is required.'); return; }
+      if (q.type !== 'text') {
+        if (!q.options.length || !q.options.some(o => o.correct)) { flagQ(i, `Question ${i+1}: at least one option must be marked correct.`); return; }
+        if (q.options.some(o => !o.text.trim())) { flagQ(i, `Question ${i+1}: option text is required.`); return; }
+      }
+    }
+    const existing = QUIZZES.get(SELECTED_DAY);
+    const payload = {
+      cohort_id: CURRENT_COHORT.id,
+      day_number: SELECTED_DAY,
+      title: quizDraft.title.trim(),
+      questions: quizDraft.questions,
+      passing_score: Number(quizDraft.passing_score) || 0,
+    };
+    let res;
+    if (existing) res = await supabase.from('quizzes').update(payload).eq('id', existing.id).select().single();
+    else res = await supabase.from('quizzes').insert(payload).select().single();
+    if (res.error) { msg.className = 'msg show err'; msg.textContent = res.error.message; return; }
+    QUIZZES.set(SELECTED_DAY, res.data);
+    editingQuiz = false; quizDraft = null;
+    toast('Quiz saved ✓');
+    renderDaysPicker(); renderQuizCard();
+    $('clearBtn').disabled = false;
+
+    function flagQ(i, text) {
+      const el = document.querySelector(`.q-item[data-qi="${i}"]`);
+      if (el) el.classList.add('invalid');
+      msg.className = 'msg show err'; msg.textContent = text;
+    }
+  }
+
+  async function deleteQuiz(id) {
+    if (!confirm('Delete this quiz? This cannot be undone.')) return;
+    const { error } = await supabase.from('quizzes').delete().eq('id', id);
+    if (error) { toast(error.message, 'err'); return; }
+    QUIZZES.delete(SELECTED_DAY);
+    toast('Quiz deleted ✓');
+    renderDaysPicker(); renderQuizCard();
+    $('clearBtn').disabled = !(QUIZZES.has(SELECTED_DAY) || ASSIGNMENTS.has(SELECTED_DAY));
+  }
+
+  async function loadQuizAttempts(quizId) {
+    const wrap = $('qAttemptsWrap');
+    if (!wrap) return;
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('user_id, answers, score, passed, completed_at, profiles:profiles(email, full_name)')
+      .eq('quiz_id', quizId)
+      .order('completed_at', { ascending: false });
+    if (error) { wrap.innerHTML = `<div class="small">Attempts unavailable: ${esc(error.message)}</div>`; return; }
+    const rows = data || [];
+    const attN = document.getElementById('qAttN');
+    if (attN) attN.textContent = rows.length;
+    if (!rows.length) { wrap.innerHTML = `<div class="empty">No attempts yet.</div>`; return; }
+    const completed = rows.filter(r => r.completed_at != null);
+    const avg = completed.length ? Math.round(completed.reduce((s,r)=>s+(Number(r.score)||0),0) / completed.length) : 0;
+    const passRate = completed.length ? Math.round(100 * completed.filter(r=>r.passed).length / completed.length) : 0;
+    wrap.innerHTML = `
+      <div class="stats-row" style="margin-top:4px">
+        <div class="stat"><div class="n">${avg}</div><div class="l">Avg score</div></div>
+        <div class="stat"><div class="n">${passRate}%</div><div class="l">Pass rate</div></div>
+        <div class="stat"><div class="n">${completed.length}/${rows.length}</div><div class="l">Completed</div></div>
+      </div>
+      <table class="mini">
+        <thead><tr><th>User</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>${esc(r.profiles?.full_name || r.profiles?.email || r.user_id)}</td>
+              <td>${r.score == null ? '—' : esc(String(r.score))}</td>
+              <td>${r.passed == null ? '—' : (r.passed ? '<span class="pill pass">Pass</span>' : '<span class="pill fail">Fail</span>')}</td>
+              <td>${r.completed_at ? esc(fmtDate(r.completed_at)) : '—'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // ---------- ASSIGNMENT CARD ----------
+  function renderAssignCard() {
+    const card = $('assignCard');
+    const a = ASSIGNMENTS.get(SELECTED_DAY);
+
+    if (editingAssign) {
+      const d = assignDraft || { title:'', description:'', rubric:'', submission_type:'link', points:10, due_at:null };
+      card.innerHTML = `
+        <h3>Assignment editor <span class="inline-actions">
+          <button class="btn" data-act="cancelA">Cancel</button>
+          <button class="btn primary" data-act="saveA">Save assignment</button>
+        </span></h3>
+        <div class="sub">Day ${SELECTED_DAY}</div>
+        <div class="form">
+          <div class="field"><label>Title</label><input type="text" id="aTitle" value="${esc(d.title || '')}" /></div>
+          <div class="field">
+            <label>Description <span class="small" style="text-transform:none;letter-spacing:0">(markdown supported)</span></label>
+            <textarea id="aDesc" rows="4">${esc(d.description || '')}</textarea>
+          </div>
+          <div class="field"><label>Rubric</label><textarea id="aRub" rows="3">${esc(d.rubric || '')}</textarea></div>
+          <div class="row">
+            <div class="field"><label>Submission type</label>
+              <select id="aType">
+                <option value="link" ${d.submission_type==='link'?'selected':''}>Link</option>
+                <option value="text" ${d.submission_type==='text'?'selected':''}>Text</option>
+                <option value="file" ${d.submission_type==='file'?'selected':''}>File</option>
+              </select>
+            </div>
+            <div class="field"><label>Points</label><input type="number" id="aPts" min="0" value="${Number(d.points ?? 10)}" /></div>
+            <div class="field"><label>Due at</label><input type="datetime-local" id="aDue" value="${d.due_at ? toLocalInput(d.due_at) : ''}" /></div>
+          </div>
+        </div>
+        <div class="msg" id="aMsg"></div>
+      `;
+      card.querySelector('[data-act=cancelA]').addEventListener('click', () => { editingAssign = false; assignDraft = null; renderAssignCard(); });
+      card.querySelector('[data-act=saveA]').addEventListener('click', saveAssignment);
+      ['aTitle','aDesc','aRub','aType','aPts','aDue'].forEach(id => card.querySelector('#'+id).addEventListener('input', pullAssignDraft));
+      return;
+    }
+
+    if (!a) {
+      card.innerHTML = `
+        <h3>Assignment</h3>
+        <div class="empty">No assignment for day ${SELECTED_DAY}.</div>
+        <div style="margin-top:12px"><button class="btn primary" id="newAssignBtn">+ Create assignment</button></div>
+      `;
+      card.querySelector('#newAssignBtn').addEventListener('click', () => {
+        const d = DAYS.find(x => x.n === SELECTED_DAY);
+        assignDraft = {
+          title: d ? `Day ${SELECTED_DAY} · ${d.title}` : `Day ${SELECTED_DAY} assignment`,
+          description:'', rubric:'', submission_type:'link', points:10, due_at:null
+        };
+        editingAssign = true;
+        renderAssignCard();
+      });
+      return;
+    }
+
+    card.innerHTML = `
+      <h3>Assignment <span class="inline-actions">
+        <button class="btn" data-act="editA">Edit</button>
+        <button class="btn danger" data-act="delA">Delete</button>
+      </span></h3>
+      <div class="sub">${esc(a.title || '')}</div>
+      <div class="stats-row">
+        <div class="stat"><div class="n">${Number(a.points ?? 0)}</div><div class="l">Points</div></div>
+        <div class="stat"><div class="n">${esc(a.submission_type || '—')}</div><div class="l">Type</div></div>
+        <div class="stat"><div class="n">${a.due_at ? esc(fmtDate(a.due_at)) : '—'}</div><div class="l">Due</div></div>
+      </div>
+      <div id="aSubsWrap"></div>
+    `;
+    card.querySelector('[data-act=editA]').addEventListener('click', () => {
+      assignDraft = {
+        title: a.title, description: a.description || '', rubric: a.rubric || '',
+        submission_type: a.submission_type || 'link', points: a.points ?? 0, due_at: a.due_at
+      };
+      editingAssign = true;
+      renderAssignCard();
+    });
+    card.querySelector('[data-act=delA]').addEventListener('click', () => deleteAssignment(a.id));
+    loadSubmissions(a);
+  }
+
+  function pullAssignDraft() {
+    if (!assignDraft) return;
+    const g = (id) => document.getElementById(id);
+    assignDraft.title = g('aTitle').value;
+    assignDraft.description = g('aDesc').value;
+    assignDraft.rubric = g('aRub').value;
+    assignDraft.submission_type = g('aType').value;
+    assignDraft.points = Number(g('aPts').value) || 0;
+    const due = g('aDue').value;
+    assignDraft.due_at = due ? new Date(due).toISOString() : null;
+  }
+
+  async function saveAssignment() {
+    pullAssignDraft();
+    const msg = $('aMsg');
+    msg.className = 'msg';
+    if (!assignDraft.title?.trim()) { msg.className = 'msg show err'; msg.textContent = 'Title is required.'; return; }
+    const existing = ASSIGNMENTS.get(SELECTED_DAY);
+    const payload = {
+      cohort_id: CURRENT_COHORT.id,
+      day_number: SELECTED_DAY,
+      title: assignDraft.title.trim(),
+      description: assignDraft.description || null,
+      rubric: assignDraft.rubric || null,
+      submission_type: assignDraft.submission_type,
+      points: Number(assignDraft.points) || 0,
+      due_at: assignDraft.due_at,
+    };
+    let res;
+    if (existing) res = await supabase.from('assignments').update(payload).eq('id', existing.id).select().single();
+    else res = await supabase.from('assignments').insert(payload).select().single();
+    if (res.error) { msg.className = 'msg show err'; msg.textContent = res.error.message; return; }
+    ASSIGNMENTS.set(SELECTED_DAY, res.data);
+    editingAssign = false; assignDraft = null;
+    toast('Assignment saved ✓');
+    renderDaysPicker(); renderAssignCard();
+    $('clearBtn').disabled = false;
+  }
+
+  async function deleteAssignment(id) {
+    if (!confirm('Delete this assignment? This cannot be undone.')) return;
+    const { error } = await supabase.from('assignments').delete().eq('id', id);
+    if (error) { toast(error.message, 'err'); return; }
+    ASSIGNMENTS.delete(SELECTED_DAY);
+    toast('Assignment deleted ✓');
+    renderDaysPicker(); renderAssignCard();
+    $('clearBtn').disabled = !(QUIZZES.has(SELECTED_DAY) || ASSIGNMENTS.has(SELECTED_DAY));
+  }
+
+  async function loadSubmissions(assignment) {
+    const wrap = $('aSubsWrap');
+    if (!wrap) return;
+    const { data, error } = await supabase
+      .from('submissions')
+      .select('id, user_id, content_url, content_text, submitted_at, status, score, feedback, profiles:profiles(email, full_name)')
+      .eq('assignment_id', assignment.id)
+      .order('submitted_at', { ascending: false });
+    if (error) { wrap.innerHTML = `<div class="small">Submissions unavailable: ${esc(error.message)}</div>`; return; }
+    const rows = data || [];
+    if (!rows.length) { wrap.innerHTML = `<div class="empty">No submissions yet.</div>`; return; }
+    wrap.innerHTML = `
+      <table class="mini">
+        <thead><tr><th>Name</th><th>Submitted</th><th>Status</th><th>Score</th><th>Content</th><th>Feedback</th><th></th></tr></thead>
+        <tbody>
+          ${rows.map(r => {
+            const contentCell = r.content_url
+              ? `<a href="${esc(r.content_url)}" target="_blank" rel="noopener" class="muted" style="text-decoration:underline">Open link</a>`
+              : (r.content_text ? `<span title="${esc(r.content_text)}">${esc((r.content_text || '').slice(0,80))}${r.content_text && r.content_text.length>80?'…':''}</span>` : '—');
+            return `
+            <tr data-sid="${esc(r.id)}">
+              <td>${esc(r.profiles?.full_name || r.profiles?.email || r.user_id)}</td>
+              <td>${r.submitted_at ? esc(fmtDate(r.submitted_at)) : '—'}</td>
+              <td>
+                <select data-s-status>
+                  <option value="submitted" ${r.status==='submitted'?'selected':''}>submitted</option>
+                  <option value="graded" ${r.status==='graded'?'selected':''}>graded</option>
+                  <option value="returned" ${r.status==='returned'?'selected':''}>returned</option>
+                </select>
+              </td>
+              <td style="max-width:70px"><input type="number" data-s-score value="${r.score == null ? '' : Number(r.score)}" /></td>
+              <td style="max-width:140px">${contentCell}</td>
+              <td style="min-width:160px"><textarea data-s-feedback rows="1" placeholder="Feedback…">${esc(r.feedback || '')}</textarea></td>
+              <td><button class="btn" data-s-save>Save</button></td>
+            </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+    wrap.querySelectorAll('tr[data-sid]').forEach(tr => {
+      const id = tr.dataset.sid;
+      tr.querySelector('[data-s-save]').addEventListener('click', async () => {
+        const btn = tr.querySelector('[data-s-save]');
+        btn.disabled = true; btn.textContent = 'Saving…';
+        const payload = {
+          status: tr.querySelector('[data-s-status]').value,
+          score: tr.querySelector('[data-s-score]').value === '' ? null : Number(tr.querySelector('[data-s-score]').value),
+          feedback: tr.querySelector('[data-s-feedback]').value || null,
+        };
+        const { error } = await supabase.from('submissions').update(payload).eq('id', id);
+        btn.disabled = false; btn.textContent = 'Save';
+        if (error) { toast(error.message, 'err'); return; }
+        toast('Submission updated ✓');
+      });
+    });
+  }
+
+  // ---------- BULK ACTIONS ----------
+  $('dupBtn').addEventListener('click', () => {
+    if (!SELECTED_DAY) return;
+    $('dupTargetDay').textContent = SELECTED_DAY;
+    const sel = $('dupSrc');
+    sel.innerHTML = DAYS.filter(d => d.n !== SELECTED_DAY).map(d => {
+      const hasQ = QUIZZES.has(d.n) ? 'Q' : '';
+      const hasA = ASSIGNMENTS.has(d.n) ? 'A' : '';
+      const mark = [hasQ, hasA].filter(Boolean).join('+');
+      return `<option value="${d.n}" ${(!hasQ && !hasA) ? 'disabled' : ''}>Day ${String(d.n).padStart(2,'0')} · ${esc(d.title)}${mark?` [${mark}]`:' [empty]'}</option>`;
+    }).join('');
+    $('dupModal').classList.add('show');
+  });
+  $('dupCancel').addEventListener('click', () => $('dupModal').classList.remove('show'));
+  $('dupConfirm').addEventListener('click', async () => {
+    const src = Number($('dupSrc').value);
+    if (!src || !SELECTED_DAY) return;
+    const srcQ = QUIZZES.get(src);
+    const srcA = ASSIGNMENTS.get(src);
+    if (!srcQ && !srcA) { toast('Source day has nothing to copy.', 'err'); return; }
+    $('dupConfirm').disabled = true; $('dupConfirm').textContent = 'Copying…';
+    try {
+      if (srcQ) {
+        const payload = {
+          cohort_id: CURRENT_COHORT.id, day_number: SELECTED_DAY,
+          title: srcQ.title, questions: srcQ.questions, passing_score: srcQ.passing_score,
+        };
+        const existing = QUIZZES.get(SELECTED_DAY);
+        const r = existing
+          ? await supabase.from('quizzes').update(payload).eq('id', existing.id).select().single()
+          : await supabase.from('quizzes').insert(payload).select().single();
+        if (r.error) throw r.error;
+        QUIZZES.set(SELECTED_DAY, r.data);
+      }
+      if (srcA) {
+        const payload = {
+          cohort_id: CURRENT_COHORT.id, day_number: SELECTED_DAY,
+          title: srcA.title, description: srcA.description, rubric: srcA.rubric,
+          submission_type: srcA.submission_type, points: srcA.points, due_at: srcA.due_at,
+        };
+        const existing = ASSIGNMENTS.get(SELECTED_DAY);
+        const r = existing
+          ? await supabase.from('assignments').update(payload).eq('id', existing.id).select().single()
+          : await supabase.from('assignments').insert(payload).select().single();
+        if (r.error) throw r.error;
+        ASSIGNMENTS.set(SELECTED_DAY, r.data);
+      }
+      toast(`Copied from day ${src} ✓`);
+      $('dupModal').classList.remove('show');
+      renderDaysPicker(); renderQuizCard(); renderAssignCard();
+      $('clearBtn').disabled = !(QUIZZES.has(SELECTED_DAY) || ASSIGNMENTS.has(SELECTED_DAY));
+    } catch (e) {
+      toast(e.message || 'Duplicate failed', 'err');
+    } finally {
+      $('dupConfirm').disabled = false; $('dupConfirm').textContent = 'Duplicate';
+    }
+  });
+
+  $('clearBtn').addEventListener('click', () => {
+    if (!SELECTED_DAY) return;
+    $('clearTargetDay').textContent = SELECTED_DAY;
+    $('clearModal').classList.add('show');
+  });
+  $('clearCancel').addEventListener('click', () => $('clearModal').classList.remove('show'));
+  $('clearConfirm').addEventListener('click', async () => {
+    const q = QUIZZES.get(SELECTED_DAY);
+    const a = ASSIGNMENTS.get(SELECTED_DAY);
+    $('clearConfirm').disabled = true; $('clearConfirm').textContent = 'Deleting…';
+    try {
+      if (q) { const r = await supabase.from('quizzes').delete().eq('id', q.id); if (r.error) throw r.error; QUIZZES.delete(SELECTED_DAY); }
+      if (a) { const r = await supabase.from('assignments').delete().eq('id', a.id); if (r.error) throw r.error; ASSIGNMENTS.delete(SELECTED_DAY); }
+      toast(`Cleared day ${SELECTED_DAY} ✓`);
+      $('clearModal').classList.remove('show');
+      renderDaysPicker(); renderQuizCard(); renderAssignCard();
+      $('clearBtn').disabled = true;
+    } catch (e) {
+      toast(e.message || 'Clear failed', 'err');
+    } finally {
+      $('clearConfirm').disabled = false; $('clearConfirm').textContent = 'Delete both';
+    }
+  });
+
+  // ---------- UTILS ----------
+  function toast(text, kind) {
+    const t = $('toast');
+    t.textContent = text;
+    t.className = 'toast show' + (kind === 'err' ? ' err' : '');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function toLocalInput(iso) {
+    const d = new Date(iso);
+    const pad = (n) => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const mo = d.toLocaleString(undefined, { month: 'short' });
+    const day = d.getDate();
+    let h = d.getHours();
+    const m = String(d.getMinutes()).padStart(2,'0');
+    const ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if (h === 0) h = 12;
+    return `${mo} ${day}, ${h}:${m} ${ap}`;
+  }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  init();
+</script>
+</body>
+</html>

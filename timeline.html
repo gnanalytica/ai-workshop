@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Timeline · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .tl-top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:36px 0 24px}
+  .tl-top h1{font-size:clamp(28px,4vw,40px);margin:0 0 6px}
+  .today-pill{font-family:"JetBrains Mono",monospace;font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(195,255,54,.08);color:var(--accent);border:1px solid rgba(195,255,54,.25);letter-spacing:.06em}
+  .back{color:var(--muted);font-size:13px}
+  .back:hover{color:var(--ink)}
+  .top-actions{display:flex;gap:10px;align-items:center}
+  .ics-btn{padding:9px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:13px;cursor:pointer;font-family:inherit}
+  .ics-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* Overview tiles */
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+  @media (max-width:720px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .tile .tlbl{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:8px}
+  .tile .tval{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:600;letter-spacing:-.01em}
+  .tile .tsub{font-size:12px;color:var(--muted);margin-top:4px}
+
+  /* Gantt */
+  .gantt-wrap{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:28px;overflow-x:auto;position:relative}
+  .gantt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .gantt-head h2{margin:0;font-size:20px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+  .legend-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+  .ld-accent{background:var(--accent)}
+  .ld-sky{background:var(--accent-4)}
+  .ld-violet{background:var(--accent-2)}
+  .ld-rose{background:var(--accent-3)}
+  .ld-muted{background:#2a2a38}
+
+  .gantt{min-width:1320px;position:relative}
+  .axis{display:grid;grid-template-columns:120px repeat(30,1fr);gap:0;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:6px}
+  .axis .a-lbl{font-size:10.5px;color:var(--muted);font-family:"JetBrains Mono",monospace;letter-spacing:.08em;text-align:center;padding:2px 2px;border-left:1px solid transparent}
+  .axis .a-lbl.wsep{border-left:1px solid var(--line)}
+  .axis .a-d{font-size:9.5px;color:#5a5a6e;margin-top:2px}
+  .axis .row-name{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;align-self:end}
+
+  .row{display:grid;grid-template-columns:120px repeat(30,1fr);height:38px;align-items:center;position:relative;border-bottom:1px dashed #1a1a24}
+  .row:last-child{border-bottom:none}
+  .row .rn{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;padding-right:10px}
+  .cell{position:relative;height:100%;display:flex;align-items:center;justify-content:center;border-left:1px solid transparent;cursor:pointer}
+  .cell.wsep{border-left:1px solid var(--line)}
+  .cell a{display:block;width:100%;height:100%;position:relative}
+
+  /* pills */
+  .pill{position:absolute;left:4px;right:4px;top:50%;transform:translateY(-50%);height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;font-family:"JetBrains Mono",monospace;letter-spacing:.04em}
+  .pill.full{height:24px}
+  .pill.unlocked{background:rgba(195,255,54,.22);border:1px solid rgba(195,255,54,.4);color:var(--accent)}
+  .pill.locked{background:#17171f;border:1px solid #25252f;color:#3a3a48}
+  .pill.done{background:var(--accent);color:#0b0b10}
+  .pill.live{background:rgba(139,92,246,.22);border:1px solid rgba(139,92,246,.5);color:#c9b6ff}
+  .pill.sub-missing{background:#17171f;border:1px solid #25252f;color:#55556a}
+  .pill.sub-submitted{background:rgba(56,189,248,.22);border:1px solid rgba(56,189,248,.45);color:#7dd5ff}
+  .pill.sub-graded{background:rgba(195,255,54,.28);border:1px solid rgba(195,255,54,.5);color:var(--accent)}
+  .pill.sub-overdue{background:rgba(255,107,107,.22);border:1px solid rgba(255,107,107,.45);color:#ffa0a0}
+  .pill.quiz-passed{background:rgba(195,255,54,.28);border:1px solid rgba(195,255,54,.5);color:var(--accent)}
+  .pill.quiz-attempted{background:rgba(56,189,248,.22);border:1px solid rgba(56,189,248,.45);color:#7dd5ff}
+  .pill.quiz-none{background:#17171f;border:1px solid #25252f;color:#55556a}
+
+  /* Today marker */
+  .today-marker{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);pointer-events:none;z-index:5}
+  .today-marker::before{content:"TODAY";position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--accent);letter-spacing:.14em;background:var(--card);padding:2px 5px;border-radius:4px;border:1px solid rgba(195,255,54,.4)}
+
+  /* Tooltip */
+  .tip{position:fixed;z-index:100;pointer-events:none;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;max-width:260px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
+  .tip .tip-h{font-weight:600;margin-bottom:4px;letter-spacing:-.01em}
+  .tip .tip-r{color:var(--muted);font-size:11.5px;margin-top:4px}
+  .tip .tip-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--accent);letter-spacing:.08em}
+
+  /* Lists */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px}
+  @media (max-width:900px){.twocol{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .panel h3{margin:0 0 14px;font-size:17px;letter-spacing:-.01em}
+  .listitem{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .listitem:last-child{border-bottom:none}
+  .li-main{min-width:0}
+  .li-tt{font-size:13.5px;font-weight:500}
+  .li-sub{font-size:11.5px;color:var(--muted);margin-top:3px;font-family:"JetBrains Mono",monospace;letter-spacing:.04em}
+  .li-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+  .li-act{font-size:12px;color:var(--accent)}
+  .li-act:hover{text-decoration:underline}
+  .empty{color:var(--muted);font-size:13px;padding:10px 0}
+  .join-btn{padding:5px 10px;border-radius:999px;background:var(--accent);color:#0b0b10;font-size:11.5px;font-weight:600;font-family:inherit;border:none;cursor:pointer;text-decoration:none}
+
+  /* Mobile fallback: vertical day rows */
+  .mobile-list{display:none}
+  @media (max-width:900px){
+    .gantt-wrap{display:none}
+    .mobile-list{display:block;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:28px}
+    .m-day{display:grid;grid-template-columns:58px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+    .m-day:last-child{border-bottom:none}
+    .m-day.today{background:rgba(195,255,54,.04);border-left:2px solid var(--accent);padding-left:8px;margin-left:-10px}
+    .m-num{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.08em}
+    .m-body .m-t{font-size:13.5px;font-weight:500;letter-spacing:-.01em}
+    .m-body .m-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .mp{font-size:10.5px;padding:3px 8px;border-radius:999px;font-family:"JetBrains Mono",monospace;font-weight:600;letter-spacing:.04em}
+    .mp.unlocked{background:rgba(195,255,54,.14);color:var(--accent)}
+    .mp.locked{background:#17171f;color:#55556a}
+    .mp.done{background:var(--accent);color:#0b0b10}
+    .mp.live{background:rgba(139,92,246,.18);color:#c9b6ff}
+    .mp.asgn-missing{background:#17171f;color:#55556a}
+    .mp.asgn-submitted{background:rgba(56,189,248,.18);color:#7dd5ff}
+    .mp.asgn-graded{background:rgba(195,255,54,.2);color:var(--accent)}
+    .mp.asgn-overdue{background:rgba(255,107,107,.18);color:#ffa0a0}
+    .mp.quiz-passed{background:rgba(195,255,54,.2);color:var(--accent)}
+    .mp.quiz-attempted{background:rgba(56,189,248,.18);color:#7dd5ff}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Timeline</div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="dashboard.html" class="back">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE -->
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Sign in required</div>
+    <h2>See your cohort timeline</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Sign in on the dashboard to view unlock states, deadlines, and your progress.</p>
+    <a href="dashboard.html" class="submit-btn" style="display:block;text-align:center;text-decoration:none">Go to sign in →</a>
+  </div>
+</div>
+
+<main class="wrap" id="main" style="display:none">
+  <div class="tl-top">
+    <div>
+      <div class="kicker">Cohort roadmap</div>
+      <h1 id="cohortName">—</h1>
+      <div class="muted" style="font-size:14px" id="cohortRange">—</div>
+    </div>
+    <div class="top-actions">
+      <div class="today-pill" id="todayPill">—</div>
+      <button class="ics-btn" id="icsBtn">Export .ics</button>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="tlbl">Days unlocked</div><div class="tval"><span id="unlockedN">0</span>/30</div><div class="tsub" id="unlockedSub">—</div></div>
+    <div class="tile"><div class="tlbl">You completed</div><div class="tval"><span id="doneN">0</span>/30</div><div class="tsub" id="doneSub">—</div></div>
+    <div class="tile"><div class="tlbl">Due this week</div><div class="tval" id="dueN">0</div><div class="tsub" id="dueSub">assignments</div></div>
+    <div class="tile"><div class="tlbl">Next live session</div><div class="tval" id="nextLiveV" style="font-size:16px">—</div><div class="tsub" id="nextLiveSub">—</div></div>
+  </div>
+
+  <div class="gantt-wrap">
+    <div class="gantt-head">
+      <h2>30-day plan</h2>
+      <div class="legend">
+        <span><span class="legend-dot ld-accent"></span>unlocked / done</span>
+        <span><span class="legend-dot ld-violet"></span>live session</span>
+        <span><span class="legend-dot ld-sky"></span>submitted / attempted</span>
+        <span><span class="legend-dot ld-rose"></span>overdue</span>
+        <span><span class="legend-dot ld-muted"></span>pending</span>
+      </div>
+    </div>
+    <div class="gantt" id="gantt"></div>
+  </div>
+
+  <div class="mobile-list" id="mobileList"></div>
+
+  <div class="twocol">
+    <div class="panel">
+      <h3>Upcoming deadlines</h3>
+      <div id="deadlines"></div>
+    </div>
+    <div class="panel">
+      <h3>Live session schedule</h3>
+      <div id="lives"></div>
+    </div>
+  </div>
+</main>
+
+<div class="tip" id="tip"></div>
+
+<script type="module">
+import { supabase, COHORT_SLUG } from './assets/supabase.js';
+import { DAYS, WEEK_TITLES } from './assets/days.js';
+
+const $ = (id) => document.getElementById(id);
+const DAY_MS = 86400000;
+
+const fmtDate = (d) => d ? new Date(d).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }) : '—';
+const fmtDateShort = (d) => d ? new Date(d).toLocaleDateString(undefined, { month:'short', day:'numeric' }) : '—';
+const fmtDOW = (d) => d ? new Date(d).toLocaleDateString(undefined, { weekday:'short' }).toUpperCase() : '';
+const fmtDM = (d) => d ? new Date(d).toLocaleDateString(undefined, { month:'numeric', day:'numeric' }) : '';
+const fmtTime = (d) => d ? new Date(d).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) : '';
+const fmtDT = (d) => d ? new Date(d).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '—';
+
+function dayDate(startsOn, n) {
+  if (!startsOn) return null;
+  const [y,m,d] = startsOn.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setDate(dt.getDate() + (n-1));
+  return dt;
+}
+
+function startOfDay(dt) { const d = new Date(dt); d.setHours(0,0,0,0); return d; }
+
+async function init() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    $('gate').style.display = 'grid';
+    return;
+  }
+  $('main').style.display = 'block';
+  await load(session.user);
+}
+
+supabase.auth.onAuthStateChange((ev, session) => {
+  if (ev === 'SIGNED_OUT') location.href = 'dashboard.html';
+});
+
+async function load(user) {
+  const now = new Date();
+  $('todayPill').textContent = now.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+
+  const cohortRes = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+  const cohort = cohortRes.data;
+  if (!cohort) return;
+
+  $('cohortName').textContent = cohort.name;
+  $('cohortRange').textContent = `${fmtDate(cohort.starts_on)} → ${fmtDate(cohort.ends_on)}`;
+
+  const [daysRes, progressRes, asgnRes, subsRes, quizzesRes, attemptsRes] = await Promise.all([
+    supabase.from('cohort_days').select('*').eq('cohort_id', cohort.id),
+    supabase.from('lab_progress').select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id),
+    supabase.from('assignments').select('*').eq('cohort_id', cohort.id),
+    supabase.from('submissions').select('*').eq('user_id', user.id),
+    supabase.from('quizzes').select('*').eq('cohort_id', cohort.id),
+    supabase.from('quiz_attempts').select('*').eq('user_id', user.id),
+  ]);
+
+  const schedMap = new Map((daysRes.data || []).map(d => [d.day_number, d]));
+  const doneSet = new Set((progressRes.data || []).map(p => p.day_number));
+  const asgnByDay = new Map();
+  (asgnRes.data || []).forEach(a => asgnByDay.set(a.day_number, a));
+  const subByAsgn = new Map((subsRes.data || []).map(s => [s.assignment_id, s]));
+  const quizByDay = new Map();
+  (quizzesRes.data || []).forEach(q => quizByDay.set(q.day_number, q));
+  const attemptByQuiz = new Map();
+  (attemptsRes.data || []).forEach(at => {
+    const prev = attemptByQuiz.get(at.quiz_id);
+    if (!prev || new Date(at.completed_at) > new Date(prev.completed_at)) attemptByQuiz.set(at.quiz_id, at);
+  });
+
+  const byDay = new Map();
+  for (let n = 1; n <= 30; n++) {
+    const asgn = asgnByDay.get(n) || null;
+    const quiz = quizByDay.get(n) || null;
+    byDay.set(n, {
+      n,
+      sched: schedMap.get(n) || null,
+      done: doneSet.has(n),
+      assignment: asgn,
+      submission: asgn ? (subByAsgn.get(asgn.id) || null) : null,
+      quiz,
+      attempt: quiz ? (attemptByQuiz.get(quiz.id) || null) : null,
+      date: dayDate(cohort.starts_on, n),
+    });
+  }
+
+  renderTiles(cohort, byDay, now);
+  renderGantt(cohort, byDay, now);
+  renderMobile(cohort, byDay, now);
+  renderDeadlines(byDay, now);
+  renderLives(byDay, now);
+  bindExport(cohort, byDay);
+}
+
+function renderTiles(cohort, byDay, now) {
+  const unlocked = [...byDay.values()].filter(x => x.sched?.is_unlocked).length;
+  const done = [...byDay.values()].filter(x => x.done).length;
+  $('unlockedN').textContent = unlocked;
+  $('unlockedSub').textContent = unlocked === 30 ? 'all days open' : `${30 - unlocked} still locked`;
+  $('doneN').textContent = done;
+  $('doneSub').textContent = done === 30 ? 'completed 🏆' : `${Math.round(done/30*100)}% progress`;
+
+  const weekStart = startOfDay(now); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekEnd = new Date(+weekStart + 7*DAY_MS);
+  const dueThis = [...byDay.values()].filter(x => {
+    if (!x.assignment?.due_at) return false;
+    const d = new Date(x.assignment.due_at);
+    return d >= weekStart && d < weekEnd;
+  }).length;
+  $('dueN').textContent = dueThis;
+  $('dueSub').textContent = dueThis === 0 ? 'nothing due' : (dueThis === 1 ? 'assignment' : 'assignments');
+
+  const upcomingLives = [...byDay.values()]
+    .filter(x => x.sched?.live_session_at && new Date(x.sched.live_session_at) >= now)
+    .sort((a,b) => new Date(a.sched.live_session_at) - new Date(b.sched.live_session_at));
+  if (upcomingLives.length) {
+    const nl = upcomingLives[0];
+    const dt = new Date(nl.sched.live_session_at);
+    const diffDays = Math.round((startOfDay(dt) - startOfDay(now)) / DAY_MS);
+    const rel = diffDays === 0 ? 'Today' : diffDays === 1 ? 'Tomorrow' : `In ${diffDays}d`;
+    $('nextLiveV').textContent = `Day ${String(nl.n).padStart(2,'0')} · ${rel}`;
+    $('nextLiveSub').textContent = `${fmtDate(dt)} ${fmtTime(dt)}`;
+  } else {
+    $('nextLiveV').textContent = 'None';
+    $('nextLiveSub').textContent = 'No upcoming sessions';
+  }
+}
+
+function asgnState(ci, now) {
+  if (!ci.assignment) return null;
+  const sub = ci.submission;
+  if (sub) {
+    if (sub.status === 'graded' || sub.score != null) return 'graded';
+    return 'submitted';
+  }
+  if (ci.assignment.due_at && new Date(ci.assignment.due_at) < now) return 'overdue';
+  return 'missing';
+}
+function quizState(ci) {
+  if (!ci.quiz) return null;
+  const at = ci.attempt;
+  if (!at) return 'none';
+  if (at.passed) return 'passed';
+  return 'attempted';
+}
+
+function renderGantt(cohort, byDay, now) {
+  const root = $('gantt');
+  root.innerHTML = '';
+
+  // Axis
+  const axis = document.createElement('div');
+  axis.className = 'axis';
+  const ax0 = document.createElement('div'); ax0.className = 'row-name'; ax0.textContent = ''; axis.appendChild(ax0);
+  for (let n = 1; n <= 30; n++) {
+    const cell = document.createElement('div');
+    cell.className = 'a-lbl' + ((n % 7 === 1 && n !== 1) ? ' wsep' : '');
+    const ci = byDay.get(n);
+    cell.innerHTML = `DAY ${String(n).padStart(2,'0')}${ci.date ? `<div class="a-d">${fmtDOW(ci.date)} ${fmtDM(ci.date)}</div>` : ''}`;
+    axis.appendChild(cell);
+  }
+  root.appendChild(axis);
+
+  const rows = [
+    { name: 'Unlock', render: (ci) => {
+        const cls = ci.sched?.is_unlocked ? 'unlocked' : 'locked';
+        const lbl = ci.sched?.is_unlocked ? 'open' : '—';
+        return `<div class="pill ${cls} full">${lbl}</div>`;
+      }, tip: (ci) => {
+        const parts = [];
+        if (ci.sched?.live_session_at) parts.push(`Live ${fmtDT(ci.sched.live_session_at)}`);
+        if (ci.sched?.notes) parts.push(ci.sched.notes);
+        return parts.join(' · ');
+      }
+    },
+    { name: 'Live', render: (ci) => {
+        if (!ci.sched?.live_session_at) return '';
+        return `<div class="pill live">${fmtTime(ci.sched.live_session_at)}</div>`;
+      }, tip: (ci) => ci.sched?.live_session_at ? `Live session · ${fmtDT(ci.sched.live_session_at)}` : ''
+    },
+    { name: 'Progress', render: (ci) => ci.done ? `<div class="pill done">✓</div>` : '',
+      tip: (ci) => ci.done ? 'Marked complete' : 'Not yet complete'
+    },
+    { name: 'Assignment', render: (ci) => {
+        const s = asgnState(ci, now);
+        if (!s) return '';
+        const map = { missing:'sub-missing', submitted:'sub-submitted', graded:'sub-graded', overdue:'sub-overdue' };
+        const lbl = { missing:'todo', submitted:'sent', graded:'✓', overdue:'late' }[s];
+        return `<div class="pill ${map[s]}">${lbl}</div>`;
+      }, tip: (ci) => {
+        if (!ci.assignment) return '';
+        const s = asgnState(ci, now);
+        const parts = [ci.assignment.title];
+        if (ci.assignment.due_at) parts.push(`Due ${fmtDT(ci.assignment.due_at)}`);
+        if (ci.submission?.score != null) parts.push(`Score ${ci.submission.score}`);
+        parts.push(`Status: ${s}`);
+        return parts.join(' · ');
+      }
+    },
+    { name: 'Quiz', render: (ci) => {
+        const s = quizState(ci);
+        if (!s) return '';
+        const cls = { none:'quiz-none', attempted:'quiz-attempted', passed:'quiz-passed' }[s];
+        const lbl = { none:'quiz', attempted:'try', passed:'✓' }[s];
+        return `<div class="pill ${cls}">${lbl}</div>`;
+      }, tip: (ci) => {
+        if (!ci.quiz) return '';
+        const parts = [ci.quiz.title || 'Quiz', `Pass: ${ci.quiz.passing_score}`];
+        if (ci.attempt) parts.push(`Last score ${ci.attempt.score}${ci.attempt.passed ? ' (passed)' : ''}`);
+        return parts.join(' · ');
+      }
+    },
+  ];
+
+  rows.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const rn = document.createElement('div'); rn.className = 'rn'; rn.textContent = r.name; row.appendChild(rn);
+    for (let n = 1; n <= 30; n++) {
+      const ci = byDay.get(n);
+      const cell = document.createElement('div');
+      cell.className = 'cell' + ((n % 7 === 1 && n !== 1) ? ' wsep' : '');
+      const inner = r.render(ci);
+      const title = ci.sched?.is_unlocked;
+      cell.innerHTML = inner ? `<a href="day.html?n=${n}">${inner}</a>` : `<a href="day.html?n=${n}" style="opacity:0"></a>`;
+
+      const dayInfo = DAYS.find(d => d.n === n);
+      const tipHTML = `<div class="tip-h">Day ${String(n).padStart(2,'0')} · ${dayInfo?.title || ''}</div><div class="tip-tag">${ci.date ? fmtDate(ci.date) : ''}</div>${r.tip(ci) ? `<div class="tip-r">${r.tip(ci)}</div>` : ''}`;
+      attachTip(cell, tipHTML);
+      row.appendChild(cell);
+    }
+    root.appendChild(row);
+  });
+
+  // Today marker
+  if (cohort.starts_on) {
+    const start = dayDate(cohort.starts_on, 1);
+    const diff = (startOfDay(now) - startOfDay(start)) / DAY_MS;
+    if (diff >= 0 && diff < 30) {
+      // The column width: 30 equal-fraction columns after a 120px name col
+      // Position via percentage of the track excluding the 120px label
+      const pct = (diff + 0.5) / 30;
+      const marker = document.createElement('div');
+      marker.className = 'today-marker';
+      marker.style.left = `calc(120px + (100% - 120px) * ${pct})`;
+      root.appendChild(marker);
+    }
+  }
+}
+
+function attachTip(el, html) {
+  const tip = $('tip');
+  el.addEventListener('mouseenter', (e) => {
+    tip.innerHTML = html;
+    tip.style.display = 'block';
+  });
+  el.addEventListener('mousemove', (e) => {
+    const pad = 14;
+    let x = e.clientX + pad, y = e.clientY + pad;
+    const rect = tip.getBoundingClientRect();
+    if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - pad;
+    if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - pad;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+  el.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+}
+
+function renderMobile(cohort, byDay, now) {
+  const root = $('mobileList');
+  const todayN = cohort.starts_on ? Math.floor((startOfDay(now) - startOfDay(dayDate(cohort.starts_on, 1))) / DAY_MS) + 1 : -1;
+  let html = '';
+  for (let n = 1; n <= 30; n++) {
+    const ci = byDay.get(n);
+    const dayInfo = DAYS.find(d => d.n === n);
+    const pills = [];
+    pills.push(ci.sched?.is_unlocked ? `<span class="mp unlocked">open</span>` : `<span class="mp locked">locked</span>`);
+    if (ci.done) pills.push(`<span class="mp done">✓ done</span>`);
+    if (ci.sched?.live_session_at) pills.push(`<span class="mp live">live ${fmtTime(ci.sched.live_session_at)}</span>`);
+    const s = asgnState(ci, now);
+    if (s) pills.push(`<span class="mp asgn-${s}">asgn: ${s}</span>`);
+    const q = quizState(ci);
+    if (q) pills.push(`<span class="mp quiz-${q === 'none' ? 'attempted' : q}" style="${q === 'none' ? 'background:#17171f;color:#55556a' : ''}">quiz: ${q}</span>`);
+    const todayCls = todayN === n ? ' today' : '';
+    html += `<a href="day.html?n=${n}" class="m-day${todayCls}" style="color:inherit;display:grid"><div class="m-num">DAY ${String(n).padStart(2,'0')}<div style="color:#5a5a6e;margin-top:2px">${ci.date ? fmtDateShort(ci.date) : ''}</div></div><div class="m-body"><div class="m-t">${dayInfo?.title || ''}</div><div class="m-meta">${pills.join('')}</div></div></a>`;
+  }
+  root.innerHTML = html;
+}
+
+function renderDeadlines(byDay, now) {
+  const root = $('deadlines');
+  const upcoming = [...byDay.values()]
+    .filter(x => x.assignment?.due_at)
+    .sort((a,b) => new Date(a.assignment.due_at) - new Date(b.assignment.due_at))
+    .filter(x => {
+      const s = asgnState(x, now);
+      return s !== 'graded';
+    })
+    .slice(0, 5);
+  if (!upcoming.length) { root.innerHTML = '<div class="empty">No upcoming deadlines.</div>'; return; }
+  root.innerHTML = upcoming.map(x => {
+    const s = asgnState(x, now);
+    const tagCls = { missing:'tag-pend', submitted:'tag-pend', graded:'tag-ok', overdue:'tag-cancel' }[s] || 'tag-pend';
+    const tagLbl = { missing:'pending', submitted:'submitted', graded:'graded', overdue:'overdue' }[s];
+    const actLbl = (s === 'submitted' || s === 'graded') ? 'View submission' : 'Submit →';
+    return `<div class="listitem">
+      <div class="li-main">
+        <div class="li-tt">${x.assignment.title}</div>
+        <div class="li-sub">DAY ${String(x.n).padStart(2,'0')} · DUE ${fmtDT(x.assignment.due_at)}</div>
+      </div>
+      <div class="li-right">
+        <span class="tag ${tagCls}">${tagLbl}</span>
+        <a class="li-act" href="day.html?n=${x.n}">${actLbl}</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLives(byDay, now) {
+  const root = $('lives');
+  const lives = [...byDay.values()]
+    .filter(x => x.sched?.live_session_at)
+    .sort((a,b) => new Date(a.sched.live_session_at) - new Date(b.sched.live_session_at));
+  if (!lives.length) { root.innerHTML = '<div class="empty">No live sessions scheduled yet.</div>'; return; }
+  root.innerHTML = lives.map(x => {
+    const dt = new Date(x.sched.live_session_at);
+    const dayInfo = DAYS.find(d => d.n === x.n);
+    const within = Math.abs(dt - now) < 12*3600*1000;
+    const joinHTML = (x.sched.meet_link && within) ? `<a class="join-btn" href="${x.sched.meet_link}" target="_blank" rel="noopener">Join</a>` : '';
+    const linkHTML = (x.sched.meet_link && !within) ? `<a class="li-act" href="${x.sched.meet_link}" target="_blank" rel="noopener">Meet link</a>` : '';
+    return `<div class="listitem">
+      <div class="li-main">
+        <div class="li-tt">Day ${String(x.n).padStart(2,'0')} · ${dayInfo?.title || ''}</div>
+        <div class="li-sub">${fmtDate(dt)} · ${fmtTime(dt)}${x.sched.notes ? ' · ' + x.sched.notes : ''}</div>
+      </div>
+      <div class="li-right">
+        ${joinHTML || linkHTML || `<a class="li-act" href="day.html?n=${x.n}">Open day →</a>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function bindExport(cohort, byDay) {
+  $('icsBtn').addEventListener('click', () => downloadICS(cohort, byDay));
+}
+
+function icsDate(d) {
+  const dt = new Date(d);
+  const p = (n) => String(n).padStart(2,'0');
+  return `${dt.getUTCFullYear()}${p(dt.getUTCMonth()+1)}${p(dt.getUTCDate())}T${p(dt.getUTCHours())}${p(dt.getUTCMinutes())}${p(dt.getUTCSeconds())}Z`;
+}
+function icsEscape(s) { return (s || '').toString().replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+
+function downloadICS(cohort, byDay) {
+  const now = new Date();
+  const stamp = icsDate(now);
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gnanalytica//AI Workshop//EN','CALSCALE:GREGORIAN'];
+
+  for (const ci of byDay.values()) {
+    if (ci.sched?.live_session_at) {
+      const start = new Date(ci.sched.live_session_at);
+      const end = new Date(+start + 90*60*1000);
+      const dayInfo = DAYS.find(d => d.n === ci.n);
+      const title = `AI Workshop — Day ${String(ci.n).padStart(2,'0')}: ${dayInfo?.title || ''}`;
+      const desc = [ci.sched.notes, ci.sched.meet_link ? `Join: ${ci.sched.meet_link}` : ''].filter(Boolean).join('\n');
+      lines.push('BEGIN:VEVENT');
+      lines.push(`UID:live-${cohort.id}-${ci.n}@gnanalytica`);
+      lines.push(`DTSTAMP:${stamp}`);
+      lines.push(`DTSTART:${icsDate(start)}`);
+      lines.push(`DTEND:${icsDate(end)}`);
+      lines.push(`SUMMARY:${icsEscape(title)}`);
+      if (desc) lines.push(`DESCRIPTION:${icsEscape(desc)}`);
+      if (ci.sched.meet_link) lines.push(`URL:${ci.sched.meet_link}`);
+      lines.push('END:VEVENT');
+    }
+    if (ci.assignment?.due_at) {
+      lines.push('BEGIN:VTODO');
+      lines.push(`UID:asgn-${ci.assignment.id}@gnanalytica`);
+      lines.push(`DTSTAMP:${stamp}`);
+      lines.push(`DUE:${icsDate(ci.assignment.due_at)}`);
+      lines.push(`SUMMARY:${icsEscape(`Assignment — Day ${String(ci.n).padStart(2,'0')}: ${ci.assignment.title}`)}`);
+      if (ci.assignment.points != null) lines.push(`DESCRIPTION:${icsEscape(`Worth ${ci.assignment.points} points`)}`);
+      lines.push('END:VTODO');
+    }
+  }
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${cohort.slug || 'cohort'}-schedule.ics`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+init();
+</script>
+</body>
+</html>

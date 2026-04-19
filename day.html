@@ -7,83 +7,212 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/app.css" />
 <style>
-  .lesson-wrap{max-width:720px;margin:0 auto;padding:32px 24px 120px}
-  .crumbs{font-size:13px;color:var(--muted);margin-bottom:26px}
+  /* ------ Layout shell ------ */
+  .lesson-shell{max-width:1180px;margin:0 auto;padding:28px 24px 120px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:44px}
+  @media (max-width: 960px){
+    .lesson-shell{grid-template-columns:1fr;gap:24px;padding:20px 18px 80px}
+    .side{position:static !important;max-height:none !important}
+  }
+  .side{position:sticky;top:80px;align-self:start;max-height:calc(100vh - 100px);overflow-y:auto;padding-right:4px}
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:#22222e;border-radius:3px}
+  .main{min-width:0;max-width:760px}
+
+  .crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
   .crumbs a:hover{color:var(--ink)}
 
-  .lesson-head{margin-bottom:28px}
+  /* ------ Sidebar ------ */
+  .side-title{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:0 0 10px}
+  .side-day-title{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin:0 0 18px;color:var(--ink)}
+  .progress-block{margin-bottom:20px}
+  .progress-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .progress-meta .pct{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);font-weight:600}
+  .progress-meta .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}
+  .progress-bar{height:4px;background:#1a1a24;border-radius:999px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:var(--accent);transition:width .35s ease;width:0%}
+
+  .toc{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--line)}
+  .toc li{position:relative}
+  .toc a{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;color:var(--muted);border-left:2px solid transparent;margin-left:-1px;transition:color .15s,border-color .15s,background .15s;line-height:1.4}
+  .toc a:hover{color:var(--ink);background:rgba(255,255,255,.02)}
+  .toc a.active{color:var(--ink);border-left-color:var(--accent)}
+  .toc .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid #2a2a38;flex-shrink:0;display:grid;place-items:center;transition:all .2s}
+  .toc a.done .dot{background:var(--accent);border-color:var(--accent)}
+  .toc a.done .dot::after{content:"";width:3px;height:5px;border-right:1.5px solid #0b0b10;border-bottom:1.5px solid #0b0b10;transform:translateY(-1px) rotate(45deg)}
+  .toc .kchip{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:auto;padding-left:6px}
+
+  .side-pager{display:flex;flex-direction:column;gap:6px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line)}
+  .side-pager a{font-size:12.5px;color:var(--muted);padding:6px 0;display:block;transition:color .15s}
+  .side-pager a:hover{color:var(--ink)}
+  .side-pager .plabel{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:1px;opacity:.7}
+
+  /* ------ Main header ------ */
+  .lesson-head{margin-bottom:26px}
   .head-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .head-row .wtag{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.18em;padding:4px 10px;border:1px solid var(--line);border-radius:999px}
   .head-row .daytag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);padding:4px 10px;border:1px solid rgba(195,255,54,.3);border-radius:999px;background:rgba(195,255,54,.06)}
-  .lesson-title{font-size:44px;line-height:1.05;letter-spacing:-.03em;margin:0 0 10px;font-weight:700}
-  .lesson-tag{font-family:"Instrument Serif",serif;font-style:italic;color:var(--muted);font-size:20px;margin:0}
+  .lesson-title{font-size:40px;line-height:1.07;letter-spacing:-.03em;margin:0 0 10px;font-weight:700}
+  .lesson-tag{font-family:"Instrument Serif",serif;font-style:italic;color:var(--muted);font-size:19px;margin:0}
 
   .live-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
   .live-pill-lg{font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(56,189,248,.12);color:#7dd5ff;border:1px solid rgba(56,189,248,.25)}
-  .btn-join{padding:8px 14px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit}
-  .btn-complete{padding:8px 14px;border-radius:999px;background:transparent;color:var(--ink);border:1px solid var(--line);font-size:13px;cursor:pointer;font-family:inherit;display:inline-flex;gap:8px;align-items:center}
-  .btn-complete.done{background:rgba(195,255,54,.1);border-color:rgba(195,255,54,.4);color:#c9f76a}
-  .btn-complete .chk{width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;display:grid;place-items:center}
-  .btn-complete.done .chk{background:var(--accent);border-color:var(--accent);color:#0b0b10}
+  .btn-join{padding:8px 14px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
 
-  /* Frontmatter header strip */
-  .lm-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px;color:var(--muted);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:22px 0 26px}
+  .lm-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px;color:var(--muted);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:20px 0 30px}
   .lm-read{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em}
   .lm-tags{display:inline-flex;gap:6px;flex-wrap:wrap}
 
-  .lm-video{position:relative;aspect-ratio:16/9;width:100%;margin:0 0 28px;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line)}
-  .lm-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  /* ------ Module cards ------ */
+  .module{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 30px;margin:0 0 20px;transition:transform .15s,border-color .15s,box-shadow .15s;scroll-margin-top:90px}
+  .module:hover{border-color:#2d2d3c}
+  .module.kind-lab{background:linear-gradient(145deg,rgba(195,255,54,.04),rgba(195,255,54,.01));border-color:rgba(195,255,54,.25)}
+  .module.kind-lab:hover{border-color:rgba(195,255,54,.5);box-shadow:0 6px 30px rgba(195,255,54,.06)}
 
-  .lm-lab{display:block;padding:22px 24px;border:1px solid rgba(195,255,54,.35);background:linear-gradient(145deg,rgba(195,255,54,.06),rgba(195,255,54,.02));border-radius:16px;margin:0 0 28px;transition:all .15s}
-  .lm-lab:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 6px 24px rgba(195,255,54,.08)}
-  .lm-lab-kicker{font-size:11.5px;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:6px}
-  .lm-lab-title{font-size:19px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
-  .lm-lab-host{font-size:12px;font-family:"JetBrains Mono",monospace}
+  .mod-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .kbadge{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:4px 10px;border-radius:999px;font-weight:600}
+  .kbadge-read{background:rgba(56,189,248,.1);color:#7dd5ff;border:1px solid rgba(56,189,248,.25)}
+  .kbadge-watch{background:rgba(139,92,246,.12);color:#c4b0ff;border:1px solid rgba(139,92,246,.3)}
+  .kbadge-lab{background:rgba(195,255,54,.1);color:#c9f76a;border:1px solid rgba(195,255,54,.3)}
+  .kbadge-quiz{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.3)}
+  .kbadge-assignment{background:rgba(255,107,107,.1);color:#ffa0a0;border:1px solid rgba(255,107,107,.3)}
+  .kbadge-discuss{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line)}
+  .kbadge-intro,.kbadge-section{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--line)}
 
-  .lm-resources{margin:0 0 20px}
-  .lm-sec-h{font-size:11.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:10px;font-weight:600}
-  .lm-resources ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-  .lm-resources a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;transition:border-color .15s,background .15s}
-  .lm-resources a:hover{border-color:#3a3a4e;background:rgba(255,255,255,.02)}
-  .lm-host{font-size:11px;font-family:"JetBrains Mono",monospace}
+  .mod-title{font-size:24px;letter-spacing:-.02em;margin:0 0 14px;font-weight:600;line-height:1.2}
 
-  /* Markdown body */
-  .content{font-size:16px;line-height:1.7;color:var(--ink)}
-  .content h1{font-size:44px;line-height:1.05;letter-spacing:-.03em;margin:48px 0 16px;font-weight:700}
-  .content h2{font-size:28px;letter-spacing:-.02em;margin:44px 0 14px;font-weight:600}
-  .content h3{font-size:20px;letter-spacing:-.01em;margin:32px 0 10px;font-weight:600}
-  .content p{margin:0 0 18px}
-  .content ul,.content ol{margin:0 0 20px;padding-left:22px}
-  .content li{margin:6px 0}
-  .content a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
-  .content blockquote{border-left:3px solid var(--accent);background:rgba(195,255,54,.04);padding:14px 18px;margin:20px 0;border-radius:0 10px 10px 0;color:#d4d4dd}
-  .content blockquote p:last-child{margin:0}
-  .content code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:13.5px}
-  .content pre{background:rgba(255,255,255,.04);border:1px solid var(--line);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:20px 0}
-  .content pre code{background:transparent;padding:0;font-size:13.5px;line-height:1.6}
-  .content hr{border:0;border-top:1px solid var(--line);margin:36px 0}
-  .content img{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+  .mod-body{font-size:17px;line-height:1.75;color:var(--ink)}
+  .mod-body h3{font-size:19px;letter-spacing:-.01em;margin:28px 0 10px;font-weight:600}
+  .mod-body h4{font-size:16px;letter-spacing:0;margin:22px 0 8px;font-weight:600;color:#d4d4dd}
+  .mod-body p{margin:0 0 16px}
+  .mod-body ul,.mod-body ol{margin:0 0 18px;padding-left:22px}
+  .mod-body li{margin:5px 0}
+  .mod-body a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+  .mod-body blockquote{border-left:3px solid var(--accent);background:rgba(195,255,54,.04);padding:12px 18px;margin:18px 0;border-radius:0 10px 10px 0;color:#d4d4dd;font-size:16px}
+  .mod-body blockquote p:last-child{margin:0}
+  .mod-body code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:14px}
+  .mod-body pre{background:#0a0a12;border:1px solid var(--line);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:18px 0}
+  .mod-body pre code{background:transparent;padding:0;font-size:13px;line-height:1.65}
+  .mod-body hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .mod-body img{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+  .mod-body table{width:100%;border-collapse:collapse;font-size:14px;margin:18px 0}
+  .mod-body th,.mod-body td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .mod-body th{color:var(--muted);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.1em}
 
-  /* Notes */
-  .notes{margin-top:56px;padding-top:28px;border-top:1px solid var(--line)}
+  .mod-video{position:relative;aspect-ratio:16/9;width:100%;margin:18px 0 8px;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line)}
+  .mod-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .mod-lab-cta{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:10px 16px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13.5px;text-decoration:none;transition:transform .12s}
+  .mod-lab-cta:hover{transform:translateY(-1px)}
+
+  .mod-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);gap:12px;flex-wrap:wrap}
+  .mark-sec-btn{padding:8px 14px;border-radius:999px;background:transparent;color:var(--muted);border:1px solid var(--line);font-size:12.5px;cursor:pointer;font-family:inherit;display:inline-flex;gap:8px;align-items:center;transition:all .15s}
+  .mark-sec-btn:hover{color:var(--ink);border-color:#3a3a4e}
+  .mark-sec-btn.done{background:rgba(195,255,54,.08);border-color:rgba(195,255,54,.35);color:#c9f76a}
+  .mark-sec-btn .chk{width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;display:grid;place-items:center}
+  .mark-sec-btn.done .chk{background:var(--accent);border-color:var(--accent);color:#0b0b10}
+  .mod-anchor{font-size:11px;color:var(--muted);font-family:"JetBrains Mono",monospace;opacity:.4}
+
+  /* ------ Quiz widget ------ */
+  .quiz{}
+  .quiz-qs{display:flex;flex-direction:column;gap:22px;margin:10px 0 18px}
+  .qitem{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:#0a0a12}
+  .qitem.scored.correct{border-color:rgba(195,255,54,.45)}
+  .qitem.scored.incorrect{border-color:rgba(255,107,107,.4)}
+  .qtext{font-size:15.5px;font-weight:500;margin:0 0 14px;line-height:1.5}
+  .qopts{display:flex;flex-direction:column;gap:8px}
+  .qopt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px;line-height:1.45;transition:border-color .15s,background .15s}
+  .qopt:hover{border-color:#3a3a4e}
+  .qopt input{margin:3px 0 0;accent-color:var(--accent)}
+  .qopt.picked{border-color:rgba(195,255,54,.4);background:rgba(195,255,54,.04)}
+  .qopt.scored-correct{border-color:rgba(195,255,54,.55);background:rgba(195,255,54,.08);color:#d2f796}
+  .qopt.scored-incorrect{border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.05);color:#ffbdbd}
+  .qopt.scored-missed{border-color:rgba(195,255,54,.25);background:rgba(195,255,54,.03);outline:1px dashed rgba(195,255,54,.3)}
+  .qopt .mark{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700}
+  .qopt.scored-correct .mark{color:#c9f76a}
+  .qopt.scored-incorrect .mark{color:#ffa0a0}
+  .qitem textarea{width:100%;min-height:90px;background:#05050a;border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--ink);font-family:inherit;font-size:14px;line-height:1.55;resize:vertical;outline:none}
+  .qitem textarea:focus{border-color:var(--accent)}
+  .qexpl{margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.02);border-left:2px solid var(--accent);border-radius:0 8px 8px 0;font-size:13.5px;color:#c9c9d2;line-height:1.5}
+  .qexpl strong{color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:4px}
+  .qsub-hint{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+
+  .quiz-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .quiz-submit{padding:10px 18px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13.5px;border:none;cursor:pointer;font-family:inherit}
+  .quiz-submit:disabled{opacity:.5;cursor:not-allowed}
+  .quiz-retake{padding:10px 18px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:13.5px;cursor:pointer;font-family:inherit}
+  .quiz-score{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--muted)}
+  .quiz-score .num{color:var(--ink);font-weight:700}
+  .quiz-score.pass .num{color:#c9f76a}
+  .quiz-score.fail .num{color:#ffa0a0}
+  .quiz-empty{padding:20px;text-align:center;color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:12px}
+
+  /* ------ Assignment widget ------ */
+  .asgn-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;font-size:12.5px;color:var(--muted)}
+  .asgn-pts{font-family:"JetBrains Mono",monospace;padding:3px 9px;border:1px solid var(--line);border-radius:999px;font-size:11.5px;letter-spacing:.05em}
+  .asgn-due{padding:3px 9px;border-radius:999px;font-size:11.5px;font-family:"JetBrains Mono",monospace;letter-spacing:.04em}
+  .asgn-due.soon{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.28)}
+  .asgn-due.overdue{background:rgba(255,107,107,.1);color:#ffa0a0;border:1px solid rgba(255,107,107,.3)}
+  .asgn-due.ok{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--line)}
+  .asgn-rubric{font-size:13px;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0 16px;line-height:1.6}
+  .asgn-form{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+  .asgn-form input[type=url],.asgn-form input[type=text],.asgn-form textarea{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:inherit;font-size:14.5px;outline:none}
+  .asgn-form textarea{min-height:140px;line-height:1.6;resize:vertical}
+  .asgn-form input:focus,.asgn-form textarea:focus{border-color:var(--accent)}
+  .asgn-submit{padding:10px 18px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13.5px;border:none;cursor:pointer;font-family:inherit;align-self:flex-start}
+  .asgn-note{font-size:12px;color:var(--muted);font-style:italic}
+  .asgn-done{padding:14px 16px;border:1px solid rgba(195,255,54,.3);background:rgba(195,255,54,.05);border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  .asgn-done-left{display:flex;flex-direction:column;gap:4px}
+  .asgn-done-tag{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.12em;color:#c9f76a;text-transform:uppercase}
+  .asgn-done-time{font-size:12.5px;color:var(--muted)}
+  .asgn-edit{padding:7px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12.5px;cursor:pointer;font-family:inherit}
+  .asgn-content-preview{margin-top:10px;padding:10px 12px;background:#0a0a12;border:1px solid var(--line);border-radius:8px;font-size:13px;color:#c9c9d2;white-space:pre-wrap;word-break:break-word;line-height:1.55;max-height:180px;overflow:auto}
+  .asgn-grade{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)}
+  .asgn-grade .score{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent);font-weight:700;margin-bottom:6px}
+  .asgn-grade .fb{font-size:13.5px;line-height:1.6;color:#c9c9d2}
+  .asgn-empty{padding:20px;text-align:center;color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:12px}
+
+  /* ------ Notes + complete + pager (bottom) ------ */
+  .notes{margin-top:48px;padding-top:28px;border-top:1px solid var(--line)}
   .notes h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
   .notes .notes-sub{font-size:13px;color:var(--muted);margin-bottom:14px}
   .notes textarea{width:100%;min-height:160px;background:#0a0a12;border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);font-family:inherit;font-size:14.5px;line-height:1.6;resize:vertical;outline:none}
   .notes textarea:focus{border-color:var(--accent)}
   .notes-status{font-size:12px;color:var(--muted);margin-top:8px;font-family:"JetBrains Mono",monospace}
 
-  /* Prev/next */
-  .pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:60px}
-  .pager a{padding:18px 20px;border:1px solid var(--line);border-radius:14px;transition:border-color .15s}
+  .day-complete-row{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding:20px 22px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);gap:14px;flex-wrap:wrap}
+  .day-complete-row .lbl-h{font-size:14.5px;font-weight:600;margin-bottom:3px}
+  .day-complete-row .lbl-s{font-size:12.5px;color:var(--muted)}
+  .btn-complete{padding:10px 16px;border-radius:999px;background:transparent;color:var(--ink);border:1px solid var(--line);font-size:13px;cursor:pointer;font-family:inherit;display:inline-flex;gap:8px;align-items:center}
+  .btn-complete.done{background:rgba(195,255,54,.1);border-color:rgba(195,255,54,.4);color:#c9f76a}
+  .btn-complete .chk{width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;display:grid;place-items:center}
+  .btn-complete.done .chk{background:var(--accent);border-color:var(--accent);color:#0b0b10}
+
+  .pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:40px}
+  .pager a{padding:16px 18px;border:1px solid var(--line);border-radius:14px;transition:border-color .15s}
   .pager a:hover{border-color:#3a3a4e}
   .pager .plabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px}
-  .pager .ptitle{font-size:14.5px;font-weight:500;letter-spacing:-.01em}
+  .pager .ptitle{font-size:14px;font-weight:500;letter-spacing:-.01em}
   .pager .next{text-align:right}
   .pager .placeholder{opacity:.35;pointer-events:none}
 
   .locked-card{padding:40px 28px;text-align:center}
   .locked-ic{font-size:40px;margin-bottom:10px}
   .placeholder-note{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;margin:20px 0}
+
+  /* Frontmatter carry-overs */
+  .lm-video{position:relative;aspect-ratio:16/9;width:100%;margin:0 0 24px;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line)}
+  .lm-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .lm-lab{display:block;padding:20px 22px;border:1px solid rgba(195,255,54,.35);background:linear-gradient(145deg,rgba(195,255,54,.06),rgba(195,255,54,.02));border-radius:16px;margin:0 0 24px;transition:all .15s}
+  .lm-lab:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .lm-lab-kicker{font-size:11.5px;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:4px}
+  .lm-lab-title{font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+  .lm-lab-host{font-size:12px;font-family:"JetBrains Mono",monospace}
+  .lm-resources{margin:24px 0 0}
+  .lm-sec-h{font-size:11.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:10px;font-weight:600}
+  .lm-resources ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+  .lm-resources a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;transition:border-color .15s,background .15s}
+  .lm-resources a:hover{border-color:#3a3a4e;background:rgba(255,255,255,.02)}
+  .lm-host{font-size:11px;font-family:"JetBrains Mono",monospace}
 </style>
 </head>
 <body>
@@ -118,56 +247,97 @@
 </div>
 
 <!-- Main lesson view -->
-<main class="lesson-wrap" id="lesson" style="display:none">
-  <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
+<main class="lesson-shell" id="lesson" style="display:none">
+  <aside class="side" id="sidebar">
+    <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
+    <div class="side-title" id="sideWeekTag">WEEK 01 · DAY 01</div>
+    <h2 class="side-day-title" id="sideTitle">—</h2>
 
-  <header class="lesson-head">
-    <div class="head-row">
-      <span class="wtag" id="weekTag">WEEK 01</span>
-      <span class="daytag" id="dayTag">DAY 01</span>
+    <div class="progress-block">
+      <div class="progress-meta">
+        <span class="lbl">Day progress</span>
+        <span class="pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="progressBarFill"></div></div>
     </div>
-    <h1 class="lesson-title" id="lessonTitle">—</h1>
-    <p class="lesson-tag" id="weekTitle">—</p>
 
-    <div class="live-row" id="liveRow"></div>
-  </header>
+    <div class="side-title" style="margin-top:6px">Contents</div>
+    <ul class="toc" id="toc"></ul>
 
-  <div id="metaHeader"></div>
-  <article class="content" id="content"></article>
+    <div class="side-pager" id="sidePager"></div>
+  </aside>
 
-  <!-- Notes -->
-  <section class="notes">
-    <h3>Your notes</h3>
-    <div class="notes-sub">Private to you. Auto-saves when you click away.</div>
-    <textarea id="notesArea" placeholder="Jot down questions, aha-moments, things to try later…"></textarea>
-    <div class="notes-status" id="notesStatus"></div>
-  </section>
+  <div class="main">
+    <header class="lesson-head">
+      <div class="head-row">
+        <span class="wtag" id="weekTag">WEEK 01</span>
+        <span class="daytag" id="dayTag">DAY 01</span>
+      </div>
+      <h1 class="lesson-title" id="lessonTitle">—</h1>
+      <p class="lesson-tag" id="weekTitle">—</p>
+      <div class="live-row" id="liveRow"></div>
+    </header>
 
-  <nav class="pager" id="pager"></nav>
+    <div id="metaHeader"></div>
+    <div id="introBlock" class="mod-body" style="margin-bottom:28px"></div>
+    <div id="modules"></div>
+    <div id="resourcesBlock"></div>
+
+    <!-- Notes -->
+    <section class="notes">
+      <h3>Your notes</h3>
+      <div class="notes-sub">Private to you. Auto-saves when you click away.</div>
+      <textarea id="notesArea" placeholder="Jot down questions, aha-moments, things to try later…"></textarea>
+      <div class="notes-status" id="notesStatus"></div>
+    </section>
+
+    <!-- Day complete row -->
+    <div class="day-complete-row">
+      <div>
+        <div class="lbl-h">Finished the whole day?</div>
+        <div class="lbl-s">This marks Day <span id="dayN">01</span> as complete on your dashboard.</div>
+      </div>
+      <button class="btn-complete" id="dayCompleteBtn">
+        <span class="chk"><svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="lbl">Mark complete</span>
+      </button>
+    </div>
+
+    <nav class="pager" id="pager"></nav>
+  </div>
 </main>
 
 <!-- Locked view -->
-<main class="lesson-wrap" id="lockedView" style="display:none">
-  <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
-  <header class="lesson-head">
-    <div class="head-row">
-      <span class="wtag" id="lWeekTag">WEEK 01</span>
-      <span class="daytag" id="lDayTag">DAY 01</span>
+<main class="lesson-shell" id="lockedView" style="display:none;grid-template-columns:1fr;max-width:720px">
+  <div>
+    <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
+    <header class="lesson-head">
+      <div class="head-row">
+        <span class="wtag" id="lWeekTag">WEEK 01</span>
+        <span class="daytag" id="lDayTag">DAY 01</span>
+      </div>
+      <h1 class="lesson-title" id="lLessonTitle">—</h1>
+    </header>
+    <div class="card locked-card">
+      <div class="locked-ic">🔒</div>
+      <h2 style="margin:0 0 8px">This day is locked</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 16px" id="lockedMsg">Check back closer to the session.</p>
+      <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-decoration:none;max-width:260px">← Back to Dashboard</a>
     </div>
-    <h1 class="lesson-title" id="lLessonTitle">—</h1>
-  </header>
-  <div class="card locked-card">
-    <div class="locked-ic">🔒</div>
-    <h2 style="margin:0 0 8px">This day is locked</h2>
-    <p class="muted" style="font-size:14px;margin:0 0 16px" id="lockedMsg">Check back closer to the session.</p>
-    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-decoration:none;max-width:260px">← Back to Dashboard</a>
   </div>
 </main>
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { DAYS, WEEK_TITLES } from './assets/days.js';
-  import { renderLesson, renderFrontmatterHeader } from './assets/content-renderer.js';
+  import { marked } from 'https://esm.sh/marked@11';
+  import {
+    renderLesson,
+    parseModules,
+    renderMetaStrip,
+    renderResourcesBlock,
+    escapeHtml,
+  } from './assets/content-renderer.js';
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, '0');
@@ -179,7 +349,6 @@
   }
   function showGate() { $('gate').style.display = 'grid'; }
 
-  // Parse ?n=
   const params = new URLSearchParams(location.search);
   const nRaw = params.get('n');
   const n = parseInt(nRaw, 10);
@@ -189,6 +358,18 @@
   }
 
   const dayMeta = DAYS.find(d => d.n === n);
+  const MODULES_KEY = `day-${n}-modules-done`;
+
+  function loadDoneModules() {
+    try {
+      const raw = localStorage.getItem(MODULES_KEY);
+      if (!raw) return new Set();
+      return new Set(JSON.parse(raw));
+    } catch { return new Set(); }
+  }
+  function saveDoneModules(set) {
+    try { localStorage.setItem(MODULES_KEY, JSON.stringify([...set])); } catch {}
+  }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -201,20 +382,22 @@
     if (event === 'SIGNED_OUT') { location.reload(); }
   });
 
+  const KIND_LABELS = {
+    intro:'Intro', read:'Read', watch:'Watch', lab:'Lab',
+    quiz:'Quiz', assignment:'Assignment', discuss:'Discuss', section:'Section',
+  };
+
   async function loadLesson(user) {
-    // Cohort
     const { data: cohort, error: cohortErr } = await supabase
       .from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
     if (cohortErr || !cohort) {
       return showError('Cohort not found', cohortErr?.message || 'Could not load cohort.');
     }
 
-    // Cohort day row
     const { data: cday } = await supabase
       .from('cohort_days').select('*')
       .eq('cohort_id', cohort.id).eq('day_number', n).maybeSingle();
 
-    // Locked view
     if (!cday || cday.is_unlocked === false) {
       $('lWeekTag').textContent = `WEEK ${pad(dayMeta.w)}`;
       $('lDayTag').textContent = `DAY ${pad(n)}`;
@@ -223,17 +406,20 @@
         const when = new Date(cday.live_session_at);
         $('lockedMsg').textContent = `Live session scheduled for ${when.toLocaleString()}.`;
       }
-      $('lockedView').style.display = 'block';
+      $('lockedView').style.display = 'grid';
       return;
     }
 
-    // Render main lesson shell
+    // Header
     $('weekTag').textContent = `WEEK ${pad(dayMeta.w)}`;
     $('dayTag').textContent = `DAY ${pad(n)}`;
     $('lessonTitle').textContent = dayMeta.title;
     $('weekTitle').textContent = WEEK_TITLES[dayMeta.w];
+    $('sideWeekTag').textContent = `WEEK ${pad(dayMeta.w)} · DAY ${pad(n)}`;
+    $('sideTitle').textContent = dayMeta.title;
+    $('dayN').textContent = pad(n);
 
-    // Live session pill + join button
+    // Live pill + join
     const liveRow = $('liveRow');
     liveRow.innerHTML = '';
     if (cday.live_session_at) {
@@ -242,14 +428,11 @@
       pill.className = 'live-pill-lg';
       pill.textContent = `Live · ${when.toLocaleString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}`;
       liveRow.appendChild(pill);
-
       if (cday.meet_link) {
         const within = Math.abs(when.getTime() - Date.now()) < 12 * 3600 * 1000;
         if (within) {
           const a = document.createElement('a');
-          a.href = cday.meet_link;
-          a.target = '_blank';
-          a.rel = 'noopener';
+          a.href = cday.meet_link; a.target = '_blank'; a.rel = 'noopener';
           a.className = 'btn-join';
           a.textContent = 'Join session →';
           liveRow.appendChild(a);
@@ -257,103 +440,517 @@
       }
     }
 
-    // Mark complete button
-    const completeBtn = document.createElement('button');
-    completeBtn.className = 'btn-complete';
-    completeBtn.innerHTML = `<span class="chk"><svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Mark complete</span>`;
-    liveRow.appendChild(completeBtn);
-
-    // Fetch user's lab_progress for this day (for completion state + notes)
+    // Load lab_progress for day completion + notes
     const { data: lp } = await supabase.from('lab_progress')
       .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', n)
       .maybeSingle();
     let isDone = !!lp;
-    let hasRow = !!lp;
 
-    function paintComplete() {
-      completeBtn.classList.toggle('done', isDone);
-      completeBtn.querySelector('.lbl').textContent = isDone ? 'Completed' : 'Mark complete';
+    const dayCompleteBtn = $('dayCompleteBtn');
+    function paintDayComplete() {
+      dayCompleteBtn.classList.toggle('done', isDone);
+      dayCompleteBtn.querySelector('.lbl').textContent = isDone ? 'Completed' : 'Mark complete';
     }
-    paintComplete();
+    paintDayComplete();
 
-    completeBtn.addEventListener('click', async () => {
-      completeBtn.disabled = true;
+    dayCompleteBtn.addEventListener('click', async () => {
+      dayCompleteBtn.disabled = true;
       if (isDone) {
-        // Delete the row entirely (per spec: "delete if present")
         const { error } = await supabase.from('lab_progress').delete()
           .eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', n);
-        if (!error) { isDone = false; hasRow = false; }
+        if (!error) isDone = false;
       } else {
         const { error } = await supabase.from('lab_progress').insert({
           user_id: user.id, cohort_id: cohort.id, day_number: n,
           notes: $('notesArea').value || null,
         });
-        if (!error) { isDone = true; hasRow = true; }
+        if (!error) isDone = true;
       }
-      paintComplete();
-      completeBtn.disabled = false;
+      paintDayComplete();
+      dayCompleteBtn.disabled = false;
     });
 
-    // Notes — prefill + debounced autosave on blur
+    // Notes autosave
     const notesArea = $('notesArea');
     const notesStatus = $('notesStatus');
     if (lp?.notes) notesArea.value = lp.notes;
-
     let saveTimer = null;
     async function saveNotes() {
-      const value = notesArea.value;
       notesStatus.textContent = 'Saving…';
       const { error } = await supabase.from('lab_progress').upsert({
-        user_id: user.id,
-        cohort_id: cohort.id,
-        day_number: n,
-        notes: value || null,
+        user_id: user.id, cohort_id: cohort.id, day_number: n,
+        notes: notesArea.value || null,
       }, { onConflict: 'user_id,cohort_id,day_number' });
-      if (error) {
-        notesStatus.textContent = `Save failed: ${error.message}`;
-      } else {
-        hasRow = true;
+      if (error) notesStatus.textContent = `Save failed: ${error.message}`;
+      else {
         const t = new Date().toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
         notesStatus.textContent = `Saved at ${t}`;
       }
     }
     notesArea.addEventListener('blur', () => {
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(saveNotes, 300);
+      clearTimeout(saveTimer); saveTimer = setTimeout(saveNotes, 300);
     });
 
-    // Prev / Next pager
-    const pager = $('pager');
+    // Pagers
     const prev = n > 1 ? DAYS.find(d => d.n === n - 1) : null;
     const next = n < 30 ? DAYS.find(d => d.n === n + 1) : null;
-    pager.innerHTML = `
-      ${prev
-        ? `<a href="day.html?n=${prev.n}"><div class="plabel">← Previous · Day ${pad(prev.n)}</div><div class="ptitle">${prev.title}</div></a>`
-        : `<div class="placeholder"></div>`}
-      ${next
-        ? `<a class="next" href="day.html?n=${next.n}"><div class="plabel">Next · Day ${pad(next.n)} →</div><div class="ptitle">${next.title}</div></a>`
-        : `<div class="placeholder"></div>`}
+    $('pager').innerHTML = `
+      ${prev ? `<a href="day.html?n=${prev.n}"><div class="plabel">← Previous · Day ${pad(prev.n)}</div><div class="ptitle">${escapeHtml(prev.title)}</div></a>` : `<div class="placeholder"></div>`}
+      ${next ? `<a class="next" href="day.html?n=${next.n}"><div class="plabel">Next · Day ${pad(next.n)} →</div><div class="ptitle">${escapeHtml(next.title)}</div></a>` : `<div class="placeholder"></div>`}
+    `;
+    $('sidePager').innerHTML = `
+      ${prev ? `<a href="day.html?n=${prev.n}"><div class="plabel">← Previous</div>Day ${pad(prev.n)} · ${escapeHtml(prev.title)}</a>` : ''}
+      ${next ? `<a href="day.html?n=${next.n}"><div class="plabel">Next →</div>Day ${pad(next.n)} · ${escapeHtml(next.title)}</a>` : ''}
     `;
 
-    // Fetch content markdown
+    // Fetch markdown + render modules
+    let meta = {}; let modules = []; let introHtml = '';
     try {
       const res = await fetch(`content/day-${pad(n)}.md`, { cache: 'no-cache' });
       if (res.ok) {
         const md = await res.text();
-        const { meta, html } = renderLesson(md);
-        $('metaHeader').innerHTML = renderFrontmatterHeader(meta);
-        $('content').innerHTML = html;
-      } else {
-        $('content').innerHTML = `<div class="placeholder-note">Content for Day ${pad(n)} is being prepared. Check back soon.</div>`;
+        const parsed = parseModules(md);
+        meta = parsed.meta || {};
+        modules = parsed.modules || [];
+        introHtml = parsed.intro || '';
       }
-    } catch (e) {
-      $('content').innerHTML = `<div class="placeholder-note">Couldn't load content for Day ${pad(n)}.</div>`;
+    } catch (e) { /* fall through to empty */ }
+
+    $('metaHeader').innerHTML = renderMetaStrip(meta);
+    if (introHtml) $('introBlock').innerHTML = introHtml;
+    $('resourcesBlock').innerHTML = renderResourcesBlock(meta);
+
+    if (!modules.length) {
+      $('modules').innerHTML = `<div class="placeholder-note">Content for Day ${pad(n)} is being prepared. Check back soon.</div>`;
+    } else {
+      renderModules(modules, meta, { user, cohort });
     }
 
-    $('lesson').style.display = 'block';
+    $('lesson').style.display = 'grid';
+
+    // Scrollspy for TOC
+    setupScrollspy(modules);
   }
 
-  init();
+  // ---------- Module rendering ----------
+
+  function renderModules(modules, meta, ctx) {
+    const done = loadDoneModules();
+    const modulesEl = $('modules');
+    const tocEl = $('toc');
+    modulesEl.innerHTML = '';
+    tocEl.innerHTML = '';
+
+    for (const m of modules) {
+      const card = document.createElement('section');
+      card.className = `module kind-${m.kind}`;
+      card.id = `mod-${m.id}`;
+
+      const bodyId = `body-${m.id}`;
+      card.innerHTML = `
+        <div class="mod-head">
+          <span class="kbadge kbadge-${m.kind}">${KIND_LABELS[m.kind] || 'Section'}</span>
+          <span class="mod-anchor">#${escapeHtml(m.id)}</span>
+        </div>
+        <h2 class="mod-title">${escapeHtml(m.title)}</h2>
+        <div class="mod-body" id="${bodyId}">${m.html || ''}</div>
+        <div class="mod-extra" id="extra-${m.id}"></div>
+        <div class="mod-foot">
+          <span class="mod-anchor-b muted" style="font-size:12px">Module · ${KIND_LABELS[m.kind] || 'Section'}</span>
+          <button class="mark-sec-btn" data-id="${m.id}">
+            <span class="chk"><svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="lbl">Mark this section complete</span>
+          </button>
+        </div>
+      `;
+      modulesEl.appendChild(card);
+
+      const extra = card.querySelector(`#extra-${CSS.escape(m.id)}`);
+
+      if (m.kind === 'watch' && m.embedVideo) {
+        const v = document.createElement('div');
+        v.className = 'mod-video';
+        v.innerHTML = `<iframe src="${escapeHtml(m.embedVideo)}" title="${escapeHtml(m.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+        extra.appendChild(v);
+      }
+      if (m.kind === 'lab' && meta.lab && meta.lab.url) {
+        const a = document.createElement('a');
+        a.href = meta.lab.url; a.target = '_blank'; a.rel = 'noopener';
+        a.className = 'mod-lab-cta';
+        a.textContent = `Open lab: ${meta.lab.title || 'Today\u2019s lab'} →`;
+        extra.appendChild(a);
+      }
+      if (m.kind === 'quiz') {
+        mountQuizWidget(extra, ctx);
+      }
+      if (m.kind === 'assignment') {
+        mountAssignmentWidget(extra, ctx);
+      }
+
+      // TOC entry
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="#mod-${m.id}" data-id="${m.id}">
+        <span class="dot"></span>
+        <span class="tlabel">${escapeHtml(m.title)}</span>
+        <span class="kchip">${KIND_LABELS[m.kind] || ''}</span>
+      </a>`;
+      tocEl.appendChild(li);
+
+      // Mark button
+      const btn = card.querySelector('.mark-sec-btn');
+      const paintBtn = () => {
+        const isOn = done.has(m.id);
+        btn.classList.toggle('done', isOn);
+        btn.querySelector('.lbl').textContent = isOn ? 'Completed' : 'Mark this section complete';
+        const tocA = tocEl.querySelector(`a[data-id="${CSS.escape(m.id)}"]`);
+        if (tocA) tocA.classList.toggle('done', isOn);
+      };
+      paintBtn();
+      btn.addEventListener('click', () => {
+        if (done.has(m.id)) done.delete(m.id); else done.add(m.id);
+        saveDoneModules(done);
+        paintBtn();
+        paintProgress(modules, done);
+      });
+
+      // Smooth scroll on TOC click
+      li.querySelector('a').addEventListener('click', (e) => {
+        e.preventDefault();
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', `#mod-${m.id}`);
+      });
+    }
+
+    paintProgress(modules, done);
+  }
+
+  function paintProgress(modules, done) {
+    const total = modules.length || 1;
+    const completed = modules.filter(m => done.has(m.id)).length;
+    const pct = Math.round((completed / total) * 100);
+    $('progressPct').textContent = `${pct}%`;
+    $('progressBarFill').style.width = `${pct}%`;
+  }
+
+  function setupScrollspy(modules) {
+    const tocEl = $('toc');
+    const opts = { rootMargin: '-30% 0px -60% 0px', threshold: 0 };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          const id = e.target.id.replace(/^mod-/, '');
+          tocEl.querySelectorAll('a').forEach(a => a.classList.toggle('active', a.dataset.id === id));
+        }
+      }
+    }, opts);
+    for (const m of modules) {
+      const el = document.getElementById(`mod-${m.id}`);
+      if (el) io.observe(el);
+    }
+  }
+
+  // ---------- Quiz widget ----------
+
+  async function mountQuizWidget(container, { user, cohort }) {
+    container.innerHTML = '<div class="quiz-empty">Loading quiz…</div>';
+    const { data: quiz } = await supabase.from('quizzes')
+      .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
+      .maybeSingle();
+    if (!quiz) {
+      container.innerHTML = '<div class="quiz-empty">No quiz for this day.</div>';
+      return;
+    }
+
+    const { data: prevAttempts } = await supabase.from('quiz_attempts')
+      .select('*').eq('user_id', user.id).eq('quiz_id', quiz.id)
+      .order('completed_at', { ascending: false }).limit(1);
+    const lastAttempt = prevAttempts?.[0] || null;
+
+    const questions = Array.isArray(quiz.questions) ? quiz.questions : [];
+    const passing = Number(quiz.passing_score ?? 70);
+
+    let state = 'idle'; // idle | scored
+    let picks = questions.map(q => q.type === 'multi' ? [] : (q.type === 'text' ? '' : null));
+
+    if (lastAttempt?.answers) {
+      try {
+        const saved = Array.isArray(lastAttempt.answers) ? lastAttempt.answers : JSON.parse(lastAttempt.answers);
+        if (Array.isArray(saved) && saved.length === questions.length) {
+          picks = saved;
+          state = 'scored';
+        }
+      } catch {}
+    }
+
+    render();
+
+    function render() {
+      const titleHtml = quiz.title ? `<p class="qsub-hint" style="font-style:normal;color:var(--ink);margin:0 0 14px;font-size:14px;font-weight:500">${escapeHtml(quiz.title)}</p>` : '';
+      const qsHtml = questions.map((q, i) => renderQuestion(q, i)).join('');
+
+      const submitted = state === 'scored';
+      const score = submitted ? computeScore() : null;
+      const scoreChip = submitted ? `<span class="quiz-score ${score.passed ? 'pass' : 'fail'}"><span class="num">${score.pct}</span> / 100 · passing ${passing} · ${score.passed ? 'passed' : 'not yet'}</span>` : '';
+
+      const actions = submitted
+        ? `<button class="quiz-retake" id="quizRetake">Retake quiz</button>${scoreChip}`
+        : `<button class="quiz-submit" id="quizSubmit">Submit quiz</button><span class="quiz-score"><span class="num">${questions.length}</span> questions</span>`;
+
+      container.innerHTML = `
+        <div class="quiz">
+          ${titleHtml}
+          <div class="quiz-qs">${qsHtml}</div>
+          <div class="quiz-actions">${actions}</div>
+        </div>
+      `;
+
+      container.querySelectorAll('.qopt input').forEach(inp => {
+        inp.addEventListener('change', (e) => {
+          const qi = Number(e.target.dataset.q);
+          const oi = Number(e.target.dataset.o);
+          const type = questions[qi].type;
+          if (type === 'multi') {
+            const set = new Set(picks[qi] || []);
+            if (e.target.checked) set.add(oi); else set.delete(oi);
+            picks[qi] = [...set];
+          } else {
+            picks[qi] = oi;
+          }
+          updatePicked();
+        });
+      });
+      container.querySelectorAll('textarea[data-q]').forEach(ta => {
+        ta.addEventListener('input', (e) => {
+          picks[Number(e.target.dataset.q)] = e.target.value;
+        });
+      });
+
+      const submitBtn = container.querySelector('#quizSubmit');
+      if (submitBtn) submitBtn.addEventListener('click', onSubmit);
+      const retakeBtn = container.querySelector('#quizRetake');
+      if (retakeBtn) retakeBtn.addEventListener('click', () => {
+        state = 'idle';
+        picks = questions.map(q => q.type === 'multi' ? [] : (q.type === 'text' ? '' : null));
+        render();
+      });
+    }
+
+    function updatePicked() {
+      container.querySelectorAll('.qopt').forEach(opt => {
+        const qi = Number(opt.dataset.q);
+        const oi = Number(opt.dataset.o);
+        const type = questions[qi].type;
+        const picked = type === 'multi' ? (picks[qi] || []).includes(oi) : picks[qi] === oi;
+        opt.classList.toggle('picked', !!picked);
+      });
+    }
+
+    function renderQuestion(q, i) {
+      const scored = state === 'scored';
+      let body = '';
+      const gradeInfo = scored ? gradeOne(q, i) : null;
+      if (q.type === 'text') {
+        const val = escapeHtml(picks[i] || '');
+        body = `<textarea data-q="${i}" placeholder="Your answer…" ${scored ? 'readonly' : ''}>${val}</textarea>
+                <div class="qsub-hint">Text responses are not auto-graded.</div>`;
+      } else {
+        const opts = (q.options || []).map((opt, oi) => {
+          const input = q.type === 'multi'
+            ? `<input type="checkbox" data-q="${i}" data-o="${oi}" ${(picks[i]||[]).includes(oi)?'checked':''} ${scored?'disabled':''} />`
+            : `<input type="radio" name="q-${i}" data-q="${i}" data-o="${oi}" ${picks[i]===oi?'checked':''} ${scored?'disabled':''} />`;
+          let extraCls = '';
+          let mark = '';
+          if (scored) {
+            const isCorrect = !!opt.correct;
+            const wasPicked = q.type === 'multi' ? (picks[i]||[]).includes(oi) : picks[i] === oi;
+            if (wasPicked && isCorrect) { extraCls = 'scored-correct'; mark = '✓'; }
+            else if (wasPicked && !isCorrect) { extraCls = 'scored-incorrect'; mark = '✗'; }
+            else if (!wasPicked && isCorrect) { extraCls = 'scored-missed'; mark = '✓'; }
+          }
+          const pickedCls = (q.type === 'multi' ? (picks[i]||[]).includes(oi) : picks[i] === oi) && !scored ? 'picked' : '';
+          return `<label class="qopt ${pickedCls} ${extraCls}" data-q="${i}" data-o="${oi}">
+            ${input}
+            <span class="qopt-text">${escapeHtml(opt.text || '')}</span>
+            ${mark ? `<span class="mark">${mark}</span>` : ''}
+          </label>`;
+        }).join('');
+        body = `<div class="qopts">${opts}</div>`;
+      }
+      const expl = scored && q.explanation
+        ? `<div class="qexpl"><strong>${gradeInfo?.correct ? 'Correct' : 'Explanation'}</strong>${marked.parse(q.explanation)}</div>`
+        : '';
+      const scoredCls = scored ? `scored ${gradeInfo?.correct ? 'correct' : 'incorrect'}` : '';
+      return `<div class="qitem ${scoredCls}">
+        <p class="qtext">${escapeHtml(q.q || '')}</p>
+        ${body}
+        ${expl}
+      </div>`;
+    }
+
+    function gradeOne(q, i) {
+      if (q.type === 'text') return { gradable: false, correct: false };
+      const correctSet = new Set((q.options || []).map((o, oi) => o.correct ? oi : -1).filter(oi => oi >= 0));
+      if (q.type === 'multi') {
+        const pickSet = new Set(picks[i] || []);
+        if (pickSet.size !== correctSet.size) return { gradable: true, correct: false };
+        for (const x of pickSet) if (!correctSet.has(x)) return { gradable: true, correct: false };
+        return { gradable: true, correct: true };
+      }
+      return { gradable: true, correct: correctSet.has(picks[i]) };
+    }
+
+    function computeScore() {
+      let gradable = 0, correct = 0;
+      questions.forEach((q, i) => {
+        const g = gradeOne(q, i);
+        if (g.gradable) { gradable++; if (g.correct) correct++; }
+      });
+      const pct = gradable === 0 ? 0 : Math.round((correct / gradable) * 100);
+      return { pct, passed: pct >= passing, correct, gradable };
+    }
+
+    async function onSubmit() {
+      const btn = container.querySelector('#quizSubmit');
+      if (btn) btn.disabled = true;
+      const score = computeScore();
+      state = 'scored';
+      await supabase.from('quiz_attempts').insert({
+        user_id: user.id,
+        quiz_id: quiz.id,
+        answers: picks,
+        score: score.pct,
+        passed: score.passed,
+        completed_at: new Date().toISOString(),
+      });
+      render();
+    }
+  }
+
+  // ---------- Assignment widget ----------
+
+  async function mountAssignmentWidget(container, { user, cohort }) {
+    container.innerHTML = '<div class="asgn-empty">Loading assignment…</div>';
+    const { data: asgn } = await supabase.from('assignments')
+      .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
+      .maybeSingle();
+    if (!asgn) {
+      container.innerHTML = '<div class="asgn-empty">No assignment for this day.</div>';
+      return;
+    }
+
+    const { data: fetched } = await supabase.from('submissions')
+      .select('*').eq('user_id', user.id).eq('assignment_id', asgn.id)
+      .maybeSingle();
+    let existing = fetched || null;
+
+    let mode = existing ? 'view' : 'edit';
+    let draft = {
+      content_url: existing?.content_url || '',
+      content_text: existing?.content_text || '',
+    };
+
+    render();
+
+    function dueInfo() {
+      if (!asgn.due_at) return { cls: 'ok', text: 'No due date' };
+      const due = new Date(asgn.due_at);
+      const now = new Date();
+      const diff = due - now;
+      const fmt = due.toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+      if (diff < 0) return { cls: 'overdue', text: `Overdue · was due ${fmt}` };
+      if (diff < 48 * 3600 * 1000) return { cls: 'soon', text: `Due ${fmt}` };
+      return { cls: 'ok', text: `Due ${fmt}` };
+    }
+
+    function render() {
+      const due = dueInfo();
+      const descHtml = asgn.description ? marked.parse(asgn.description) : '';
+      const rubric = asgn.rubric ? `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><br>${escapeHtml(asgn.rubric)}</div>` : '';
+      const pts = asgn.points != null ? `<span class="asgn-pts">${escapeHtml(String(asgn.points))} pts</span>` : '';
+
+      let form = '';
+      if (mode === 'edit') {
+        const submitType = asgn.submission_type || 'link';
+        let input = '';
+        if (submitType === 'text') {
+          input = `<textarea id="asgnText" placeholder="Paste or type your submission…">${escapeHtml(draft.content_text)}</textarea>`;
+        } else if (submitType === 'file') {
+          input = `<input type="url" id="asgnLink" placeholder="https://link-to-your-file" value="${escapeHtml(draft.content_url)}" />
+                   <div class="asgn-note">Note: paste a link to a cloud-hosted file (Drive, Dropbox, S3). Direct file upload coming soon.</div>`;
+        } else {
+          input = `<input type="url" id="asgnLink" placeholder="https://…" value="${escapeHtml(draft.content_url)}" />`;
+        }
+        form = `<form class="asgn-form" id="asgnForm">
+          ${input}
+          <button class="asgn-submit" type="submit">${existing ? 'Update submission' : 'Submit'}</button>
+        </form>`;
+      } else if (existing) {
+        const when = existing.submitted_at ? new Date(existing.submitted_at).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '';
+        const preview = existing.content_url
+          ? `<div class="asgn-content-preview"><a href="${escapeHtml(existing.content_url)}" target="_blank" rel="noopener">${escapeHtml(existing.content_url)}</a></div>`
+          : (existing.content_text ? `<div class="asgn-content-preview">${escapeHtml(existing.content_text)}</div>` : '');
+        const grade = existing.status === 'graded'
+          ? `<div class="asgn-grade">
+              <div class="score">Score · ${escapeHtml(String(existing.score ?? '—'))}${asgn.points != null ? ` / ${escapeHtml(String(asgn.points))}` : ''}</div>
+              <div class="fb">${existing.feedback ? marked.parse(existing.feedback) : '<span class="muted">No feedback yet.</span>'}</div>
+            </div>`
+          : '';
+        form = `<div class="asgn-done">
+          <div class="asgn-done-left">
+            <span class="asgn-done-tag">✓ Submitted</span>
+            <span class="asgn-done-time">${escapeHtml(when)}</span>
+          </div>
+          <button class="asgn-edit" id="asgnEdit">Edit submission</button>
+        </div>${preview}${grade}`;
+      }
+
+      container.innerHTML = `
+        <div class="asgn">
+          <div class="asgn-meta">
+            ${pts}
+            <span class="asgn-due ${due.cls}">${escapeHtml(due.text)}</span>
+          </div>
+          ${asgn.title ? `<h3 style="margin:6px 0 10px;font-size:18px;letter-spacing:-.01em">${escapeHtml(asgn.title)}</h3>` : ''}
+          <div class="mod-body" style="font-size:15px">${descHtml}</div>
+          ${rubric}
+          ${form}
+        </div>
+      `;
+
+      const formEl = container.querySelector('#asgnForm');
+      if (formEl) {
+        formEl.addEventListener('submit', onSubmit);
+        const linkEl = container.querySelector('#asgnLink');
+        if (linkEl) linkEl.addEventListener('input', (e) => draft.content_url = e.target.value);
+        const textEl = container.querySelector('#asgnText');
+        if (textEl) textEl.addEventListener('input', (e) => draft.content_text = e.target.value);
+      }
+      const editBtn = container.querySelector('#asgnEdit');
+      if (editBtn) editBtn.addEventListener('click', () => { mode = 'edit'; render(); });
+    }
+
+    async function onSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        user_id: user.id,
+        assignment_id: asgn.id,
+        content_url: draft.content_url || null,
+        content_text: draft.content_text || null,
+        submitted_at: new Date().toISOString(),
+        status: existing?.status === 'graded' ? existing.status : 'submitted',
+      };
+      const { data, error } = await supabase.from('submissions')
+        .upsert(payload, { onConflict: 'user_id,assignment_id' })
+        .select().single();
+      if (error) {
+        alert(`Submit failed: ${error.message}`);
+        return;
+      }
+      existing = data || { ...payload };
+      mode = 'view';
+      render();
+    }
+  }
 </script>
 </body>
 </html>

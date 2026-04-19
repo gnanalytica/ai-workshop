@@ -18,7 +18,6 @@ function parseFrontmatter(text) {
     if (idx === -1) continue;
     const key = line.slice(0, idx).trim();
     let val = line.slice(idx + 1).trim();
-    // Strip optional wrapping quotes
     if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
       val = val.slice(1, -1);
     } else if (val.startsWith('[') || val.startsWith('{')) {
@@ -29,21 +28,24 @@ function parseFrontmatter(text) {
   return meta;
 }
 
+function splitFrontmatter(markdownText) {
+  let meta = {};
+  let body = markdownText || '';
+  const fmMatch = body.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
+  if (fmMatch) {
+    meta = parseFrontmatter(fmMatch[1]);
+    body = body.slice(fmMatch[0].length);
+  }
+  return { meta, body };
+}
+
 /**
  * renderLesson(markdownText, targetEl?)
  *   Parses optional frontmatter and returns { meta, html }.
  *   If targetEl is provided, also writes html into it.
  */
 export function renderLesson(markdownText, targetEl) {
-  let meta = {};
-  let body = markdownText || '';
-
-  const fmMatch = body.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
-  if (fmMatch) {
-    meta = parseFrontmatter(fmMatch[1]);
-    body = body.slice(fmMatch[0].length);
-  }
-
+  const { meta, body } = splitFrontmatter(markdownText);
   const html = marked.parse(body);
   if (targetEl) targetEl.innerHTML = html;
   return { meta, html };
@@ -60,14 +62,138 @@ function domainOf(url) {
   catch { return ''; }
 }
 
+function slugify(s = '') {
+  return String(s).toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60) || 'section';
+}
+
+const KIND_MATCHERS = [
+  { kind: 'intro',      re: /^intro\b/i },
+  { kind: 'read',       re: /^read\s*:/i },
+  { kind: 'watch',      re: /^watch\s*:/i },
+  { kind: 'lab',        re: /^lab\s*:/i },
+  { kind: 'quiz',       re: /^quiz\b/i },
+  { kind: 'assignment', re: /^assignment\b/i },
+  { kind: 'discuss',    re: /^discuss\s*:/i },
+];
+
+function classifyHeading(title) {
+  for (const m of KIND_MATCHERS) if (m.re.test(title)) return m.kind;
+  return 'section';
+}
+
+function stripKindPrefix(title, kind) {
+  if (kind === 'section' || kind === 'intro' || kind === 'quiz' || kind === 'assignment') {
+    return title.replace(/^(intro|quiz|assignment)\b[\s:—-]*/i, '').trim() || title;
+  }
+  return title.replace(/^(read|watch|lab|discuss)\s*:\s*/i, '').trim();
+}
+
+const YT_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})(?:[?&][^\s]*)?/;
+
+function extractYouTube(body) {
+  const lines = body.split(/\r?\n/);
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    const m = line.match(YT_RE);
+    // Only treat as a standalone embed if the whole line is the URL (possibly wrapped in <>)
+    if (m && (line === m[0] || line === `<${m[0]}>`)) {
+      const id = m[1];
+      return {
+        embedUrl: `https://www.youtube.com/embed/${id}`,
+        rawLine: raw,
+      };
+    }
+  }
+  return null;
+}
+
 /**
- * renderFrontmatterHeader(meta)
- *   Returns HTML string for a metadata strip above the body.
+ * parseModules(markdownText)
+ *   Splits the markdown body by top-level `## ` headings into modules.
+ *   Returns { meta, modules: [{ id, title, kind, html, embedVideo? }], intro? }
+ *   Content before the first `## ` heading is returned separately as `intro` (html only).
+ */
+export function parseModules(markdownText) {
+  const { meta, body } = splitFrontmatter(markdownText);
+
+  // Split on lines that start with `## ` (avoid matching deeper headings).
+  // We'll walk line-by-line to build sections, keeping the heading line as the split marker.
+  const lines = body.split(/\r?\n/);
+  const sections = [];
+  let pre = [];
+  let current = null;
+
+  for (const line of lines) {
+    const h2 = line.match(/^##\s+(.+?)\s*$/);
+    if (h2) {
+      if (current) sections.push(current);
+      else if (pre.length) {
+        // preamble collected
+      }
+      let title = h2[1].trim();
+      // Optional {#id} annotation
+      let explicitId = null;
+      const idMatch = title.match(/\{#([A-Za-z0-9_-]+)\}\s*$/);
+      if (idMatch) {
+        explicitId = idMatch[1];
+        title = title.slice(0, idMatch.index).trim();
+      }
+      current = { rawTitle: title, explicitId, lines: [] };
+    } else if (current) {
+      current.lines.push(line);
+    } else {
+      pre.push(line);
+    }
+  }
+  if (current) sections.push(current);
+
+  const intro = pre.join('\n').trim();
+  const introHtml = intro ? marked.parse(intro) : '';
+
+  // Skip the first H1 (title) from the intro preamble rendering if it's just "# Title"
+  // (we'll leave rendering decision to consumer — include as-is).
+
+  const usedIds = new Set();
+  const modules = sections.map((s) => {
+    const kind = classifyHeading(s.rawTitle);
+    const cleanTitle = stripKindPrefix(s.rawTitle, kind) || s.rawTitle;
+
+    // ID
+    let id = s.explicitId || slugify(`${kind}-${cleanTitle}`);
+    let baseId = id; let i = 2;
+    while (usedIds.has(id)) { id = `${baseId}-${i++}`; }
+    usedIds.add(id);
+
+    let sectionBody = s.lines.join('\n').trim();
+
+    // Extract YouTube if the body contains a single URL line
+    let embedVideo = null;
+    if (kind === 'watch') {
+      const yt = extractYouTube(sectionBody);
+      if (yt) {
+        embedVideo = yt.embedUrl;
+        sectionBody = sectionBody.split(/\r?\n/).filter(l => l.trim() !== yt.rawLine.trim() && l.trim() !== `<${yt.rawLine.trim()}>`).join('\n').trim();
+      }
+    }
+
+    const html = sectionBody ? marked.parse(sectionBody) : '';
+    return { id, title: cleanTitle, kind, html, embedVideo };
+  });
+
+  return { meta, intro: introHtml, modules };
+}
+
+/**
+ * renderFrontmatterHeader(meta) — full header strip (reading time + tags + video + lab + resources)
  */
 export function renderFrontmatterHeader(meta = {}) {
   const parts = [];
 
-  // Meta row: reading time + tags
   const metaBits = [];
   if (meta.reading_time) {
     metaBits.push(`<span class="lm-read">⏱ ${escapeHtml(meta.reading_time)}</span>`);
@@ -81,7 +207,6 @@ export function renderFrontmatterHeader(meta = {}) {
     parts.push(`<div class="lm-row">${metaBits.join('')}</div>`);
   }
 
-  // Video
   if (meta.video) {
     parts.push(`
       <div class="lm-video">
@@ -91,7 +216,6 @@ export function renderFrontmatterHeader(meta = {}) {
       </div>`);
   }
 
-  // Lab card
   if (meta.lab && typeof meta.lab === 'object' && meta.lab.url) {
     parts.push(`
       <a class="lm-lab" href="${escapeHtml(meta.lab.url)}" target="_blank" rel="noopener">
@@ -101,7 +225,6 @@ export function renderFrontmatterHeader(meta = {}) {
       </a>`);
   }
 
-  // Resources
   if (Array.isArray(meta.resources) && meta.resources.length) {
     const items = meta.resources.map(r => {
       const url = r?.url || '#';
@@ -120,3 +243,42 @@ export function renderFrontmatterHeader(meta = {}) {
 
   return parts.join('\n');
 }
+
+/**
+ * renderMetaStrip(meta) — compact version with only reading-time + tags.
+ */
+export function renderMetaStrip(meta = {}) {
+  const bits = [];
+  if (meta.reading_time) {
+    bits.push(`<span class="lm-read">⏱ ${escapeHtml(meta.reading_time)}</span>`);
+  }
+  if (Array.isArray(meta.tags) && meta.tags.length) {
+    bits.push(
+      `<span class="lm-tags">${meta.tags.map(t => `<span class="tag tag-pend">${escapeHtml(t)}</span>`).join(' ')}</span>`
+    );
+  }
+  if (!bits.length) return '';
+  return `<div class="lm-row">${bits.join('')}</div>`;
+}
+
+/**
+ * renderResourcesBlock(meta) — just the resources list block, for rendering separately.
+ */
+export function renderResourcesBlock(meta = {}) {
+  if (!Array.isArray(meta.resources) || !meta.resources.length) return '';
+  const items = meta.resources.map(r => {
+    const url = r?.url || '#';
+    const title = r?.title || url;
+    return `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener">
+      <span>${escapeHtml(title)}</span>
+      <span class="lm-host muted">${escapeHtml(domainOf(url))}</span>
+    </a></li>`;
+  }).join('');
+  return `
+    <div class="lm-resources">
+      <div class="lm-sec-h">Resources</div>
+      <ul>${items}</ul>
+    </div>`;
+}
+
+export { escapeHtml, domainOf };
