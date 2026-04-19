@@ -58,7 +58,8 @@
 
 <!-- ADMIN PANEL -->
 <main class="wrap" id="panel" style="display:none">
-  <div style="margin:36px 0 8px">
+  <div id="adminNav"></div>
+  <div style="margin:24px 0 8px">
     <div class="kicker">Cohort 01</div>
     <h1>Registrations</h1>
   </div>
@@ -79,6 +80,7 @@
       <option value="waitlist">Waitlist</option>
       <option value="cancelled">Cancelled</option>
     </select>
+    <button class="cta ghost" id="exportBtn" style="margin-left:auto">Export CSV</button>
   </div>
 
   <div class="table-wrap">
@@ -95,7 +97,9 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
   const $ = (id) => document.getElementById(id);
+  document.getElementById('adminNav').innerHTML = renderAdminNav('admin.html');
   let ALL_ROWS = [];
   let COHORT = null;
 
@@ -207,6 +211,19 @@
 
   $('search').addEventListener('input', render);
   $('filterStatus').addEventListener('change', render);
+  $('exportBtn').addEventListener('click', () => {
+    const header = ['name','college','year','phone','github','status','progress','joined'];
+    const lines = [header.join(',')].concat(ALL_ROWS.map(r => [
+      r.profile.full_name || '', r.profile.college || '', r.profile.year || '',
+      r.profile.phone || '', r.profile.github_username || '', r.status,
+      r.progress, new Date(r.created_at).toISOString(),
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')));
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `registrations-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  });
 
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 

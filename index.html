@@ -424,6 +424,7 @@
     <h3>Join the cohort</h3>
     <p class="sub">Cohort 01 starts <b style="color:var(--ink)">May 15, 2026</b>. 40 seats. We'll email you a magic link to confirm.</p>
     <form id="regForm">
+      <div class="field"><label>Enrollment code</label><input type="text" name="code" id="codeInput" required placeholder="Ask your cohort host" style="text-transform:uppercase" /></div>
       <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@college.edu" /></div>
       <div class="row2">
         <div class="field"><label>Full name</label><input type="text" name="full_name" required /></div>
@@ -483,6 +484,13 @@
   const COHORT_SLUG = 'cohort-01';
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const prefillCode = urlParams.get('code');
+  if (prefillCode) {
+    const el = document.getElementById('codeInput');
+    if (el) el.value = prefillCode.toUpperCase();
+  }
+
   window.openModal = () => document.getElementById('regModal').classList.add('open');
   window.closeModal = () => document.getElementById('regModal').classList.remove('open');
   window.openLogin = () => document.getElementById('loginModal').classList.add('open');
@@ -537,8 +545,18 @@
     const data = Object.fromEntries(new FormData(form).entries());
 
     try {
+      // Validate enrollment code
+      const codeRaw = (data.code || '').trim().toUpperCase();
+      if (!codeRaw) throw new Error('Enrollment code is required.');
+      const { data: codeRow, error: codeErr } = await supabase
+        .from('enrollment_codes').select('*').eq('code', codeRaw).maybeSingle();
+      if (codeErr) throw codeErr;
+      if (!codeRow) throw new Error('Invalid enrollment code.');
+      if (codeRow.expires_at && new Date(codeRow.expires_at) < new Date()) throw new Error('This code has expired.');
+      if (codeRow.max_uses && codeRow.used_count >= codeRow.max_uses) throw new Error('This code has reached its use limit.');
+
       const { data: cohort, error: cohortErr } = await supabase
-        .from('cohorts').select('id').eq('slug', COHORT_SLUG).single();
+        .from('cohorts').select('id').eq('id', codeRow.cohort_id).single();
       if (cohortErr) throw cohortErr;
 
       const { error: otpErr } = await supabase.auth.signInWithOtp({
@@ -554,6 +572,7 @@
               phone: data.phone,
               github_username: data.github_username,
               motivation: data.motivation,
+              code_id: codeRow.id,
             },
           },
         },
@@ -593,6 +612,10 @@
       motivation: pending.motivation,
       status: 'pending',
     }, { onConflict: 'user_id,cohort_id' });
+
+    if (pending.code_id) {
+      await supabase.rpc('increment_code_use', { code_id: pending.code_id }).catch(() => {});
+    }
 
     await supabase.auth.updateUser({ data: { pending_registration: null } });
 

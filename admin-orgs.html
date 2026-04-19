@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Orgs & Codes · Admin · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
+  .section-head h2{margin:0}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .filters input,.filters select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  .org-row{cursor:pointer}
+  .org-row.active td{background:rgba(195,255,54,.06)!important;border-left:2px solid var(--accent)}
+  .row-actions{display:flex;gap:8px;justify-content:flex-end}
+  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.danger:hover{border-color:var(--accent-3);color:#ffa0a0}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;place-items:center;z-index:100;padding:20px}
+  .modal-backdrop.show{display:grid}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h3{margin:0 0 18px;font-size:20px;letter-spacing:-.02em}
+  .modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .color-field{display:flex;gap:10px;align-items:center}
+  .color-field input[type="color"]{width:48px;height:42px;padding:2px;border-radius:10px;background:#0a0a12;border:1px solid var(--line);cursor:pointer}
+  .modal-actions{display:flex;gap:10px;margin-top:18px}
+  .modal-actions .submit-btn{flex:1}
+  .preview-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;gap:18px;align-items:center;margin-bottom:16px}
+  .preview-logo{width:56px;height:56px;border-radius:14px;background:#0a0a12;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;flex:none}
+  .preview-logo img{width:100%;height:100%;object-fit:cover}
+  .preview-logo.empty{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .preview-body{flex:1;min-width:0}
+  .preview-body h3{margin:0 0 6px;font-size:22px;letter-spacing:-.02em}
+  .preview-tag{color:var(--muted);font-size:13.5px;margin:0 0 12px}
+  .preview-btn{padding:10px 18px;border-radius:999px;border:none;font-weight:700;font-size:13.5px;cursor:default;font-family:inherit;color:#0b0b10}
+  .gen-btn{padding:10px 12px;border-radius:10px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit;font-size:12.5px}
+  .gen-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .code-with-btn{display:flex;gap:8px}
+  .code-with-btn input{flex:1}
+  .reveal-url{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;word-break:break-all;display:none}
+  .reveal-url.show{display:block}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
+  .col-meta{color:var(--muted);font-size:12px}
+  @media(max-width:700px){.modal-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only admin accounts can access this page.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- DENIED -->
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Not authorized</h2>
+      <p>You're signed in but not an admin. Ask an existing admin to flip <code>profiles.is_admin = true</code> for your account.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div style="margin:24px 0 8px">
+    <div class="kicker">Platform</div>
+    <h1>Orgs & codes</h1>
+  </div>
+
+  <!-- Live preview (shows when an org is selected) -->
+  <div id="previewWrap" style="display:none"></div>
+
+  <!-- ORGANIZATIONS -->
+  <div class="section-head">
+    <h2>Organizations</h2>
+    <button class="cta" id="newOrgBtn">+ New organization</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th><th>Slug</th><th>Cohorts</th><th>Registrations</th><th>Created</th><th style="text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="orgRows"></tbody>
+    </table>
+  </div>
+
+  <!-- ENROLLMENT CODES -->
+  <div class="section-head" style="margin-top:40px">
+    <h2 id="codesTitle">Enrollment codes</h2>
+    <div style="display:flex;gap:10px;align-items:center">
+      <select id="orgFilter" class="inline" style="padding:10px 14px;font-size:13.5px;border-radius:10px">
+        <option value="">All orgs</option>
+      </select>
+      <button class="cta" id="newCodeBtn">+ New code</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th><th>Organization</th><th>Cohort</th><th>Uses</th><th>Expires</th><th>Created</th><th style="text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="codeRows"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ORG MODAL -->
+<div class="modal-backdrop" id="orgModal">
+  <div class="modal">
+    <h3 id="orgModalTitle">New organization</h3>
+    <form id="orgForm">
+      <input type="hidden" name="id" />
+      <div class="modal-row">
+        <div class="field"><label>Name *</label><input type="text" name="name" required /></div>
+        <div class="field"><label>Slug *</label><input type="text" name="slug" required pattern="[a-z0-9-]+" /></div>
+      </div>
+      <div class="field"><label>Tagline</label><input type="text" name="tagline" /></div>
+      <div class="field"><label>Logo URL</label><input type="url" name="logo_url" placeholder="https://…" /></div>
+      <div class="field">
+        <label>Primary color</label>
+        <div class="color-field">
+          <input type="color" name="primary_color" value="#c3ff36" id="orgColor" />
+          <input type="text" name="primary_color_text" value="#c3ff36" id="orgColorText" style="flex:1;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px" />
+        </div>
+      </div>
+      <div class="msg" id="orgMsg"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-sm" style="padding:13px 18px;flex:none" id="orgCancel">Cancel</button>
+        <button type="submit" class="submit-btn" id="orgSubmit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CODE MODAL -->
+<div class="modal-backdrop" id="codeModal">
+  <div class="modal">
+    <h3>New enrollment code</h3>
+    <form id="codeForm">
+      <div class="field">
+        <label>Code *</label>
+        <div class="code-with-btn">
+          <input type="text" name="code" required style="font-family:'JetBrains Mono',monospace;text-transform:uppercase" />
+          <button type="button" class="gen-btn" id="genCodeBtn">Generate</button>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="field">
+          <label>Organization *</label>
+          <select name="organization_id" id="codeOrgSelect" required></select>
+        </div>
+        <div class="field">
+          <label>Cohort *</label>
+          <select name="cohort_id" id="codeCohortSelect" required></select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="field"><label>Max uses</label><input type="number" name="max_uses" min="1" placeholder="unlimited" /></div>
+        <div class="field"><label>Expires at</label><input type="datetime-local" name="expires_at" /></div>
+      </div>
+      <div class="msg" id="codeMsg"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-sm" style="padding:13px 18px;flex:none" id="codeCancel">Cancel</button>
+        <button type="submit" class="submit-btn" id="codeSubmit">Create code</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+
+  const $ = (id) => document.getElementById(id);
+  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-orgs.html');
+
+  let ORGS = [];
+  let COHORTS = [];
+  let CODES = [];
+  let REG_COUNTS = new Map(); // org_id -> registration count
+  let ACTIVE_ORG_ID = null;
+
+  // ---------- auth gate (same pattern as admin.html) ----------
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    await checkAdmin(session.user);
+  }
+  function showGate() { $('gate').style.display = 'grid'; $('denied').style.display = 'none'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'none'; }
+  function showDenied() { $('gate').style.display = 'none'; $('denied').style.display = 'grid'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'inline-block'; }
+  function showPanel() { $('gate').style.display = 'none'; $('denied').style.display = 'none'; $('panel').style.display = 'block'; $('signoutBtn').style.display = 'inline-block'; }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'); const msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
+    else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
+  });
+
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
+    if (event === 'SIGNED_OUT') showGate();
+  });
+
+  async function checkAdmin(user) {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!profile?.is_admin) return showDenied();
+    showPanel();
+    await loadAll();
+  }
+
+  // ---------- data loaders ----------
+  async function loadAll() {
+    await Promise.all([loadOrgs(), loadCohorts(), loadCodes(), loadRegistrationCounts()]);
+    renderOrgs();
+    renderOrgFilter();
+    renderCodes();
+    renderPreview();
+  }
+  async function loadOrgs() {
+    const { data, error } = await supabase.from('organizations').select('*').order('created_at', { ascending: false });
+    if (error) console.error(error);
+    ORGS = data || [];
+  }
+  async function loadCohorts() {
+    const { data } = await supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    COHORTS = data || [];
+  }
+  async function loadCodes() {
+    const { data } = await supabase.from('enrollment_codes').select('*').order('created_at', { ascending: false });
+    CODES = data || [];
+  }
+  async function loadRegistrationCounts() {
+    // join via cohorts -> org
+    const { data: regs } = await supabase.from('registrations').select('cohort_id');
+    const cohortToOrg = new Map(COHORTS.map(c => [c.id, c.organization_id]));
+    REG_COUNTS = new Map();
+    (regs || []).forEach(r => {
+      const oid = cohortToOrg.get(r.cohort_id);
+      if (!oid) return;
+      REG_COUNTS.set(oid, (REG_COUNTS.get(oid) || 0) + 1);
+    });
+  }
+
+  // ---------- orgs render ----------
+  function renderOrgs() {
+    if (!ORGS.length) {
+      $('orgRows').innerHTML = `<tr><td colspan="6" class="empty-state">No organizations yet. Create one to get started.</td></tr>`;
+      return;
+    }
+    $('orgRows').innerHTML = ORGS.map(o => {
+      const cohortCount = COHORTS.filter(c => c.organization_id === o.id).length;
+      const regCount = REG_COUNTS.get(o.id) || 0;
+      const isActive = o.id === ACTIVE_ORG_ID;
+      return `
+        <tr class="org-row ${isActive ? 'active' : ''}" data-org="${o.id}">
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:10px;height:10px;border-radius:3px;background:${esc(o.primary_color || '#c3ff36')};display:inline-block;flex:none"></span>
+              <b>${esc(o.name)}</b>
+            </div>
+            ${o.tagline ? `<div class="col-meta" style="margin-top:3px">${esc(o.tagline)}</div>` : ''}
+          </td>
+          <td class="mono" style="font-size:12.5px">${esc(o.slug)}</td>
+          <td>${cohortCount}</td>
+          <td>${regCount}</td>
+          <td class="muted" style="font-size:12px">${new Date(o.created_at).toLocaleDateString()}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-action="edit-org" data-id="${o.id}">Edit</button>
+              <button class="btn-sm danger" data-action="delete-org" data-id="${o.id}">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    $('orgRows').querySelectorAll('.org-row').forEach(tr => {
+      tr.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        const id = tr.dataset.org;
+        ACTIVE_ORG_ID = (ACTIVE_ORG_ID === id) ? null : id;
+        renderOrgs();
+        renderCodes();
+        renderPreview();
+        $('orgFilter').value = ACTIVE_ORG_ID || '';
+      });
+    });
+    $('orgRows').querySelectorAll('[data-action="edit-org"]').forEach(b => {
+      b.addEventListener('click', (e) => { e.stopPropagation(); openOrgModal(ORGS.find(o => o.id === b.dataset.id)); });
+    });
+    $('orgRows').querySelectorAll('[data-action="delete-org"]').forEach(b => {
+      b.addEventListener('click', (e) => { e.stopPropagation(); deleteOrg(b.dataset.id); });
+    });
+  }
+
+  function renderOrgFilter() {
+    $('orgFilter').innerHTML = `<option value="">All orgs</option>` +
+      ORGS.map(o => `<option value="${o.id}">${esc(o.name)}</option>`).join('');
+    $('orgFilter').value = ACTIVE_ORG_ID || '';
+  }
+
+  function renderPreview() {
+    const org = ORGS.find(o => o.id === ACTIVE_ORG_ID);
+    if (!org) { $('previewWrap').style.display = 'none'; $('previewWrap').innerHTML = ''; return; }
+    const color = org.primary_color || '#c3ff36';
+    $('previewWrap').style.display = 'block';
+    $('previewWrap').innerHTML = `
+      <div class="kicker" style="margin-top:18px">Live preview · ${esc(org.slug)}</div>
+      <div class="preview-card">
+        <div class="preview-logo ${org.logo_url ? '' : 'empty'}">
+          ${org.logo_url ? `<img src="${esc(org.logo_url)}" alt="" onerror="this.parentElement.classList.add('empty');this.remove();this.parentElement.textContent='logo'" />` : 'logo'}
+        </div>
+        <div class="preview-body">
+          <h3>${esc(org.name)}</h3>
+          <p class="preview-tag">${esc(org.tagline || 'No tagline set.')}</p>
+          <button class="preview-btn" style="background:${esc(color)}">Start learning →</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ---------- org modal ----------
+  function openOrgModal(org) {
+    const f = $('orgForm');
+    f.reset();
+    $('orgMsg').className = 'msg';
+    if (org) {
+      $('orgModalTitle').textContent = 'Edit organization';
+      f.elements.id.value = org.id;
+      f.elements.name.value = org.name || '';
+      f.elements.slug.value = org.slug || '';
+      f.elements.tagline.value = org.tagline || '';
+      f.elements.logo_url.value = org.logo_url || '';
+      const c = org.primary_color || '#c3ff36';
+      $('orgColor').value = c; $('orgColorText').value = c;
+    } else {
+      $('orgModalTitle').textContent = 'New organization';
+      f.elements.id.value = '';
+      $('orgColor').value = '#c3ff36'; $('orgColorText').value = '#c3ff36';
+    }
+    $('orgModal').classList.add('show');
+  }
+  $('newOrgBtn').addEventListener('click', () => openOrgModal(null));
+  $('orgCancel').addEventListener('click', () => $('orgModal').classList.remove('show'));
+  $('orgModal').addEventListener('click', (e) => { if (e.target === $('orgModal')) $('orgModal').classList.remove('show'); });
+
+  // auto slug from name
+  $('orgForm').elements.name.addEventListener('input', (e) => {
+    const slugField = $('orgForm').elements.slug;
+    if (!slugField.dataset.touched) {
+      slugField.value = slugify(e.target.value);
+    }
+  });
+  $('orgForm').elements.slug.addEventListener('input', (e) => { e.target.dataset.touched = '1'; });
+
+  $('orgColor').addEventListener('input', (e) => { $('orgColorText').value = e.target.value; });
+  $('orgColorText').addEventListener('input', (e) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) $('orgColor').value = e.target.value;
+  });
+
+  $('orgForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('orgMsg'); const btn = $('orgSubmit');
+    msg.className = 'msg'; btn.disabled = true; btn.textContent = 'Saving…';
+    const fd = new FormData(e.target);
+    const id = fd.get('id') || null;
+    const payload = {
+      name: fd.get('name').trim(),
+      slug: slugify(fd.get('slug')),
+      tagline: fd.get('tagline').trim() || null,
+      logo_url: fd.get('logo_url').trim() || null,
+      primary_color: fd.get('primary_color_text').trim() || '#c3ff36',
+    };
+
+    // client-side slug check
+    const { data: existing } = await supabase.from('organizations').select('id').eq('slug', payload.slug).maybeSingle();
+    if (existing && existing.id !== id) {
+      msg.className = 'msg show err'; msg.textContent = `Slug "${payload.slug}" already in use.`;
+      btn.disabled = false; btn.textContent = 'Save'; return;
+    }
+
+    let error;
+    if (id) ({ error } = await supabase.from('organizations').update(payload).eq('id', id));
+    else ({ error } = await supabase.from('organizations').insert(payload));
+
+    if (error) {
+      const m = error.code === '23505' ? `Slug "${payload.slug}" already in use.` : error.message;
+      msg.className = 'msg show err'; msg.textContent = m;
+      btn.disabled = false; btn.textContent = 'Save'; return;
+    }
+    $('orgModal').classList.remove('show');
+    btn.disabled = false; btn.textContent = 'Save';
+    $('orgForm').elements.slug.dataset.touched = '';
+    await loadOrgs(); await loadRegistrationCounts();
+    renderOrgs(); renderOrgFilter(); renderPreview();
+    toast('Organization saved ✓');
+  });
+
+  async function deleteOrg(id) {
+    const o = ORGS.find(x => x.id === id);
+    if (!o) return;
+    if (!confirm(`Delete "${o.name}"?\n\nThis will CASCADE delete all cohorts, enrollment codes, and potentially registrations linked to them. This cannot be undone.`)) return;
+    const { error } = await supabase.from('organizations').delete().eq('id', id);
+    if (error) { alert(error.message); return; }
+    if (ACTIVE_ORG_ID === id) ACTIVE_ORG_ID = null;
+    await loadAll();
+    toast('Organization deleted ✓');
+  }
+
+  // ---------- codes render ----------
+  function renderCodes() {
+    const filter = $('orgFilter').value || ACTIVE_ORG_ID || '';
+    const rows = filter ? CODES.filter(c => c.organization_id === filter) : CODES;
+    const orgMap = new Map(ORGS.map(o => [o.id, o]));
+    const cohortMap = new Map(COHORTS.map(c => [c.id, c]));
+
+    const activeOrg = ORGS.find(o => o.id === ACTIVE_ORG_ID);
+    $('codesTitle').textContent = activeOrg ? `Enrollment codes · ${activeOrg.name}` : 'Enrollment codes';
+
+    if (!rows.length) {
+      $('codeRows').innerHTML = `<tr><td colspan="7" class="empty-state">No enrollment codes${filter ? ' for this org' : ''} yet.</td></tr>`;
+      return;
+    }
+    $('codeRows').innerHTML = rows.map(c => {
+      const org = orgMap.get(c.organization_id);
+      const cohort = cohortMap.get(c.cohort_id);
+      const uses = `${c.used_count || 0}${c.max_uses ? ` / ${c.max_uses}` : ' / ∞'}`;
+      const expires = c.expires_at ? new Date(c.expires_at).toLocaleString() : '—';
+      return `
+        <tr>
+          <td>
+            <span class="mono" style="font-weight:700;font-size:13px">${esc(c.code)}</span>
+            <div class="reveal-url" id="url-${c.id}">${esc(buildEnrollUrl(c.code))}</div>
+          </td>
+          <td>${org ? esc(org.name) : '<span class="muted">—</span>'}</td>
+          <td>${cohort ? esc(cohort.name) : '<span class="muted">—</span>'}</td>
+          <td>${esc(uses)}</td>
+          <td class="muted" style="font-size:12px">${esc(expires)}</td>
+          <td class="muted" style="font-size:12px">${new Date(c.created_at).toLocaleDateString()}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-action="copy" data-id="${c.id}" data-code="${esc(c.code)}">Copy link</button>
+              <button class="btn-sm" data-action="reveal" data-id="${c.id}">Reveal</button>
+              <button class="btn-sm danger" data-action="delete-code" data-id="${c.id}">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    $('codeRows').querySelectorAll('[data-action="copy"]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const url = buildEnrollUrl(b.dataset.code);
+        try { await navigator.clipboard.writeText(url); toast('Copied ✓'); }
+        catch { toast('Copy failed'); }
+      });
+    });
+    $('codeRows').querySelectorAll('[data-action="reveal"]').forEach(b => {
+      b.addEventListener('click', () => {
+        const el = document.getElementById(`url-${b.dataset.id}`);
+        el.classList.toggle('show');
+        b.textContent = el.classList.contains('show') ? 'Hide' : 'Reveal';
+      });
+    });
+    $('codeRows').querySelectorAll('[data-action="delete-code"]').forEach(b => {
+      b.addEventListener('click', () => deleteCode(b.dataset.id));
+    });
+  }
+
+  $('orgFilter').addEventListener('change', (e) => {
+    ACTIVE_ORG_ID = e.target.value || null;
+    renderOrgs(); renderCodes(); renderPreview();
+  });
+
+  function buildEnrollUrl(code) {
+    const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+    return `${base}?code=${encodeURIComponent(code)}`;
+  }
+
+  // ---------- code modal ----------
+  function openCodeModal() {
+    const f = $('codeForm'); f.reset();
+    $('codeMsg').className = 'msg';
+    $('codeOrgSelect').innerHTML = ORGS.map(o => `<option value="${o.id}">${esc(o.name)}</option>`).join('');
+    if (ACTIVE_ORG_ID) $('codeOrgSelect').value = ACTIVE_ORG_ID;
+    updateCohortSelect();
+    $('codeModal').classList.add('show');
+  }
+  function updateCohortSelect() {
+    const orgId = $('codeOrgSelect').value;
+    const cohorts = COHORTS.filter(c => c.organization_id === orgId);
+    $('codeCohortSelect').innerHTML = cohorts.length
+      ? cohorts.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')
+      : `<option value="">— no cohorts for this org —</option>`;
+  }
+  $('newCodeBtn').addEventListener('click', () => {
+    if (!ORGS.length) { alert('Create an organization first.'); return; }
+    openCodeModal();
+  });
+  $('codeCancel').addEventListener('click', () => $('codeModal').classList.remove('show'));
+  $('codeModal').addEventListener('click', (e) => { if (e.target === $('codeModal')) $('codeModal').classList.remove('show'); });
+  $('codeOrgSelect').addEventListener('change', updateCohortSelect);
+  $('genCodeBtn').addEventListener('click', () => { $('codeForm').elements.code.value = randomCode(8); });
+  $('codeForm').elements.code.addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase(); });
+
+  $('codeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('codeMsg'); const btn = $('codeSubmit');
+    msg.className = 'msg'; btn.disabled = true; btn.textContent = 'Creating…';
+    const fd = new FormData(e.target);
+    const payload = {
+      code: fd.get('code').trim().toUpperCase(),
+      organization_id: fd.get('organization_id'),
+      cohort_id: fd.get('cohort_id'),
+      max_uses: fd.get('max_uses') ? parseInt(fd.get('max_uses'), 10) : null,
+      expires_at: fd.get('expires_at') ? new Date(fd.get('expires_at')).toISOString() : null,
+      used_count: 0,
+    };
+    if (!payload.cohort_id) {
+      msg.className = 'msg show err'; msg.textContent = 'Pick a cohort.';
+      btn.disabled = false; btn.textContent = 'Create code'; return;
+    }
+    const { error } = await supabase.from('enrollment_codes').insert(payload);
+    if (error) {
+      const m = error.code === '23505' ? `Code "${payload.code}" already exists.` : error.message;
+      msg.className = 'msg show err'; msg.textContent = m;
+      btn.disabled = false; btn.textContent = 'Create code'; return;
+    }
+    $('codeModal').classList.remove('show');
+    btn.disabled = false; btn.textContent = 'Create code';
+    await loadCodes();
+    renderCodes();
+    toast('Enrollment code created ✓');
+  });
+
+  async function deleteCode(id) {
+    const c = CODES.find(x => x.id === id);
+    if (!c) return;
+    if (!confirm(`Delete code "${c.code}"? This cannot be undone.`)) return;
+    const { error } = await supabase.from('enrollment_codes').delete().eq('id', id);
+    if (error) { alert(error.message); return; }
+    await loadCodes();
+    renderCodes();
+    toast('Code deleted ✓');
+  }
+
+  // ---------- utils ----------
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function slugify(s) { return String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function randomCode(n) {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let out = ''; const buf = new Uint32Array(n); crypto.getRandomValues(buf);
+    for (let i = 0; i < n; i++) out += alphabet[buf[i] % alphabet.length];
+    return out;
+  }
+  let toastTimer;
+  function toast(text) {
+    const t = $('toast'); t.textContent = text; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  init();
+</script>
+</body>
+</html>

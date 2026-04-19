@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lesson · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .lesson-wrap{max-width:720px;margin:0 auto;padding:32px 24px 120px}
+  .crumbs{font-size:13px;color:var(--muted);margin-bottom:26px}
+  .crumbs a:hover{color:var(--ink)}
+
+  .lesson-head{margin-bottom:28px}
+  .head-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .head-row .wtag{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.18em;padding:4px 10px;border:1px solid var(--line);border-radius:999px}
+  .head-row .daytag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);padding:4px 10px;border:1px solid rgba(195,255,54,.3);border-radius:999px;background:rgba(195,255,54,.06)}
+  .lesson-title{font-size:44px;line-height:1.05;letter-spacing:-.03em;margin:0 0 10px;font-weight:700}
+  .lesson-tag{font-family:"Instrument Serif",serif;font-style:italic;color:var(--muted);font-size:20px;margin:0}
+
+  .live-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+  .live-pill-lg{font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(56,189,248,.12);color:#7dd5ff;border:1px solid rgba(56,189,248,.25)}
+  .btn-join{padding:8px 14px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit}
+  .btn-complete{padding:8px 14px;border-radius:999px;background:transparent;color:var(--ink);border:1px solid var(--line);font-size:13px;cursor:pointer;font-family:inherit;display:inline-flex;gap:8px;align-items:center}
+  .btn-complete.done{background:rgba(195,255,54,.1);border-color:rgba(195,255,54,.4);color:#c9f76a}
+  .btn-complete .chk{width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;display:grid;place-items:center}
+  .btn-complete.done .chk{background:var(--accent);border-color:var(--accent);color:#0b0b10}
+
+  /* Frontmatter header strip */
+  .lm-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px;color:var(--muted);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:22px 0 26px}
+  .lm-read{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em}
+  .lm-tags{display:inline-flex;gap:6px;flex-wrap:wrap}
+
+  .lm-video{position:relative;aspect-ratio:16/9;width:100%;margin:0 0 28px;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line)}
+  .lm-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .lm-lab{display:block;padding:22px 24px;border:1px solid rgba(195,255,54,.35);background:linear-gradient(145deg,rgba(195,255,54,.06),rgba(195,255,54,.02));border-radius:16px;margin:0 0 28px;transition:all .15s}
+  .lm-lab:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 6px 24px rgba(195,255,54,.08)}
+  .lm-lab-kicker{font-size:11.5px;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:6px}
+  .lm-lab-title{font-size:19px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+  .lm-lab-host{font-size:12px;font-family:"JetBrains Mono",monospace}
+
+  .lm-resources{margin:0 0 20px}
+  .lm-sec-h{font-size:11.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:10px;font-weight:600}
+  .lm-resources ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+  .lm-resources a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;transition:border-color .15s,background .15s}
+  .lm-resources a:hover{border-color:#3a3a4e;background:rgba(255,255,255,.02)}
+  .lm-host{font-size:11px;font-family:"JetBrains Mono",monospace}
+
+  /* Markdown body */
+  .content{font-size:16px;line-height:1.7;color:var(--ink)}
+  .content h1{font-size:44px;line-height:1.05;letter-spacing:-.03em;margin:48px 0 16px;font-weight:700}
+  .content h2{font-size:28px;letter-spacing:-.02em;margin:44px 0 14px;font-weight:600}
+  .content h3{font-size:20px;letter-spacing:-.01em;margin:32px 0 10px;font-weight:600}
+  .content p{margin:0 0 18px}
+  .content ul,.content ol{margin:0 0 20px;padding-left:22px}
+  .content li{margin:6px 0}
+  .content a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+  .content blockquote{border-left:3px solid var(--accent);background:rgba(195,255,54,.04);padding:14px 18px;margin:20px 0;border-radius:0 10px 10px 0;color:#d4d4dd}
+  .content blockquote p:last-child{margin:0}
+  .content code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:13.5px}
+  .content pre{background:rgba(255,255,255,.04);border:1px solid var(--line);padding:16px 18px;border-radius:12px;overflow-x:auto;margin:20px 0}
+  .content pre code{background:transparent;padding:0;font-size:13.5px;line-height:1.6}
+  .content hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+  .content img{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+
+  /* Notes */
+  .notes{margin-top:56px;padding-top:28px;border-top:1px solid var(--line)}
+  .notes h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
+  .notes .notes-sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .notes textarea{width:100%;min-height:160px;background:#0a0a12;border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);font-family:inherit;font-size:14.5px;line-height:1.6;resize:vertical;outline:none}
+  .notes textarea:focus{border-color:var(--accent)}
+  .notes-status{font-size:12px;color:var(--muted);margin-top:8px;font-family:"JetBrains Mono",monospace}
+
+  /* Prev/next */
+  .pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:60px}
+  .pager a{padding:18px 20px;border:1px solid var(--line);border-radius:14px;transition:border-color .15s}
+  .pager a:hover{border-color:#3a3a4e}
+  .pager .plabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px}
+  .pager .ptitle{font-size:14.5px;font-weight:500;letter-spacing:-.01em}
+  .pager .next{text-align:right}
+  .pager .placeholder{opacity:.35;pointer-events:none}
+
+  .locked-card{padding:40px 28px;text-align:center}
+  .locked-ic{font-size:40px;margin-bottom:10px}
+  .placeholder-note{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;margin:20px 0}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Lesson</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Gate shown if not signed in -->
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Sign in required</div>
+    <h2>You need to be signed in to view lessons</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Head back to the dashboard to sign in with your magic link.</p>
+    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-align:center;text-decoration:none">Go to Dashboard →</a>
+  </div>
+</div>
+
+<!-- Error/invalid state -->
+<div class="gate" id="errorGate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Not found</div>
+    <h2 id="errorTitle">Invalid day</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px" id="errorMsg">That day doesn't exist. Pick one from the dashboard.</p>
+    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-align:center;text-decoration:none">← Back to Dashboard</a>
+  </div>
+</div>
+
+<!-- Main lesson view -->
+<main class="lesson-wrap" id="lesson" style="display:none">
+  <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
+
+  <header class="lesson-head">
+    <div class="head-row">
+      <span class="wtag" id="weekTag">WEEK 01</span>
+      <span class="daytag" id="dayTag">DAY 01</span>
+    </div>
+    <h1 class="lesson-title" id="lessonTitle">—</h1>
+    <p class="lesson-tag" id="weekTitle">—</p>
+
+    <div class="live-row" id="liveRow"></div>
+  </header>
+
+  <div id="metaHeader"></div>
+  <article class="content" id="content"></article>
+
+  <!-- Notes -->
+  <section class="notes">
+    <h3>Your notes</h3>
+    <div class="notes-sub">Private to you. Auto-saves when you click away.</div>
+    <textarea id="notesArea" placeholder="Jot down questions, aha-moments, things to try later…"></textarea>
+    <div class="notes-status" id="notesStatus"></div>
+  </section>
+
+  <nav class="pager" id="pager"></nav>
+</main>
+
+<!-- Locked view -->
+<main class="lesson-wrap" id="lockedView" style="display:none">
+  <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
+  <header class="lesson-head">
+    <div class="head-row">
+      <span class="wtag" id="lWeekTag">WEEK 01</span>
+      <span class="daytag" id="lDayTag">DAY 01</span>
+    </div>
+    <h1 class="lesson-title" id="lLessonTitle">—</h1>
+  </header>
+  <div class="card locked-card">
+    <div class="locked-ic">🔒</div>
+    <h2 style="margin:0 0 8px">This day is locked</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 16px" id="lockedMsg">Check back closer to the session.</p>
+    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-decoration:none;max-width:260px">← Back to Dashboard</a>
+  </div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { DAYS, WEEK_TITLES } from './assets/days.js';
+  import { renderLesson, renderFrontmatterHeader } from './assets/content-renderer.js';
+
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2, '0');
+
+  function showError(title, msg) {
+    $('errorGate').style.display = 'grid';
+    if (title) $('errorTitle').textContent = title;
+    if (msg) $('errorMsg').textContent = msg;
+  }
+  function showGate() { $('gate').style.display = 'grid'; }
+
+  // Parse ?n=
+  const params = new URLSearchParams(location.search);
+  const nRaw = params.get('n');
+  const n = parseInt(nRaw, 10);
+  if (!Number.isInteger(n) || n < 1 || n > 30) {
+    showError('Invalid day', `"${nRaw ?? ''}" is not a valid day number. Pick one between 1 and 30.`);
+    throw new Error('invalid day');
+  }
+
+  const dayMeta = DAYS.find(d => d.n === n);
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    await loadLesson(session.user);
+  }
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) loadLesson(session.user);
+    if (event === 'SIGNED_OUT') { location.reload(); }
+  });
+
+  async function loadLesson(user) {
+    // Cohort
+    const { data: cohort, error: cohortErr } = await supabase
+      .from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    if (cohortErr || !cohort) {
+      return showError('Cohort not found', cohortErr?.message || 'Could not load cohort.');
+    }
+
+    // Cohort day row
+    const { data: cday } = await supabase
+      .from('cohort_days').select('*')
+      .eq('cohort_id', cohort.id).eq('day_number', n).maybeSingle();
+
+    // Locked view
+    if (!cday || cday.is_unlocked === false) {
+      $('lWeekTag').textContent = `WEEK ${pad(dayMeta.w)}`;
+      $('lDayTag').textContent = `DAY ${pad(n)}`;
+      $('lLessonTitle').textContent = dayMeta.title;
+      if (cday?.live_session_at) {
+        const when = new Date(cday.live_session_at);
+        $('lockedMsg').textContent = `Live session scheduled for ${when.toLocaleString()}.`;
+      }
+      $('lockedView').style.display = 'block';
+      return;
+    }
+
+    // Render main lesson shell
+    $('weekTag').textContent = `WEEK ${pad(dayMeta.w)}`;
+    $('dayTag').textContent = `DAY ${pad(n)}`;
+    $('lessonTitle').textContent = dayMeta.title;
+    $('weekTitle').textContent = WEEK_TITLES[dayMeta.w];
+
+    // Live session pill + join button
+    const liveRow = $('liveRow');
+    liveRow.innerHTML = '';
+    if (cday.live_session_at) {
+      const when = new Date(cday.live_session_at);
+      const pill = document.createElement('span');
+      pill.className = 'live-pill-lg';
+      pill.textContent = `Live · ${when.toLocaleString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}`;
+      liveRow.appendChild(pill);
+
+      if (cday.meet_link) {
+        const within = Math.abs(when.getTime() - Date.now()) < 12 * 3600 * 1000;
+        if (within) {
+          const a = document.createElement('a');
+          a.href = cday.meet_link;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.className = 'btn-join';
+          a.textContent = 'Join session →';
+          liveRow.appendChild(a);
+        }
+      }
+    }
+
+    // Mark complete button
+    const completeBtn = document.createElement('button');
+    completeBtn.className = 'btn-complete';
+    completeBtn.innerHTML = `<span class="chk"><svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Mark complete</span>`;
+    liveRow.appendChild(completeBtn);
+
+    // Fetch user's lab_progress for this day (for completion state + notes)
+    const { data: lp } = await supabase.from('lab_progress')
+      .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', n)
+      .maybeSingle();
+    let isDone = !!lp;
+    let hasRow = !!lp;
+
+    function paintComplete() {
+      completeBtn.classList.toggle('done', isDone);
+      completeBtn.querySelector('.lbl').textContent = isDone ? 'Completed' : 'Mark complete';
+    }
+    paintComplete();
+
+    completeBtn.addEventListener('click', async () => {
+      completeBtn.disabled = true;
+      if (isDone) {
+        // Delete the row entirely (per spec: "delete if present")
+        const { error } = await supabase.from('lab_progress').delete()
+          .eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', n);
+        if (!error) { isDone = false; hasRow = false; }
+      } else {
+        const { error } = await supabase.from('lab_progress').insert({
+          user_id: user.id, cohort_id: cohort.id, day_number: n,
+          notes: $('notesArea').value || null,
+        });
+        if (!error) { isDone = true; hasRow = true; }
+      }
+      paintComplete();
+      completeBtn.disabled = false;
+    });
+
+    // Notes — prefill + debounced autosave on blur
+    const notesArea = $('notesArea');
+    const notesStatus = $('notesStatus');
+    if (lp?.notes) notesArea.value = lp.notes;
+
+    let saveTimer = null;
+    async function saveNotes() {
+      const value = notesArea.value;
+      notesStatus.textContent = 'Saving…';
+      const { error } = await supabase.from('lab_progress').upsert({
+        user_id: user.id,
+        cohort_id: cohort.id,
+        day_number: n,
+        notes: value || null,
+      }, { onConflict: 'user_id,cohort_id,day_number' });
+      if (error) {
+        notesStatus.textContent = `Save failed: ${error.message}`;
+      } else {
+        hasRow = true;
+        const t = new Date().toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
+        notesStatus.textContent = `Saved at ${t}`;
+      }
+    }
+    notesArea.addEventListener('blur', () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveNotes, 300);
+    });
+
+    // Prev / Next pager
+    const pager = $('pager');
+    const prev = n > 1 ? DAYS.find(d => d.n === n - 1) : null;
+    const next = n < 30 ? DAYS.find(d => d.n === n + 1) : null;
+    pager.innerHTML = `
+      ${prev
+        ? `<a href="day.html?n=${prev.n}"><div class="plabel">← Previous · Day ${pad(prev.n)}</div><div class="ptitle">${prev.title}</div></a>`
+        : `<div class="placeholder"></div>`}
+      ${next
+        ? `<a class="next" href="day.html?n=${next.n}"><div class="plabel">Next · Day ${pad(next.n)} →</div><div class="ptitle">${next.title}</div></a>`
+        : `<div class="placeholder"></div>`}
+    `;
+
+    // Fetch content markdown
+    try {
+      const res = await fetch(`content/day-${pad(n)}.md`, { cache: 'no-cache' });
+      if (res.ok) {
+        const md = await res.text();
+        const { meta, html } = renderLesson(md);
+        $('metaHeader').innerHTML = renderFrontmatterHeader(meta);
+        $('content').innerHTML = html;
+      } else {
+        $('content').innerHTML = `<div class="placeholder-note">Content for Day ${pad(n)} is being prepared. Check back soon.</div>`;
+      }
+    } catch (e) {
+      $('content').innerHTML = `<div class="placeholder-note">Couldn't load content for Day ${pad(n)}.</div>`;
+    }
+
+    $('lesson').style.display = 'block';
+  }
+
+  init();
+</script>
+</body>
+</html>

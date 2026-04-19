@@ -17,9 +17,15 @@
   .week-head .wn{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.15em}
   .week-head h3{margin:0;font-size:20px;letter-spacing:-.02em}
   .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-  .day-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .15s}
+  .day-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit}
   .day-item:hover{border-color:#3a3a4e}
   .day-item.done{background:rgba(195,255,54,.06);border-color:rgba(195,255,54,.3)}
+  .day-item.locked{opacity:.45;cursor:not-allowed;background:#0d0d14}
+  .day-item.locked:hover{border-color:var(--line)}
+  .day-item.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .lock-ic{color:var(--muted)}
+  .day-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .live-pill{font-size:10.5px;padding:2px 8px;border-radius:999px;background:rgba(56,189,248,.15);color:#7dd5ff;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
   .checkbox{width:22px;height:22px;border:2px solid var(--line);border-radius:7px;display:grid;place-items:center;flex-shrink:0;transition:all .15s}
   .day-item.done .checkbox{background:var(--accent);border-color:var(--accent)}
   .checkbox svg{opacity:0;transition:opacity .15s}
@@ -187,12 +193,15 @@
     renderRegStatus(reg);
     toggleEnrollCard(user, cohort, profile, reg);
 
-    const { data: progress } = await supabase.from('lab_progress')
-      .select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id);
-    const doneSet = new Set((progress || []).map(p => p.day_number));
+    const [progressRes, scheduleRes] = await Promise.all([
+      supabase.from('lab_progress').select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id),
+      supabase.from('cohort_days').select('*').eq('cohort_id', cohort.id),
+    ]);
+    const doneSet = new Set((progressRes.data || []).map(p => p.day_number));
+    const scheduleMap = new Map((scheduleRes.data || []).map(d => [d.day_number, d]));
 
     renderProgress(doneSet);
-    renderWeeks(user, cohort, doneSet);
+    renderWeeks(user, cohort, doneSet, scheduleMap);
   }
 
   function toggleEnrollCard(user, cohort, profile, reg) {
@@ -269,9 +278,10 @@
     $('streak').textContent = done === 30 ? 'Completed 🏆' : `${30 - done} days to go`;
   }
 
-  function renderWeeks(user, cohort, doneSet) {
+  function renderWeeks(user, cohort, doneSet, scheduleMap) {
     const container = $('weeksContainer');
     container.innerHTML = '';
+    const now = Date.now();
     for (let w = 1; w <= 4; w++) {
       const days = DAYS.filter(d => d.w === w);
       const block = document.createElement('div');
@@ -279,20 +289,44 @@
       block.innerHTML = `
         <div class="week-head"><span class="wn">WEEK ${String(w).padStart(2,'0')}</span><h3>${WEEK_TITLES[w]}</h3></div>
         <div class="day-grid">
-          ${days.map(d => `
-            <div class="day-item ${doneSet.has(d.n) ? 'done' : ''}" data-day="${d.n}">
-              <div class="checkbox"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="#0b0b10" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          ${days.map(d => {
+            const sched = scheduleMap.get(d.n);
+            const unlocked = sched?.is_unlocked;
+            const liveAt = sched?.live_session_at ? new Date(sched.live_session_at).getTime() : null;
+            const isToday = liveAt && Math.abs(liveAt - now) < 12*3600*1000;
+            const cls = ['day-item',
+              doneSet.has(d.n) ? 'done' : '',
+              !unlocked ? 'locked' : '',
+              isToday ? 'today' : ''].filter(Boolean).join(' ');
+            const href = unlocked ? `day.html?n=${d.n}` : '#';
+            const lockIcon = `<svg class="lock-ic" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5"/></svg>`;
+            const checkBox = `<div class="checkbox" data-toggle="1"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="#0b0b10" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+            return `
+            <a class="${cls}" data-day="${d.n}" data-unlocked="${unlocked ? 1 : 0}" href="${href}">
+              ${unlocked ? checkBox : lockIcon}
               <div class="day-body">
-                <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
+                <div class="day-top">
+                  <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
+                  ${isToday ? '<span class="live-pill">Today</span>' : ''}
+                </div>
                 <div class="day-t">${d.title}</div>
               </div>
-            </div>
-          `).join('')}
+            </a>`;
+          }).join('')}
         </div>`;
       container.appendChild(block);
     }
     container.querySelectorAll('.day-item').forEach(el => {
-      el.addEventListener('click', () => toggleDay(user, cohort, el, doneSet));
+      if (el.dataset.unlocked === '0') {
+        el.addEventListener('click', (e) => e.preventDefault());
+        return;
+      }
+      const cb = el.querySelector('[data-toggle]');
+      if (cb) cb.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDay(user, cohort, el, doneSet);
+      });
     });
   }
 
