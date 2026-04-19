@@ -1,5 +1,6 @@
 ---
 reading_time: 15 min
+tldr: "A vague problem is the root of every wasted sprint. Sharpen the question before you chase the answer."
 tags: ["framing", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Rewrite a vague problem three times", "url": "https://excalidraw.com/"}

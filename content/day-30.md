@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Demo day. Stand up, tell the story, show the thing, take the hits. Then keep going."
 tags: ["capstone", "pitch", "storytelling"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Demo prep checklist and dress rehearsal", "url": "https://www.ycombinator.com/library/"}

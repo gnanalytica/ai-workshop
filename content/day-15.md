@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "AI isn't magic or sentient — it's a very good next-token predictor. Knowing that changes how you use it."
 tags: ["ai", "llms", "theory"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Chatbot triangulation: same prompt, three models", "url": "https://chat.openai.com/"}

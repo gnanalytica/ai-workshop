@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Prompting is a craft with rules — clarity, context, constraints, examples. Stop guessing, start iterating."
 tags: ["ai", "llms", "prompting", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Prompt battles: five styles on one classification task", "url": "https://python.langchain.com/docs/"}

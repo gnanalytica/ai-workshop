@@ -1,148 +1,166 @@
 ---
-reading_time: 15 min
-tags: ["web", "fundamentals", "hands-on"]
+reading_time: 14 min
+tldr: "A click is a 50ms trip across DNS, TCP, HTTPS, servers, DBs, and back. Understand the trip, own the debugging."
+tags: ["concepts", "web", "mental-model"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Build a campus events page with vanilla HTML/CSS/JS", "url": "https://example.com/labs/day-09"}
-resources: [{"title": "MDN Web Docs", "url": "https://developer.mozilla.org/en-US/"}, {"title": "MDN: HTML basics", "url": "https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics"}, {"title": "MDN: JavaScript first steps", "url": "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps"}]
+lab: {"title": "Anatomy of a web page", "url": "https://developer.mozilla.org/en-US/docs/Web"}
+resources: [{"title": "MDN: HTTP overview", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview"}, {"title": "MDN: DOM introduction", "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction"}]
 ---
 
 ## Intro
 
-Before React, before Next.js, before any framework you'll use later — the web is three languages glued together by a browser. If you understand that glue, every framework stops being magic. Today is HTML for structure, CSS for appearance, JavaScript for behavior, and how they meet in the DOM.
+Yesterday you saw that software is boxes exchanging notes. Today we zoom into the web — the world's biggest note-passing system. By the end you should be able to trace a single click from a fingertip to a pixel on the other side of the planet, and back.
 
-## Read: The three-language stack
+## Read: The trip a click makes
 
-### HTML is a tree, not a page
+A click looks instant. It is not. In the ~200 milliseconds between tap and render, ten separate systems cooperate.
 
-A browser doesn't see your HTML as lines of text. It parses it into a **DOM tree** — a nested structure of nodes. Everything else (CSS selectors, JS queries) hangs off that tree.
+```
+  tap --> browser --> DNS --> TCP --> TLS --> HTTP request --> server
+                                                                  |
+     render <-- parse <-- HTTP response <-- database <-- logic <---+
+```
 
-```html
+We'll walk it in English. No code.
+
+### Step 1 — DNS: the internet's contact book
+
+You type `instagram.com`. Your computer doesn't know where that is. It asks a **DNS resolver** (usually your ISP's or Cloudflare's `1.1.1.1`) to translate the name into an IP address like `157.240.23.174`. Think of DNS as the phone directory. Names are for humans; IP addresses are for machines.
+
+> DNS is cached aggressively. That's why a new domain takes a few minutes to "propagate".
+
+### Step 2 — TCP + TLS: dialing and securing the line
+
+Your browser opens a **TCP** connection to that IP. TCP is the reliability layer — it guarantees the bytes arrive in order, none dropped. Then **TLS** wraps the whole conversation in encryption (that's what the padlock icon means). Without TLS, the Wi-Fi router at your café could read everything.
+
+### Step 3 — HTTP: the message format
+
+Once connected, your browser sends an **HTTP request**. It looks like this:
+
+```
+Example — you're reading, not typing.
+
+GET /accounts/login/ HTTP/1.1
+Host: instagram.com
+User-Agent: Mozilla/5.0 (...)
+Accept: text/html
+Cookie: sessionid=abc123
+```
+
+Four things matter:
+
+- **Method** (`GET`, `POST`, `PUT`, `DELETE`) — the verb.
+- **Path** (`/accounts/login/`) — the noun.
+- **Headers** — metadata (who you are, what you accept, your session cookie).
+- **Body** (for POST/PUT) — the payload.
+
+The server replies with a **status code** and a body:
+
+```
+Example — you're reading, not typing.
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+Set-Cookie: sessionid=xyz789
+
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Campus Events</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header><h1>This week on campus</h1></header>
-    <main>
-      <ul id="events"></ul>
-    </main>
-    <script src="app.js" defer></script>
-  </body>
-</html>
+<html>...
 ```
 
-Use **semantic** tags (`<header>`, `<main>`, `<article>`, `<nav>`) instead of `<div>` soup. Screen readers, search engines, and your teammates will thank you.
+| Status | Meaning | You'll see it when |
+|---|---|---|
+| 200 | OK | Things work |
+| 301 / 302 | Redirect | URL changed |
+| 400 | Bad request | You sent garbage |
+| 401 / 403 | Not authorized | You're not logged in / not allowed |
+| 404 | Not found | Typo in URL or deleted resource |
+| 500 | Server exploded | Their bug, not yours |
+| 503 | Service unavailable | Their server overloaded |
 
-### CSS: the cascade, the box, and layout
+Memorize the families (2xx ok, 3xx redirect, 4xx your fault, 5xx their fault). Everything else you can Google.
 
-Three things to internalize:
+### Step 4 — The server does work
 
-1. **The box model.** Every element is a box with content, padding, border, margin. `box-sizing: border-box` is the setting you want (the default is surprising).
-2. **The cascade.** More specific selectors win. `#hero h1` beats `h1`. Inline styles beat everything except `!important` (don't).
-3. **Modern layout.** Flexbox for one-dimensional rows/columns. Grid for two-dimensional layouts. Forget `float` for layout.
+The server reads the request, checks your cookie, fetches rows from a database, maybe calls two other APIs, assembles a response, sends it back. This is the part we'll unpack on Days 10 and 11.
 
-```css
-:root {
-  --accent: #ff5a1f;
-  --bg: #0b0b0f;
-  --fg: #f4f4f5;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font: 16px/1.5 system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--fg);
-}
-#events {
-  list-style: none; padding: 0;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-.event {
-  padding: 1rem; border: 1px solid #333; border-radius: 8px;
-}
-.event h3 { margin: 0 0 .25rem; color: var(--accent); }
+### Step 5 — The browser parses and renders
+
+The browser receives HTML, parses it into a **DOM** (Document Object Model — a tree of elements), applies **CSS** (styling), and runs **JavaScript** (interactivity). The DOM is the live, in-memory representation of the page.
+
+```
+         html
+          |
+    +-----+------+
+   head         body
+    |            |
+  title     +----+----+
+           nav  main  footer
+                 |
+               article
+                 |
+              paragraph
 ```
 
-### JavaScript: events and the DOM
+When you click a "Like" button, JavaScript often updates the DOM **and** fires a new HTTP request in the background to tell the server. The page doesn't fully reload. This is the SPA / modern-web pattern.
 
-JS runs in the browser, sees the DOM, and reacts to events. The three moves you'll do constantly:
+### Frontend vs backend, now concretely
 
-```js
-// 1. query the DOM
-const list = document.querySelector("#events");
+| Runs on | Languages typically seen | Artifact |
+|---|---|---|
+| Frontend (client) | HTML, CSS, JavaScript/TypeScript | DOM in a tab |
+| Backend (server) | Python, Node, Go, Java, Ruby | Running process |
 
-// 2. fetch data
-const res = await fetch("events.json");
-const events = await res.json();
+You will not write any of these this month. You will direct an AI that does. But you must recognize them when you see them.
 
-// 3. render
-list.innerHTML = events
-  .map(e => `<li class="event"><h3>${e.title}</h3><p>${e.when}</p></li>`)
-  .join("");
-```
+### A real example: liking a post on Insta
 
-`async/await` with `fetch` is the modern way. Avoid jQuery and avoid raw XMLHttpRequest.
+1. Tap the heart — event fires in the client.
+2. JavaScript updates the heart to red **optimistically** (state lives in the DOM).
+3. Parallel fetch goes out: `POST /api/like` with the post ID + your session cookie.
+4. Server checks auth, writes a row to a `likes` table, notifies the poster's phone via a push service.
+5. Server replies `200 OK`.
+6. If the server replied `500`, the client quietly rolls back the heart.
 
-### How browsers actually load a page
+That's the whole web in one screen.
 
-| Step | What happens |
-|------|--------------|
-| 1 | DNS resolves domain to IP |
-| 2 | Browser opens TCP + TLS to the server |
-| 3 | Sends `GET /` — server returns HTML |
-| 4 | Browser parses HTML, discovers CSS/JS/images, requests them |
-| 5 | CSS blocks render; JS (without `defer`) blocks parsing |
-| 6 | DOM + CSSOM combine into render tree, layout, paint |
+## Watch: The browser is a rendering engine
 
-Open DevTools → Network tab on any site. Watch the waterfall. This view will save you hours of "why is my site slow" confusion later.
-
-> If you only learn one devtool this week, learn Chrome/Firefox DevTools cold.
-
-## Watch: Anatomy of a web page
-
-A walkthrough of a single static page — inspecting the DOM, tweaking CSS live, adding a JS event listener, and watching requests in the Network tab.
+Watch one visual explainer of how a browser turns HTML into pixels. Pay more attention to the pictures than the words.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch which requests block rendering vs. happen after.
-- Notice how editing CSS in DevTools updates the page with no reload.
-- See how `console.log` + breakpoints beat scattering `alert()`.
+- Watch for the moment HTML becomes a tree.
+- Notice when CSS and JS block rendering.
+- See how images and fonts arrive late and cause **layout shift**.
 
-## Lab: Campus events, no framework
+## Lab: Anatomy of a web page (40 min)
 
-Build a single static page that reads `events.json` and renders this week's campus events. No React, no build step, no npm — just three files.
+No code. Browser devtools only.
 
-1. Create `campus-events/` with `index.html`, `style.css`, `app.js`, `events.json`.
-2. Seed `events.json` with 6 events: `{"title": "...", "when": "...", "where": "...", "club": "..."}`.
-3. Write `index.html` with semantic tags (`<header>`, `<main>`, `<footer>`) and an empty `<ul id="events">`. Link CSS in `<head>` and JS with `defer`.
-4. Style with CSS Grid so cards reflow from 1 column on mobile to 3 on desktop. Use CSS variables for colors.
-5. In `app.js`, `fetch("events.json")`, parse, and render cards. Escape user content (don't just `innerHTML` a raw string — use `textContent` for fields).
-6. Add a search box that filters events as you type. Use `input` event + `Array.filter`.
-7. Add a "sort by date" toggle button.
-8. Serve locally with `python3 -m http.server 8000`. Visit `http://localhost:8000`. You can't `fetch` from a `file://` URL — this is why we need a server.
-9. Open DevTools → Lighthouse. Run a report. Fix any red accessibility issues (usually: missing `alt`, low contrast, missing `<label>`).
-10. Commit to a new repo `campus-events`. You'll deploy this on Day 14.
+1. Open three sites of different styles: a news site (ndtv.com), a SaaS product (linear.app), a social network you use.
+2. On each, open devtools → **Elements** tab. This is the live DOM.
+3. Hover over elements in the Elements panel — watch them highlight on the page. Pick 3 elements per site (a button, a heading, an image) and note their tag (`button`, `h1`, `img`).
+4. Switch to the **Network** tab, filter by `Doc`. Look at the request and response headers for the main document on each site. Spot the `Content-Type`, `Set-Cookie`, and any `Cache-Control` headers.
+5. In the Network tab, filter by `Fetch/XHR`. Count how many API calls each site makes in the first 5 seconds.
+6. Pick one API call and look at its **Response** preview — it will usually be JSON. Note one field name you understand.
+7. On the Excalidraw canvas (or paper), draw the 5-step trip-a-click diagram from the reading, filled in with **real values** from the news site: the domain, the IP (devtools shows it under `Remote Address`), one header, one status code, one DOM element.
+8. Export the diagram.
 
-Stretch: add a "RSVP" button that stores a count in `localStorage` so it survives refresh.
+Submit the diagram + a screenshot of the Network tab.
 
 ## Quiz
 
-Four questions covering the DOM vs. HTML distinction, what `defer` does, the difference between Flexbox and Grid, and why `fetch` fails on `file://`. One short answer on the cascade.
+Short-answer on: DNS's job, what a status code family means, what the DOM is, the difference between a page load and an API call, and what "optimistic UI" means.
 
 ## Assignment
 
-Submit the `campus-events` GitHub repo link. It must render correctly when served via `python3 -m http.server` and include your Lighthouse report screenshot in `docs/lighthouse.png`. Accessibility score must be 90+.
+Pick one app or site you love. Write a 300-word "trip report" tracing a single user action (send a DM, add to cart, mark as done) through all five boxes from Day 8. Include one diagram. No code.
 
-## Discuss: Framework tax
+## Discuss: Seeing the invisible
 
-- A senior tells you "just use Next.js from day one." What do you gain and what do you lose by starting with a framework before vanilla JS?
-- When would a static HTML+CSS page beat a React SPA for a campus event site?
-- You see a 2 MB JS bundle on a college fest website that shows 10 events. What went wrong upstream?
-- Should CSS live in a separate file, in `<style>`, or inline? Argue for each in different contexts.
+- Why does the first load of a site feel slower than subsequent loads, even on the same Wi-Fi?
+- A friend says "the internet is down". What three things would you actually check?
+- Your college portal shows a 502 error during result time. Whose fault is it, and what does the status code family tell you?
+- If TLS didn't exist, what would be different about using Wi-Fi at a café?
+- Modern apps update the page without a full reload. What tradeoff does that introduce?

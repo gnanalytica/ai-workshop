@@ -1,5 +1,6 @@
 ---
 reading_time: 15 min
+tldr: "Every hard problem is a system. Map the loops, find the leverage, avoid symptom-chasing."
 tags: ["systems", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Draw a causal-loop diagram of a campus problem", "url": "https://excalidraw.com/"}

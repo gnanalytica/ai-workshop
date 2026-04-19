@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Agents = LLMs + tools + a loop. The magic, the fragility, and the future of applied AI."
 tags: ["agents", "product", "discussion"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Map the agent you'd actually build", "url": "https://langchain-ai.github.io/langgraph/"}

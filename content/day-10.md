@@ -1,153 +1,169 @@
 ---
-reading_time: 15 min
-tags: ["apis", "python", "hands-on"]
+reading_time: 14 min
+tldr: "APIs are contracts between systems. Learn to read them; AI writes the calls."
+tags: ["concepts", "apis", "systems"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Hit a real API with requests and handle pagination", "url": "https://example.com/labs/day-10"}
-resources: [{"title": "requests library", "url": "https://requests.readthedocs.io/"}, {"title": "httpbin — test HTTP requests", "url": "https://httpbin.org/"}, {"title": "JSONPlaceholder fake API", "url": "https://jsonplaceholder.typicode.com/"}, {"title": "MDN HTTP overview", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview"}]
+lab: {"title": "Three public APIs in Hoppscotch", "url": "https://hoppscotch.io/"}
+resources: [{"title": "Postman", "url": "https://www.postman.com/"}, {"title": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com/"}, {"title": "httpbin", "url": "https://httpbin.org/"}]
 ---
 
 ## Intro
 
-An API is just a contract: "if you send me this request, I'll send you back this response." Today you'll stop being intimidated by API docs and start reading them the way engineers do — method, path, auth, body, response, errors.
+If the web is a country, APIs are its common language. Every non-trivial app you've ever touched is a front-end talking to one or more APIs. Today we build the mental model without writing a single line of code.
 
-## Read: HTTP, REST, and the shape of a request
+## Read: APIs as menus, contracts, and pipes
 
-### The five things in every HTTP request
+### What an API actually is
 
-1. **Method** — `GET`, `POST`, `PUT`, `PATCH`, `DELETE`
-2. **URL** — `https://api.github.com/users/torvalds`
-3. **Headers** — metadata (auth, content type, user agent)
-4. **Body** — the payload (for `POST`/`PUT`/`PATCH`)
-5. **Query params** — `?page=2&per_page=50`
+**API** = Application Programming Interface. Strip the jargon: it is a **menu** a server publishes so other programs know what to order.
 
-And the five things in every response: **status code**, **headers**, **body**, **timing**, and (sometimes) **pagination hints**.
-
-### Status codes that matter
-
-| Code | Meaning | Who's at fault |
-|------|---------|----------------|
-| 200 | OK | nobody |
-| 201 | Created | nobody |
-| 204 | No Content | nobody |
-| 400 | Bad Request | you |
-| 401 | Unauthorized | you (no/bad token) |
-| 403 | Forbidden | you (wrong perms) |
-| 404 | Not Found | you (wrong URL) or them |
-| 429 | Rate Limited | you (too fast) |
-| 5xx | Server error | them |
-
-If you see `500` on your first call, it's usually *you* sending a malformed body — always check the response body before blaming the server.
-
-### `curl` is your microscope
-
-Before writing Python, hit the endpoint with `curl`. It's the fastest way to see what's happening.
-
-```bash
-curl -s https://api.github.com/users/torvalds | jq .
-curl -s -X POST https://httpbin.org/post \
-  -H "Content-Type: application/json" \
-  -d '{"hello": "world"}' | jq .
+```
+    [ Your app ]  --- GET /users/42 --->  [ Their API ]
+                                                 |
+                   <---  JSON response  ---------+
 ```
 
-`httpbin.org` echoes back what you sent — perfect for debugging.
+Three metaphors, pick the one that sticks:
 
-### Python: `requests` is still the default
+- **Menu at a restaurant** — defined dishes, defined ingredients, defined prices. You order, kitchen produces.
+- **Contract** — if you send X with shape Y, I promise to return Z.
+- **Pipe** — structured data flows in, structured data flows out. No human involved.
 
-```python
-import requests
+### Anatomy of an API call
 
-r = requests.get(
-    "https://api.github.com/users/torvalds/repos",
-    params={"per_page": 100, "page": 1},
-    headers={"User-Agent": "campus-workshop/1.0",
-             "Accept": "application/vnd.github+json"},
-    timeout=10,
-)
-r.raise_for_status()      # throw on 4xx/5xx
-data = r.json()
+| Part | Example | What it controls |
+|---|---|---|
+| Base URL | `https://api.github.com` | Which server |
+| Endpoint | `/users/torvalds` | Which resource |
+| Method | `GET` | What to do with it |
+| Headers | `Authorization: Bearer <token>` | Who you are, what format |
+| Query params | `?per_page=5&sort=created` | Filters |
+| Body | `{ "title": "Hello" }` | Payload for POST/PUT/PATCH |
+| Response | JSON (usually) | What you get back |
+
+### REST, the dominant dialect
+
+**REST** is a style, not a technology. Core idea: treat everything as a **resource** with a URL, act on it with HTTP verbs.
+
+| Verb | Intent | Example |
+|---|---|---|
+| GET | Read | `GET /orders/42` |
+| POST | Create | `POST /orders` |
+| PUT / PATCH | Update | `PATCH /orders/42` |
+| DELETE | Delete | `DELETE /orders/42` |
+
+A campus placement portal, restful:
+
+```
+GET    /students            list students
+GET    /students/CS22B007   get one
+POST   /students            register a new one
+PATCH  /students/CS22B007   update CGPA
+DELETE /students/CS22B007   withdraw
+GET    /companies/Zoho/applicants   nested resource
 ```
 
-Three things students skip and then regret:
+Readable. Predictable. Learnable.
 
-> **Always** set a `timeout`. Without one, a hung server hangs your script forever.
-> **Always** call `raise_for_status()` (or check `r.status_code`) before using `r.json()`.
-> **Always** set a `User-Agent`. Some APIs silently block unknown clients.
+### What a JSON response looks like
 
-### Pagination, rate limits, retries
+```
+Example — you're reading, not typing.
 
-Most APIs paginate. Three common styles:
-
-- **Offset/limit**: `?page=2&per_page=50`
-- **Cursor**: response includes `next_cursor`, pass it back
-- **Link header**: GitHub style — `Link: <...>; rel="next"`
-
-Loop until there's no next page. Back off on `429`:
-
-```python
-import time
-def get_all(url, params):
-    out, page = [], 1
-    while True:
-        r = requests.get(url, params={**params, "page": page}, timeout=10)
-        if r.status_code == 429:
-            time.sleep(int(r.headers.get("Retry-After", "5")))
-            continue
-        r.raise_for_status()
-        batch = r.json()
-        if not batch: return out
-        out.extend(batch)
-        page += 1
+{
+  "id": "CS22B007",
+  "name": "Priya Menon",
+  "cgpa": 8.9,
+  "skills": ["python", "ml", "react"],
+  "placed": false,
+  "applications": [
+    { "company": "Zoho",   "status": "shortlisted" },
+    { "company": "Swiggy", "status": "rejected" }
+  ]
+}
 ```
 
-### Auth in 30 seconds
+JSON is just key–value pairs, arrays, and nesting. If you can read a WhatsApp contact card, you can read JSON.
 
-| Scheme | Header | Where you get the token |
-|--------|--------|-------------------------|
-| API key | `Authorization: Bearer xxx` or `X-API-Key: xxx` | dashboard |
-| OAuth | `Authorization: Bearer xxx` | login flow |
-| Basic | `Authorization: Basic base64(user:pass)` | rare now |
+### REST vs GraphQL vs RPC — one-line mental model
 
-Never commit tokens. Use environment variables + `python-dotenv`.
+| Style | Mental model | When you'll meet it |
+|---|---|---|
+| REST | "GET a resource by URL" | Most public APIs (GitHub, Stripe) |
+| GraphQL | "Send a shopping list, get exactly that" | Apps with deep nested UIs (Shopify, GitHub v4) |
+| gRPC / RPC | "Call a function on another machine" | Internal microservices |
+| WebSockets | "Keep the line open, talk both ways" | Chat, live scores, collaborative editing |
 
-## Watch: Reading API docs like an engineer
+You don't need to pick today. You need to recognize them when an AI suggests one.
 
-A walkthrough of how to land on a new API's docs page and go from "I have no idea" to a working `curl` in five minutes.
+### Auth: the part everyone gets wrong
+
+Most APIs need to know who's calling. Four common patterns:
+
+- **API key** — a long string in a header. Simple, for server-to-server.
+- **OAuth / login tokens** — user logs in, app gets a token on their behalf. "Sign in with Google" is this.
+- **JWT** — a self-describing token the server can verify without a database lookup.
+- **Session cookie** — the browser default; works because browsers auto-send cookies.
+
+> A leaked API key is the single most common security incident among student projects. Treat them like your password — never commit them to GitHub.
+
+### Rate limits, idempotency, versioning
+
+Three words that separate toy APIs from real ones:
+
+- **Rate limit** — "You can call me 60 times per minute. After that, 429." Twitter, GitHub, OpenAI all rate-limit.
+- **Idempotent** — calling it twice is the same as calling it once. `GET` is idempotent; naive `POST /pay` is not. Payment APIs invent an idempotency key so you don't double-charge.
+- **Versioning** — `/v1/users` vs `/v2/users`. APIs change; versions let old clients keep working.
+
+### A concrete story: the Dunzo clone
+
+Your dummy Dunzo clone needs four APIs:
+
+1. **Your own backend** — user accounts, orders.
+2. **Maps API** — distance, ETA, directions.
+3. **Payments API** — Razorpay/Stripe to charge the card.
+4. **SMS API** — Twilio/MSG91 to text the OTP.
+
+Your server is a conductor. Each box plays one instrument. Your code is the score. Tomorrow we'll see where the data itself lives.
+
+## Watch: APIs in 100 seconds, then deeper
+
+Watch a short "APIs in 100 seconds" explainer, then a longer REST walkthrough.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch how they find the base URL, auth section, and one example endpoint first.
-- Notice they test with `curl` or Postman before writing code.
-- See how they map error codes back to docs.
+- Spot the difference between an API and a website.
+- Notice how the same backend can serve a web app, an Android app, and a smartwatch.
+- Pay attention to the word **endpoint**.
 
-## Lab: Build a GitHub repo explorer
+## Lab: Three APIs in Hoppscotch (40 min)
 
-Use the public GitHub API (no auth needed for low traffic, but you'll get better rate limits with a token). Goal: given a username, fetch all their public repos, handle pagination, dump to CSV, and print top 5 by stars.
+Browser-based, no install, no code.
 
-1. Create project: `mkdir gh-explorer && cd gh-explorer && python3 -m venv .venv && source .venv/bin/activate && pip install requests`.
-2. First, hit it by hand: `curl -s "https://api.github.com/users/torvalds/repos?per_page=5" | jq '.[].name'`. Read the response shape.
-3. Create a [personal access token](https://github.com/settings/tokens) (classic, no scopes needed for public). Put it in `.env`: `GH_TOKEN=ghp_...`. Add `.env` to `.gitignore` now.
-4. Write `explorer.py`. Load the token with `os.environ.get("GH_TOKEN")` (use `python-dotenv` if you prefer).
-5. Implement `get_repos(username)` that paginates until no more repos come back. Use `per_page=100`. Handle 404 (user doesn't exist) with a clean error message.
-6. Add retry + backoff for `429` and `5xx`. Cap at 3 retries.
-7. Write `repos.csv` with columns: `name, stars, forks, language, updated_at`. Use the `csv` module.
-8. Print the top 5 repos by stars as a table. Use plain `print` or `rich` if you want polish.
-9. Add `--user` as a CLI arg via `argparse`. Run it on 3 different usernames.
-10. Commit, push, open a GitHub issue on your own repo listing one thing that surprised you about the API.
+1. Open `https://hoppscotch.io/`. Leave the method as `GET`.
+2. **API 1 — GitHub user**. Enter `https://api.github.com/users/torvalds`. Send. Look at the JSON response. On a worksheet, write: 3 fields you understand, the status code, the `content-type` response header.
+3. **API 2 — JSONPlaceholder (fake blog)**. `GET https://jsonplaceholder.typicode.com/posts/1`. Send. Change the ID to `2`, `10`, `999`. Note when you get a 404 and why.
+4. **API 3 — OpenLibrary**. `GET https://openlibrary.org/search.json?q=the+alchemist`. Send. Count how many results. Try a different query param.
+5. On httpbin, `GET https://httpbin.org/headers`. Look at what headers **your browser** sent without you realising.
+6. Try one `POST` on `https://jsonplaceholder.typicode.com/posts` with a JSON body of your choice. The API will pretend to save it and echo back an `id`.
+7. On paper, design a mini-menu for a *hostel laundry tracker* API: list 4 endpoints with method + path + one-line purpose each. Do not write code. Design only.
+8. Export the worksheet + a screenshot of one Hoppscotch response.
 
-Stretch: swap the target to the [OpenLibrary API](https://openlibrary.org/developers/api) and list the top 10 works by an author.
+Submit the worksheet + screenshots.
 
 ## Quiz
 
-Four questions on HTTP methods and status codes, what `raise_for_status()` does, pagination strategies, and where to put secrets.
+4 questions: identify a method from a scenario, read a JSON response and extract a field, explain what a 429 means, describe one difference between REST and GraphQL in your own words.
 
 ## Assignment
 
-Submit the `gh-explorer` repo. Include a `README.md` with the exact command to run it, a sample `repos.csv` (for a public user like `torvalds`), and one paragraph in a `NOTES.md` on how you decided to handle rate limits.
+Pick an app you use (Ola, Swiggy, LinkedIn, whatever). Sketch its likely **public API** as a list of 6–10 endpoints (method + path + purpose). Bonus: mark which third-party APIs it probably calls. Submission: one-page PDF or markdown doc. No code.
 
-## Discuss: API design choices
+## Discuss: Thinking in contracts
 
-- GitHub uses `Link` headers for pagination; Stripe uses cursors; most small APIs use `?page=`. Why do big APIs move to cursors as they scale?
-- Should an API return `200` with `{"error": "..."}` or a real `4xx`? What does each choice cost the client?
-- A teammate commits an API key to the repo. The repo is public for 20 minutes before they notice. What's the correct response, in order?
-- You're designing an API for a campus hostel booking app. Walk through three endpoints you'd expose and the method + path for each.
+- Why is `GET` idempotent but `POST` usually isn't? Give a scenario where that matters.
+- Razorpay vs UPI vs Paytm — if you were building a checkout, how would you decide which API to integrate first?
+- What's the difference between an API going down and an API returning a 500?
+- An API changes its response shape without a new version. What breaks in every app using it, and whose responsibility is the fix?
+- Could a restaurant's paper menu become "RESTful"? What would be the resource, what would be the verbs?

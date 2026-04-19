@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Tokens, attention, weights — the three primitives behind every LLM. Understand them, debug better prompts."
 tags: ["ai", "llms", "theory"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Tokenization surprises with tiktoken and HuggingFace", "url": "https://github.com/openai/tiktoken"}

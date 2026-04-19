@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Prompt, RAG, or fine-tune? A decision tree, not a religion. Cost, latency, maintainability — pick for the job."
 tags: ["ai", "llms", "fine-tuning", "rag", "prompting"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Three approaches, one task: prompting vs RAG vs LoRA fine-tune", "url": "https://github.com/unslothai/unsloth"}

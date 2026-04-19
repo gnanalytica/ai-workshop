@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "A great demo tells one story well. Problem → insight → demo → what's next. Rehearse out loud."
 tags: ["pitch", "storytelling", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "3-slide pitch and live demo rehearsal", "url": "https://www.ycombinator.com/library/"}

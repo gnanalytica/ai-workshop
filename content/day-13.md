@@ -1,137 +1,154 @@
 ---
-reading_time: 15 min
-tags: ["ai-tools", "fundamentals", "hands-on"]
+reading_time: 14 min
+tldr: "You are the director, not the typist. AI writes code; you shape intent, critique output, and steer."
+tags: ["concepts", "ai-tools", "vibe"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Set up Ollama + Continue and refactor with an AI pair", "url": "https://example.com/labs/day-13"}
-resources: [{"title": "Ollama", "url": "https://ollama.com/"}, {"title": "Continue (VS Code)", "url": "https://www.continue.dev/"}, {"title": "Cursor", "url": "https://cursor.com/"}, {"title": "Cline", "url": "https://cline.bot/"}]
+lab: {"title": "Direct an AI pair programmer (no typing)", "url": "https://cursor.com/"}
+resources: [{"title": "Cursor", "url": "https://cursor.com/"}, {"title": "Claude Code", "url": "https://www.anthropic.com/claude-code"}, {"title": "Replit", "url": "https://replit.com/"}]
 ---
 
 ## Intro
 
-You've spent a week learning fundamentals the hard way. Now you'll meet the tool that's changing how developers work: an AI pair programmer. Today is not about *how LLMs work* — that's next week. Today is about *using one well* as a tool, without becoming dependent on it.
+The last four days gave you the mental model of software. Today you put on the director's chair. Your job is not to type code. Your job is to tell an AI what to build, read what it produced, critique it, and steer it. This is the skill that will define the next decade of work.
 
-## Read: Pair programming with AI, pragmatically
+## Read: From programmer to director
 
-### What an AI pair programmer actually is
+### The shift
 
-It's an editor integration — VS Code, JetBrains, Neovim — that can:
+The word "programmer" is becoming a verb that humans do less and less. In 2026, you will spend more time:
 
-- Autocomplete the next few lines.
-- Answer questions about code you highlight.
-- Suggest edits to a file you're in.
-- Run multi-file refactors when you ask.
+- describing intent,
+- reviewing diffs,
+- asking for changes,
+- and approving shipping,
 
-That's it. It's not a magic engineer. It's a fast, confident, sometimes-wrong collaborator that reads what you show it.
+than you spend typing. Tools like **Cursor**, **Claude Code**, **Windsurf**, **bolt.new**, **v0**, **Lovable**, and **Replit Agent** are the camera, lights, and crew. You are the director.
 
-### The tools you'll see this year
+> Andrej Karpathy coined "vibe coding": describing the *feel* of what you want and letting the model commit it into being. It is a real skill, not a gimmick.
 
-| Tool | Runs models | Best for | Cost |
-|------|-------------|----------|------|
-| [Ollama](https://ollama.com/) | local | privacy, offline, free | free (your machine) |
-| [Continue](https://www.continue.dev/) | local or cloud | VS Code/JetBrains with your choice of model | free (open source) |
-| [Cline](https://cline.bot/) | cloud | autonomous multi-file edits in VS Code | free + bring-your-own-key |
-| [Cursor](https://cursor.com/) | cloud | full editor rebuilt around AI | paid tier |
+### The director's four verbs
 
-Today we'll use **Ollama + Continue** because it runs locally, costs nothing, and teaches you how these tools work underneath.
+| Verb | What you do | Analogy |
+|---|---|---|
+| Intent | Describe the goal with context | "We're shooting a heist sequence" |
+| Critique | Read output and identify what's off | "Light the face from the left" |
+| Constrain | Narrow the solution space | "Keep it under 90 seconds" |
+| Verify | Run / click / observe the result | Watch the playback |
 
-### The three modes of AI assistance
+Bad directors skip critique and verify. They ask, accept, and ship. Then things blow up.
 
-1. **Autocomplete.** Ghost text as you type. Accept with Tab. Reject by typing.
-2. **Chat.** Ask a question about highlighted code. Good for "explain this" or "why is this slow?"
-3. **Edit.** Describe a change; the tool proposes a diff. Good for "rename this variable everywhere" or "add type hints to this function."
+### The anatomy of a great prompt to a coding AI
 
-Beginners reach for chat. Pros use autocomplete for flow and edit mode for refactors.
+A weak prompt: *"make a todo app"*
 
-### How to use it well (and how not to)
+A director's prompt:
 
-> Treat AI suggestions like a pull request from an unfamiliar contributor. Read it, run it, test it. **Never merge unread.**
+> Build a single-page todo app. Stack: vanilla HTML + CSS + vanilla JS in one file. Requirements: add a todo (Enter to submit), toggle done (click), delete (x button), persist in localStorage. No dependencies, no build step. Design: clean, minimal, dark mode by default, system font, responsive. When done, show me the file tree and wait for my review before making further changes.
 
-Do:
-- Read every line before accepting.
-- Keep functions short so the AI has tight context.
-- Use it to *speed up* things you already understand.
-- Write the tests yourself, or review AI-generated tests extra carefully.
+Every clause is a dial:
 
-Don't:
-- Let it write code you can't explain.
-- Paste confidential code into cloud tools without checking policy.
-- Accept its first answer when debugging — ask for alternatives.
-- Use it as a search engine replacement for core concepts you need to learn.
+- **Stack** constrains the solution space.
+- **Requirements** define "done".
+- **Constraints** ("no dependencies", "one file") prevent scope creep.
+- **Design** communicates taste.
+- **Protocol** ("wait for review") controls the loop.
 
-### Local models, briefly
+### The context-quality axis
 
-`ollama pull qwen2.5-coder:7b` downloads a coding-focused model (~4 GB). It runs on your laptop. It's not as strong as frontier cloud models, but it's:
+AI output quality is mostly a function of the context you give it. Order of impact, roughly:
 
-- Private (nothing leaves your machine).
-- Free to run.
-- Good enough for refactors, explanations, and autocomplete on most codebases.
+1. A **clear goal** (1 sentence).
+2. **Concrete constraints** (tech stack, file layout, "do not").
+3. **Examples** of the style / output you want.
+4. **The existing codebase** being in the tool's working memory (Cursor handles this; chat UIs don't).
+5. **Feedback loops** — let it run, see the result, iterate.
 
-For a student laptop, a 7B model is usually the sweet spot. 3B runs everywhere but feels weaker; 13B+ needs 16 GB+ RAM and a decent GPU.
+If your output is bad, your context was bad. "The AI is dumb" is almost always wrong.
 
-### A note on *not* becoming dependent
+### When to let the AI drive vs when to pause
 
-The biggest risk with AI tools is skill atrophy. If you accept every completion without reading, in six months you'll be a worse engineer than you are today. The fix is boring: regularly write chunks of code with the tool off. Treat AI like a forklift, not a wheelchair.
+| Let AI drive | Pause and think yourself |
+|---|---|
+| Boilerplate, setup, scaffolding | Schema / data model decisions |
+| Renaming, refactoring, porting | Security, auth, payments |
+| Fixing obvious bugs from errors | Anything irreversible (deletes, migrations) |
+| Writing tests for existing code | Architectural choices (REST vs WS, SQL vs NoSQL) |
+| UI styling iterations | Naming the product |
 
-## Watch: A real refactor with an AI pair
+Rule of thumb: **the AI writes; you decide**.
 
-A short walkthrough of taking a messy 80-line Python function, splitting it with Continue's edit mode, and reviewing each proposed change.
+### The critique loop
+
+Once the AI produces code, your job is to **read the diff like a PR reviewer**:
+
+1. Does it match the intent? (Not "does it compile"; does it solve what I asked.)
+2. Is the approach sensible? (Any red flags — fake data, hard-coded secrets, needless complexity?)
+3. What did it skip or assume silently?
+4. What would break in a real user's hands?
+
+Then respond with targeted feedback, not vague frustration. *"The delete button deletes immediately; add an undo toast that lasts 5 seconds"* beats *"the delete is bad, fix it"*.
+
+### Common traps
+
+- **The agreement trap**: the AI will happily agree with a wrong direction. Push back on its confidence.
+- **The hallucinated API**: it imagines a library function that doesn't exist. Always run the code.
+- **The silent skip**: it says "I've implemented it" but left a `TODO` inside a function. Read the diff.
+- **The yes-machine loop**: you ask for a change, it over-corrects, you ask again, it over-corrects back. Break the loop by restating the spec.
+- **The single-file blob**: it puts everything in one file. Ask for structure upfront.
+
+### The modern toolbelt in one table
+
+| Tool | Best for | Where it runs | You type code? |
+|---|---|---|---|
+| Cursor | Working on a real codebase, IDE-first | Desktop | Rarely; AI types |
+| Claude Code | Terminal-native agentic work | Terminal | No |
+| Windsurf | IDE with deeper agentic loops | Desktop | Rarely |
+| bolt.new | From-scratch web apps in browser | Browser | No |
+| v0 by Vercel | UI components, React/Next.js | Browser | No |
+| Lovable | End-to-end web apps with deploy | Browser | No |
+| Replit Agent | Cloud IDE that can also deploy | Browser | No |
+| ChatGPT / Claude.ai | Ad-hoc snippets, explanations | Browser | Copy-paste |
+
+All of these are the pen. You are the author.
+
+## Watch: Vibe-coding in practice
+
+Watch one senior engineer stream a real session with Cursor or Claude Code. Pay attention to what they *do not* type.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch how the author accepts some suggestions and rejects others.
-- Notice they run tests after every accepted change.
-- See what they do when the AI confidently proposes a wrong fix.
+- Notice how often they stop the AI mid-stream.
+- Notice how they phrase corrections.
+- Notice that they still read every diff.
 
-## Lab: Ollama + Continue, end to end
+## Lab: Direct an AI pair programmer (45 min)
 
-Install a local AI pair programmer and use it to improve yesterday's code.
+**If you're tempted to type code yourself, stop and ask the AI to do it.** Your hands type English only.
 
-1. Install Ollama from [ollama.com](https://ollama.com/). Verify: `ollama --version`. Start the service (macOS/Windows: it auto-starts; Linux: `ollama serve &`).
-2. Pull a coding model:
-   ```bash
-   ollama pull qwen2.5-coder:7b
-   ollama run qwen2.5-coder:7b "write a python function that reverses a string"
-   ```
-   Confirm you get a sensible answer.
-3. In VS Code, install the **Continue** extension from the Marketplace.
-4. Open Continue's config (`~/.continue/config.json` or via the UI) and add Ollama as a provider:
-   ```json
-   {
-     "models": [
-       {
-         "title": "Qwen Coder 7B",
-         "provider": "ollama",
-         "model": "qwen2.5-coder:7b"
-       }
-     ],
-     "tabAutocompleteModel": {
-       "title": "Qwen Coder 7B",
-       "provider": "ollama",
-       "model": "qwen2.5-coder:7b"
-     }
-   }
-   ```
-5. Reload VS Code. Open your Day 10 `gh-explorer/explorer.py`. Confirm you get ghost-text autocomplete as you type.
-6. Highlight the `get_all` pagination function. Open Continue chat. Ask: *"Explain what this does and one edge case it doesn't handle."* Read the answer critically — is it right?
-7. Use edit mode (Cmd/Ctrl+I). Prompt: *"Add a `max_pages` parameter (default 10) to prevent runaway loops. Keep behavior unchanged when not passed."* Review the diff. Accept only if correct.
-8. Run your script against a known user. Confirm output is unchanged.
-9. Commit in a new branch `feat/ai-refactor` with a clear message. Open a PR to your own repo. In the PR description, list exactly which lines were AI-suggested vs. hand-written.
-10. Disable Continue. Without AI help, write a small function `top_n_by(items, key, n)` and a test. Notice how it feels.
+1. Install **Cursor** (`cursor.com`) or **Claude Code** (`anthropic.com/claude-code`). Sign in.
+2. Create an empty folder, open it in the tool. Start a new chat/agent session.
+3. Write a **director's prompt** for a small utility — e.g. "a single-page JPEG-to-WebP converter that runs entirely in the browser, no backend, with drag-and-drop and a download button". Include stack, constraints, design, and protocol. Paste your prompt into your worksheet.
+4. Let the AI generate. **Do not** edit the code yourself. Read the diff.
+5. Open the file in a browser. Try it. Find one real bug or UX flaw. Describe it in one sentence in your worksheet.
+6. Ask the AI to fix exactly that, with one constraint added (e.g. "also show original-vs-new file size"). Review the new diff.
+7. Iterate 2–3 more rounds. For each round, log: your prompt, the change, and whether you accepted or pushed back.
+8. At the end, write a 5-line retrospective: what worked, what didn't, what you'd do differently. Attach the final file and your iteration log.
 
-Stretch: try Cline instead of Continue for a multi-file change. Compare the experience.
+Submit the log + the final output.
 
 ## Quiz
 
-Three questions on when to use autocomplete vs. chat vs. edit, one on local vs. cloud tradeoffs, and one short answer on what "skill atrophy" means in this context.
+4 questions: given a weak prompt, rewrite it as a director's prompt; identify one failure mode in a provided AI-written diff; list three tasks you should *not* offload to the AI; define "vibe coding" in one sentence.
 
 ## Assignment
 
-Submit the PR link from step 9. In a 6-line `AI-USAGE.md` in that PR, describe: which tool, which model, one suggestion you *rejected* and why, and one bug the AI missed that you caught. This reflection is the point, not the code.
+Compare two AI tools (e.g. Cursor vs bolt.new) on the same small spec. Submit a 1-page reflection: what each did well, which you'd choose for what job, and one screenshot each. No code from you. Submission: PDF + screenshots.
 
-## Discuss: Pair, or crutch?
+## Discuss: The director's chair
 
-- Where's the line between "using AI to go faster" and "letting AI do the thinking"? Give a specific example of each.
-- Your college has a rule against "AI assistance" in assignments. Your internship expects you to use Copilot daily. How do you hold both?
-- Local models (Ollama) vs. cloud models (Cursor). When does each win?
-- You catch a teammate submitting an AI-generated PR they clearly didn't read. How do you handle it?
+- If AI can write most of the code, what is left for a human engineer to own?
+- What's the difference between being lazy and being a good director? They can look similar from the outside.
+- When is it worth reading every line vs trusting the AI and running the code?
+- A junior teammate vibe-codes a PR you can tell they don't fully understand. How do you respond?
+- Five years out, which parts of this workflow do you think will be gone entirely?

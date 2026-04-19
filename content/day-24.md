@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "MCP is the USB-C of AI — one protocol to plug tools into any model. Write a server, be part of the ecosystem."
 tags: ["mcp", "agents", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Write your first MCP server", "url": "https://modelcontextprotocol.io/"}

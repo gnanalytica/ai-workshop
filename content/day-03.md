@@ -1,5 +1,6 @@
 ---
 reading_time: 15 min
+tldr: "Design thinking is a muscle — empathize, define, ideate, prototype, test — not a ceremony."
 tags: ["design", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Run a tiny problem through five stages in 45 minutes", "url": "https://excalidraw.com/"}

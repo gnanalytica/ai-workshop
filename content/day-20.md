@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "RAG = retrieval + generation. Grounded answers, lower hallucinations, domain adaptation without training."
 tags: ["ai", "rag", "hands-on", "llms"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Tiny RAG over local PDFs with LlamaIndex + Ollama", "url": "https://docs.llamaindex.ai/"}

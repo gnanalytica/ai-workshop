@@ -1,5 +1,6 @@
 ---
 reading_time: 15 min
+tldr: "Decomposition, pattern-matching, abstraction, algorithmic thinking — the thinking moves that outlive any language."
 tags: ["computational", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Decompose a decision with the four CT primitives", "url": "https://excalidraw.com/"}

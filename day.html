@@ -59,6 +59,9 @@
   .btn-join{padding:8px 14px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
 
   .lm-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px;color:var(--muted);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:20px 0 30px}
+  .tldr-card{background:linear-gradient(135deg,rgba(195,255,54,.1),rgba(195,255,54,.03));border:1px solid rgba(195,255,54,.3);border-radius:14px;padding:18px 22px;margin:0 0 28px;display:flex;gap:16px;align-items:flex-start}
+  .tldr-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.18em;font-weight:700;padding-top:3px;flex-shrink:0}
+  .tldr-body{font-size:16px;line-height:1.55;color:var(--ink);letter-spacing:-.01em}
   .lm-read{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em}
   .lm-tags{display:inline-flex;gap:6px;flex-wrap:wrap}
 
@@ -279,6 +282,7 @@
     </header>
 
     <div id="metaHeader"></div>
+    <div id="tldrBlock"></div>
     <div id="introBlock" class="mod-body" style="margin-bottom:28px"></div>
     <div id="modules"></div>
     <div id="resourcesBlock"></div>
@@ -517,6 +521,13 @@
     } catch (e) { /* fall through to empty */ }
 
     $('metaHeader').innerHTML = renderMetaStrip(meta);
+    if (meta.tldr) {
+      $('tldrBlock').innerHTML = `
+        <div class="tldr-card">
+          <div class="tldr-kicker">TL;DR</div>
+          <div class="tldr-body">${escapeHtml(meta.tldr)}</div>
+        </div>`;
+    }
     if (introHtml) $('introBlock').innerHTML = introHtml;
     $('resourcesBlock').innerHTML = renderResourcesBlock(meta);
 

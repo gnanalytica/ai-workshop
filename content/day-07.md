@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Pick the capstone problem today. You'll live with it for 3 weeks — choose something you actually care about."
 tags: ["framing", "meta", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Heilmeier writeup of your capstone problem", "url": "https://excalidraw.com/"}

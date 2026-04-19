@@ -8,14 +8,14 @@ export const DAYS = [
   { n: 6,  w: 1, title: "Computational thinking without code" },
   { n: 7,  w: 1, title: "Pick a problem you actually care about" },
 
-  // Week 2 — Make. Programming fluency, web, data, APIs, git, tiny AI intro at the end.
-  { n: 8,  w: 2, title: "Programming fluency refresher (Python)" },
-  { n: 9,  w: 2, title: "Web mental model: HTML, CSS, JS" },
-  { n: 10, w: 2, title: "APIs: how software talks to software" },
-  { n: 11, w: 2, title: "Data literacy: tables, schemas, SQL basics" },
-  { n: 12, w: 2, title: "Git and shipping in a team" },
-  { n: 13, w: 2, title: "Your first AI pair programmer" },
-  { n: 14, w: 2, title: "Ship a tiny web app end-to-end" },
+  // Week 2 — Make. Mental models of software, no syntax drills. AI does the typing when needed.
+  { n: 8,  w: 2, title: "How software actually works (the mental model)" },
+  { n: 9,  w: 2, title: "The web as a system: the trip a click makes" },
+  { n: 10, w: 2, title: "APIs: the lingua franca of software" },
+  { n: 11, w: 2, title: "Data literacy: thinking in tables and queries" },
+  { n: 12, w: 2, title: "Git and shipping: how teams actually work" },
+  { n: 13, w: 2, title: "Directing an AI pair programmer" },
+  { n: 14, w: 2, title: "Vibe-code your first tiny app" },
 
   // Week 3 — AI core. LLMs, prompting, local inference, RAG.
   { n: 15, w: 3, title: "What AI actually is (and isn't)" },

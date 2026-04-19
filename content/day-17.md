@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Running a model on your laptop makes the abstraction concrete. Ollama + Open WebUI in 15 minutes."
 tags: ["ai", "llms", "hands-on", "ollama", "open-source"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Install Ollama + Open WebUI, benchmark three models", "url": "https://ollama.com/"}

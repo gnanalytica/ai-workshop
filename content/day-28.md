@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Capstone kickoff. Pick small, scope brutally, commit to shipping a working thing in 48 hours."
 tags: ["capstone", "product", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "90-minute scoping sprint", "url": "https://www.svpg.com/"}

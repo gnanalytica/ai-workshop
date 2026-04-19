@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "AI UX is different: show uncertainty, cite sources, offer stop buttons, design for failure."
 tags: ["ux", "product", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Redesign one AI feature for trust", "url": "https://excalidraw.com/"}

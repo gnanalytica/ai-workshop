@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Features aren't products. Jobs-to-be-done, trust design, failure modes — the product layer AI needs."
 tags: ["product", "discussion"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Teardown: score 3 AI products", "url": "https://www.svpg.com/"}

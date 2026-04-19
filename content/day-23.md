@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "LangGraph turns agents into debuggable graphs. Build one, watch it think, fix its loops."
 tags: ["agents", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Build a 3-tool LangGraph agent", "url": "https://langchain-ai.github.io/langgraph/"}

@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Embeddings turn words into directions in space. That's what makes search, memory, and RAG work."
 tags: ["ai", "embeddings", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Semantic search over your own markdown notes", "url": "https://www.sbert.net/"}

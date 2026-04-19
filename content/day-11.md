@@ -1,166 +1,179 @@
 ---
-reading_time: 16 min
-tags: ["data", "sql", "hands-on"]
+reading_time: 14 min
+tldr: "Apps are spreadsheets in disguise. Learn to sketch schemas and read queries; AI writes them."
+tags: ["concepts", "data", "mental-model"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Design and query a campus clubs schema in SQLite", "url": "https://example.com/labs/day-11"}
-resources: [{"title": "SQLite docs", "url": "https://sqlite.org/"}, {"title": "PostgreSQL docs", "url": "https://www.postgresql.org/docs/"}, {"title": "SQLite CLI reference", "url": "https://sqlite.org/cli.html"}, {"title": "SQL tutorial (PostgreSQL)", "url": "https://www.postgresql.org/docs/current/tutorial.html"}]
+lab: {"title": "Schema-sketching and SQLBolt", "url": "https://sqlbolt.com/"}
+resources: [{"title": "SQLBolt", "url": "https://sqlbolt.com/"}, {"title": "MDN: Databases", "url": "https://developer.mozilla.org/en-US/docs/Glossary/Database"}]
 ---
 
 ## Intro
 
-If Python moves data and APIs transport it, SQL is where data actually *lives*. Today: tables, schemas, keys, joins, and enough SQL to query a real database without googling every line. We'll use SQLite because it's a single file with zero setup — but everything you learn transfers directly to Postgres.
+Apps forget everything when they close. Databases are how software remembers. Today you learn to *think* in tables, rows, keys, and queries — without typing a single query. By the end you'll be able to sketch the data model of any app on a napkin.
 
-## Read: Tables, schemas, and the one query shape
+## Read: Tables, relationships, queries
 
-### Think in tables, not objects
+### The core intuition: apps are spreadsheets in disguise
 
-A table is rows and columns with a fixed shape. That's it. The art is deciding **what's a row** and **what's a column**.
+Almost every app you use — Swiggy, Classroom, LinkedIn — is, under the hood, a small set of spreadsheets linked to each other. A **table** is one spreadsheet. A **row** is one record. A **column** is one attribute. A **primary key** is the unique ID per row. A **foreign key** is how one table points to another.
 
-Bad: one `clubs` table with a column `members` holding a comma-separated string `"alice,bob,carol"`. You'll regret this the first time someone asks "how many students are in at least 2 clubs?"
-
-Good: two tables, `clubs` and `memberships`, with a join.
-
-### Keys and relationships
-
-- **Primary key (PK):** unique row id. Usually `id INTEGER PRIMARY KEY`.
-- **Foreign key (FK):** a column pointing at another table's PK.
-- **One-to-many:** a club has many events. `events.club_id` references `clubs.id`.
-- **Many-to-many:** students join many clubs, clubs have many students. Needs a join table.
-
-```sql
-CREATE TABLE clubs (
-  id        INTEGER PRIMARY KEY,
-  name      TEXT NOT NULL UNIQUE,
-  founded   DATE
-);
-
-CREATE TABLE students (
-  id        INTEGER PRIMARY KEY,
-  roll_no   TEXT NOT NULL UNIQUE,
-  name      TEXT NOT NULL
-);
-
-CREATE TABLE memberships (
-  student_id INTEGER NOT NULL REFERENCES students(id),
-  club_id    INTEGER NOT NULL REFERENCES clubs(id),
-  joined_on  DATE NOT NULL,
-  PRIMARY KEY (student_id, club_id)
-);
-
-CREATE TABLE events (
-  id        INTEGER PRIMARY KEY,
-  club_id   INTEGER NOT NULL REFERENCES clubs(id),
-  title     TEXT NOT NULL,
-  starts_at DATETIME NOT NULL,
-  venue     TEXT
-);
-```
-
-### The one query shape
-
-Every SQL SELECT you'll write this semester fits this template:
-
-```sql
-SELECT   <columns>
-FROM     <table>
-JOIN     <other> ON <condition>
-WHERE    <filter>
-GROUP BY <columns>
-HAVING   <filter on groups>
-ORDER BY <columns>
-LIMIT    <n>;
-```
-
-Not every query uses every clause, but the order is fixed.
-
-### Joins without tears
-
-```sql
--- Which events is each club running this week?
-SELECT c.name, e.title, e.starts_at
-FROM   clubs c
-JOIN   events e ON e.club_id = c.id
-WHERE  e.starts_at BETWEEN '2026-04-14' AND '2026-04-20'
-ORDER  BY e.starts_at;
-```
-
-| Join | When |
-|------|------|
-| `INNER JOIN` | only rows that match in both tables |
-| `LEFT JOIN` | all rows from left, even if no match right |
-| `RIGHT JOIN` | opposite (rare; flip the tables instead) |
-| `FULL OUTER` | union of both (rare) |
-
-### Indexes are why databases are fast
-
-A query like `WHERE roll_no = 'CS21B023'` on a million rows without an index is a full scan. Add:
-
-```sql
-CREATE INDEX idx_students_roll ON students(roll_no);
-```
-
-Now it's a tree lookup. But indexes cost on writes — don't index everything.
-
-### Migrations, not `ALTER TABLE` in a GUI
-
-Keep schema changes in numbered `.sql` files in `migrations/` and commit them. That's how every real team works.
+Here's Dunzo's likely data model in four tables:
 
 ```
-migrations/
-  001_init.sql
-  002_add_events_venue.sql
-  003_index_memberships.sql
+users                          orders
+-------------                  ---------------
+id (PK)                        id (PK)
+name                           user_id  (FK -> users.id)
+phone                          restaurant_id (FK -> restaurants.id)
+created_at                     total
+                               status
+                               created_at
+
+restaurants                    order_items
+-------------                  ---------------
+id (PK)                        id (PK)
+name                           order_id  (FK -> orders.id)
+lat, lng                       menu_item_id (FK -> menu_items.id)
+open_now                       quantity
 ```
 
-Run them with `sqlite3 app.db < migrations/001_init.sql`.
+Read it twice. This is *the* mental model.
 
-## Watch: SQL in 20 minutes for people who already code
+> A well-designed schema is 60% of a good app. Everything else is plumbing.
 
-A fast tour of SELECT, JOIN, GROUP BY, and the common mistakes — `SELECT *` in production, forgetting `GROUP BY` columns, mixing up `WHERE` and `HAVING`.
+### Why relationships matter
+
+If you kept everything in one giant table — user, their orders, the items, the restaurants — you'd have duplication, inconsistency, and chaos. Splitting into related tables is called **normalization**. Joining them back at query time gives you the view you want.
+
+Three common relationship shapes:
+
+| Shape | Example |
+|---|---|
+| One-to-one | A user has one profile |
+| One-to-many | A user has many orders |
+| Many-to-many | A student applies to many companies; a company sees many students |
+
+Many-to-many always needs a **join table** (here: `applications`).
+
+### SQL: the language of questions
+
+SQL is how you **ask questions** of a database. You will not write SQL this month. You should be able to read it.
+
+```
+Example — you're reading, not typing.
+
+SELECT name, cgpa
+FROM students
+WHERE cgpa > 8.5
+ORDER BY cgpa DESC
+LIMIT 10;
+```
+
+Translation: *Give me the top 10 students by CGPA above 8.5, name and CGPA only.* SQL is almost English when you squint.
+
+A join looks like this:
+
+```
+Example — you're reading, not typing.
+
+SELECT students.name, applications.company, applications.status
+FROM students
+JOIN applications ON applications.student_id = students.id
+WHERE applications.status = 'shortlisted';
+```
+
+Translation: *Show me every student shortlisted somewhere, with the company and status.*
+
+The six keywords you'll see 95% of the time: `SELECT`, `FROM`, `WHERE`, `JOIN`, `GROUP BY`, `ORDER BY`. That's it.
+
+### SQL vs NoSQL, the honest intuition
+
+| | SQL (Postgres, MySQL, SQLite) | NoSQL (MongoDB, Firestore, DynamoDB) |
+|---|---|---|
+| Mental model | Spreadsheets with relationships | Nested documents (like JSON) |
+| Schema | Strict — you declare it upfront | Flexible — shape can vary per doc |
+| Good at | Complex queries, transactions, reports | Huge scale of simple lookups, changing shapes |
+| Bad at | Nested / evolving data | Complex joins across collections |
+| You'll meet it in | Most apps, always | Chat apps, real-time, specific niches |
+
+Default to SQL. Reach for NoSQL when you have a concrete reason.
+
+### The three questions a schema must answer
+
+When you (or an AI) designs a data model, pressure-test it with:
+
+1. **What's the unit?** (Is the row a user, an order, an event?)
+2. **What's unique about it?** (What's the primary key?)
+3. **What does it relate to?** (Which foreign keys?)
+
+If you can answer those three for every table, the rest of the design falls out.
+
+### Reading vs writing, cache vs source of truth
+
+Real apps read data 100x more often than they write it. So they **cache**. Instagram doesn't query the DB every time you open the app — it serves your feed from a cache, which is a faster, less-durable copy. The DB remains the **source of truth**. Caches go stale; sources of truth do not.
+
+```
+   write --> [ source-of-truth DB ]
+                   |
+                   v  (refreshed occasionally)
+             [ cache ]
+                   ^
+                   |
+   read ----------+
+```
+
+Stale caches are responsible for 40% of "why is my profile pic still the old one" bugs.
+
+### A campus-flavoured example: the placement data model
+
+Tables you'd sketch for a placement portal:
+
+- `students` (id, roll_no, name, branch, cgpa, resume_url)
+- `companies` (id, name, sector, ctc_min, ctc_max)
+- `jobs` (id, company_id, title, eligibility_cgpa, deadline)
+- `applications` (id, student_id, job_id, status, applied_at)
+- `interviews` (id, application_id, round, scheduled_at, result)
+
+Five tables, four relationships, and you've modelled your college's entire placement cell. That's the power of thinking in tables.
+
+## Watch: Database fundamentals in 10 minutes
+
+One clear visual explainer of tables, keys, and joins. Optional second video on SQL vs NoSQL.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch for how the author builds a query incrementally — SELECT first, then WHERE, then JOIN.
-- Notice when they reach for a subquery vs. a JOIN.
-- See how `EXPLAIN QUERY PLAN` reveals index use.
+- Watch for the word **join**.
+- Notice that "relational" really just means "tables that point at each other".
+- Spot the moment they explain a primary key vs a foreign key.
 
-## Lab: Campus clubs schema and queries
+## Lab: Schema-sketching + SQLBolt (45 min)
 
-Design, migrate, seed, and query a small campus clubs database end-to-end with SQLite.
+You will not write a single query. You will sketch and read.
 
-1. Install SQLite (usually preinstalled on macOS/Linux; on Windows: `winget install SQLite.SQLite`). Verify: `sqlite3 --version`.
-2. Create project `clubs-db/`. Inside, make `migrations/`, `seeds/`, `queries/` folders.
-3. Write `migrations/001_init.sql` with the 4 tables shown above (`clubs`, `students`, `memberships`, `events`). Include `FOREIGN KEY` constraints and `NOT NULL` where it matters.
-4. Write `migrations/002_indexes.sql` with indexes on `memberships(club_id)`, `events(club_id)`, `events(starts_at)`.
-5. Create the DB and run migrations:
-   ```bash
-   sqlite3 clubs.db < migrations/001_init.sql
-   sqlite3 clubs.db < migrations/002_indexes.sql
-   ```
-6. Write `seeds/seed.sql` with 5 clubs, 20 students, ~30 memberships, 10 events. Use realistic names. Run it against `clubs.db`.
-7. In `queries/`, write one SQL file per question:
-   - `q1_clubs_by_size.sql` — clubs ordered by member count, largest first.
-   - `q2_multi_club_students.sql` — students in 2+ clubs.
-   - `q3_upcoming_events.sql` — events in the next 7 days, with club name.
-   - `q4_inactive_clubs.sql` — clubs with zero events this semester. (Hint: `LEFT JOIN` + `WHERE events.id IS NULL`.)
-8. Run each query: `sqlite3 clubs.db < queries/q1_clubs_by_size.sql`. Capture outputs in `queries/results.md`.
-9. Open one query with `EXPLAIN QUERY PLAN` prefix and confirm it's using an index, not a full scan.
-10. Commit. Your repo should be reproducible: anyone cloning it can run a single `make init` or `bash setup.sh` and get the same DB.
+1. **Scenario**: your college is rolling out a campus placement portal. You're given a messy Google Sheet where someone dumped everything into one tab. On paper or Excalidraw, design the **clean schema** — 4–6 tables, with columns and primary/foreign keys marked. 10 minutes, no code.
+2. Swap with a partner (or re-read after a break). Critique: are there missing relationships? Over-normalized tables? Missing keys?
+3. Open `https://sqlbolt.com/`. Work through lessons 1, 2, and 3. These are read-heavy; the site gives you the query, you read the result.
+4. Without running new queries, **read** 5 provided SQL statements and, on your worksheet, translate each into plain English.
+5. Draw the ER diagram (entity-relationship diagram) for SQLBolt's `movies` example. Boxes for tables, lines for relationships.
+6. Identify one query that would need a **JOIN** and one that doesn't. Explain why in a sentence.
+7. On paper, list the top 3 questions you'd expect the placement cell to ask their database ("how many CS students placed?", etc.). For each, name the tables involved.
+8. Export the schema sketch + the worksheet.
 
-Stretch: port the same schema to Postgres locally (`docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=pw postgres:16`), note any syntax you had to change (`AUTOINCREMENT` → `SERIAL`, dates, etc.).
+Submit both.
 
 ## Quiz
 
-Four questions on choosing between one-to-many and many-to-many, picking PKs vs. FKs, when to index, and reading a `JOIN` + `GROUP BY` query.
+4 questions: identify primary vs foreign key in a diagram, translate a simple `SELECT ... WHERE` in English, spot a many-to-many relationship, and explain why a cache and a DB can disagree.
 
 ## Assignment
 
-Submit the `clubs-db` repo. It must include the migrations, seed, four query files, a `results.md` with the output of each, and a `SCHEMA.md` with an ER diagram (a text sketch is fine; Mermaid is a bonus). One short paragraph in `NOTES.md` on a design decision you almost got wrong.
+Pick an app and sketch its data model in 4–6 tables on one page. Mark primary keys, foreign keys, and at least one many-to-many. Write a one-paragraph justification for your choices. Submission: a diagram PNG/PDF + paragraph. No code.
 
-## Discuss: Schema choices have consequences
+## Discuss: Thinking in rows
 
-- Storing `tags` as a comma-separated column vs. a separate `tags` table. What problems does each cause six months later?
-- Your club app suddenly needs "sub-clubs" (a club has child clubs). How do you change the schema with minimum pain?
-- SQLite or Postgres for a hackathon project with 200 users? Defend your pick.
-- A senior says "just use MongoDB, schemas slow you down." What are they right about and what are they missing?
+- Your hostel WhatsApp group has 200 messages a day. What would the `messages` table look like, and what indexes would you want?
+- A dating app "sees" only profiles of the opposite preference. Is this a database filter or an application-layer filter? Does it matter?
+- Why do transactions (the banking kind) almost always live in SQL, not NoSQL?
+- When Netflix shows you "trending in India" — is that computed per-request or cached? What gives it away?
+- A classmate claims "we don't need a database, we'll store everything in a JSON file". When is that fine, and when does it break?

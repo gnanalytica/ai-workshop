@@ -1,5 +1,6 @@
 ---
 reading_time: 15 min
+tldr: "The best design research is a good conversation. Shut up, listen, write exact words, not opinions."
 tags: ["empathy", "design"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Run one 20-minute user interview", "url": "https://www.designkit.org/"}

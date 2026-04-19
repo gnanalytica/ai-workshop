@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "Studio day. Morning spec, midday slice, afternoon polish, evening rehearsal. Ship ugly, ship live."
 tags: ["capstone", "hands-on"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "6-hour studio build", "url": "https://langchain-ai.github.io/langgraph/"}

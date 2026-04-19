@@ -1,5 +1,6 @@
 ---
 reading_time: 14 min
+tldr: "30 days, 4 tracks: think → make → AI → ship. Treat this as a builder's gym, not a lecture hall."
 tags: ["kickoff", "meta", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
 lab: {"title": "Write your learning contract", "url": "https://excalidraw.com/"}

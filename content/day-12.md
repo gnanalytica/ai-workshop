@@ -1,146 +1,175 @@
 ---
-reading_time: 15 min
-tags: ["git", "fundamentals", "hands-on"]
+reading_time: 14 min
+tldr: "Git is a reasoning system for change. Learn to read PRs and commit graphs; AI handles the commands."
+tags: ["concepts", "git", "shipping"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Branch, PR, and review on a real GitHub repo", "url": "https://example.com/labs/day-12"}
-resources: [{"title": "Git docs", "url": "https://git-scm.com/"}, {"title": "Pro Git book (free)", "url": "https://git-scm.com/book/en/v2"}, {"title": "GitHub docs", "url": "https://docs.github.com/"}, {"title": "GitHub flow", "url": "https://docs.github.com/en/get-started/using-github/github-flow"}]
+lab: {"title": "GitHub PR walkthrough + Oh My Git!", "url": "https://ohmygit.org/"}
+resources: [{"title": "GitHub docs", "url": "https://docs.github.com/"}, {"title": "Oh My Git!", "url": "https://ohmygit.org/"}, {"title": "GitHub", "url": "https://github.com/"}]
 ---
 
 ## Intro
 
-Every professional team in the world uses Git. Not knowing it past `add`, `commit`, `push` is the single clearest tell of a beginner. Today you'll work the way real teams do: feature branches, pull requests, code review, protected `main`, and clean history.
+Software is never written, only rewritten. Today you learn the mental model for how teams track, review, and ship changes — without typing a single git command. You'll read pull requests, annotate commit graphs, and build intuition for the workflow every company on earth uses.
 
-## Read: The parts of Git that matter
+## Read: Version control as a time machine
 
-### Mental model: three trees
+### The core idea
 
-Git doesn't have one "place" for your code. It has three, and most confusion comes from not knowing which is which.
+Imagine Google Docs' "version history", but designed by engineers who don't trust each other. That's git.
 
-| Tree | What it is | Moves code via |
-|------|------------|----------------|
-| Working directory | your files on disk | editing |
-| Staging area (index) | what *will* be in the next commit | `git add` |
-| Repository | committed history | `git commit` |
-
-Remote (`origin`) is a fourth tree, on GitHub. `git push` moves commits there; `git fetch` / `git pull` brings them back.
-
-### The daily loop
-
-```bash
-git status                       # what's changed?
-git switch -c feat/search-box    # new branch from current
-# ...edit files...
-git add app.js style.css         # stage specific files, not -A blindly
-git commit -m "Add search box to events list"
-git push -u origin feat/search-box
-# open a PR on GitHub
-```
-
-### Good commits vs. bad commits
-
-> A good commit message finishes the sentence: *"If applied, this commit will …"*
-
-Bad: `fix stuff`, `wip`, `asdf`, `final final v2`.
-Good: `Add search filter to events list`, `Fix 429 retry backoff in explorer`.
-
-Keep each commit focused on one thing. Reviewers reading your PR should be able to understand any single commit on its own.
-
-### Branching strategy: GitHub flow
-
-For a 30-day project and most small teams, you don't need git-flow or release branches. Just:
-
-1. `main` is always deployable.
-2. Every change goes in a branch named `feat/...`, `fix/...`, or `chore/...`.
-3. Open a PR. Someone else reviews.
-4. Squash-merge into `main`. Delete the branch.
-
-### Pull requests are communication, not just merging
-
-A good PR has:
-
-- A **title** that reads like a commit message.
-- A short **description**: *what* and *why*, plus any screenshots or before/after.
-- Linked **issue** (`Closes #12`).
-- Passing **CI** (we'll add this on Day 14).
-- At least one **review** approval.
-
-### Protect `main` from yourself
-
-In GitHub → Settings → Branches → Add rule for `main`:
-
-- Require pull request before merging
-- Require at least 1 approving review
-- Require status checks to pass
-- Include administrators
-
-This prevents the 11 pm "I'll just push to main" that takes down the demo.
-
-### Fixing mistakes without panic
-
-```bash
-git restore app.js                  # discard unstaged changes in file
-git restore --staged app.js         # unstage (keeps edits)
-git commit --amend                  # fix last commit message / add forgot file
-git reset --soft HEAD~1             # undo last commit, keep changes staged
-git revert <sha>                    # new commit that undoes <sha> (safe on shared branches)
-```
-
-Never `git push --force` on `main` or anyone else's branch. On your *own* feature branch, `--force-with-lease` is ok.
-
-### `.gitignore` and secrets
-
-Before your first commit, create a `.gitignore`:
+- Every change is a **commit** — a labeled snapshot of the whole project.
+- Commits form a **graph** — usually linear but can branch and merge.
+- Each person works on a **branch** — a parallel timeline they can mess with freely.
+- When ready, they **merge** back into `main` — the canonical timeline everyone trusts.
 
 ```
-.venv/
-__pycache__/
-.env
-node_modules/
-.DS_Store
-*.sqlite
+  main:   o---o---o-----------------o---o
+               \                   /
+  feature:      o---o---o---o---o-+
 ```
 
-If you ever commit a secret: rotate the secret *first*, then scrub history (or just delete the repo and start over for a small project). Git history is permanent by default.
+Everything else is detail.
 
-## Watch: Branching, PRs, and reviews on a real repo
+### Why teams need this
 
-A walkthrough of a single feature from "I have an idea" to merged PR, including how the reviewer leaves line comments and how the author addresses them.
+- **History**: who changed what, when, and why.
+- **Rollback**: a bad deploy? Revert the commit, redeploy the previous snapshot.
+- **Parallel work**: 5 people, 5 branches, no one overwrites the others.
+- **Review**: code is reviewed *before* it hits `main`, via pull requests.
+- **Attribution**: `git blame` (ugly name, useful feature) shows who last changed a given line.
+
+> Git is not a backup system. It's a *reasoning* system for change over time.
+
+### The vocabulary, once
+
+| Term | Plain English |
+|---|---|
+| Repository (repo) | A project folder tracked by git |
+| Commit | A saved snapshot with a message |
+| Branch | A parallel timeline off `main` |
+| Merge | Bringing a branch's changes into another |
+| Pull request (PR) | "Please review and merge my branch" |
+| Remote | A copy of the repo on another machine (usually GitHub) |
+| Clone | Copy a remote repo locally |
+| Push / pull | Upload / download changes |
+| Diff | The delta between two states |
+| Conflict | Two branches changed the same lines differently |
+| Revert | Undo a commit by making a new "opposite" commit |
+
+### The GitHub workflow (what every team actually does)
+
+```
+  1. clone       -- copy the repo to your machine
+  2. branch      -- git checkout -b fix/login-bug
+  3. work        -- edit files (AI does the typing in 2026)
+  4. commit      -- snapshot with a message
+  5. push        -- upload the branch to GitHub
+  6. open PR     -- request review
+  7. review      -- teammates comment, you iterate
+  8. CI runs     -- tests + lint automatically
+  9. merge       -- once approved + green, branch merges into main
+ 10. deploy      -- main (or a release) goes to production
+```
+
+This is called **trunk-based development with short-lived branches**. It's the default in 2026.
+
+### What a commit message looks like
+
+```
+Example — you're reading, not typing.
+
+fix(login): handle expired session cookie gracefully
+
+Previously, an expired cookie triggered an unhandled 500.
+Now we redirect to /login and surface a toast. Fixes #412.
+```
+
+A good message answers *what* and *why* — never just *what*. The AI will write these for you in Week 3; you'll learn to grade them.
+
+### The commit graph, visually
+
+```
+  *   a1b2c3  (main)  Merge PR #42
+  |\
+  | * 9f8e7d  Add CGPA filter to /students
+  | * 7c6b5a  Sketch UI for placement board
+  |/
+  *   4d3c2b  Initial schema
+```
+
+Read top to bottom, newest first. Stars are commits, lines are lineage, merges close a branch back into main. Once you can read this, you can read any project's history.
+
+### Pull requests — the atomic unit of shipping
+
+A PR has four moving parts:
+
+1. **The diff** — exactly which lines changed.
+2. **The description** — what and why, often with screenshots or a Loom.
+3. **Reviews** — approvals, change requests, line-by-line comments.
+4. **Checks** — automated CI: tests passed? linter clean? build green?
+
+Good PRs are small (< 400 lines changed), focused (one thing), and well-described. Bad PRs are huge, scattered, and labeled "misc fixes". You will review many PRs in your career. Starting to read them now pays compounding dividends.
+
+### CI/CD: from commit to customer
+
+- **CI (Continuous Integration)**: every push auto-runs tests on a fresh machine.
+- **CD (Continuous Deployment)**: once merged to main, it auto-deploys.
+
+```
+  push --> GitHub --> CI runs tests --> CD builds image --> deploy to server --> users
+```
+
+In 2026, Vercel, Netlify, Cloudflare Pages, Railway, and Render give you this pipeline for free. You push; they ship. We'll use this on Day 14.
+
+### Open source etiquette (why it matters for you)
+
+A strong GitHub profile is the new resume. Employers look at:
+
+- Commit frequency and cadence.
+- The quality of your README and PR descriptions.
+- Contributions to other projects.
+- Issues you've filed that are useful to others.
+
+Aim to be a good citizen. Write clear issues. Write clear PRs. Thank reviewers. Your future self is hiring your present self.
+
+## Watch: Git explained with drawings
+
+One explainer with visual branch diagrams. The second optional watch: a real PR review from a senior engineer.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch how the author splits changes into small commits, not one giant one.
-- Notice the reviewer asks *why*, not just *what*.
-- See how the PR description links to the issue and explains tradeoffs.
+- Watch for branches diverging and reconverging.
+- Notice how reviewers think about *why* as much as *what*.
+- Pay attention to the "squash and merge" option — it collapses messy history.
 
-## Lab: Team up and ship a PR
+## Lab: Read a real pull request (35 min)
 
-Do this with a partner. If you don't have one, play both roles (but the lesson is muted).
+No typing. No terminal.
 
-1. One teammate creates a new GitHub repo `campus-notes` (public, with README and MIT license). Add the other as a collaborator.
-2. Clone it: `git clone git@github.com:<user>/campus-notes.git && cd campus-notes`.
-3. In GitHub → Settings → Branches, add a protection rule on `main`: require PR, require 1 review, require branches to be up to date.
-4. Open an issue: *"Add a simple note-taking HTML page with title + body + save to localStorage"*.
-5. Person A: `git switch -c feat/note-form`, add `index.html` with a form and a save button wired to `localStorage`. Commit in 2–3 small commits. Push. Open a PR, link the issue, add a screenshot.
-6. Person B: review the PR. Leave **at least two line comments** (one nitpick, one substantive suggestion). Don't approve yet.
-7. Person A: address comments. Push new commits (don't force-push). Reply to each comment.
-8. Person B: approve and squash-merge. Delete the branch on GitHub.
-9. Both: `git switch main && git pull` to sync local `main`. Confirm the feature branch is gone locally: `git branch -d feat/note-form`.
-10. Swap roles and repeat for a second feature: *"Add a list of saved notes below the form"*. This time include a deliberate bug; reviewer must catch it.
+1. Go to `github.com/facebook/react` (or any popular OSS repo you like — `vercel/next.js`, `tldraw/tldraw`).
+2. Click the **Pull requests** tab → filter by **Closed**. Pick any merged PR with at least 5 comments.
+3. Read the PR description. Summarize it in one sentence on your worksheet.
+4. Open the **Files changed** tab. Count the files, and estimate the diff size.
+5. Read the **Conversation** tab end to end. Note one piece of useful feedback a reviewer gave.
+6. Click the PR author's profile. Look at their contribution history. Observation: what does a serious contributor's profile look like?
+7. Switch to the repo's **Insights → Network** view. Screenshot the commit graph. Annotate one merge and one branch point in Excalidraw.
+8. (Optional) Play `https://ohmygit.org/` — the OSS card game that teaches git visually — for 15 minutes.
 
-Stretch: set up GitHub Actions to run a tiny check on every PR (e.g., `npx htmlhint index.html`). You'll extend this on Day 14.
+Submit the worksheet + annotated graph.
 
 ## Quiz
 
-Four questions on the three-tree model, what `git reset` vs. `git revert` do, why you'd protect `main`, and how to recover a file you accidentally `git restore`d. One short answer on writing a good commit message.
+4 questions: given a commit graph diagram, identify the merge; given a PR description, decide if it's good; explain why short-lived branches beat long-lived ones; define "CI" in your own words.
 
 ## Assignment
 
-Submit a link to your `campus-notes` repo with at least two merged PRs, each with at least one review comment addressed. In `CONTRIBUTING.md`, write a 5-line description of your team's branch naming and review rules.
+Pick any merged PR on any public repo. Write a 250-word "PR review of the PR review": what did the author do well, what could have been better, what would you as a reviewer have asked? Attach a screenshot of the PR. No code.
 
-## Discuss: Git culture
+## Discuss: Working in the open
 
-- Squash-merge vs. merge commit vs. rebase-merge. What does each optimize for? What did your team pick and why?
-- A teammate force-pushes to `main` and loses your commits. Walk through the recovery, step by step.
-- "Commit early, commit often" vs. "one commit per logical change." Where's the real line?
-- When is it ok to merge your own PR without review? (Hint: almost never in a team; some cases on solo projects.)
+- Your teammate opened a 3,000-line PR titled "stuff". What do you do?
+- Why do companies prefer many small commits over one giant one?
+- "Move fast and break things" vs "require 2 approvals on every PR" — when is each right?
+- How would the PR workflow change if AIs are generating most of the diffs (as they will on Day 13)?
+- A famous open-source maintainer reviews 20 PRs a day. What signals let them decide quickly?
