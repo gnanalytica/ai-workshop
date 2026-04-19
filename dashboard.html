@@ -10,7 +10,7 @@
 <style>
   .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
   .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;margin-bottom:32px}
-  .pbar{height:8px;background:#0a0a12;border-radius:999px;overflow:hidden;margin-top:14px}
+  .pbar{height:8px;background:var(--input-bg);border-radius:999px;overflow:hidden;margin-top:14px}
   .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7affb4);transition:width .3s}
   .pstats{display:flex;justify-content:space-between;font-size:13px;margin-top:10px;color:var(--muted)}
   .week-block{margin-bottom:28px}
@@ -19,9 +19,10 @@
   .week-head h3{margin:0;font-size:20px;letter-spacing:-.02em}
   .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
   .day-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit}
-  .day-item:hover{border-color:#3a3a4e}
+  .day-item:hover{border-color:var(--accent)}
   .day-item.done{background:rgba(195,255,54,.06);border-color:rgba(195,255,54,.3)}
-  .day-item.locked{opacity:.45;cursor:not-allowed;background:#0d0d14}
+  [data-theme="light"] .day-item.done{background:rgba(111,165,0,.08);border-color:rgba(111,165,0,.35)}
+  .day-item.locked{opacity:.5;cursor:not-allowed;background:var(--bg-soft)}
   .day-item.locked:hover{border-color:var(--line)}
   .day-item.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .lock-ic{color:var(--muted)}
@@ -83,6 +84,7 @@
     <a href="#overview" class="active" data-tab="overview">Overview</a>
     <a href="#lessons" data-tab="lessons">Lessons</a>
     <a href="#capstone" data-tab="capstone">Capstone</a>
+    <a href="#activity" data-tab="activity">My activity</a>
     <a href="#profile" data-tab="profile">Profile</a>
   </div>
 
@@ -100,9 +102,12 @@
   <!-- TODAY'S FOCUS -->
   <div id="todayCard" class="progress-wrap" style="display:none"></div>
 
+  <!-- UPCOMING -->
+  <div id="upcomingCard" class="progress-wrap" style="display:none"></div>
+
   <!-- ENROLL CARD: shown only when signed in but not registered for cohort -->
   <div id="enrollCard" style="display:none">
-    <div class="progress-wrap" style="border-color:rgba(195,255,54,.3);background:linear-gradient(145deg,rgba(195,255,54,.04),#14141c)">
+    <div class="progress-wrap" style="border-color:rgba(195,255,54,.3);background:linear-gradient(145deg,rgba(195,255,54,.04),var(--card))">
       <div class="kicker">One step left</div>
       <h2 style="margin:0 0 8px">Finish enrolling</h2>
       <p class="muted" style="font-size:14px;margin:0 0 20px">You're signed in but haven't joined Cohort 01 yet. Fill in a few details and you're in.</p>
@@ -152,8 +157,31 @@
     <div class="progress-wrap">
       <div class="kicker">Your spec</div>
       <h2 style="margin:0 0 10px">Day 15 notes</h2>
-      <p class="muted" style="font-size:14px;margin:0 0 10px">Your locked 1-page spec lives in your Day 15 notes. Update it there.</p>
-      <a href="day.html?n=15" class="cta ghost" style="display:inline-block;margin-top:6px">Open Day 15 →</a>
+      <div id="capSpec" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Capstone submissions</div>
+      <h2 style="margin:0 0 10px">Day 21 + Day 30</h2>
+      <div id="capSubs" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY TAB -->
+  <section id="tab-activity" class="tab-panel" style="display:none">
+    <div class="progress-wrap">
+      <div class="kicker">Quiz attempts</div>
+      <h2 style="margin:0 0 14px">Your quiz scores</h2>
+      <div id="quizTableWrap" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Assignments</div>
+      <h2 style="margin:0 0 14px">Submissions</h2>
+      <div id="subTableWrap" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Reading notes</div>
+      <h2 style="margin:0 0 14px">Your notes across all days</h2>
+      <div id="notesList" class="muted" style="font-size:14px">Loading…</div>
     </div>
   </section>
 
@@ -172,10 +200,20 @@
       <div id="showcaseLink" style="margin-top:14px"></div>
     </div>
     <div class="progress-wrap">
+      <div class="kicker">Theme preference</div>
+      <h2 style="margin:0 0 12px">Dark, light, or system</h2>
+      <div id="themeRadios" style="display:flex;gap:10px;flex-wrap:wrap">
+        <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:13px"><input type="radio" name="themePref" value="dark" style="accent-color:var(--accent)" /> Dark</label>
+        <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:13px"><input type="radio" name="themePref" value="light" style="accent-color:var(--accent)" /> Light</label>
+        <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:13px"><input type="radio" name="themePref" value="system" style="accent-color:var(--accent)" /> System</label>
+      </div>
+    </div>
+    <div class="progress-wrap">
       <div class="kicker">Certificate</div>
       <h2 style="margin:0 0 8px">30/30 = certificate</h2>
       <p class="muted" style="font-size:14px;margin:0 0 12px">Complete all 30 days to auto-issue your certificate.</p>
-      <a href="certificate.html" class="cta ghost" style="display:inline-block">View certificate →</a>
+      <a href="certificate.html" class="cta ghost" style="display:inline-block;margin-right:8px">View certificate →</a>
+      <button class="cta ghost" id="signOutProfileBtn" style="display:inline-block">Sign out</button>
     </div>
   </section>
 </main>
@@ -187,7 +225,7 @@
 
   // Tab switching via URL hash
   function activateTab(name) {
-    const valid = ['overview','lessons','capstone','profile'];
+    const valid = ['overview','lessons','capstone','activity','profile'];
     if (!valid.includes(name)) name = 'overview';
     document.querySelectorAll('#dashTabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
     document.querySelectorAll('.tab-panel').forEach(p => p.style.display = p.id === 'tab-' + name ? 'block' : 'none');
@@ -278,18 +316,144 @@
     toggleEnrollCard(user, cohort, profile, reg);
 
     const [progressRes, scheduleRes] = await Promise.all([
-      supabase.from('lab_progress').select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id),
+      supabase.from('lab_progress').select('day_number, notes, completed_at').eq('user_id', user.id).eq('cohort_id', cohort.id),
       supabase.from('cohort_days').select('*').eq('cohort_id', cohort.id),
     ]);
-    const doneSet = new Set((progressRes.data || []).map(p => p.day_number));
+    const progress = progressRes.data || [];
+    const doneSet = new Set(progress.map(p => p.day_number));
     const scheduleMap = new Map((scheduleRes.data || []).map(d => [d.day_number, d]));
 
     renderProgress(doneSet);
     renderWeeks(user, cohort, doneSet, scheduleMap);
     renderTeamCard(user, cohort);
     renderTodayCard(user, cohort, doneSet, scheduleMap);
+    renderUpcomingCard(user, cohort, scheduleMap);
     renderMilestones(doneSet, reg);
     renderProfile(user, profile, reg);
+    renderCapSpec(progress);
+    renderCapSubs(user, cohort);
+    renderActivity(user, cohort, progress);
+  }
+
+  function renderUpcomingCard(user, cohort, scheduleMap) {
+    const card = document.getElementById('upcomingCard');
+    if (!card) return;
+    const now = Date.now();
+    const upcoming = Array.from(scheduleMap.values())
+      .filter(x => x.live_session_at && new Date(x.live_session_at).getTime() >= now)
+      .sort((a,b) => new Date(a.live_session_at) - new Date(b.live_session_at));
+    const nextLive = upcoming[0];
+    if (!nextLive) { card.style.display = 'none'; return; }
+    const t = DAYS.find(d => d.n === nextLive.day_number);
+    const dt = new Date(nextLive.live_session_at);
+    const when = dt.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+    const joinBtn = nextLive.meet_link
+      ? `<a href="${escapeHtml(nextLive.meet_link)}" target="_blank" class="cta" style="display:inline-block">Join →</a>`
+      : `<a href="day.html?n=${nextLive.day_number}" class="cta ghost" style="display:inline-block">Open lesson →</a>`;
+    card.innerHTML = `
+      <div class="kicker">Upcoming</div>
+      <h2 style="margin:0 0 6px">Next live · Day ${nextLive.day_number}</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 14px">${escapeHtml(t?.title || '')} · ${escapeHtml(when)}</p>
+      ${joinBtn}`;
+    card.style.display = 'block';
+  }
+
+  function renderCapSpec(progress) {
+    const el = document.getElementById('capSpec');
+    if (!el) return;
+    const d15 = (progress || []).find(p => p.day_number === 15);
+    if (d15?.notes) {
+      el.innerHTML = `<div style="padding:14px 16px;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;white-space:pre-wrap;color:var(--ink);font-size:13.5px">${escapeHtml(d15.notes)}</div>
+        <div style="margin-top:10px"><a href="day.html?n=15" class="cta ghost" style="display:inline-block;font-size:12.5px;padding:6px 12px">Edit in Day 15 →</a></div>`;
+    } else {
+      el.innerHTML = `Capstone spec lives in your Day 15 notes. <a href="day.html?n=15" style="color:var(--accent)">Open Day 15 →</a>`;
+    }
+  }
+
+  async function renderCapSubs(user, cohort) {
+    const el = document.getElementById('capSubs');
+    if (!el) return;
+    const { data: subs } = await supabase
+      .from('submissions')
+      .select('*, assignments!inner(day_number,title,cohort_id)')
+      .eq('user_id', user.id)
+      .eq('assignments.cohort_id', cohort.id)
+      .in('assignments.day_number', [21, 30]);
+    const list = subs || [];
+    if (!list.length) {
+      el.innerHTML = `No capstone submissions yet. <a href="day.html?n=21" style="color:var(--accent)">Submit Day 21 →</a> · <a href="day.html?n=30" style="color:var(--accent)">Submit Day 30 →</a>`;
+      return;
+    }
+    el.innerHTML = list.sort((a,b) => a.assignments.day_number - b.assignments.day_number).map(s => {
+      const link = s.content_url ? `<a href="${escapeHtml(s.content_url)}" target="_blank" style="color:var(--accent)">Open →</a>` : '—';
+      return `<div style="padding:12px 14px;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;margin-bottom:10px"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.12em;margin-bottom:6px">DAY ${s.assignments.day_number} · ${escapeHtml(s.assignments.title)}</div>Status: ${escapeHtml(s.status || '—')} · ${link}</div>`;
+    }).join('');
+  }
+
+  async function renderActivity(user, cohort, progress) {
+    const [attemptsRes, subsRes] = await Promise.all([
+      supabase.from('quiz_attempts').select('*, quizzes!inner(day_number,title,cohort_id)').eq('user_id', user.id).eq('quizzes.cohort_id', cohort.id),
+      supabase.from('submissions').select('*, assignments!inner(id,day_number,title,points,cohort_id)').eq('user_id', user.id).eq('assignments.cohort_id', cohort.id),
+    ]);
+    const attempts = attemptsRes.data || [];
+    const subs = subsRes.data || [];
+
+    const qWrap = document.getElementById('quizTableWrap');
+    if (!attempts.length) {
+      qWrap.innerHTML = `<p style="margin:0">No quiz attempts yet.</p>`;
+    } else {
+      attempts.sort((a,b) => new Date(b.completed_at) - new Date(a.completed_at));
+      qWrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Quiz</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Passed</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Date</th>
+        </tr></thead><tbody>${
+        attempts.map(qa => `<tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${qa.quizzes.day_number}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${escapeHtml(qa.quizzes.title)}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${qa.score ?? '—'}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${qa.passed ? '✓' : '—'}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">${qa.completed_at ? new Date(qa.completed_at).toLocaleDateString() : '—'}</td></tr>`).join('')
+      }</tbody></table>`;
+    }
+
+    const sWrap = document.getElementById('subTableWrap');
+    if (!subs.length) {
+      sWrap.innerHTML = `<p style="margin:0">No submissions yet.</p>`;
+    } else {
+      subs.sort((a,b) => a.assignments.day_number - b.assignments.day_number);
+      sWrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Title</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Status</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
+        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Submitted</th>
+        </tr></thead><tbody>${
+        subs.map(s => {
+          const score = s.score != null ? `${s.score}/${s.assignments.points}` : '—';
+          const when = s.submitted_at ? new Date(s.submitted_at).toLocaleDateString() : '—';
+          return `<tr>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${s.assignments.day_number}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${escapeHtml(s.assignments.title)}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${escapeHtml(s.status || '—')}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${score}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">${when}</td></tr>`;
+        }).join('')
+      }</tbody></table>`;
+    }
+
+    const nWrap = document.getElementById('notesList');
+    const notes = (progress || []).filter(lp => lp.notes).sort((a,b) => a.day_number - b.day_number);
+    if (!notes.length) {
+      nWrap.innerHTML = `<p style="margin:0">No notes yet. Notes live inside each day's lesson page.</p>`;
+    } else {
+      nWrap.innerHTML = notes.map(lp => {
+        const d = DAYS.find(x => x.n === lp.day_number);
+        return `<div style="padding:14px 16px;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;font-size:13.5px;white-space:pre-wrap"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.12em;margin-bottom:6px">DAY ${String(lp.day_number).padStart(2,'0')} · ${escapeHtml(d?.title || '')}</div>${escapeHtml(lp.notes)}</div>`;
+      }).join('');
+    }
   }
 
   function renderTodayCard(user, cohort, doneSet, scheduleMap) {
@@ -377,6 +541,32 @@
     if (link) {
       link.innerHTML = `<a href="showcase.html?u=${user.id}" target="_blank" class="cta ghost" style="display:inline-block;font-size:13px">Open your showcase →</a>`;
     }
+
+    // Theme preference radios
+    const radios = document.querySelectorAll('#themeRadios input[name="themePref"]');
+    const current = localStorage.getItem('theme') || 'dark';
+    radios.forEach(r => {
+      r.checked = (r.value === current);
+      r.addEventListener('change', () => {
+        if (r.value === 'system') {
+          const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+          const next = prefersLight ? 'light' : 'dark';
+          document.documentElement.dataset.theme = next;
+          localStorage.setItem('theme', next);
+          document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
+        } else {
+          document.documentElement.dataset.theme = r.value;
+          localStorage.setItem('theme', r.value);
+          document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: r.value } }));
+        }
+      });
+    });
+
+    const soBtn = document.getElementById('signOutProfileBtn');
+    if (soBtn) soBtn.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      location.reload();
+    });
   }
 
   function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
@@ -414,7 +604,7 @@
     const avatars = (members || []).map(m => {
       const name = m.profiles?.full_name || '—';
       const initials = name.split(/\s+/).map(s => s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?';
-      return `<span title="${escapeHtml(name)}" style="width:30px;height:30px;border-radius:50%;background:#0a0a12;border:1px solid var(--line);display:inline-grid;place-items:center;font-size:11px;font-weight:600;margin-right:-6px;color:var(--accent)">${initials}</span>`;
+      return `<span title="${escapeHtml(name)}" style="width:30px;height:30px;border-radius:50%;background:var(--input-bg);border:1px solid var(--line);display:inline-grid;place-items:center;font-size:11px;font-weight:600;margin-right:-6px;color:var(--accent)">${initials}</span>`;
     }).join('');
 
     card.style.display = 'block';
@@ -429,8 +619,6 @@
         <a href="teams.html" class="cta">View team →</a>
       </div>`;
   }
-
-  function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
   function toggleEnrollCard(user, cohort, profile, reg) {
     const card = $('enrollCard');
@@ -529,8 +717,10 @@
     const container = $('weeksContainer');
     container.innerHTML = '';
     const now = Date.now();
-    for (let w = 1; w <= 4; w++) {
+    const maxWeek = Math.max(...DAYS.map(d => d.w));
+    for (let w = 1; w <= maxWeek; w++) {
       const days = DAYS.filter(d => d.w === w);
+      if (!days.length) continue;
       const block = document.createElement('div');
       block.className = 'week-block';
       block.innerHTML = `
@@ -547,7 +737,7 @@
               isToday ? 'today' : ''].filter(Boolean).join(' ');
             const href = unlocked ? `day.html?n=${d.n}` : '#';
             const lockIcon = `<svg class="lock-ic" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5"/></svg>`;
-            const checkBox = `<div class="checkbox" data-toggle="1"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="#0b0b10" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+            const checkBox = `<div class="checkbox" data-toggle="1"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 L5 9 L10 3" stroke="var(--cta-ink)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
             return `
             <a class="${cls}" data-day="${d.n}" data-unlocked="${unlocked ? 1 : 0}" href="${href}">
               ${unlocked ? checkBox : lockIcon}
