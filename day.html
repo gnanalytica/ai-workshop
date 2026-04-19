@@ -57,6 +57,11 @@
   .live-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
   .live-pill-lg{font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(56,189,248,.12);color:#7dd5ff;border:1px solid rgba(56,189,248,.25)}
   .btn-join{padding:8px 14px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
+  .checkin-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(195,255,54,.1);color:#c9f76a;border:1px solid rgba(195,255,54,.35);font-weight:600}
+  .checkin-btn{padding:8px 14px;border-radius:999px;background:transparent;color:var(--ink);border:1px solid rgba(195,255,54,.4);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+  .checkin-btn:hover{background:rgba(195,255,54,.08)}
+  .checkin-btn:disabled{opacity:.6;cursor:not-allowed}
+  .checkin-err{font-size:12px;color:#ffa0a0}
 
   .lm-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:13px;color:var(--muted);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:20px 0 30px}
   .cp-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;background:color-mix(in oklab, var(--cp-c) 12%, transparent);border:1px solid color-mix(in oklab, var(--cp-c) 45%, transparent);margin:0 0 14px;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
@@ -468,6 +473,14 @@
           liveRow.appendChild(a);
         }
       }
+      // Check-in button (within ±12h of live session)
+      const withinCheckin = Math.abs(when.getTime() - Date.now()) < 12 * 3600 * 1000;
+      if (withinCheckin) {
+        const wrap = document.createElement('span');
+        wrap.id = 'checkinWrap';
+        liveRow.appendChild(wrap);
+        mountCheckin(wrap, { user, cohort });
+      }
     }
 
     // Load lab_progress for day completion + notes
@@ -706,6 +719,56 @@
       const el = document.getElementById(`mod-${m.id}`);
       if (el) io.observe(el);
     }
+  }
+
+  // ---------- Check-in ----------
+
+  async function mountCheckin(container, { user, cohort }) {
+    function fmtTime(iso) {
+      try { return new Date(iso).toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' }); }
+      catch { return ''; }
+    }
+    function renderDone(checkedAt) {
+      container.innerHTML = `<span class="tag tag-ok checkin-pill">Checked in ✓ at ${escapeHtml(fmtTime(checkedAt))}</span>`;
+    }
+    function renderButton() {
+      container.innerHTML = `
+        <button class="checkin-btn" id="checkinBtn">Check in to today's session</button>
+        <span class="checkin-err" id="checkinErr"></span>
+      `;
+      container.querySelector('#checkinBtn').addEventListener('click', onCheckin);
+    }
+    async function onCheckin() {
+      const btn = container.querySelector('#checkinBtn');
+      const err = container.querySelector('#checkinErr');
+      btn.disabled = true; err.textContent = '';
+      const nowIso = new Date().toISOString();
+      const { data, error } = await supabase.from('attendance')
+        .upsert({
+          user_id: user.id,
+          cohort_id: cohort.id,
+          day_number: n,
+          checked_in_at: nowIso,
+        }, { onConflict: 'user_id,cohort_id,day_number' })
+        .select().maybeSingle();
+      if (error) {
+        err.textContent = error.message;
+        btn.disabled = false;
+        return;
+      }
+      renderDone(data?.checked_in_at || nowIso);
+    }
+
+    const { data: existing, error } = await supabase.from('attendance')
+      .select('checked_in_at')
+      .eq('user_id', user.id).eq('cohort_id', cohort.id).eq('day_number', n)
+      .maybeSingle();
+    if (error && error.code !== 'PGRST116') {
+      container.innerHTML = `<span class="checkin-err">${escapeHtml(error.message)}</span>`;
+      return;
+    }
+    if (existing?.checked_in_at) renderDone(existing.checked_in_at);
+    else renderButton();
   }
 
   // ---------- Quiz widget ----------

@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Teams · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .team-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px}
+  .team-card h3{margin:0 0 6px;font-size:20px;letter-spacing:-.02em}
+  .team-card p.sub{color:var(--muted);font-size:13.5px;margin:0 0 18px}
+  .detail-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;margin-top:24px}
+  .detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:24px}
+  .detail-head h2{margin:0;font-size:26px;letter-spacing:-.02em}
+  .detail-head .meta{color:var(--muted);font-size:13.5px;margin-top:6px}
+  .code-box{display:inline-flex;align-items:center;gap:10px;background:#0a0a12;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;letter-spacing:.1em}
+  .btn-sm{padding:7px 12px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.danger:hover{border-color:var(--accent-3);color:#ffa0a0}
+  .member-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:#0a0a12;border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+  .avatar{width:38px;height:38px;border-radius:50%;background:#14141c;border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex:none}
+  .role-badge{padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .role-lead{background:rgba(195,255,54,.12);color:#c9f76a;border:1px solid rgba(195,255,54,.25)}
+  .role-member{background:rgba(138,138,154,.12);color:var(--muted);border:1px solid var(--line)}
+  .actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+  .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
+  .signout:hover{color:var(--ink)}
+  .inline-edit{background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--ink);font-size:26px;letter-spacing:-.02em;font-family:inherit;font-weight:700;outline:none;padding:2px 0;min-width:240px}
+  .inline-edit:focus{border-bottom-color:var(--accent)}
+  .lock-pill{padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
+  .lock-on{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.25)}
+  .lock-off{background:rgba(56,189,248,.1);color:#7dd5ff;border:1px solid rgba(56,189,248,.2)}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .code-input{font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.15em;text-align:center;font-size:16px;font-weight:700}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Teams</div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="dashboard.html" style="font-size:13px;color:var(--muted)">Dashboard</a>
+      <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Student login</div>
+    <h2>Sign in to manage your team</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Use the same email you registered with. We'll send a magic link.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div class="hero-row">
+    <div>
+      <div class="kicker">Capstone</div>
+      <h1>Your team</h1>
+      <div class="muted" style="font-size:14px" id="cohortInfo">—</div>
+    </div>
+  </div>
+
+  <!-- EMPTY STATE: create / join -->
+  <div id="emptyState" style="display:none">
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="kicker">New team</div>
+        <h3>Create a team</h3>
+        <p class="sub">You'll be the lead. Teams have 2–3 people. Share your join code once you're ready.</p>
+        <form id="createForm">
+          <div class="field"><label>Team name</label><input type="text" name="name" required maxlength="60" placeholder="Alpha Wolves" /></div>
+          <div class="field"><label>Description <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input type="text" name="description" maxlength="140" placeholder="One-line pitch…" /></div>
+          <button type="submit" class="submit-btn" id="createBtn">Create team →</button>
+          <div class="msg" id="createMsg"></div>
+        </form>
+      </div>
+      <div class="team-card">
+        <div class="kicker">Join</div>
+        <h3>Join a team</h3>
+        <p class="sub">Enter the 6-character code shared by your teammate.</p>
+        <form id="joinForm">
+          <div class="field"><label>Join code</label><input type="text" name="code" required maxlength="6" minlength="6" class="code-input" placeholder="ABCDEF" /></div>
+          <button type="submit" class="submit-btn" id="joinBtn">Join team →</button>
+          <div class="msg" id="joinMsg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL STATE -->
+  <div id="detailState" style="display:none">
+    <div class="detail-card" id="detailCard"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+
+  const $ = (id) => document.getElementById(id);
+  let USER = null;
+  let COHORT = null;
+  let TEAM = null;
+  let MEMBERSHIP = null;
+  let MEMBERS = [];
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    USER = session.user;
+    await loadAll();
+  }
+  function showGate() { $('gate').style.display='grid'; $('panel').style.display='none'; $('signoutBtn').style.display='none'; }
+  function showPanel() { $('gate').style.display='none'; $('panel').style.display='block'; $('signoutBtn').style.display='inline-block'; }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'), msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className='msg show err'; msg.textContent = error.message; btn.disabled=false; btn.textContent='Send magic link →'; }
+    else { msg.className='msg show ok'; msg.textContent='Check your email.'; btn.textContent='Sent ✓'; }
+  });
+
+  $('signoutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) { USER = session.user; loadAll(); }
+    if (event === 'SIGNED_OUT') showGate();
+  });
+
+  async function loadAll() {
+    showPanel();
+    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    COHORT = cohort;
+    $('cohortInfo').textContent = cohort ? `${cohort.name}` : '—';
+
+    const { data: membership } = await supabase
+      .from('team_members')
+      .select('id, team_id, role, teams!inner(id, name, description, join_code, max_members, locked_at, created_by, cohort_id)')
+      .eq('user_id', USER.id)
+      .eq('teams.cohort_id', cohort.id)
+      .maybeSingle();
+    MEMBERSHIP = membership;
+    TEAM = membership?.teams || null;
+
+    if (!TEAM) {
+      $('emptyState').style.display = 'block';
+      $('detailState').style.display = 'none';
+      bindEmptyState();
+    } else {
+      await loadMembers();
+      $('emptyState').style.display = 'none';
+      $('detailState').style.display = 'block';
+      renderDetail();
+    }
+  }
+
+  async function loadMembers() {
+    const { data } = await supabase
+      .from('team_members')
+      .select('id, user_id, role, joined_at, profiles(full_name, college)')
+      .eq('team_id', TEAM.id)
+      .order('joined_at', { ascending: true });
+    MEMBERS = data || [];
+  }
+
+  function bindEmptyState() {
+    $('createForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $('createBtn'), msg = $('createMsg');
+      msg.className = 'msg'; btn.disabled = true; btn.textContent = 'Creating…';
+      const fd = new FormData(e.target);
+      const name = String(fd.get('name') || '').trim();
+      const description = String(fd.get('description') || '').trim() || null;
+      if (!name) { fail(msg, btn, 'Name is required.', 'Create team →'); return; }
+      const { data: team, error } = await supabase.from('teams').insert({
+        cohort_id: COHORT.id, name, description, created_by: USER.id,
+      }).select().single();
+      if (error) { fail(msg, btn, error.message, 'Create team →'); return; }
+      const { error: mErr } = await supabase.from('team_members').insert({
+        team_id: team.id, user_id: USER.id, role: 'lead',
+      });
+      if (mErr) { fail(msg, btn, mErr.message, 'Create team →'); return; }
+      msg.className='msg show ok'; msg.textContent='Team created.';
+      setTimeout(loadAll, 500);
+    };
+
+    $('joinForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = $('joinBtn'), msg = $('joinMsg');
+      msg.className = 'msg'; btn.disabled = true; btn.textContent = 'Joining…';
+      const code = String(new FormData(e.target).get('code') || '').trim().toUpperCase();
+      if (code.length !== 6) { fail(msg, btn, 'Enter the full 6-character code.', 'Join team →'); return; }
+      const { data: team, error } = await supabase
+        .from('teams').select('id, name, max_members, locked_at, cohort_id')
+        .eq('join_code', code).maybeSingle();
+      if (error) { fail(msg, btn, error.message, 'Join team →'); return; }
+      if (!team) { fail(msg, btn, 'Invalid code.', 'Join team →'); return; }
+      if (team.cohort_id !== COHORT.id) { fail(msg, btn, 'That code belongs to a different cohort.', 'Join team →'); return; }
+      if (team.locked_at) { fail(msg, btn, 'That team is locked.', 'Join team →'); return; }
+      const { count } = await supabase.from('team_members').select('id', { count: 'exact', head: true }).eq('team_id', team.id);
+      if ((count || 0) >= team.max_members) { fail(msg, btn, 'That team is full.', 'Join team →'); return; }
+      const { error: mErr } = await supabase.from('team_members').insert({
+        team_id: team.id, user_id: USER.id, role: 'member',
+      });
+      if (mErr) { fail(msg, btn, mErr.message, 'Join team →'); return; }
+      msg.className='msg show ok'; msg.textContent=`Joined "${team.name}".`;
+      setTimeout(loadAll, 500);
+    };
+  }
+
+  function fail(msg, btn, text, label) {
+    msg.className = 'msg show err'; msg.textContent = text;
+    btn.disabled = false; btn.textContent = label;
+  }
+
+  function renderDetail() {
+    const isLead = MEMBERSHIP.role === 'lead';
+    const count = MEMBERS.length;
+    const locked = !!TEAM.locked_at;
+
+    const membersHtml = MEMBERS.map(m => {
+      const name = m.profiles?.full_name || '—';
+      const college = m.profiles?.college || '';
+      const initials = name.split(/\s+/).map(s=>s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?';
+      const isSelf = m.user_id === USER.id;
+      const showKick = isLead && !isSelf;
+      return `
+        <div class="member-row">
+          <div class="avatar">${initials}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600">${esc(name)}${isSelf ? ' <span class="muted" style="font-weight:400;font-size:12px">· you</span>' : ''}</div>
+            ${college ? `<div class="muted" style="font-size:12.5px">${esc(college)}</div>` : ''}
+          </div>
+          <span class="role-badge role-${m.role}">${m.role}</span>
+          ${showKick ? `<button class="btn-sm danger" data-kick="${m.id}">Remove</button>` : ''}
+        </div>`;
+    }).join('');
+
+    const inviteUrl = 'https://gnanalytica.github.io/ai-workshop/teams.html';
+    const lockBtnLabel = locked ? 'Unlock team' : 'Lock team';
+    const canLockNow = isLead && count >= 2;
+
+    $('detailCard').innerHTML = `
+      <div class="detail-head">
+        <div style="flex:1;min-width:260px">
+          ${isLead
+            ? `<input class="inline-edit" id="nameInput" value="${esc(TEAM.name)}" maxlength="60" />`
+            : `<h2>${esc(TEAM.name)}</h2>`}
+          ${TEAM.description
+            ? (isLead
+                ? `<input id="descInput" value="${esc(TEAM.description)}" maxlength="140" style="margin-top:8px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--muted);font-size:13.5px;font-family:inherit;outline:none;width:100%;padding:2px 0" />`
+                : `<div class="meta">${esc(TEAM.description)}</div>`)
+            : (isLead
+                ? `<input id="descInput" placeholder="Add a one-line description" maxlength="140" style="margin-top:8px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--muted);font-size:13.5px;font-family:inherit;outline:none;width:100%;padding:2px 0" />`
+                : '')}
+          <div class="meta" style="margin-top:10px">${count}/${TEAM.max_members} members · <span class="lock-pill ${locked ? 'lock-on' : 'lock-off'}">${locked ? 'locked' : 'open'}</span></div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px">Join code</div>
+          <div class="code-box">${esc(TEAM.join_code)}
+            <button class="btn-sm" id="copyCodeBtn">Copy</button>
+            ${isLead ? `<button class="btn-sm" id="regenBtn" title="Regenerate join code">↻</button>` : ''}
+          </div>
+          <div style="margin-top:8px"><button class="btn-sm" id="copyInviteBtn">Copy invite text</button></div>
+        </div>
+      </div>
+
+      <h3 style="margin:0 0 12px;font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em">Members</h3>
+      <div>${membersHtml}</div>
+
+      <div class="actions-row">
+        ${isLead ? `<button class="btn-sm" id="saveMetaBtn">Save name/description</button>` : ''}
+        ${isLead ? `<button class="btn-sm" id="lockBtn" ${!canLockNow && !locked ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>${lockBtnLabel}</button>` : ''}
+        <button class="btn-sm danger" id="leaveBtn">Leave team</button>
+      </div>
+      <div class="msg" id="detailMsg" style="margin-top:14px"></div>
+
+      <div style="margin-top:18px;padding:14px 16px;background:#0a0a12;border:1px solid var(--line);border-radius:12px;font-size:13px;color:var(--muted)">
+        Share with teammates: <span class="mono" style="color:var(--ink)">Join my team with code <b>${esc(TEAM.join_code)}</b> at ${inviteUrl}</span>
+      </div>
+    `;
+
+    $('copyCodeBtn').onclick = () => copy(TEAM.join_code, 'Code copied');
+    const copyInv = $('copyInviteBtn');
+    copyInv.onclick = () => copy(`Join my team with code ${TEAM.join_code} at ${inviteUrl}`, 'Invite copied');
+    const regen = $('regenBtn');
+    if (regen) regen.onclick = regenerateCode;
+    const saveBtn = $('saveMetaBtn');
+    if (saveBtn) saveBtn.onclick = saveMeta;
+    const lockBtn = $('lockBtn');
+    if (lockBtn) lockBtn.onclick = toggleLock;
+    $('leaveBtn').onclick = leaveTeam;
+    $('detailCard').querySelectorAll('[data-kick]').forEach(b => {
+      b.onclick = () => kickMember(b.dataset.kick);
+    });
+  }
+
+  async function saveMeta() {
+    const msg = $('detailMsg'); msg.className = 'msg';
+    const name = $('nameInput')?.value.trim();
+    const descEl = $('descInput');
+    const description = descEl ? (descEl.value.trim() || null) : TEAM.description;
+    if (!name) { msg.className='msg show err'; msg.textContent='Name cannot be empty.'; return; }
+    const { error } = await supabase.from('teams').update({ name, description }).eq('id', TEAM.id);
+    if (error) { msg.className='msg show err'; msg.textContent=error.message; return; }
+    toast('Saved');
+    await loadAll();
+  }
+
+  async function toggleLock() {
+    const msg = $('detailMsg'); msg.className = 'msg';
+    const newVal = TEAM.locked_at ? null : new Date().toISOString();
+    const { error } = await supabase.from('teams').update({ locked_at: newVal }).eq('id', TEAM.id);
+    if (error) { msg.className='msg show err'; msg.textContent=error.message; return; }
+    toast(newVal ? 'Team locked' : 'Team unlocked');
+    await loadAll();
+  }
+
+  async function regenerateCode() {
+    if (!confirm('Regenerate the join code? Old code will stop working.')) return;
+    const newCode = randomCode(6);
+    const { error } = await supabase.from('teams').update({ join_code: newCode }).eq('id', TEAM.id);
+    if (error) { alert(error.message); return; }
+    toast('New code generated');
+    await loadAll();
+  }
+
+  async function kickMember(memberRowId) {
+    const m = MEMBERS.find(x => x.id === memberRowId);
+    if (!m) return;
+    if (!confirm(`Remove ${m.profiles?.full_name || 'this member'} from the team?`)) return;
+    const { error } = await supabase.from('team_members').delete().eq('id', memberRowId);
+    if (error) { alert(error.message); return; }
+    toast('Member removed');
+    await loadAll();
+  }
+
+  async function leaveTeam() {
+    const isLead = MEMBERSHIP.role === 'lead';
+    const others = MEMBERS.filter(m => m.user_id !== USER.id);
+    if (isLead && others.length > 0) {
+      alert('You are the lead. Transfer leadership first by removing yourself only after promoting another member, or remove all members and delete the team.');
+      return;
+    }
+    if (!confirm('Leave this team?')) return;
+    const { error } = await supabase.from('team_members').delete().eq('id', MEMBERSHIP.id);
+    if (error) { alert(error.message); return; }
+    if (isLead && others.length === 0) {
+      await supabase.from('teams').delete().eq('id', TEAM.id);
+    }
+    toast('You left the team');
+    setTimeout(loadAll, 400);
+  }
+
+  async function copy(text, note) {
+    try { await navigator.clipboard.writeText(text); toast(note || 'Copied'); }
+    catch { toast('Copy failed'); }
+  }
+
+  function randomCode(n) {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let out = ''; const buf = new Uint32Array(n); crypto.getRandomValues(buf);
+    for (let i=0;i<n;i++) out += alphabet[buf[i] % alphabet.length];
+    return out;
+  }
+
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  let toastTimer;
+  function toast(text){ const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 1800); }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Teams · Admin · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
+  .section-head h2{margin:0}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .filters select,.filters input{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.danger:hover{border-color:var(--accent-3);color:#ffa0a0}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+  .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0 12px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .stat .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .stat .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-top:4px}
+  .member-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:#0a0a12;border:1px solid var(--line);font-size:12px;margin:2px 4px 2px 0}
+  .member-chip .x{color:var(--muted);cursor:pointer;font-weight:700;padding:0 2px}
+  .member-chip .x:hover{color:#ffa0a0}
+  .expand-row{background:#0a0a12!important}
+  .expand-row td{padding:14px 16px;border-top:0}
+  .inline-input{background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none;width:100%}
+  .inline-input:focus{border-color:var(--accent)}
+  .lock-pill{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .lock-on{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.25)}
+  .lock-off{background:rgba(56,189,248,.1);color:#7dd5ff;border:1px solid rgba(56,189,248,.2)}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;place-items:center;z-index:100;padding:20px}
+  .modal-backdrop.show{display:grid}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h3{margin:0 0 18px;font-size:20px;letter-spacing:-.02em}
+  .modal-actions{display:flex;gap:10px;margin-top:18px}
+  .modal-actions .submit-btn{flex:1}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
+  .multi-select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px;max-height:180px;overflow:auto}
+  .multi-select label{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:13px;cursor:pointer}
+  .multi-select label:hover{background:#14141c}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only admin accounts can access this page.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Not authorized</h2>
+      <p>You're signed in but not an admin.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div style="margin:24px 0 8px">
+    <div class="kicker">Capstone</div>
+    <h1>Teams</h1>
+  </div>
+
+  <div class="filters">
+    <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Cohort</label>
+    <select id="cohortSel"></select>
+    <button class="cta" id="newTeamBtn" style="margin-left:auto">+ New team</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="n" id="stTotal">0</div><div class="l">Total teams</div></div>
+    <div class="stat"><div class="n" id="stMembers">0</div><div class="l">Students in teams</div></div>
+    <div class="stat"><div class="n" id="stLocked">0</div><div class="l">Locked teams</div></div>
+    <div class="stat"><div class="n" id="stOpen">0</div><div class="l">Open teams</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th><th>Description</th><th>Members</th><th>Join code</th><th>Status</th><th>Created by</th><th style="text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="teamRows"></tbody>
+    </table>
+  </div>
+
+  <div class="section-head" style="margin-top:40px">
+    <h2>Unassigned students</h2>
+    <div class="muted" style="font-size:13px" id="unassignedNote">—</div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>College</th><th style="text-align:right">Assign</th></tr>
+      </thead>
+      <tbody id="unassignedRows"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- NEW/EDIT TEAM MODAL -->
+<div class="modal-backdrop" id="teamModal">
+  <div class="modal">
+    <h3 id="teamModalTitle">New team</h3>
+    <form id="teamForm">
+      <input type="hidden" name="id" />
+      <div class="field"><label>Name *</label><input type="text" name="name" required maxlength="60" /></div>
+      <div class="field"><label>Description</label><input type="text" name="description" maxlength="140" /></div>
+      <div class="field" id="initialMembersWrap">
+        <label>Initial members</label>
+        <div class="multi-select" id="initialMembers"></div>
+      </div>
+      <div class="field" id="initialLeadWrap">
+        <label>Lead</label>
+        <select name="lead" id="initialLead"></select>
+      </div>
+      <div class="msg" id="teamMsg"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-sm" style="padding:13px 18px;flex:none" id="teamCancel">Cancel</button>
+        <button type="submit" class="submit-btn" id="teamSubmit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+
+  const $ = (id) => document.getElementById(id);
+  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-teams.html');
+
+  let COHORTS = [];
+  let COHORT_ID = null;
+  let TEAMS = [];
+  let MEMBERS_BY_TEAM = new Map(); // team_id -> [members]
+  let PROFILES = new Map(); // user_id -> profile
+  let REGISTRATIONS = []; // confirmed registrations for current cohort
+  let EXPANDED = new Set();
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return showGate();
+    await checkAdmin(session.user);
+  }
+  function showGate() { $('gate').style.display='grid'; $('denied').style.display='none'; $('panel').style.display='none'; $('signoutBtn').style.display='none'; }
+  function showDenied() { $('gate').style.display='none'; $('denied').style.display='grid'; $('panel').style.display='none'; $('signoutBtn').style.display='inline-block'; }
+  function showPanel() { $('gate').style.display='none'; $('denied').style.display='none'; $('panel').style.display='block'; $('signoutBtn').style.display='inline-block'; }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'), msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className='msg show err'; msg.textContent = error.message; btn.disabled=false; btn.textContent='Send magic link →'; }
+    else { msg.className='msg show ok'; msg.textContent='Check your email.'; btn.textContent='Sent ✓'; }
+  });
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
+    if (event === 'SIGNED_OUT') showGate();
+  });
+
+  async function checkAdmin(user) {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!profile?.is_admin) return showDenied();
+    showPanel();
+    await loadCohorts();
+  }
+
+  async function loadCohorts() {
+    const { data } = await supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    COHORTS = data || [];
+    $('cohortSel').innerHTML = COHORTS.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+    COHORT_ID = COHORTS[0]?.id || null;
+    $('cohortSel').addEventListener('change', (e) => { COHORT_ID = e.target.value; loadAll(); });
+    if (COHORT_ID) await loadAll();
+  }
+
+  async function loadAll() {
+    if (!COHORT_ID) return;
+    const [teamsRes, regsRes] = await Promise.all([
+      supabase.from('teams').select('*').eq('cohort_id', COHORT_ID).order('created_at', { ascending: true }),
+      supabase.from('registrations').select('user_id, status').eq('cohort_id', COHORT_ID).eq('status', 'confirmed'),
+    ]);
+    TEAMS = teamsRes.data || [];
+    REGISTRATIONS = regsRes.data || [];
+
+    const teamIds = TEAMS.map(t => t.id);
+    MEMBERS_BY_TEAM = new Map();
+    let allMembers = [];
+    if (teamIds.length) {
+      const { data: mem } = await supabase
+        .from('team_members').select('*').in('team_id', teamIds)
+        .order('joined_at', { ascending: true });
+      allMembers = mem || [];
+      TEAMS.forEach(t => MEMBERS_BY_TEAM.set(t.id, []));
+      allMembers.forEach(m => {
+        const arr = MEMBERS_BY_TEAM.get(m.team_id) || [];
+        arr.push(m);
+        MEMBERS_BY_TEAM.set(m.team_id, arr);
+      });
+    }
+
+    // Load profiles for all involved users
+    const userIds = new Set();
+    allMembers.forEach(m => userIds.add(m.user_id));
+    REGISTRATIONS.forEach(r => userIds.add(r.user_id));
+    TEAMS.forEach(t => { if (t.created_by) userIds.add(t.created_by); });
+    if (userIds.size) {
+      const { data: profs } = await supabase.from('profiles').select('id, full_name, college, email').in('id', Array.from(userIds));
+      PROFILES = new Map((profs || []).map(p => [p.id, p]));
+    } else {
+      PROFILES = new Map();
+    }
+
+    renderStats();
+    renderTeams();
+    renderUnassigned();
+  }
+
+  function renderStats() {
+    const total = TEAMS.length;
+    let inTeams = 0, locked = 0;
+    TEAMS.forEach(t => {
+      inTeams += (MEMBERS_BY_TEAM.get(t.id) || []).length;
+      if (t.locked_at) locked++;
+    });
+    $('stTotal').textContent = total;
+    $('stMembers').textContent = inTeams;
+    $('stLocked').textContent = locked;
+    $('stOpen').textContent = total - locked;
+  }
+
+  function renderTeams() {
+    if (!TEAMS.length) {
+      $('teamRows').innerHTML = `<tr><td colspan="7" class="empty-state">No teams yet in this cohort.</td></tr>`;
+      return;
+    }
+    const rows = [];
+    TEAMS.forEach(t => {
+      const members = MEMBERS_BY_TEAM.get(t.id) || [];
+      const creator = PROFILES.get(t.created_by);
+      const locked = !!t.locked_at;
+      rows.push(`
+        <tr data-team="${t.id}">
+          <td><b data-role="name" data-id="${t.id}" style="cursor:text" contenteditable="true">${esc(t.name)}</b></td>
+          <td class="muted" style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span data-role="desc" data-id="${t.id}" contenteditable="true">${esc(t.description || '')}</span></td>
+          <td><button class="btn-sm" data-expand="${t.id}">${members.length}/${t.max_members} ${EXPANDED.has(t.id) ? '▴' : '▾'}</button></td>
+          <td><span class="mono" style="font-weight:700">${esc(t.join_code)}</span> <button class="btn-sm" data-copy="${esc(t.join_code)}">Copy</button></td>
+          <td><span class="lock-pill ${locked ? 'lock-on' : 'lock-off'}">${locked ? 'locked' : 'open'}</span></td>
+          <td class="muted" style="font-size:12.5px">${creator ? esc(creator.full_name || creator.email || '—') : '—'}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-save-meta="${t.id}">Save</button>
+              <button class="btn-sm" data-lock="${t.id}">${locked ? 'Unlock' : 'Lock'}</button>
+              <button class="btn-sm danger" data-delete="${t.id}">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `);
+      if (EXPANDED.has(t.id)) {
+        const chips = members.map(m => {
+          const p = PROFILES.get(m.user_id);
+          const name = p?.full_name || p?.email || m.user_id.slice(0, 8);
+          const college = p?.college ? ` · ${esc(p.college)}` : '';
+          const badge = m.role === 'lead' ? ' (lead)' : '';
+          return `<span class="member-chip">${esc(name)}${badge}${college}<span class="x" data-remove="${m.id}" title="Remove">✕</span></span>`;
+        }).join('') || '<span class="muted" style="font-size:13px">No members yet.</span>';
+        rows.push(`
+          <tr class="expand-row" data-team-exp="${t.id}">
+            <td colspan="7">${chips}</td>
+          </tr>
+        `);
+      }
+    });
+    $('teamRows').innerHTML = rows.join('');
+
+    $('teamRows').querySelectorAll('[data-expand]').forEach(b => {
+      b.onclick = () => {
+        const id = b.dataset.expand;
+        if (EXPANDED.has(id)) EXPANDED.delete(id); else EXPANDED.add(id);
+        renderTeams();
+      };
+    });
+    $('teamRows').querySelectorAll('[data-copy]').forEach(b => {
+      b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); toast('Copied'); } catch { toast('Copy failed'); } };
+    });
+    $('teamRows').querySelectorAll('[data-save-meta]').forEach(b => {
+      b.onclick = () => saveTeamMeta(b.dataset.saveMeta);
+    });
+    $('teamRows').querySelectorAll('[data-lock]').forEach(b => {
+      b.onclick = () => toggleLock(b.dataset.lock);
+    });
+    $('teamRows').querySelectorAll('[data-delete]').forEach(b => {
+      b.onclick = () => deleteTeam(b.dataset.delete);
+    });
+    $('teamRows').querySelectorAll('[data-remove]').forEach(x => {
+      x.onclick = () => removeMember(x.dataset.remove);
+    });
+  }
+
+  async function saveTeamMeta(teamId) {
+    const nameEl = $('teamRows').querySelector(`[data-role="name"][data-id="${teamId}"]`);
+    const descEl = $('teamRows').querySelector(`[data-role="desc"][data-id="${teamId}"]`);
+    const name = (nameEl?.textContent || '').trim();
+    const description = (descEl?.textContent || '').trim() || null;
+    if (!name) { toast('Name required'); return; }
+    const { error } = await supabase.from('teams').update({ name, description }).eq('id', teamId);
+    if (error) { alert(error.message); return; }
+    toast('Saved');
+    await loadAll();
+  }
+
+  async function toggleLock(teamId) {
+    const t = TEAMS.find(x => x.id === teamId);
+    if (!t) return;
+    const newVal = t.locked_at ? null : new Date().toISOString();
+    const { error } = await supabase.from('teams').update({ locked_at: newVal }).eq('id', teamId);
+    if (error) { alert(error.message); return; }
+    toast(newVal ? 'Locked' : 'Unlocked');
+    await loadAll();
+  }
+
+  async function deleteTeam(teamId) {
+    const t = TEAMS.find(x => x.id === teamId);
+    if (!t) return;
+    if (!confirm(`Delete team "${t.name}"? All memberships are removed. This cannot be undone.`)) return;
+    await supabase.from('team_members').delete().eq('team_id', teamId);
+    const { error } = await supabase.from('teams').delete().eq('id', teamId);
+    if (error) { alert(error.message); return; }
+    toast('Team deleted');
+    await loadAll();
+  }
+
+  async function removeMember(memberRowId) {
+    if (!confirm('Remove this member from their team?')) return;
+    const { error } = await supabase.from('team_members').delete().eq('id', memberRowId);
+    if (error) { alert(error.message); return; }
+    toast('Member removed');
+    await loadAll();
+  }
+
+  function getUnassignedUserIds() {
+    const assigned = new Set();
+    MEMBERS_BY_TEAM.forEach(arr => arr.forEach(m => assigned.add(m.user_id)));
+    return REGISTRATIONS.filter(r => !assigned.has(r.user_id)).map(r => r.user_id);
+  }
+
+  function renderUnassigned() {
+    const ids = getUnassignedUserIds();
+    $('unassignedNote').textContent = `${ids.length} confirmed student${ids.length === 1 ? '' : 's'} without a team`;
+    if (!ids.length) {
+      $('unassignedRows').innerHTML = `<tr><td colspan="4" class="empty-state">Everyone's on a team.</td></tr>`;
+      return;
+    }
+    const teamOpts = TEAMS
+      .filter(t => (MEMBERS_BY_TEAM.get(t.id) || []).length < t.max_members && !t.locked_at)
+      .map(t => `<option value="${t.id}">${esc(t.name)} (${(MEMBERS_BY_TEAM.get(t.id)||[]).length}/${t.max_members})</option>`).join('');
+    $('unassignedRows').innerHTML = ids.map(uid => {
+      const p = PROFILES.get(uid);
+      const name = p?.full_name || '—';
+      const email = p?.email || '';
+      const college = p?.college || '';
+      return `
+        <tr>
+          <td>${esc(name)}</td>
+          <td class="muted" style="font-size:12.5px">${esc(email)}</td>
+          <td class="muted" style="font-size:12.5px">${esc(college)}</td>
+          <td style="text-align:right">
+            <div class="row-actions">
+              <select class="inline-input" style="width:auto;max-width:220px" data-assign-select="${uid}">
+                <option value="">— Add to team —</option>
+                ${teamOpts}
+              </select>
+              <button class="btn-sm" data-assign-btn="${uid}">Add</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+    $('unassignedRows').querySelectorAll('[data-assign-btn]').forEach(b => {
+      b.onclick = () => {
+        const uid = b.dataset.assignBtn;
+        const sel = $('unassignedRows').querySelector(`[data-assign-select="${uid}"]`);
+        const teamId = sel?.value;
+        if (!teamId) { toast('Pick a team'); return; }
+        assignToTeam(uid, teamId);
+      };
+    });
+  }
+
+  async function assignToTeam(userId, teamId) {
+    const { error } = await supabase.from('team_members').insert({ team_id: teamId, user_id: userId, role: 'member' });
+    if (error) { alert(error.message); return; }
+    toast('Assigned');
+    await loadAll();
+  }
+
+  // ---------- Create team modal ----------
+  $('newTeamBtn').addEventListener('click', openTeamModal);
+  $('teamCancel').addEventListener('click', () => $('teamModal').classList.remove('show'));
+  $('teamModal').addEventListener('click', (e) => { if (e.target === $('teamModal')) $('teamModal').classList.remove('show'); });
+
+  function openTeamModal() {
+    const f = $('teamForm'); f.reset();
+    $('teamMsg').className = 'msg';
+    const unassigned = getUnassignedUserIds();
+    $('initialMembers').innerHTML = unassigned.length
+      ? unassigned.map(uid => {
+          const p = PROFILES.get(uid);
+          const name = p?.full_name || p?.email || uid.slice(0,8);
+          const college = p?.college ? ` · ${esc(p.college)}` : '';
+          return `<label><input type="checkbox" value="${uid}" data-member /> <span>${esc(name)}${college}</span></label>`;
+        }).join('')
+      : '<div class="muted" style="font-size:13px;padding:8px">No unassigned students.</div>';
+    $('initialLead').innerHTML = `<option value="">— none —</option>`;
+    $('initialMembers').querySelectorAll('[data-member]').forEach(cb => {
+      cb.addEventListener('change', refreshLeadOptions);
+    });
+    $('teamModal').classList.add('show');
+  }
+
+  function refreshLeadOptions() {
+    const picked = Array.from($('initialMembers').querySelectorAll('[data-member]:checked')).map(cb => cb.value);
+    $('initialLead').innerHTML = `<option value="">— none —</option>` + picked.map(uid => {
+      const p = PROFILES.get(uid);
+      const name = p?.full_name || p?.email || uid.slice(0,8);
+      return `<option value="${uid}">${esc(name)}</option>`;
+    }).join('');
+  }
+
+  $('teamForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('teamMsg'); const btn = $('teamSubmit');
+    msg.className = 'msg'; btn.disabled = true; btn.textContent = 'Saving…';
+    const fd = new FormData(e.target);
+    const name = String(fd.get('name') || '').trim();
+    const description = String(fd.get('description') || '').trim() || null;
+    const picked = Array.from($('initialMembers').querySelectorAll('[data-member]:checked')).map(cb => cb.value);
+    const lead = String(fd.get('lead') || '') || null;
+
+    if (!name) { msg.className='msg show err'; msg.textContent='Name required.'; btn.disabled=false; btn.textContent='Save'; return; }
+
+    const createdBy = lead || picked[0] || (await supabase.auth.getUser()).data.user.id;
+    const { data: team, error } = await supabase.from('teams').insert({
+      cohort_id: COHORT_ID, name, description, created_by: createdBy,
+    }).select().single();
+    if (error) { msg.className='msg show err'; msg.textContent=error.message; btn.disabled=false; btn.textContent='Save'; return; }
+
+    if (picked.length) {
+      const rows = picked.map(uid => ({
+        team_id: team.id, user_id: uid,
+        role: (lead && uid === lead) ? 'lead' : 'member',
+      }));
+      if (lead && !picked.includes(lead)) rows.push({ team_id: team.id, user_id: lead, role: 'lead' });
+      const { error: mErr } = await supabase.from('team_members').insert(rows);
+      if (mErr) { msg.className='msg show err'; msg.textContent=mErr.message; btn.disabled=false; btn.textContent='Save'; return; }
+    } else if (lead) {
+      await supabase.from('team_members').insert({ team_id: team.id, user_id: lead, role: 'lead' });
+    }
+
+    $('teamModal').classList.remove('show');
+    btn.disabled = false; btn.textContent = 'Save';
+    toast('Team created');
+    await loadAll();
+  });
+
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  let toastTimer;
+  function toast(text){ const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 1800); }
+
+  init();
+</script>
+</body>
+</html>

@@ -118,6 +118,8 @@
     </div>
   </div>
 
+  <div id="teamCard" class="progress-wrap" style="display:none"></div>
+
   <div id="weeksContainer"></div>
 </main>
 
@@ -212,7 +214,59 @@
 
     renderProgress(doneSet);
     renderWeeks(user, cohort, doneSet, scheduleMap);
+    renderTeamCard(user, cohort);
   }
+
+  async function renderTeamCard(user, cohort) {
+    const card = $('teamCard');
+    if (!cohort) { card.style.display = 'none'; return; }
+    const { data: membership } = await supabase
+      .from('team_members')
+      .select('team_id, role, teams!inner(id, name, description, cohort_id, max_members, locked_at)')
+      .eq('user_id', user.id)
+      .eq('teams.cohort_id', cohort.id)
+      .maybeSingle();
+
+    if (!membership) {
+      card.style.display = 'block';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+          <div>
+            <div class="kicker" style="margin-bottom:6px">Capstone</div>
+            <b style="font-size:17px">Your team</b>
+            <div class="muted" style="font-size:13.5px;margin-top:6px">You haven't formed or joined a team yet.</div>
+          </div>
+          <a href="teams.html" class="cta">Create or join →</a>
+        </div>`;
+      return;
+    }
+
+    const team = membership.teams;
+    const { data: members } = await supabase
+      .from('team_members')
+      .select('user_id, role, profiles(full_name)')
+      .eq('team_id', team.id);
+    const count = members?.length || 0;
+    const avatars = (members || []).map(m => {
+      const name = m.profiles?.full_name || '—';
+      const initials = name.split(/\s+/).map(s => s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?';
+      return `<span title="${escapeHtml(name)}" style="width:30px;height:30px;border-radius:50%;background:#0a0a12;border:1px solid var(--line);display:inline-grid;place-items:center;font-size:11px;font-weight:600;margin-right:-6px;color:var(--accent)">${initials}</span>`;
+    }).join('');
+
+    card.style.display = 'block';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <div class="kicker" style="margin-bottom:6px">Capstone</div>
+          <b style="font-size:17px">Your team · ${escapeHtml(team.name)}</b>
+          <div class="muted" style="font-size:13.5px;margin-top:6px">${count}/${team.max_members} members${team.locked_at ? ' · locked' : ''}</div>
+          <div style="margin-top:10px;display:flex;align-items:center">${avatars}</div>
+        </div>
+        <a href="teams.html" class="cta">View team →</a>
+      </div>`;
+  }
+
+  function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
   function toggleEnrollCard(user, cohort, profile, reg) {
     const card = $('enrollCard');
