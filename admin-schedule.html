@@ -109,9 +109,25 @@
     <div class="sum-card"><div class="sum-n" id="sNextAt">—</div><div class="sum-l">Next live session</div></div>
   </div>
 
-  <div class="bulk-row">
-    <button class="bulk-btn" id="bulkBtn">Unlock through today</button>
-    <div class="msg" id="topMsg" style="margin:0"></div>
+  <div class="bulk-row" style="flex-wrap:wrap;gap:10px;align-items:center">
+    <button class="bulk-btn" id="bulkBtn" title="Unlock all days whose session time has arrived (or days elapsed since start)">Unlock through today</button>
+    <div style="width:1px;height:22px;background:var(--line);margin:0 4px"></div>
+    <span class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Bulk</span>
+    <button class="bulk-btn" id="selectAllBtn">Select all</button>
+    <button class="bulk-btn" id="selectNoneBtn">Select none</button>
+    <select id="selectWeek" style="background:var(--input-bg,#0a0a12);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13px;outline:none">
+      <option value="">Select week…</option>
+      <option value="1">Week 1 (Days 1–5)</option>
+      <option value="2">Week 2 (Days 6–10)</option>
+      <option value="3">Week 3 (Days 11–15)</option>
+      <option value="4">Week 4 (Days 16–20)</option>
+      <option value="5">Week 5 (Days 21–25)</option>
+      <option value="6">Week 6 (Days 26–30)</option>
+    </select>
+    <button class="bulk-btn" id="enableSelBtn" style="background:rgba(195,255,54,.08);border-color:rgba(195,255,54,.35);color:var(--accent)">Enable selected</button>
+    <button class="bulk-btn" id="disableSelBtn" style="background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.3);color:#ffa0a0">Disable selected</button>
+    <span class="muted" id="selCount" style="font-size:12.5px;margin-left:6px">0 selected</span>
+    <div class="msg" id="topMsg" style="margin:0;flex:1 0 100%"></div>
   </div>
 
   <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px">
@@ -221,7 +237,7 @@
 
   function renderWeeks() {
     const container = $('weeks');
-    const html = [1,2,3,4].map(w => {
+    const html = [1,2,3,4,5,6].map(w => {
       const days = DAYS.filter(d => d.w === w);
       const cards = days.map(d => dayCardHtml(d)).join('');
       return `
@@ -240,11 +256,16 @@
     const row = DAY_ROWS.get(d.n) || { day_number: d.n, is_unlocked: false, live_session_at: null, meet_link: '', notes: '' };
     const dtVal = row.live_session_at ? toLocalInput(row.live_session_at) : '';
     return `
-      <div class="day-card ${row.is_unlocked ? 'unlocked' : ''}" data-day="${d.n}">
+      <div class="day-card ${row.is_unlocked ? 'unlocked' : ''}" data-day="${d.n}" data-week="${d.w}">
         <div class="day-head">
-          <div>
-            <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
-            <div class="day-title">${esc(d.title)}</div>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <label title="Bulk select" style="cursor:pointer;margin-top:2px">
+              <input type="checkbox" data-field="bulk_sel" class="bulk-sel" style="width:16px;height:16px;accent-color:var(--accent)" />
+            </label>
+            <div>
+              <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
+              <div class="day-title">${esc(d.title)}</div>
+            </div>
           </div>
           <label class="switch" title="Unlock">
             <input type="checkbox" data-field="is_unlocked" ${row.is_unlocked ? 'checked' : ''} />
@@ -327,6 +348,61 @@
     flash.classList.add('show');
     setTimeout(() => flash.classList.remove('show'), 1200);
   });
+
+  // ---------- Bulk multi-select ----------
+  function bulkSelBoxes() { return document.querySelectorAll('.bulk-sel'); }
+  function selectedDays() {
+    return [...document.querySelectorAll('.day-card')]
+      .filter(card => card.querySelector('.bulk-sel')?.checked)
+      .map(card => parseInt(card.dataset.day, 10));
+  }
+  function updateSelCount() {
+    $('selCount').textContent = `${selectedDays().length} selected`;
+  }
+  document.addEventListener('change', (e) => {
+    if (e.target.classList?.contains('bulk-sel')) updateSelCount();
+  });
+  $('selectAllBtn').addEventListener('click', () => {
+    bulkSelBoxes().forEach(cb => { cb.checked = true; });
+    updateSelCount();
+  });
+  $('selectNoneBtn').addEventListener('click', () => {
+    bulkSelBoxes().forEach(cb => { cb.checked = false; });
+    updateSelCount();
+  });
+  $('selectWeek').addEventListener('change', (e) => {
+    const w = parseInt(e.target.value, 10);
+    if (!w) return;
+    document.querySelectorAll('.day-card').forEach(card => {
+      const cb = card.querySelector('.bulk-sel');
+      if (cb) cb.checked = parseInt(card.dataset.week, 10) === w;
+    });
+    updateSelCount();
+    e.target.value = '';
+  });
+  async function applyBulkEnable(enable) {
+    const days = selectedDays();
+    if (!days.length) { toast('No days selected.'); return; }
+    if (!CURRENT_COHORT) return;
+    const payload = { is_unlocked: enable, unlocked_at: enable ? new Date().toISOString() : null };
+    // For each selected day, upsert the cohort_days row
+    for (const n of days) {
+      const existing = DAY_ROWS.get(n);
+      if (existing?.id) {
+        await supabase.from('cohort_days').update(payload).eq('id', existing.id);
+      } else {
+        await supabase.from('cohort_days').insert({
+          cohort_id: CURRENT_COHORT.id,
+          day_number: n,
+          ...payload,
+        });
+      }
+    }
+    toast(`${enable ? 'Enabled' : 'Disabled'} ${days.length} day${days.length === 1 ? '' : 's'}.`);
+    await loadSchedule(CURRENT_COHORT.id);
+  }
+  $('enableSelBtn').addEventListener('click', () => applyBulkEnable(true));
+  $('disableSelBtn').addEventListener('click', () => applyBulkEnable(false));
 
   $('bulkBtn').addEventListener('click', async () => {
     if (!CURRENT_COHORT) return;
