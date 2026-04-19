@@ -183,7 +183,10 @@
       <a href="#capstone">Capstone</a>
       <a href="dashboard.html">Dashboard</a>
     </div>
-    <a class="cta" href="#" onclick="openModal();return false;">Enroll →</a>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" onclick="openLogin();return false;" style="font-size:14px;color:var(--muted)">Sign in</a>
+      <a class="cta" href="#" onclick="openModal();return false;">Enroll →</a>
+    </div>
   </div>
 </nav>
 
@@ -447,6 +450,23 @@
   </div>
 </div>
 
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeLogin()" aria-label="Close">×</button>
+    <h3>Welcome back</h3>
+    <p class="sub">Enter your email — we'll send you a magic link to your dashboard.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@college.edu" /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+      <div style="margin-top:14px;font-size:13px;color:var(--muted);text-align:center">
+        New here? <a href="#" onclick="closeLogin();openModal();return false;" style="color:var(--accent)">Enroll instead →</a>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer id="enroll">
   <div class="wrap foot">
@@ -465,8 +485,38 @@
 
   window.openModal = () => document.getElementById('regModal').classList.add('open');
   window.closeModal = () => document.getElementById('regModal').classList.remove('open');
+  window.openLogin = () => document.getElementById('loginModal').classList.add('open');
+  window.closeLogin = () => document.getElementById('loginModal').classList.remove('open');
   document.getElementById('regModal').addEventListener('click', e => {
     if (e.target.id === 'regModal') closeModal();
+  });
+  document.getElementById('loginModal').addEventListener('click', e => {
+    if (e.target.id === 'loginModal') closeLogin();
+  });
+
+  const loginForm = document.getElementById('loginForm');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginMsg = document.getElementById('loginMsg');
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Sending…';
+    loginMsg.className = 'msg';
+    const email = new FormData(loginForm).get('email');
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: new URL('dashboard.html', window.location.href).toString() },
+    });
+    if (error) {
+      loginMsg.className = 'msg show err';
+      loginMsg.textContent = error.message;
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Send magic link →';
+    } else {
+      loginMsg.className = 'msg show ok';
+      loginMsg.textContent = "Check your email — we'll drop you into your dashboard.";
+      loginBtn.textContent = 'Sent ✓';
+    }
   });
 
   const form = document.getElementById('regForm');
