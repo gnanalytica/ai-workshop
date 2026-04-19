@@ -2,7 +2,7 @@
 reading_time: 16 min
 tldr: "An agent is a model in a loop with tools — today you build one with LangGraph and plug in your first MCP server."
 tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/2B7_Y-6KBSQ
 lab: {"title": "Build a 3-tool LangGraph agent and wire up an MCP server", "url": "https://langchain-ai.github.io/langgraph/"}
 prompt_of_the_day: "You are an agent with tools: {{tool_list}}. Goal: {{goal}}. Before each tool call, state your reasoning in one sentence. After each tool result, state what you learned in one sentence. Stop when the goal is met or after 6 steps."
 tools_hands_on: [{"name": "LangGraph", "url": "https://langchain-ai.github.io/langgraph/"}, {"name": "Model Context Protocol", "url": "https://modelcontextprotocol.io"}]
@@ -96,7 +96,7 @@ We demo it today. Tomorrow we go deep on multi-agent patterns and when the abstr
 
 ## Watch: Tracing an agent step by step
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/2B7_Y-6KBSQ
 
 ## Lab: A 3-tool LangGraph agent + your first MCP server
 

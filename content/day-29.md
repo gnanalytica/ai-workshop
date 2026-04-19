@@ -2,7 +2,7 @@
 reading_time: 10 min
 tldr: "The demo is won or lost in the first 30 seconds — today you rehearse until it is boring, then polish your showcase."
 tags: ["launch", "demo", "rehearsal", "showcase"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/Unzc731iCUY
 lab: {"title": "Two full dry-runs + showcase polish", "url": "/showcase.html"}
 prompt_of_the_day: "Critique this 3-minute demo transcript {{transcript}} for a live panel. Score on hook (0-10), story arc (0-10), call to action (0-10). Give 3 specific line-level rewrites and 2 cut suggestions."
 tools_hands_on: [{"name": "Showcase page", "url": "/showcase.html"}, {"name": "Loom", "url": "https://loom.com"}, {"name": "Descript", "url": "https://descript.com"}]
@@ -59,7 +59,7 @@ Panels will ask sharp questions. The bridge technique: acknowledge → bridge �
 
 ## Watch: Instructor Dress Rehearsal + Common Mistakes (12 min)
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/Unzc731iCUY
 
 Live walkthrough of a full demo with mistakes and fixes, then a critique of two past student demos.
 

@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "The Mom Test is the rule: ask about past behaviour, never about future opinions. Today you run one real interview and plan two more."
 tags: ["design", "user-research", "interviews", "capstone"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/FG1Fa-t4AEQ
 lab: {"title": "Record and transcribe a 20-min capstone interview with a classmate", "url": "https://otter.ai"}
 prompt_of_the_day: "Here is a transcript of a user interview about my capstone problem. {{paste_transcript}}. Extract: (1) the 3 most surprising things the user actually did (not said), (2) any contradictions between what they said and what they did, (3) 3 Jobs-to-be-Done hypotheses in the format 'When [situation], I want to [motivation], so I can [outcome]', (4) 5 follow-up questions I should ask in interview #2."
 tools_hands_on: [{"name": "Otter.ai", "url": "https://otter.ai"}]
@@ -51,7 +51,7 @@ Recording matters. Human memory is a liar. Otter.ai (otter.ai) records and auto-
 
 Watch Rob Fitzpatrick summarise the three rules and demonstrate a before/after interview. Notice how the "after" version asks nothing about the idea yet produces far stronger signal.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/FG1Fa-t4AEQ
 
 - Never mention your idea in the first half of the interview.
 - Ask "when was the last time?" — it converts opinions into stories.

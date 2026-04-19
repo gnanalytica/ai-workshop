@@ -2,7 +2,7 @@
 reading_time: 15 min
 tldr: "Stop re-prompting. Write CLAUDE.md + AGENTS.md once so your AI remembers your project every time — the real unlock of 2026."
 tags: ["build", "technical"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/ASAaKhK1B5w
 lab: {"title": "Write your capstone's first CLAUDE.md + AGENTS.md + 3 slash commands", "url": "https://claude.com/claude-code"}
 prompt_of_the_day: "You are a context engineer. Given my capstone description {{capstone_description}} and stack {{stack}}, draft a CLAUDE.md with these sections: Project Overview, Architecture, Coding Rules, File Locations, Testing Patterns, Common Pitfalls, Slash Commands. Make every rule actionable."
 tools_hands_on: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
@@ -70,7 +70,7 @@ Project memory is the highest-leverage layer because it's shared with your teamm
 
 Instructor walks through a real 150-line CLAUDE.md from a production AI project — Project Overview, architecture diagram, coding rules, slash commands, hooks — calling out why each line exists. Then shows what happens when you delete it and start a fresh chat.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/ASAaKhK1B5w
 
 - 100–300 lines is the sweet spot.
 - Every rule should be testable (would a human know if it was violated?).

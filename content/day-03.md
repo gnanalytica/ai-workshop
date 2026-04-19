@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "A good prompt is not a magic spell. It's a well-briefed junior — context, role, examples, constraints, tone, evaluation."
 tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Iterate one prompt five times", "url": "https://claude.ai/"}
 prompt_of_the_day: "You are a {{role}}. Context: {{one paragraph about the situation}}. Task: {{what you want done}}. Constraints: {{bullet list of must-dos and must-nots}}. Examples: {{1-2 good examples}}. Output format: {{JSON / markdown / table}}."
 tools_hands_on: [{"name": "Claude", "url": "https://claude.ai/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}]
@@ -91,8 +91,7 @@ Prompt engineering = one good message. **Context engineering** = designing the *
 
 Short curated clip covering CREATE, few-shot, CoT, and structured output.
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Watch for:
 - Why "think step by step" doubles accuracy on reasoning tasks

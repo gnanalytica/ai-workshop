@@ -2,7 +2,7 @@
 reading_time: 15 min
 tldr: "Run an LLM on your own laptop, compare three prompt styles on a 10-row eval set, and trace everything in Langfuse."
 tags: ["build", "technical"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/rIRkxZSn-A8
 lab: {"title": "Install Ollama + run a 1-3B model + log 10 evals in Langfuse", "url": "https://ollama.com/download"}
 prompt_of_the_day: "Act as a prompt engineer. My task is {{task_description}}. Generate three prompt variants: (A) zero-shot, (B) chain-of-thought with self-critique, (C) few-shot with 3 examples. Output each as a clearly labelled code block so I can paste them into Langfuse."
 tools_hands_on: [{"name": "Ollama", "url": "https://ollama.com"}, {"name": "Open WebUI", "url": "https://openwebui.com"}, {"name": "Langfuse", "url": "https://langfuse.com"}]
@@ -61,7 +61,7 @@ That's it. The magic is the **repeatability** — the next time you tweak your p
 
 Live walkthrough installing Ollama, pulling a small model, wiring up Open WebUI, and making the first local chat call. Then we switch to Groq for a side-by-side speed comparison.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/rIRkxZSn-A8
 
 - Ollama listens on `http://localhost:11434` — the number matters.
 - Open WebUI gives you a ChatGPT-style interface on top of Ollama.

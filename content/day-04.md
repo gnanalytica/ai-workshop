@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "AI lies beautifully, leaks quietly, and amplifies whatever bias you feed it. Your job is to stop being surprised by it."
 tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/N9_a_MUHpB4
 lab: {"title": "Make three models hallucinate — on purpose", "url": "https://claude.ai/"}
 prompt_of_the_day: "Give me 5 recent peer-reviewed papers (2023-2025) on {{niche topic}}. For each, include title, authors, journal, DOI, and one-line finding. Mark any you're less than 95% confident about."
 tools_hands_on: [{"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}, {"name": "Gemini", "url": "https://gemini.google.com/"}]
@@ -82,8 +82,7 @@ Because it's optimised to sound fluent, not to be truthful. Fluency and truth ha
 
 ## Watch: AI failures — a 15-minute tour
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/N9_a_MUHpB4
 
 Watch for:
 - How quickly Tay turned (under 16 hours)

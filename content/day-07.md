@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Google gives you links. AI research tools give you a grounded answer with citations you can actually trust."
 tags: ["exposure", "tools"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/EOmgC3-hznM
 lab: {"title": "Ship a 1-page research brief on your capstone domain", "url": "https://www.perplexity.ai"}
 prompt_of_the_day: "Act as a senior analyst. Produce a research brief on {{topic}} for a capstone feasibility review. Structure: (1) problem in one paragraph, (2) 5 recent developments (last 18 months) with citations, (3) 3 existing solutions + their gaps, (4) 3 open questions worth a student project, (5) my 60-second verdict. Cite every factual claim inline."
 tools_hands_on: [{"name": "Perplexity", "url": "https://www.perplexity.ai"}, {"name": "NotebookLM", "url": "https://notebooklm.google.com"}, {"name": "Gemini Deep Research", "url": "https://gemini.google.com"}]
@@ -47,7 +47,7 @@ Gemini Deep Research is the heaviest hitter. You give it a prompt, it plans a re
 
 A short demo where we drop a 30-page PDF on campus placement trends into NotebookLM and it produces a 9-minute podcast with two AI hosts, a mind map, and a study guide — in 90 seconds.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/EOmgC3-hznM
 
 - Notice that the hosts actually disagree at 4:20; grounded models surface tension.
 - Watch how the mind map reorganizes your doc by theme, not page order.

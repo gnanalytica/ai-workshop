@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Your problem lives inside a system of loops — diagram it, find the leverage point, then pitch the whole thing in 60 seconds using SCQA."
 tags: ["design", "systems-thinking", "storytelling", "pitch", "capstone"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/_EMnnq3teEs
 lab: {"title": "Causal-loop diagram + 60-sec SCQA pitch for your capstone", "url": "https://excalidraw.com"}
 prompt_of_the_day: "I am pitching my capstone in 60 seconds using the SCQA structure (Situation, Complication, Question, Answer). Capstone: {{my_capstone}}. Surprising insight from interviews: {{insight}}. Leverage point from my causal-loop diagram: {{leverage_point}}. Draft three versions of the pitch — one analytical, one emotional, one contrarian — each under 150 words. Then tell me which is strongest and why."
 tools_hands_on: [{"name": "Excalidraw", "url": "https://excalidraw.com"}]
@@ -47,7 +47,7 @@ For your capstone, after drawing the loop, ask: *at which node would a small cha
 
 A short video on systems thinking and why small interventions at the right point cause cascading change, while large interventions at the wrong point accomplish nothing.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/_EMnnq3teEs
 
 - The strongest leverage is almost never where it first appears to be.
 - Most interventions target parameters; most impact comes from mindsets.

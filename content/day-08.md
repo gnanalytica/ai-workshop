@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Pixels are free now. Today you generate a poster and a ten-second video for your capstone pitch."
 tags: ["exposure", "tools"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/5deYUaqwreo
 lab: {"title": "Ship 1 poster + 1 ten-second video for your capstone", "url": "https://aistudio.google.com"}
 prompt_of_the_day: "Design a poster for a student project called {{project_name}} that solves {{problem}} for {{audience}}. Style: clean, modern, Indian campus aesthetic, 2026 techno-optimist. Composition: hero object center, minimal text, one bold tagline. Palette: {{two colors}}. Format: 2:3 portrait, print-ready."
 tools_hands_on: [{"name": "Nano Banana (Google Imagen via AI Studio)", "url": "https://aistudio.google.com"}, {"name": "Adobe Firefly", "url": "https://firefly.adobe.com"}, {"name": "Kling AI", "url": "https://klingai.com"}]
@@ -60,7 +60,7 @@ For this cohort we lean on **Nano Banana** (via Google AI Studio) because it is 
 
 A speedrun where we take one capstone idea — "a mobile lab-report scanner for chemistry students" — and generate a poster in Nano Banana, Firefly, Ideogram, and Midjourney with the same prompt. Watch which tool nails which slot.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/5deYUaqwreo
 
 - Notice which tool gets the Indian hostel context right without being told.
 - See how Ideogram wins the text-rendering slot instantly.

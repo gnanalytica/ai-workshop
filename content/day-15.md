@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Run a compressed 1-day design sprint, wireframe your capstone, and lock a 1-page spec in public — this is Capstone Milestone 2."
 tags: ["design", "sprint", "spec", "wireframes", "capstone", "milestone"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/K2vSQPh6MCE
 lab: {"title": "Wireframe your capstone in Figma + write your locked 1-page spec", "url": "https://www.figma.com"}
 prompt_of_the_day: "Critique my 1-page capstone spec as a ruthless senior PM. Spec: {{paste_spec}}. (1) Which sentence is still vague or hides an assumption? (2) What is on the 'will build' list that belongs on 'will NOT build'? (3) Is the success metric actually measurable in 14 days? (4) Would you greenlight this? If not, what is the single most important change before Monday?"
 tools_hands_on: [{"name": "Figma", "url": "https://www.figma.com"}]
@@ -56,7 +56,7 @@ That is the spec. If it bleeds onto a second page, cut. The discipline of *fitti
 
 A walkthrough of the GV design sprint methodology, compressed to show how each day's output fuels the next. Notice how the team resists "let's make it look nicer" and keeps pulling back to decisions.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/K2vSQPh6MCE
 
 - The sprint's power is the timebox, not the post-its.
 - Every phase ends with a decision, not a discussion.

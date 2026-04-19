@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Every chat model has a personality and a superpower. Pick the right one and train it to remember you."
 tags: ["exposure", "tools"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/YgvL0dA_2Pg
 lab: {"title": "Build your personal Jarvis in Claude Projects", "url": "https://claude.ai"}
 prompt_of_the_day: "You are my personal Jarvis for {{context: e.g. 3rd-year CSE at NITK}}. My goals this month are {{goals}}. My constraints are {{time, budget, tools}}. My thinking style is {{style}}. For every answer: (1) ask one clarifying question first if the task is ambiguous, (2) give the shortest honest answer, (3) end with one next step I can do in 10 minutes."
 tools_hands_on: [{"name": "ChatGPT", "url": "https://chatgpt.com"}, {"name": "Claude", "url": "https://claude.ai"}, {"name": "Gemini", "url": "https://gemini.google.com"}]
@@ -51,7 +51,7 @@ A useful mental model: Claude is the thoughtful senior, ChatGPT is the eager int
 
 A ten-minute walkthrough of the five models above, same prompt across all of them, and how the answers differ. Watch for the difference in tone, length, and how each model handles uncertainty.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/YgvL0dA_2Pg
 
 - Notice which model asks a clarifying question unprompted.
 - Watch how Grok's real-time data changes the answer for "trending placement news".

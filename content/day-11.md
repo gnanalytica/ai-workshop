@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "A crisp, Heilmeier-style problem statement is half the work — today you rewrite yours three times until it stops being vague."
 tags: ["design", "framing", "problem-statement", "capstone"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/XGNBFRcQMng
 lab: {"title": "Rewrite your capstone problem statement 3x", "url": "https://www.darpa.mil/work-with-us/heilmeier-catechism"}
 prompt_of_the_day: "You are a skeptical program manager. Interrogate my problem statement using the Heilmeier Catechism. Problem: {{my_capstone_problem}}. For each of the 9 questions, point out what is vague, what is assumed, and what evidence I am missing. Then rewrite the statement in 80 words or fewer."
 tools_hands_on: [{"name": "Paper + pen", "url": "https://www.darpa.mil/work-with-us/heilmeier-catechism"}, {"name": "Claude", "url": "https://claude.ai"}]
@@ -51,7 +51,7 @@ By the end of today you should be able to say, out loud, in under 30 seconds: *w
 
 Watch this short explainer on the Heilmeier Catechism and why research funders still use it today. Notice how every answer is concrete — numbers, names, timeframes — and how the speaker refuses abstractions.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/XGNBFRcQMng
 
 - Heilmeier's nine questions are a bias-check, not a template — the goal is honest answers.
 - "Who cares?" is the fastest way to kill a bad project. Answer it first.

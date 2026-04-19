@@ -2,7 +2,7 @@
 reading_time: 16 min
 tldr: "Two agents that delegate beat one agent that tries everything — today you wire up a swarm, a skill, and a plugin."
 tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/wgmCjrMFoyc
 lab: {"title": "Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm", "url": "https://docs.claude.com/en/api/agent-sdk"}
 prompt_of_the_day: "You are the supervisor. You have two worker agents: {{agent_a}} and {{agent_b}}. For the user request '{{request}}', decide which worker to call first, what to pass them, and what to do with their output. Hand off explicitly and never do the worker's job yourself."
 tools_hands_on: [{"name": "Claude Agent SDK", "url": "https://docs.claude.com/en/api/agent-sdk"}, {"name": "OpenAI Swarm", "url": "https://github.com/openai/swarm"}, {"name": "OpenClaw", "url": "https://github.com/openclaw/openclaw"}]
@@ -81,7 +81,7 @@ AutoGen from Microsoft Research pioneered many multi-agent patterns still in use
 
 ## Watch: Two agents doing the tango
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/wgmCjrMFoyc
 
 ## Lab: Build a 2-agent workflow that delegates
 

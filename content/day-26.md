@@ -2,7 +2,7 @@
 reading_time: 10 min
 tldr: "Ethics is not a lecture, it is a checklist — today you red-team your own capstone before the world does."
 tags: ["launch", "ethics", "safety", "red-team"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/EBK-a94IFHY
 lab: {"title": "Red-team your capstone", "url": "https://github.com/NVIDIA/garak"}
 prompt_of_the_day: "You are a red-team auditor. Given this system prompt {{system_prompt}} and use case {{use_case}}, generate 5 prompt-injection payloads, 3 jailbreak attempts, and 2 data-exfiltration probes. For each, explain the failure mode and a one-line mitigation."
 tools_hands_on: [{"name": "Garak", "url": "https://github.com/NVIDIA/garak"}, {"name": "LLM-Guard", "url": "https://llm-guard.com"}, {"name": "AI Incident Database", "url": "https://incidentdatabase.ai"}]
@@ -45,7 +45,7 @@ Five patterns that cover 80% of incidents: a visible stop button on any agent lo
 
 ## Watch: Anthropic on Red-Teaming (12 min)
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/EBK-a94IFHY
 
 A walk-through of how frontier labs red-team before release, and what you can steal for a weekend project.
 

@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "AI listens, AI speaks, AI decks. You will ship a 5-slide pitch and a 30-second avatar intro for your capstone today."
 tags: ["exposure", "tools"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/KgRGp_MSqNs
 lab: {"title": "5-slide deck + 30-second AI-avatar intro for your capstone", "url": "https://gamma.app"}
 prompt_of_the_day: "Generate a 5-slide pitch deck for a student capstone: {{project_name}}. Slides: (1) problem — one real user in one sentence, (2) insight — why it has not been solved, (3) solution — how it works in 15 words, (4) demo moment — screenshot placeholder, (5) what I'll build in 4 weeks. Tone: confident, specific, no buzzwords. Audience: AI-curious college peers."
 tools_hands_on: [{"name": "Otter", "url": "https://otter.ai"}, {"name": "Gamma", "url": "https://gamma.app"}, {"name": "ElevenLabs", "url": "https://elevenlabs.io"}]
@@ -50,7 +50,7 @@ Otter is the default for class notes and team meetings. It records, transcribes 
 
 A live run where we take a one-paragraph capstone idea, generate a deck in Gamma, replace the default diagrams with Napkin, and record a 30-second intro with an ElevenLabs voice and a HeyGen avatar. The whole pipeline, no cuts.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/KgRGp_MSqNs
 
 - Notice the outline-first workflow, never slide-first.
 - Watch how Napkin's diagram replaces a wall of bullets.

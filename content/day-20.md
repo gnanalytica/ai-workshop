@@ -2,7 +2,7 @@
 reading_time: 15 min
 tldr: "Chain AI with APIs and triggers in n8n, automate a browser task you hate, and ship your first real workflow to prod."
 tags: ["build", "technical"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/4cQWJViybAQ
 lab: {"title": "Build an n8n flow (AI + real API + trigger) and one browser-use automation", "url": "https://n8n.io"}
 prompt_of_the_day: "Act as an automation designer. My boring manual task is {{task_description}}. Design an n8n flow: (1) trigger, (2) data fetch via which API, (3) AI step and prompt, (4) output destination. List each node in sequence with the exact config I'd paste."
 tools_hands_on: [{"name": "n8n", "url": "https://n8n.io"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}]
@@ -77,7 +77,7 @@ None of those individual steps is AI magic. The magic is the **chain**. Small mo
 
 Live-build of a Gmail-to-Slack AI triage agent in n8n cloud, followed by a browser-use run on a real college portal, followed by a Jina Reader + AI summarizer chain.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/4cQWJViybAQ
 
 - n8n's AI Agent node is drop-in; plug Ollama or Groq as the brain.
 - browser-use is slow but real — budget a few minutes per task.

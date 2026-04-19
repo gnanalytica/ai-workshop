@@ -2,7 +2,7 @@
 reading_time: 15 min
 tldr: "Git, GitHub, localhost, and APIs — the four rails every AI builder rides on, explored without writing a single line of code."
 tags: ["build", "technical"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/hwP7WQkmECE
 lab: {"title": "Fork a repo + hit 3 public APIs with Hoppscotch", "url": "https://hoppscotch.io"}
 prompt_of_the_day: "You are my OSS mentor. I want to contribute to {{repo_url}}. Read its README and CONTRIBUTING.md, list 3 good-first-issues I could realistically tackle, and explain each issue in plain English with the files I'd need to change."
 tools_hands_on: [{"name": "GitHub", "url": "https://github.com"}, {"name": "Hoppscotch", "url": "https://hoppscotch.io"}]
@@ -66,7 +66,7 @@ Payloads are almost always **JSON** — key-value pairs in curly braces. `{"name
 
 Video walkthrough on how to scan a GitHub repo in 10 minutes — README first, then the `examples/` folder, then open issues, then recent PRs — so you can understand an AI project without reading its source code.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/hwP7WQkmECE
 
 - Always start at the README — 80% of "how do I use this" lives there.
 - `CONTRIBUTING.md` tells you the PR process.

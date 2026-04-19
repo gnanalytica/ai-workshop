@@ -2,7 +2,7 @@
 reading_time: 16 min
 tldr: "Stop typing code and start directing it — ship your capstone v0 by the end of today."
 tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/LCEmiRjPEtQ
 lab: {"title": "Vibe-code your capstone v0", "url": "https://cursor.com/docs"}
 prompt_of_the_day: "You are my pair-programmer. Read {{CLAUDE.md}} and the current file tree. I want to build {{feature}}. Before writing code, propose a 3-step plan, call out the riskiest assumption, and wait for my sign-off."
 tools_hands_on: [{"name": "Cursor", "url": "https://cursor.com"}, {"name": "bolt.new", "url": "https://bolt.new"}, {"name": "Google Antigravity", "url": "https://antigravity.google.com"}]
@@ -73,7 +73,7 @@ You have three tools to try today — Cursor, bolt.new, Antigravity — but you 
 
 ## Watch: Director's-chair vibe coding walkthrough
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/LCEmiRjPEtQ
 
 ## Lab: Ship a v0 of your capstone
 

@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Design thinking is not sticky-note theatre — it is a disciplined loop of divergence and convergence, and today you run all five stages on your capstone."
 tags: ["design", "design-thinking", "capstone", "process"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/ldYzbV0NDp8
 lab: {"title": "Map all 5 stages of design thinking on your capstone in FigJam", "url": "https://www.figma.com/figjam/"}
 prompt_of_the_day: "Act as a senior product designer reviewing my capstone design-thinking map. Capstone: {{my_capstone}}. For each stage — Empathize, Define, Ideate, Prototype, Test — tell me: (1) what I seem to have skipped, (2) where I am confusing divergence with convergence, (3) one concrete artifact I should add before moving on."
 tools_hands_on: [{"name": "Figma / FigJam", "url": "https://www.figma.com/figjam/"}]
@@ -43,7 +43,7 @@ IDEO built the original Design Kit at designkit.org with over 50 methods, each w
 
 Watch a short d.school walk-through of a project that cycled through all five stages. Notice how much time was spent in Empathize relative to Prototype — and how the POV statement changed twice before the team committed.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/ldYzbV0NDp8
 
 - Empathy was not an exercise — it was a continuous input that kept re-shaping Define.
 - The prototype was crude on purpose; polish would have delayed learning.
