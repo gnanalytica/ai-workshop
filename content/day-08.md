@@ -1,159 +1,102 @@
 ---
-reading_time: 15 min
-tldr: "A vague problem is the root of every wasted sprint. Sharpen the question before you chase the answer."
-tags: ["framing", "thinking"]
+reading_time: 14 min
+tldr: "Pixels are free now. Today you generate a poster and a ten-second video for your capstone pitch."
+tags: ["exposure", "tools"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Rewrite a vague problem three times", "url": "https://excalidraw.com/"}
-resources: [{"title": "The Heilmeier Catechism (DARPA)", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit — How Might We", "url": "https://www.designkit.org/"}, {"title": "Are You Solving the Right Problem? — HBR", "url": "https://hbr.org/"}]
+lab: {"title": "Ship 1 poster + 1 ten-second video for your capstone", "url": "https://aistudio.google.com"}
+prompt_of_the_day: "Design a poster for a student project called {{project_name}} that solves {{problem}} for {{audience}}. Style: clean, modern, Indian campus aesthetic, 2026 techno-optimist. Composition: hero object center, minimal text, one bold tagline. Palette: {{two colors}}. Format: 2:3 portrait, print-ready."
+tools_hands_on: [{"name": "Nano Banana (Google Imagen via AI Studio)", "url": "https://aistudio.google.com"}, {"name": "Adobe Firefly", "url": "https://firefly.adobe.com"}, {"name": "Kling AI", "url": "https://klingai.com"}]
+tools_demo: [{"name": "Ideogram", "url": "https://ideogram.ai"}, {"name": "Runway", "url": "https://runwayml.com"}, {"name": "Midjourney", "url": "https://midjourney.com"}]
+tools_reference: [{"name": "Pika", "url": "https://pika.art"}, {"name": "Canva Magic Studio", "url": "https://canva.com"}]
+resources: [{"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Firefly user guide", "url": "https://firefly.adobe.com"}]
 ---
 
 ## Intro
 
-Most bad projects are not bad because of bad execution. They are bad because someone answered a question nobody had clearly asked. Today you learn the single highest-leverage habit of a good builder: converting vague, tangled problems into crisp statements that you — and anyone you hand the work to — can actually act on.
+Pixels used to be expensive. Designers charged for posters, film crews charged for videos, and a 10-second animation cost a weekend. Today you will make both in 45 minutes, for the capstone idea you have been sharpening. Day 10 is the ideathon; your pitch deserves to look real.
 
-## Read: From fog to framing
+## Read: Diffusion, prompts, and the state of video in 2026
 
-### The symptom: vague problems
+**A one-paragraph mental model of diffusion.** Most modern image generators are diffusion models. During training, the model sees millions of image-caption pairs and learns to turn clear images into noise, step by step. To generate, it runs the process in reverse: start from pure noise, denoise one step at a time, guided by your text prompt, until a coherent image emerges. You do not need the math. You need the intuition: the model is a sculptor removing noise until your prompt appears. Your prompt is the chisel. Video models do the same trick across time — they denoise frames that are consistent with each other.
 
-"I want to build something for students." "We should do something with AI for education." "Hostel Wi-Fi is bad." These are not problems. They are *vibes*. Vibes cannot be solved. They can only be argued about.
+**What good image prompts look like.** Six slots, every time.
 
-A crisp problem statement has four properties:
+| Slot | Example |
+|------|---------|
+| Subject | "A jute tote bag full of mess-hall tiffins" |
+| Action / state | "sitting on a wooden bench" |
+| Setting | "late-evening NITK hostel corridor, warm tungsten lights" |
+| Style | "editorial photograph, 50mm, shallow depth of field" |
+| Composition | "subject center, negative space top, 2:3 portrait" |
+| Modifiers | "film grain, natural shadows, no text" |
 
-1. **A specific user** — not "students", but "2nd-year students in Block-B hostel who commute to mess at 9:30pm".
-2. **A specific painful moment** — the instant where the current experience fails.
-3. **A measurable gap** — what is happening today vs. what should be happening.
-4. **A reason it matters now** — why bother this week instead of next year.
+Short prompts produce generic images. Long prompts with specific nouns produce distinctive images. The mistake beginners make is adjectives; the fix is nouns. "Beautiful" is weaker than "brass tiffin, steam". "Cinematic" is weaker than "golden hour, 85mm, Kodak Portra 400".
 
-### Tool 1: The Heilmeier Catechism
+**Negative prompts and iteration.** Every serious tool has a negative prompt field: list what you do not want. "no text, no watermark, no extra fingers, no distorted faces" catches 90% of junk. Iterate: the first image is a draft. Use in-tool editing (Firefly's generative fill, Nano Banana's reference-image edits) instead of re-rolling from scratch.
 
-George Heilmeier, the former DARPA director, made every project proposer answer the same nine questions. It's brutal and clarifying:
+**The 2026 image-tool landscape.**
 
-> 1. What are you trying to do? Articulate it with absolutely no jargon.
-> 2. How is it done today, and what are the limits of current practice?
-> 3. What is new in your approach and why do you think it will be successful?
-> 4. Who cares? If you're successful, what difference will it make?
-> 5. What are the risks?
-> 6. How much will it cost?
-> 7. How long will it take?
-> 8. What are the mid-term and final "exams" to check for success?
-> 9. How will you know you're done?
+| Tool | Strength | Weak at | Best use |
+|------|----------|---------|----------|
+| Nano Banana (Imagen in AI Studio) | Photorealism, character consistency, edit-by-reference | Stylized art | Capstone product shots, Indian faces and contexts |
+| Firefly | Commercially safe (trained on licensed data) | Less edgy | Anything you will publish or submit |
+| Ideogram | Perfect text inside images | Photorealism | Posters, logos, memes with words |
+| Midjourney | Aesthetics and vibe | Speed, text | Mood boards |
 
-If you cannot answer (1) in one sentence without buzzwords, you do not understand your problem yet. Go back.
+For this cohort we lean on **Nano Banana** (via Google AI Studio) because it is free, very good at Indian faces and environments, and excellent at edit-by-reference — you can upload a photo of your hostel and generate consistent variations. Firefly is our fallback for anything that must be commercially safe (your resume header, LinkedIn banner, a submitted project).
 
-### Tool 2: "How Might We…"
+**Video generation in 2026.** We finally crossed the "useful" line. Kling, Veo 3, Runway Gen-4, Pika 2, Wan and Higgsfield all produce 5–10 second clips with believable motion, physics, and (on some) synchronized audio. Free tiers give you a handful of credits per day — enough for a pitch. Rules that still hold:
 
-Once you know the pain, reframe it as an invitation. "How Might We" (HMW) is a prompt format invented at P&G and popularized by IDEO. It turns a complaint into a design challenge.
+- Keep clips short. 5–10 seconds looks great; 30 seconds looks cursed.
+- Describe motion explicitly: "camera slowly pushes in", "leaves flutter left to right", "subject turns head 30 degrees". Models default to static.
+- Start from an image when you can. Text-to-video is lottery; image-to-video is direction.
+- Consistency across shots is still hard. Use the same reference image for every clip in a sequence.
 
-- Too broad: *How might we fix education?* → useless.
-- Too narrow: *How might we add a red button to the app?* → traps you into one solution.
-- Just right: *How might we help 2nd-year students decide what electives to pick before the 48-hour registration window closes?*
+**Ethics and safety.** Three red lines: do not generate real people without consent (your friend's face, a professor, a celebrity), do not generate images of minors in any suggestive context ever, and label AI-generated media as AI-generated when you share it. Most platforms already embed invisible C2PA provenance tags, but you should label it anyway. For a student capstone this almost never bites, but the habit matters.
 
-A good HMW is specific about the user and the moment, but silent about the solution.
+**Copyright in India, briefly.** As of 2026, purely AI-generated output is not copyrightable on its own; human creative input (your prompt, your edits, your selection) is what makes it protectable. For a capstone or portfolio, you own the creative direction; do not claim you manually drew what the model made.
 
-### Worked example: the mess menu problem
+## Watch: Prompt-to-pixel, same idea across four tools
 
-Vague starting point:
+A speedrun where we take one capstone idea — "a mobile lab-report scanner for chemistry students" — and generate a poster in Nano Banana, Firefly, Ideogram, and Midjourney with the same prompt. Watch which tool nails which slot.
 
-> "The mess food is bad."
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-**Heilmeier pass:**
+- Notice which tool gets the Indian hostel context right without being told.
+- See how Ideogram wins the text-rendering slot instantly.
+- Watch the Midjourney output: beautiful, but does it say anything?
 
-| Q | Rough answer |
-|---|------|
-| What are you trying to do? | Reduce the gap between what mess residents want to eat and what is served. |
-| How is it done today? | A committee of 5 seniors picks a 4-week rotating menu in July. No feedback loop during the semester. |
-| What's new? | A 30-second weekly "what will you actually eat?" poll whose results directly adjust next week's procurement. |
-| Who cares? | 420 residents, the mess manager (food waste hits his budget), hostel warden. |
-| Risks? | Low poll response, political pushback from committee. |
-| Success metric? | Weekly plate-waste weight down 20% in 6 weeks. |
+## Lab: Poster + 10-second video for your capstone
 
-**HMW rewrite:**
+Time: 45 minutes. Artifact: one poster image + one short video, posted to the cohort showcase.
 
-> *How might we give mess residents a 30-second weekly way to shape next week's menu, so procurement can cut waste?*
-
-Notice: the problem is now small enough to attack, big enough to matter, and the success metric (plate-waste weight) is concrete.
-
-### The 5 Whys (when you are stuck on symptoms)
-
-Ask "why" five times in a row on the surface complaint. You usually land somewhere unexpected.
-
-1. *Mess food is bad.* Why?
-2. *The menu repeats boring items.* Why?
-3. *The committee picked items that store well, not items people like.* Why?
-4. *They don't know what people like week-to-week.* Why?
-5. *There is no feedback loop between eaters and procurement.* → **Root cause**: missing feedback loop, not bad taste.
-
-The fix is now obvious: build the feedback loop. You just avoided building a "better menu algorithm" nobody needed.
-
-### Common framing mistakes
-
-- **Solution-smuggling.** "How might we build an app for mess feedback?" smuggles in "app" as the answer. Strip it.
-- **Infinite scope.** "How might we improve campus life?" — cannot be attacked.
-- **No user.** Passive voice hides the human. If you can't name the person whose day gets better, start over.
-- **No timebox.** If the problem has been around for 10 years, why does it need to be solved *this week*?
-
-## Watch: the art of problem framing
-
-A short talk on why "solving the right problem" is the rarest skill in product work. Watch once at 1x — it rewards attention.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Note the framing flip around the mid-point: from "how do we fix X" to "why does X happen at all?"
-- Watch for the phrase "problem statement" vs "solution statement". The speaker is careful.
-- Notice how the worked example names a single, specific user by role.
-
-## Lab: three iterations of a crisp problem
-
-You will take a vague problem and rewrite it three times, each rewrite sharper than the last.
-
-1. Pick one of these vague starting points (or bring your own):
-   - "Placement prep is stressful."
-   - "Class notes are scattered everywhere."
-   - "Campus events have low turnout."
-   - "The library is always full during exams."
-2. Open a blank doc or Excalidraw page. Create three columns labeled **V1**, **V2**, **V3**.
-3. **V1** — write the problem as a complaint, the way a friend would say it in the canteen. One line.
-4. **V2** — run it through the 5 Whys. Write the root cause and a new problem statement naming a specific user + specific moment.
-5. **V3** — rewrite V2 as a "How Might We" that is *specific about the user and moment, silent about the solution*. No "app", "AI", "platform" allowed.
-6. Below V3, answer four Heilmeier questions in one line each: What are you trying to do? Who cares? How will we know it worked? What's the biggest risk?
-7. Pair with a cohort partner. Trade V3s. Each of you tries to break the other's: is there a user named? a moment? a measurable gap?
-8. Rewrite V3 one more time based on their critique.
-
-Use the template:
-
-```
-V1 (the complaint):
-  _________________________________________________________
-
-V2 (after 5 Whys):
-  Root cause: _____________________________________________
-  Restated:   _____________________________________________
-
-V3 (How Might We):
-  How might we __________________________________________
-  for ___________________________________________________
-  when __________________________________________________ ?
-
-Heilmeier mini-pass:
-  What:    ______________________________________________
-  Who:     ______________________________________________
-  Success: ______________________________________________
-  Risk:    ______________________________________________
-```
+1. Open https://aistudio.google.com and select Nano Banana / Imagen. Paste today's prompt-of-the-day with `{{project_name}}`, `{{problem}}`, `{{audience}}`, and two colors filled in for your capstone idea.
+2. Generate 4 variations. Pick the best. Use the **edit** feature to fix one thing (add a tagline, swap a color, remove clutter).
+3. Open https://firefly.adobe.com. Re-run the same prompt there. Compare. Keep whichever is stronger as your final poster. Export as PNG, 2:3.
+4. Still on your poster, if you need crisp text on the image, paste the prompt into https://ideogram.ai and use its output for the typography layer. Composite in Canva if needed.
+5. Open https://klingai.com and sign in with the free tier. Upload your poster as a reference image.
+6. Prompt the video model: "Camera slowly pushes in on the hero object. Gentle parallax. Soft ambient motion in background. 10 seconds, 16:9." Generate.
+7. If Kling credits run out, fall back to https://runwayml.com or https://pika.art free tier.
+8. Export the 10-second MP4. Post poster + video to the cohort showcase with a one-line capstone tagline.
 
 ## Quiz
 
-Quick check on today's core moves — Heilmeier, How-Might-We, 5 Whys, and the four properties of a crisp problem statement. Aim for 75%+. If you score lower, re-read the worked example; we rely on these muscles every single day from here on.
+Three checks. In one sentence, what is a diffusion model doing? Which tool would you trust for a commercially safe LinkedIn banner, and why not Midjourney? What is the single prompt change that most reliably improves a mediocre video — a fancier adjective, an explicit camera motion, or a longer clip?
 
 ## Assignment
 
-Submit your final **V3 statement plus the four Heilmeier answers** as a **text submission**. One problem, one page, no more. We will grade on specificity and whether your statement names a user, a moment, and a measurable gap. Solution-smuggled language (words like "app", "dashboard", "AI") gets an automatic rewrite request.
+Post to the cohort showcase:
 
-## Discuss: sharpening each other's framing
+1. Your final poster PNG.
+2. Your 10-second MP4.
+3. A one-line tagline for your capstone. No essay — let the visual sell it.
 
-- Read your V3 out loud. Does the group believe the user is a real, specific person — or a vague persona?
-- Which of the four properties (user / moment / gap / urgency) is the easiest to fake? Why?
-- Give an example from your past where you built something nobody wanted. What was the framing mistake?
-- When is it dishonest to solution-smuggle — and when is it fine because the solution is obvious?
-- How does a crisp problem statement change *who you would go talk to next*?
+This is your daily artifact. It is also a preview of your Friday ideathon pitch.
+
+## Discuss: Taste, speed, and slop
+
+- Did any of your generations feel generic? What was missing from the prompt?
+- Which tool's aesthetic felt most "you"?
+- Did you label your output as AI-generated when posting? Why or why not?
+- When pixels are free, what becomes scarce — taste, distribution, or honesty?
+- Would you pay a human designer for this poster now? At what price?

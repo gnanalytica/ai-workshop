@@ -1,87 +1,115 @@
 ---
-reading_time: 10 min
-tldr: "Open a browser, sign in, and get three real AI wins in the next 15 minutes. No code, no setup, no excuses."
-tags: ["use", "kickoff", "consumer"]
-video: https://www.youtube.com/embed/JTxsNm9IdYU
-lab: {"title": "Your first 3 AI wins in 15 minutes", "url": "https://chat.openai.com/"}
-prompt_of_the_day: "I'm a college student new to AI. In 5 bullets, summarise this text like I'm reading it for the first time and running late for class. Keep each bullet under 15 words. Text: {{paste_text_here}}"
-resources: [{"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Gemini", "url": "https://gemini.google.com/"}, {"title": "Perplexity", "url": "https://www.perplexity.ai/"}]
+reading_time: 14 min
+tldr: "AI is not magic. It's a very confident autocomplete that learned patterns from the internet."
+tags: ["foundations", "theory"]
+video: https://www.youtube.com/embed/zjkBMFhNj_g
+lab: {"title": "Same prompt, three brains", "url": "https://chat.openai.com/"}
+prompt_of_the_day: "You are my {{subject}} TA. Explain {{topic}} to a 3rd-year college student in 5 bullets, one analogy from hostel life, and one mistake students usually make."
+tools_hands_on: [{"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}, {"name": "Gemini", "url": "https://gemini.google.com/"}]
+tools_demo: [{"name": "Tiktokenizer", "url": "https://tiktokenizer.vercel.app/"}]
+tools_reference: [{"name": "Karpathy Intro to LLMs", "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g"}, {"name": "3Blue1Brown Neural Networks", "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi"}]
+resources: [{"title": "Attention is All You Need (the paper that started it)", "url": "https://arxiv.org/abs/1706.03762"}, {"title": "A Visual Guide to Transformers", "url": "https://jalammar.github.io/illustrated-transformer/"}]
 ---
 
 ## Intro
 
-Welcome to Day 1. Today is not about theory, history, or "what is AI". Today is about your first real win — a moment where you go "wait, it just did that in 30 seconds?" By the end of this lesson you'll have three AI-made artefacts sitting in your chat history, a screenshot to post in the group, and a confident sense that this month is going to change how you work.
+You've been using AI for a year. Today you learn what's actually inside the box. No math. No jargon parade. Just the mental model that separates students who *use* AI from students who *understand* it — and that gap decides who gets the internship.
 
-## Read: Three tools, one tab, zero setup
+## Read: The stack — from "AI" to the chatbot on your phone
 
-You do not need to pick the "best" AI tool. You need to open one and start. Most of this week works in any of them. Here's the honest one-line on each so you can stop shopping and start using.
+Everybody says "AI" and means five different things. Let's fix that.
 
-| Tool | Best for | Sign-in | Free tier |
-|------|----------|---------|-----------|
-| ChatGPT | All-round, great image generation | Google account | Yes, GPT‑5 mini / basic GPT-5 |
-| Claude | Long documents, clean writing, nuance | Google/email | Yes, Sonnet on free |
-| Gemini | Google Docs / Drive / YouTube integration | Google account | Yes, 2.5 Flash |
-| Copilot | Windows + Office files | Microsoft account | Yes |
-| Perplexity | Search with sources cited | Google/email | Yes |
+```
+AI  (big umbrella: anything that mimics thinking)
+ └── Machine Learning  (programs that learn from examples, not rules)
+      └── Deep Learning  (ML using big neural networks)
+           └── LLMs  (deep nets trained on text — ChatGPT, Claude, Gemini)
+                └── Agents  (LLMs that take actions: search, click, code)
+```
 
-**Recommendation for Day 1:** sign into **ChatGPT** and **Claude**. Keep both as tabs. You'll compare them over the week.
+Think of it like your college:
+- **AI** is the university.
+- **ML** is the engineering department.
+- **Deep Learning** is the CSE branch.
+- **LLMs** are the AI/ML specialization.
+- **Agents** are the final-year students who actually *do* projects.
 
-### What these tools actually are (in one paragraph)
+Each inner circle is more specific, more powerful, and newer.
 
-A chat AI is a very fast reader and writer that has read most of the public internet. You paste something in, you ask a question, it answers. It is not a search engine — it doesn't browse by default unless you turn that on. It is not always right — treat it like a brilliant intern who sometimes bluffs. Your job is to ask well and check the important bits.
+### Hype vs reality
 
-### The three tasks every student should do on Day 1
+| Claim you'll hear | What's actually true |
+|---|---|
+| "AI thinks" | It predicts the next likely word |
+| "AI understands you" | It pattern-matches your words to training data |
+| "AI is conscious" | It has no memory between chats by default |
+| "AI will replace engineers" | It will replace engineers who don't use AI |
+| "AI is always right" | It is confidently wrong ~15-30% of the time |
 
-These are your wins today. Do all three. Screenshot each.
+The single most important thing: **an LLM is an extremely well-read autocomplete.** It finished the sentence "Roses are red, violets are…" a billion times during training. Now it finishes *your* sentences too — including "write me a cover letter for Flipkart SDE intern…"
 
-**Task 1 — Summarise something long.** Grab any PDF you have open right now (a lecture slide deck, a chapter, a research paper, a placement guide). Drag it into ChatGPT or Claude. Type: *"Summarise this in 7 bullets. Then give me the 3 things I'd be asked in an exam."* Watch what happens.
+### Tokens, weights, attention — the three words that matter
 
-**Task 2 — Explain it like you're 10.** Pick one concept you half-understand. Dynamic programming. Bayes theorem. How OS page tables work. Ask: *"Explain {{topic}} to me like I'm 10. Then explain it again like I'm a 2nd-year CS student. Use an analogy with cricket or Maggi."* The double-explanation trick is gold — you get intuition AND depth.
+**Tokens.** The LLM doesn't see letters or words. It sees tokens — chunks of text, roughly 3-4 characters each. "Bengaluru" might be 3 tokens. "LOL" is 1 token. "I'm cooked" is 4 tokens. This matters because you pay per token, and long prompts are slow.
 
-**Task 3 — Brainstorm 20 ideas.** Whatever's on your plate — hostel fest theme, project topic, internship pitch, CV bullet ideas. Ask: *"Give me 20 ideas for {{X}}. Mix safe with wild. Mark the 5 you'd pick if you were me."* You'll throw out 17. Three will surprise you.
+> Example: Your 800-word resume is about 1,100 tokens. Your WhatsApp chat with your hostel group from last Sunday is probably 4,000 tokens.
 
-### Your "wow" moment for today
+**Weights.** During training, the model saw trillions of tokens and adjusted billions of internal "dials" (weights) so that its next-token predictions got better. Those weights are the "brain." GPT-4 has roughly 1.7 trillion weights. They're fixed after training — the model doesn't learn from you during a chat.
 
-Here's the trick nobody tells you on day one: **ask it to critique itself**. After any response, say: *"Now review that answer like a strict professor. What's missing, weak, or wrong?"* The quality of the second answer will shock you. Free, in two clicks.
+**Attention.** When predicting the next token, the model looks back at the prompt and decides *which earlier words matter most*. Ask "In the mess menu I showed you earlier, which item has paneer?" — attention is what lets it scroll back to the mess menu part and ignore your earlier rant about Wi-Fi.
 
-## Watch: Getting set up in under 5 minutes
+Worked example — how a prompt becomes a reply:
 
-A quick walk-through of signing into ChatGPT, uploading a file, and running your first three prompts. Watch on 1.5x if you're in a hurry.
+1. You type: "Write a leave application to hostel warden."
+2. Tokenizer breaks it into ~10 tokens.
+3. Model reads tokens, weights light up patterns it saw during training (thousands of formal letters, applications, Indian English conventions).
+4. Attention focuses on "leave", "hostel", "warden" — ignores filler.
+5. It predicts the next token, then the next, then the next — one at a time — until it hits an end signal.
+6. You see a full letter. Feels instant. It was actually ~400 coin-flips weighted by a trillion-parameter brain.
 
-https://www.youtube.com/embed/JTxsNm9IdYU
+### Why the same prompt gives different answers
+
+Two reasons. First, **temperature** — a dial that controls randomness. Temperature 0 = always pick the top guess. Temperature 1 = sometimes pick the 2nd or 3rd guess for variety. Most chatbots run around 0.7. Second, different models have different weights. ChatGPT, Claude, and Gemini read mostly the same internet but were trained differently — like three toppers who studied the same syllabus but will answer an essay question differently.
+
+## Watch: Karpathy's "Intro to LLMs" (first 30 min)
+
+Andrej Karpathy co-founded OpenAI and led AI at Tesla. This is the clearest intro in the world. Watch the first 30 minutes today — rest across the week.
+
+https://www.youtube.com/embed/zjkBMFhNj_g
 <!-- TODO: replace video -->
 
-- Notice how the presenter uploads a file — you'll do this in the lab.
-- Watch how they *refine* their prompt after the first answer. That's the whole skill.
-- Ignore any paid feature shown; free tier is enough this week.
+Watch for:
+- The "two files" analogy (weights + run-code)
+- Why training costs millions of dollars but running is cheap
+- The "dream" explanation of hallucination
 
-## Lab: Ship your first three wins
+## Lab: Same prompt, three brains
 
-You'll end this lab with three screenshots and one short post in the class group.
+30 minutes. You'll poke ChatGPT, Claude, and Gemini with the exact same prompt and spot the personality differences.
 
-1. Open `https://chat.openai.com/` and sign in with your Google account. Do the same in a second tab with `https://claude.ai/`.
-2. Find a PDF or long article you have right now (at least 5 pages). Drag it into ChatGPT.
-3. Paste the prompt of the day above, replacing `{{paste_text_here}}` with a paragraph — or just say "summarise the uploaded file in 5 bullets for a student running late". Screenshot the answer.
-4. Pick one concept you're shaky on. Ask Claude: *"Explain {{topic}} like I'm 10, then like I'm a 2nd-year student, with a cricket or food analogy."* Screenshot.
-5. Ask either tool: *"Give me 20 ideas for {{thing you need ideas for}}. Mark your top 5."* Screenshot.
-6. Reply to the last answer with *"Now review that list like a strict professor — what's weak or missing?"* Notice the jump in quality.
-7. Put all three screenshots into one image (any collage tool, or just a Google Slide) and save it.
-8. Post it in the class group channel with one line: "Day 1 done. My favourite win was ___."
+1. Open all three tools from the frontmatter. Sign up with your college email if needed (free tiers work).
+2. Copy this prompt: *"You are my college placement mentor. I'm a 3rd-year CSE student with a 7.8 CGPA and one internship at a startup. List the 5 highest-leverage things I should do in the next 90 days."*
+3. Paste it into ChatGPT. Save the reply in a Google Doc labelled "ChatGPT".
+4. Paste the same prompt into Claude. Save under "Claude".
+5. Paste into Gemini. Save under "Gemini".
+6. Now open Tiktokenizer (in `tools_demo`). Paste your prompt. Note how many tokens it is.
+7. Compare the three replies on three axes: specificity, tone, and length. Which one felt most *useful*? Which felt most *generic*?
+8. Write one observation at the bottom of your doc: "The model that understood me best was ___ because ___."
 
-**Victory condition:** a collage of 3 screenshots posted, and you personally felt one "oh that's cool" moment. That's it.
+Artifact: a single Google Doc with three answers + your take. Share link in the class channel.
 
 ## Quiz
 
-A quick 4-question check-in on today. You'll be asked which tool fits which task, what the "critique yourself" trick does, and whether AI should be trusted blindly. Open-book, 2 minutes.
+Four quick questions on tokens, weights, attention, and the ML → DL → LLM hierarchy. Don't overthink. The quiz is there to catch wobbles, not rank you.
 
 ## Assignment
 
-Submit a single screenshot (or collage) of your three Day 1 wins, plus two lines: (a) which task surprised you the most, and (b) one thing you want to use AI for this week. Drop it in the submission form. No judgement on prompt quality — we're just proving you showed up.
+Write a 150-word reflection titled *"What surprised me about AI today."* One paragraph. No AI-assisted writing (we'll know — you'll know). Submit as a text file or Notion page. The goal isn't a great essay. The goal is capturing your honest baseline so Day 30 feels like a transformation, not a memory.
 
-## Discuss: What AI felt like on Day 1
+## Discuss: Live session prompts
 
-- What did you try to get AI to do that it *couldn't* do well? Share the failure.
-- Which tool felt more natural to you — ChatGPT or Claude — and why?
-- Did anyone else feel slightly uncomfortable about how fast it answered? Let's talk about it.
-- If you had to describe today to a parent in one sentence, what would you say?
-- What task do you do every week that you'd love to never do again after this workshop?
+- Which of the three models "felt" most human to you — and why do you think that is?
+- If an LLM is "just autocomplete," why does it feel like it understands you?
+- Name one task you'd still trust a human over any AI for, and defend it.
+- How would you explain "tokens" to your parents in under 60 seconds?
+- If AI is wrong 20% of the time, where in your life is that already acceptable, and where is it absolutely not?

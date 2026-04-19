@@ -1,159 +1,114 @@
 ---
-reading_time: 15 min
-tldr: "The best design research is a good conversation. Shut up, listen, write exact words, not opinions."
-tags: ["empathy", "design"]
+reading_time: 14 min
+tldr: "Checkpoint day. You brainstorm, shape, pitch, vote, and leave with a locked capstone one-pager."
+tags: ["exposure", "tools", "capstone", "checkpoint"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Run one 20-minute user interview", "url": "https://www.designkit.org/"}
-resources: [{"title": "IDEO Design Kit — methods", "url": "https://www.designkit.org/"}, {"title": "The Mom Test by Rob Fitzpatrick (book)", "url": "https://hbr.org/"}, {"title": "IDEO on empathy", "url": "https://www.ideo.com/"}]
+lab: {"title": "Ideathon: brainstorm → shape → pitch → vote", "url": "https://claude.ai"}
+prompt_of_the_day: "Help me pick a capstone. Run me through the Heilmeier Catechism for each of these 3 ideas: {{idea_1}}, {{idea_2}}, {{idea_3}}. For each, answer the 9 Heilmeier questions in 2 lines each. Then apply my 3-filter test: (a) is there one real user I can name? (b) can I build a usable slice in 4 weeks? (c) do I care enough to push through week 3 despair? End with a single recommendation and one risk."
+tools_hands_on: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Perplexity", "url": "https://www.perplexity.ai"}, {"name": "Gamma", "url": "https://gamma.app"}]
+tools_demo: [{"name": "ChatGPT", "url": "https://chatgpt.com"}]
+tools_reference: [{"name": "Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil"}, {"name": "YC Library", "url": "https://www.ycombinator.com/library"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org"}]
+resources: [{"name": "Heilmeier Catechism", "url": "https://www.darpa.mil"}, {"name": "Paul Graham essays", "url": "https://www.ycombinator.com/library"}]
 ---
 
 ## Intro
 
-User interviews sound trivial — you just ask questions, right? Wrong. Most student interviews are quietly useless because they ask leading questions and reward polite lies. Today you learn the specific shape of a *useful* interview: one that makes the person tell you stories from their life, not opinions about your idea.
+Checkpoint day. You have touched a dozen tools in nine days. Today the workshop changes gears: from exposure to commitment. By 9 pm you will have a locked capstone one-pager and a team of two or three. Everything in Weeks 3 and 4 is built on what you decide today.
 
-## Read: why most interviews are worthless, and how to fix them
+## Read: How to pick a capstone worth four weeks
 
-### The core failure: asking about the future
+**Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.
 
-"Would you use an app that helps you find study partners?" → almost everyone says *"yeah sure, sounds useful."* Then nobody downloads it.
+**The Heilmeier Catechism.** George Heilmeier, former DARPA director, wrote nine questions that every proposed project must answer. We use them verbatim because they are ruthless and short:
 
-People are terrible predictors of their own future behavior. They are excellent historians of their own recent past. So:
+1. What are you trying to do? Articulate objectives with no jargon.
+2. How is it done today, and what are the limits of current practice?
+3. What is new in your approach and why will it succeed?
+4. Who cares? If you succeed, what difference will it make?
+5. What are the risks?
+6. How much will it cost?
+7. How long will it take?
+8. What are the mid-term and final exams to check for success?
+9. What are the metrics that matter?
 
-> **Rule 1:** Ask about their life, not about your idea.
+If you cannot answer any of the nine in two lines, you do not understand your idea yet. Use today's prompt-of-the-day to run all three of your candidate ideas through the catechism with Claude.
 
-"Tell me about the last time you looked for a study partner" beats "would you use…" every single time. The past is concrete. The future is wishful.
+**The 3-filter test.** A faster gate we use alongside Heilmeier.
 
-### The Mom Test
+| Filter | Question | Why it matters |
+|--------|----------|----------------|
+| Real user | Can you name one specific person who will use this in Week 4? | No named user = no feedback loop = no learning |
+| Small scope | Can you ship a crappy but usable version in 10 hours? | If not, you will never reach demo day |
+| You care | Will you still be excited in Week 3 when it breaks at 2 am? | Capstone survival is emotional, not technical |
 
-Rob Fitzpatrick's framing is called **The Mom Test**: ask questions that are so specific and past-tense that even your mom — who loves you and wants to be encouraging — could not accidentally lie to you.
+Three yeses = ship. Two yeses = shape the idea for another week before committing. One or fewer = drop it, pick a different idea.
 
-Three rules from the book:
+**College-relatable examples of well-scoped capstones.**
 
-1. **Talk about their life, not your idea.**
-2. **Ask about specifics in the past, not opinions about the future.**
-3. **Talk less, listen more.**
+- "A Telegram bot my hostel mess committee uses to log today's menu and collect one-tap feedback." One user (the mess secretary), small scope (bot + sheet), and you eat there daily.
+- "An AI flashcard generator that turns a Bio-Chem textbook chapter into Anki cards for my NEET-repeat cousin." One user (your cousin), small scope (one chapter), and there is a deadline.
+- "A Chrome extension that rewrites my placement cover letters in the voice of the company I'm applying to." One user (you), small scope (extension + prompt), and you feel every bad letter.
 
-### Good vs bad questions
+Poorly-scoped versions of the same ideas: "a full mess management platform", "an AI tutor for all science subjects", "a career-automation suite". Same domains, 10x scope, 0.1x chance of shipping.
 
-| Bad | Why | Good |
-|-----|-----|------|
-| "Would you pay for this?" | Invites politeness | "What did you spend money on last month to solve this?" |
-| "Do you think study partners help?" | Invites opinion | "Walk me through the last time you studied with someone." |
-| "Would you use this app?" | Asks about future | "How did you handle this problem last week?" |
-| "Is this a good idea?" | Invites flattery | "What's the last thing that really frustrated you about X?" |
+**Team formation.** Teams of 2 or 3. Solo is allowed but harder; teams of 4 move slower than teams of 2 for this size of project. Pick complementary skills where you can, but more important: pick someone whose work-rhythm matches yours. A morning person and a 3 am person will miss every standup. Agree on: one primary communication channel, two 30-minute sync times per week, one shared doc for decisions.
 
-### The 5-question interview skeleton
+**The ideathon format (90 minutes total).**
 
-Any good 20-minute interview fits into 5 beats. Memorize this shape:
+- **Round 1 — Brainstorm (10 min).** Every student writes 5 capstone ideas alone, no filter, no judgement. Quantity first.
+- **Round 2 — Shape (15 min).** Pick your top 3. Run today's prompt-of-the-day in Claude. Rewrite each idea into one honest sentence: "I am building <thing> for <user> so they can <outcome>."
+- **Round 3 — Pitch in pairs (20 min).** Pair up with a stranger. Each person pitches all 3 ideas in 2 minutes. Partner asks one Heilmeier question per idea. Switch.
+- **Round 4 — Peer voting (10 min).** Everyone writes their single favorite idea (yours or someone else's) on a sticky. Cluster. Top clusters attract teammates.
+- **Round 5 — Team lock (35 min).** Teams form around clusters. Each team picks one idea, runs it through the 3-filter test together, writes the one-pager, submits.
 
-1. **Warm-up (2 min)** — "Tell me about yourself, what year, what you're studying." Lowers their guard.
-2. **Context (5 min)** — "When was the last time you [did the thing we care about]?" Get them into a specific memory.
-3. **Story dig (8 min)** — Follow that memory. "What happened next? What did you do? How did it make you feel?" Do not interrupt.
-4. **Workaround probe (3 min)** — "What did you do to get around the problem?" The workaround is usually the gold.
-5. **Close (2 min)** — "Who else should I talk to about this?" and "Is it okay if I check back in a week?"
+**What the one-pager must contain.** Problem (who hurts, one real named user if you have one), scope (one sentence describing the Week-4 demo), non-goals (what you will explicitly NOT build — this is the hardest and most important section), team (names and roles), risks (top 2), and success metric (how you will know at demo day whether it worked).
 
-### The five magical follow-up phrases
+**Why "what I won't build" matters more than "what I will build".** Scope creep kills every cohort project. The non-goals section is a commitment to your future self: in Week 3 when you are tempted to add auth, mobile, analytics, and payments, the one-pager says no. Locking this today — while you are calm — protects you from yourself later.
 
-When you are listening and want them to say more, use these:
+## Watch: Steelmanning three cohort ideas
 
-- "Tell me more about that."
-- "What happened next?"
-- "Can you give me an example?"
-- "Why do you think that is?"
-- Silence. (Count to five in your head. They will keep talking.)
+The instructor picks the three most-voted ideas from the morning and steelmans each for four minutes — strongest version of the argument, then the one risk that will kill it. Watch how an idea sharpens when you defend it generously before critiquing it.
 
-### Worked example: interviewing about notes sharing
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-Interviewer asks the bad version:
+- Notice how "I would use this" beats "the market is $X billion" every time.
+- Listen for the moment an idea gets smaller and better in the same sentence.
+- Watch the instructor refuse to rescue a too-big idea — the kindness is the refusal.
 
-> *"Would you use an app where seniors upload their notes?"*
-> *"Yeah, sounds cool."*
+## Lab: Run the ideathon
 
-Useless. Now the good version:
+Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pager.md` for your team.
 
-> *"Tell me about the last time you were studying for an exam and you needed notes you didn't have."*
-> *"Oh god — OS mid-sem. I didn't have unit 3 notes because I skipped that week."*
-> *"Walk me through what you did."*
-> *"I messaged the group. Nobody replied till 10pm. Then I went through three seniors' Google Drive links — most were broken. I ended up photocopying from a classmate at 11pm, skipped dinner."*
-> *"What did you do with the photocopies the next day?"*
-> *"I scanned them on my phone and made a WhatsApp group with four other people to share."*
-
-You now know: the real behavior is WhatsApp-group-based, the moment of pain is 8pm the night before, the workaround is scanning + group-sharing. You did not ask about an app. You learned what was real. *That* is the interview.
-
-### Common interview mistakes
-
-- **Pitching.** The moment you describe your idea, the interview becomes a politeness contest.
-- **Leading.** "Don't you find that frustrating?" → yes, obviously. Useless data.
-- **Filling silence.** When they pause, you want to fill it. Don't.
-- **Forgetting to record.** Get permission and record. You will remember 20% otherwise. Minimum: take verbatim notes of their exact phrases.
-- **Interviewing friends only.** Friends lie to be kind. Reach out to 2nd-degree connections too.
-
-### Note-taking format
-
-Capture their words, not your summary. Later you will thank yourself.
-
-```
-INTERVIEW NOTES
-Who: _________________ (year, branch, relevant context)
-When: _________________   Duration: _______ min
-Recorded? Y / N
-
-Verbatim quotes (their words):
-  "_____________________________________________________"
-  "_____________________________________________________"
-
-Stories they told (bullet points, past tense):
-  - _____________________________________________________
-  - _____________________________________________________
-
-Workarounds they mentioned:
-  - _____________________________________________________
-
-Surprises (things I didn't expect):
-  - _____________________________________________________
-
-My biases I noticed while interviewing:
-  - _____________________________________________________
-```
-
-## Watch: how to listen for the real problem
-
-A short clip on interviewing technique. Watch how the interviewer uses silence and reflects back the user's own words.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Count the number of times the interviewer says "tell me more about that".
-- Note the ratio of talking time (aim for 20% you, 80% them).
-- Watch for the moment the interviewee says something unexpected — does the interviewer chase it or steer past it?
-
-## Lab: one real 20-minute interview
-
-You are going to conduct one real interview — on a real person, about a real past problem. Not roleplay.
-
-1. Pick a small problem area relevant to your Day 7 capstone direction (placements, mess, notes, events, commute, anything).
-2. Find one classmate or junior who has experienced that problem recently. Not your best friend. Not someone you want to impress.
-3. Schedule 20 minutes. In person beats video call.
-4. Ask permission to record audio on your phone, *and* take written notes. Promise not to share the recording.
-5. Run the 5-beat skeleton above. Time yourself loosely — don't be a robot about it.
-6. Use the five follow-up phrases often. Count internally how many times you used each.
-7. After the interview, spend 10 minutes immediately writing up the notes using the template. Capture verbatim quotes while fresh.
-8. Highlight the *one surprising thing* they said — the part you didn't expect.
-9. Identify at least one workaround they mentioned. Workarounds point to unmet needs.
-10. Write 2 lines on what you would do differently in your next interview.
+1. **Brainstorm (10 min).** Solo. Dump 5 ideas. No editing. Use hostel life, placement pain, exam prep, campus events, family problems as prompts.
+2. **Shape (15 min).** Pick your top 3. Open https://claude.ai and paste today's prompt-of-the-day. Copy the Heilmeier answers back into your notes.
+3. **Research sanity check (5 min, parallel).** For your top idea, one 30-second https://www.perplexity.ai query: "does this already exist?" Celebrate if yes — you now have a differentiator to find.
+4. **Pitch in pairs (20 min).** Find a partner. 2 minutes each. Partner must ask one Heilmeier question per idea. Take notes on your partner's reactions.
+5. **Peer voting (10 min).** Write your single favorite idea on a sticky. Cluster on the board (or in a cohort Miro).
+6. **Team lock (20 min).** Form a team around a cluster. Run the 3-filter test out loud together. If one member fails the "I care" filter, reshape the idea until they pass or they leave the team — both are fine.
+7. **Write the one-pager (10 min).** Use the template: Problem, User, Scope, Non-goals, Team, Risks, Metric. Keep it to one page. Draft in Claude if stuck; rewrite in your own words.
+8. **Submit.** Post `capstone-one-pager.md` to the cohort channel with the tag `#milestone-1`. This is your commitment.
 
 ## Quiz
 
-Quick check on The Mom Test rules, the 5-beat skeleton, and the difference between past-tense and future-tense questions. Four questions. Aim for 75%+ — you will interview more people this week for your capstone direction.
+Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
 
-## Assignment
+## Assignment — CAPSTONE MILESTONE 1
 
-Submit your completed interview notes as a **text submission** using the template. Must include: at least 2 verbatim quotes, at least 1 story in past tense, at least 1 workaround they mentioned, and 1 surprise. Also include a 2-line reflection on your interviewing technique. No names needed; anonymize if they prefer.
+Your team submits a locked capstone one-pager (Markdown, ≤ 400 words) containing:
 
-## Discuss: where empathy breaks down
+1. **Problem** — who hurts, in one sentence. Name a real user if possible.
+2. **Scope** — what the Week-4 demo will do, in one sentence.
+3. **Non-goals** — 3–5 bullet list of what you will explicitly NOT build.
+4. **Team** — names, roles, primary comms channel.
+5. **Risks** — top 2, with a one-line mitigation each.
+6. **Success metric** — one measurable thing that tells you at demo day whether it worked.
 
-- Which Mom Test rule did you violate most during your interview? Be honest.
-- Did the person you interviewed tell you a story that contradicted something you assumed? What was it?
-- When is it ethical to record an interview? When not?
-- How many interviews do you think are "enough" to see a pattern — 3, 5, 10? Defend your answer.
-- Whose voice is *missing* from the problem you're exploring? Who won't show up to a convenient interview?
+Submit before midnight. This is the biggest deliverable of the workshop so far and the foundation for Weeks 3–4. Once submitted, your scope is locked — changes after today require instructor approval.
+
+## Discuss: The idea you fell in love with and had to kill
+
+- Which idea did you almost pick that failed the 3-filter test? What killed it?
+- When your partner pushed back on your best idea, did you defend it or did it shrink? Which was the right response?
+- Is your team's "won't build" list long enough? What is missing from it?
+- Who is the one user you will talk to in Week 3? How will you get them on a call?
+- What would make you abandon this capstone in Week 3, and how will you prevent that?

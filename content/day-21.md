@@ -1,116 +1,101 @@
 ---
-reading_time: 14 min
-tldr: "Direct an AI to build your app from your Day-14 spec, iterate, deploy, and ship a live URL by tonight."
-tags: ["vibe", "shipping", "capstone"]
+reading_time: 16 min
+tldr: "Stop typing code and start directing it — ship your capstone v0 by the end of today."
+tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Ship your first AI app to a live URL", "url": "https://bolt.new/"}
-prompt_of_the_day: "Build me a single-page web app that does the following:\n- Audience: {{who}}\n- Problem it solves: {{pain}}\n- Core flow: {{six_box_flow}}\n- Success looks like: {{shipped_criteria}}\n- Stack: Next.js + Tailwind. Keep it simple. Add clear placeholder data so I can see it working immediately."
-resources: [{"title": "bolt.new", "url": "https://bolt.new/"}, {"title": "Lovable", "url": "https://lovable.dev/"}, {"title": "v0", "url": "https://v0.dev/"}, {"title": "Cursor", "url": "https://cursor.com/"}, {"title": "Claude Code", "url": "https://www.anthropic.com/claude-code"}]
+lab: {"title": "Vibe-code your capstone v0", "url": "https://cursor.com/docs"}
+prompt_of_the_day: "You are my pair-programmer. Read {{CLAUDE.md}} and the current file tree. I want to build {{feature}}. Before writing code, propose a 3-step plan, call out the riskiest assumption, and wait for my sign-off."
+tools_hands_on: [{"name": "Cursor", "url": "https://cursor.com"}, {"name": "bolt.new", "url": "https://bolt.new"}, {"name": "Google Antigravity", "url": "https://antigravity.google.com"}]
+tools_demo: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cline", "url": "https://cline.bot"}]
+tools_reference: [{"name": "Continue", "url": "https://continue.dev"}, {"name": "Lovable", "url": "https://lovable.dev"}, {"name": "v0", "url": "https://v0.dev"}, {"name": "Emergent", "url": "https://emergent.sh"}, {"name": "Replit Agent", "url": "https://replit.com"}, {"name": "Windsurf", "url": "https://codeium.com/windsurf"}]
+resources: [{"name": "Anthropic: Claude Code best practices", "url": "https://www.anthropic.com/engineering/claude-code-best-practices"}, {"name": "Cursor: the AI Code Editor", "url": "https://cursor.com"}]
 ---
 
 ## Intro
 
-This is the day you've been prepping for. Every concept, every lab, every discussion — they all converge here. You will not write code. You will direct an AI to write code, iterate on what it gives back, and ship a live URL tonight. Week 2's thinking pays off now.
+Today is the day you stop being a typist and start being a director. Week 5 is about shipping — and shipping starts with a working v0 of your capstone, today, on your laptop. You have spent four weeks accumulating context, prompting muscle, a CLAUDE.md from Day 19, a repo, and a problem worth solving. Today you point a vibe-coding tool at it and iterate until something runs.
 
-## Read: Vibe-coding is a real skill
+This is also a checkpoint. By the end of the day you submit a local prototype and a 200-word "director's commentary" explaining the prompts you wrote, the fights you had with the model, and the one moment you almost gave up. That reflection is the deliverable — the code is just evidence.
 
-"Vibe-coding" is directing an AI to build software through plain-English conversation. Critics hate the name. The thing itself is real — in 2026, shipping a working MVP in an afternoon is normal, and the people who do it best share one trait: they know what they want before they start typing.
+## Read: Director vs Typist — the mindset shift that unlocks AI-first building
 
-### Why yesterday's spec matters today
+Every engineer who is still slow with AI tools in 2026 is stuck in typist mode. A typist reads a Stack Overflow answer, retypes it into their editor, runs it, and debugs line by line. A typist thinks in characters. A director thinks in intent, constraints, and acceptance criteria. The director writes a spec, hands it to a capable junior (the model), reads the output critically, and redirects. The director never touches the keyboard to write code — but they do touch it to write specs, reviews, and rejections.
 
-The single biggest predictor of whether you ship a good app today is whether your Day-14 spec is sharp. A vague spec yields a vague app. A one-line "a study helper with AI" gets you exactly that — a generic chat box wrapper. A detailed spec gets you something specific and useful.
+The mental flip is this: **your job is to compress your intent into unambiguous English, not to compile English into code**. If the model is confused, your spec was bad. If the code is wrong, your spec was incomplete. If the code is fragile, your spec missed the failure modes. The model is a mirror; blaming it is blaming your own prompt.
 
-Your spec already has: who it's for, what pain it removes, the six-box flow, success criteria, an anti-goal. You'll paste that, roughly, as your first message.
+### The art of the spec
 
-### Pick one tool and commit
+A good spec has four parts, and your CLAUDE.md from Day 19 already carries the first two:
 
-Don't channel-surf between builders. Pick one and stay all day.
+1. **Context** — what the project is, what tech stack, what files exist, what conventions you follow. This is static; CLAUDE.md covers it.
+2. **Invariants** — things that must never break. "All API routes must return JSON, never HTML." "No new dependencies without my approval." "TypeScript strict mode stays on."
+3. **This task** — the specific change. Not "add login" but "add a `/login` page that accepts email + password, posts to `/api/auth`, stores the returned JWT in an httpOnly cookie, and redirects to `/dashboard` on success."
+4. **Acceptance** — how you will know it is done. "I should be able to log in, refresh the page, and still be logged in." "If I type a wrong password I should see 'Invalid credentials' without the page reloading."
 
-| Tool | Best for | Deploy story |
-|---|---|---|
-| bolt.new | Full-stack web apps with backend | One-click Netlify |
-| Lovable | Polished SaaS-looking UIs, DB included | Built-in deploy + Supabase |
-| v0 | Beautiful front-end components, design-forward | One-click Vercel |
-| Cursor / Claude Code | Deeper control, working with a real repo | You manage deploy |
+If you write those four parts before you press Enter, you will be in the top 5% of vibe coders. Most people skip to part 3 and wonder why the model keeps inventing libraries.
 
-For today, we recommend **bolt.new** or **Lovable**. Both run in browser, both deploy for free, both handle the full stack. v0 is gorgeous but more front-end focused. Cursor/Claude Code are the pros' choice — try them next week.
+### Iteration loops — spec, code, review, iterate
 
-### The iteration loop that actually works
+Vibe coding is not a single prompt. It is a loop. Every turn through the loop has four moves:
 
-```
-Read this, don't type it
+- **Spec** — what I want next, with acceptance criteria.
+- **Code** — the model writes it. You do not touch the keyboard except to approve diffs.
+- **Review** — you read every changed file. You run the thing. You break the thing on purpose.
+- **Iterate** — you feed back what is wrong. You do not rewrite; you redirect.
 
- 1. Describe      ->  paste spec, get first version
- 2. Try it        ->  click through; note what's broken
- 3. Name it       ->  "the submit button does nothing; fix and add a loading state"
- 4. Let AI work   ->  don't edit manually; direct it back
- 5. Repeat        ->  10-20 tight loops beats 2 giant refactors
-```
+Most beginners break on the Review step. They see a diff that looks vaguely plausible, accept it, and move on. Then they discover four turns later that the model invented a function name that does not exist, wrote tests that import nothing, and silently removed a feature from last week. Review is not optional. Review is where directing happens.
 
-The trap is trying to fix things yourself by reading the code. Don't. The AI wrote it, the AI can fix it. Your job is to see problems clearly and describe them precisely.
+A practical tip: keep turns short. If you are on turn 7 of a single conversation, the model is probably hallucinating context. Start a fresh session, hand it the CLAUDE.md and the current diff, and restate the goal.
 
-### The three layers of your app
+### When to let AI off the leash
 
-Almost every AI app has three layers. Know which one has a bug.
+There are two modes. **Tight leash**: every change is a diff you review before it hits the disk. Cursor's chat and Claude Code's default mode feel like this. **Long leash**: the agent runs a loop, edits many files, runs tests, fixes errors, and only comes back when it is stuck. Claude Code's agent mode, Antigravity's background tasks, Replit Agent, and Emergent feel like this.
 
-- Front-end. The UI the user sees. Buttons, forms, chat boxes. Bugs here are visual or interaction-based.
-- Back-end / API. The glue that calls the LLM, stores data, talks to external APIs. Bugs here are "nothing happens when I click" or "500 error."
-- Data. Database, vector store for RAG, file uploads. Bugs here are "my upload disappeared" or "it keeps showing the same answer."
+The heuristic:
+- Tight leash when the code matters long-term: core logic, security boundaries, the data model.
+- Long leash when the cost of a bad attempt is low: scaffolding, CSS, tests, migrations, boilerplate CRUD.
 
-When something breaks, diagnose which layer. "The button doesn't do anything" could be front-end (button isn't wired) or back-end (API never returned). Open the browser's DevTools Network tab to see which.
+If you put long-leash agents on core logic without a strong test suite, you will wake up to a tangle. If you put tight leash on boilerplate, you will be there all day.
 
-### Ship criteria, revisited
+### Debugging AI output
 
-From your Day-14 spec, you have three success criteria and one anti-goal. Tape them to your screen. At every iteration, ask: am I closer to these three, or farther? Anything that doesn't move those numbers is a distraction.
+The model will lie to you. Not maliciously — it will confidently ship code that does not run, import modules that do not exist, and call APIs that were deprecated in 2023. Three debugging reflexes will save you hours:
 
-### The six classic mistakes to avoid
+- **Run it immediately.** Never accept a diff you have not executed. Half the hallucinations die on the first `npm run dev`.
+- **Read the stack trace to the model.** Paste the full error back. Do not paraphrase. The model is better at reading its own mistakes than you are.
+- **Ask it to think out loud before it fixes.** "Before you change anything, tell me what you think is wrong and why." If the diagnosis is wrong, the fix will be wrong.
 
-1. Changing the spec mid-build. You lose the AI's context and restart from zero.
-2. Adding auth on Day 1. Nobody needs to log in to see your demo. Skip.
-3. Making it pretty before it works. Ugly-and-working beats beautiful-and-broken.
-4. Copying errors into chat without the context. The AI needs the file, the line, and what you clicked.
-5. Quitting on the third failure. Most apps get built on the eighth attempt. Push.
-6. Shipping nothing because "it's not ready." Ship ugly. Iterate tomorrow.
+And the nuclear option: **ask for two solutions, pick one**. "Give me two different ways to solve this, with tradeoffs." You get better code and a small education for free.
 
-## Watch: A full vibe-coded app, start to URL
+### The capstone angle
 
-A recorded session of a builder taking an idea from empty screen to live URL in under an hour using bolt.new or Lovable. Watch the rhythm of describe-try-name-let-AI-work.
+You have three tools to try today — Cursor, bolt.new, Antigravity — but you will pick one as your primary. The choice is less about capability (they all work) and more about where your capstone lives. If you have an existing repo on your machine, Cursor is strongest. If you are building a web app from scratch and want it deployable in one click, bolt.new shines. If you want an agent running long-horizon tasks across many files with a planning UI, Antigravity is the new hotness. Try all three on the same small task first — rebuilding a landing page, say — then commit to one for the real work.
 
-https://www.youtube.com/embed/VIDEO_ID
+## Watch: Director's-chair vibe coding walkthrough
+
 <!-- TODO: replace video -->
 
-- Notice how short each instruction is after the first big one.
-- Watch how the builder handles errors — always by describing, never by editing.
-- Observe how they ship a broken version first, then fix in place.
+## Lab: Ship a v0 of your capstone
 
-## Lab: Ship your first AI app
-
-This is a 90–120 minute lab. Block the time. Close Slack. Let's go.
-
-1. Open your Day-14 spec. Read it once, out loud. Fix any vague sentence before you start.
-2. Open https://bolt.new/ (or https://lovable.dev/ — your choice, commit to one). Sign in free.
-3. Paste today's prompt-of-the-day, filling `{{who}}`, `{{pain}}`, `{{six_box_flow}}`, and `{{shipped_criteria}}` from your spec. Hit send.
-4. Wait. The AI will scaffold a project in 30–90 seconds. Click through the preview. Note three things that work and three that don't.
-5. Fix the biggest broken thing first, in one sentence. Example: "The chat input doesn't send on Enter. Also, show a loading spinner while the AI responds." Let the AI rebuild. Test again.
-6. If your app needs AI inside it (most will), add a clear instruction: "Use the OpenAI/Anthropic API for the chat. Read the key from an environment variable called OPENAI_API_KEY. Add a settings screen where I can paste my key." Most builders now handle this natively.
-7. If your app uses RAG (from Day 19), direct: "Add a file upload. When a PDF is uploaded, chunk it, embed it, store embeddings, and use them to answer questions. Show the source page in each answer." Don't worry about the technical terms — the AI has read every tutorial.
-8. Iterate until your three success criteria are met. Deploy using the builder's one-click deploy. Copy the live URL.
-9. Share the live URL with one classmate RIGHT NOW. Ask them to try one thing and tell you what broke. Fix that thing. Re-share.
-
-Your deliverable is a live URL that a stranger can open and use. Not a GitHub repo. Not a screenshot. A URL.
+1. Open your capstone repo. Confirm your Day 19 CLAUDE.md is in the root and up to date.
+2. Pick ONE primary tool — Cursor, bolt.new, or Antigravity. Open your capstone in it.
+3. Write a **one-page spec** for the v0 scope. Not the whole product. The smallest end-to-end path a user can walk: input → AI call → output.
+4. Run the spec → code → review → iterate loop until the v0 works locally. Target: 3 hours, 5–8 iterations.
+5. Commit after every accepted diff. Your git log is your director's journal.
+6. Record a 90-second screen capture of the v0 running.
 
 ## Quiz
 
-Four questions today: which tool fits which job, what makes a good iteration instruction, which layer a given bug lives in, and one "spec review" item where you pick the stronger of two specs.
+1. What are the four parts of a good spec?
+2. When should you use a long-leash agent vs a tight-leash chat?
+3. What is the "read the stack trace to the model" reflex for?
+4. Name one signal that a conversation has gone too long and you should start fresh.
+5. Why is Review the step most beginners skip?
 
 ## Assignment
 
-Submit three things in the class channel: (1) your live URL, (2) a screenshot of your best moment, (3) a 150-word reflection on what surprised you about directing an AI to build something real. Watch two classmates' submissions and leave one specific, kind comment on each.
+**Capstone Milestone 3 (daily, checkpoint):** Submit (a) a working local prototype of your capstone v0 — a recording and a repo link — and (b) a 200-word director's commentary. The commentary must name your primary tool, the single hardest prompt you wrote, one moment the model went off the rails and how you pulled it back, and one thing you would do differently next time.
 
-## Discuss: You shipped. Now what?
+## Discuss: Where does vibe coding stop working?
 
-- What's the single thing about your app you're proud of, and the single thing you already want to rebuild?
-- Which worked better — bolt.new, Lovable, v0, or something else — and why?
-- When did the AI most misunderstand you, and how did you recover?
-- You now know APIs, embeddings, RAG, prompting, and shipping. Which of those will you deepen next, and why?
-- If you had one more day with this app, what would you add? What would you cut?
+Share one part of your capstone where the model consistently failed today. Was it a domain-specific library, a subtle UX call, a security concern, a weird framework version? Post the spec you wrote, the output you got, and your theory about why the model struggled. The class will vote on the most interesting failure mode.

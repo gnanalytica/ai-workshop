@@ -65,6 +65,15 @@
   .pill.quiz-attempted{background:rgba(56,189,248,.22);border:1px solid rgba(56,189,248,.45);color:#7dd5ff}
   .pill.quiz-none{background:#17171f;border:1px solid #25252f;color:#55556a}
 
+  /* Milestone row — checkpoints stand out */
+  .row.milestones{height:54px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent)}
+  .row.milestones .rn{color:var(--ink);font-weight:700;letter-spacing:.18em}
+  .pill.milestone{position:absolute;left:2px;right:2px;top:50%;transform:translateY(-50%);height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:#0b0b10;box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.18);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px;cursor:pointer}
+  .pill.milestone .mi-dot{width:8px;height:8px;border-radius:999px;background:rgba(0,0,0,.35);flex-shrink:0}
+  .pill.milestone .mi-lbl{overflow:hidden;text-overflow:ellipsis}
+  .pill.milestone:hover{transform:translateY(-50%) scale(1.04);transition:transform .12s ease}
+  @media (max-width:1500px){.pill.milestone .mi-lbl{display:none}}
+
   /* Today marker */
   .today-marker{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);pointer-events:none;z-index:5}
   .today-marker::before{content:"TODAY";position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--accent);letter-spacing:.14em;background:var(--card);padding:2px 5px;border-radius:4px;border:1px solid rgba(195,255,54,.4)}
@@ -113,6 +122,8 @@
     .mp.asgn-overdue{background:rgba(255,107,107,.18);color:#ffa0a0}
     .mp.quiz-passed{background:rgba(195,255,54,.2);color:var(--accent)}
     .mp.quiz-attempted{background:rgba(56,189,248,.18);color:#7dd5ff}
+    .m-milestone{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin-bottom:8px;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;color:#0b0b10;letter-spacing:.08em;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+    .m-milestone .mm-tag{background:rgba(0,0,0,.25);color:inherit;padding:2px 8px;border-radius:999px;font-size:10px;letter-spacing:.1em}
   }
 </style>
 </head>
@@ -161,6 +172,7 @@
     <div class="gantt-head">
       <h2>30-day plan</h2>
       <div class="legend">
+        <span><span class="legend-dot" style="background:linear-gradient(90deg,#c3ff36,#38bdf8,#8b5cf6,#ff6b6b)"></span>milestones</span>
         <span><span class="legend-dot ld-accent"></span>unlocked / done</span>
         <span><span class="legend-dot ld-violet"></span>live session</span>
         <span><span class="legend-dot ld-sky"></span>submitted / attempted</span>
@@ -189,7 +201,7 @@
 
 <script type="module">
 import { supabase, COHORT_SLUG } from './assets/supabase.js';
-import { DAYS, WEEK_TITLES } from './assets/days.js';
+import { DAYS, WEEK_TITLES, CHECKPOINTS } from './assets/days.js';
 
 const $ = (id) => document.getElementById(id);
 const DAY_MS = 86400000;
@@ -346,12 +358,23 @@ function renderGantt(cohort, byDay, now) {
     const cell = document.createElement('div');
     cell.className = 'a-lbl' + ((n % 7 === 1 && n !== 1) ? ' wsep' : '');
     const ci = byDay.get(n);
-    cell.innerHTML = `DAY ${String(n).padStart(2,'0')}${ci.date ? `<div class="a-d">${fmtDOW(ci.date)} ${fmtDM(ci.date)}</div>` : ''}`;
+    const cp = CHECKPOINTS[n];
+    const cpBadge = cp ? ` <span style="display:inline-block;width:6px;height:6px;border-radius:999px;background:${cp.color};vertical-align:middle;margin-left:2px;box-shadow:0 0 6px ${cp.color}"></span>` : '';
+    cell.innerHTML = `DAY ${String(n).padStart(2,'0')}${cpBadge}${ci.date ? `<div class="a-d">${fmtDOW(ci.date)} ${fmtDM(ci.date)}</div>` : ''}`;
     axis.appendChild(cell);
   }
   root.appendChild(axis);
 
   const rows = [
+    { name: 'Milestones', milestone: true, render: (ci) => {
+        const cp = CHECKPOINTS[ci.n];
+        if (!cp) return '';
+        return `<div class="pill milestone" style="background:${cp.color}"><span class="mi-dot"></span><span class="mi-lbl">${cp.label}</span></div>`;
+      }, tip: (ci) => {
+        const cp = CHECKPOINTS[ci.n];
+        return cp ? `Checkpoint · ${cp.label}` : '';
+      }
+    },
     { name: 'Unlock', render: (ci) => {
         const cls = ci.sched?.is_unlocked ? 'unlocked' : 'locked';
         const lbl = ci.sched?.is_unlocked ? 'open' : '—';
@@ -404,7 +427,7 @@ function renderGantt(cohort, byDay, now) {
 
   rows.forEach(r => {
     const row = document.createElement('div');
-    row.className = 'row';
+    row.className = 'row' + (r.milestone ? ' milestones' : '');
     const rn = document.createElement('div'); rn.className = 'rn'; rn.textContent = r.name; row.appendChild(rn);
     for (let n = 1; n <= 30; n++) {
       const ci = byDay.get(n);
@@ -472,7 +495,9 @@ function renderMobile(cohort, byDay, now) {
     const q = quizState(ci);
     if (q) pills.push(`<span class="mp quiz-${q === 'none' ? 'attempted' : q}" style="${q === 'none' ? 'background:#17171f;color:#55556a' : ''}">quiz: ${q}</span>`);
     const todayCls = todayN === n ? ' today' : '';
-    html += `<a href="day.html?n=${n}" class="m-day${todayCls}" style="color:inherit;display:grid"><div class="m-num">DAY ${String(n).padStart(2,'0')}<div style="color:#5a5a6e;margin-top:2px">${ci.date ? fmtDateShort(ci.date) : ''}</div></div><div class="m-body"><div class="m-t">${dayInfo?.title || ''}</div><div class="m-meta">${pills.join('')}</div></div></a>`;
+    const cp = CHECKPOINTS[n];
+    const milestoneCard = cp ? `<div class="m-milestone" style="background:${cp.color}"><span class="mm-tag">Milestone</span><span>${cp.label}</span></div>` : '';
+    html += `<a href="day.html?n=${n}" class="m-day${todayCls}" style="color:inherit;display:grid"><div class="m-num">DAY ${String(n).padStart(2,'0')}<div style="color:#5a5a6e;margin-top:2px">${ci.date ? fmtDateShort(ci.date) : ''}</div></div><div class="m-body">${milestoneCard}<div class="m-t">${dayInfo?.title || ''}</div><div class="m-meta">${pills.join('')}</div></div></a>`;
   }
   root.innerHTML = html;
 }

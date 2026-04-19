@@ -1,146 +1,92 @@
 ---
-reading_time: 10 min
-tldr: "Build a full slide deck from 5 bullets, analyse a CSV with zero Excel formulas, and run a mock interview before lunch."
-tags: ["use", "productivity", "consumer"]
-video: https://www.youtube.com/embed/ZY-Z9HbB-hQ
-lab: {"title": "Build a 'My 2026 Goals' deck with Gamma", "url": "https://gamma.app/"}
-prompt_of_the_day: "You are a tough but fair interviewer for a {{role, e.g. Data Analyst Intern}} at a {{company type, e.g. fintech startup}}. Ask me 5 questions one at a time. Wait for each answer before the next. After question 5, give me a brutally honest 3-part review: what was strong, what was weak, what I should practise."
-resources: [{"title": "Gamma", "url": "https://gamma.app/"}, {"title": "Canva (Magic Studio)", "url": "https://www.canva.com/"}, {"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Perplexity", "url": "https://www.perplexity.ai/"}]
+reading_time: 14 min
+tldr: "Every chat model has a personality and a superpower. Pick the right one and train it to remember you."
+tags: ["exposure", "tools"]
+video: https://www.youtube.com/embed/VIDEO_ID
+lab: {"title": "Build your personal Jarvis in Claude Projects", "url": "https://claude.ai"}
+prompt_of_the_day: "You are my personal Jarvis for {{context: e.g. 3rd-year CSE at NITK}}. My goals this month are {{goals}}. My constraints are {{time, budget, tools}}. My thinking style is {{style}}. For every answer: (1) ask one clarifying question first if the task is ambiguous, (2) give the shortest honest answer, (3) end with one next step I can do in 10 minutes."
+tools_hands_on: [{"name": "ChatGPT", "url": "https://chatgpt.com"}, {"name": "Claude", "url": "https://claude.ai"}, {"name": "Gemini", "url": "https://gemini.google.com"}]
+tools_demo: [{"name": "Grok", "url": "https://grok.com"}, {"name": "Microsoft Copilot", "url": "https://copilot.microsoft.com"}, {"name": "Kimi", "url": "https://kimi.moonshot.cn"}]
+tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}]
+resources: [{"name": "Claude Projects guide", "url": "https://claude.ai"}, {"name": "ChatGPT Custom Instructions", "url": "https://chatgpt.com"}]
 ---
 
 ## Intro
 
-Today we turn AI into your operations team. Slide decks, CV polish, data analysis, meeting notes, interview prep — all in a browser, all free-tier. By the end of today you'll feel the real time dividend: things that took 2 hours now take 20 minutes. This is the day your habits start to shift.
+Welcome to Week 2. Last week you learned what AI is; this week you will touch everything. Today's job is the most important of the week: stop using one chatbot as a search engine and start using five of them as thinking partners. By Friday you will pick a capstone; today you build the tool that will help you pick it.
 
-## Read: The daily-ops AI stack
+## Read: Five models, five personalities
 
-Four everyday tasks, four workflows. Pick the two that match your life right now and go deep.
+The big frontier chat models look identical from the outside. They all have a text box. But in 2026, the gap between the best answer and the average answer is almost entirely about knowing which model to ask, how to set it up, and how to talk to it. Most students give up on "AI" after three mediocre ChatGPT replies. The actual reason the reply was mediocre is that they asked the wrong model, with no context, in one line.
 
-### 1. Slide decks from thin air — Gamma and Canva Magic
+Here is the honest field guide we use in this cohort.
 
-Writing slides is mostly busywork. AI is made for busywork.
+| Model | Best at | Weak at | Use when |
+|-------|---------|---------|----------|
+| Claude | Long-form writing, code review, nuanced reasoning, safety | Real-time web, images | Essays, resumes, capstone planning, reading long PDFs |
+| ChatGPT | Code generation, plugins, general tasks, voice mode | Heavy citation | Python scripts, daily assistant, voice walks |
+| Gemini | Google Workspace, long context, Drive/Gmail | Personality | Analyzing your Gmail, Google Docs edits, 1M-token PDFs |
+| Grok | Real-time X feed, news, edgy tone | Careful writing | "What is trending on placements today?" |
+| Kimi | Chinese-language context, long docs | English nuance | Reading Chinese research, cross-cultural work |
 
-**Gamma** (`https://gamma.app/`) takes a topic or outline and generates a full visual deck in 20 seconds. Free account gives you 400 credits — enough for 5–10 decks. **Canva Magic** does the same inside Canva with more brand polish.
+A useful mental model: Claude is the thoughtful senior, ChatGPT is the eager intern, Gemini is the Google employee, Grok is the news junkie cousin, Kimi is the exchange student from Tsinghua. You would not ask all five the same question the same way in real life, so stop doing it online.
 
-How to use Gamma well: give it *structure*, not just a topic. A 5-bullet outline produces a far better deck than a vague topic.
+**Memory and Projects: the two features that change everything.** A raw chat window is amnesiac. Every new conversation starts from zero; you type your context again like a goldfish. The three features that fix this:
 
-```
-Copy and paste this into Gamma as your prompt:
+1. **Custom Instructions / System Prompt** (ChatGPT Settings → Personalization, Claude Settings → Profile, Gemini Saved Info). Write once: "I am a 3rd-year CSE student at NITK. I prefer concise answers. I am preparing for SDE placements. Always give me the smallest useful next step." Every future conversation inherits this.
+2. **Memory** (ChatGPT Memory, Gemini Saved Info). The model writes down facts about you as you chat. You can view and edit the memory list. Good memory turns the tool from a vending machine into a tutor who has known you for a semester.
+3. **Projects** (Claude Projects, ChatGPT Projects/GPTs, Gemini Gems). A project is a workspace that pins reference files, a system prompt, and past chats together. This is where your "Jarvis" will live.
 
-Create a 6-slide deck called "My 2026 Goals".
-Slides:
-1. Title — my name + "2026"
-2. Career goal — one specific internship/job target with 2 reasons
-3. Skill goal — one hard skill, one soft skill, how I'll measure progress
-4. Project goal — one public thing I'll ship (hackathon / blog / repo)
-5. Personal goal — fitness, reading, or a relationship goal
-6. Accountability — how I'll track monthly and who will check on me
+**Why we build Jarvis in Claude Projects today:** Claude has the cleanest Projects UI, the biggest file upload budget on the free tier, and the best long-form writing. You will upload your resume, your transcript, your capstone brainstorm, and your class schedule. For the next 25 days, every planning conversation starts inside this project. By Day 30 your Jarvis will know more about your cohort journey than your hostel roommate.
 
-Style: clean, modern, warm. Avoid corporate stock photos.
-```
+**Prompting mindset for thinking partners.** Treat the model as a smart but literal collaborator who cannot read your mind. Three rules:
 
-You'll get a deck with visuals, formatting, and transitions already done. Edit the words and ship.
+- Give **context before task**. "I have a 4-hour Tuesday evening. I need to finish DSA revision and one capstone milestone. What should I do?" beats "help me plan".
+- Ask for **one clarifying question first** when the task is open-ended. This is in today's prompt-of-the-day. It forces the model to slow down.
+- End every response with a **10-minute next action**. Humans drown in plans. Always get one concrete move.
 
-### 2. CV polish — the 3-prompt workflow
+**A note on privacy.** Anything you paste into a free-tier chatbot may be used for training. Do not paste your Aadhaar, your friend's grades, or your company's NDA. For sensitive work use the "improve the model for everyone" toggle off, or use the enterprise tier. We will revisit this in Week 4.
 
-Your CV is one document you'll update for years. Do this once, do it right.
+## Watch: Picking the right chatbot in 2026
 
-```
-Copy and paste this prompt (to ChatGPT or Claude):
+A ten-minute walkthrough of the five models above, same prompt across all of them, and how the answers differ. Watch for the difference in tone, length, and how each model handles uncertainty.
 
-Step 1: Rewrite each bullet on my CV using the pattern "[action verb] + [what I did] + [measurable result]". Kill vague words like "helped", "worked on", "responsible for".
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-Step 2: For a {{target role}} at a {{target company type}}, re-order the bullets by relevance.
+- Notice which model asks a clarifying question unprompted.
+- Watch how Grok's real-time data changes the answer for "trending placement news".
+- Compare how Claude and ChatGPT structure the same resume-review output.
 
-Step 3: Score my CV out of 10 on: specificity, verbs, numbers, target-role fit. Suggest 3 edits.
+## Lab: Build your personal Jarvis
 
-Here's my CV text: {{paste CV as plain text}}
-```
+Time: 40 minutes. Artifact: a living Claude Project you will use all cohort.
 
-This is the single most valuable AI prompt for placement season. Save it.
-
-### 3. Data analysis without Excel formulas
-
-You can upload a CSV directly into ChatGPT (free tier supports small files) or Claude. No VLOOKUP, no pivot tables, no panic.
-
-Example: you've got a CSV of your college club's event attendance.
-
-```
-Copy and paste this prompt (after uploading the CSV):
-
-You are a data analyst. Here's our event attendance CSV.
-
-1. Summarise the file: rows, columns, what each column likely means.
-2. Give me 3 interesting patterns (e.g., which events had highest turnout, which day of the week is best).
-3. Build a simple bar chart of attendance by event.
-4. Tell me one thing this data CANNOT answer, so I don't misuse it.
-```
-
-You get charts, summary, and honest limits — in 30 seconds.
-
-### 4. Interview prep — mock interviews at 2 AM
-
-This is the underrated superpower. AI will role-play an interviewer endlessly and never get tired of you saying "umm".
-
-The prompt-of-the-day above is your template. Run it before every interview this placement season. Follow-up moves:
-
-- *"Now ask me 3 behavioural questions in the STAR format."*
-- *"Pretend I'm stuck and I'm rambling. Interrupt me like a real interviewer would."*
-- *"Give me feedback as if I were your own younger sibling — kind but honest."*
-
-### Picking the right tool at a glance
-
-| Task | Best tool | Time saved |
-|------|-----------|-----------|
-| Slide deck from outline | Gamma | 90 min → 10 min |
-| Polished branded deck | Canva Magic | 60 min → 15 min |
-| CSV analysis | ChatGPT / Claude | Full afternoon → 20 min |
-| Mock interview | ChatGPT (voice mode even better) | Requires a friend → on-demand |
-| Meeting notes from recording | Gemini (in Google Meet) | Manual transcription → auto |
-| Recent-news research with sources | Perplexity | 30 min Googling → 3 min |
-
-### The "wow" trick of the day
-
-In ChatGPT's voice mode (free on mobile), say: *"Interview me for a Data Analyst role. Talk like a real interviewer, not a chatbot. Push me if I'm vague."* Then walk around your room and answer out loud. This is practising at a quality most students never get until their 5th real interview. Free.
-
-## Watch: Gamma, mock interviews, and CSV analysis in one sitting
-
-A combined demo of the three biggest daily-ops wins.
-
-https://www.youtube.com/embed/ZY-Z9HbB-hQ
-<!-- TODO: replace video -->
-
-- Notice how little typing Gamma needs to produce a usable deck.
-- Watch the mock interview segment — see how the AI follows up on weak answers.
-- Pay attention to the "what this data can't answer" move in the CSV demo.
-
-## Lab: A 1-page "My 2026 Goals" deck
-
-You'll end with a Gamma deck and a screenshot of your mock-interview feedback.
-
-1. Write a 5-bullet outline of your 2026 goals in a Notes app. Career, skill, project, personal, accountability.
-2. Open `https://gamma.app/`, sign up free, click "Create → Generate", and paste the prompt above (edited with your bullets).
-3. Let Gamma build the deck. Edit the wording on 2–3 slides so it sounds like you (use Day 4's voice-match trick).
-4. Change the theme once to something you like more. Export the deck as PDF or share link.
-5. Now switch to ChatGPT. Run the prompt-of-the-day for a mock interview for a role you actually want (intern, placement, club role — pick one).
-6. Answer all 5 questions honestly, in 2–3 lines each. Read the feedback.
-7. Bonus — ask: *"Based on my weak answers, what 3 things should I practise this week?"* Save the list.
-8. Submit the Gamma share link + screenshot of the feedback.
-
-**Victory condition:** one Gamma deck link + one mock-interview feedback screenshot + one saved "things to practise" list.
+1. Sign in at https://claude.ai and click **Projects → Create project**. Name it "Jarvis — <your name>".
+2. In **Project instructions**, paste today's prompt-of-the-day and fill every `{{placeholder}}` with real details about you.
+3. Upload to **Project knowledge**: your latest resume (PDF), your transcript or grade card, and a 1-page text file listing 5 capstone ideas you are curious about. If you have no resume yet, upload a half-page "about me".
+4. Start a new chat in the project. Ask: "Read everything in project knowledge. Summarize me back to me in 5 bullets. What gaps do you see for a capstone pick?"
+5. Ask a second follow-up: "Based on what you know, which 3 of my capstone ideas are most fundable, most learnable, and most interesting? Score each 1–5."
+6. Open a **second browser tab** with ChatGPT and a **third** with Gemini. Paste the exact same two prompts into each. Do not give them your project context on purpose.
+7. Screenshot all three final responses side by side. Notice how much better the Claude answer is because of context.
+8. Back in Claude, ask Jarvis: "Given today was Day 6 of a 30-day workshop and Day 10 is an ideathon, what should I think about this week to be ready?" Save the reply in a note called `capstone-scratch.md`.
 
 ## Quiz
 
-Four questions: best tool for a quick deck, what Gamma needs to produce a good deck, one thing AI CSV analysis still needs you to verify, and why mock interviews work even though the AI isn't a real interviewer.
+Three quick questions to confirm you got the core moves. What is the difference between Memory and Projects? Which model would you ask to summarize a 90-page Google Doc your professor shared on Drive? Which model would you ask for the current status of a breaking AI news story? And why did the Claude Jarvis answer beat the blank ChatGPT answer in step 7?
 
 ## Assignment
 
-Drop your Gamma deck link and your mock-interview feedback screenshot. In 2 lines: which of today's four workflows are you most likely to use weekly, and why?
+Submit two artifacts to the cohort Slack channel before 11 pm:
 
-## Discuss: AI as your chief-of-staff
+1. A screenshot of your Claude Project sidebar showing uploaded files and project instructions.
+2. Three screenshots of your best three chatbot conversations from today (any model), each with a one-sentence caption on why the answer was good.
 
-- If AI can make a deck in 20 seconds, what *should* the human time be spent on?
-- Has anyone's mock interview exposed a real weakness today? Share if comfortable.
-- For placements — is using AI for CV polish the same as a senior helping you edit? Why or why not?
-- What's one "small" daily task you'd automate with AI starting tomorrow?
-- Where would you NOT trust AI at work — even a year from now?
+This is your daily artifact. It is the ticket to Day 7.
+
+## Discuss: Which model is your default?
+
+- Which model felt most like a friend and which felt most like a vending machine? Why?
+- Did any model refuse something you thought was reasonable? Did any model over-agree?
+- What did you put into Memory that you would never tell a human stranger?
+- If you could only use one model for the rest of the cohort, which and why?
+- What surprised you when the same prompt produced five different answers?

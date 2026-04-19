@@ -1,119 +1,131 @@
 ---
-reading_time: 14 min
-tldr: "LangGraph turns agents into debuggable graphs. Build one, watch it think, fix its loops."
-tags: ["agents", "hands-on"]
+reading_time: 16 min
+tldr: "An agent is a model in a loop with tools — today you build one with LangGraph and plug in your first MCP server."
+tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Build a 3-tool LangGraph agent", "url": "https://langchain-ai.github.io/langgraph/"}
-resources: [{"title": "LangGraph tutorials", "url": "https://langchain-ai.github.io/langgraph/tutorials/"}, {"title": "LangChain docs", "url": "https://python.langchain.com/docs/"}, {"title": "Langfuse", "url": "https://langfuse.com/docs"}, {"title": "CrewAI", "url": "https://docs.crewai.com/"}]
+lab: {"title": "Build a 3-tool LangGraph agent and wire up an MCP server", "url": "https://langchain-ai.github.io/langgraph/"}
+prompt_of_the_day: "You are an agent with tools: {{tool_list}}. Goal: {{goal}}. Before each tool call, state your reasoning in one sentence. After each tool result, state what you learned in one sentence. Stop when the goal is met or after 6 steps."
+tools_hands_on: [{"name": "LangGraph", "url": "https://langchain-ai.github.io/langgraph/"}, {"name": "Model Context Protocol", "url": "https://modelcontextprotocol.io"}]
+tools_demo: [{"name": "CrewAI", "url": "https://crewai.com"}, {"name": "LangChain agents", "url": "https://langchain.com"}]
+tools_reference: [{"name": "HuggingFace smolagents", "url": "https://huggingface.co/docs/smolagents"}, {"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}, {"name": "Playwright-MCP", "url": "https://github.com/microsoft/playwright-mcp"}]
+resources: [{"name": "Anthropic: Building effective agents", "url": "https://www.anthropic.com/engineering/building-effective-agents"}, {"name": "MCP specification", "url": "https://modelcontextprotocol.io/specification"}]
 ---
 
 ## Intro
 
-Yesterday you mapped an agent on paper. Today you build one that actually runs — in LangGraph, with three real tools, against a messy real task. Your goal is not a pretty demo. Your goal is to watch the loop break, then fix it. That is the skill.
+Until now every LLM call you have made has been a one-shot: prompt in, text out. Today that changes. An agent is a model in a loop, with the ability to call tools and decide what to do next based on what the tools return. It is the difference between asking a model "what is the weather in Mumbai?" and handing it a browser, a calculator, a file system, and a goal — and watching it work.
 
-## Read: LangGraph in one sitting
+This is the day the gap between "AI is cool" and "AI gets things done" closes. You will build a three-tool LangGraph agent, trace its reasoning, hit one of its predictable failure modes, and fix it. You will also plug your first MCP server into Cursor or Claude and understand why every AI vendor in 2026 speaks MCP natively.
 
-LangGraph models an agent as a **state graph** — nodes are functions, edges are transitions, and state is a typed dict that flows through. It's Pythonic, debuggable, and has mostly eaten the LangChain AgentExecutor pattern by 2026. Alternatives: CrewAI (role-based, nicer for multi-agent), the OpenAI Agents SDK (thin, provider-locked), Claude Agent SDK (same but for Anthropic). Pick LangGraph when you want control.
+## Read: ReAct, tool-use, planning loops, and MCP
 
-### The core shape
+### The ReAct loop — reason plus act
 
-```python
-from typing import TypedDict, Annotated
-from langgraph.graph import StateGraph, END
-from langgraph.graph.message import add_messages
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage
+ReAct is the simplest agent pattern that actually works, and it underlies almost every agent framework you will meet. The acronym expands to Reason + Act. The model alternates between two kinds of output:
 
-class AgentState(TypedDict):
-    messages: Annotated[list, add_messages]
+1. **Thought:** free-text reasoning about what to do next.
+2. **Action:** a structured call to a tool — `search("term")`, `read_file("path")`, `calculator("2+2")`.
 
-llm = ChatOpenAI(model="gpt-4.1-mini").bind_tools(tools)
+The loop:
 
-def reasoner(state: AgentState):
-    return {"messages": [llm.invoke(state["messages"])]}
-
-def should_continue(state):
-    last = state["messages"][-1]
-    return "tools" if last.tool_calls else END
-
-graph = StateGraph(AgentState)
-graph.add_node("reasoner", reasoner)
-graph.add_node("tools", ToolNode(tools))
-graph.add_edge("tools", "reasoner")
-graph.add_conditional_edges("reasoner", should_continue)
-graph.set_entry_point("reasoner")
-app = graph.compile()
+```
+while not done:
+    thought = model.think(history)
+    action = model.choose_tool(thought)
+    observation = tool.run(action)
+    history.append(thought, action, observation)
 ```
 
-That's it. Everything else — memory, checkpoints, human-in-the-loop — is an add-on to this skeleton.
+That is the entire pattern. Everything else — planning, reflection, self-critique, multi-agent orchestration — is a variation on which thoughts the model emits, which tools are exposed, and how history is pruned.
 
-### Tool design matters more than prompts
+The power is that the model gets to see the consequences of its actions and adjust. If search returns nothing, it tries different keywords. If a calculation fails, it reads the error and corrects its inputs. If a file does not exist, it lists the directory. That closed loop is what separates agents from chatbots.
 
-A good tool has:
+### Tool-use — the contract that makes it work
 
-- A **verb-noun** name (`search_web`, not `tool1`).
-- A docstring that says **when to use it**, not just what it does.
-- A narrow, typed input schema.
-- Deterministic, small outputs. Truncate before returning.
+A tool is a function the model can call. But to the model, a tool is three things:
 
-```python
-from langchain_core.tools import tool
+- **Name** — `web_search`, `write_file`.
+- **Description** — what it does, in plain English, crisply. The model reads this every turn.
+- **Schema** — typed inputs and outputs, usually JSON schema.
 
-@tool
-def search_web(query: str) -> str:
-    """Search the public web. Use for facts newer than 2024 or
-    names/events you don't recognize. Do NOT use for math."""
-    ...
-```
+Good tools have small surface area. `write_file(path, content)` is great. `filesystem(operation, path, content, mode, flags)` is a pit of despair — the model will fill in `flags` wrong every time. A tool should do one thing and describe itself in one sentence.
 
-Models follow tool docstrings the way humans follow street signs. Vague docstring, vague agent.
+Return values matter as much as inputs. Return structured data the model can parse. Return errors with a hint about how to fix them: `{"error": "file not found", "suggestion": "try listing the directory first"}`. The model is a reader; give it good prose.
 
-### Debugging a loop that won't stop
+### Planning loops — and why agents break
 
-Three habits that save hours:
+Pure ReAct works for three or four steps. Beyond that it starts to wander. The model forgets the goal, retraces steps, or gets stuck on a failing tool and retries it ten times.
 
-1. **Trace everything.** Hook up Langfuse or LangSmith from minute one. Reading raw tool traces teaches you more than any blog post.
-2. **Cap recursion.** `app.invoke(..., {"recursion_limit": 10})`. Fail loud.
-3. **Print the messages array after each step** while developing. If you don't know what's in state, you can't reason about why the model did what it did.
+Planning loops mitigate this by giving the model a two-level structure:
 
-## Watch: Build along with LangGraph
+- **Plan step:** write a numbered plan of what to do.
+- **Execute step:** do step 1, check if it worked, mark it done, move to step 2.
+- **Replan step:** if the plan no longer fits reality, rewrite it.
 
-A recorded build where someone constructs a small tool-using agent and walks through their debugging sessions. The mistakes are more instructive than the code.
+LangGraph, CrewAI, and most modern frameworks expose planning as first-class state. The model is not just emitting thoughts; it is updating a data structure that persists across turns.
 
-https://www.youtube.com/embed/VIDEO_ID
+Agents break for predictable reasons. Memorize this list — you will hit each one today:
+
+- **Infinite retry.** A tool fails; the model tries the same call again with identical inputs. Fix: pass the previous error back with a "do not retry identical inputs" rule.
+- **Goal drift.** Six steps in, the model is exploring something tangential. Fix: restate the goal in the system prompt every turn, or summarize history into a working memory.
+- **Hallucinated tools.** The model invents a tool that does not exist. Fix: strict tool schemas and rejecting calls to unknown tools cleanly.
+- **Context blow-up.** After ten tool calls the context is full of junk. Fix: summarize old observations, keep only the most recent few verbatim.
+- **Premature success.** The model declares victory without checking. Fix: a final verification tool the model must call before stopping.
+
+### MCP — USB-C for AI tools
+
+The Model Context Protocol is a specification published by Anthropic and now adopted across the industry. It is the cable standard for connecting AI models to tools, data sources, and services. Before MCP, every vendor had their own plugin format: OpenAI had plugins, Claude had tools, LangChain had its own wrappers, Cursor had its own extension system. Every integration was re-built for every host.
+
+MCP flips that. You write **one MCP server** that exposes a set of tools, and any MCP-compatible client — Cursor, Claude Desktop, Zed, your own app — can use them. Think USB-C: one cable, one spec, any device.
+
+An MCP server exposes three things:
+
+- **Tools** — callable functions (same idea as LangChain tools).
+- **Resources** — readable data the model can fetch (files, DB rows, API responses).
+- **Prompts** — reusable prompt templates the user can invoke.
+
+The transport is usually stdio (for local processes) or Streamable HTTP (for remote servers). You run the server, tell the client where to find it, and the client handshakes to discover capabilities. Any model that supports tool use can now use your server — no vendor-specific code.
+
+The practical implication: stop building one-off integrations. If you have a useful capability — a search over your company wiki, a wrapper over your internal API, a custom data source — expose it as an MCP server. It then works across every AI host your team uses, now and next year.
+
+### CrewAI and the multi-agent tease
+
+CrewAI is a framework that makes multi-agent workflows trivial to describe. You define agents by role — "researcher", "writer", "reviewer" — give each one tools and a backstory, and CrewAI orchestrates the handoffs. It is a beautiful abstraction for a small class of problems: anything where a sequential assembly line of roles produces better output than a single generalist.
+
+We demo it today. Tomorrow we go deep on multi-agent patterns and when the abstraction hurts more than it helps.
+
+## Watch: Tracing an agent step by step
+
 <!-- TODO: replace video -->
 
-- Watch where they set the recursion limit and why.
-- Notice how they write tool docstrings — surgical, not generic.
-- Pay attention to how they inspect state between steps.
+## Lab: A 3-tool LangGraph agent + your first MCP server
 
-## Lab: Build a 3-tool agent, then break it
+Part A — the agent:
 
-You're building an agent with three tools: a web search, a calculator, and a file-writer. It will take a messy research question and produce a markdown brief on disk.
+1. Install LangGraph. Create a project with three tools: `web_search`, `calculator`, `write_file`.
+2. Define the graph: an LLM node, a tool node, a conditional edge that routes back to the LLM until the LLM emits a final answer.
+3. Set a goal: "Find the current population of India and Pakistan, compute the ratio, and write the result to `out.txt`."
+4. Run it. Export the full trace (thoughts, actions, observations).
+5. Deliberately break one tool (make `calculator` return wrong results). Watch the agent fail. Fix by adding a verification step.
 
-1. `pip install langgraph langchain langchain-openai tavily-python python-dotenv`. Set `OPENAI_API_KEY` and `TAVILY_API_KEY` in a `.env`.
-2. Create `tools.py` with three `@tool`-decorated functions: `search_web(query)` (Tavily), `calc(expression)` (use `numexpr`, not `eval`), and `write_file(path, content)` (restrict to `./out/`).
-3. Write precise docstrings. Explicitly say when NOT to use each tool.
-4. Create `agent.py` with the LangGraph skeleton above. Bind the three tools. Set recursion limit to 8.
-5. Run it on the task: *"Compare the cost of running Llama 3.1 70B on Together.ai vs. on a rented H100, for 1M tokens/day. Write me a one-page brief in `out/brief.md` with a cost table and a recommendation."*
-6. Watch it work. It will probably do something wrong. Log the full message trace.
-7. Identify the first failure. Is it a bad tool call, a hallucinated number, or a thrash? Write it down.
-8. Fix one thing — sharpen a docstring, add a validator, or tighten the system prompt. Re-run.
-9. Add a `recursion_limit` assertion and a simple eval: does `out/brief.md` exist and contain the words "cost" and "recommendation"? Make it a function.
-10. Commit the repo. Include a `NOTES.md` with the three bugs you saw and how you fixed two of them.
+Part B — MCP:
+
+1. Pick one existing MCP server (filesystem, fetch, or Playwright-MCP).
+2. Configure Cursor or Claude Desktop to connect to it. Verify the tools appear in the client.
+3. Use it for one real task in your capstone workflow.
 
 ## Quiz
 
-Four questions on LangGraph state, when conditional edges fire, what `bind_tools` actually does under the hood, and the single most common reason agent loops run forever.
+1. What does ReAct stand for and what are the two kinds of model output each turn?
+2. What three things define a tool from the model's perspective?
+3. Name three predictable ways agents break and one fix for each.
+4. What does MCP stand for and what analogy is used for it?
+5. What three kinds of capabilities does an MCP server expose?
 
 ## Assignment
 
-Extend your lab agent with a fourth tool of your own — something domain-specific to your capstone idea. Run it on three different real prompts. For each, log: number of iterations, total tokens, cost, and whether the output was correct. Put the table in your repo README. If your agent's average cost per run is >$0.25, redesign until it's cheaper or explain why the cost is worth it.
+**Daily:** Submit (a) your working LangGraph agent repo, (b) a full trace of one successful run and one failed run, and (c) a one-paragraph writeup of the single loop-fix you had to make to keep the agent from breaking.
 
-## Discuss: When agents earn their keep
+## Discuss: The MCP server you would build next
 
-- In your run, did the agent actually plan — or did it just chain tools linearly? How do you tell?
-- Would CrewAI's role-based abstraction have helped here, or added ceremony?
-- Where's the line between "prompt the tools harder" and "redesign the graph"?
-- Your agent will run against flaky APIs. What's the right retry strategy — at the tool level, the node level, or the graph level?
-- If you shipped this to a classmate, what one safeguard is non-negotiable before they press run?
+If you were to publish one MCP server for your team or community to use, what would it wrap? Post the name, the three tools it would expose, and who would benefit. We will vote on the best ideas and encourage a few of you to actually build and publish them this week.

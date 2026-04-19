@@ -1,53 +1,69 @@
 export const DAYS = [
-  // Week 1 — Use. Consumer AI quick wins. No setup, no code, all confidence-building.
-  { n: 1,  w: 1, title: "Your new superpower: your first AI win today" },
-  { n: 2,  w: 1, title: "Prompting that actually works" },
-  { n: 3,  w: 1, title: "AI for studying: notes, explanations, practice" },
-  { n: 4,  w: 1, title: "AI for writing: emails, essays, applications" },
-  { n: 5,  w: 1, title: "AI for creativity: ideas, images, stories" },
-  { n: 6,  w: 1, title: "AI for your day-to-day: tasks, decks, CVs" },
-  { n: 7,  w: 1, title: "Week 1 wrap: your AI workflow + reflection" },
+  // Week 1 — Foundations
+  { n: 1,  w: 1, title: "What AI is + inside an LLM" },
+  { n: 2,  w: 1, title: "Open-model landscape + Indian AI" },
+  { n: 3,  w: 1, title: "Prompts + context engineering intro" },
+  { n: 4,  w: 1, title: "Ethics + AI failures workshop" },
+  { n: 5,  w: 1, title: "Workshop: AI wins show-and-tell" },
 
-  // Week 2 — Think. Design thinking, problem framing. Off-screen muscle.
-  { n: 8,  w: 2, title: "From vague problem to crisp problem statement" },
-  { n: 9,  w: 2, title: "Design thinking — the real version" },
-  { n: 10, w: 2, title: "User empathy and the art of the interview" },
-  { n: 11, w: 2, title: "Systems thinking: maps, loops, leverage points" },
-  { n: 12, w: 2, title: "Computational thinking without code" },
-  { n: 13, w: 2, title: "Pick a problem you actually care about" },
-  { n: 14, w: 2, title: "Design sprint: map your idea in a day" },
+  // Week 2 — Exposure → Capstone kickoff
+  { n: 6,  w: 2, title: "Chat as thinking partner" },
+  { n: 7,  w: 2, title: "Research: Perplexity + NotebookLM + Deep Research" },
+  { n: 8,  w: 2, title: "Creativity: images + video" },
+  { n: 9,  w: 2, title: "Meetings, presentations + voice" },
+  { n: 10, w: 2, title: "Ideathon 1 + Capstone kickoff", checkpoint: "Capstone kickoff" },
 
-  // Week 3 — Build. How AI works + concepts + vibe coding. Accessible depth.
-  { n: 15, w: 3, title: "How AI actually works (the mental model)" },
-  { n: 16, w: 3, title: "Run your own LLM locally" },
-  { n: 17, w: 3, title: "Prompting deeper: patterns and pitfalls" },
-  { n: 18, w: 3, title: "Embeddings and semantic search" },
-  { n: 19, w: 3, title: "RAG: feed AI your own data" },
-  { n: 20, w: 3, title: "The web, APIs and data — concepts to direct AI" },
-  { n: 21, w: 3, title: "Vibe-code and ship your first AI app" },
+  // Week 3 — Think & Tell applied to YOUR capstone
+  { n: 11, w: 3, title: "Vague → crisp problem statement" },
+  { n: 12, w: 3, title: "Design thinking — the real version" },
+  { n: 13, w: 3, title: "User empathy + interviews" },
+  { n: 14, w: 3, title: "Systems thinking + storytelling + pitch" },
+  { n: 15, w: 3, title: "Design sprint + locked 1-page spec", checkpoint: "Locked spec" },
 
-  // Week 4 — Ship. Agents, product, capstone.
-  { n: 22, w: 4, title: "From chatbots to agents" },
-  { n: 23, w: 4, title: "Your first agent with LangGraph" },
-  { n: 24, w: 4, title: "MCP: the USB-C of AI" },
-  { n: 25, w: 4, title: "Designing UX for AI features" },
-  { n: 26, w: 4, title: "Product thinking for AI" },
-  { n: 27, w: 4, title: "Storytelling, demos, and the pitch" },
-  { n: 28, w: 4, title: "Capstone kickoff and teams" },
-  { n: 29, w: 4, title: "Capstone build day" },
-  { n: 30, w: 4, title: "Demo day" },
+  // Week 4 — Dev + AI Build
+  { n: 16, w: 4, title: "GitHub + localhost + APIs" },
+  { n: 17, w: 4, title: "Run LLMs locally + prompting deeper + evals" },
+  { n: 18, w: 4, title: "Embeddings + RAG + knowledge graphs" },
+  { n: 19, w: 4, title: "Context engineering: CLAUDE.md + AGENTS.md + evals" },
+  { n: 20, w: 4, title: "APIs, data, automation (n8n) + browser agents" },
+
+  // Week 5 — Build, Ship, Agentic
+  { n: 21, w: 5, title: "Vibe-code your capstone v0", checkpoint: "v0 prototype" },
+  { n: 22, w: 5, title: "Deploy + cost math + UX for AI + GEO" },
+  { n: 23, w: 5, title: "Agents + MCP + LangGraph + CrewAI" },
+  { n: 24, w: 5, title: "Multi-agent + Swarms + Skills + Plugins" },
+  { n: 25, w: 5, title: "Ideathon 2 + Mini-Demo Day", checkpoint: "Mini-demo" },
+
+  // Week 6 — Launch (light theory, heavy capstone)
+  { n: 26, w: 6, title: "Ethics + Risks workshop" },
+  { n: 27, w: 6, title: "AI benchmarks: how to read leaderboards" },
+  { n: 28, w: 6, title: "How to keep up with AI" },
+  { n: 29, w: 6, title: "Demo rehearsal + showcase polish" },
+  { n: 30, w: 6, title: "Demo Day — live panel", checkpoint: "Final demo" },
 ];
 
 export const WEEK_TITLES = {
-  1: "Use — win with AI today",
-  2: "Think — frame problems worth solving",
-  3: "Build — how AI works and how to direct it",
-  4: "Ship — agents, product, capstone",
+  1: "Foundations",
+  2: "Exposure → Capstone kickoff",
+  3: "Think & Tell · applied to your capstone",
+  4: "Dev + AI Build",
+  5: "Build, Ship, Agentic",
+  6: "Launch — light theory, heavy capstone",
 };
 
 export const WEEK_OUTCOMES = {
-  1: "By end of Week 1, you'll have an AI workflow that saves you hours every week — and the confidence to show classmates.",
-  2: "By end of Week 2, you'll have framed a real problem worth solving and locked it in as your capstone direction.",
-  3: "By end of Week 3, you'll have shipped a small AI-powered web app — directing AI to build it for you.",
-  4: "By end of Week 4, you'll have launched your capstone live and pitched it to a panel.",
+  1: "By end of Week 1 you know what AI is, how it works, and where it breaks.",
+  2: "By end of Week 2 you've used every flavor of AI tool — and you've locked in your capstone.",
+  3: "By end of Week 3 you have a 1-page spec + wireframes of the capstone you'll build.",
+  4: "By end of Week 4 you can direct AI to build real things and reason about them.",
+  5: "By end of Week 5 your capstone v0 is live and you've seen the agentic horizon.",
+  6: "By end of Week 6 your capstone is polished, demoed, and live on your showcase.",
+};
+
+export const CHECKPOINTS = {
+  10: { label: "Capstone kickoff", color: "#c3ff36" },
+  15: { label: "Locked spec",       color: "#c3ff36" },
+  21: { label: "v0 prototype",      color: "#38bdf8" },
+  25: { label: "Mini-demo",         color: "#8b5cf6" },
+  30: { label: "Final demo",        color: "#ff6b6b" },
 };

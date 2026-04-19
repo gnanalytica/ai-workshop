@@ -1,141 +1,110 @@
 ---
-reading_time: 14 min
-tldr: "MCP is the USB-C of AI — one protocol to plug tools into any model. Write a server, be part of the ecosystem."
-tags: ["mcp", "agents", "hands-on"]
+reading_time: 16 min
+tldr: "Two agents that delegate beat one agent that tries everything — today you wire up a swarm, a skill, and a plugin."
+tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Write your first MCP server", "url": "https://modelcontextprotocol.io/"}
-resources: [{"title": "Model Context Protocol", "url": "https://modelcontextprotocol.io/"}, {"title": "MCP GitHub org", "url": "https://github.com/modelcontextprotocol"}, {"title": "MCP Python SDK", "url": "https://github.com/modelcontextprotocol/python-sdk"}, {"title": "Claude Desktop config", "url": "https://modelcontextprotocol.io/quickstart"}]
+lab: {"title": "Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm", "url": "https://docs.claude.com/en/api/agent-sdk"}
+prompt_of_the_day: "You are the supervisor. You have two worker agents: {{agent_a}} and {{agent_b}}. For the user request '{{request}}', decide which worker to call first, what to pass them, and what to do with their output. Hand off explicitly and never do the worker's job yourself."
+tools_hands_on: [{"name": "Claude Agent SDK", "url": "https://docs.claude.com/en/api/agent-sdk"}, {"name": "OpenAI Swarm", "url": "https://github.com/openai/swarm"}, {"name": "OpenClaw", "url": "https://github.com/openclaw"}]
+tools_demo: [{"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "Claude Skills", "url": "https://docs.claude.com/en/docs/build-with-claude/skills"}, {"name": "Claude Plugins", "url": "https://claude.com/plugins"}]
+tools_reference: [{"name": "LangGraph multi-agent", "url": "https://langchain-ai.github.io/langgraph/concepts/multi_agent/"}, {"name": "CrewAI flows", "url": "https://docs.crewai.com/concepts/flows"}, {"name": "OpenAI Agents SDK", "url": "https://openai.github.io/openai-agents-python/"}, {"name": "DeepLearning.ai agent courses", "url": "https://deeplearning.ai"}, {"name": "Magentic-One", "url": "https://www.microsoft.com/en-us/research/publication/magentic-one"}, {"name": "Meta CICERO", "url": "https://ai.meta.com/research/cicero/"}]
+resources: [{"name": "Anthropic: multi-agent research system", "url": "https://www.anthropic.com/engineering/multi-agent-research-system"}, {"name": "OpenAI Swarm on GitHub", "url": "https://github.com/openai/swarm"}]
 ---
 
 ## Intro
 
-Every tool-using agent eventually re-invents the same plumbing: how do I describe my tools to the model, how do I stream their output back, how do I swap providers without rewriting everything? MCP is the answer the industry converged on. By 2026 it's supported by Claude, Cursor, VS Code, Zed, OpenAI's Agents SDK, and most serious agent frameworks. Today you write one.
+Yesterday one agent in a loop. Today multiple agents that talk to each other. You will learn the three orchestration patterns that cover 90% of real-world multi-agent systems, build a working two-agent handoff in either the Claude Agent SDK or OpenAI Swarm, and meet two newer abstractions — Claude Skills and Claude Plugins — that are reshaping how reusable agent behaviors ship in 2026.
 
-## Read: MCP, stripped of marketing
+By the end of today you have a workflow where one agent delegates to another, with a diagram that explains the handoff clearly enough that a teammate could modify it.
 
-**Model Context Protocol** is a JSON-RPC 2.0 spec, released by Anthropic in late 2024, for connecting models to **tools**, **resources** (readable data), and **prompts** (reusable templates). The pitch — "USB-C for AI" — is mostly right: one plug shape, many devices.
+## Read: Orchestration patterns, Swarm minimalism, Skills, and Plugins
 
-### Three primitives, that's all
+### Why multi-agent at all
 
-| Primitive | What it is | Example |
-|---|---|---|
-| **Tool** | A function the model can call | `send_email(to, body)` |
-| **Resource** | Readable content the model can fetch | `file://notes/2026-04-17.md` |
-| **Prompt** | A parameterized template the client offers users | `/summarize-pr {pr_number}` |
+A single agent with twelve tools becomes a jack-of-all-trades. Its system prompt bloats. Its tool-choice accuracy drops. Its context fills with irrelevant observations from tools it did not need. The classic symptom: the more capable you try to make one agent, the worse it gets at any single task.
 
-The beauty is separation of concerns: the **server** exposes primitives, the **client** (Claude Desktop, Cursor, your app) decides how to present them. Your server doesn't know or care which model calls it.
+Multi-agent architecture is a separation-of-concerns move. Each agent has a narrow role, a focused system prompt, a small toolset, and clear inputs and outputs. You compose them into a workflow. Two good small agents beat one bloated big agent, the same way two good microservices beat one monolith for a certain class of problem.
 
-### Transports
+Multi-agent is not free. You pay in latency (handoffs add turns), cost (each agent uses tokens), and complexity (debugging a swarm is harder than debugging a loop). Use it when the roles are genuinely distinct, not because "more agents" sounds impressive.
 
-- **stdio** — server is a subprocess, pipes over stdin/stdout. Easiest to start, local only.
-- **Streamable HTTP** — server is a web service, supports remote hosting and auth. What you'd use in production.
+### Three orchestration patterns
 
-Start with stdio. Go HTTP when someone other than you needs to use it.
+**Supervisor.** A single "boss" agent reads the user request and delegates to worker agents. Workers return results to the supervisor, which decides the next step. This is the pattern most production systems use because it is easy to reason about. LangGraph's supervisor template and CrewAI's hierarchical process are both supervisor patterns.
 
-### Minimal server, Python
+**Swarm.** Agents can hand off to each other directly, peer-to-peer, without going through a central supervisor. The current agent decides which other agent should take over, and control transfers. OpenAI Swarm is the canonical minimal implementation — about 300 lines of Python — and its strength is simplicity. The weakness: without a supervisor, it is easy to build loops where A hands to B hands back to A forever.
 
-```python
-# server.py
-from mcp.server.fastmcp import FastMCP
-import httpx, datetime
+**Hierarchical.** Supervisors of supervisors. A top-level agent delegates to mid-level agents, which have their own workers. Useful for genuinely large problems — think a research team where an editor-in-chief delegates to section editors who delegate to writers. Cost scales fast; use sparingly.
 
-mcp = FastMCP("study-helper")
+As a starter heuristic: use supervisor unless you have a clear reason to use swarm or hierarchical. It is the pattern with the best debuggability-to-power ratio.
 
-@mcp.tool()
-def word_count(text: str) -> int:
-    """Count words in a string. Use when a user asks how long a passage is."""
-    return len(text.split())
+### OpenAI Swarm minimalism
 
-@mcp.tool()
-async def city_weather(city: str) -> str:
-    """Get current weather for a city. Use only for current conditions,
-    not forecasts."""
-    async with httpx.AsyncClient() as c:
-        r = await c.get(f"https://wttr.in/{city}?format=3")
-        return r.text
+Swarm is worth studying even if you never ship it to production. It shows how much you can do with two primitives:
 
-@mcp.resource("time://now")
-def now() -> str:
-    """Current ISO timestamp."""
-    return datetime.datetime.now().isoformat()
+- **Agents** — a name, instructions, a set of functions (tools), and a list of other agents this one can hand off to.
+- **Handoffs** — a function the agent can call that returns another agent. Swarm replaces the active agent and continues the loop.
 
-if __name__ == "__main__":
-    mcp.run()  # stdio by default
-```
+That is the whole framework. No graph, no roles, no plans — just agents and handoffs. Read the source. It will change how you think about the more complex frameworks.
 
-Run it. `python server.py` — nothing visible happens. That's correct; it's waiting on stdin.
+### Claude Skills — reusable agent behaviors
 
-### Wiring it into Claude Desktop
+A Claude Skill is a packaged unit of instructions plus optional tools that teaches a Claude agent how to do a specific task. Skills live in a folder, ship as markdown with a small manifest, and get auto-loaded when their description matches the user's request. Think of them as "docstrings you can install" for agents.
 
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+The killer property is **context efficiency**. Instead of stuffing every possible instruction into your system prompt, you let the agent discover the right skill on demand. A 200-line skill for "writing a SQL migration" only enters context when the user asks about migrations. The rest of the time, it costs nothing.
 
-```json
-{
-  "mcpServers": {
-    "study-helper": {
-      "command": "python",
-      "args": ["/absolute/path/to/server.py"]
-    }
-  }
-}
-```
+If you have found yourself copy-pasting the same multi-paragraph instruction into every new project — "here is how we format commits", "here is our API style", "here is our brand voice" — that is a skill waiting to be written.
 
-Restart Claude Desktop. You'll see a plug icon in the compose box. Ask "how many words in 'the rain in Spain'" — Claude will call your tool.
+### Claude Plugins — distributing agent behavior
 
-### When MCP is the right tool (and when it isn't)
+A Claude Plugin bundles skills, commands, hooks, and MCP servers into a single installable unit. Where a skill is one behavior, a plugin is a whole pack: a team's conventions, tools, and workflows shipped as one. Plugins have a marketplace; skills are the ingredients.
 
-Use MCP when:
+The plugin model matters because it turns agent configuration from a local hack into a shareable artifact. Your team can publish a plugin, every developer installs it, and their Claude instances behave consistently. This is the quiet revolution of late 2025: agents finally have a packaging story.
 
-- You want to expose the same capability to multiple clients (Claude, Cursor, your own app).
-- You're building an internal tool others on your team need.
-- You want a clean trust boundary — MCP clients ask permission per tool call.
+### Claude Agent SDK vs OpenAI Agents SDK
 
-Don't bother when:
+Both give you a production-grade framework for building agent applications. Both support tools, handoffs, streaming, tracing, and structured outputs. They diverge in personality:
 
-- You have one app and one model; a plain function call is simpler.
-- You need sub-10ms latency; JSON-RPC over stdio is not free.
-- Your tool is so stateful it needs a database — build it as a service and wrap a thin MCP server around it.
+- **Claude Agent SDK** leans into long-horizon agents with strong planning, skills and plugins, and Anthropic's tool-use conventions. It is tuned for Claude models but can be adapted.
+- **OpenAI Agents SDK** is minimal, multi-provider-friendly, and has best-in-class tracing via the OpenAI dashboard. Closer in spirit to Swarm, evolved into production form.
 
-> MCP is a contract, not a framework. It saves you from inventing one, not from thinking.
+Pick one today, finish the lab, then skim the other's docs so you can translate between them. Both will exist in 2027.
 
-## Watch: MCP end-to-end walkthrough
+### OpenClaw — open-source agent infrastructure
 
-A build-along showing a working stdio server, wiring to Claude Desktop, then migrating the same server to HTTP with OAuth.
+OpenClaw is a community effort to publish open-source agent templates and tooling that are not locked to a vendor framework. The value proposition is escape velocity from proprietary stacks: you can inspect, fork, and self-host the full agent loop. If you care about reproducibility, on-prem deployment, or simply understanding every line of the system you are running, OpenClaw is worth a look.
 
-https://www.youtube.com/embed/VIDEO_ID
+<!-- TODO: verify URL -->
+
+### AutoGen, Magentic-One, and the research frontier
+
+AutoGen from Microsoft Research pioneered many multi-agent patterns still in use. Magentic-One is its newer flagship: a supervisor-driven team that browses, codes, and files — a reference implementation of a general-purpose agent team. Meta's CICERO pushed multi-agent into negotiation and natural-language strategy. You will not ship any of these tomorrow, but reading their papers is the fastest way to understand where the field is heading.
+
+## Watch: Two agents doing the tango
+
 <!-- TODO: replace video -->
 
-- Watch how they scope resource URIs — the namespace matters.
-- Notice how they handle a tool that needs user confirmation.
-- Pay attention to error payloads — MCP errors are structured.
+## Lab: Build a 2-agent workflow that delegates
 
-## Lab: Write a minimal MCP server and plug it in
-
-You're building a tiny "notes server" that exposes two tools — `search_notes` and `append_note` — against a local markdown folder.
-
-1. `pip install mcp httpx`. Create a folder `~/mcp-notes/` with 3 sample markdown files inside a `notes/` subfolder.
-2. Create `server.py` using `FastMCP`. Name it `notes`.
-3. Implement `search_notes(query: str) -> list[str]` — returns file paths that contain `query` (case-insensitive, plain substring is fine).
-4. Implement `append_note(filename: str, text: str) -> str` — appends text to a file under `notes/`. Reject paths that escape the folder.
-5. Write **precise** docstrings. Your docstring is the model's API reference.
-6. Test it standalone with the MCP inspector: `npx @modelcontextprotocol/inspector python server.py`. Click around, invoke both tools.
-7. Wire it into Claude Desktop or Cursor via config. Restart.
-8. Open a fresh conversation and ask: "Find my notes about LangGraph and add a line saying I finished day 23." Verify the file actually changed on disk.
-9. Add one **resource**: `notes://index` that returns the list of all notes as markdown. Re-test.
-10. Commit the server. In the README, show a one-line install snippet that a classmate could copy into their config.
+1. Pick a real task from your capstone that naturally splits in two. Examples: `researcher + writer`, `planner + coder`, `intake + responder`.
+2. Using either Claude Agent SDK **or** OpenAI Swarm, define two agents with distinct system prompts and tools.
+3. Implement the handoff. Agent A does its job and hands a structured output to Agent B. Agent B produces the final response.
+4. Instrument tracing so you can see every message between agents.
+5. Run three test cases. Export the traces.
+6. Draw a diagram — boxes for agents, arrows for handoffs, labels for what each arrow carries. Paste or sketch it in your repo's README.
+7. Bonus: fork one template from OpenClaw and note what changed between it and your design.
 
 ## Quiz
 
-Three questions covering the three MCP primitives, the difference between a tool and a resource, and why stdio servers run as subprocesses. One bonus on when you'd pick HTTP transport.
+1. Name the three orchestration patterns and one situation where each is the right choice.
+2. What are the only two primitives in OpenAI Swarm?
+3. What makes a Claude Skill more context-efficient than a giant system prompt?
+4. What does a Claude Plugin bundle together?
+5. What is one risk of the swarm pattern without a supervisor?
 
 ## Assignment
 
-Publish your MCP server to GitHub with a short README: what it does, the config block to install it, and a 30-second demo GIF of it working in Claude Desktop or Cursor. Then consume one MCP server someone else built — a public one from the official servers repo — and write two paragraphs on the design choices you'd imitate or avoid.
+**Daily:** Submit (a) your 2-agent workflow repo with tracing enabled, (b) three sample traces showing handoffs, and (c) a diagram (hand-drawn is fine) that explains the workflow at a glance. Include one paragraph on why you split the roles the way you did.
 
-## Discuss: Protocols eat platforms
+## Discuss: When did one agent become two?
 
-- Why did MCP win over custom plugin systems from OpenAI and others? What did it get right?
-- Security: MCP servers can read your files and hit the network. How do you decide which servers to trust?
-- Would you build your capstone as an MCP server, a plain app, or both? Why?
-- What's missing from MCP that you'd add if you were designing v2?
-- When the model picks the wrong MCP tool, whose fault is it — the server author, the client, or the model?
+Post the moment in your capstone design when you realized one agent was not enough. What symptom pushed you to split? Bloated prompt, tool confusion, mixed responsibilities? What did the second agent do that the first could not?

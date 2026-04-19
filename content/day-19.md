@@ -1,119 +1,129 @@
 ---
-reading_time: 14 min
-tldr: "RAG lets AI answer questions about YOUR stuff — notes, PDFs, docs — without retraining anything."
-tags: ["rag", "embeddings", "ai"]
+reading_time: 15 min
+tldr: "Stop re-prompting. Write CLAUDE.md + AGENTS.md once so your AI remembers your project every time — the real unlock of 2026."
+tags: ["build", "technical"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Build a Q&A bot over your lecture notes with NotebookLM", "url": "https://notebooklm.google.com/"}
-prompt_of_the_day: "Answer ONLY using the context below. If the answer is not in the context, say 'not in the provided notes.' Cite the source file and page.\n\nContext: {{context}}\n\nQuestion: {{question}}"
-resources: [{"title": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"title": "Open WebUI (local RAG)", "url": "https://openwebui.com/"}, {"title": "HuggingFace Chat", "url": "https://huggingface.co/chat/"}]
+lab: {"title": "Write your capstone's first CLAUDE.md + AGENTS.md + 3 slash commands", "url": "https://claude.com/claude-code"}
+prompt_of_the_day: "You are a context engineer. Given my capstone description {{capstone_description}} and stack {{stack}}, draft a CLAUDE.md with these sections: Project Overview, Architecture, Coding Rules, File Locations, Testing Patterns, Common Pitfalls, Slash Commands. Make every rule actionable."
+tools_hands_on: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
+tools_demo: [{"name": "Battle-tested CLAUDE.md examples", "url": "https://github.com/search?q=CLAUDE.md&type=code"}, {"name": "Custom slash commands (Claude Code)", "url": "https://docs.claude.com/claude-code"}]
+tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}]
+resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/search?q=filename%3ACLAUDE.md&type=code"}, {"name": "Claude Code hooks guide", "url": "https://docs.claude.com/claude-code"}]
 ---
 
 ## Intro
 
-Yesterday you saw text become coordinates. Today you put those coordinates to work. RAG — Retrieval-Augmented Generation — is how ChatGPT-like apps answer questions about your specific documents without ever retraining the model. By tonight you'll have a Q&A bot over your own lecture notes.
+You've noticed the pattern by now: every time you open a new chat, you re-explain your project. The stack, the folder layout, the naming rules, "don't use class components", "we prefer pytest". That's wasted energy. Today we fix it permanently with **context engineering** — the shift from one-off prompts to reusable instruction files the AI reads automatically.
 
-## Read: Giving AI your stuff
+## Read: From prompting to context engineering
 
-A frozen LLM knows what was on the internet up to its training cutoff. It does not know your lecture notes, your startup's internal docs, or your syllabus for this semester. It also doesn't know last week's news. So how does "chat with your PDF" work? RAG.
+**The shift in one sentence.** Prompting is what you say. Context engineering is what the AI *already knows* before you say anything.
 
-### The core idea in one line
+In 2023, the whole industry was obsessed with prompt wording — the perfect incantation. By 2026, the winning teams don't waste brain cycles on single prompts. They build a **context layer**: files, memory, tool definitions, and rules that travel with every AI interaction in their repo. The result: every new chat starts the AI at skill level 10 instead of level 0.
 
-Before the model answers, we retrieve the relevant chunks of your documents and paste them into the prompt. The model then generates an answer grounded in those chunks, not its memory.
+**CLAUDE.md and AGENTS.md — the standard instruction files.**
 
+- **CLAUDE.md** is a markdown file Claude Code (and many other agents) automatically reads when you open a project. It's your project's "onboarding doc for an AI coworker".
+- **AGENTS.md** is a vendor-neutral spec (see agents.md) pushed by OpenAI, Cursor, and others for the same purpose. Many projects now ship both — Claude reads CLAUDE.md; Codex, Cursor, and Aider read AGENTS.md.
+- **.cursorrules** is Cursor's own flavour, increasingly being replaced by AGENTS.md.
+
+A good instruction file has roughly these sections:
+
+1. **Project Overview** — 3-sentence summary of what this repo does.
+2. **Architecture** — ASCII or bullet diagram of the main components and how they talk.
+3. **Stack & Conventions** — languages, frameworks, style guides. "TypeScript strict mode. React 19. Tailwind. No class components."
+4. **File Locations** — where things live. "API routes: `app/api/`. Components: `components/`. DB migrations: `drizzle/`."
+5. **Coding Rules** — dos and don'ts. "Always validate inputs with Zod. Never log secrets. Prefer composition over inheritance."
+6. **Testing Patterns** — how to run tests, what framework, where mocks live.
+7. **Common Pitfalls** — every gotcha someone burned 4 hours on once. "Don't import from `@/lib/db` in client components. SSR will crash."
+8. **Slash Commands & Hooks** — custom shortcuts tailored to this project.
+
+**Why a good CLAUDE.md saves hours.** Without it: every new chat, you explain the same 8 things. The AI guesses the rest wrong and you fix it twice. With it: you type "implement the signup flow" and the AI already knows to use Zod, put the route under `app/api/auth/signup/route.ts`, write a Vitest test alongside it, and not touch `lib/session.ts` (marked "frozen" in your CLAUDE.md). Real teams report 30–60% less back-and-forth after adopting this.
+
+**Slash commands — workflows as muscle memory.** Claude Code lets you define custom commands under `.claude/commands/` (each is just a markdown file with a prompt template). Typing `/review` in Claude Code runs your review checklist. Typing `/ship` runs your pre-commit ritual. Typing `/debug-api` runs your standard API debugging walkthrough. Three you should always write:
+
+- `/review` — "Review the current diff for reuse, quality, and security. Check against our CLAUDE.md coding rules. Output pass/fail per rule."
+- `/plan` — "Given this task, produce a 5-step implementation plan with files touched and risks. Wait for approval before coding."
+- `/explain` — "Explain this code to me like I'm new to the repo. Use our Architecture section as context."
+
+**Hooks — automating the harness.** Hooks are scripts the Claude Code harness runs automatically at specific events — `PreToolUse`, `PostToolUse`, `Stop`. Common uses: auto-format after every file edit, run tests when Claude finishes, block a command that touches `.env`. Hooks live in `settings.json`. You configure once; they enforce forever. This is how "from now on, always run prettier after an edit" goes from memory-based (unreliable) to harness-enforced (ironclad).
+
+**Project-level memory — the third layer.** Beyond CLAUDE.md there's per-session memory and user-level memory. The hierarchy:
+
+- **User memory** (`~/.claude/CLAUDE.md`) — global preferences. "I'm Sandeep. My email is sandeep@gnanalytica.com. I prefer pnpm over npm."
+- **Project memory** (`./CLAUDE.md`) — this repo's rules. Checked into git.
+- **Session memory** — what the AI learned this conversation. Ephemeral.
+
+Project memory is the highest-leverage layer because it's shared with your teammates.
+
+**Evals for your context file itself.** The meta-move: evaluate your CLAUDE.md like you'd evaluate a prompt. Make a list of 10 realistic project tasks ("add an API route", "write a migration", "fix a bug in component X"). Give them to Claude Code with and without your CLAUDE.md. Compare quality. The delta tells you whether your context file is pulling its weight.
+
+**What goes wrong when CLAUDE.md is bad.** Three anti-patterns:
+
+- **Too vague.** "Write clean code" is not actionable. "No functions longer than 40 lines" is.
+- **Too long.** A 2000-line CLAUDE.md chews your context window and confuses the model. Aim for 100–300 lines. Link out for the rest.
+- **Stale.** Update it when your stack changes. An outdated CLAUDE.md is worse than none — it actively misleads.
+
+**Bottom line.** Prompting is a skill. Context engineering is a leverage multiplier. Writing your first CLAUDE.md today will pay back every single chat you have for the rest of your capstone.
+
+## Watch: A battle-tested CLAUDE.md, annotated
+
+Instructor walks through a real 150-line CLAUDE.md from a production AI project — Project Overview, architecture diagram, coding rules, slash commands, hooks — calling out why each line exists. Then shows what happens when you delete it and start a fresh chat.
+
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+
+- 100–300 lines is the sweet spot.
+- Every rule should be testable (would a human know if it was violated?).
+- Slash commands turn workflows into one-word shortcuts.
+- Hooks turn rules into harness-level enforcement.
+
+## Lab: Write your capstone's first CLAUDE.md
+
+Budget 45–60 minutes. Do this in Claude Code (preferred) or Cursor.
+
+1. Create a new folder for your capstone repo (or open an existing one). Run `git init` if it isn't a repo yet.
+2. Open it in Claude Code. Ask: "Read my repo and draft a starter CLAUDE.md using the 8-section template." It will produce a draft from the files it sees.
+3. Edit the draft. Remove fluff. Add **concrete, testable** rules — especially the Common Pitfalls section. Aim for 150–250 lines.
+4. Read this, don't type it — this is the shape of what you're writing:
+
+```markdown
+# CLAUDE.md — Capstone: RAG Bot for College Handbook
+
+## Project Overview
+A RAG chatbot answering student queries from the 300-page handbook PDF.
+
+## Stack
+- Next.js 15 (App Router), TypeScript strict
+- LlamaIndex + Ollama (local) / Groq (prod)
+- pgvector on Neon
+
+## Coding Rules
+- Always use Zod for input validation on API routes.
+- Never read PDFs at request time — use the ingested index.
+- All prompts live in `prompts/` as .md files, never inline.
+
+## Common Pitfalls
+- Ollama defaults to port 11434. If absent, fall back to Groq.
+- Do not touch `lib/ingest.ts` without re-running the full eval set.
 ```
-Read this, don't type it
 
- user question  ->  search your docs (via embeddings)  ->  top 3 chunks
-                                                                |
-                                                                v
-                                      [ question + top 3 chunks ] -> LLM -> answer with sources
-```
-
-That's the whole pattern. "Retrieval" (find relevant text) + "Augmented" (stuff it into the prompt) + "Generation" (the LLM writes the answer).
-
-### Why not just paste the whole PDF?
-
-Two reasons.
-
-- Context windows are finite. A 128K-token window sounds huge but a 300-page textbook plus all your notes blows past it.
-- Accuracy drops in huge contexts. Models get distracted by irrelevant material. Feeding 3 relevant chunks beats feeding 300 random pages, even if both fit.
-
-### The RAG pipeline, step by step
-
-You'll see this pipeline in every RAG product on earth, from NotebookLM to enterprise search.
-
-| Step | What happens | Analogy |
-|---|---|---|
-| 1. Chunk | Split documents into ~500-word pieces | Cut a book into flashcards |
-| 2. Embed | Turn each chunk into a vector | Assign each flashcard coordinates |
-| 3. Store | Put vectors in a vector database | Drop flashcards onto a meaning map |
-| 4. Retrieve | Embed the user's question, find nearest chunks | "Which flashcards sit nearest this question?" |
-| 5. Augment | Paste top chunks into the prompt | Hand the model those flashcards |
-| 6. Generate | LLM writes an answer grounded in the chunks | The model reads the flashcards, then writes |
-
-Every RAG system is some version of these six steps. The rest is UX and infrastructure.
-
-### Why RAG beats "just fine-tune the model"
-
-Fine-tuning — retraining a model on your data — is expensive, slow, and leaks information. RAG is cheaper, faster, and lets you update your data anytime without touching the model.
-
-| Aspect | Fine-tuning | RAG |
-|---|---|---|
-| Cost | High | Low |
-| Speed to update | Days | Seconds (just re-embed new docs) |
-| Accuracy on your data | Good | Excellent (uses exact passages) |
-| Citation / sourcing | Hard | Built-in (chunks have filenames) |
-| Privacy | Risky | Docs stay in your vector DB |
-
-For 95% of "chat with your docs" use cases, RAG wins.
-
-### Common failure modes
-
-- Bad chunking. Splitting mid-sentence breaks meaning. Fix: chunk by paragraph or sliding window.
-- Wrong embedding model. Different embedding models have different strengths. Keep query and document embeddings in the same model.
-- Model ignores the context. Fix: the prompt-of-the-day pattern — "answer ONLY using context below; if missing, say so."
-- Irrelevant top chunks. Fix: increase the number of retrieved chunks, or add a reranker (a second model that sorts chunks by quality).
-
-### NotebookLM: RAG with zero code
-
-Google's NotebookLM is a free, polished RAG product. Upload PDFs, slides, YouTube transcripts, or pasted text. Ask questions. Get cited, source-linked answers. It is the fastest possible demo of what you're building toward. Under the hood, it runs the six-step pipeline above — you just don't see the plumbing.
-
-## Watch: RAG end to end
-
-A clear walkthrough of the full RAG pipeline with a running example — upload a PDF, watch it chunk, see embeddings go into a store, watch retrieval fire, then the final generation. No code heavy.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Notice how chunking choices affect answer quality.
-- Watch where the citations come from in the final output.
-- Observe the prompt template stuffing chunks in at the end.
-
-## Lab: Turn your lecture notes into a Q&A bot
-
-Two paths: zero-code with NotebookLM, and lightly-local with Open WebUI. Do the first, and if time permits, the second.
-
-1. Collect 3–5 documents from your semester. PDFs of lecture notes, course slides, a syllabus, your own Google Docs exported as PDF — whatever's real. Aim for 50–200 pages total.
-2. Open https://notebooklm.google.com/ and sign in with Google. Click "New notebook."
-3. Upload your documents as sources. Wait for NotebookLM to process (it chunks and embeds in the background).
-4. Ask a hard, specific question — something you'd normally scroll through a PDF to find. Example: "According to my operating systems notes, what's the difference between a semaphore and a mutex? Cite the slide." Notice every sentence in the answer links back to the source.
-5. Ask an out-of-scope question: "What's the weather in Bengaluru?" Confirm NotebookLM refuses or says not available. That's the grounding working.
-6. Use the "Audio Overview" feature to generate a podcast of your notes. This is RAG + TTS — beautiful demo to show friends.
-7. Open https://openwebui.com/ (the one you installed Day 16). Create a new chat, click the paperclip, upload one of your PDFs. Ask the same questions. Compare NotebookLM vs. local Open WebUI. Which cited better? Which was faster?
-8. Paste today's prompt-of-the-day into any chat LLM. Fill `{{context}}` with a paragraph from your notes and `{{question}}` with something specific. Notice how the grounded pattern forces honest answers.
+5. Create an **AGENTS.md** that mirrors the essentials, tuned for non-Claude agents (Codex, Cursor). Keep it shorter — rules only.
+6. Create 3 custom slash commands in `.claude/commands/`: `/review.md`, `/plan.md`, `/explain.md`. Each is a single-prompt markdown file.
+7. (Bonus) Add one hook in `.claude/settings.json` — e.g., auto-run your linter after any file edit.
+8. Test it. Open a fresh Claude Code session and ask it to implement one small capstone feature. Notice how much *less* you have to re-explain.
 
 ## Quiz
 
-Four questions: what RAG stands for, why we don't just paste whole PDFs, which step uses embeddings, and one scenario asking when fine-tuning beats RAG (hint: almost never, unless you need new behaviors vs. new knowledge).
+Four to ponder: What's the difference between CLAUDE.md, AGENTS.md, and `.cursorrules`? Why is 2000 lines of CLAUDE.md worse than 200? What's a slash command actually — magic or just a saved prompt? What's a hook, and when would you choose a hook over a rule in CLAUDE.md?
 
 ## Assignment
 
-Build a NotebookLM notebook for your capstone. Upload anything relevant — research, course docs, competitor apps' landing pages saved as PDF. Ask it 5 questions you'll actually need answered to build on Day 21. Screenshot the Q&A and submit.
+Ship a working **CLAUDE.md** + **AGENTS.md** + **3 custom slash commands** for your capstone repo. Commit them to git. In the cohort channel, paste: a screenshot of your repo's root showing these files, and one example task where CLAUDE.md made the AI noticeably smarter on the first try.
 
-## Discuss: Grounded AI
+## Discuss: Leverage you can't unsee
 
-- Which felt more trustworthy — NotebookLM or Open WebUI — and why?
-- Where did your RAG setup mess up? What would you change?
-- RAG cites sources. ChatGPT (without browsing) doesn't. How does that change how you'd use each?
-- What docs would you NEVER want to upload to a cloud RAG? What does that tell you about local RAG?
-- How would your capstone change if you had a RAG system over every document your target users care about?
+- Which single rule in your CLAUDE.md do you expect to save the most hours?
+- Which section (Architecture? Pitfalls? Slash Commands?) was hardest to write — and why?
+- Should CLAUDE.md be checked into git publicly, or does it leak too much project detail?
+- What would a team-wide "house style" CLAUDE.md look like across all projects?
+- When would a hook be a better tool than a CLAUDE.md rule?

@@ -1,145 +1,104 @@
 ---
-reading_time: 14 min
-tldr: "Graduate from chat tricks to a real prompting toolkit: roles, chains of thought, structured output, few-shot, and failure modes."
-tags: ["prompting", "llms", "concepts"]
+reading_time: 15 min
+tldr: "Run an LLM on your own laptop, compare three prompt styles on a 10-row eval set, and trace everything in Langfuse."
+tags: ["build", "technical"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Build your personal prompt library", "url": "https://huggingface.co/chat/"}
-prompt_of_the_day: "You are a {{role}}. Think step-by-step before you answer. Then critique your own answer and revise it once. Return final answer as JSON with keys: answer, confidence, caveats."
-resources: [{"title": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"title": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}, {"title": "HuggingFace Chat", "url": "https://huggingface.co/chat/"}]
+lab: {"title": "Install Ollama + run a 1-3B model + log 10 evals in Langfuse", "url": "https://ollama.com/download"}
+prompt_of_the_day: "Act as a prompt engineer. My task is {{task_description}}. Generate three prompt variants: (A) zero-shot, (B) chain-of-thought with self-critique, (C) few-shot with 3 examples. Output each as a clearly labelled code block so I can paste them into Langfuse."
+tools_hands_on: [{"name": "Ollama", "url": "https://ollama.com"}, {"name": "Open WebUI", "url": "https://openwebui.com"}, {"name": "Langfuse", "url": "https://langfuse.com"}]
+tools_demo: [{"name": "Groq (free Llama 3.3 70B @ 750 tok/s)", "url": "https://groq.com"}, {"name": "Hugging Face model cards", "url": "https://huggingface.co"}]
+tools_reference: [{"name": "LM Studio", "url": "https://lmstudio.ai"}, {"name": "WebLLM (in-browser)", "url": "https://webllm.mlc.ai"}, {"name": "Together AI", "url": "https://together.ai"}, {"name": "Fireworks AI", "url": "https://fireworks.ai"}, {"name": "LangSmith", "url": "https://smith.langchain.com"}]
+resources: [{"name": "Qwen 2.5 1.5B", "url": "https://ollama.com/library/qwen2.5"}, {"name": "Gemma 2 2B", "url": "https://ollama.com/library/gemma2"}, {"name": "Phi-3 mini 3.8B", "url": "https://ollama.com/library/phi3"}]
 ---
 
 ## Intro
 
-Week 1 you learned to ask. Today you learn to direct. The five patterns in this lesson are what separate people who "use ChatGPT" from people who get reliably great work out of AI. By the end you'll have a personal prompt library you'll reuse for years.
+Yesterday you learned the rails. Today you drive. We put a real LLM on your laptop — yes, even a 4GB college laptop — and layer prompting patterns that bigger models can't brute-force their way past. Then we do something 90% of builders skip: we measure. Evals turn "sounds good" into "provably better".
 
-## Read: Five patterns that actually work
+## Read: Local LLMs, prompting patterns, and evals
 
-A prompt is a specification. Vague spec, vague output. Rich spec, rich output. The patterns below compound — stack them, and the same model gives dramatically better answers.
+Let's unpack three ideas that make you dangerous: quantization (so models fit on your laptop), prompt patterns (so small models punch above their weight), and evals (so you know which prompt actually works).
 
-### Pattern 1: Role prompting
+**Quantization in one paragraph.** A neural network is a pile of numbers called weights. Full-precision weights are 16 or 32 bits each. A 7B-parameter model at full precision needs 14GB of RAM. Most of us don't have that. **Quantization** compresses each weight into 4 or 8 bits, shrinking the model 2–4x with only a small quality hit. The file format you'll see everywhere is **GGUF** — a single packaged file containing a quantized model plus its tokenizer. The naming pattern `Q4_K_M` means "4-bit quantization, medium quality variant". Rule of thumb: `Q4_K_M` for most laptops, `Q8_0` if you have RAM to spare, `Q2` only if you're desperate.
 
-Start by casting the model. "You are a senior recruiter at a top-tier consulting firm reviewing this resume for a case-interview role." That one sentence changes which tokens become probable. You're not lying to the model — you're pointing its frozen intuitions toward the right subset of the internet.
+**Which model should you pull?** Match the model to your RAM.
 
+| Laptop RAM | Pick | Approx size |
+|------------|------|-------------|
+| 4 GB | Qwen 2.5 1.5B Q4 | ~1 GB |
+| 6 GB | Gemma 2 2B Q4 | ~1.6 GB |
+| 8 GB+ | Phi-3 mini 3.8B Q4 | ~2.3 GB |
+| 16 GB | Llama 3.1 8B Q4 | ~4.7 GB |
+
+These small models (SLMs) won't replace GPT-5 or Claude, but for summarization, classification, structured extraction, and routing, they're shockingly competent — and **free, offline, private**.
+
+**Cloud fallback — your free GPU.** When local is too slow for the demo, cloud inference APIs give you 70B-class models at ridiculous speeds. **Groq** serves Llama 3.3 70B at ~750 tokens/sec on a free tier. **Together AI** and **Fireworks AI** offer wide model catalogues with per-token billing. The workflow: prototype locally with Ollama, switch the endpoint URL to Groq when you need more brain, and your app code barely changes.
+
+**Prompting patterns that actually move numbers.** Prompting is not magic words — it's a set of reusable patterns. Four that you should internalize today:
+
+1. **Chain-of-Thought (CoT).** Ask the model to think step by step before answering. `"Explain your reasoning step-by-step, then on the final line write FINAL: <answer>."` This single trick can swing accuracy 10–30% on reasoning tasks. Small models benefit most.
+
+2. **Self-critique.** Ask the model to answer, then critique its own answer, then revise. `"Step 1: draft. Step 2: list three weaknesses of your draft. Step 3: produce an improved final version."` Great for writing tasks and long-form outputs.
+
+3. **Structured JSON output.** Never parse free text if you can help it. `"Return ONLY valid JSON matching this schema: {\"intent\": string, \"confidence\": 0-1, \"entities\": string[]}."` Ollama and most cloud APIs now have a `format: json` flag — use it.
+
+4. **Few-shot.** Show 2–5 worked examples before asking your real question. The examples teach tone, format, and edge cases faster than any instructions can. Budget a few hundred tokens; the payoff is huge.
+
+**Evals — the habit that separates builders from tinkerers.** An **eval** is a repeatable test of an LLM prompt against a fixed dataset with an automatic or human-judged score. The minimum viable eval:
+
+- A table of 10 rows. Each row has an `input` and an `expected` (or an `accept_if` rule).
+- Run your prompt across all 10 rows. Collect outputs.
+- Score each output (exact match, contains, LLM-as-judge, or a regex).
+- Tally the pass rate.
+
+That's it. The magic is the **repeatability** — the next time you tweak your prompt, you rerun the same 10 rows and get a new number. If the number went up, ship it. If it went down, revert. You just graduated from vibes-driven development to data-driven development.
+
+**Langfuse** is our free, open-source eval + tracing platform. Every LLM call gets logged with inputs, outputs, latency, and tokens. You can tag outputs, group them into "sessions", and run dataset-based evals. It plays nicely with Ollama, OpenAI-compatible APIs, LangChain, and LlamaIndex. Alternatives: **LangSmith** (by LangChain, slicker UI but paid) or rolling your own Google Sheet (works fine for 10 rows).
+
+**Tokens and context windows.** One final vocabulary drop. A **token** is roughly 3/4 of an English word. A **context window** is how many tokens a model can "see" at once. Qwen 2.5 handles 32k tokens. Llama 3.3 handles 128k. Gemini 2.5 handles 1M. When a model "forgets" what you said, you've blown the context window — not because the model is dumb, but because you exceeded its RAM.
+
+## Watch: Ollama in 10 minutes
+
+Live walkthrough installing Ollama, pulling a small model, wiring up Open WebUI, and making the first local chat call. Then we switch to Groq for a side-by-side speed comparison.
+
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+
+- Ollama listens on `http://localhost:11434` — the number matters.
+- Open WebUI gives you a ChatGPT-style interface on top of Ollama.
+- Groq's free tier is faster than any local setup you'll build today.
+- Local is private; cloud is fast. Use both.
+
+## Lab: Install Ollama + 3-way prompt showdown in Langfuse
+
+Budget 45–60 minutes.
+
+1. Install **Ollama** from ollama.com. Launch it; it runs as a background service.
+2. Pick your model based on RAM (see the table above). Pull it — the command you'll run from your terminal (read this, don't panic):
+
+```bash
+ollama pull qwen2.5:1.5b   # or gemma2:2b, phi3:mini
+ollama run qwen2.5:1.5b "Explain RAG in 2 sentences."
 ```
-Read this, don't type it
 
-Weak : "Review my resume"
-Strong: "You are a senior recruiter at McKinsey India. You've seen 10,000
-         resumes. Review this one for an entry-level consultant role.
-         Flag the top 3 weaknesses and suggest one fix per weakness."
-```
-
-Specificity in the role beats adjectives every time. "Senior recruiter at McKinsey India" beats "good recruiter."
-
-### Pattern 2: Chain of thought
-
-Ask the model to think out loud before answering. Phrases like "Let's think step by step" or "First, list the relevant facts. Then reason through them. Then give your final answer" measurably improve performance on anything requiring reasoning — math, logic puzzles, tricky analysis.
-
-Why it works: remember, the model generates one token at a time, and each token conditions the next. When it has "thinking tokens" before the answer token, the answer token lands on a much better foundation. You're giving it runway.
-
-### Pattern 3: Few-shot examples
-
-Show, don't tell. If you want a specific format or style, paste 2–3 examples before your real request. The model will pattern-match hard.
-
-```
-Read this, don't type it
-
-Q: "I missed the placement deadline"
-A: { "emotion": "anxious", "urgency": "high", "next_step": "email coordinator today" }
-
-Q: "I'm not sure which company to apply to"
-A: { "emotion": "uncertain", "urgency": "low", "next_step": "list top 5 criteria" }
-
-Q: "I bombed the aptitude test"   <-- your real question
-A:
-```
-
-The model will produce a JSON object matching the pattern. No instructions needed.
-
-### Pattern 4: Structured output
-
-Ask for JSON, XML, or a specific markdown shape. Frontier models are trained to follow schemas. This is what makes AI usable in real apps — you can parse the output programmatically on Day 21.
-
-```
-Read this, don't type it
-
-Return your answer as JSON with this exact schema:
-{
-  "answer": string,
-  "confidence": "low" | "medium" | "high",
-  "sources_needed": string[]
-}
-Do not include any text outside the JSON.
-```
-
-Many modern APIs also support a strict "JSON mode" that guarantees valid JSON. But even in plain chat, the above prompt gets you 95% of the way.
-
-### Pattern 5: Self-critique and revise
-
-A second pass almost always beats the first pass. Append: "Now critique your own answer as a harsh editor. List 3 weaknesses. Then write a revised version that fixes them." You're essentially asking the model to play two roles — author and editor — and the editor catches what the author missed.
-
-### Putting them together
-
-The best real-world prompts stack three or four patterns.
-
-| Layer | What to write |
-|---|---|
-| Role | "You are a senior data-science mentor." |
-| Task | "Given these notes, design a 2-week study plan." |
-| Thinking | "First list the topics. Then group them by difficulty. Then schedule." |
-| Format | "Return as a markdown table with columns: day, topic, est. hours." |
-| Critique | "After the table, write one paragraph on what a weaker plan would look like so I can compare." |
-
-Paste that into any modern model and you'll get a near-consultant-quality plan.
-
-### When prompts fail — and what to do
-
-Three common failure modes:
-
-- Hallucination on facts. Fix: give the model the source text in the prompt, or use RAG (Day 19).
-- Refusal / over-caution. Fix: clarify intent ("this is for my own placement prep, not for sharing"), or switch to a local model.
-- Ignoring format. Fix: few-shot it, or end the prompt with "Respond ONLY with the JSON, no preamble."
-
-If nothing works, the prompt is probably wrong, not the model. Shorten it. Simplify. Try again.
-
-## Watch: Prompt patterns in action
-
-A compact tour of chain-of-thought, role, and few-shot prompting with live before/after examples. Watch how each pattern changes the output on the same underlying question.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Watch how a single role line shifts tone dramatically.
-- Notice the accuracy lift from "think step by step."
-- See how few-shot makes JSON output almost perfect.
-
-## Lab: Your personal prompt library
-
-Goal: build a reusable library of 6 prompts you'll actually use this semester.
-
-1. Open a Google Doc titled "My Prompt Library v1." Create six headings: Study, Placement Prep, Writing, Coding, Debugging, Life Admin.
-2. Open https://huggingface.co/chat/ and pick any modern frontier model. You'll test prompts here.
-3. For the Study heading, write a prompt using at least 3 of today's patterns. Example goal: "Given a topic, output a 1-day study sprint plan as JSON." Paste your prompt into the chat, test with 3 different topics, iterate until the output is consistently good. Save the final prompt to your doc.
-4. Do the same for Placement Prep. Example goal: "Given a target company, output 5 behavioral interview questions and model answers."
-5. Now for Writing. Goal: "Given a paragraph, output a harsher, tighter version and explain what you cut." Use self-critique.
-6. For Coding and Debugging, make prompts that force the model to ask a clarifying question if the user's request is ambiguous. (Hint: add "If anything is unclear, ask one question before answering.")
-7. For Life Admin, write a prompt that turns a screenshot of a messy WhatsApp chat into a clean JSON of action items.
-8. Paste today's prompt-of-the-day, fill `{{role}}`, and try it on your hardest question of the week. Save the result.
-
-Every prompt in your doc should use at least 3 of today's 5 patterns. Comment on each one explaining which patterns you stacked.
+3. Install **Open WebUI** (follow the one-click Docker or desktop path at openwebui.com). Open `http://localhost:3000`. Select your local model in the dropdown. Say hi.
+4. Go to **langfuse.com**, sign up free, create a project. Grab your public + secret keys.
+5. Pick a task for your capstone. Write **three prompt variants** using the prompt-of-the-day scaffold: zero-shot, CoT + self-critique, few-shot with 3 examples.
+6. Build a 10-row eval set in a Google Sheet: columns `input`, `expected`. Keep inputs short and realistic (real student queries, real PDFs).
+7. Run each variant across all 10 rows — either via Open WebUI manually (tedious but educational) or via Langfuse's prompt management UI. Log every run.
+8. Score each output 1 (pass) or 0 (fail). Compute a win rate per variant. Take a screenshot of the Langfuse trace view. Crown a winner.
 
 ## Quiz
 
-Expect four checks on the five patterns, one scenario question asking which pattern fixes which failure, and one "spot the weak prompt" rewrite question. Trust the stacking principle — layered prompts win.
+Four quick ones: Why is `Q4_K_M` the most common quantization? What does chain-of-thought actually add to a prompt — tokens, structure, or both? If Groq is faster and free, why bother with local Ollama? What's the minimum number of rows that makes an eval meaningful for you, honestly?
 
 ## Assignment
 
-Pick one prompt from your library. Run it on 3 different models (two cloud, one local from yesterday). Paste all three outputs into your doc with a 2-sentence verdict per model. Submit the doc link.
+Build a **10-row eval set** on a task tied to your capstone. Run **three prompt styles** (zero-shot, CoT + critique, few-shot). Pick the winning prompt and save it in Langfuse's prompt library with a version tag. Post the win rate of each variant to the cohort channel and call out anything surprising.
 
-## Discuss: The prompting mindset
+## Discuss: When small wins and when big wins
 
-- Which pattern felt most like "unlocking" the model for you?
-- When does self-critique actually make things worse — if ever?
-- How do you balance "short prompts feel natural" with "long prompts work better"?
-- Which of your 6 library prompts will you actually use this week?
-- What's a task where no amount of prompting will rescue you, and you should reach for code or RAG instead?
+- Which task surprised you with how well a small local model handled it?
+- Did CoT help or just add latency? When was few-shot worth the token cost?
+- Share one eval row that broke all three prompts — what does that tell you?
+- Would you deploy a 2B local model to real users, or always route to Groq/Claude?
+- What's the smallest eval set you'd trust to ship a prompt change to production?

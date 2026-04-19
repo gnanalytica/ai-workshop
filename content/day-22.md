@@ -1,113 +1,107 @@
 ---
-reading_time: 14 min
-tldr: "Agents = LLMs + tools + a loop. The magic, the fragility, and the future of applied AI."
-tags: ["agents", "product", "discussion"]
+reading_time: 16 min
+tldr: "Push your capstone live, compute what it costs per user, design for trust, and make AI engines cite you."
+tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Map the agent you'd actually build", "url": "https://langchain-ai.github.io/langgraph/"}
-resources: [{"title": "LangGraph docs", "url": "https://langchain-ai.github.io/langgraph/"}, {"title": "CrewAI docs", "url": "https://docs.crewai.com/"}, {"title": "Browser-use", "url": "https://github.com/browser-use/browser-use"}, {"title": "Anthropic: Building effective agents", "url": "https://www.anthropic.com/research/building-effective-agents"}]
+lab: {"title": "Deploy + trust-UX audit + llms.txt", "url": "https://vercel.com/docs"}
+prompt_of_the_day: "Audit the trust stack of {{product_url}}. For each of: streaming, uncertainty indicators, citations, stop button, undo, and error recovery — tell me what is present, what is missing, and what one change would most increase user trust."
+tools_hands_on: [{"name": "Vercel", "url": "https://vercel.com"}, {"name": "Supabase", "url": "https://supabase.com"}, {"name": "Figma", "url": "https://figma.com"}]
+tools_demo: [{"name": "Neon", "url": "https://neon.tech"}, {"name": "Cloudflare Workers", "url": "https://workers.cloudflare.com"}, {"name": "Schema.org validator", "url": "https://validator.schema.org"}]
+tools_reference: [{"name": "Fly.io", "url": "https://fly.io"}, {"name": "Render", "url": "https://render.com"}, {"name": "Cloudflare Pages", "url": "https://pages.cloudflare.com"}, {"name": "GitHub Pages", "url": "https://pages.github.com"}, {"name": "Netlify", "url": "https://netlify.com"}, {"name": "Deno Deploy", "url": "https://deno.com/deploy"}, {"name": "Turso", "url": "https://turso.tech"}, {"name": "Modal", "url": "https://modal.com"}, {"name": "Replicate", "url": "https://replicate.com"}, {"name": "AWS Bedrock", "url": "https://aws.amazon.com/bedrock"}, {"name": "GCP Vertex AI", "url": "https://cloud.google.com/vertex-ai"}, {"name": "Azure AI Foundry", "url": "https://azure.microsoft.com/products/ai-foundry"}, {"name": "Ola Krutrim Cloud", "url": "https://olakrutrim.com"}]
+resources: [{"name": "llms.txt standard", "url": "https://llmstxt.org"}, {"name": "Schema.org", "url": "https://schema.org"}]
 ---
 
 ## Intro
 
-For three weeks you built things that answer. This week you build things that act. An agent is not a cleverer chatbot — it is a program that chooses its next step based on what just happened. That freedom is the feature and the failure mode. Today we ground the word "agent" so you stop using it loosely.
+Yesterday you built a v0 on your laptop. Today it goes on the internet. A capstone that only runs on localhost is a demo of your patience, not your product. By the end of today you will have a live URL, a token-cost worksheet that tells you how much 10, 100, and 1000 users will cost you per month, a trust-audited UI, and an llms.txt file so the AI search engines of 2026 can cite you correctly.
 
-## Read: What an agent actually is
+## Read: Shipping, cost math, trust UX, and getting cited by AI
 
-A useful working definition, borrowed from Anthropic and hardened through 2025: an **agent** is an LLM in a loop that decides which tool to call, sees the result, and decides again — until a stop condition. Everything else — memory, planning, multi-agent routing — is an optimization over that loop.
+### Free-tier survival and cold starts
 
-### The ReAct loop, demystified
+Every hosting platform has a free tier. None of them is free the way you think. They are free as long as your usage stays in the sweet spot: low traffic, short-lived requests, small bundles. Cross a line — cold starts on a big Python image, a long-running LLM stream, a DB connection that never releases — and the platform either charges you or kills your request with a 502.
 
-The canonical shape is **Reason → Act → Observe**, repeated. On paper:
+Rules of survival:
 
-```
-┌──────────────┐
-│  User goal   │
-└──────┬───────┘
-       ▼
-   ┌───────┐     ┌──────────┐
-   │ Think │ ──▶ │ Tool call│
-   └───▲───┘     └────┬─────┘
-       │              ▼
-       │        ┌──────────┐
-       └──────  │ Observe  │
-                └──────────┘
-                     │
-                     ▼
-                  Done?
-```
+- **Keep bundles small.** Every MB adds to cold start. Strip dev dependencies, tree-shake, lazy-load model clients.
+- **Stream LLM responses.** A 30-second non-streamed response looks like a timeout. A 30-second stream looks like thinking.
+- **Pool DB connections.** Serverless platforms open a new connection every invocation. Use a pooler (Supabase's pgbouncer, Neon's pooled endpoint) or you will run out of slots at 100 concurrent users.
+- **Cache the cacheable.** Static prompts, embeddings for frequent queries, system-prompt prefixes — cache them at the edge.
 
-The loop has four moving parts worth naming explicitly:
+Cold starts matter because of the perception gap: if your first request takes 4 seconds and every later request takes 200ms, users judge you on the 4. Warm the function on deploy, or pay for the "always-on" tier on the routes that matter most.
 
-| Part | What it does | Where it breaks |
-|---|---|---|
-| **Reasoner** | Picks the next tool + arguments | Hallucinates tools; over-plans |
-| **Tools** | Actual side-effectful capabilities | Flaky APIs, bad schemas |
-| **Observation** | Feeds tool output back | Blows up context window |
-| **Stop condition** | Ends the loop | Never triggers → infinite spin |
+### Vendor lock-in — the real cost you do not see
 
-If you can't point at these four in your agent's code, you don't have an agent, you have a vibe.
+The cheapest way to ship a v0 is to grab the most magical platform: Vercel + its AI SDK, Supabase + its auth, Cloudflare + Workers AI, or bolt.new's stack. That magic has a price you pay later. Vendor lock-in shows up when you try to move and discover your auth assumes Supabase JWT shape, your queue is a Vercel Cron, your file storage is an R2 bucket, and your model calls use a proprietary router.
 
-### Workflow vs. agent — and why you want the workflow most days
+You cannot fully avoid lock-in — and you shouldn't, at v0. But you can **quarantine it**. Wrap the vendor SDKs in your own thin interfaces: `db.query()`, `auth.currentUser()`, `llm.complete()`. When the day comes to swap a vendor, you change one file, not fifty.
 
-Most "agent" products in 2026 are actually **workflows**: a fixed DAG of LLM calls with tools in known positions. They are cheaper, faster, and easier to evaluate. Use a true agentic loop only when the path genuinely can't be known up front — research, debugging, open-ended web tasks.
+### Token-cost math per user
 
-> Rule of thumb: if you can draw the state diagram in under 10 nodes, don't use a free-form agent. Hard-code the graph.
+This is the number most junior AI builders never compute, and it eats startups alive. The math is simple; do it today.
 
-### The three failure modes you will hit
+For every core interaction a user has with your product, estimate:
 
-1. **The thrash** — the model calls the same tool with slightly different args forever. Fix: dedupe by argument hash, cap iterations.
-2. **The confident wrong** — model fabricates a tool output or ignores a real one. Fix: validate tool results with a schema; log observation text back verbatim.
-3. **The context bomb** — 40 tool observations later, the prompt is 180k tokens of logs. Fix: summarize intermediate observations, keep only the last N raw.
+- **Input tokens**: system prompt + retrieved context + user message. Count generously.
+- **Output tokens**: what the model returns.
+- **Model price**: input $/M tokens and output $/M tokens. Look it up on the provider page.
+- **Interactions per user per month**: your best guess.
 
-### Worked example: "book me a quiet study room for Thursday"
+`cost_per_user = interactions × (input_tokens × input_price + output_tokens × output_price)`
 
-What tools does this agent need?
+A chat app with a 2000-token system prompt, 500 tokens of user message, 600 tokens of response, running on a mid-tier model at $3 input / $15 output per million tokens, used 20 times a month, costs you roughly $0.20 per user per month. That is survivable. Make the system prompt 10,000 tokens because "more context is better" and you just multiplied your burn by 5 without making the product better.
 
-- `list_rooms(building, date)` — availability
-- `get_noise_profile(room_id)` — historical noise data
-- `check_my_calendar(date)` — my free slots
-- `book_room(room_id, start, end)` — the commit step
+Do the math for 10, 100, and 1000 users. The first number tells you if a demo week is free. The second tells you when your free provider credits run out. The third tells you what your pricing page has to say.
 
-The reasoner's job: intersect free slots with available quiet rooms, propose one, confirm, book. Notice: booking is irreversible — that tool needs a human confirmation gate. Good agents distinguish **read tools** (cheap, retry freely) from **write tools** (gated, logged, undoable).
+### UX for AI — the trust stack
 
-## Watch: How to think about agents in 2026
+AI products have a distinct UX surface area because the model is non-deterministic. Users tolerate weirdness only if the UI tells them what is happening. The **trust stack**:
 
-Short talk contrasting workflows, agents, and multi-agent systems — with specific guidance on when each pays off.
+1. **Streaming.** Show tokens as they arrive. Silence feels like a bug.
+2. **Uncertainty indicators.** If the model is not confident, say so — "I'm not sure, but…" prefixes or a confidence bar.
+3. **Citations.** Every factual claim should link to its source. Unsourced claims corrode trust permanently.
+4. **Stop button.** Always. If the user wants to abort a runaway generation, they should be one click away.
+5. **Undo.** Every AI-destructive action (delete, overwrite, commit) must be reversible for at least one minute.
+6. **Error recovery.** When the model fails, say what failed and offer one next step — "Retry", "Try a smaller model", "Report this."
 
-https://www.youtube.com/embed/VIDEO_ID
+Audit your capstone against those six today. Missing two of them is normal for a v0; missing five is a reason users will churn on day one.
+
+### GEO — Generative Engine Optimization
+
+Google shaped the last 20 years of web UX through SEO. The next decade is shaped by AI search — ChatGPT, Perplexity, Claude, Gemini, every LLM that answers questions with citations. GEO is the craft of getting cited.
+
+Three moves that work today:
+
+- **Publish an `llms.txt`.** A single markdown file at `yourdomain.com/llms.txt` that tells LLMs what your site is about, the most important pages, and how to reference you. The spec is at llmstxt.org.
+- **Add Schema.org markup.** JSON-LD blocks that describe your product, FAQs, authors, and articles. LLMs read structured data preferentially because it is trustworthy.
+- **Write for extraction.** Short paragraphs, clear headings, one claim per sentence. If a human can skim your page in 30 seconds and summarize it, a model can too.
+
+GEO is not SEO with new hats. It rewards clarity and structure over keyword density. Put a table of contents on every long page. Answer the obvious question in the first paragraph. Link to primary sources, not your own blog.
+
+## Watch: From localhost to live URL in under 20 minutes
+
 <!-- TODO: replace video -->
 
-- Watch for how they define the stop condition — most teams skip this.
-- Notice how they handle write actions vs. read actions.
-- Note the cost curves: agents get expensive fast when loops don't terminate.
+## Lab: Ship it, cost it, trust it, publish llms.txt
 
-## Lab: Paper-map the agent you'd actually build
-
-No code today. Pick a real task from your life — not a toy. Examples: "triage my GitHub notifications", "pick a weekend movie from what's on my streaming services", "update my resume from my last 3 commits". Then:
-
-1. On paper, write the user goal in one sentence. If it takes two, split it.
-2. List every **tool** the agent would need. Separate read vs. write.
-3. Draw the ReAct loop for a happy path — number the steps.
-4. Identify the **stop condition**. "When the model says done" is not one; be specific.
-5. Identify the **failure mode** you'd hit first. Thrash, confident wrong, or context bomb?
-6. Decide: is this actually a workflow? If you can draw a fixed DAG, redraw it as a DAG.
-7. Add a human-in-the-loop gate before every write tool. Mark which actions need confirmation.
-8. Estimate cost: guess tokens per iteration × expected iterations × price. Is this <$0.10 per run? If not, redesign.
-9. Sketch the eval: how would you know the agent did the task right on 10 test cases?
-10. Photograph your paper map. Post it in the cohort channel.
+1. Connect your capstone repo to Vercel. Push. Take the production URL.
+2. If you have a DB, provision a Supabase project and point the app at the pooled connection string. Set env vars in Vercel.
+3. Build the **token-cost worksheet**. A spreadsheet with columns: interaction name, input tokens, output tokens, model, price in, price out, cost per interaction, cost per user per month at 10, 100, 1000 users.
+4. Do a **trust-UX audit** of your live product in Figma or on paper. For each of the six trust-stack elements, mark present / partial / missing and note one change.
+5. Create `public/llms.txt` following llmstxt.org. Include project summary, three important URLs, and author. Deploy. Verify at `yoursite.com/llms.txt`.
 
 ## Quiz
 
-Four short questions on ReAct anatomy, when to prefer a workflow over an agent, and what a stop condition really is. Expect one trick question about multi-agent systems — most of them are just workflows with extra steps.
+1. Why do cold starts hurt perceived performance more than steady-state latency?
+2. What does "quarantining vendor lock-in" look like in code?
+3. Write the formula for cost per user per month.
+4. Name four of the six elements of the AI trust stack.
+5. What does an `llms.txt` file do?
 
 ## Assignment
 
-Write a one-page spec for your paper-mapped agent. Include: the user, the goal, the tool list with read/write tags, the stop condition, and the first failure mode you expect. End with one paragraph on why an agent is the right shape here vs. a hard-coded workflow. If you can't defend that choice, your assignment is to redesign it as a workflow.
+**Daily:** Submit (a) your live capstone URL, (b) your token-cost worksheet at 10/100/1000 users, and (c) the URL of your published `llms.txt`. Bonus: add Schema.org JSON-LD to your landing page and paste the Schema.org validator result.
 
-## Discuss: Agents, agency, and taste
+## Discuss: The cost surprise
 
-- When does "agent" add real value over a good workflow, and when is it a résumé word?
-- Who owns the action when an agent books the wrong room — the user, the builder, the model provider?
-- How do you explain to a non-technical user what your agent can and cannot do?
-- What is the smallest agent you've used that actually worked for you? What made it work?
-- Multi-agent systems: real pattern or hype? Where have you seen one genuinely outperform a single well-prompted loop?
+Share the number that shocked you in your token-cost worksheet. Was it the system prompt size? The output length? The model choice? Post your before-and-after: one change you could make that drops cost per user by 40% without hurting quality.

@@ -1,133 +1,105 @@
 ---
-reading_time: 14 min
-tldr: "Embeddings are coordinates for meaning. Once you see text as points in space, semantic search suddenly makes sense."
-tags: ["embeddings", "ai", "concepts"]
+reading_time: 15 min
+tldr: "Turn your PDFs into a RAG bot, store embeddings in pgvector, and meet GraphRAG — when graphs beat chunks."
+tags: ["build", "technical"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Play with an embedding visualizer", "url": "https://huggingface.co/spaces"}
-prompt_of_the_day: "Given these 10 phrases: {{phrases}}, group them by meaning (not keywords). Explain each group in one line."
-resources: [{"title": "HuggingFace Spaces", "url": "https://huggingface.co/spaces"}, {"title": "TensorFlow Embedding Projector", "url": "https://projector.tensorflow.org/"}, {"title": "Nomic Atlas", "url": "https://atlas.nomic.ai/"}]
+lab: {"title": "Build a working RAG bot on your capstone PDFs (NotebookLM + LlamaIndex + pgvector)", "url": "https://notebooklm.google"}
+prompt_of_the_day: "Act as a RAG architect. My corpus is {{corpus_description}} (size, formats, domain). Recommend: (1) chunk size + overlap, (2) embedding model, (3) vector store, (4) when I should switch to GraphRAG instead of chunk-based RAG. Justify each choice in one line."
+tools_hands_on: [{"name": "NotebookLM", "url": "https://notebooklm.google"}, {"name": "LlamaIndex", "url": "https://docs.llamaindex.ai"}, {"name": "Neon pgvector", "url": "https://neon.com"}]
+tools_demo: [{"name": "Neo4j AuraDB", "url": "https://neo4j.com/cloud/aura/"}, {"name": "Microsoft GraphRAG", "url": "https://github.com/microsoft/graphrag"}, {"name": "Graphify", "url": "https://github.com/graphify"}]
+tools_reference: [{"name": "Chroma", "url": "https://trychroma.com"}, {"name": "Qdrant", "url": "https://qdrant.tech"}, {"name": "Pinecone", "url": "https://pinecone.io"}, {"name": "Sentence-Transformers", "url": "https://sbert.net"}, {"name": "HF MTEB embeddings leaderboard", "url": "https://huggingface.co/spaces/mteb/leaderboard"}]
+resources: [{"name": "LlamaIndex + Ollama tutorial", "url": "https://docs.llamaindex.ai/en/stable/examples/llm/ollama/"}, {"name": "pgvector docs", "url": "https://github.com/pgvector/pgvector"}]
 ---
 
 ## Intro
 
-"Embeddings" sounds scary. It's not. By the end of this lesson you'll have a one-line definition you can teach your grandmother, plus the intuition for why Google, Spotify, and ChatGPT all feel smarter than the search engines of 2010. Tomorrow, this is what makes RAG work.
+An LLM alone knows a lot about the world but nothing about *your* world — your PDFs, your notes, your company docs. Today we fix that. You'll learn embeddings (coordinates for meaning), build a RAG bot on your own documents, and meet GraphRAG — the technique that beats chunking when your data has structure.
 
-## Read: Coordinates for meaning
+## Read: Embeddings, RAG, and when graphs beat chunks
 
-Here's the whole idea in one sentence: an embedding is a list of numbers that represents the meaning of a piece of text as a point in space. Similar meanings sit close together; unrelated meanings sit far apart. That's it. Everything else is details.
+**Embeddings are coordinates for meaning.** Take any piece of text — a sentence, a paragraph, a whole doc — and an **embedding model** turns it into a list of numbers called a vector, usually 384, 768, or 1536 dimensions long. The magic property: sentences with similar meaning end up close in this high-dimensional space. "The cat sat on the mat" and "A feline rested on the rug" will be neighbours, even though they share almost no words. "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess" will be near each other too.
 
-### The 2D toy version
+The closeness metric is **cosine similarity**, a number between -1 and 1. Above 0.8 is "very close", around 0.5 is "loosely related", near 0 is "unrelated". This is how every modern search engine works under the hood — including Google, Spotify recommendations, and every AI chatbot that "remembers" your docs.
 
-Imagine a map with just two axes: formality and topic.
+**Why embeddings beat keywords.** Keyword search asks "does this document contain these exact words?" Semantic search asks "is this document about the same *idea*?" A student searching "how to pay college fees online" should find a page titled "Tuition payment portal guide" — they share zero keywords but mean the same thing. Embeddings bridge that gap.
 
-```
-Read this, don't type it
+**RAG = Retrieval + Augmented Generation.** RAG is the pattern that powers 90% of production AI apps. Three steps:
 
-formal |                     "filed a petition"
-       |            "submitted an application"
-       |
-       |  "dropped an email"
-casual |  "shot a text"
-       +--------------------------------------
-          casual topic             legal topic
-```
+1. **Ingest.** Chop your documents into chunks (typically 300–800 tokens each, with 10–20% overlap). Embed each chunk. Store `(chunk_text, embedding, metadata)` in a **vector database**.
+2. **Retrieve.** When the user asks a question, embed the question. Find the top-K chunks nearest to it in vector space (K is usually 3–10).
+3. **Generate.** Stuff those chunks into the LLM's context along with the question: "Given this context, answer the question." The LLM now answers from *your* data, not its training data.
 
-"Submitted an application" and "filed a petition" are close on this map because they're both formal and both legal-ish. "Dropped an email" and "shot a text" cluster in the casual-everyday corner. Real embeddings live in 768 or 1536 dimensions, not 2, but the idea is identical — every piece of text becomes a point, and distance means dissimilarity.
+That's the entire trick. Everything else is optimization.
 
-### Why this beats keyword search
+**Chunking strategies — the unglamorous 80%.** The quality of RAG is mostly the quality of chunking.
 
-Old search: match the exact words. Ask "how to pay college fees" and it won't match "tuition payment instructions." Semantic search: match the meaning. The embedding for both phrases lands in nearly the same spot, so one query finds the other. This is why modern search feels psychic — it's not magic, it's geometry.
+- **Fixed-size chunking** — split every N tokens. Easy, dumb, often fine.
+- **Sentence / paragraph chunking** — respect natural boundaries. Better recall on prose.
+- **Semantic chunking** — split where meaning shifts (requires an extra embed step). Best quality, slowest to build.
+- **Hierarchical chunking** — store both small chunks (for precision) and summaries of their parents (for context). Great for long documents.
 
-| Search type | "how to quit my part-time job" | What it finds |
-|---|---|---|
-| Keyword | Strict word match | Pages with "quit" and "part-time" |
-| Semantic (embeddings) | Nearest point in space | "resignation letter for intern," "ending a side gig politely" |
+Tip: always keep chunk **overlap** (the last ~15% of chunk N repeats as the first ~15% of chunk N+1) so facts that straddle a boundary aren't lost.
 
-### How embeddings get made
+**Vector stores — where embeddings live.** Your options, from easiest to most production-ready:
 
-You feed a piece of text into a small model (called an embedding model — Sentence Transformers, text-embedding-3-small, nomic-embed-text, etc.). Out comes a fixed-length vector of numbers — usually between 384 and 3072 numbers long. That vector IS the embedding. It is the text's coordinates on the meaning map.
+- **NotebookLM** (Google) — fully managed, zero code. Upload PDFs, ask questions. Best 20-minute RAG on the planet.
+- **Chroma** — open-source, runs on your laptop, Pythonic.
+- **pgvector on Neon** — Postgres with a vector column. One database for both relational and vector data. Neon gives you a free serverless Postgres with pgvector preinstalled.
+- **Qdrant / Pinecone / Weaviate** — dedicated managed vector DBs, great at billion-vector scale.
 
-```
-Read this, don't type it
+For a student capstone with 50–5000 docs, **Chroma** or **pgvector on Neon** is the sweet spot.
 
-"I love placement prep"  -> [ 0.21, -0.44, 0.78, ..., 0.09 ]   (768 numbers)
-"Placements make me happy" -> [ 0.19, -0.41, 0.76, ..., 0.11 ] (nearly identical)
-"How to fix a flat tire"  -> [ -0.88, 0.30, -0.12, ..., 0.77 ] (far away)
-```
+**Embedding models — not all equal.** `text-embedding-3-small` (OpenAI) is the workhorse default. `all-MiniLM-L6-v2` (384 dims) runs locally in milliseconds. `bge-large` and `nomic-embed-text` are strong open-source picks. Check the **MTEB leaderboard** on Hugging Face for fresh benchmarks. Rule: whatever embedder you used to ingest, you must use to query. Never mix models.
 
-The first two vectors are close because their meanings are close. The third is far. Compute distance between two vectors (usually cosine similarity, a number between -1 and 1), and you have a ranking of relevance.
+**When graphs beat chunks — GraphRAG intuition.** Chunk-based RAG breaks when the answer requires connecting facts across many documents. Example: "Which professors in the CSE department co-authored papers with Stanford researchers between 2020 and 2023?" No single chunk contains that answer — it lives in the *relationships* between entities.
 
-### Similarity, clustering, search — three uses
+**GraphRAG** (popularized by Microsoft) does this:
 
-Once text becomes points in space, three superpowers unlock:
+1. Run an LLM over your documents to extract entities (people, orgs, concepts) and relationships ("authored", "works at", "cites").
+2. Store them in a **knowledge graph** — a database of nodes and edges — such as **Neo4j AuraDB** (free tier available).
+3. Cluster the graph into communities and pre-summarize each community.
+4. At query time, traverse the graph and feed both **chunks** and **community summaries** to the LLM.
 
-- Similarity. Given a query, find the top 5 closest items in a database. That's semantic search and tomorrow's RAG.
-- Clustering. Given 10,000 customer feedback quotes, group them automatically by theme. No tagging needed.
-- Classification. Given labeled examples ("spam," "not spam"), embed a new email and see which cluster it's nearest to.
+GraphRAG shines for questions that are multi-hop ("A → B → C"), comparative ("who else is like X?"), or global ("what are the main themes across the corpus?"). It's overkill for simple FAQ lookup.
 
-Everything recommendation-engine-ish — Spotify's "Daily Mix," Netflix's "Because you watched," LinkedIn's "Jobs like this" — is some flavor of "embed things, find nearest neighbors."
+**Graphify** is a lightweight skill we use in this workshop to auto-extract knowledge graphs from any input — code, docs, papers, even images. You'll see it live today. The output: an HTML viewer + a JSON graph + an audit report. Great for turning messy PDFs into navigable structure.
 
-### Embeddings vs. LLMs
+## Watch: NotebookLM to pgvector — RAG on increasing difficulty
 
-They're cousins, not twins.
+Walkthrough starting with NotebookLM (5 minutes, zero code), then LlamaIndex + Ollama + Chroma (more control), then pgvector on Neon (production-shaped), and finally a GraphRAG demo in Neo4j.
 
-| Tool | What it outputs | Used for |
-|---|---|---|
-| LLM (Llama, GPT) | Text | Chat, writing, reasoning |
-| Embedding model | A vector of numbers | Search, clustering, RAG |
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-An embedding model is much smaller and faster than a chat LLM. Running embeddings on a million documents on your laptop is realistic. Running a chat LLM on a million queries is not.
+- NotebookLM handles 80% of student RAG use cases with zero setup.
+- LlamaIndex gives you swap-in-swap-out control over chunker, embedder, retriever.
+- pgvector = one DB for everything; cheap to run on Neon's free tier.
+- Reach for graphs only when your questions span many docs.
 
-### The 1-picture summary
+## Lab: Build a RAG bot on your capstone PDFs
 
-```
-Read this, don't type it
+Budget 45–60 minutes. Pick whichever path matches your comfort level — all three count.
 
- raw text  ->  [ embedding model ]  ->  point in 768-D space
-                                         |
-                                         v
-                         compare to other points, sort by distance
-                                         |
-                                         v
-                   "these 5 items mean roughly the same thing"
-```
-
-## Watch: Embeddings, visually
-
-A ten-minute tour of embeddings with live visualizations of words drifting into clusters as they're embedded. Watch how "king - man + woman ≈ queen" shows up geometrically.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Notice how synonyms land near each other without anyone labeling them.
-- Watch the vector arithmetic trick — meaning has directions.
-- Observe how outliers stand out in the cluster view.
-
-## Lab: See text turn into space
-
-You'll play with two free browser tools — no code, no install.
-
-1. Open the TensorFlow Embedding Projector: https://projector.tensorflow.org/. It loads a preset embedding of 10,000 English words by default. Rotate the 3D view.
-2. In the search box (right panel), type `king`. Watch the projector zoom to the point and highlight its nearest neighbors — queen, prince, throne, monarch. Those are semantic neighbors in real embedding space.
-3. Try `college`, `placement`, `resume`. Note which words cluster near your campus-life vocabulary.
-4. Open https://huggingface.co/spaces and search for "embedding visualizer" or "sentence similarity." Pick any top result (many creators maintain free Spaces for this). Paste 5 sentences of your own — mix formal and casual versions of similar ideas (e.g., "I quit" vs. "I formally tender my resignation"). See the similarity scores.
-5. Still in a HuggingFace Space, compare these three: "campus placement prep," "getting a job after college," "how to survive interviews." All should score > 0.6 similarity. Now add "how to bake a cake" — watch it score near 0.
-6. Open https://atlas.nomic.ai/ (free account). Upload a CSV of 20–50 short texts (your own notes, tweets, whatever) — Nomic will embed and cluster them into a map you can zoom around. This is the clearest "meaning as geography" experience you'll get all week.
-7. Paste today's prompt-of-the-day into any chat LLM with 10 phrases of your choosing. Compare its human-readable grouping to the geometric clusters you saw in Nomic. Same idea, two lenses.
-8. In your Prompt Library doc from yesterday, add a new section "Embeddings intuition" and paste 3 screenshots from today plus a 3-sentence reflection.
+1. Collect 5–20 real PDFs for your capstone (textbook chapters, research papers, internal docs, lecture notes).
+2. **Path A — NotebookLM:** go to notebooklm.google, create a new notebook, upload your PDFs. Ask it 5 questions from your assignment list. Note which it nailed and which it fumbled.
+3. **Path B — LlamaIndex + Ollama + Chroma:** use Claude/Cursor to scaffold a `SimpleDirectoryReader → VectorStoreIndex → query_engine` pipeline. You direct; it codes.
+4. **Path C — pgvector on Neon:** create a free Neon project, enable the `vector` extension, create a `documents(id, content, embedding vector(384))` table. Have Claude generate the ingest + query SQL.
+5. Write the 5 target questions down *before* you test — no moving the goalposts.
+6. For each question, compare: did the answer cite the right source? Was it hallucinated? Was the retrieved chunk relevant?
+7. Tune **one** knob: chunk size OR top-K OR embedder. Rerun. Was it better?
+8. Optional: run **Graphify** or Microsoft GraphRAG on the same PDFs. Ask a multi-hop question. Did the graph version win?
 
 ## Quiz
 
-Four quick items: what an embedding is, why semantic search beats keyword search, what cosine similarity roughly measures, and one scenario about picking embeddings vs. an LLM for a task. Lean on the "coordinates for meaning" line.
+A few mental check-ins: What's the cosine similarity between two unrelated sentences, roughly? Why does chunk overlap matter? When would GraphRAG beat plain RAG — give one concrete capstone example? Why must ingest and query use the same embedder?
 
 ## Assignment
 
-Open Atlas or any Space visualizer. Embed 30 short items from one corner of your life — your WhatsApp bookmarks, your saved tweets, your lecture note headings. Share a screenshot of the cluster map in the class channel with a one-paragraph observation of what clustered unexpectedly.
+Ship a **working RAG bot** that answers **5 questions** about your capstone domain from your own PDFs. For each question, paste: the question, the retrieved chunk(s), and the final answer. Tune at least one parameter (chunk size, top-K, or embedder) and show a before/after. Post the repo or NotebookLM link in the cohort channel.
 
-## Discuss: Meaning as geometry
+## Discuss: Chunks, graphs, and what your corpus needs
 
-- What clustered together in your Atlas map that surprised you? What didn't cluster that you expected to?
-- Keyword search still wins in some cases — when?
-- If embeddings work on any text, could they work on code? On images? On song clips? What would break?
-- How does "meaning as distance" change how you'd build a feed of recommendations?
-- What's the scariest implication of a world where everything you type can be clustered with everything else you've ever typed?
+- Did NotebookLM surprise you — in a good or bad way?
+- Which of your 5 questions failed, and was it a chunking problem or a retrieval problem?
+- Where in your capstone would a knowledge graph add real value over chunks?
+- If embeddings are "coordinates for meaning", what would "coordinates for tone" look like?
+- Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions?

@@ -1,114 +1,81 @@
 ---
 reading_time: 14 min
-tldr: "A one-day design sprint to turn your fuzzy capstone idea into a 1-page spec you can actually build."
-tags: ["capstone", "design-sprint", "concepts"]
+tldr: "Your problem lives inside a system of loops — diagram it, find the leverage point, then pitch the whole thing in 60 seconds using SCQA."
+tags: ["design", "systems-thinking", "storytelling", "pitch", "capstone"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Your 1-page capstone spec", "url": "https://www.thesprintbook.com/"}
-prompt_of_the_day: "You are my product coach. I want to build {{idea}} for {{user}}. Ask me 5 sharp questions that will force me to decide the smallest useful version I can ship in 7 days."
-resources: [{"title": "Google Ventures Design Sprint", "url": "https://www.thesprintbook.com/"}, {"title": "Shape Up (pitch format)", "url": "https://basecamp.com/shapeup"}, {"title": "Claude Code", "url": "https://www.anthropic.com/claude-code"}]
+lab: {"title": "Causal-loop diagram + 60-sec SCQA pitch for your capstone", "url": "https://excalidraw.com"}
+prompt_of_the_day: "I am pitching my capstone in 60 seconds using the SCQA structure (Situation, Complication, Question, Answer). Capstone: {{my_capstone}}. Surprising insight from interviews: {{insight}}. Leverage point from my causal-loop diagram: {{leverage_point}}. Draft three versions of the pitch — one analytical, one emotional, one contrarian — each under 150 words. Then tell me which is strongest and why."
+tools_hands_on: [{"name": "Excalidraw", "url": "https://excalidraw.com"}]
+tools_demo: [{"name": "Napkin AI", "url": "https://www.napkin.ai"}, {"name": "Y Combinator Library", "url": "https://www.ycombinator.com/library"}]
+tools_reference: [{"name": "Thinking in Systems — Donella Meadows (book)", "url": "https://donellameadows.org/systems-thinking-resources/"}, {"name": "Randy Olson — ABT narrative", "url": "https://www.randyolsonproductions.com/abt-framework"}]
+resources: [{"name": "Donella Meadows — Leverage Points essay", "url": "https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/"}, {"name": "SCQA framework — Barbara Minto (Pyramid Principle)", "url": "https://www.barbaraminto.com"}, {"name": "Pixar's 22 story rules", "url": "https://www.pixar.com"}]
 ---
 
 ## Intro
 
-You've spent two weeks learning to think clearly with AI. Now you're about to build. But before you touch a single tool, we compress Google Ventures' 5-day Design Sprint into one focused day. By tonight you'll have a 1-page spec: the problem, the user, the flow, and what "shipped" looks like. That paper beats three weeks of vibes.
+Every capstone problem lives inside a system — a tangle of feedback loops, incentives, and delays. If you intervene at the wrong point, the system absorbs your fix and snaps back. Today you diagram the system around your problem, find a leverage point, and compress the whole thing into a 60-second pitch sharp enough that a stranger at a conference can repeat it.
 
-## Read: From fuzzy idea to a spec someone can build
+## Read: Loops, leverage points, and stories that stick
 
-Every student walks in with an idea like "an AI thing for studying" or "something for placements." That's a vibe, not a plan. A spec answers four questions, hard: who is this for, what pain does it remove, what do they do with it, and how do you know it worked. If you can't answer those in one page, no AI tool on earth will save you.
+**Why systems thinking, now?** By Day 13 you have heard users describe their pain. Pain is a *symptom*. Systems thinking asks what *pattern of relationships* produces the pain — and which point in that pattern is worth intervening in. Most capstones fail not because the solution is bad but because it intervenes at a weak leverage point. A stronger diagram saves you weeks.
 
-The Design Sprint was invented at Google Ventures to take a startup from idea to tested prototype in five days. We're going to squeeze it into six hours, skip the user-testing half, and replace the fancy prototype with a paper sketch plus a written spec. That's enough.
+**Causal-loop diagrams (CLDs).** The basic grammar: nodes (variables that can go up or down), arrows (causal links), and polarity marks. An arrow labelled **+** means "moves in the same direction" (more A → more B). An arrow labelled **−** means "moves in the opposite direction" (more A → less B). Closed loops of arrows are either *reinforcing* (R — the loop amplifies change, a vicious or virtuous circle) or *balancing* (B — the loop stabilises around a goal).
 
-### The four decisions that unlock everything
+Example. A productivity-app capstone. Nodes: Number of unread emails, Anxiety, Times-per-day checking inbox, Real work hours, Output quality. Arrows: unread emails → + anxiety → + checking inbox → − unread emails (momentarily) → but checking inbox → − real work hours → − output quality → + anxiety. You now have an R-loop (anxiety feeding checking feeding anxiety) and a hidden cost (output quality collapsing). The symptom is "too many emails." The system is "an anxiety feedback loop that steals deep-work hours."
 
-Every good build rests on four decisions made in order. Skip one and you'll be lost by Day 19.
+Draw the loop and a new question appears: where do you intervene? Reducing email volume (the obvious fix) barely touches the loop because the driver is anxiety, not volume.
 
-| Decision | Bad answer | Good answer |
-|---|---|---|
-| Who | "Students" | "Second-year CS students at my college prepping for campus placements in the next 90 days" |
-| Pain | "Studying is hard" | "They waste 2 hours scrolling LeetCode without knowing which 5 problems actually match their target company" |
-| Job | "Help them study" | "Given a target company, surface a ranked 10-problem practice set and track what they solve" |
-| Done | "It works" | "One friend uses it for a week and says it replaced their random LeetCode routine" |
+**Meadows' leverage points.** Donella Meadows' famous essay lists twelve places to intervene in a system, ordered weakest to strongest. The weak ones are parameters (tweak a number — e.g., inbox limit). Middle ones are structures (buffer sizes, delays, information flows — e.g., surface only the three emails that matter today). The strong ones are goals, mindsets, and paradigms (redefine what "managing email" even means — e.g., treat the inbox as a search tool, not a to-do list).
 
-Notice the pattern: the bad answers are abstract nouns, the good answers are specific verbs and countable nouns. Your spec must read like the right column.
+You do not need to memorise all twelve. Remember the punchline: **parameters are the easiest lever and the weakest; paradigms are the hardest lever and the strongest.** Most capstones default to parameter fixes because they feel concrete. Look one level higher.
 
-### The one-day sprint, hour by hour
+For your capstone, after drawing the loop, ask: *at which node would a small change cause a disproportionate shift in the whole loop's behaviour?* That is your leverage point. Circle it in red.
 
-You don't need a conference room or sticky notes. You need a notebook, a timer, and discipline. Here's the compressed flow.
+**From systems to story.** Once you know the loop and the leverage point, you can tell the problem's story with unusual clarity. Humans remember stories, not bullet points. Two frameworks you will use for the rest of the workshop:
 
-```
-Read this, don't type it
+**SCQA (Situation, Complication, Question, Answer).** From Barbara Minto's *Pyramid Principle*. Start with a stable Situation the audience agrees with. Introduce the Complication that disrupts it. Surface the Question it raises. Deliver the Answer. Example, 60 seconds: *"Solo accountants spend 40% of their week inside email. (Situation.) But most of those checks are anxiety-driven, not information-driven — they check 47 times a day and find something actionable 3 times. (Complication.) So how do you quiet the inbox without missing the 3 that matter? (Question.) We triage incoming email by urgency using a model trained on the user's own past responses, surfacing only what needs action today. (Answer.)"* Notice how the Complication is a surprising fact — usually the insight from your interviews.
 
-HOUR 1  Map the problem       -> write the 4 decisions above, 1 page
-HOUR 2  Lightning demos       -> list 5 apps you love, steal 1 idea from each
-HOUR 3  Sketch the user flow  -> 6 boxes from "user opens app" to "user is happy"
-HOUR 4  Paper-prototype       -> draw 3-5 screens on paper, label buttons
-HOUR 5  Define "shipped"      -> 3 crisp success criteria, 1 anti-goal
-HOUR 6  Write the 1-page spec -> the document you'll hand to the AI on Day 21
-```
+**The ABT (And, But, Therefore).** Randy Olson's compression of story structure into three words. *"Freelancers need to bill clients **and** track hours. **But** existing tools are built for teams, so solo users juggle three apps. **Therefore** we built a single-screen workflow that collapses invoicing, tracking, and follow-up into one surface."* If your pitch cannot fit the AND-BUT-THEREFORE test, the story is still muddled.
 
-Lightning demos sound silly but they're the secret weapon. You don't need to invent a novel UI. If Duolingo's streak, Spotify's "Daily Mix," and Notion's slash-menu work, borrow them. Good artists steal.
+**The Pixar pitch formula.** *Once upon a time, [X]. Every day, [Y]. One day, [Z]. Because of that, [A]. Because of that, [B]. Until finally, [C].* Works for products too. Forces a real protagonist and a turning point. Use this when SCQA feels too corporate.
 
-### The user flow: six boxes, no more
+**Delivering the 60-second pitch.** Three rules. First, **earn the complication** — the insight should surprise a smart listener, not bore them. Second, **name one person** — not "users," but "Aisha, a solo accountant in Nairobi serving 40 small businesses." Specificity travels further than abstraction. Third, **close with a concrete ask or next step** — a beta user, a referral, an intro, a piece of feedback. A pitch that ends without an ask is a lecture.
 
-A user flow is just a horizontal chain of boxes showing what happens, in order. Not a wireframe. Not a mockup. Just nouns and verbs.
+**Great pitch examples.** YC Demo Day pitches (ycombinator.com/library) are master classes in compression. Watch how the best ones establish the Situation in under 10 seconds, hit the Complication with a number that makes the audience gasp, and deliver the Answer with a metric. Also study Napkin AI (napkin.ai) for how it auto-diagrams narrative text — a useful sanity check that your pitch has a real structure.
 
-```
-Read this, don't type it
+## Watch: Donella Meadows on leverage points
 
-[ Lands on site ] -> [ Uploads notes PDF ] -> [ AI indexes it ]
-      -> [ Asks a question ] -> [ Gets answer + source page ] -> [ Saves favorite ]
-```
+A short video on systems thinking and why small interventions at the right point cause cascading change, while large interventions at the wrong point accomplish nothing.
 
-That's a RAG app for lecture notes in one line. When you sit down in bolt.new on Day 21, you'll paste that exact chain as your first instruction. Clarity upstream, speed downstream.
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-### The "shipped" definition
+- The strongest leverage is almost never where it first appears to be.
+- Most interventions target parameters; most impact comes from mindsets.
+- Loops have delays — interventions often look like they failed before they work.
 
-Most student projects die because "done" is undefined. Fix that now. Write three success criteria that a stranger could verify in 60 seconds.
+## Lab: Causal-loop diagram + SCQA pitch (60 min)
 
-- A live URL anyone can open without login.
-- Upload a PDF and get back at least one correct answer with the source page.
-- One real classmate has used it and said something honest about it.
-
-Add one anti-goal — something you explicitly will NOT do. "I will not add user accounts." "I will not support non-English documents." Anti-goals are where scope creep goes to die.
-
-## Watch: The design sprint in 90 seconds
-
-Jake Knapp, who invented the Sprint at Google Ventures, walks through the full five-day version. Watch it and mentally compress — the principles matter, not the schedule.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Notice how the sprint starts with a long-term goal, not a feature.
-- Watch how the team prioritizes one user flow over many.
-- Observe how the prototype is intentionally cheap.
-
-## Lab: Write your 1-page capstone spec
-
-No AI tools today. This is the last think-before-build exercise. Grab paper, a timer, and go.
-
-1. Set a 60-minute timer. Open a fresh Google Doc titled "My Capstone Spec v1."
-2. Answer the four decisions from the table above. One sentence each. If you can't be specific, your "who" is wrong — narrow it.
-3. Open 5 apps you love on your phone. For each, write one sentence: "The idea I'm stealing is ___." You now have 5 design primitives to remix.
-4. On paper, draw the six-box user flow. Photograph it and paste it into the doc.
-5. Sketch 3 to 5 screens on paper — just boxes and labels. "Upload button here. Chat input here. Answer appears here with a source chip." Photograph and paste.
-6. Write three "shipped" criteria and one anti-goal. Make them testable by a stranger in under a minute.
-7. Paste today's prompt-of-the-day into ChatGPT or Claude. Answer its 5 questions inside your doc. Let it push back on your weak spots.
-8. Read the whole doc aloud to a friend or roommate. If they can't repeat back what you're building, rewrite until they can.
-
-Your deliverable is one Google Doc, one page, screenshots allowed. If it runs longer than a page you've added things you don't need yet.
+1. **Open Excalidraw (excalidraw.com)** and create a new canvas titled "[Your capstone] — CLD v1."
+2. **List 6-10 variables (5 min).** From your Day 13 interview insights, write down the nouns that change over time — anxiety, emails, hours, output, trust, churn, revenue, etc.
+3. **Draw the arrows (10 min).** Connect nodes with arrows. Label each arrow **+** (same direction) or **−** (opposite). Do not worry about beauty.
+4. **Close at least one loop (5 min).** Your diagram must contain at least one closed loop. Label it **R** (reinforcing) or **B** (balancing).
+5. **Find the leverage point (5 min).** Mark the node where a small shift would cascade hardest. Circle it in red. Write one sentence on *why* that node.
+6. **Write the SCQA pitch (15 min).** Using the leverage point, draft a 60-second pitch in SCQA form. Keep under 150 words. Name one specific user.
+7. **Run Claude (10 min).** Paste your pitch using today's Prompt of the Day. Pick the strongest of the three versions it generates — or merge.
+8. **Pair and deliver (10 min).** Pair with a classmate. Deliver your pitch verbally in 60 seconds. Let them time you. Swap. Give one note: where did the Complication land or fail?
 
 ## Quiz
 
-A short quiz on scoping will follow. Expect questions on the difference between a user, a pain, a job, and a definition of done. Expect one trick question about scope creep. There is a right answer and a tempting wrong answer — pick the one a stranger could verify.
+Three sanity checks. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
 
 ## Assignment
 
-Submit your 1-page spec as a public Google Doc link by tomorrow morning. It must contain: the four decisions, the six-box user flow, at least three paper-screen photos, three success criteria, and one anti-goal. If a classmate reads it and can't sketch roughly what you're building, revise it before Day 21.
+Submit three artifacts to the cohort channel: (1) a screenshot of your Excalidraw causal-loop diagram with the leverage point circled, (2) your 60-second SCQA pitch as plain text (under 150 words), (3) a 2-minute voice memo of you delivering the pitch out loud. Yes, out loud — we can hear the difference between a pitch that has been spoken and one that has only been typed.
 
-## Discuss: Defending your scope
+## Discuss: Where is the real leverage?
 
-- What was the single hardest thing to cut from your idea, and why did you cut it?
-- Whose specific problem is this — name one real person you know who fits the profile.
-- What's a "shipped" criterion you're tempted to fudge, and what would honest success actually look like?
-- Which app did you steal the most from, and what did you change?
-- What will you say no to in the next 7 days that your past self would have said yes to?
+- Which loop in your diagram was the biggest surprise? Did you know it was there before you drew it?
+- Is your leverage point a parameter, a structure, or a paradigm? Which level were you tempted to default to, and why?
+- Whose interest in your system is *not* aligned with solving the problem? (Every system has one.)
+- Which version of your pitch — analytical, emotional, contrarian — felt most like you? Which would travel furthest through a stranger?
+- What fact in your pitch would make a sceptic stop scrolling?

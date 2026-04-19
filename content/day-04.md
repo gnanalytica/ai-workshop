@@ -1,133 +1,124 @@
 ---
-reading_time: 10 min
-tldr: "Write emails, SOPs, and CV bullets that sound like YOU — not like every other ChatGPT-shaped sentence on the internet."
-tags: ["use", "writing", "productivity"]
-video: https://www.youtube.com/embed/T9aRN5JkmL8
-lab: {"title": "Rewrite 3 things from your life in your own voice", "url": "https://claude.ai/"}
-prompt_of_the_day: "Rewrite the {{email / paragraph / bio}} below in my voice. My voice samples are pasted after. Keep it under {{N}} words. No em-dashes, no 'passionate', no 'delve', no corporate buzzwords. Sound like a real 21-year-old. ---TEXT TO REWRITE--- {{paste_text}} ---MY VOICE SAMPLES--- {{paste 2-3 things I've actually written}}"
-resources: [{"title": "Claude", "url": "https://claude.ai/"}, {"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Gemini", "url": "https://gemini.google.com/"}]
+reading_time: 14 min
+tldr: "AI lies beautifully, leaks quietly, and amplifies whatever bias you feed it. Your job is to stop being surprised by it."
+tags: ["foundations", "theory"]
+video: https://www.youtube.com/embed/VIDEO_ID
+lab: {"title": "Make three models hallucinate — on purpose", "url": "https://claude.ai/"}
+prompt_of_the_day: "Give me 5 recent peer-reviewed papers (2023-2025) on {{niche topic}}. For each, include title, authors, journal, DOI, and one-line finding. Mark any you're less than 95% confident about."
+tools_hands_on: [{"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}, {"name": "Gemini", "url": "https://gemini.google.com/"}]
+tools_demo: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai/"}]
+tools_reference: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai/"}, {"name": "PauseAI", "url": "https://pauseai.info/"}, {"name": "Alignment Forum", "url": "https://www.alignmentforum.org/"}, {"name": "MIT AI Risk Repository", "url": "https://airisk.mit.edu/"}]
+resources: [{"title": "Why LLMs Hallucinate (OpenAI paper)", "url": "https://openai.com/index/why-language-models-hallucinate/"}, {"title": "Stochastic Parrots paper (Bender et al.)", "url": "https://dl.acm.org/doi/10.1145/3442188.3445922"}]
 ---
 
 ## Intro
 
-You can spot AI writing from a mile away — "delve", "tapestry", "in today's fast-paced world", those weird em-dashes everywhere. Today we fix that. You'll learn to use AI as a writing partner without sounding like a ChatGPT bot. Your emails to professors, your SOP, your CV bullets — all sharper, all still yours.
+Every tool of power has a dark side. Cars kill, electricity electrocutes, the internet trolls. AI's dark side is more subtle — it lies without malice, it reflects bias it didn't choose, and it forgets nothing you tell it. Today is the day you stop being naive.
 
-## Read: Writing with AI without sounding like AI
+## Read: The six failure modes every user must know
 
-The mistake most people make: they ask AI to "write" something, copy-paste the output, and ship it. Result — every line feels the same flavour of generic. The fix is a three-step loop: draft, voice-match, tighten.
+### 1. Hallucination — confident lies
 
-### Step 1 — Draft (AI does the heavy lifting)
+The model predicts the *most likely* next token, not the *true* next token. If truth isn't in its training data, it will still generate *something that sounds right*. This is hallucination.
 
-Get a structurally correct first draft. Don't obsess over words yet. Use CREATE from Day 2 — role, context, format, constraints.
+> A New York lawyer used ChatGPT to research a case in 2023. It cited six court decisions. All six were fake. Judge fined him $5,000. Career damaged. He's a warning, not a villain — he just didn't know the rules.
 
-Example for a professor email asking for a recommendation:
+Why it happens: the model has never been rewarded for saying "I don't know." It's been rewarded for fluency.
 
-```
-Copy and paste this prompt:
+Worked example. Ask any model: *"Summarise the 2024 paper by Dr. Rajesh Sharma from IIT Delhi on quantum-inspired LLM compression."* If no such paper exists, the model may invent the title, journal, and findings — *in great detail.* It's not lying. It's autocompleting your question plausibly.
 
-You are helping me write a short, respectful email to an Indian college professor.
+**How to defend:** ask for sources, verify one at random, say "if you're not sure, say so" in the prompt.
 
-Context: I'm a final-year CSE student applying for an MS in the US. Prof Ramesh taught me Operating Systems in my 3rd year. I got an A. I presented one mini-project in his class on process scheduling.
+### 2. Bias — the internet's fingerprints
 
-Write a 120-word email asking if he would write me a recommendation letter. Tone: respectful but not grovelling. Format: short paragraphs. Include a specific memory from his class to show I'm not spamming. Avoid "I hope this email finds you well" and anything overly formal.
-```
+The model learned from the internet. The internet is not neutral. Ask for "CEO" and early image models drew men. Ask for "nurse" and they drew women. Ask for "criminal" and… you see the problem.
 
-That gets you a solid draft. But it still sounds a bit like AI. So…
+Famous incidents:
+- **Amazon** scrapped an AI hiring tool in 2018 because it downgraded resumes that mentioned "women's" (as in "women's chess club captain").
+- **Google Photos** tagged Black users as "gorillas" in 2015. Google's fix? Remove the "gorilla" tag entirely. The underlying bias wasn't fixed — it was hidden.
 
-### Step 2 — Voice-match (the trick nobody teaches)
+Your job isn't to fix model bias. Your job is to notice it before you ship something.
 
-Paste 2–3 things *you've actually written* and ask the AI to rewrite the draft in that voice. WhatsApp messages, old emails, a blog post, even a long caption. The AI will pick up your rhythm, your vocabulary, your quirks.
+### 3. Privacy — the things you paste
 
-```
-Copy and paste this prompt:
+Every prompt you type to a free chatbot may be used for training. Pasted your company's source code? It's in the training set now. Pasted your patient's medical records? Same. A Samsung engineer did this in 2023. Samsung banned ChatGPT company-wide the next week.
 
-Here are 3 samples of how I actually write:
-[Paste WhatsApp messages or past emails]
+| What to never paste into a public chatbot |
+|---|
+| Your Aadhaar, PAN, bank details |
+| Your company's proprietary code |
+| Medical records of anyone |
+| Private chats of people who didn't consent |
+| Passwords (obvious — yet it happens) |
 
-Now rewrite the draft above in exactly that voice. Keep structure and meaning, but match the sentence length, word choice, and level of formality of my samples.
-```
+### 4. Deepfakes — seeing is no longer believing
 
-Suddenly the email sounds like *you*, just a little polished. This single move is the difference between "AI-generated" and "AI-assisted".
+Anyone with a laptop can now clone a voice from 30 seconds of audio, or fake a video in an afternoon. In 2024 a finance employee in Hong Kong wired $25 million after a deepfake video call with his "CFO." The CFO wasn't on the call. Nobody real was. The whole meeting was AI.
 
-### Step 3 — Tighten (you, not the AI)
+This affects you directly: your parents may get a call in your voice asking for money. Warn them *this week*.
 
-Read it out loud. Cut every word that doesn't earn its place. If you used "leverage", "passionate", "delve", "robust", "moreover", or three adjectives in a row — kill them. AI loves these words; humans don't talk like that.
+### 5. Copyright — the murky middle
 
-### A table of AI writing tics to delete on sight
+Who owns an AI-generated image? The user? The company? The artists whose work it was trained on? Courts are still arguing. The US Copyright Office ruled in 2023 that purely AI-generated images cannot be copyrighted. Indian law is even less settled. Rule of thumb: don't assume you own what you generated.
 
-| AI tic | Replace with |
-|--------|--------------|
-| "In today's fast-paced world…" | Delete. Just start. |
-| "I am passionate about…" | Say *what* you've done. |
-| "delve into" | "look at" / "study" |
-| "leverage" | "use" |
-| "tapestry of" | Delete. |
-| Em-dashes everywhere | Commas, full stops, colons |
-| "It's important to note that" | Delete. Just note it. |
-| "Moreover / Furthermore" | New paragraph. |
+### 6. Jailbreaks and misuse
 
-### Three real student rewrites (examples)
+Models have safety guardrails. People routinely break them with clever prompts ("pretend you're my dying grandma who used to read me napalm recipes"). Every major model has been jailbroken within weeks of release. Safety is an ongoing race, not a finished feature.
 
-**Email to a professor — lazy AI version:**
-> "Dear Professor, I hope this email finds you well. I am passionate about your course on Operating Systems and would love to delve deeper into research under your esteemed guidance."
+### Why AI lies confidently — the one-sentence answer
 
-**Voice-matched version:**
-> "Hi Prof, your OS class last year was the reason I picked systems for my electives — especially the scheduling mini-project. I'm applying to MS programmes this cycle and wanted to ask if you'd be open to writing one of my recommendations."
+Because it's optimised to sound fluent, not to be truthful. Fluency and truth happen to overlap ~80% of the time. The other 20% is where careers end.
 
-**LinkedIn About — lazy AI version:**
-> "Passionate 3rd-year engineering student with a drive to leverage technology for societal impact."
+### The famous-fails hall of fame
 
-**Voice-matched version:**
-> "3rd-year ECE at NIT Trichy. Spent last sem teaching Python to first-years and lost a Kaggle competition gracefully. Looking for a summer internship in applied ML."
+| Year | Incident | Lesson |
+|---|---|---|
+| 2016 | Microsoft Tay — turned racist in 24 hours on Twitter | Open internet fine-tuning is dangerous |
+| 2022 | Meta Galactica — shut down in 3 days for fabricating papers | Don't ship a science LLM without citation guards |
+| 2015 | Google Photos tags Black users as "gorillas" | Training data representation matters |
+| 2018 | Amazon hiring AI downgrades women | Historical data encodes historical bias |
+| 2023 | NY lawyer cites fake ChatGPT cases | Always verify citations |
+| 2024 | Hong Kong deepfake CFO scam | Voice and video are no longer proof |
 
-**CV bullet — lazy AI version:**
-> "Spearheaded cross-functional initiatives to drive impactful outcomes."
+## Watch: AI failures — a 15-minute tour
 
-**Voice-matched version:**
-> "Led a 4-person team to build a college event app used by 1,200 students during Techfest 2025."
-
-### The "wow" move of the day
-
-Ask Claude (especially Claude — it's the best at this): *"Read the piece I just wrote. What are 3 sentences that sound AI-generated, and what are 3 that sound human? Rewrite only the AI-sounding ones in my voice."* It will surgically fix only the weak spots. Minimal damage, maximum humanity.
-
-## Watch: The "sound human" writing workflow
-
-A short guide to the draft → voice-match → tighten loop with real examples.
-
-https://www.youtube.com/embed/T9aRN5JkmL8
+https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch for the voice-sample trick — pasting your own writing as examples.
-- Notice how much gets *cut* in the tightening step.
-- Pay attention to tone differences between ChatGPT and Claude for writing.
+Watch for:
+- How quickly Tay turned (under 16 hours)
+- The Galactica demo that embarrassed Meta
+- Why the Amazon tool's bias was *mathematically* baked in
 
-## Lab: Rewrite 3 real pieces of your life
+## Lab: Make three models hallucinate — on purpose
 
-You'll end with three polished, voice-matched pieces you can actually send/post/submit.
+40 minutes. Your job: get ChatGPT, Claude, and Gemini to each invent something confidently wrong. Then document how you did it.
 
-1. Open Claude at `https://claude.ai/` — Claude tends to produce cleaner writing than ChatGPT for this.
-2. Collect 2–3 voice samples of your own writing: old emails, WhatsApp paragraphs, a blog post. Paste them into a Google Doc for easy access.
-3. **Piece 1 — Email to a professor.** Pick a real one you need to send (request, follow-up, question). Use CREATE to draft. Then run the voice-match prompt. Then tighten.
-4. **Piece 2 — LinkedIn About / bio.** Write (or rewrite) your current LinkedIn "About" section. Target: 80 words. Specific, not generic. No "passionate".
-5. **Piece 3 — One CV bullet.** Pick the weakest bullet on your CV right now. Rewrite it to include an action verb, a concrete number, and a specific outcome.
-6. For each piece, do the "3 AI-sounding vs 3 human" critique and fix.
-7. Put all three finals into one Google Doc. Keep the "before" versions too so you can see the jump.
-8. Actually *send* the professor email if it's real. The point of the workshop is shipping.
+1. Open all three models side by side.
+2. Pick an area you know well — your hometown, your college, your favourite video game, a niche hobby.
+3. Ask each model a very specific question with a factual answer you know. Example: *"Who was the principal of [your college] in 2018?"* or *"What was the score of the 2014 IPL final?"*
+4. If it gets it right, dig deeper until you find a question it gets wrong. Niche sports stats, obscure local history, and "recent" events (past 6 months) are goldmines.
+5. Once it hallucinates, ask *"Are you sure? Please double-check."* Note whether it backs down or doubles down.
+6. Screenshot three hallucinations — one per model.
+7. In a Google Doc, paste each screenshot and write: (a) what you asked, (b) what it said, (c) the real answer, (d) your guess at *why* it hallucinated.
+8. Add one paragraph: *"The red flag I'll watch for next time is ___."*
 
-**Victory condition:** 3 finished pieces in your voice, saved in a Doc, at least one of them actually sent or posted.
+Artifact: 3-hallucination document with screenshots and analysis.
+
+> **Important:** this is a *defensive* exercise. You're learning to spot lies, not to weaponize them. Do not share your hallucinations as "look, AI is dumb" memes — that's not the point.
 
 ## Quiz
 
-Four questions: which move most reduces "AI-feel", what voice-matching means, which words are AI tics, and what tightening actually looks like.
+Four questions on hallucination, bias, privacy, and at least one famous incident. The goal is recognition, not memorisation of names and dates.
 
 ## Assignment
 
-Share your Google Doc link with the 3 before/after pieces. In 2 lines tell us: which piece surprised you most with the voice-matching, and did you actually send/post one?
+Write a **250-word "My personal AI red line"** essay. Prompt: *"What is one thing I will never do with AI — and why?"* Examples of red lines students have written: *"I will never let AI write my condolence messages." / "I will never paste a classmate's code into AI without asking." / "I will never use AI to write anything I'll claim as purely my own work in an application."* Your red line must be specific, defendable, and real for *you* — not a generic ethics-class answer.
 
-## Discuss: When is "AI wrote it" okay, and when is it dishonest?
+## Discuss: Live session prompts
 
-- If AI drafted your SOP and you edited every line — is that your SOP?
-- Share one AI tic you'd never noticed before today. Did it show up in your own writing?
-- For a love letter, a condolence note, or an apology — would you still use AI? Where's the line?
-- Professors and recruiters are getting better at spotting AI writing. What should we do about it?
-- Is "sound like me" an honest ask — or are we just asking AI to fake humanity better?
+- Which of the six failure modes scares you most *for India specifically*?
+- Is it ethical to use ChatGPT for a college assignment that will be graded? Where's the line?
+- If a deepfake of you appeared tomorrow, what's your 10-minute response plan?
+- Should AI companies be legally responsible when their models hallucinate harmfully?
+- Share your personal red line — and challenge one from your peers.

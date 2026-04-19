@@ -69,7 +69,8 @@
   .sub{color:var(--muted);max-width:460px;font-size:15.5px;line-height:1.55}
 
   /* WEEKS */
-  .weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .weeks{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(min-width:1400px){.weeks{grid-template-columns:repeat(6,1fr)}}
   .week{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
   .week:hover{transform:translateY(-4px);border-color:#3a3a4e}
   .week .bar{position:absolute;inset:0 0 auto 0;height:3px}
@@ -77,6 +78,8 @@
   .w2 .bar{background:linear-gradient(90deg,#38bdf8,#8b5cf6)}
   .w3 .bar{background:linear-gradient(90deg,#8b5cf6,#ff6b6b)}
   .w4 .bar{background:linear-gradient(90deg,#ff6b6b,#ffb86b)}
+  .w5 .bar{background:linear-gradient(90deg,#ffb86b,#ffe066)}
+  .w6 .bar{background:linear-gradient(90deg,#ffe066,#c3ff36)}
   .w-n{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);margin-top:8px}
   .w-t{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:8px 0 10px}
   .w-d{font-size:13.5px;color:#b8b8c4;line-height:1.55;margin-bottom:16px}
@@ -239,31 +242,45 @@
     <div class="weeks">
       <div class="week w1">
         <div class="bar"></div>
-        <div class="w-n">WEEK 01 · DAYS 1–7</div>
-        <h3 class="w-t">Use</h3>
-        <p class="w-d">Get a real AI win on Day 1. Consumer-tool mastery — prompt, study, write, create — in ~15 min a day. No setup, no code.</p>
-        <div class="w-tags"><span class="mini">Hooks</span><span class="mini">Prompts</span><span class="mini">Wins</span></div>
+        <div class="w-n">WEEK 01 · DAYS 1–5</div>
+        <h3 class="w-t">Foundations</h3>
+        <p class="w-d">What AI is, how LLMs work, the open-model landscape, Indian AI, prompts, and a full-day ethics workshop on where AI breaks.</p>
+        <div class="w-tags"><span class="mini">Theory</span><span class="mini">Ethics</span><span class="mini">Landscape</span></div>
       </div>
       <div class="week w2">
         <div class="bar"></div>
-        <div class="w-n">WEEK 02 · DAYS 8–14</div>
-        <h3 class="w-t">Think</h3>
-        <p class="w-d">Problem framing, design thinking, user empathy, systems and computational thinking. Off-screen. Pick the problem you'll ship.</p>
-        <div class="w-tags"><span class="mini">Design</span><span class="mini">Framing</span><span class="mini">Systems</span></div>
+        <div class="w-n">WEEK 02 · DAYS 6–10</div>
+        <h3 class="w-t">Exposure → Capstone kickoff</h3>
+        <p class="w-d">Hands-on with chat, research, creativity, voice, video, presentations. Friday: ideathon 1 — lock in your capstone.</p>
+        <div class="w-tags"><span class="mini">Tools</span><span class="mini">Ideathon</span><span class="mini">Capstone</span></div>
       </div>
       <div class="week w3">
         <div class="bar"></div>
-        <div class="w-n">WEEK 03 · DAYS 15–21</div>
-        <h3 class="w-t">Build</h3>
-        <p class="w-d">How AI works under the hood, running models locally, prompting deeper, RAG, and vibe-coding your first AI app end-to-end.</p>
-        <div class="w-tags"><span class="mini">LLMs</span><span class="mini">RAG</span><span class="mini">Vibe code</span></div>
+        <div class="w-n">WEEK 03 · DAYS 11–15</div>
+        <h3 class="w-t">Think & Tell · applied to YOUR capstone</h3>
+        <p class="w-d">Problem framing, design thinking, user empathy, systems + storytelling. End-of-week: locked 1-page spec + wireframes.</p>
+        <div class="w-tags"><span class="mini">Design</span><span class="mini">Interviews</span><span class="mini">Sprint</span></div>
       </div>
       <div class="week w4">
         <div class="bar"></div>
-        <div class="w-n">WEEK 04 · DAYS 22–30</div>
-        <h3 class="w-t">Ship</h3>
-        <p class="w-d">From chatbots to agents, MCP, UX-for-AI, product thinking, storytelling — then build, demo and ship your capstone.</p>
-        <div class="w-tags"><span class="mini">Agents</span><span class="mini">Product</span><span class="mini">Capstone</span></div>
+        <div class="w-n">WEEK 04 · DAYS 16–20</div>
+        <h3 class="w-t">Dev + AI Build</h3>
+        <p class="w-d">GitHub + localhost + APIs, local LLMs, prompting + evals, embeddings + RAG, context engineering (CLAUDE.md / AGENTS.md), automation.</p>
+        <div class="w-tags"><span class="mini">RAG</span><span class="mini">Context-eng</span><span class="mini">n8n</span></div>
+      </div>
+      <div class="week w5">
+        <div class="bar"></div>
+        <div class="w-n">WEEK 05 · DAYS 21–25</div>
+        <h3 class="w-t">Build, Ship, Agentic</h3>
+        <p class="w-d">Vibe-code your capstone, deploy live, UX for AI, GEO. Agents, MCP, multi-agent, Swarms, Skills, Plugins. Friday mini-demo.</p>
+        <div class="w-tags"><span class="mini">Vibe code</span><span class="mini">Agents</span><span class="mini">MCP</span></div>
+      </div>
+      <div class="week w6">
+        <div class="bar"></div>
+        <div class="w-n">WEEK 06 · DAYS 26–30</div>
+        <h3 class="w-t">Launch</h3>
+        <p class="w-d">Light lectures — ethics deep, benchmarks, how to keep up with AI. Capstone polish, rehearsal, and live demo day.</p>
+        <div class="w-tags"><span class="mini">Ethics</span><span class="mini">Benchmarks</span><span class="mini">Demo</span></div>
       </div>
     </div>
   </div>

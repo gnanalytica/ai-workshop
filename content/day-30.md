@@ -1,148 +1,88 @@
 ---
-reading_time: 14 min
-tldr: "Demo day. Stand up, tell the story, show the thing, take the hits. Then keep going."
-tags: ["capstone", "pitch", "storytelling"]
+reading_time: 10 min
+tldr: "Thirty days ago you didn't know where to start. Today you ship. Go time."
+tags: ["launch", "demo-day", "graduation", "capstone"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Demo prep checklist and dress rehearsal", "url": "https://www.ycombinator.com/library/"}
-resources: [{"title": "YC: How to present to investors", "url": "https://www.ycombinator.com/library/6a-how-to-present-to-investors"}, {"title": "Figma Slides", "url": "https://www.figma.com/slides/"}, {"title": "Loom", "url": "https://www.loom.com/"}, {"title": "SVPG", "url": "https://www.svpg.com/"}]
+lab: {"title": "THE DEMO — live panel", "url": "/showcase.html"}
+prompt_of_the_day: "Write my 200-word 'what I'll do next' statement. My capstone is {{capstone}}, the hardest thing I learned was {{lesson}}, and my next 30-day goal is {{goal}}. Voice: confident, specific, no hype."
+tools_hands_on: [{"name": "Your live capstone URL", "url": "/showcase.html"}, {"name": "Showcase page", "url": "/showcase.html"}, {"name": "Certificate", "url": "/certificate.html"}]
+tools_demo: [{"name": "Instructor state-of-the-cohort", "url": "/showcase.html"}, {"name": "Awards ceremony", "url": "/certificate.html"}]
+tools_reference: [{"name": "Certificate (auto-issued at 30/30)", "url": "/certificate.html"}, {"name": "Cohort showcase", "url": "/showcase.html"}]
+resources: [{"name": "Your capstone repo", "url": "/showcase.html"}, {"name": "Your showcase entry", "url": "/showcase.html"}]
 ---
 
 ## Intro
 
-Thirty days ago you couldn't explain what a token was. Today you ship. The day has three acts — final polish, dress rehearsal, the live show — and then the part that actually matters, which is what you do after the cohort ends. Read this in the morning, come back to it before the demo.
+Thirty days ago, most of you had never written a prompt you were proud of. You didn't know RAG from an agent loop, didn't have a point of view on open vs closed weights, didn't know which benchmarks to trust. You showed up anyway.
 
-## Read: Demo day, from setup to afterparty
+Today you ship. In front of a panel. With a URL anyone can open. That is not a small thing. That is the thing.
 
-### The morning: polish, don't rebuild
+Look around your cohort channel right now. Every one of those names put in the hours next to you. Message one of them and say thank you. We'll wait.
 
-You have three polish items from last night's retro. That is the list. Do not add a fourth. Do not refactor. Do not chase the clever idea that came to you in the shower — write it in `LATER.md` and move on.
+Today is short on lecture and long on you. Let's go.
 
-The three polish items should be, in order:
+## Read: Go Time (400 words)
 
-1. The **opening moment** of the demo — the first 10 seconds a user sees.
-2. The **one thing** most likely to break live.
-3. The **copy** on the hero screen — labels, empty states, error messages. Proofread twice.
+The structure you have rehearsed works. Trust it.
 
-If all three are done before lunch, spend the rest of the morning rehearsing, not coding.
+**30-second hook.** Name the pain, name the human, make them lean in. The panel is seeing eight demos today. Yours needs to land in the first sentence or it won't land at all.
 
-### Pitch structure, recapped
+**2-minute story.** One end-to-end path. One real moment of value. No settings screens. No empty states. Pre-recorded backup ready on a second tab in case something breaks. If something does break, smile, say "of course, on stage" — laugh with them, switch tabs, keep going. Grace under failure is what the panel remembers.
 
-The four-beat spine from Day 27:
+**30-second ask.** Specific. Name it. Users, hires, capital, collaborators, feedback — whichever you actually want. Vague asks get forgotten. Sharp asks get followed up on Monday morning.
 
-1. **Problem** — a specific person, a specific situation.
-2. **Insight** — what changed that makes this possible now.
-3. **Demo** — live, 2–3 minutes of the thinnest slice working.
-4. **What's next** — one real milestone, not a roadmap.
+### During Q&A
 
-5 minutes total. Leave time for questions. If your team has three people, one opens and narrates, one drives the demo, one fields questions. Decide who does what **before** the dress rehearsal, not during.
+Listen to the whole question. Pause one beat. Answer the question that was actually asked, then bridge to your strongest point. If you don't know, say "I don't know yet — here's how I'd find out." That answer scores higher than a bluff every single time.
 
-### Handling the panel
+### After your demo
 
-Three kinds of questions, three prepared shapes of answer:
+Stay in the room. Watch every other demo. Applaud loudly. Cohorts that cheer each other on build careers together. Some of the people sitting next to you today will be your co-founders, your early hires, your best references, your lifelong group chat. That is not workshop sentimentality. That is the actual long-run value of showing up for 30 days.
 
-| Question type | Example | Answer shape |
-|---|---|---|
-| Challenge | "How's this different from tool X?" | Name the one job you do better, not three. |
-| Depth | "What's your eval?" | Number + method + honest limitation. |
-| Trap | "What if the model lies?" | Name the mitigation + the remaining risk. |
+### The certificate
 
-On anything you don't know: **"I don't know — here's how I'd find out."** That beats every other answer you could improvise.
+When your 30/30 checkpoint completes today, certificate.html auto-issues. Download it. Print it if you want. But know this: the certificate is a proof-of-finish, not a proof-of-skill. The proof-of-skill is the live URL in your demo. That URL is your portfolio now.
 
-### When the live demo fails
+### One last thing
 
-It will sometimes. In order:
+The field does not stop moving because you graduated. Tomorrow morning, open your Day 28 pipeline. Friday, do your first 30-minute signal read. Next month, ship version 2. The workshop ends today. The work doesn't.
 
-1. Don't apologize; narrate. "That call took longer than usual — while it runs, here's what you're about to see…"
-2. After 8 seconds of nothing, **cut to the recording**. Say "to save time, here's the same flow from this morning." No one minds.
-3. If the whole demo dies, pivot to a whiteboard: walk through the screens verbally. A demo-less demo loses a point, not the room.
+## Watch: State of the Cohort (10 min)
 
-### After the cohort ends
-
-The panel's verdict is not the point. The point is what you do in the next 30 days. Three paths and all are legitimate:
-
-- **Ship for real.** Put the capstone in front of 10 non-classmate users. Collect bug reports. Charge $5.
-- **Turn it into portfolio.** Clean repo, clean README, a Loom video at the top. One shareable URL. This wins internships.
-- **Shelve it and change direction.** Take the skill, drop the project. That is also fine.
-
-What you should not do: keep the repo private and move on. The work only compounds if someone can see it.
-
-## Demo prep checklist
-
-Tick every box before you walk on stage. This is today's "lab."
-
-```
-TECHNICAL
-[ ] Repo main branch builds from a clean clone
-[ ] README has a one-line install + one-line run
-[ ] Eval passes at or above target rate; number in README
-[ ] Demo laptop is plugged in (not on battery)
-[ ] Airplane mode WiFi plan confirmed with organizers
-[ ] Plan B recording is on the laptop, not in the cloud
-[ ] All tabs pre-opened; notifications silenced
-[ ] Prepared prompts in a scratchpad, ready to paste
-[ ] Two full dry-runs done today
-
-DECK
-[ ] Three slides, named and timed
-[ ] Problem slide leads with a named person
-[ ] Solution slide has one sentence, not three
-[ ] "What's next" has a date and a metric
-[ ] Deck also exists as a PDF on the laptop
-
-TEAM
-[ ] Roles decided: narrator / driver / Q&A lead
-[ ] Who answers each of the three question types
-[ ] Dress code agreed (consistency > formality)
-[ ] Water on stage, phone on silent
-
-AFTER
-[ ] Repo set to public before demo
-[ ] Demo recording uploaded (Loom or YouTube unlisted)
-[ ] Cohort channel post drafted: link + 3-line elevator
-[ ] LinkedIn post drafted (or actively declined)
-```
-
-### Dress rehearsal — 30 minutes, non-negotiable
-
-Do this once, two hours before the showcase.
-
-1. Set a 5-minute timer. Run the full pitch + demo, standing, projected on a second screen if possible.
-2. Have a non-teammate watch. Ask them: what was the single muddled sentence?
-3. Re-run. This time have them ask three hard questions right after. Answer each in under 30 seconds.
-4. Record the second run. Watch the first 60 seconds back. That's your opener — it either lands or it doesn't.
-5. Fix only the opener and the single muddled sentence. Don't touch the rest.
-
-### The showcase itself
-
-Five minutes is shorter than you think. It is also longer than you think if you lose the room. Three tactics that help:
-
-- **Land the first laugh or nod** in under 30 seconds. A specific, slightly self-deprecating detail works better than a joke.
-- **Look at the back of the room** during verbal beats; look at the screen only when pointing at something.
-- **End on a full-stop sentence**, not a question. "That's what we built. Happy to dig into any of it." is a clean landing.
-
-## Watch: Demo day, done well
-
-A montage-plus-commentary of 6 student demos from a prior cohort — three that worked, three that stumbled. The stumbles are the lesson.
-
-https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Notice which opener hooks in the first 10 seconds.
-- Watch how the strongest team handles a mid-demo hiccup.
-- Pay attention to the "what's next" slide — the honest ones beat the ambitious ones.
+Instructor opens Demo Day with a look back at what this cohort shipped — by the numbers, by the stories, by the names.
 
-## Assignment
+## Lab: THE DEMO (live panel)
 
-After the showcase, write **one short reflection (400–600 words)**: if you ran this cohort for yourself, what would you change about the last 30 days? Be specific. Which day was underused, which was overloaded, which concept landed because of something the course didn't deserve credit for. What would you cut, what would you double, what would you add that no one taught you here.
+- 5 minutes per team, rotating order drawn live.
+- 4 minutes demo, 1 minute panel Q&A.
+- Panel: instructor + 2 guest judges.
+- Awards ceremony immediately after the last demo.
+- Certificate auto-issues on certificate.html for everyone at 30/30.
+- Group photo. Non-negotiable.
 
-Post the reflection publicly — on your own blog, GitHub, or LinkedIn. Link it in the cohort channel. This is the last deliverable. It matters more than the demo.
+## Quiz
 
-No quiz today.
+1. What are the three beats of your demo? (Say them out loud before you go on.)
+2. What do you do if the live API fails on stage?
+3. What is your specific ask?
+4. Where does your certificate auto-issue?
+5. When is your first post-cohort signal-read session?
 
-## Discuss: What you leave with
+## Assignment — FINAL SUBMISSION
 
-- Pick one moment from the 30 days when your understanding actually shifted. What caused it?
-- What will you build next week, without anyone grading you?
-- The weakest day of the course — what would have made it stronger?
-- Who on your team raised your game? Name the specific thing they did.
-- In a year, when someone asks "what did you do in 2026?" — what's the one-sentence answer, and how does what you built this week fit into it?
+Ship one submission containing:
+- **Live capstone URL** (deployed, publicly accessible)
+- **Repo link** (README with run instructions)
+- **Pitch deck** (5-8 slides max)
+- **30-second teaser video** (Loom or similar)
+- **200-word "What I'll do next"** — concrete, dated, shippable goal for the next 30 days
+
+Post in the cohort channel. Tag two people you want to keep building with.
+
+## Discuss: What You'll Carry Forward
+
+One paragraph. What you believed about AI on Day 1 that you no longer believe. What you believe now that you didn't then. What you'll be working on in six months. Read every single other post before you close the tab tonight — that is how you leave.
+
+Congratulations. You shipped. See you on the internet.

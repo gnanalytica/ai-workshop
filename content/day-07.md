@@ -1,145 +1,87 @@
 ---
-reading_time: 10 min
-tldr: "Look back at 6 real AI wins. Build your personal AI stack. Reflect. Next week we stop using tools and start thinking like builders."
-tags: ["use", "reflection", "kickoff"]
-video: https://www.youtube.com/embed/5e8u8e5Gz9U
-lab: {"title": "Build your personal AI stack worksheet", "url": "https://chat.openai.com/"}
-prompt_of_the_day: "Here are 6 AI workflows I tried this week: {{list them}}. Based on my life as a {{year, branch, college}} student, which 3 should I build into a weekly habit, and what's a realistic weekly cadence for each? Be blunt and specific."
-resources: [{"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"title": "Gamma", "url": "https://gamma.app/"}, {"title": "ImageFX", "url": "https://labs.google/fx/tools/image-fx"}]
+reading_time: 14 min
+tldr: "Google gives you links. AI research tools give you a grounded answer with citations you can actually trust."
+tags: ["exposure", "tools"]
+video: https://www.youtube.com/embed/VIDEO_ID
+lab: {"title": "Ship a 1-page research brief on your capstone domain", "url": "https://www.perplexity.ai"}
+prompt_of_the_day: "Act as a senior analyst. Produce a research brief on {{topic}} for a capstone feasibility review. Structure: (1) problem in one paragraph, (2) 5 recent developments (last 18 months) with citations, (3) 3 existing solutions + their gaps, (4) 3 open questions worth a student project, (5) my 60-second verdict. Cite every factual claim inline."
+tools_hands_on: [{"name": "Perplexity", "url": "https://www.perplexity.ai"}, {"name": "NotebookLM", "url": "https://notebooklm.google.com"}, {"name": "Gemini Deep Research", "url": "https://gemini.google.com"}]
+tools_demo: [{"name": "NotebookLM Audio Overview", "url": "https://notebooklm.google.com"}]
+tools_reference: [{"name": "Elicit", "url": "https://elicit.com"}, {"name": "Consensus", "url": "https://consensus.app"}, {"name": "SciSpace", "url": "https://scispace.com"}, {"name": "Research Rabbit", "url": "https://researchrabbit.ai"}, {"name": "Connected Papers", "url": "https://www.connectedpapers.com"}, {"name": "Scholarcy", "url": "https://www.scholarcy.com"}]
+resources: [{"name": "Perplexity Pro Search docs", "url": "https://www.perplexity.ai"}, {"name": "NotebookLM help", "url": "https://notebooklm.google.com"}]
 ---
 
 ## Intro
 
-Seven days ago you may never have uploaded a PDF to an AI. Today you've built a poster, run a mock interview, written in your own voice, and turned a 20-page doc into a quiz. Time to pause, look at what worked, and design the tiny habits that will carry these wins into the rest of the year.
+Yesterday you built a thinking partner. Today you give it a library card. By the end of today, you will never again start a capstone idea with a raw Google search. You will start with a research brief, grounded in citations, that took you 20 minutes instead of two afternoons.
 
-## Read: Your Week 1 in review
+## Read: Search is dead. Long live grounded research.
 
-Six days, six concrete skills. Let's count them back.
+For twenty years, research meant: Google, click ten blue links, skim ten tabs, take notes. The bottleneck was not finding information; it was synthesizing it. In 2026 that synthesis step is free.
 
-| Day | Skill | Artefact you produced |
-|-----|-------|----------------------|
-| 1 | First wins: summarise, explain, brainstorm | 3-screenshot collage |
-| 2 | CREATE prompting framework | Prompt-upgrade Google Doc |
-| 3 | Study with NotebookLM | 5-slide summary + quiz |
-| 4 | Writing in your own voice | 3 rewritten pieces |
-| 5 | AI creativity: images + ideas | Hostel event poster |
-| 6 | Daily ops: decks, CSVs, interviews | Gamma deck + mock feedback |
+**Keyword search vs AI search.** A keyword search returns documents that contain your words. An AI search reads those documents and writes you an answer. The difference matters because most of your questions are not "find me the document"; they are "tell me what is going on". A student Googling "best battery chemistry for campus solar cart" gets ads and old blog posts. The same student on Perplexity gets a 400-word synthesis of LiFePO4 vs NMC tradeoffs with six citations from 2025 papers and one from a Reddit thread flagged as anecdotal.
 
-Look at that list. Seven days ago it didn't exist.
+**Grounding and citations: the only thing separating research from hallucination.** A grounded model cannot invent a claim; every sentence must map to a retrieved source. The user interface shows the little [1][2][3] markers. Click them. Always click them. About 10% of the time the source does not actually say what the model claims; that is your signal to rewrite the claim or drop it. Treat citations as evidence, not decoration.
 
-### Which wins actually saved you the most time?
+**The three research tools you need, and when.**
 
-There's a rough pattern across most students in this workshop. Be honest with yourself and circle what's true for you:
+| Tool | Best for | Output | Watch out for |
+|------|----------|--------|---------------|
+| Perplexity | Fast web-grounded Q&A, news, comparisons | Paragraph + inline cites | Free tier Pro Search limit |
+| NotebookLM | Synthesizing your own PDFs, papers, YouTube links | Mind maps, FAQs, audio podcasts | Only your uploaded sources |
+| Gemini Deep Research | Multi-hour agent runs over 100+ sources | 10–20 page report | Slow, use for big questions |
 
-- **If you're a heavy reader:** Day 3 (NotebookLM) probably saved the most time. Make it a weekly ritual before every class.
-- **If you're placement-focused:** Day 6 (CV + mock interviews) wins. Make it 2x a week leading up to interviews.
-- **If you write a lot:** Day 4 (voice-matched writing) is your daily driver.
-- **If you run events / do design work:** Day 5 (images) cuts days off your schedule.
-- **If you do a lot of group projects:** Day 2 (good prompts) + Day 6 (decks) is the combo.
+Perplexity is your quick-draw. Type a question, get a sourced answer in 10 seconds. Enable **Pro Search** (2–3 free runs/day) for harder questions; it plans sub-queries, searches each, and synthesizes. Enable **Deep Research** for the big one-hour crawl.
 
-Not all six will become habits. That's fine. Two out of six used weekly is a huge win.
+NotebookLM is Google's underrated weapon. Upload up to 50 sources (PDFs, YouTube URLs, pasted text, Google Docs). It builds a private index you can ask, and refuses to answer from outside those sources. This is perfect for a literature review: upload 10 papers, ask "what is the consensus view on <X> and who disagrees?" — every answer is grounded in the exact source and paragraph. It also generates **audio overviews** (two AI hosts discussing your sources in podcast form, excellent for commute listening) and **mind maps** that give you an at-a-glance structure.
 
-### Your personal AI stack
+Gemini Deep Research is the heaviest hitter. You give it a prompt, it plans a research agenda (30–60 steps), shows you the plan, you edit it, and then it runs for 10–20 minutes crawling the open web. The output is a long structured report. Use this once or twice a week, not ten times a day.
 
-A "stack" is just the tools you *actually* open every week, plus the prompts you reuse. Keep it small. Three tools and five prompts beat ten tools and zero habits.
+**Deep Research methodology: how these agents actually work.** Good multi-step research is four loops: (1) clarify the question, (2) decompose into sub-questions, (3) search and read each sub-question, (4) synthesize and flag contradictions. You can do this yourself with plain Perplexity if you follow the pattern manually. Ask the model first: "What are the 5 sub-questions I should answer before answering this?" Then send each sub-question as its own Perplexity query. Then ask a final model to synthesize. This DIY version beats single-shot search for almost every real research question and works on any free tier.
 
-Template (fill this in the lab):
+**Hallucination checklist.** Before you quote a fact in your brief: (1) Click the citation. (2) Confirm the source exists and is reputable. (3) Confirm the source actually says what the model claims. (4) Check the date — AI tools sometimes quote 2019 articles as if current. (5) For medical, legal, or financial claims, cross-verify on a second tool.
 
-```
-MY PERSONAL AI STACK
+**Academic tools for later.** Elicit and Consensus specialize in peer-reviewed papers. SciSpace and Scholarcy summarize papers. Research Rabbit and Connected Papers build visual citation graphs — paste one paper, see its neighborhood. These are niche but amazing when you need them; bookmark for the literature-review stage of your capstone in Week 3.
 
-Primary chat tool: _______ (for writing, thinking, explaining)
-Document/study tool: _______ (for PDFs, notes, long reading)
-Creative tool: _______ (for images, posters, moodboards)
+## Watch: NotebookLM generates a podcast from your notes
 
-My top 5 saved prompts (title + where I keep them):
-1. _______
-2. _______
-3. _______
-4. _______
-5. _______
+A short demo where we drop a 30-page PDF on campus placement trends into NotebookLM and it produces a 9-minute podcast with two AI hosts, a mind map, and a study guide — in 90 seconds.
 
-My weekly AI rituals:
-- Every Sunday night: _______
-- Before every class/lecture: _______
-- Before every deadline: _______
-```
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-Keep this in your Notes app, pinned.
+- Notice that the hosts actually disagree at 4:20; grounded models surface tension.
+- Watch how the mind map reorganizes your doc by theme, not page order.
+- See how clicking a claim jumps to the exact source sentence.
 
-### The honesty check — what AI still doesn't fix
+## Lab: Research brief on your capstone domain
 
-A healthy look-back has to include limits. Even at the end of Week 1:
+Time: 45 minutes. Artifact: a 1-page Markdown brief with 5+ citations.
 
-- AI can summarise a chapter. It cannot make you *remember* it. Retrieval practice still requires you.
-- AI can draft an email. It cannot repair a real relationship with a prof you've ignored for a year.
-- AI can polish your CV. It cannot give you the internship. Projects, networking, and timing still do that.
-- AI confidently makes mistakes — dates, citations, fine numbers. Always verify the bits that matter.
-
-This isn't pessimism. This is why tools alone aren't enough — and it's the exact reason for Week 2.
-
-### What's coming in Week 2 — Design Thinking
-
-You now have tools. But tools don't choose what to build, who to build it for, or whether it's worth building at all. Next week we shift from *using* AI to *thinking* like a builder. Topics will include:
-
-- Starting from a real user problem, not a tool
-- Interview techniques for talking to users (yes, humans!)
-- Ideation, prioritisation, and the "kill your ideas" workflow
-- Prototyping a solution — still in a browser, still no code
-- Running a small test and measuring what actually worked
-
-By end of Week 2 you won't just be someone *using* AI. You'll be someone deciding *what to use AI for*. That's the real skill that compounds.
-
-### The "wow" move of the day — the compounding effect
-
-One last prompt to try. Ask ChatGPT or Claude:
-
-```
-Copy and paste this prompt:
-
-Based on these 6 skills I learned this week ({{list}}), project forward: if I used them consistently for 90 days, what specific tangible wins would I realistically see by {{today + 90 days}}? Be concrete. No hype. No generic "you'll be more productive" — give me examples tied to my life as a {{year, branch, interests}} student.
-```
-
-The answer is your motivation for the rest of the workshop.
-
-## Watch: A Week 1 recap + what building looks like
-
-A short closing video — less how-to, more mindset. What changes when AI stops being a novelty and becomes a habit.
-
-https://www.youtube.com/embed/5e8u8e5Gz9U
-<!-- TODO: replace video -->
-
-- Notice how the most productive users keep their stack *small*.
-- Watch the shift from "what can AI do" to "what should I do".
-- Pay attention to how habits form — always tied to a ritual, not motivation.
-
-## Lab: Your personal AI stack worksheet
-
-You'll end with a 1-page personal AI stack, written by you, informed by AI, ready to pin.
-
-1. Open a Google Doc titled "My AI Stack — [Your Name]". Paste the template from the Read section.
-2. Fill in your 3 primary tools and your 5 saved prompts. Pull the prompts from Days 1–6 (CREATE, study-tutor, voice-match, poster, mock-interview).
-3. Go to ChatGPT. Paste the prompt-of-the-day, listing your 6 workflows and your student context.
-4. Read the AI's suggestions. Keep the ones that feel true. Reject the ones that don't. You're in charge.
-5. Write your "Weekly AI Rituals" section — 3 specific time-slots in your week when you'll use AI. Sunday planning. Before every Wednesday lab. Before every assignment deadline. Whatever fits.
-6. Run the 90-day projection prompt from the "wow" section. Paste the output at the bottom of your doc.
-7. Take 5 minutes. Write a short reflection — 5 lines — on the question: "What's one thing you believed about AI 7 days ago that you no longer believe?"
-8. Submit the Doc link + the reflection via the Week 1 reflection form.
-
-**Victory condition:** a 1-page stack doc, a 90-day projection at the bottom, and a real 5-line reflection.
+1. Pick one capstone domain you are curious about (hostel food logistics, DSA interview prep, campus event discovery, lab-report automation — anything). Write a one-line problem statement.
+2. Open https://www.perplexity.ai. Turn on **Pro Search**. Paste today's prompt-of-the-day with `{{topic}}` filled in. Save the response.
+3. From the Perplexity answer, pick the 5 most relevant citations. Download those sources as PDFs, or copy their URLs.
+4. Open https://notebooklm.google.com. Create a new notebook called "capstone-<your-topic>". Add the 5 sources.
+5. In NotebookLM, ask: "What do these sources agree on? Where do they disagree? What is missing?" Save the answer.
+6. Generate an **Audio Overview** of the notebook. Listen while you do the next step.
+7. Open https://gemini.google.com and toggle on **Deep Research**. Submit a refined version of your question. Let it run in the background.
+8. Combine the Perplexity answer, the NotebookLM synthesis, and the Deep Research excerpts into a single 1-page Markdown brief. Every factual claim must carry a citation. Save as `brief-<topic>.md`.
 
 ## Quiz
 
-Four questions: what a "personal AI stack" is, why small beats big, one thing AI still can't fix, and what Week 2 focuses on.
+Four questions to check the reflex. What is the difference between Perplexity Pro Search and Deep Research? Why does NotebookLM refuse to answer from the open web, and when is that a feature rather than a bug? What are the four steps of the hallucination check? And which of today's tools would you use to map the 30 most-cited papers around a niche research question?
 
 ## Assignment
 
-Submit the Week 1 Reflection Form (link in the class channel) with: (a) your AI stack Doc link, (b) your 90-day projection paragraph, (c) one sentence on what changed in your head this week, (d) one thing you're still skeptical about. This is the only assignment this week without a "build" deliverable — we want your thinking, not your output.
+Post to the cohort channel:
 
-## Discuss: From using AI to building with AI
+1. Your 1-page `brief-<topic>.md` with at least 5 inline citations.
+2. The NotebookLM audio overview link (or a 30-second voice note reacting to it).
+3. One sentence: "I almost quoted this, then clicked the citation and found…" — show us one claim you had to drop or rewrite.
 
-- What's one thing you believed about AI 7 days ago that you no longer believe?
-- Which day's win are you most likely to still be doing in 6 months — and why?
-- Did anyone feel *worse* at something this week (e.g., writing) because you leaned on AI? Share honestly.
-- If AI can do 40% of a college student's work — what should the other 60% be?
-- What are you expecting (or dreading) about Week 2, now that we're leaving tools behind?
+## Discuss: Trusting the machine
+
+- Did any of your tools disagree on a factual claim? Which did you believe and why?
+- When is it okay to skip clicking citations, and when is it negligent?
+- Did the audio overview change how you understood your own sources?
+- Which capstone ideas got stronger after the research, and which got killed?
+- Is AI search replacing Google for you yet, or are you still hedging?

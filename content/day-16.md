@@ -1,116 +1,103 @@
 ---
-reading_time: 14 min
-tldr: "Run a real LLM on your own laptop with zero cloud, zero cost, and zero data leaving your machine."
-tags: ["llms", "ai", "concepts"]
+reading_time: 15 min
+tldr: "Git, GitHub, localhost, and APIs — the four rails every AI builder rides on, explored without writing a single line of code."
+tags: ["build", "technical"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Install Ollama and chat with three models", "url": "https://ollama.com/"}
-prompt_of_the_day: "You are a local model with no internet. Given this text: {{text}}, give me a 3-bullet summary and flag anything you are unsure about."
-resources: [{"title": "Ollama", "url": "https://ollama.com/"}, {"title": "Open WebUI", "url": "https://openwebui.com/"}, {"title": "Ollama model library", "url": "https://ollama.com/library"}]
+lab: {"title": "Fork a repo + hit 3 public APIs with Hoppscotch", "url": "https://hoppscotch.io"}
+prompt_of_the_day: "You are my OSS mentor. I want to contribute to {{repo_url}}. Read its README and CONTRIBUTING.md, list 3 good-first-issues I could realistically tackle, and explain each issue in plain English with the files I'd need to change."
+tools_hands_on: [{"name": "GitHub", "url": "https://github.com"}, {"name": "Hoppscotch", "url": "https://hoppscotch.io"}]
+tools_demo: [{"name": "Browser DevTools (Network tab)", "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools"}, {"name": "GitHub good-first-issue search", "url": "https://github.com/search?q=label%3Agood-first-issue&type=issues"}]
+tools_reference: [{"name": "Git official docs", "url": "https://git-scm.com"}, {"name": "MDN Web Docs", "url": "https://developer.mozilla.org"}, {"name": "Open Source Guides", "url": "https://opensource.guide"}, {"name": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com"}, {"name": "HTTPBin", "url": "https://httpbin.org"}]
+resources: [{"name": "GitHub Skills (free interactive)", "url": "https://skills.github.com"}, {"name": "OpenLibrary API", "url": "https://openlibrary.org/developers/api"}, {"name": "Open-Meteo free weather API", "url": "https://open-meteo.com"}]
 ---
 
 ## Intro
 
-Today your laptop becomes an AI server. You'll install Ollama, pull three different open models, and chat with them through a polished browser UI — all offline. This matters more than it sounds: privacy, cost, and the freedom to tinker all come from here.
+Welcome to Week 4. Until now you've been a power user of AI. This week you become a builder — but still without writing code yourself. Today we learn the four rails every software project runs on: **Git, GitHub, localhost, and APIs**. You will click, fork, read, and poke. No typing code. By the end you will be able to read a repo like you read a book, and talk to any API on the internet.
 
-## Read: What "local" actually means
+## Read: The four rails — Git, GitHub, localhost, APIs
 
-When you use ChatGPT, your text travels to OpenAI's servers, gets processed on thousand-dollar GPUs, and comes back. Free while free, fine for homework, terrible for a leaked offer letter or a client's private data. A local model inverts that: the weights sit on your disk, inference happens on your CPU or GPU, and nothing leaves the machine. The tradeoff is speed and smarts — but for many real tasks, the gap is smaller than you'd think.
+Every AI project you will ever touch sits on top of four ideas. If you understand these four, the rest of the stack becomes readable. If you don't, every tutorial feels like hieroglyphics.
 
-### The three reasons local matters
+**1. Git — the time machine for files.** Git is a tool that tracks every change you make to a folder. Think of it as infinite Ctrl+Z, but across a whole project and across a whole team. The unit of change is a **commit** — a snapshot with a message like "fixed login bug". Commits live on **branches** — parallel universes of your code. You make a `feature/rag-bot` branch, experiment freely, and if it works you **merge** it back to the `main` branch. If it breaks, you throw the branch away. Your main branch stays clean.
 
-- Privacy. Your notes, your code, your chats — none of it trains anyone else's model or sits in anyone else's logs.
-- Cost. Once you've downloaded the weights, every query is free forever. No per-token pricing.
-- Offline. Plane, train, campus outage, remote village — your AI works.
+The magic word is **diff**. A diff is the difference between two versions — lines added in green, lines removed in red. Every code review on Earth is just humans reading diffs. When you tell an AI "fix this bug", what it actually does is produce a diff. Learning to read diffs is the single most valuable skill for directing AI.
 
-There's a fourth, subtler reason: understanding. When you see how slowly a 3B-parameter model streams tokens on your laptop, you feel scaling laws in your fingertips. That intuition is worth the hour.
+Key commands you should recognize (read this, don't type it):
 
-### The model zoo, briefly
-
-Every week someone releases a new open model. Here's the 2026 landscape, simplified.
-
-| Model family | Size range | Best for | Made by |
-|---|---|---|---|
-| Llama 3.2 | 1B / 3B | Fast chat, small devices | Meta |
-| Qwen 3 | 4B / 8B / 32B | Coding, reasoning, multilingual | Alibaba |
-| Mistral | 7B | Balanced general chat | Mistral AI |
-| Gemma 3 | 2B / 9B / 27B | Safe, instruction-tuned | Google |
-| Phi 4 | 4B / 14B | Punches above weight on reasoning | Microsoft |
-
-You do not need to memorize this. The rule of thumb: pick a size that fits your RAM. 3B-class models run happily on 8GB laptops. 7B-class models want 16GB. 30B+ wants a beefy GPU or serious patience.
-
-### Ollama, in one paragraph
-
-Ollama is the simplest way to run local LLMs. It's free, open source, and ships as a desktop app on macOS, Windows, and Linux. Install it once, and you get a background service that can download any supported model by name and expose it as a chat. It's the Docker of LLMs — a clean runtime for weights.
-
-### Open WebUI — putting a face on Ollama
-
-Ollama itself is minimal. Open WebUI is a free browser-based frontend that makes it feel like ChatGPT: multi-turn chats, saved conversations, model-switching, document upload, even basic RAG. You run it locally with one installer. It talks to Ollama under the hood.
-
-```
-Read this, don't type it
-
-[ Your browser ]  <-->  [ Open WebUI on localhost:3000 ]
-                              |
-                              v
-                       [ Ollama service ]
-                              |
-                              v
-                  [ Model weights on your disk ]
+```bash
+git clone https://github.com/user/repo.git   # download a repo
+git branch feature/my-change                 # create a branch
+git add .                                    # stage your changes
+git commit -m "add RAG endpoint"             # snapshot them
+git push                                     # upload to GitHub
+git pull                                     # download latest
 ```
 
-All traffic stays on your machine. The network tab in your browser will show zero external requests.
+**2. GitHub — the social network for code.** GitHub is where Git repositories live in the cloud. Every AI tool you've used this month — LangChain, Ollama, n8n, browser-use — lives on GitHub. Four things happen there:
 
-### Cloud vs. local, honestly
+- **Issues** — bug reports and feature requests. Scan these to understand what a project actually does and where it hurts.
+- **Pull Requests (PRs)** — "hey maintainer, please merge my branch". A PR is a proposal with a diff attached.
+- **Forks** — your personal copy of someone else's repo. Forking is free and creates no obligation. Fork first, experiment later.
+- **Stars** — bookmarks. Star counts are noisy but useful as a proxy for popularity.
 
-| Aspect | Cloud (ChatGPT/Claude) | Local (Ollama) |
-|---|---|---|
-| Smarts | Frontier, very high | Small to medium |
-| Speed | Fast (big GPUs) | Depends on your laptop |
-| Privacy | Data leaves your machine | Nothing leaves |
-| Cost | Per-token or subscription | One-time download, free forever |
-| Offline | No | Yes |
-| Setup | None | 10 minutes today |
+To contribute to open source, the loop is: fork → branch → change → PR → review → merge. You don't have to be a senior engineer. Every big repo has a `good-first-issue` label. Search `label:good-first-issue language:python stars:>1000` and you'll find hundreds.
 
-Neither is "better." They're different tools. A seasoned builder uses both: frontier for hard reasoning, local for privacy-sensitive or high-volume work.
+**3. Localhost — your computer as a server.** When a program on your laptop serves a website or API, it lives at `localhost` (also written `127.0.0.1`). A **port** is a numbered door — port 3000, 8080, 11434. Ollama runs on `localhost:11434`. Open WebUI on `localhost:3000`. n8n on `localhost:5678`. When a tutorial says "open http://localhost:3000", it means "your laptop is running something; talk to it on door 3000".
 
-## Watch: Ollama in five minutes
+One subtle distinction: `127.0.0.1` means "only my laptop can reach this". `0.0.0.0` means "anyone on my Wi-Fi can reach this". Most AI tools default to 127.0.0.1 for safety. If you're demoing to a classmate on the same network, you switch to 0.0.0.0 — at your own risk.
 
-A walkthrough of installing Ollama, pulling a model, and chatting through Open WebUI. Watch for the part where the presenter unplugs their Wi-Fi mid-chat — the model keeps answering.
+**4. APIs — how programs talk.** An **API** (Application Programming Interface) is a contract. "Send me this JSON on this URL, I'll send back that JSON." That's it. Ninety-nine percent of AI work is calling APIs.
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+APIs speak **HTTP**. The verbs are:
 
-- Notice how small the install actually is.
-- Watch the first token appear after the model loads into RAM.
-- Observe the RAM usage climb when a bigger model loads.
+- `GET` — read something. (`GET /users/sandeep` → returns Sandeep's profile.)
+- `POST` — create or submit something. (`POST /chat` → "here's my message, reply please.")
+- `PUT` / `PATCH` — update.
+- `DELETE` — remove.
 
-## Lab: Three models, one laptop
+Responses come back with **status codes**: 200 (OK), 201 (created), 400 (you sent bad data), 401 (you're not logged in), 404 (not found), 429 (too many requests — slow down), 500 (the server crashed, not your fault). When something breaks, read the status code first. It tells you who to blame.
 
-You'll install Ollama, pull three models, and compare them side by side.
+Payloads are almost always **JSON** — key-value pairs in curly braces. `{"name": "Sandeep", "city": "Bengaluru"}`. AI responses, weather data, OpenAI chat completions — all JSON.
 
-1. Go to https://ollama.com/ and download the Ollama desktop app for your OS. Install it. Launch it. You'll see a small icon in your menu bar or system tray — that's the service running.
-2. Open the Ollama app window. In the model picker, type `llama3.2:3b` and click download. Wait 2–5 minutes (it's ~2GB). This is a small, fast Meta model.
-3. Pull two more: `qwen3:4b` and `mistral:7b`. While these download, move to step 4.
-4. Open WebUI. The easiest path: open the Ollama app, go to the built-in chat window. If you want the fuller experience, visit https://openwebui.com/ and follow their "one-click install" that connects to your local Ollama. Either works for today.
-5. Chat with Llama 3.2 3B first. Ask: "Summarize the French Revolution in 3 bullets, aimed at a college student." Note the speed and quality.
-6. Switch to Qwen 3 4B using the model dropdown. Ask the exact same question. Switch to Mistral 7B. Same question. You now have a three-way comparison — paste all three answers into a Google Doc. Which sounded smartest? Which was fastest?
-7. Turn off your Wi-Fi. Ask any of the three to help you outline a placement resume. Notice it still works. That's the whole point.
-8. Paste today's prompt-of-the-day into the largest model you pulled, with a paragraph from your own notes or a news article as `{{text}}`. Save the output.
+**Why this matters for you.** When Claude tells you "call the OpenAI API with these headers", you will now know what that sentence means. When Ollama fails and says "connection refused on port 11434", you know it means the Ollama server isn't running. When you fork a repo to add a feature, you know the ritual. You've stopped being a tourist.
 
-If a model feels painfully slow, pick a smaller one — speed matters more than the last 10% of quality for this week.
+## Watch: Reading a repo without coding
+
+Video walkthrough on how to scan a GitHub repo in 10 minutes — README first, then the `examples/` folder, then open issues, then recent PRs — so you can understand an AI project without reading its source code.
+
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+
+- Always start at the README — 80% of "how do I use this" lives there.
+- `CONTRIBUTING.md` tells you the PR process.
+- Sort issues by "good first issue" to find entry points.
+- The `examples/` or `cookbook/` folder is gold.
+
+## Lab: Fork one repo + hit three APIs in Hoppscotch
+
+Spend 30–45 minutes. No code — clicks and reads only.
+
+1. Go to **github.com** and sign in. Search for `ollama` (by that name). Click the top repo. Click **Star**. Click **Fork** (top right). You now own a copy.
+2. On your fork, open the **Issues** tab. Filter by `label:good-first-issue`. Open two or three. Read them like short stories — title, description, comments.
+3. Open any merged PR from the last week on the original repo. Click the **Files changed** tab. Stare at the diff. Ask Claude: "explain this diff in plain English".
+4. Now APIs. Open **hoppscotch.io** (no install needed). You get a Postman-like interface in your browser.
+5. First call: `GET https://openlibrary.org/search.json?q=hitchhiker` — hit **Send**. Read the JSON. Notice `docs[0].title`.
+6. Second call: `GET https://api.github.com/users/torvalds` — see Linus Torvalds' public profile. Note the `followers` field and the 200 status.
+7. Third call: `GET https://api.open-meteo.com/v1/forecast?latitude=12.97&longitude=77.59&current_weather=true` — Bengaluru's live weather. No API key needed.
+8. Bonus: `GET https://httpbin.org/status/429` — deliberately trigger a 429. Notice the status code. Try `/status/500`.
 
 ## Quiz
 
-A short quiz on local inference. Expect questions on why you'd prefer local over cloud, what "7B" refers to, what Ollama and Open WebUI each do, and one scenario question asking you to pick the right tool for the job. Trust the privacy/cost/offline framing.
+Four questions to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
 
 ## Assignment
 
-Record a 60-second screen capture (Loom, QuickTime, or phone camera pointed at your laptop) showing you ask the same question to two different local models and getting different answers. Upload to the class channel with a one-sentence verdict on which model you'd keep and why.
+Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your pick). Star three OSS AI projects you want to understand better. Open one **draft** issue on a repo you care about — a question, a typo fix, or a feature idea. Don't stress about polish; drafts are meant to be rough. Paste your three links into the cohort channel.
 
-## Discuss: Local first, cloud when needed
+## Discuss: Becoming native to the dev world
 
-- Which of the three models surprised you most — was it the biggest, or a smaller one?
-- What's one task you currently do in ChatGPT that you'd rather run locally, and why?
-- Running a 7B model felt slow. What would you trade for that speed — quality, privacy, or cost?
-- Have you ever pasted something into ChatGPT that you wish you hadn't? What would a local setup change about that behavior?
-- If open models keep getting better every 3 months, what changes for big AI labs like OpenAI?
+- Which part of today's four rails felt most foreign? Git, GitHub, localhost, or APIs?
+- Share a good-first-issue from any repo you found interesting and pitch why.
+- Have you ever seen a 500 error in the wild? What was the context?
+- Does `fork → branch → PR` feel like a social ritual or an engineering one? Maybe both?
+- What's one API from today's lab you could imagine chaining into your capstone?

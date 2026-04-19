@@ -1,167 +1,87 @@
 ---
 reading_time: 14 min
-tldr: "Pick the capstone problem today. You'll live with it for 3 weeks — choose something you actually care about."
-tags: ["framing", "meta", "thinking"]
+tldr: "The Mom Test is the rule: ask about past behaviour, never about future opinions. Today you run one real interview and plan two more."
+tags: ["design", "user-research", "interviews", "capstone"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Heilmeier writeup of your capstone problem", "url": "https://excalidraw.com/"}
-resources: [{"title": "The Heilmeier Catechism", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit", "url": "https://www.designkit.org/"}, {"title": "The Systems Thinker", "url": "https://thesystemsthinker.com/"}]
+lab: {"title": "Record and transcribe a 20-min capstone interview with a classmate", "url": "https://otter.ai"}
+prompt_of_the_day: "Here is a transcript of a user interview about my capstone problem. {{paste_transcript}}. Extract: (1) the 3 most surprising things the user actually did (not said), (2) any contradictions between what they said and what they did, (3) 3 Jobs-to-be-Done hypotheses in the format 'When [situation], I want to [motivation], so I can [outcome]', (4) 5 follow-up questions I should ask in interview #2."
+tools_hands_on: [{"name": "Otter.ai", "url": "https://otter.ai"}]
+tools_demo: [{"name": "Claude", "url": "https://claude.ai"}]
+tools_reference: [{"name": "The Mom Test (book) — Rob Fitzpatrick", "url": "https://www.momtestbook.com"}, {"name": "Teresa Torres — Continuous Discovery Habits", "url": "https://www.producttalk.org"}]
+resources: [{"name": "The Mom Test — Rob Fitzpatrick (book)", "url": "https://www.momtestbook.com"}, {"name": "Jobs to be Done — Clayton Christensen intro", "url": "https://hbr.org/2016/09/know-your-customers-jobs-to-be-done"}, {"name": "Continuous Discovery Habits — Teresa Torres (book)", "url": "https://www.producttalk.org/2021/05/continuous-discovery-habits-now-available/"}]
 ---
 
 ## Intro
 
-Today everything from Week 1 compounds. You will pick the one problem you are going to work on for the rest of the cohort — through the Build weeks, through Ship week, into the final demo. Pick well. Pick something that will still annoy you in three weeks, because that is the only kind of problem you'll push through when it gets hard.
+Most founders' user interviews are a slow way to hear themselves think. They ask leading questions, get polite lies, and walk away more confident and less informed. Today you learn the opposite: how to ask so badly about your idea that the user cannot help telling the truth. You will also plan and execute real interviews before Day 15.
 
-## Read: how to pick a problem you'll still care about on day 28
+## Read: The Mom Test, JTBD, and listening for what is not said
 
-### Why the choice matters so much
+Rob Fitzpatrick's *The Mom Test* starts from a simple premise: even your mom will lie to you about your business idea, not out of malice but out of love. So stop asking people if they like your idea. Instead, ask about their life. His three rules:
 
-In Week 2 you start building. In Week 3 you start shipping. If the problem you pick today is lukewarm, the technical grind will chew through your motivation by day 14, and you'll ghost the cohort. Every year, the students who finish are almost always the ones who picked something *personal and specific* in Week 1, not something *trendy and impressive*.
+1. **Talk about their life, not your idea.**
+2. **Ask about specifics in the past, not generics or opinions about the future.**
+3. **Talk less, listen more.**
 
-### Three filters for a good capstone problem
+These sound obvious and are almost universally violated. Bad question: "Would you use an app that helps you track your expenses?" (Hypothetical, future, leading. Answer: "Sure, sounds useful!" Meaningless.) Good question: "Walk me through the last time you tried to figure out where your money went this month. What did you actually do?" (Specific, past, behavioural. Answer: a real story with texture, workarounds, and pain.)
 
-Apply all three filters. If a candidate fails one, keep looking.
+Past behaviour predicts future behaviour. Stated preference predicts almost nothing. If a user has not already hacked together a spreadsheet, scheduled a reminder, paid for a competitor, or complained on Reddit about the problem — they probably do not have the problem, no matter how enthusiastically they nod.
 
-**Filter 1: Personal pain or personal proximity.** Either you have this problem, or someone you can text right now has this problem. You can literally get a user on the phone in 10 minutes. If you can't, the feedback loop is too long — you'll build in the dark.
+**Biased questions to hunt and kill.** Any question starting with "would you" or "do you think you would" is future-tense fantasy. Any question that describes your solution before asking about the problem primes the answer. Any question that uses your jargon trains the user to use it back at you. Any compliment ("this is such a smart idea!") is a tax on your honesty — thank them and change the subject. A useful trick: before the interview, write your questions and underline every verb. If the verb is *would, could, might, think* — rewrite it as *did, have, last time*.
 
-**Filter 2: Small enough to prototype in a weekend, big enough to matter.** If it's too small, you'll finish early and coast. If it's too big, you'll drown and quit. The sweet spot: a prototype that takes ~8 focused hours, aimed at a problem whose full version could reasonably occupy a year.
+**Commitment and advancement.** Fitzpatrick's second big idea: a meeting without a clear next step is a failure, no matter how nice it felt. Real signal is the user giving up something of value — time, reputation, money, a referral, access to a colleague. "I love it!" is not signal. "Can I introduce you to my co-worker who has this problem worse than me?" is signal. Always end an interview by asking for a specific next step. If they dodge, the enthusiasm was polite, not real.
 
-**Filter 3: Real-world feedback within 7 days.** You must be able to put a prototype in front of a real user and get a reaction within a week. No "we'd need approval from the university IT department to test this". If the access path is blocked, the problem is wrong *for this cohort* — even if it's a great problem in general.
+**Listen for what they do not say.** Three patterns to watch for:
 
-### Green flags and red flags
+- **Workarounds.** If the user has a kludgy spreadsheet, a group chat, a reminder system — those are gold. People only build workarounds for problems they actually have. Ask them to show you the workaround, not describe it. Ask to see their screen.
+- **Emotion spikes.** Moments when the tone shifts — frustration, embarrassment, a laugh that covers something. Mark the timestamp. That is the real problem, not the tidy one they stated at the top.
+- **What they refuse to pay for.** The most honest signal: ask what they currently pay for related tools and what they quit paying for. People's calendars and credit cards tell the truth even when their mouths do not.
 
-| Green flag | Red flag |
-|-----------|----------|
-| You can name 3 specific people affected | "Students" in general |
-| You have a story of when this pain hit *you* | You only heard about it third-hand |
-| You can test a prototype for free | Testing requires institutional approval |
-| You have mixed feelings about solutions | You are certain "an app is the answer" |
-| The problem has existed for years unresolved | It's a new trend you saw on LinkedIn |
+**Jobs-to-be-Done (JTBD).** Clayton Christensen's framing: users do not buy products, they "hire" them to do a job. The canonical example is the milkshake study at a fast-food chain. Surveys said customers wanted thicker, sweeter milkshakes. Observation revealed the morning milkshake was "hired" to make a boring commute tolerable — it had to last 20 minutes, be drinkable one-handed, and not leave crumbs. The job was *pacify my commute*, not *taste better*. That reframing changed the product.
 
-The mixed-feelings one is subtle: if you're *already certain* of the solution, you've skipped the thinking work. You want to be genuinely curious.
+The JTBD format: *When [situation], I want to [motivation], so I can [outcome].* Example: *When I get a new client email, I want to know within 10 seconds whether it is urgent, so I can stop checking my inbox 47 times a day.* A good JTBD has a triggering situation, an emotional or functional motivation, and a measurable outcome. You will draft three JTBD hypotheses from every interview transcript.
 
-### Worked example: three candidate problems, one pick
+**Interview structure (20 minutes).** Warmup (2 min) — thank them, explain you are learning, not selling. Context (5 min) — their role, day, workflow. The Story (8 min) — the most recent time they hit this problem, moment-by-moment. Workarounds (3 min) — what have they already tried? what did they pay for? what did they quit? Commitment (2 min) — referral, next meeting, access to artifacts.
 
-Student: Ananya, 3rd year, CS, interested in education.
+Do not demo. Do not pitch. Do not save the bad idea. Your job is to leave more confused than you arrived; confusion is evidence of real learning. If you walk out feeling validated, you probably interviewed your own reflection.
 
-**Candidate A:** "Build an AI tutor for JEE aspirants."
-- Personal proximity? Low — she's past JEE.
-- Weekend-prototype-able? Not really — content is the hard part.
-- User access in 7 days? Would need cold outreach to coaching centers.
-- **Verdict:** impressive on paper, impossible to validate in this cohort. Skip.
+Recording matters. Human memory is a liar. Otter.ai (otter.ai) records and auto-transcribes in real time; you can then paste the transcript into Claude and hunt for patterns across multiple interviews — themes, contradictions, emotional spikes. Get consent first. Always.
 
-**Candidate B:** "Help my hostel friends decide daily what to order on Swiggy."
-- Personal proximity? Extremely — this is her WhatsApp group every night.
-- Weekend-prototype-able? Yes — a Google Form + a weighted-vote script.
-- User access? Instant — 8 friends, same hostel floor.
-- **Verdict:** passes all three, but may be too small. Keep as backup.
+## Watch: The Mom Test in 10 minutes
 
-**Candidate C:** "Help 1st-year students in her department pick a mentor from 2nd-year seniors, based on interests — the current process is chaotic DMs."
-- Personal proximity? Medium-high — she's a mentor and sees the chaos.
-- Weekend-prototype-able? A structured form + matching spreadsheet prototype is doable.
-- User access? 20 juniors reachable via department WhatsApp group.
-- Has existed unresolved for years? Yes.
-- She has mixed feelings about whether matching should be algorithmic or human-curated — good, that's curiosity.
-- **Verdict:** picked.
+Watch Rob Fitzpatrick summarise the three rules and demonstrate a before/after interview. Notice how the "after" version asks nothing about the idea yet produces far stronger signal.
 
-Ananya's Heilmeier writeup becomes her Day 7 artifact — and her guiding document for the next 23 days.
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-### Your Day 7 artifact: the Heilmeier writeup
+- Never mention your idea in the first half of the interview.
+- Ask "when was the last time?" — it converts opinions into stories.
+- Compliments are warning signs, not encouragement.
 
-You are going to produce a one-page Heilmeier writeup of your capstone problem. This document is the contract between today-you and day-30-you. When you're confused in Week 3, you come back and read this.
+## Lab: Interview a classmate about your capstone's user (50 min)
 
-```
-CAPSTONE PROBLEM — <your name>
+You will pair with another cohort member. You interview them about *their* capstone's user (from their perspective or their best proxy), and they interview you. No demoing your idea.
 
-1. What are you trying to do? (no jargon, one sentence):
-   __________________________________________________
-
-2. How is it done today, and what are the limits?
-   __________________________________________________
-
-3. What is new in your approach?
-   __________________________________________________
-
-4. Who cares? Name at least 3 specific affected people:
-   - ________________________________________________
-   - ________________________________________________
-   - ________________________________________________
-
-5. What are the main risks?
-   - ________________________________________________
-   - ________________________________________________
-
-6. How will you test a prototype in the next 7 days?
-   __________________________________________________
-
-7. What will "good enough at day 30" look like?
-   __________________________________________________
-
-8. What will make you quit this problem? (know your exit triggers)
-   __________________________________________________
-```
-
-Question 8 is deliberately uncomfortable. Naming the quit conditions upfront — "if after 10 user tests nobody cares, I'll switch" — is what separates disciplined builders from sunk-cost prisoners.
-
-### Weaving in everything from Week 1
-
-Notice how this single artifact exercises every muscle you built this week:
-
-- Day 2 (crisp problem statement) → Questions 1 and 4.
-- Day 3 (design thinking) → Question 6 (prototype + test).
-- Day 4 (user empathy) → Question 4's specific named people.
-- Day 5 (systems) → hidden in Question 2's "what are the limits".
-- Day 6 (computational thinking) → Question 7 demands a concrete, observable output.
-
-If you feel Week 1 was slow, here is where you cash in. Students who skipped the thinking work will pick bad capstones today and pay for it for the next 23 days.
-
-### A quick sanity check before you commit
-
-Before submitting, ask yourself three honest questions:
-
-1. *If this problem never gets solved, does that bother me personally?*
-2. *Can I text a real affected user, right now, without awkwardness?*
-3. *Am I excited — or am I picking this because it sounds impressive in a cohort update?*
-
-If the answer to any is shaky, go back and pick a different problem. You have one more day before Week 2 locks you in.
-
-## Watch: picking problems worth working on
-
-A short talk on how to choose what to build — focused on taste, personal stake, and the signals that separate real problems from fashionable ones.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Watch for the distinction between a "problem" and a "market".
-- Listen for how the speaker describes their quit-conditions on past projects.
-- Note any advice about picking problems that are *unsexy but real*.
-
-## Lab: write your capstone's Heilmeier writeup
-
-This is the deliverable that carries into Week 2. Take it seriously.
-
-1. List 3–5 candidate problems you care about. Each should have a sentence of context.
-2. Apply the three filters to each candidate. Eliminate any that fail even one filter.
-3. Pick one. If more than one survives, pick the one where you can most easily name 3 affected people by first name.
-4. Write the Heilmeier writeup using the template above. Fill every line — no blanks.
-5. For question 4 (Who cares?), text or DM at least one of the named people. Ask: "Hey, if I built something to help with X, would you actually try it next week?" Capture their reply.
-6. For question 6 (test in 7 days), pick a specific prototype format: paper, Google Form, WhatsApp flow, Excalidraw click-through. No code yet.
-7. For question 8, write honest quit-triggers. "If after 5 tests nobody completes the flow, I'll pivot." "If I can't get any real user by day 14, I'll switch problems."
-8. Pair with a cohort partner. Read each other's writeups. Each person gets to ask three "are you sure?" questions.
-9. Revise your writeup based on the partner critique.
-10. Submit the final one-page artifact.
+1. **Write 8 questions (10 min).** Draft 8 Mom-Test-compliant questions about your user's life, focused on past behaviour. No "would you." Underline every verb — all should be past-tense.
+2. **Set up Otter (3 min).** Sign in at otter.ai, start a new recording, get verbal consent on tape ("Is it okay if I record this for my notes?").
+3. **Run the interview (20 min).** Follow the structure: warmup, context, the story, workarounds, commitment. Resist the urge to explain your idea. If you feel that urge, ask another past-tense question instead.
+4. **Ask for the workaround (inside the 20 min).** "Can you show me how you handle this today?" Screen-share if remote.
+5. **End with a commitment ask.** "Could you introduce me to one person who has this problem worse than you?" Note the answer.
+6. **Stop the recording. Export the transcript from Otter.**
+7. **Run the Claude analysis (10 min).** Paste the transcript into Claude using today's Prompt of the Day. Record the 3 surprising behaviours, 3 JTBD hypotheses, and 5 follow-up questions.
+8. **Plan interviews #2 and #3.** Text two real candidate users (friends, family, acquaintances) now. Book 20-minute slots before Day 15.
 
 ## Quiz
 
-Quick check on the three filters, why exit triggers matter, and how Week 1's tools feed into the Heilmeier writeup. Four questions. Aim for 75%+. This is the last Week-1 quiz; Week 2 opens with Build mode.
+Three rapid calls. Which of these is Mom-Test-compliant: (a) "Would you pay for a tool that does X?" (b) "What did you do the last time X happened?" (c) "Do you think other people have this problem?" Only (b) survives. Why? Because it asks for past behaviour from the person in front of you, not future opinions about strangers. Write that sentence on a sticky note.
 
-## Assignment
+## Assignment (2-day)
 
-Submit your final Heilmeier writeup as a **file upload or text submission** — one page, all eight questions answered. Must include: 3 specific named users, at least one quoted message from a real user you contacted, a prototype plan testable in 7 days, and honest exit triggers. Writeups without named users get sent back. This document becomes your capstone spine for Weeks 2–4.
+By end of Day 15, submit: (1) your Otter transcript from the classmate interview, (2) transcripts (or detailed notes, with consent) from at least 2 real candidate-user interviews, (3) a short write-up with the 3 most surprising insights across all three interviews — surprising meaning they contradicted something you believed on Day 11. Post in the cohort channel. These insights feed directly into Day 14's systems map and Day 15's locked spec.
 
-## Discuss: the problem you're locking in
+## Discuss: What did the user *not* say?
 
-- Read out your one-sentence answer to question 1. Does the group understand it without follow-up?
-- Which filter was hardest to pass honestly — personal proximity, prototype-ability, or 7-day feedback?
-- What did your real user say when you texted them? Did it change your framing?
-- What's your exit trigger, and is it specific enough that you'll actually honor it?
-- If a classmate's capstone sounds more impressive than yours, does that bother you? What does that feeling mean?
+- Which of your questions was still leading, even after you thought you fixed it?
+- Where in the transcript did the user's tone shift — and what were they talking about at that moment?
+- What workaround did you see that you did not expect? What does it reveal about the real job?
+- Did you get a real commitment — or a polite one? How can you tell the difference?
+- What belief from your Day 11 problem statement did this interview just break?

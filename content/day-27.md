@@ -1,108 +1,98 @@
 ---
-reading_time: 14 min
-tldr: "A great demo tells one story well. Problem → insight → demo → what's next. Rehearse out loud."
-tags: ["pitch", "storytelling", "hands-on"]
+reading_time: 10 min
+tldr: "Benchmarks are marketing until you know how to read them — today you pick the right model for YOUR use case, not the leaderboard's."
+tags: ["launch", "benchmarks", "evaluation", "models"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "3-slide pitch and live demo rehearsal", "url": "https://www.ycombinator.com/library/"}
-resources: [{"title": "YC library", "url": "https://www.ycombinator.com/library/"}, {"title": "YC: How to present to investors", "url": "https://www.ycombinator.com/library/6a-how-to-present-to-investors"}, {"title": "Figma slides", "url": "https://www.figma.com/slides/"}, {"title": "Pitch.com", "url": "https://pitch.com/"}]
+lab: {"title": "Pick the best model for your capstone", "url": "https://lmarena.ai"}
+prompt_of_the_day: "Given my capstone use case {{use_case}} and constraints {{latency, cost, context_window}}, compare these candidate models {{model_list}} across MMLU, MT-Bench, LM Arena Elo, and one domain benchmark. Recommend primary + fallback with a one-line justification each."
+tools_hands_on: [{"name": "LM Arena", "url": "https://lmarena.ai"}, {"name": "Artificial Analysis", "url": "https://artificialanalysis.ai"}, {"name": "LiveBench", "url": "https://livebench.ai"}]
+tools_demo: [{"name": "LM Arena side-by-side", "url": "https://lmarena.ai"}, {"name": "HuggingFace Open LLM Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}]
+tools_reference: [{"name": "SEAL Leaderboards", "url": "https://scale.com/leaderboard"}, {"name": "ARC Prize", "url": "https://arcprize.org"}, {"name": "Papers With Code", "url": "https://paperswithcode.com"}, {"name": "LiveBench", "url": "https://livebench.ai"}]
+resources: [{"name": "Artificial Analysis", "url": "https://artificialanalysis.ai"}, {"name": "HuggingFace Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}]
 ---
 
 ## Intro
 
-A great project with a bad demo reads as a mediocre project. A mediocre project with a great demo reads as great. This is not fair but it is true, and on Sunday the panel will see you for eight minutes. Today you build the story and the demo that surfaces it.
+Short morning, long afternoon. By noon you should know exactly which model your capstone runs on and why — with receipts. The rest is build time. Today's lecture: how to read a leaderboard without being fooled by one.
 
-## Read: Demo craft, without theatre
+## Read: The Benchmark Literacy Crash Course (600 words)
 
-A demo is not a product tour. A demo is a single story told so tightly that the audience feels the problem, watches it dissolve, and leaves with one clear mental picture of what you built.
+Every model launch comes with a chart. Every chart makes that model look like the best. Your job is to see through the chart.
 
-### The four-beat pitch
+### The benchmarks you'll see cited most
 
-Every strong 5-minute AI demo has the same spine:
+**MMLU** (Massive Multitask Language Understanding) — 57 subjects, multiple choice. The OG. Now saturated; top models cluster at 88-92%. Useful as a floor, not a ceiling.
 
-1. **Problem** (45–60s) — a specific person in a specific situation, losing something specific. Names, not abstractions.
-2. **Insight** (30–45s) — why now? What changed in the world or the tech that makes this possible in 2026?
-3. **Demo** (2–3 min) — live, not recorded, unless your demo has hard network dependencies. Show the product solving the exact problem from beat 1.
-4. **What's next** (30s) — one slide. Not a roadmap — the next real milestone.
+**GPQA** (Graduate-level Google-Proof Q&A) — Hard science questions designed so Google doesn't help. Less contaminated than MMLU. A better 2025 signal for "does this model actually reason."
 
-Four beats. Total under 5 minutes. Leave 2–3 for questions.
+**HumanEval** and **SWE-bench** — Code. HumanEval is tiny Python functions (saturated). SWE-bench is real GitHub issues from real repos. SWE-bench Verified is the signal that matters for coding agents.
 
-### The problem beat that actually lands
+**MT-Bench** — Multi-turn conversation, judged by GPT-4. Good proxy for chat quality, biased toward models that "sound like" GPT-4.
 
-Most students open with "AI is transforming X." Cut that sentence and every sentence like it. The opening should be a person.
+**MATH** and **AIME** — Math problems from easy to olympiad. AIME 2024/2025 scores are the current frontier signal.
 
-> Compare:
->
-> **Weak:** "Students today struggle with information overload."
->
-> **Strong:** "Meena has three engineering textbooks open, two Chrome tabs of past papers, and a WhatsApp group that keeps pinging. Her exam is in 40 hours. She opens ChatGPT, asks it to summarize Chapter 7, and the summary misses the two equations she actually needs."
+**ARC-AGI** — Visual pattern puzzles trivial for humans, hard for LLMs. The benchmark that actually moves when reasoning improves. The ARC Prize offers real money for beating it.
 
-The second version gives the audience a picture. The picture is half the work.
+### The leaderboards you should actually check
 
-### The demo beat that won't die on stage
+**LM Arena (lmarena.ai)** — Humans vote blind between two model responses. Elo rankings. The closest thing to "which model do real users prefer right now." Also the easiest to game at the margins, so look at top 10, not rank-1-vs-rank-2.
 
-Rules, in order of how often students break them:
+**Artificial Analysis (artificialanalysis.ai)** — A dashboard mapping quality vs price vs latency vs context window. If you only bookmark one leaderboard, bookmark this — it answers the question you actually have: what gives me the best tradeoff today.
 
-1. **Pre-open every tab, window, and file.** Nothing new opens during a live demo.
-2. **Kill notifications.** Airplane mode after the demo assets are loaded. If you need the network, test it on the actual venue WiFi beforehand.
-3. **Have a Plan B recording.** Screen-capture a perfect run this morning. If the live demo stalls for >8 seconds, cut to the recording without apology.
-4. **Never type long inputs on stage.** Prepared prompts live in a scratchpad; paste them.
-5. **Speak while clicking.** Dead air during a model call makes 3 seconds feel like 30. Narrate what's happening.
-6. **One screen only.** If your demo needs three tabs side-by-side, you've lost.
+**HuggingFace Open LLM Leaderboard** — Focus on open-weight models. Rerun on fresh benchmarks to reduce contamination.
 
-### The slide, kept honest
+**LiveBench (livebench.ai)** — Contamination-resistant: questions rotated monthly from sources post-training-cutoff. Trust this more than static benchmarks for anything frontier.
 
-Three slides is all you need.
+**SEAL (Scale AI)** — Private, held-out benchmarks. Less gameable.
 
-| Slide | Content |
-|---|---|
-| **1 — Problem** | One person, one situation, one line of pain. One image. |
-| **2 — Solution + insight** | One sentence of what you built, one sentence of why now. |
-| **3 — What's next** | One metric target, one date. Names of your team. Contact. |
+### Why benchmarks lie
 
-If you feel a fourth slide coming on, it belongs in the Q&A as a backup.
+Four reasons, in order of commonness:
 
-### Handling the panel
+1. **Contamination** — The benchmark leaked into training data. Any benchmark older than 18 months is suspect.
+2. **Overfitting to the benchmark** — Labs train against leaked or near-duplicate data. The model "knows the test."
+3. **Narrow task, broad claim** — "Beats GPT-4" on one benchmark, loses on five others. Always ask: on what?
+4. **Evaluator bias** — GPT-4-as-judge favors GPT-4-shaped answers. Human preference favors confident and verbose.
 
-The judges will ask three kinds of questions: **challenge** ("how is this different from X?"), **depth** ("what's your eval?"), and **trap** ("what if the model is wrong?"). Prepare one 30-second answer for each. Rule: if you don't know, say "I don't know — here's how I'd find out." That answer wins every time.
+### How to read a release properly
 
-## Watch: A clean 5-minute AI demo, analyzed
+Three-step skim: (1) Which benchmark and what's the delta vs prior SOTA? (2) What's the cost and latency — not just quality? (3) Is there a LiveBench or LM Arena number? If not, be suspicious.
 
-A walkthrough of a demo day talk, paused at each beat, with notes on what's working and what isn't.
+Then always do a private eval on 20 prompts from your actual use case. Benchmarks tell you what works on average. Your private eval tells you what works for you.
 
-https://www.youtube.com/embed/VIDEO_ID
+## Watch: Reading a Model Release Paper Live (10 min)
+
 <!-- TODO: replace video -->
 
-- Watch how they open — the first 20 seconds decide the room.
-- Notice when they type vs. paste during the live demo.
-- Pay attention to how they handle a model response that takes longer than expected.
+Instructor walks through the most recent frontier model release — what to believe, what to skip, what to private-eval.
 
-## Lab: Write the pitch, rehearse it live
+## Lab: Pick your capstone's model (30 min)
 
-You will write a 3-slide pitch for your capstone idea and rehearse a live 2-minute demo with a classmate playing the panel.
+1. Open Artificial Analysis. Filter by your latency and cost constraints (5 min).
+2. Shortlist 3 candidates. Open LM Arena, run 5 of your actual capstone prompts side-by-side (15 min).
+3. Pick one domain-specific benchmark (SWE-bench for coding, MATH for math, MT-Bench for chat) and check your candidates' scores on LiveBench (5 min).
+4. Pick primary + fallback. Write a 2-line why (5 min).
 
-1. Open Figma Slides, Pitch, or plain Keynote. Make three slides exactly. Title each one.
-2. Draft the **problem** slide. Name a real person (real name if you can — a user you've talked to). One image. One-line pain.
-3. Draft the **solution + insight** slide. One sentence for each. If either sentence has more than 20 words, cut.
-4. Draft the **what's next** slide. A metric, a date, your team.
-5. Write the **verbal script** for the full 4 beats. Time yourself reading it. Trim to under 5 minutes total.
-6. Storyboard the **live demo** moment-by-moment. List every click, every prompt, every expected output. If the model latency would kill the flow, pre-record 10-second hero moments and splice.
-7. Prepare the **Plan B recording** — a flawless screen capture of your demo, with captions for each step.
-8. Rehearse with a classmate acting as panelist. Record it on your phone.
-9. After rehearsal, ask the classmate for: one thing that was clear, one thing that was muddled, one question they almost asked but didn't. Fix all three.
-10. Upload the recording and the 3 slides. In a README, paste the three hardest panel questions you're preparing for and your 30-second answers.
+Afternoon: implement the swap in your capstone if needed, then keep building.
 
 ## Quiz
 
-Three questions on the four-beat structure, why the problem beat should open with a person, and the rules for live demos. One scenario where you have to decide live vs. recorded.
+1. Why is MMLU less useful in 2026 than in 2023?
+2. What makes LiveBench contamination-resistant?
+3. What does LM Arena actually measure?
+4. Name two reasons benchmarks lie.
+5. What should you always do after reading a benchmark?
 
 ## Assignment
 
-Record a clean take of your 4-minute pitch (problem, insight, demo, what's next). Post it privately to the cohort channel with the three-slide deck. Give one piece of substantive feedback on two other students' recordings — not "nice job", but a specific line that could be tighter or a demo moment that lost you.
+Ship a 1-page model card for your capstone:
+- Model chosen + version
+- Why (benchmark + private eval results)
+- Fallback model and switching criteria
+- Cost per 1k tokens and expected monthly spend
 
-## Discuss: The ethics of a good demo
+Continue capstone build. Demo day is three days away.
 
-- Where's the line between a polished demo and a dishonest one? Is pre-baked input data cheating?
-- When a model fails live, should you fake it, cut to recording, or lean into the failure? What do founders you respect actually do?
-- The panel will ask "how is this not just a wrapper?" What's your best honest answer for your capstone?
-- Is the four-beat spine too rigid? When does a demo earn the right to break it?
-- Pick one AI company demo you've seen this year that wasted your time. What specifically did they do wrong?
+## Discuss: The Benchmark That Fooled You
+
+Post one benchmark headline from the last year that oversold a model. What did the chart hide? What private eval would have caught it? Two replies minimum.

@@ -1,134 +1,106 @@
 ---
-reading_time: 10 min
-tldr: "Bad prompts get bad answers. Learn the CREATE framework and watch AI quality jump 10x — same tool, same free account."
-tags: ["use", "prompt", "productivity"]
-video: https://www.youtube.com/embed/jC4v5AS4RIM
-lab: {"title": "Rewrite 3 prompts using CREATE", "url": "https://chat.openai.com/"}
-prompt_of_the_day: "You are a {{role, e.g. strict placement coach}}. Context: {{who I am and what I need}}. Task: {{the specific thing I want}}. Format: {{bullets / table / 200 words / email}}. Constraints: {{tone, length, must-include, must-avoid}}. Examples of what good looks like: {{paste 1-2 examples or say 'none'}}."
-resources: [{"title": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}, {"title": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"title": "Google Prompting Essentials", "url": "https://grow.google/prompting-essentials/"}]
+reading_time: 14 min
+tldr: "Open models are closing the gap with GPT-4, and the next decade of AI won't be written only in San Francisco."
+tags: ["foundations", "theory"]
+video: https://www.youtube.com/embed/VIDEO_ID
+lab: {"title": "Three models, two tasks, one winner", "url": "https://lmarena.ai/"}
+prompt_of_the_day: "Translate this English paragraph into {{language}} as spoken by a college student in {{city}}, not textbook formal: {{paragraph}}"
+tools_hands_on: [{"name": "Sarvam.ai", "url": "https://www.sarvam.ai/"}, {"name": "BharatGPT (CoRover)", "url": "https://corover.ai/bharatgpt/"}, {"name": "LM Arena", "url": "https://lmarena.ai/"}]
+tools_demo: [{"name": "HuggingFace Model Hub", "url": "https://huggingface.co/models"}, {"name": "Ollama (preview — install Day 17)", "url": "https://ollama.com/"}]
+tools_reference: [{"name": "Qwen", "url": "https://qwenlm.github.io/"}, {"name": "DeepSeek", "url": "https://www.deepseek.com/"}, {"name": "Kimi (Moonshot)", "url": "https://kimi.moonshot.cn/"}, {"name": "GLM (Zhipu)", "url": "https://chatglm.cn/"}, {"name": "Phi (Microsoft)", "url": "https://huggingface.co/microsoft"}, {"name": "Gemma (Google)", "url": "https://ai.google.dev/gemma"}, {"name": "Krutrim", "url": "https://www.krutrim.ai/"}]
+resources: [{"title": "HuggingFace Open LLM Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}, {"title": "Meesho x Sarvam case study", "url": "https://www.sarvam.ai/"}]
 ---
 
 ## Intro
 
-Yesterday you got wins. Today you get leverage. The difference between an average AI user and someone who feels like they hired a team is one skill: prompting. Same tool, same account — but 10x the quality. By the end of today you'll have a personal prompt library you can paste for the rest of your life.
+Yesterday you met three American chatbots. Today you meet twenty more — Chinese, Indian, European, tiny, huge. The world of AI is much bigger than ChatGPT, and knowing that gives you options most of your classmates don't have.
 
-## Read: The CREATE framework
+## Read: Closed vs open — and why "open" is the word that matters
 
-Most people type into AI like they type into Google. That's the problem. AI is not a search box — it's a very literal collaborator. The more it knows about who you are, what you want, and what "good" looks like, the better it answers. Use this acronym. Name it. Live by it.
+An AI model is basically a huge file of numbers (the weights) plus a little code to run it. There are two flavours:
 
-**CREATE** stands for:
+**Closed weights.** The company keeps the file secret. You can only talk to it through their website or API. Examples: GPT-4o (OpenAI), Claude (Anthropic), Gemini (Google).
 
-- **C — Character / role.** Who should the AI pretend to be?
-- **R — Request.** What exactly do you want?
-- **E — Examples.** What does good look like?
-- **A — Audience / context.** Who are you, who's this for?
-- **T — Tone & format.** Voice, length, structure.
-- **E — Edge cases / constraints.** What to avoid, must-include, limits.
+**Open weights.** The company publishes the file for anyone to download. You can run it on your laptop, your company's server, or a rented GPU. You can also modify it. Examples: Llama (Meta), Qwen (Alibaba), DeepSeek, Mistral.
 
-You don't have to use all six every time. But if an AI answer is bad, check which letter you skipped.
+Why does "open" matter for *you*?
 
-### Before and after (same tool, same day)
+| Reason | What it means for a college student |
+|---|---|
+| Free to run | No ₹1700/month ChatGPT Plus bills |
+| Private | Your data doesn't leave your laptop |
+| Customisable | You can fine-tune it on your college's notes |
+| No rate limits | Run it 24/7 for your side project |
+| Works offline | Hostel Wi-Fi is down? Still works |
 
-**Bad prompt:** "write me a cover letter for a data science internship"
+The catch: open models are usually *slightly* behind the best closed ones on the hardest tasks. In 2023 they were miles behind. In 2026 the gap is often a single point on a benchmark — close enough that for most real work, you can't tell the difference. (We'll do actual benchmarking on Day 27. Today is just the tour.)
 
-**Result:** Generic, robotic, uses the phrase "highly motivated individual", sounds like 50,000 other letters.
+### The Chinese family — loud, fast, and free
 
-**CREATE prompt:**
+For two years now, Chinese labs have been the most prolific *open* releasers on the planet. You should know these names:
 
-```
-Copy and paste this prompt:
+- **Qwen** (Alibaba) — the most complete family. Sizes from 0.5B to 400B+. Very strong at code, reasoning, and multilingual work. If you pick one Chinese model to explore, pick this.
+- **DeepSeek** — famous for "DeepSeek R1" which embarrassed Silicon Valley by matching OpenAI's o1 reasoning model at a fraction of the training cost.
+- **Kimi** (Moonshot AI) — the long-context champion. Feeds in whole textbooks.
+- **GLM** (Zhipu / Tsinghua) — strong bilingual (Chinese + English) and one of the oldest open families.
 
-You are a senior recruiter at a Bangalore product startup who screens 200 CVs a week.
+### The "small is beautiful" family
 
-I'm a 3rd-year ECE student with a CGPA of 8.1, two Kaggle bronze medals, and one Python-based college project on traffic signal optimisation. I'm applying for a Data Science Intern role at a logistics startup (20-person team, Series A).
+- **Phi** (Microsoft) — tiny models (~3B) that punch above their weight. Runs on a laptop.
+- **Gemma** (Google) — Google's open cousin to Gemini. Popular for on-device work.
+- **Mistral** (France) — the European contender. Efficient, multilingual, strong at reasoning.
 
-Write a cover letter of 180 words max.
+### The India family — this is the part no one else teaches you
 
-Tone: confident, specific, no buzzwords. Sound like a real 21-year-old, not a LinkedIn bot.
+India is building AI. Not importing it. Three names to memorise:
 
-Must include: my Kaggle work framed in plain English, why logistics interests me, one question I'd want to ask the founder.
+- **Sarvam AI** — Bengaluru. Founded 2023. Indian-language specialists. Their models handle Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia in ways GPT-4 still fumbles. **Meesho** uses Sarvam to power its voice assistant for sellers who don't read English — this is real deployment, not a demo.
+- **BharatGPT** (by CoRover) — a voice-and-text conversational platform already running inside Indian Railways' "AskDISHA" assistant, handling millions of queries in 14+ Indian languages.
+- **Krutrim** (Ola) — funded by Bhavish Aggarwal. Building a full-stack Indian AI — from silicon to model. Aggressive, ambitious, worth watching.
 
-Avoid: "highly motivated", "passionate", "synergy", any phrase that sounds like a template.
+Worked example — why Indian models matter. Ask GPT-4: *"Translate 'The mess food was kadak today yaar' into formal English."* It'll get it, sort of. Now ask it to reply in Tamil like a 20-year-old from Chennai. Watch it flail. Now try Sarvam. You'll see the difference. That gap — the *cultural and linguistic* gap — is where Indian AI will win.
 
-Example of good opening line: "I spent last weekend trying to predict Bangalore auto fares from 3 GB of messy CSVs — I didn't win, but I learnt why logistics data is genuinely fun."
-```
+> **Why should you care?** Because the companies hiring AI talent in India in 2027 won't just be Google and OpenAI. They'll be Sarvam, Krutrim, Fractal, Ola, Flipkart, Meesho, and ten startups that don't exist yet. Knowing this ecosystem gives you a hiring edge your classmates don't have.
 
-**Result:** You now have a letter you'd actually send. Specificity is the whole game.
+## Watch: HuggingFace Hub tour + India AI snapshot
 
-### The five moves that instantly upgrade any prompt
+I'll record a 12-minute screencast walking through the HuggingFace hub and the Sarvam playground. Goal: you should be able to find any open model in under 30 seconds after watching this.
 
-| Move | What to add | Example |
-|------|-------------|---------|
-| Give it a role | "You are a…" | "You are a harsh DSA interviewer." |
-| Give it *you* | Your background in one line | "I'm a 2nd-year CSE student, weak at recursion." |
-| Ask for a format | Bullets / table / 3 sections | "Reply as a 3-column table." |
-| Show an example | "Good looks like this: …" | Paste a paragraph you liked. |
-| Ask it to think | "Before answering, list your assumptions." | Forces slower, better reasoning. |
-
-### Your reusable prompt library (copy these into a Notes app today)
-
-**Study helper**
-```
-You are a patient tutor. I'm a 2nd-year engineering student. Explain {{topic}} in this order: (1) one-line intuition, (2) formal definition, (3) worked example with numbers, (4) three practice questions — don't solve them yet.
-```
-
-**Writer-with-my-voice**
-```
-Rewrite this {{email / essay / message}} in my voice. My voice samples are below. Keep it under {{N}} words. Don't use em-dashes, corporate buzzwords, or the word "delve". Samples: {{paste 2-3 things you've written}}.
-```
-
-**Explainer / simplifier**
-```
-Explain {{topic}} three times: (a) to a 10-year-old using a food analogy, (b) to a 2nd-year engineering student, (c) to a senior professor. Keep each version under 100 words.
-```
-
-**Decision-helper**
-```
-I'm trying to decide between {{A}} and {{B}}. Give me: 3 reasons for A, 3 reasons for B, 3 questions I should ask myself, and finally your honest recommendation if you were me.
-```
-
-### The "wow" trick of the day
-
-After any AI answer, type: **"What did you assume that might be wrong? What would you ask me to make this 2x better?"** The AI will reveal exactly what it guessed about your situation. Fix those, re-ask, and the next answer is dramatically better.
-
-## Watch: Prompt engineering basics in 10 minutes
-
-One short primer on structuring prompts. Watch for the before/after demos — they're the clearest way to internalise why CREATE works.
-
-https://www.youtube.com/embed/jC4v5AS4RIM
+https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Notice how experts almost always give the AI a *role* first.
-- Count how many times they refine a prompt rather than re-prompt from scratch.
-- Pay attention to format instructions — "reply as a table" changes everything.
+Watch for:
+- How to read a model card (license, size, language)
+- The "Spaces" tab — try models in-browser, zero install
+- The difference between "Instruct" and "Base" versions
 
-## Lab: Rewrite three real prompts
+## Lab: Three models, two tasks, one winner
 
-You'll end with a Google Doc containing your 3 bad-vs-good prompt pairs.
+40 minutes. You'll put three open models head-to-head on two realistic tasks.
 
-1. Open a Google Doc. Title it "My Prompt Upgrades — Day 2".
-2. Write down 3 things you'd actually ask an AI this week: e.g. "help me study for OS midterm", "write a DM to a senior for referral", "help me plan my week".
-3. For each one, first write the *lazy* version you'd have typed on Day 1. Paste it into ChatGPT. Screenshot the answer.
-4. Now rewrite it using CREATE — all six letters. Paste the new version into the same chat. Screenshot the new answer.
-5. Under each pair, write 2 lines: what got better and why.
-6. Ask the AI: *"What did you assume that might be wrong about me?"* Paste its reply into your doc.
-7. Save one of your three as a permanent template in a Notes app called "My Prompts".
-8. Submit the Doc link.
+1. Open LM Arena (`lmarena.ai`). Click "Direct Chat" and pick any model from the dropdown — start with `qwen2.5-72b-instruct`.
+2. Open Sarvam.ai playground in a second tab. Sign up with phone/email.
+3. Open a third tab with any one of: DeepSeek chat, Kimi chat, or GLM chat.
+4. **Task A (reasoning):** *"I have ₹50,000 for a 5-day trip. Goa, Manali, or Meghalaya? Pick one and give me a day-by-day budget breakdown."* Paste into all three.
+5. **Task B (Indian language):** *"Write a 100-word WhatsApp apology to my mom in [your mother tongue] for not calling her in 2 weeks. Make it sound like a college student, not a greeting card."* Paste into all three.
+6. Create a 1-page Google Doc with a 3×2 table: rows are models, columns are tasks. Paste outputs.
+7. Write one sentence per cell: *"This was good / bad because…"*.
+8. Declare a winner per task at the bottom. Note whether the "winner" is the same for both tasks. (Spoiler: it usually isn't.)
 
-**Victory condition:** one Google Doc with three before/after pairs and one saved template you'll reuse this semester.
+Artifact: 1-page comparison doc. Submit as PDF.
 
 ## Quiz
 
-Four quick questions: what CREATE stands for, which letter most people skip, the "critique your assumptions" move, and spotting which of four prompts is best.
+Four questions on open vs closed weights, the Chinese family, the Indian family, and why open matters. Don't memorise company logos — memorise *why* each model exists.
 
 ## Assignment
 
-Share your Google Doc link and pick the single biggest jump in quality from your three pairs. In 3 lines tell us: what was the lazy prompt, what did you add, and what did the AI do differently. No screenshots needed beyond your doc.
+Take the Lab doc and expand it. Rank the 3 open models you tested on both tasks (1 = best, 3 = worst). Add a short paragraph: *"If I were building an app for [pick: Indian farmers / my college's alumni portal / a vernacular news reader], which model would I use and why?"* Keep it to one page. This is the comparison you'd cite in a product manager interview.
 
-## Discuss: Why does giving AI a "role" change the answer so much?
+## Discuss: Live session prompts
 
-- Which letter of CREATE felt most unnatural to add — and why?
-- Share your single best prompt from today. Would you let a junior copy it?
-- Has anyone's AI pushed back or refused something after you gave more context? What happened?
-- Where should we *not* use a heavy prompt — when is a one-liner enough?
-- Does writing better prompts feel like writing better briefs for a human? Good or bad thing?
+- If open models are almost as good and free — why does OpenAI still make billions?
+- Sarvam or Krutrim: which bet is safer, and which is bolder?
+- Would you trust a Chinese open model with your startup's customer data? Why or why not?
+- Does India *need* its own LLM, or is fine-tuning existing ones enough?
+- Which model surprised you most in the lab, and what does that tell you about benchmarks?

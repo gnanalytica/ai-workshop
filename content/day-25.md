@@ -1,113 +1,113 @@
 ---
-reading_time: 14 min
-tldr: "AI UX is different: show uncertainty, cite sources, offer stop buttons, design for failure."
-tags: ["ux", "product", "hands-on"]
+reading_time: 16 min
+tldr: "Demo day — three minutes, one story, three critiques, one page of what you will change next."
+tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Redesign one AI feature for trust", "url": "https://excalidraw.com/"}
-resources: [{"title": "Nielsen Norman Group", "url": "https://www.nngroup.com/"}, {"title": "Figma", "url": "https://www.figma.com/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}, {"title": "Apple HIG: Generative AI", "url": "https://developer.apple.com/design/human-interface-guidelines/generative-ai"}, {"title": "Google PAIR guidebook", "url": "https://pair.withgoogle.com/guidebook/"}]
+lab: {"title": "3-minute live demo to a peer panel of 5", "url": "https://ycombinator.com/demoday"}
+prompt_of_the_day: "Turn {{my_capstone_description}} into a 30-second hook, a 2-minute story, and a 30-second ask. The hook must make a stranger lean in. The story must show a real moment. The ask must be specific."
+tools_hands_on: [{"name": "Loom", "url": "https://loom.com"}, {"name": "Figma Slides", "url": "https://figma.com/slides"}]
+tools_demo: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Canva", "url": "https://canva.com"}]
+tools_reference: [{"name": "YC Demo Day archives", "url": "https://ycombinator.com/demoday"}, {"name": "Pitchfork Economics", "url": "https://pitchforkeconomics.com"}, {"name": "AngelList pitch deck templates", "url": "https://angellist.com"}]
+resources: [{"name": "YC: How to present to investors", "url": "https://ycombinator.com/library"}, {"name": "First Round: The Art of the Demo", "url": "https://review.firstround.com"}]
 ---
 
 ## Intro
 
-A working model is not a working product. Most AI features feel slightly off not because the model is wrong, but because the UI pretends the model is never wrong. Today's question: when your model is probabilistic, what does a trustworthy interface look like?
+Five days ago your capstone was a spec. Today it demos to a panel. This is Ideathon 2 and Mini-Demo Day — the checkpoint that closes Week 5 and opens the final stretch of the workshop. You present a three-minute live demo of your capstone v0 to a rotating panel of five peers. You get critique. You turn that critique into a one-page plan. That plan is next week's fuel.
 
-## Read: UX for systems that sometimes lie
+Today's reading is about demo craft: the 30-second hook, the 2-minute story, the 30-second ask, and the harder work of hearing critique without flinching and without capitulating.
 
-The design problem with AI features is that the output quality is a **distribution**, not a value. Your UI has to give the user tools to navigate that distribution — to notice when things look off, to intervene, to recover. Five patterns do most of the work.
+## Read: Demo craft, critique handling, and turning feedback into action
 
-### 1. Uncertainty, made visible
+### Why demos matter more than decks
 
-If your model is confident, say so; if it isn't, say that too. Options, ordered by how much they change the UX:
+In the AI era, decks are cheap. Anyone can generate a deck in ten minutes. A live demo — a working product, on your screen, that does a thing — is the only artifact that cannot be faked. When investors, customers, and collaborators see a demo, they update their model of you in a way slides never trigger. Demos transfer belief.
 
-- Hedging language in the output itself ("it looks like…", "I'm not sure, but…").
-- Inline confidence badges on specific claims.
-- Highlighting parts of the answer that came from retrieval vs. were generated.
-- A dedicated "sources" panel with per-claim citations.
+This is why every high-performing founder school — YC, South Park Commons, the top accelerators — orients around demo day, not pitch day. The demo is the content. The words around it are just wrapping.
 
-Perplexity won users by making the last one non-optional. Copy the pattern.
+### The 30-second hook
 
-### 2. Citations and receipts
+You have 30 seconds before the audience decides whether you are worth their attention. Your hook must do three things in that window:
 
-For anything factual, show receipts. The design question is **where**: footnotes under the paragraph, hover cards over claims, or a side panel. Rule: the closer the source is to the claim, the more the user trusts it.
+1. **Name the problem in the audience's life.** Not an abstract market problem. A specific moment a real person experiences. "Every founder I know spends six hours a week stitching together customer feedback from Slack, email, and Linear." That is a hook. "The customer feedback market is worth $X billion" is not.
+2. **Promise a specific outcome.** Not "we use AI to make things better." Something like "We turn those six hours into six minutes." Concrete, measurable, believable.
+3. **Earn the next 30 seconds.** Leave a small, unexplained thread the audience wants pulled. "And the weird part is — the AI isn't the hard part."
 
-### 3. Stop, undo, regenerate
+Write the hook. Read it aloud. Cut it in half. Read it again. If it takes more than 25 seconds to say, it is still too long.
 
-Three controls no AI feature should ship without:
+### The 2-minute story
 
-| Control | Why it matters |
-|---|---|
-| **Stop** | Long generations need an interrupt. No stop button = no trust. |
-| **Undo** | Especially for write actions. An agent that can't undo is a liability. |
-| **Regenerate / try again** | Let users escape bad outputs without restarting the task. |
+The middle is a story, not a feature list. Features make audiences passive; stories make them participate. A story has:
 
-### 4. Progressive disclosure of agency
+- **A character** — a real user, named if possible. "Priya is a product manager at a 40-person startup."
+- **A specific moment** — the instant before they needed your product. "It is Monday morning. She has 200 Slack messages, 50 support tickets, and a standup in 30 minutes."
+- **The turn** — what they do with your product. This is where the live demo goes. You show the thing, not describe it. Click, type, watch the output appear. Streaming is your friend.
+- **The payoff** — what they have now that they did not before. Not "a dashboard." Something like "five minutes later, she walks into standup with three prioritized themes and the verbatim quotes to back them up."
 
-An AI feature can act in several modes:
+Two minutes is strict. Rehearse until you hit it on the nose. Cut any feature that does not serve the story, even the one you are most proud of. Demo craft is composition; features are notes. A good composition has silence between the notes.
 
-1. **Suggest** — shows output, user copies manually.
-2. **Draft** — inserts into the doc, marked as AI-generated.
-3. **Apply with confirmation** — proposes an action, asks yes/no.
-4. **Auto-apply** — does it; user can undo.
+### The 30-second ask
 
-Default to the lowest mode you can get away with. Move up only when usage patterns prove it's safe and wanted.
+End with a specific request. Vague asks get vague responses. Concrete asks get action. Examples:
 
-### 5. Failure modes, by design
+- "I need five design partners in B2B SaaS with 50–200 employees. If you know someone, message me after."
+- "I am hiring one founding engineer who has shipped production LLM systems. Intro me."
+- "I am raising a pre-seed round of $500k. I have $200k soft-committed. Looking for lead."
 
-Every AI feature has failure modes. Good design names them in the UI. GitHub Copilot's gray ghost text says "this is a guess, not a commit". Notion AI's "continue writing" button implicitly accepts that it can be ignored. Your feature needs the equivalent — a visual contract with the user that says **"this output is provisional"**.
+The ask is not a grovel. It is a menu. Make it easy for the audience to say yes to one specific thing.
 
-### Worked example: "AI-summarize my notes"
+### Handling critique
 
-Naive design: button labeled "Summarize" → replaces the note with AI output. Awful.
+Peer critique today will land in three flavors. Learn to recognize each in real time and respond differently.
 
-Redesign, applying the patterns:
+**Signal critique** — the reviewer names something real and specific. "Your onboarding has three steps before the user sees any AI output. Every step loses half the users." This is gold. Say "thank you", write it down verbatim, and do not defend. Defending signal critique is the single most expensive mistake a demoer can make.
 
-- Button labeled **"Draft summary"** (not "Summarize" — that implies correctness).
-- Output opens in a **side pane**, not in place of the note.
-- Each bullet in the summary has a small **source link** to the note region it came from.
-- A visible **stop** button while generating; a **regenerate** button after.
-- An explicit **"Insert at top of note"** action — never auto-inserts.
-- A faint **"AI-generated"** marker on inserted content that persists for 24 hours.
+**Taste critique** — the reviewer dislikes a choice that is actually a choice. "I would never use purple for the primary button." Thank them, note it, and let it go. You cannot please every taste, and chasing taste critique breaks coherent products.
 
-The feature does the same work. The user is now in charge.
+**Confused critique** — the reviewer misunderstood something. "Wait, so does the AI write the code or does the human?" Resist the temptation to re-explain immediately. Instead, ask a question: "What part of the demo made that unclear?" Confused critique usually points to a genuine communication failure earlier. Fix the demo, not the reviewer.
 
-## Watch: Interfaces for probabilistic systems
+A pro move: after each critique, summarize it back to the reviewer in one sentence. "So what you are saying is: the third step of onboarding is killing adoption and I should compress it." If they nod, you heard right. If they correct you, you just learned something even better.
 
-A talk from a designer who ships AI features at scale. Focus is less on the model and more on the micro-interactions — skeleton loaders, confidence states, the undo stack.
+### Turning feedback into action
 
-https://www.youtube.com/embed/VIDEO_ID
+The one-page action doc is the deliverable, not the demo itself. The demo was a probe. The feedback is the data. The plan is the output.
+
+Structure for your one-pager:
+
+- **Three critiques received** — verbatim quotes, named if possible.
+- **Pattern** — what theme connects them? "All three mentioned onboarding friction."
+- **One change I will make next week** — a specific, scoped, measurable change.
+- **One thing I will NOT change** — a critique you heard and chose to reject, with reasoning. This matters. Founders who capitulate to every critique build incoherent products. Founders who reject all critique build irrelevant ones. The art is picking well.
+- **How I will know the change worked** — the metric or moment that proves it.
+
+This pattern — probe, listen, choose, ship, measure — is every founder's loop. Today you run it for the first time. You will run it a thousand more.
+
+## Watch: Instructor pitches a capstone live, panel critiques, founder responds
+
 <!-- TODO: replace video -->
 
-- Watch how they handle streaming output — it shapes the perceived latency.
-- Notice the copy on error states; AI errors need different words than 500s.
-- Pay attention to how they test designs with users who don't trust AI.
+## Lab: Mini-Demo Day
 
-## Lab: Redesign one AI feature for trust
-
-You will take one existing AI feature — yours or someone else's — and redesign it in Figma or Excalidraw.
-
-1. Pick a feature. Defaults if stuck: "AI reply in Gmail", "AI summarize PR in GitHub", "AI-generated cover letter from a resume".
-2. Use it for real. Take screenshots of every screen, every state (idle, loading, result, error).
-3. Write a list of every moment the UI could lie to you, rush you, or trap you.
-4. Open Excalidraw (or a fresh Figma file). Draw the current flow as-is. Annotate in red where trust breaks.
-5. Redesign the flow applying all five patterns: uncertainty, citations, stop/undo/regenerate, progressive agency, named failure modes.
-6. Explicitly show at least one new state that the original UI hid (e.g. low-confidence output, a mid-generation stop, an undo after apply).
-7. Pick one **micro-interaction** and design it carefully — the streaming skeleton, the regenerate animation, the citation hover card.
-8. Write 3 sentences of rationale for each pattern change. Not "prettier" — functional.
-9. Share the file link with a classmate. Ask them to point to one thing that still feels untrustworthy.
-10. Iterate once, then post your before/after in the cohort channel.
+1. Prep a 3-minute demo of your capstone v0: 30-second hook, 2-minute story with live product usage, 30-second ask.
+2. Rehearse three times. Cut to fit. Record one rehearsal for yourself.
+3. Join your assigned group of 5 peers. Rotate through two rounds so every group sees different demos.
+4. Each demo is followed by 3 minutes of panel critique. Every panelist gives one piece of feedback.
+5. As a panelist in other groups, deliver signal-level critique. No taste attacks, no confused rants.
+6. Record your own demo live for your portfolio.
+7. After all demos, step away for 30 minutes. Come back and write the one-page action doc.
 
 ## Quiz
 
-Three questions on the five trust patterns, the difference between "suggest" and "apply with confirmation" modes, and why streaming matters for perceived latency. A bonus on when auto-apply is acceptable.
+1. What are the three jobs of a 30-second hook?
+2. What are the four beats of the 2-minute story structure?
+3. What makes an ask strong vs weak?
+4. Name the three flavors of critique and the correct response to each.
+5. Why does the one-pager include a "what I will NOT change" section?
 
 ## Assignment
 
-Build a **Loom or screen-recorded** walkthrough (under 3 minutes) of your redesign. Narrate why each change exists. Put the Figma/Excalidraw link and the video in a single markdown file in your repo. If you can't defend a design choice in one sentence, cut it.
+**Weekly deliverable (checkpoint):** Submit (a) a recording of your 3-minute mini-demo, (b) three verbatim critiques you received with attribution, and (c) your one-page "what I will change and what I will not, with reasoning" document. This is the artifact that feeds your Week 6 work.
 
-## Discuss: Taste in the age of mediocrity
+## Discuss: The critique that stung — and was right
 
-- Which AI product today has the best UX for uncertainty, and what specifically do they do?
-- Auto-apply vs. confirmation: where's the line, and does it move as trust grows?
-- Citations are trusted even when wrong. Is that a feature or a failure?
-- How do you design for users who don't know the model can be wrong?
-- When an AI feature's accuracy drops from 95% to 92%, what should change in the UI — and what shouldn't?
+Share the single piece of critique today that stung the most and, on reflection, was also correct. What made it sting? What will you change because of it? The bravest posts win a shout-out on Monday.

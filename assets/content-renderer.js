@@ -262,6 +262,38 @@ export function renderMetaStrip(meta = {}) {
 }
 
 /**
+ * renderToolSections(meta) — 3 columns of Hands-on / Demo / Reference tools.
+ * Looks for meta.tools_hands_on, meta.tools_demo, meta.tools_reference
+ * each an array of {name, url}.
+ */
+export function renderToolSections(meta = {}) {
+  const cols = [
+    { key: 'tools_hands_on', label: 'Hands-on', tint: 'lime',  desc: 'You do it, 20–30 min artifact.' },
+    { key: 'tools_demo',     label: 'Demo',      tint: 'violet',desc: 'Instructor walks through; you watch.' },
+    { key: 'tools_reference',label: 'Reference', tint: 'sky',   desc: 'Self-explore after class.' },
+  ];
+  const hasAny = cols.some(c => Array.isArray(meta[c.key]) && meta[c.key].length);
+  if (!hasAny) return '';
+  const colHtml = cols.map(c => {
+    const items = meta[c.key];
+    const list = Array.isArray(items) && items.length
+      ? `<ul>${items.map(t => {
+          const url = t?.url || '#';
+          const name = t?.name || url;
+          return `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a><span class="lm-host muted">${escapeHtml(domainOf(url))}</span></li>`;
+        }).join('')}</ul>`
+      : `<p class="muted" style="font-size:13px;margin:6px 0 0">None this day.</p>`;
+    return `
+      <div class="tool-col tool-${c.tint}">
+        <div class="tool-h">${escapeHtml(c.label)}</div>
+        <div class="tool-d">${escapeHtml(c.desc)}</div>
+        ${list}
+      </div>`;
+  }).join('');
+  return `<div class="tool-grid">${colHtml}</div>`;
+}
+
+/**
  * renderResourcesBlock(meta) — just the resources list block, for rendering separately.
  */
 export function renderResourcesBlock(meta = {}) {

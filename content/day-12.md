@@ -1,190 +1,79 @@
 ---
-reading_time: 15 min
-tldr: "Decomposition, pattern-matching, abstraction, algorithmic thinking — the thinking moves that outlive any language."
-tags: ["computational", "thinking"]
+reading_time: 14 min
+tldr: "Design thinking is not sticky-note theatre — it is a disciplined loop of divergence and convergence, and today you run all five stages on your capstone."
+tags: ["design", "design-thinking", "capstone", "process"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Decompose a decision with the four CT primitives", "url": "https://excalidraw.com/"}
-resources: [{"title": "Computational Thinking — Wikipedia", "url": "https://en.wikipedia.org/wiki/Computational_thinking"}, {"title": "Jeannette Wing's 2006 essay (search it)", "url": "https://hbr.org/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}]
+lab: {"title": "Map all 5 stages of design thinking on your capstone in FigJam", "url": "https://www.figma.com/figjam/"}
+prompt_of_the_day: "Act as a senior product designer reviewing my capstone design-thinking map. Capstone: {{my_capstone}}. For each stage — Empathize, Define, Ideate, Prototype, Test — tell me: (1) what I seem to have skipped, (2) where I am confusing divergence with convergence, (3) one concrete artifact I should add before moving on."
+tools_hands_on: [{"name": "Figma / FigJam", "url": "https://www.figma.com/figjam/"}]
+tools_demo: [{"name": "tldraw", "url": "https://www.tldraw.com"}, {"name": "Stanford d.school case studies", "url": "https://dschool.stanford.edu/resources"}]
+tools_reference: [{"name": "IDEO Design Kit", "url": "https://www.designkit.org"}, {"name": "Stanford d.school toolkit", "url": "https://dschool.stanford.edu/resources"}]
+resources: [{"name": "IDEO Design Kit — Methods", "url": "https://www.designkit.org/methods.html"}, {"name": "d.school Design Thinking Bootleg", "url": "https://dschool.stanford.edu/resources/design-thinking-bootleg"}]
 ---
 
 ## Intro
 
-Computational thinking has nothing to do with being a programmer. It is a way of breaking messy reality into pieces a machine — or a junior teammate, or a process — can execute. Today you learn the four primitive moves that underpin every software system, and apply them without writing a single line of code.
+Design thinking has a reputation problem. It has been diluted into colourful sticky notes, two-hour "workshops," and the smug sense that wandering around a whiteboard counts as work. It does not. Done properly, design thinking is a hard, iterative discipline that alternates between opening up ideas and ruthlessly closing them. Today you run the real version on your own capstone.
 
-## Read: the four primitives
+## Read: The five stages, and the traps inside each one
 
-Jeannette Wing, in a 2006 essay that launched the term into mainstream curriculum, argues computational thinking rests on four mental moves:
+Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype, Test**. The linear diagrams lie — you will bounce between them many times before shipping. What matters is not the order but the *rhythm* inside each stage: diverge (widen the possibility space), then converge (commit to one thing and move on). Skipping either half is the most common failure.
 
-1. **Decomposition** — break a big messy problem into smaller, well-defined parts.
-2. **Pattern recognition** — spot similarities within and across problems.
-3. **Abstraction** — hide details that don't matter for your current purpose.
-4. **Algorithmic design** — define a step-by-step procedure that produces the desired output.
+**Empathize.** You are not the user. You are almost never the user, even if you think you are. The goal of this stage is to genuinely inhabit another person's context — their constraints, their emotions, their workarounds, the things they will never put in a survey because they are embarrassed or bored. Tools: shadowing, contextual inquiry, diary studies, open interviews (Day 13 goes deep on this). Anti-pattern: "I asked my co-founder and she agreed." That is not research. That is confirmation.
 
-You use these every day, just unconsciously. Making these moves explicit is what makes you dangerous.
+**Define.** You took everything you heard in Empathize and now you squeeze it into one sentence — the Point of View (POV) statement. Format: *[specific user] needs [need, stated as a verb] because [surprising insight].* Example: "Aisha, a solo accountant serving 40 small businesses, needs a way to triage client emails by urgency because she currently checks her inbox 47 times a day out of anxiety, not because she found anything new." Notice the insight is not obvious. If your POV is "users want it to be faster," you have not defined anything — you have restated the premise.
 
-### Primitive 1 — Decomposition
+**Ideate.** This is the diverge stage, and most teams butcher it by converging too early. The rule: go wide before going deep. Aim for 30+ ideas in 20 minutes. Use constraints to force creativity — "what would the solution look like if it cost $1? If it had no screen? If it had to work offline? If a 7-year-old had to use it?" Then, and only then, converge. Dot-vote. Kill 80% of the ideas. Pick two to three to prototype. A team that generates ten ideas and builds the first one is not ideating; it is defaulting.
 
-The act of chopping. You take "plan my elective registration" and break it into "list available electives → filter by interest → check schedule conflicts → check professor ratings → rank top 3 → submit form before deadline".
+**Prototype.** A prototype is the cheapest possible thing that forces a real reaction. It is not a finished product. It is not a polished Figma mockup. It can be a paper sketch, a Wizard-of-Oz demo (you play the AI behind the curtain), a 10-line script, a role-play, a Notion page pretending to be an app. The test of a prototype is: *if this is wrong, will we find out in under a day?* If not, you are overbuilding.
 
-Good decomposition has three properties:
+**Test.** Put the prototype in front of a real human — not your mom, not your co-founder, not the cohort chat. A real candidate user. Observe more than you ask. Note where they hesitate, what they touch first, what they ignore, what makes them smile. Then go back to Empathize, or Define, or Ideate — wherever the evidence points. Testing without updating upstream stages is theatre.
 
-- **Each sub-part can be understood in isolation.** If changing sub-part A forces you to rewrite sub-part B, they weren't really decomposed.
-- **The parts together cover the whole.** No hidden steps.
-- **Each part has a clear input and output.** "Check schedule conflicts" takes a list of electives and returns a filtered list.
+**Divergent vs convergent thinking.** This is the hidden engine of the whole method. Every stage has both. Empathize diverges across users, then converges on one or two personas. Define diverges across possible framings, then converges on one POV. The anti-pattern is holding both at once: brainstorming while simultaneously critiquing. The brain cannot do both well, so you end up doing neither. Separate them in time. When diverging, no "yes, but." When converging, no "what if we also."
 
-### Primitive 2 — Pattern recognition
+**Anti-pattern: PowerPoint prototypes.** A 40-slide deck is not a prototype; it is a document about a prototype that does not exist. If a user cannot interact with it (even by pretending), you have not tested anything.
 
-Seeing "wait — this is just like that." Planning placement prep feels like planning exam prep, which feels like planning a gym routine. The pattern is *goal-setting + recurring deliberate practice + feedback review*. Recognizing the pattern means you don't reinvent a template every time.
+**Anti-pattern: validation theatre.** You show your prototype to five friendly users. They all smile. You call it "validated." What actually happened: friendly users said friendly things and you heard what you wanted to hear. Real testing surfaces disconfirming evidence. If you walked out of a test with no surprises, you tested wrong — you either picked the wrong users, asked the wrong questions, or built something so vague no one could disagree with it.
 
-Patterns also apply *within* a problem. If two sub-parts of a decomposition feel the same, maybe they are — and you can reuse one approach.
+**Anti-pattern: falling in love with stage one.** Some teams spend three weeks in Empathize and never ship. Others skip it entirely and Ideate for a week. A healthy capstone cycles through all five stages at least twice in four weeks. Speed is a design-thinking skill.
 
-### Primitive 3 — Abstraction
+IDEO built the original Design Kit at designkit.org with over 50 methods, each with instructions and timeboxes. Stanford's d.school publishes the "Bootleg" — a playful toolkit of every method they teach. Both are free and you will use them repeatedly over the next three weeks. Bookmark them now.
 
-Deliberate forgetting. When you write "check schedule conflicts", you hide the fact that timetables are in PDFs, slots have sub-codes, and Wednesdays have labs. At *this* level of abstraction, all you care about is: *input → a decision of conflict or no-conflict*. The details matter at a lower level, not this one.
+## Watch: A real design-thinking case from Stanford d.school
 
-> A mental model is an abstraction. A map is an abstraction. The shortcut "mess is crowded 7:30–8:15pm" is an abstraction of thousands of lived events.
+Watch a short d.school walk-through of a project that cycled through all five stages. Notice how much time was spent in Empathize relative to Prototype — and how the POV statement changed twice before the team committed.
 
-The skill is knowing *which details to drop*. Drop too many and your model lies to you. Drop too few and you drown.
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-### Primitive 4 — Algorithmic design
+- Empathy was not an exercise — it was a continuous input that kept re-shaping Define.
+- The prototype was crude on purpose; polish would have delayed learning.
+- The team's strongest insight came from a user they had initially dismissed as "not the target."
 
-Turning a decomposition into a procedure. A recipe. A runbook. Written so that someone else (a teammate, a future-you, a computer) can execute it without guessing.
+## Lab: Map the full cycle on your capstone in FigJam (45 min)
 
-A good algorithm has:
+1. **Open FigJam (figma.com/figjam)** and create a new board titled "[Your capstone name] — DT map v1."
+2. **Draw five columns** left to right: Empathize, Define, Ideate, Prototype, Test.
+3. **Empathize column (7 min).** List 3 candidate users (name, age, context). List 5 questions you do not yet know the answer to. Mark each question D (diverge — open-ended) or C (converge — needs a specific answer).
+4. **Define column (7 min).** Draft your Point of View statement: *[user] needs [verb-based need] because [surprising insight].* If you cannot fill the "surprising" slot, write "I have not yet earned this insight" and move on honestly.
+5. **Ideate column (10 min).** Set a 10-minute timer. Generate at least 20 solution ideas. Include three deliberately bad ones (the $1 version, the no-screen version, the 7-year-old version). Then dot-vote your top three.
+6. **Prototype column (7 min).** For your top idea, describe the cheapest possible prototype in one sentence. Is it a paper sketch? A Wizard-of-Oz script? A fake landing page? Name the format and the build time.
+7. **Test column (7 min).** Name 3 real humans (first names only) you could test with by Day 15. Name 3 questions you will NOT ask them (leading ones, "would you use this?" types) and 3 you will.
+8. **Run the Claude review (5 min).** Export the FigJam as an image, paste into Claude with today's Prompt of the Day, and write down every gap it finds.
 
-- **Defined inputs.** "Given a list of 8 electives..."
-- **Defined outputs.** "...return the 3 I should register for, ranked."
-- **Deterministic steps.** Each step has one obvious meaning.
-- **Edge cases named.** "If two electives tie in score, pick the one with the earlier class time."
-- **A stopping condition.** You know when you're done.
-
-### Worked example: "which elective should I pick?"
-
-A 3rd-year student has to pick 2 electives out of 8 options. Classic messy real-life decision. Let's run the four primitives.
-
-**Decompose:**
-
-- Gather the 8 elective options (data).
-- Score each against criteria.
-- Detect schedule conflicts between picks.
-- Pick top-ranked non-conflicting pair.
-
-**Pattern-recognize:** this is structurally identical to picking which 2 clubs to join or which 2 courses on Coursera to finish this semester. Same template.
-
-**Abstract:** you are going to ignore details like "what my parents think" or "what a specific senior said". Keep 4 clean criteria:
-
-1. Genuine interest (1–5).
-2. Career signal / resume weight (1–5).
-3. Professor quality (1–5).
-4. Schedule load (inverse — how many hours/week, lower is better, scored 1–5).
-
-**Algorithm:**
-
-```
-INPUT: list of 8 electives, each with {name, slot, hours_per_week, prof_rating}
-INPUT: my self-scored interest for each elective (1-5)
-
-STEP 1: For each elective, compute
-   score = 0.4 * interest
-         + 0.25 * career_signal
-         + 0.2 * prof_rating
-         + 0.15 * (6 - load_score)   # lower load = higher contribution
-
-STEP 2: Sort electives by score, descending.
-
-STEP 3: Starting from top: pick the first elective.
-        Walk down the list, pick the highest-scored elective
-        whose slot does NOT conflict with already-picked ones.
-
-STEP 4: Stop when 2 are picked.
-
-EDGE CASE: If no non-conflicting second pick exists,
-           backtrack — try the 2nd-ranked as first pick instead.
-
-OUTPUT: ranked list of 2 electives, plus a 1-line reason for each.
-```
-
-This is code in spirit, not in syntax. It's executable by *you* with a pen and paper. You can also hand it to a friend and they'd make the same decision you would. *That* is the test of a good algorithm.
-
-### Another mini-case: a notes-sharing flow
-
-Problem: "Share unit-3 OS notes with my study group of 5."
-
-Decompose → `scan pages` → `check legibility` → `name file consistently` → `upload to shared drive` → `notify group`.
-
-Pattern: same structure as sharing any set of files. Reusable.
-
-Abstract: we don't care whether it's OS or DBMS notes. We don't care whether Drive or Dropbox. At this level, it's "upload and notify".
-
-Algorithm: a 5-step runbook anyone in the group can follow. Bonus: if the steps are clear, any member can do the next upload without being asked. You just removed the bottleneck that was *you*.
-
-### Why this matters before AI
-
-When you learn to prompt AI models in Week 2, a crisply decomposed problem gives you a crisply scoped prompt. A vague problem gives you vague output. Computational thinking is how you pre-digest the problem so the machine doesn't have to guess.
-
-## Watch: computational thinking without code
-
-A short overview of the four primitives with real-world (non-coding) examples. The visuals are the point.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Listen for how the speaker uses the word "abstraction" — is it "simplifying" or "hiding"? The distinction matters.
-- Watch for a pattern-recognition example that is *not* from computing.
-- Count how many edge cases the speaker surfaces in their worked algorithm.
-
-## Lab: decompose a real decision you're facing
-
-Pick a real, upcoming decision. Examples: which elective to pick, which internship to apply to, which club to commit to, whether to do a summer project vs a course.
-
-1. Open Excalidraw or a blank doc. Divide the page into four quadrants, one per CT primitive.
-2. **Decompose** — write out 4–7 sub-parts of the decision, each with an input and output.
-3. **Pattern recognize** — identify at least one *other* decision you've made that had the same structure. Write 2 lines on what the shared pattern is.
-4. **Abstract** — list the 3–5 details you are deliberately choosing to ignore and 3–5 you are keeping. Yes, both lists matter.
-5. **Algorithm design** — write a pseudocode-style procedure, like the worked example above. Plain English in `STEP 1`, `STEP 2` form is fine. Must include an edge case and a stopping condition.
-6. Hand your algorithm to a cohort partner. Ask them to "execute" it verbally on your inputs. If they have to ask you clarifying questions, the algorithm isn't done yet.
-7. Tighten the algorithm based on their questions.
-
-Template:
-
-```
-DECISION: ____________________________________
-
-DECOMPOSITION (sub-parts with input → output):
-  1. _________________________ : ___ → ___
-  2. _________________________ : ___ → ___
-  3. _________________________ : ___ → ___
-  ...
-
-PATTERN: this is structurally like: _____________
-Shared template: ________________________________
-
-ABSTRACTION:
-  Dropping: ______________________________________
-  Keeping:  ______________________________________
-
-ALGORITHM:
-  INPUT:  _______________________________________
-  STEP 1: _______________________________________
-  STEP 2: _______________________________________
-  STEP 3: _______________________________________
-  EDGE:   _______________________________________
-  STOP:   _______________________________________
-  OUTPUT: _______________________________________
-```
+Screenshot the final board.
 
 ## Quiz
 
-Quick check on the four primitives, what counts as a good decomposition, and the difference between abstraction and oversimplification. Four questions. Aim for 75%+. These primitives are the bridge between Week 1's thinking work and Week 2's building.
+Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
 
 ## Assignment
 
-Submit your four-quadrant worksheet as a **file upload** (image or PDF). We grade on: whether the decomposition's parts actually compose back to the whole, whether your abstraction explicitly names what is dropped, and whether the algorithm has at least one edge case and a stopping condition. Vague English counts against you.
+Submit a screenshot of your full 5-column FigJam board to the cohort channel. Include your POV statement in the post body as plain text. Also share the one gap Claude surfaced that stung the most — and how you plan to close it before Day 14.
 
-## Discuss: where CT helps and where it misleads
+## Discuss: Where did your process cheat?
 
-- What does computational thinking buy you that "just think clearly" doesn't?
-- Give an example where abstraction would *harm* a decision because it hides something morally important.
-- Which of the four primitives do you use most naturally? Which do you avoid?
-- Is algorithmic design a form of intellectual laziness (offloading judgement) or rigor (making judgement explicit)?
-- How would you teach a 10-year-old to decompose a problem — without using the word "decompose"?
+- Which stage did you rush, and what would slowing down by 2x cost you?
+- What "surprising insight" slot did you struggle to fill — and what does that tell you about your empathy work so far?
+- Which of your 20 ideas was the best *bad* idea, and why might it actually contain a real one?
+- When did you last feel the urge to build before defining? What triggered it?
+- If you had to pick between a crude prototype tomorrow and a polished one in a week, which serves learning more — and which serves your ego?

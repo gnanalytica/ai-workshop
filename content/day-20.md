@@ -1,147 +1,114 @@
 ---
-reading_time: 14 min
-tldr: "APIs, HTTP, JSON, requests — the concepts that let you direct AI to connect anything to anything."
-tags: ["web", "apis", "concepts"]
+reading_time: 15 min
+tldr: "Chain AI with APIs and triggers in n8n, automate a browser task you hate, and ship your first real workflow to prod."
+tags: ["build", "technical"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Hit three real APIs with Hoppscotch — no code", "url": "https://hoppscotch.io/"}
-prompt_of_the_day: "I want my app to call the {{api}} API. Explain the endpoint, what I need to send, what I'll get back, and rewrite it as a plain-English sentence I could say to Lovable/bolt.new."
-resources: [{"title": "Hoppscotch", "url": "https://hoppscotch.io/"}, {"title": "MDN Web Docs: HTTP", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP"}, {"title": "PokeAPI", "url": "https://pokeapi.co/"}, {"title": "GitHub REST API", "url": "https://docs.github.com/en/rest"}, {"title": "OpenWeather", "url": "https://openweathermap.org/api"}]
+lab: {"title": "Build an n8n flow (AI + real API + trigger) and one browser-use automation", "url": "https://n8n.io"}
+prompt_of_the_day: "Act as an automation designer. My boring manual task is {{task_description}}. Design an n8n flow: (1) trigger, (2) data fetch via which API, (3) AI step and prompt, (4) output destination. List each node in sequence with the exact config I'd paste."
+tools_hands_on: [{"name": "n8n", "url": "https://n8n.io"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}]
+tools_demo: [{"name": "Firecrawl", "url": "https://firecrawl.dev"}, {"name": "Jina Reader", "url": "https://jina.ai/reader"}]
+tools_reference: [{"name": "Zapier AI Actions", "url": "https://zapier.com/ai"}, {"name": "Make.com", "url": "https://make.com"}, {"name": "Playwright MCP", "url": "https://github.com/microsoft/playwright-mcp"}, {"name": "Claude computer-use", "url": "https://docs.claude.com/claude-code"}]
+resources: [{"name": "n8n templates gallery", "url": "https://n8n.io/workflows/"}, {"name": "browser-use quickstart", "url": "https://docs.browser-use.com"}]
 ---
 
 ## Intro
 
-Tomorrow you direct an AI to build your app. To direct it well, you need four small concepts: what an API is, what HTTP is, what JSON looks like, and what "request / response" means. Not to write code — but to speak the language your AI builder speaks. Today's a concept-and-click day.
+Here's the under-appreciated truth about AI in 2026: the biggest ROI isn't chatbots — it's **automation**. Ninety percent of the value showing up in real offices is "AI + API + trigger" flows that replace some human clicking the same buttons every morning. Today we build one. Then we teach a browser agent to handle the tasks no API exists for.
 
-## Read: The plumbing under every app
+## Read: APIs, n8n, and browser agents
 
-Every app you've ever used is mostly glue between APIs. Instagram's home feed? An API call. Uber's map? Two API calls. ChatGPT? An API call to OpenAI. When you describe an app to bolt.new tomorrow, you'll say things like "when the user submits, fetch X from Y and display Z." That sentence is built out of the concepts below.
+**Automation is the 80% practical use case.** Ask any working professional where AI is actually saving them time this year. It's rarely "I had a deep chat with Claude". It's "every morning at 9 AM, an agent reads yesterday's support tickets, tags them by priority and topic, drafts responses for the routine ones, and posts a summary to Slack." That's not a chatbot. It's a **workflow**: trigger → data fetch → AI reasoning → action.
 
-### API: a menu for machines
+The pattern has three parts:
 
-An API — Application Programming Interface — is a menu of things a service lets outside software do. OpenWeather's menu: "I'll give you weather for any city, here's the exact request format." GitHub's menu: "I'll give you a user's repos, their README, their profile." The API is the contract; following the contract gets you the data.
+1. **Trigger.** What kicks the flow off? A schedule (every morning), a webhook (when a new form fills), a database change, a new email, a button click.
+2. **Middle.** Fetch data from APIs, transform it, pass it through an AI step (summarize, classify, extract, generate).
+3. **Output.** Post to Slack, write to a spreadsheet, send an email, call another API, update a database.
 
-```
-Read this, don't type it
+You compose these visually in **n8n**, **Make.com**, or **Zapier**. n8n is our pick because it's open-source, self-hostable, code-optional (you can drop down to JavaScript/Python nodes if needed), and has excellent native AI nodes (OpenAI, Anthropic, Ollama, LangChain agents).
 
-You  -->  "Give me weather for Bengaluru"  -->  OpenWeather API
-  <--  "27 C, humid, chance of rain 40%"  <--
-```
+**Why n8n wins for builders.**
 
-That exchange is a request and a response. That's essentially the whole web.
+- Open-source + self-host = no per-task cost at scale.
+- 400+ pre-built integrations (Slack, Gmail, Notion, Airtable, Postgres, HTTP, webhook).
+- Native AI Agent node — drop in a system prompt, tools, and memory.
+- Free cloud tier at n8n.cloud for those who don't want to self-host.
+- Visual canvas — you direct; you don't type framework boilerplate.
 
-### HTTP: the verbs of the web
+**A concrete flow — the capstone triage bot.** Imagine you run student support for your college club. A Google Form collects queries. You want each query auto-tagged (`academic / logistics / event / complaint`), routed to the right lead over Slack, and stored in Airtable. Manually that's 4 minutes per ticket × 40 tickets/day = 160 minutes/day gone. In n8n:
 
-HTTP (HyperText Transfer Protocol) is the language of those exchanges. Every request uses one of a handful of verbs:
+- **Node 1 — Google Form trigger.** Fires whenever a new submission lands.
+- **Node 2 — AI Agent (Groq + Llama 3.3 70B).** System prompt: "Classify this query into one of [academic, logistics, event, complaint]. Return JSON with `category`, `urgency` (1-5), and a `one_line_summary`."
+- **Node 3 — Switch.** Routes on `category`.
+- **Node 4 — Slack node.** Posts to `#academic-leads` (or whichever channel matches).
+- **Node 5 — Airtable node.** Appends the row with timestamps.
 
-| Verb | Means | Example |
-|---|---|---|
-| GET | "Give me this thing" | GET the Pokémon named "pikachu" |
-| POST | "Make a new thing" | POST a new tweet |
-| PUT | "Replace this thing" | PUT an updated profile |
-| DELETE | "Remove this thing" | DELETE my account |
+Build time: 30 minutes. Time saved: 160 minutes every single day. That's the multiplier.
 
-When you browse a website, your browser is firing GETs nonstop. When you hit "submit" on a form, it's usually POSTing. You already live inside HTTP; you just didn't name it.
+**Browser agents — for when no API exists.** A huge chunk of boring work lives on websites with no API. University portals. Government forms. Old-school vendor dashboards. Linkedin. For those, you need a **browser agent** — an AI that actually sees a webpage and clicks, types, scrolls, like a human would.
 
-### URL: the address
+- **browser-use** (github.com/browser-use/browser-use) — open-source, Python, uses Playwright under the hood. Give it a task in plain English ("log into my college portal and download this week's attendance sheet") and it figures out the clicks.
+- **Claude computer-use** — Anthropic's first-party capability; Claude can literally control your screen.
+- **Playwright MCP** — a more controlled, deterministic approach for repeatable flows.
 
-Every API request goes to a URL. The URL has structure:
+Browser agents are slower and flakier than API calls (pages change, popups interrupt, CAPTCHAs happen) but they unlock the 50% of workflows that are "trapped behind a login". Rule of thumb: **API first, browser agent as last resort**.
 
-```
-Read this, don't type it
+**Web scraping for AI — Firecrawl and Jina Reader.** When you just need clean content from a public page, don't write a scraper. Two services do it brilliantly:
 
-https://pokeapi.co/api/v2/pokemon/pikachu
-|_____|  |________| |_______________|
-scheme   domain     path
-```
+- **Firecrawl** — point it at a URL, get back markdown. Handles JS-rendered pages, pagination, and structured extraction. Great for ingesting docs into RAG.
+- **Jina Reader** — literally prepend `https://r.jina.ai/` to any URL. Get clean markdown back. Zero config. Free tier is generous.
 
-The path is usually where the "what" lives. `/api/v2/pokemon/pikachu` reads almost like English — "give me version 2 of the pokemon named pikachu."
+Both are drop-in `HTTP Request` nodes in n8n.
 
-### JSON: the shape of data
+**Chaining it all — the real picture.** A production AI workflow often looks like this:
 
-APIs usually talk back in JSON — JavaScript Object Notation. It's just key-value pairs in a specific syntax. If you can read a Python dict or a YAML file, you can read JSON.
+Webhook trigger → Firecrawl (scrape a competitor's pricing page) → AI step (extract pricing table as JSON) → Postgres write (store prices with timestamp) → Slack alert (if price changed > 10%) → schedule this whole thing daily.
 
-```
-Read this, don't type it
+None of those individual steps is AI magic. The magic is the **chain**. Small models, tight prompts, real APIs, real triggers, shipped to production.
 
-{
-  "name": "pikachu",
-  "height": 4,
-  "weight": 60,
-  "abilities": [
-    { "name": "static" },
-    { "name": "lightning-rod" }
-  ]
-}
-```
+**Cost and safety.** Two gotchas:
 
-Three rules:
-- Curly braces `{}` hold key-value pairs (an object).
-- Square brackets `[]` hold lists.
-- Strings are in double quotes.
+- **Token cost.** A flow that runs 10,000 times/day using GPT-5 Opus will destroy your budget. Use small local models (Ollama) or cheap hosted ones (Groq, Together) for high-volume nodes. Reserve big models for steps that need real reasoning.
+- **Guardrails.** AI agents acting on the real world can do real damage. Start with **dry-run mode** (log the action instead of performing it), add **human-in-the-loop approval** for any destructive step, and always set **rate limits**.
 
-When you tell an AI builder "use this field from the response," you point at a JSON key. That's the whole conversation.
+**Where this fits your capstone.** Every capstone benefits from one automation flow. If your capstone is a RAG bot, the flow ingests new docs daily. If it's a research assistant, it watches arxiv and summarizes relevant papers every morning. If it's a tutoring system, it posts a daily progress digest. The flow is not the capstone — it's the layer that keeps the capstone alive in production.
 
-### Headers and keys
+## Watch: From zero to a running n8n flow in 20 minutes
 
-Most real APIs require an API key — a password that identifies you — sent in a special spot called a header. Your header might look like `Authorization: Bearer sk-abc123…`. Don't memorize it; just know that keys live in headers, and headers are metadata you attach to the request. Think of headers as the envelope; the body is the letter.
+Live-build of a Gmail-to-Slack AI triage agent in n8n cloud, followed by a browser-use run on a real college portal, followed by a Jina Reader + AI summarizer chain.
 
-### Rate limits and status codes
+https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 
-The response also comes with a status code:
+- n8n's AI Agent node is drop-in; plug Ollama or Groq as the brain.
+- browser-use is slow but real — budget a few minutes per task.
+- Jina Reader is the "just add water" scraper.
+- Always build with test data first; connect real data last.
 
-| Code | Meaning |
-|---|---|
-| 200 | OK, here's your data |
-| 201 | Created, your new thing exists |
-| 401 | Not authenticated (bad or missing key) |
-| 404 | Not found (wrong URL or missing resource) |
-| 429 | Too many requests — slow down |
-| 500 | Server broke, not your fault |
+## Lab: Build one real n8n flow + one browser automation
 
-When bolt.new or Lovable throws an error tomorrow, 9 times out of 10 it'll reference a status code. You'll know exactly what happened.
+Budget 60 minutes. Pick boring tasks you actually do.
 
-### Why this matters for AI apps
-
-Every AI app you build is made of these pieces: user sends a request to your app, your app calls an LLM API, maybe calls a weather or database API, stitches the JSON together, sends a response back. You're the conductor. The orchestra speaks HTTP and JSON.
-
-## Watch: APIs in plain English
-
-A short, no-code explainer on what APIs are, how HTTP works, and why JSON became the universal data shape. Watch until you could explain an API to a friend at dinner.
-
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
-
-- Notice how every app they show reduces to request/response.
-- Watch for the headers/body distinction in the demo.
-- Observe how JSON mirrors real-world nesting.
-
-## Lab: Hit three real APIs in your browser
-
-Hoppscotch is a free browser-based API client — think Postman without the install. You'll use it to make three real API calls, no code, no login.
-
-1. Open https://hoppscotch.io/. You'll see a Method dropdown (defaulted to GET) and a URL bar. That's a full API client in one screen.
-2. **PokeAPI (no auth).** Set method to GET. Paste URL: `https://pokeapi.co/api/v2/pokemon/pikachu`. Click Send. Scroll the JSON response. Find the `height`, `weight`, and `abilities` fields. Note the status code — it should be 200.
-3. Change the URL to `https://pokeapi.co/api/v2/pokemon/charizard`. Send. Compare the JSON shape — same keys, different values. That consistency is what makes APIs programmable.
-4. **GitHub API (no auth for public data).** GET `https://api.github.com/users/torvalds`. You'll see Linus Torvalds' public profile as JSON. Try `https://api.github.com/users/torvalds/repos` for his repos.
-5. **OpenWeather (requires free key).** Go to https://openweathermap.org/api, sign up free, grab an API key from your account page. In Hoppscotch, GET `https://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=YOUR_KEY`. Replace YOUR_KEY. Send. Look at the `main.temp` field — that's Bengaluru's temperature in Kelvin (subtract 273 for Celsius).
-6. Deliberately break the OpenWeather call. Change the key to `wrong`. Send. You'll see a 401 status. That's authentication failing. Fix the key. Send. 200 again.
-7. Deliberately break the URL — GET `https://api.github.com/users/thisuserdoesnotexist99999`. You'll see 404. That's "not found."
-8. Paste today's prompt-of-the-day into any chat LLM with `{{api}}` set to one of the three above. Get a plain-English sentence you could paste into Lovable tomorrow. Save it.
-
-Time permitting, look at Hoppscotch's "Generate code" button — it converts your request into a copy-paste code snippet in any language. That's what AI builders do under the hood, and you just saw it happen.
+1. Sign up for **n8n.cloud** free tier (or self-host via Docker if you prefer — docs at n8n.io). Create a new workflow.
+2. Pick a trigger relevant to your capstone — Schedule (every hour), Webhook (on form submission), or Gmail (on new email matching a filter).
+3. Add an HTTP Request node that calls a real public API — OpenLibrary, weather, GitHub, or Jina Reader on a page you care about.
+4. Add an **AI Agent** or **OpenAI** node. Wire Groq or your Ollama endpoint as the model. Prompt: extract, classify, or summarize the data.
+5. Add an output node — Slack, Google Sheets, Discord, or plain Email.
+6. Execute the workflow. Watch each node turn green. Debug the red ones. Celebrate.
+7. Now switch to **browser-use**. Install via the quickstart at docs.browser-use.com. Pick one task you hate — "download attendance from college portal", "scrape job listings from careers page", "check Amazon price every morning".
+8. Give browser-use the task in plain English. Watch it actually operate the browser. Note what it got right and where a human still needs to help.
 
 ## Quiz
 
-Expect questions on the four HTTP verbs, reading a JSON object, picking the right status code for a scenario, and one "explain this URL structure" item. Trust the request/response mental model.
+Four: What's the difference between a trigger and a webhook? When would you reach for browser-use instead of an HTTP Request? Why is "dry-run mode" the first thing you should configure? Why would you pick Groq over GPT-5 for a flow running 10k/day?
 
-## Assignment
+## Assignment (WEEKLY deliverable)
 
-Find a real API you'd use in your capstone. Candidates: NewsAPI, a free sports-stats API, a translation API, Google Books, a LeetCode-problems API. Hit one endpoint in Hoppscotch and screenshot the JSON. Write a 3-sentence "what I'd use this for" note. Submit.
+Ship **one working n8n flow** relevant to your capstone — a real trigger, a real API, a real AI step, a real output. Plus **one browser-use automation** of a task you personally hate doing manually. Record a 60-second Loom walking through both. Post the Loom link plus a one-paragraph write-up ("what it saves me per week") to the cohort channel. This is the Week 4 capstone checkpoint — ship it.
 
-## Discuss: Seeing the web for what it is
+## Discuss: What you'll never do manually again
 
-- Which of the three APIs felt most "magical"? Which felt most boring (in a good way)?
-- An API key is a password — what goes wrong if you paste yours into a public GitHub repo?
-- Why is JSON everywhere? What's the alternative (XML, CSV) and why did JSON win?
-- Which API would make your capstone app dramatically better if you connected it?
-- When you describe tomorrow's build to an AI, which concepts from today will you actually name out loud?
+- Which manual task in your week is first on the chopping block?
+- What went wrong in your n8n flow the first time — data shape, auth, or the AI node?
+- When is browser-use genuinely useful vs. a fragile hack?
+- How do you sleep at night giving an agent access to your email or Slack?
+- Where does automation stop being helpful and start being creepy or unsafe?

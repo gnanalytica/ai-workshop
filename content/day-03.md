@@ -1,130 +1,131 @@
 ---
-reading_time: 10 min
-tldr: "Turn a 20-page PDF into a 5-slide summary and 10 practice questions before your next chai break. NotebookLM is your new study buddy."
-tags: ["use", "study", "productivity"]
-video: https://www.youtube.com/embed/d8JkYJ5JQHk
-lab: {"title": "From 20-page PDF to 5-slide deck + quiz", "url": "https://notebooklm.google.com/"}
-prompt_of_the_day: "You are a patient tutor. Explain {{topic}} as if I'm a 2nd-year engineering student who just missed the class. Give me: 1) the one-line intuition, 2) the formal definition, 3) a worked example with numbers, 4) three practice questions — don't solve them yet."
-resources: [{"title": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Khanmigo", "url": "https://www.khanmigo.ai/"}]
+reading_time: 14 min
+tldr: "A good prompt is not a magic spell. It's a well-briefed junior — context, role, examples, constraints, tone, evaluation."
+tags: ["foundations", "theory"]
+video: https://www.youtube.com/embed/VIDEO_ID
+lab: {"title": "Iterate one prompt five times", "url": "https://claude.ai/"}
+prompt_of_the_day: "You are a {{role}}. Context: {{one paragraph about the situation}}. Task: {{what you want done}}. Constraints: {{bullet list of must-dos and must-nots}}. Examples: {{1-2 good examples}}. Output format: {{JSON / markdown / table}}."
+tools_hands_on: [{"name": "Claude", "url": "https://claude.ai/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}]
+tools_demo: [{"name": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com/"}]
+tools_reference: [{"name": "Anthropic Prompt Engineering Guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}, {"name": "DAIR.AI Prompt Engineering Guide", "url": "https://www.promptingguide.ai/"}, {"name": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}]
+resources: [{"title": "Chain-of-Thought paper", "url": "https://arxiv.org/abs/2201.11903"}, {"title": "Anthropic 'Context is King' post", "url": "https://www.anthropic.com/"}]
 ---
 
 ## Intro
 
-Today we make AI your study partner — the kind that never gets tired, never judges you for asking "but why?", and can quiz you at 2 AM. By the end of the lab, you'll have turned a terrifying 20-page reading into a 5-slide summary and 10 practice questions, in under 30 minutes. You'll also learn the one tool most students haven't discovered yet: NotebookLM.
+The difference between a student who gets 3x output from AI and one who gives up saying "AI is mid" — is not intelligence. It's prompt craft. Today you learn the only framework you'll ever need, and a small taste of what's coming in Week 3: *context engineering.*
 
-## Read: The AI study stack
+## Read: CREATE — the only prompt framework you need
 
-Studying with AI is not "ask it the answer". That's cheating yourself. Studying with AI is compression, translation, and drill. Three moves — and each has a best tool.
+Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.
 
-### Move 1 — Compress: turn long into short
+**C — Context.** What's the situation? Who am I? What's already been tried?
+**R — Role.** Who should the AI be? (Expert? Peer? Critic?)
+**E — Examples.** Show, don't just tell. Even one example 5x the output quality.
+**A — Active constraints.** What MUST the output do, and what MUST it NOT do?
+**T — Tone.** Formal? Casual? Sarcastic? Hinglish?
+**E — Evaluation.** How will you judge the answer? Tell the model.
 
-Upload your lecture notes, a research paper, or a chapter PDF into an AI. Ask for layered summaries: a 1-line version, a 5-bullet version, and a 1-page version. Different depths for different moments — revising on the bus vs revising the night before.
+Worked example. Compare these two prompts:
 
-**Best tool:** **NotebookLM** by Google (`https://notebooklm.google.com/`). You can upload up to 50 sources per notebook — PDFs, Google Docs, YouTube transcripts, websites — and ask questions that cite which source the answer came from. It is free and underrated.
+> **Weak:** "Write me a cover letter for SDE internship."
 
-Example prompt for a lecture PDF:
+> **Strong:** "**Context:** I'm a 3rd-year CSE student at VIT Vellore, CGPA 8.1, two hackathon wins, one React side project. Applying to Razorpay SDE-Intern. **Role:** You are a senior engineer at Razorpay who's reviewed 500 intern applications. **Examples:** [paste one cover letter you like]. **Constraints:** Under 250 words, mention one specific Razorpay product, no clichés like 'passionate' or 'go-getter'. **Tone:** confident but humble, Indian English. **Evaluation:** If a hiring manager would skim past this, it fails."
 
-```
-Copy and paste this prompt:
+The second one takes 90 seconds longer to write. It saves 30 minutes of editing.
 
-Summarise the uploaded notes in three versions:
-1) A single tweet (under 200 chars) capturing the main idea.
-2) 7 bullet points I can memorise for a viva.
-3) A 1-page study sheet with a short intuition per concept, and one formula or code snippet per concept if relevant.
-```
+### Zero-shot, few-shot, chain-of-thought — three patterns to know
 
-### Move 2 — Translate: turn jargon into intuition
+**Zero-shot:** Ask without any example. Fastest. Works for simple tasks.
+*"Summarise this article in 3 bullets."*
 
-Half of studying is figuring out what the textbook *meant*. AI is exceptional at this. The trick is to ask for multiple explanations at different levels.
-
-```
-Copy and paste this prompt:
-
-Explain {{topic, e.g. Kalman filters}} three times:
-- Once to a 12-year-old using a food or cricket analogy.
-- Once to a 2nd-year engineering student with the key formula.
-- Once to someone preparing for a PhD interview, with nuance and edge cases.
-```
-
-The "explain it at 3 levels" move is the single best study prompt ever written. Steal it.
-
-### Move 3 — Drill: turn reading into retention
-
-Passive reading is a lie. You don't remember what you don't retrieve. AI makes retrieval practice painless — it can generate flashcards, MCQs, short-answer questions, and even a mock viva.
+**Few-shot:** Give 1-5 examples first. Dramatically better for formatting or style tasks.
 
 ```
-Copy and paste this prompt:
+Example 1:
+Input: "Prof cancelled class yaar"
+Sentiment: relieved
+Reason: "class cancelled" + "yaar" signals relief
 
-From the uploaded notes, generate:
-- 10 flashcards (Q on one line, A on next).
-- 5 MCQs with 4 options each, and mark the correct one only at the very end.
-- 3 "trap" questions — things students commonly get wrong on exams about this topic.
-- 1 open-ended viva question where I have to reason, not recall.
-Then quiz me one at a time. Wait for my answer before revealing the correct one.
+Example 2:
+Input: "Mess food was peak today, I'm cooked"
+Sentiment: positive
+Reason: "peak" is Gen-Z slang for excellent
+
+Now classify:
+Input: "Placements list dropped and I'm not on it"
 ```
 
-That last line is magic — "wait for my answer before revealing" turns a chat into an interactive tutor.
+**Chain-of-thought (CoT):** Add "Think step by step before answering." The model writes out reasoning before the final answer. Works shockingly well on math, logic, and debugging.
 
-### Picking the right tool for the job
+*"A mess charges ₹3200/month for unlimited meals. I eat 20 days/month, 2 meals a day. Street food costs ₹80/meal. Which is cheaper? Think step by step."*
 
-| Task | Best tool | Why |
-|------|-----------|-----|
-| Upload 50 PDFs, ask cross-document questions | NotebookLM | Cites sources, multi-doc |
-| Deep single-document chat | Claude | Handles long context, clean writing |
-| Quick explanations, image-based questions | ChatGPT | Great multimodal, fast |
-| Math homework walkthrough | ChatGPT or Khanmigo | Step-by-step reasoning |
-| "Fetch + cite" current info (recent papers) | Perplexity | Always shows links |
+### Structured output — the hidden superpower
 
-### The "wow" moment: NotebookLM's audio overview
+If you ask nicely, the model will reply in any format you want: JSON, CSV, markdown tables, YAML. This is how you go from "AI gives me text" to "AI gives me data I can paste into Excel."
 
-Inside NotebookLM, after you upload sources, click **Audio Overview**. In about 5 minutes it generates a podcast — two AI hosts chatting about *your notes*, complete with banter. Put it on during your commute. It is genuinely, unreasonably good for revision. Nobody tells first-years about this. Now you know.
+Example prompt:
+*"Give me 5 project ideas for a 3rd-year CSE student. Return as JSON with keys: title, difficulty (1-5), time\_days, tech\_stack (array), one\_line\_pitch."*
 
-### Honesty check: what AI still gets wrong
+The model will reply:
+```json
+[
+  {"title": "Hostel mess rating app", "difficulty": 2, "time_days": 7, "tech_stack": ["React Native", "Firebase"], "one_line_pitch": "Tinder for paneer."}
+]
+```
 
-- Dates, citations, and specific numbers — always verify.
-- Niche Indian-syllabus or professor-specific content — it may invent.
-- Math with long multi-step calculations — ask it to show every step and sanity-check.
+Now you can paste that straight into a spreadsheet. That's the leap.
 
-Rule: use AI to *understand*. Use your own brain to *verify*. Use your own effort to *retain*.
+### A peek at "context engineering" (Week 3 teaser)
 
-## Watch: NotebookLM for students
+Prompt engineering = one good message. **Context engineering** = designing the *whole information environment* around the AI: what it knows, what it has access to, what it doesn't see, what it remembers across chats. In Week 3 (Day 19) you'll build a `CLAUDE.md` file — a permanent context brief that travels with every chat. For now, just know: the future of working with AI is not better prompts, it's better *context systems*.
 
-A short demo of uploading a PDF, asking smart questions, and using audio overview. Worth every minute.
+| Prompt engineering | Context engineering |
+|---|---|
+| One message | A whole environment |
+| "Write me X" | "Here's who I am, what I've built, what I'm building, and how I work — now write X" |
+| Repeats every time | Loads once, reuses forever |
+| Good for: one-off tasks | Good for: personal AI teammates |
 
-https://www.youtube.com/embed/d8JkYJ5JQHk
+## Watch: Prompting masterclass snippets
+
+Short curated clip covering CREATE, few-shot, CoT, and structured output.
+
+https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Notice how answers include citations to the exact page of the source.
-- Watch the audio overview feature — the "wow" moment of the day.
-- See how the presenter asks follow-up questions instead of re-prompting.
+Watch for:
+- Why "think step by step" doubles accuracy on reasoning tasks
+- How role-prompting changes tone without you asking
+- The one-example trick that beats zero-shot every time
 
-## Lab: 20-page PDF → 5-slide summary + 10 practice questions
+## Lab: Iterate one prompt five times
 
-You'll end with a Google Slide deck and a flashcard list you can actually use for your next test.
+35 minutes. One prompt. Five rewrites. You'll feel the curve.
 
-1. Pick a 15–25 page PDF from one of your current courses (or a paper you've been avoiding). If nothing comes to mind, download any chapter from NCERT or your college's shared drive.
-2. Open `https://notebooklm.google.com/`, sign in with Google, and create a new notebook. Upload your PDF as a source.
-3. In the chat, ask: *"Give me a 5-slide outline summarising this entire document. Each slide should have a title and 3 bullets. Cite which page each point is from."*
-4. Copy the outline into a new Google Slide deck (free at `slides.google.com`). One slide per section. Use Gemini-in-Slides if available, or just paste text.
-5. Back in NotebookLM, ask: *"Generate 10 practice questions — mix of 5 MCQs and 5 short-answer. Don't reveal answers yet. Quiz me one at a time."*
-6. Actually answer 5 of them. See how you score. (This is the point of the whole lab.)
-7. Try the Audio Overview feature. Listen to 2 minutes of it.
-8. Export/screenshot your slide deck and the quiz chat.
+1. Pick a real task you actually need done. Suggestions: *"Draft 3 LinkedIn posts about my last internship" / "Summarise my DBMS notes into exam flashcards" / "Plan my study week for end-sems."* Whatever you pick, it must be real.
+2. Open Claude. Write your first prompt in 10 seconds — however you'd normally ask. Save the output as V1.
+3. Rewrite using **C** and **R** only (add context + role). Save as V2.
+4. Rewrite adding **E** (one example of what good output looks like). Save as V3.
+5. Rewrite adding **A** and **T** (constraints + tone). Save as V4.
+6. Rewrite adding structured output (ask for JSON, table, or markdown with headings). Save as V5.
+7. Line up V1 through V5 in a Google Doc. Read them in order. Write one sentence: *"The biggest jump happened between V__ and V__ because __."*
+8. Pick the best of the five. Clean it up. Add it to a new note called "My Prompt Library" — this is your first entry.
 
-**Victory condition:** a 5-slide deck + a chat where you actually attempted 5 questions + you experienced the audio overview at least once.
+Artifact: Google Doc with 5 versions + one reflection sentence. Plus your first library entry.
 
 ## Quiz
 
-Four short questions on when to use NotebookLM vs ChatGPT, what "explain at 3 levels" does, why retrieval beats re-reading, and one thing AI reliably gets wrong.
+Four questions on CREATE, zero-shot vs few-shot, CoT, and structured output. You don't have to name the framework — you have to recognize the parts.
 
 ## Assignment
 
-Share a screenshot of your 5-slide deck + your quiz score (be honest — even 2/5 is fine, we want the attempt). Add one line: which course will you use this workflow for this semester?
+Build a personal prompt library with **10 templates.** Categories to cover: (1) study/notes, (2) resume/cover letter, (3) LinkedIn post, (4) code explanation, (5) email/message, (6) brainstorming, (7) summarisation, (8) translation, (9) debate/devil's advocate, (10) free choice. Each template must have visible `{{placeholders}}` so you can reuse it. Store in Notion, Google Docs, or a plain markdown file. This is an artifact you'll *actually* use for the next two years.
 
-## Discuss: AI and studying — line between help and crutch
+## Discuss: Live session prompts
 
-- Where's the line between "AI helped me understand" and "AI did it for me"?
-- Did the audio overview feel like a real podcast? Would you actually listen?
-- Has anyone caught AI giving a confidently wrong answer about your syllabus? Share.
-- If your professor banned AI, how much of today's workflow could you still do ethically?
-- What's one subject you'd never trust AI with, and why?
+- Which of the six CREATE letters do you skip most often — and what's it costing you?
+- Is asking for JSON "cheating," or is it how adults use LLMs?
+- When does few-shot *hurt* instead of help?
+- Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate?
+- Where's the line between "prompting" and just "writing clearly"?
