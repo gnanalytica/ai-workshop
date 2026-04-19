@@ -298,6 +298,8 @@
     if (event === 'SIGNED_OUT') showGate();
   });
 
+  let TEAM_INFO = null; // { id, name, meet_link, role }
+
   async function loadDashboard(user) {
     showDash(user);
     const [profileRes, cohortRes] = await Promise.all([
@@ -306,6 +308,15 @@
     ]);
     const profile = profileRes.data;
     const cohort = cohortRes.data;
+
+    // Load team membership (for meet links + capstone editor)
+    const { data: membership } = await supabase
+      .from('team_members')
+      .select('team_id, role, teams!inner(id, name, meet_link, cohort_id)')
+      .eq('user_id', user.id)
+      .eq('teams.cohort_id', cohort.id)
+      .maybeSingle();
+    TEAM_INFO = membership ? { ...membership.teams, role: membership.role } : null;
 
     $('hiName').textContent = profile?.full_name || user.email;
     $('cohortInfo').textContent = `${cohort.name} · ${cohort.starts_on} → ${cohort.ends_on}`;
@@ -333,6 +344,7 @@
     renderCapSpec(progress);
     renderCapSubs(user, cohort);
     renderActivity(user, cohort, progress);
+    renderCapstoneEditor(user, cohort);
   }
 
   function renderUpcomingCard(user, cohort, scheduleMap) {
@@ -347,14 +359,22 @@
     const t = DAYS.find(d => d.n === nextLive.day_number);
     const dt = new Date(nextLive.live_session_at);
     const when = dt.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
-    const joinBtn = nextLive.meet_link
-      ? `<a href="${escapeHtml(nextLive.meet_link)}" target="_blank" class="cta" style="display:inline-block">Join →</a>`
-      : `<a href="day.html?n=${nextLive.day_number}" class="cta ghost" style="display:inline-block">Open lesson →</a>`;
+    const within = Math.abs(dt.getTime() - Date.now()) < 12 * 3600 * 1000;
+    const cohortMeet = cohort?.meet_link;
+    const teamMeet = TEAM_INFO?.meet_link;
+    const buttons = [];
+    if (within && cohortMeet) {
+      buttons.push(`<a href="${escapeHtml(cohortMeet)}" target="_blank" rel="noopener" class="cta" style="display:inline-block;margin-right:8px">Join cohort Meet →</a>`);
+    }
+    if (within && teamMeet) {
+      buttons.push(`<a href="${escapeHtml(teamMeet)}" target="_blank" rel="noopener" class="cta ghost" style="display:inline-block;margin-right:8px;border-color:var(--accent-2);color:var(--accent-2)">Join team breakout →</a>`);
+    }
+    buttons.push(`<a href="day.html?n=${nextLive.day_number}" class="cta ghost" style="display:inline-block">Open lesson →</a>`);
     card.innerHTML = `
       <div class="kicker">Upcoming</div>
       <h2 style="margin:0 0 6px">Next live · Day ${nextLive.day_number}</h2>
       <p class="muted" style="font-size:14px;margin:0 0 14px">${escapeHtml(t?.title || '')} · ${escapeHtml(when)}</p>
-      ${joinBtn}`;
+      ${buttons.join('')}`;
     card.style.display = 'block';
   }
 
@@ -478,12 +498,18 @@
     const title = DAYS.find(d => d.n === nextDay.n)?.title || '';
     const liveAt = nextDay.sched.live_session_at ? new Date(nextDay.sched.live_session_at) : null;
     const isSoon = liveAt && Math.abs(liveAt - Date.now()) < 12*3600*1000;
+    const cohortMeetBtn = (isSoon && cohort?.meet_link)
+      ? `<a href="${escapeHtml(cohort.meet_link)}" target="_blank" rel="noopener" class="cta" style="display:inline-block;margin-left:8px">Join cohort Meet →</a>`
+      : '';
+    const teamMeetBtn = (isSoon && TEAM_INFO?.meet_link)
+      ? `<a href="${escapeHtml(TEAM_INFO.meet_link)}" target="_blank" rel="noopener" class="cta ghost" style="display:inline-block;margin-left:8px;border-color:var(--accent-2);color:var(--accent-2)">Join team breakout →</a>`
+      : '';
     card.innerHTML = `
       <div class="kicker">${isSoon ? "Today's focus" : 'Up next'}</div>
       <h2 style="margin:0 0 8px">Day ${String(nextDay.n).padStart(2,'0')} · ${escapeHtml(title)}</h2>
       ${liveAt ? `<p class="muted" style="font-size:14px;margin:0 0 12px">Live session: ${liveAt.toLocaleString()}</p>` : ''}
       <a href="day.html?n=${nextDay.n}" class="cta" style="display:inline-block">Continue →</a>
-      ${nextDay.sched.meet_link && isSoon ? `<a href="${escapeHtml(nextDay.sched.meet_link)}" target="_blank" class="cta ghost" style="display:inline-block;margin-left:8px">Join Meet</a>` : ''}`;
+      ${cohortMeetBtn}${teamMeetBtn}`;
     card.style.display = 'block';
   }
 
@@ -510,10 +536,111 @@
       </li>`;
     }).join('');
 
-    // Sync the capstone tab's team card
-    const capTeam = document.getElementById('capTeam');
-    const teamCard = document.getElementById('teamCard');
-    if (capTeam && teamCard && teamCard.innerHTML) capTeam.innerHTML = teamCard.innerHTML;
+    // (capTeam card is now rendered by renderCapstoneEditor)
+  }
+
+  let CAPSTONE_SUB = null; // realtime channel
+  async function renderCapstoneEditor(user, cohort) {
+    const host = document.getElementById('capTeam');
+    if (!host) return;
+    if (!TEAM_INFO) {
+      host.innerHTML = `
+        <div class="kicker" style="margin-bottom:6px">Team capstone</div>
+        <h2 style="margin:0 0 8px">No team yet</h2>
+        <p class="muted" style="font-size:14px;margin:0 0 14px">Form or join a team on <a href="teams.html" style="color:var(--accent)">/teams.html</a> to start your capstone spec.</p>`;
+      return;
+    }
+    const { data: cap } = await supabase
+      .from('capstones').select('*').eq('team_id', TEAM_INFO.id).maybeSingle();
+
+    let editorById = null;
+    if (cap?.updated_by) {
+      const { data: p } = await supabase.from('profiles').select('full_name,email').eq('id', cap.updated_by).maybeSingle();
+      editorById = p?.full_name || p?.email || null;
+    }
+    const updatedLabel = cap?.updated_at
+      ? `Last edited${editorById ? ` by ${escapeHtml(editorById)}` : ''} · ${timeAgo(cap.updated_at)}`
+      : '';
+
+    const v = cap || {};
+    host.innerHTML = `
+      <div class="kicker" style="margin-bottom:6px">Team capstone</div>
+      <h2 style="margin:0 0 4px">${escapeHtml(TEAM_INFO.name)}</h2>
+      <div class="muted" style="font-size:12.5px;margin-bottom:16px" id="capUpdatedLbl">${updatedLabel}</div>
+      <form id="capstoneForm">
+        <div class="field"><label>Title *</label><input type="text" name="title" required maxlength="120" value="${escapeHtml(v.title || '')}" /></div>
+        <div class="field"><label>Problem statement</label><textarea name="problem_statement" rows="3">${escapeHtml(v.problem_statement || '')}</textarea></div>
+        <div class="field"><label>Target user</label><input type="text" name="target_user" value="${escapeHtml(v.target_user || '')}" /></div>
+        <div class="field"><label>Solution summary</label><textarea name="solution_summary" rows="3">${escapeHtml(v.solution_summary || '')}</textarea></div>
+        <div class="field"><label>Tech stack <span class="muted" style="text-transform:none;letter-spacing:0">(comma-separated)</span></label><input type="text" name="tech_stack" value="${escapeHtml(v.tech_stack || '')}" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label>GitHub URL</label><input type="url" name="github_url" value="${escapeHtml(v.github_url || '')}" /></div>
+          <div class="field"><label>Demo URL</label><input type="url" name="demo_url" value="${escapeHtml(v.demo_url || '')}" /></div>
+          <div class="field"><label>Pitch deck URL</label><input type="url" name="pitch_deck_url" value="${escapeHtml(v.pitch_deck_url || '')}" /></div>
+          <div class="field"><label>Video URL</label><input type="url" name="video_url" value="${escapeHtml(v.video_url || '')}" /></div>
+        </div>
+        <div class="field"><label>Status</label>
+          <select name="status">
+            <option value="in_progress" ${v.status==='in_progress'||!v.status?'selected':''}>In progress</option>
+            <option value="submitted" ${v.status==='submitted'?'selected':''}>Submitted</option>
+            <option value="showcased" ${v.status==='showcased'?'selected':''}>Showcased</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-btn" id="capSaveBtn">Save capstone</button>
+        <div class="msg" id="capMsg"></div>
+      </form>`;
+
+    const form = document.getElementById('capstoneForm');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('capSaveBtn'); const msg = document.getElementById('capMsg');
+      btn.disabled = true; btn.textContent = 'Saving…'; msg.className = 'msg';
+      const fd = new FormData(form);
+      const payload = {
+        team_id: TEAM_INFO.id,
+        cohort_id: cohort.id,
+        title: String(fd.get('title') || '').trim(),
+        problem_statement: String(fd.get('problem_statement') || '').trim() || null,
+        target_user: String(fd.get('target_user') || '').trim() || null,
+        solution_summary: String(fd.get('solution_summary') || '').trim() || null,
+        tech_stack: String(fd.get('tech_stack') || '').trim() || null,
+        github_url: String(fd.get('github_url') || '').trim() || null,
+        demo_url: String(fd.get('demo_url') || '').trim() || null,
+        pitch_deck_url: String(fd.get('pitch_deck_url') || '').trim() || null,
+        video_url: String(fd.get('video_url') || '').trim() || null,
+        status: String(fd.get('status') || 'in_progress'),
+        updated_by: user.id,
+        updated_at: new Date().toISOString(),
+      };
+      if (!payload.title) { msg.className='msg show err'; msg.textContent='Title is required.'; btn.disabled=false; btn.textContent='Save capstone'; return; }
+      const { error } = await supabase.from('capstones').upsert(payload, { onConflict: 'team_id' });
+      btn.disabled = false; btn.textContent = 'Save capstone';
+      if (error) { msg.className='msg show err'; msg.textContent=error.message; return; }
+      msg.className='msg show ok'; msg.textContent='Saved.';
+      setTimeout(() => renderCapstoneEditor(user, cohort), 300);
+    };
+
+    // Realtime subscription for teammate saves
+    if (CAPSTONE_SUB) { try { supabase.removeChannel(CAPSTONE_SUB); } catch {} }
+    CAPSTONE_SUB = supabase.channel(`capstone-${TEAM_INFO.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'capstones', filter: `team_id=eq.${TEAM_INFO.id}` },
+        (payload) => {
+          // Skip if this tab just wrote it (same user within 1s)
+          const row = payload.new || payload.old;
+          if (!row) return;
+          if (row.updated_by === user.id && row.updated_at && (Date.now() - new Date(row.updated_at).getTime()) < 2000) return;
+          renderCapstoneEditor(user, cohort);
+        })
+      .subscribe();
+  }
+
+  function timeAgo(iso) {
+    if (!iso) return '';
+    const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
   }
 
   function renderProfile(user, profile, reg) {

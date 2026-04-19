@@ -114,6 +114,16 @@
     <div class="msg" id="topMsg" style="margin:0"></div>
   </div>
 
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px">
+    <div class="kicker" style="margin-bottom:6px">Cohort Meet link</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="cohortMeetInput" placeholder="https://meet.google.com/…" style="flex:1;min-width:260px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+      <button class="save-btn" id="cohortMeetSave">Save cohort Meet</button>
+      <span class="saved-flash" id="cohortMeetFlash">✓ saved</span>
+    </div>
+    <div class="muted" style="font-size:12px;margin-top:8px">Shown to students as "Join cohort Meet" when a live session is within ±12h.</div>
+  </div>
+
   <div id="weeks"></div>
 </main>
 
@@ -183,6 +193,7 @@
   async function loadSchedule(cohortId) {
     CURRENT_COHORT = COHORTS.find(c => c.id === cohortId);
     $('cohortKicker').textContent = CURRENT_COHORT ? `${CURRENT_COHORT.name} · starts ${CURRENT_COHORT.starts_on || '—'}` : 'Schedule';
+    $('cohortMeetInput').value = CURRENT_COHORT?.meet_link || '';
 
     const { data, error } = await supabase.from('cohort_days').select('*').eq('cohort_id', cohortId).order('day_number', { ascending: true });
     if (error) { topMsg(error.message, 'err'); return; }
@@ -299,6 +310,23 @@
       renderSummary();
     });
   }
+
+  $('cohortMeetSave').addEventListener('click', async () => {
+    if (!CURRENT_COHORT) return;
+    const btn = $('cohortMeetSave'); const flash = $('cohortMeetFlash');
+    const val = $('cohortMeetInput').value.trim() || null;
+    btn.disabled = true; btn.textContent = 'Saving…';
+    const { data, error } = await supabase.from('cohorts').update({ meet_link: val }).eq('id', CURRENT_COHORT.id).select().single();
+    btn.disabled = false; btn.textContent = 'Save cohort Meet';
+    if (error) { topMsg(error.message, 'err'); return; }
+    if (data) {
+      CURRENT_COHORT.meet_link = data.meet_link;
+      const idx = COHORTS.findIndex(c => c.id === data.id);
+      if (idx >= 0) COHORTS[idx] = { ...COHORTS[idx], meet_link: data.meet_link };
+    }
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 1200);
+  });
 
   $('bulkBtn').addEventListener('click', async () => {
     if (!CURRENT_COHORT) return;

@@ -573,6 +573,31 @@
       // Check-in button (within ±12h of live session)
       const withinCheckin = Math.abs(when.getTime() - Date.now()) < 12 * 3600 * 1000;
       if (withinCheckin) {
+        // Cohort Meet button (primary, lime)
+        if (cohort.meet_link) {
+          const a = document.createElement('a');
+          a.href = cohort.meet_link; a.target = '_blank'; a.rel = 'noopener';
+          a.className = 'cta';
+          a.style.cssText = 'display:inline-block;margin-left:6px';
+          a.textContent = 'Join cohort Meet →';
+          liveRow.appendChild(a);
+        }
+        // Team breakout Meet button (secondary, ghost / violet)
+        const { data: mem } = await supabase
+          .from('team_members')
+          .select('team_id, teams!inner(id, meet_link, name, cohort_id)')
+          .eq('user_id', user.id)
+          .eq('teams.cohort_id', cohort.id)
+          .maybeSingle();
+        const teamMeet = mem?.teams?.meet_link;
+        if (teamMeet) {
+          const a2 = document.createElement('a');
+          a2.href = teamMeet; a2.target = '_blank'; a2.rel = 'noopener';
+          a2.className = 'cta ghost';
+          a2.style.cssText = 'display:inline-block;margin-left:6px;border-color:var(--accent-2);color:var(--accent-2)';
+          a2.textContent = 'Join team breakout →';
+          liveRow.appendChild(a2);
+        }
         const wrap = document.createElement('span');
         wrap.id = 'checkinWrap';
         liveRow.appendChild(wrap);

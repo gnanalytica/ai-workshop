@@ -196,6 +196,21 @@
       supabase.from('showcase_submissions').select('*').eq('user_id', userId).eq('cohort_id', profile.cohort_id).order('day_number'),
     ]);
 
+    // Find this user's team in this cohort, then see if capstone is showcased
+    let showcasedCapstone = null;
+    try {
+      const { data: mem } = await supabase
+        .from('team_members')
+        .select('team_id, teams!inner(cohort_id)')
+        .eq('user_id', userId)
+        .eq('teams.cohort_id', profile.cohort_id)
+        .maybeSingle();
+      if (mem?.team_id) {
+        const { data: cap } = await supabase.from('showcase_capstones').select('*').eq('team_id', mem.team_id).maybeSingle();
+        if (cap) showcasedCapstone = cap;
+      }
+    } catch {}
+
     const daysCompleted = progressRes.data?.days_completed || 0;
     const submissions = subsRes.data || [];
     const isSelf = session?.user?.id === userId;
@@ -276,6 +291,23 @@
           <div class="dotgrid">${dotsHtml}</div>
         </div>
       </section>
+
+      ${showcasedCapstone ? `
+        <div class="section-head">
+          <h2>Capstone</h2>
+          <span class="muted" style="font-size:13px">Team project</span>
+        </div>
+        <div class="subcard" style="padding:20px 22px">
+          <h4 style="margin:0 0 8px;font-size:18px">${escapeHtml(showcasedCapstone.title || '—')}</h4>
+          ${showcasedCapstone.problem_statement ? `<p class="muted" style="font-size:13.5px;margin:0 0 12px;white-space:pre-wrap">${escapeHtml(showcasedCapstone.problem_statement)}</p>` : ''}
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            ${showcasedCapstone.demo_url ? `<a class="link" href="${escapeHtml(showcasedCapstone.demo_url)}" target="_blank" rel="noopener">Demo →</a>` : ''}
+            ${showcasedCapstone.video_url ? `<a class="link" href="${escapeHtml(showcasedCapstone.video_url)}" target="_blank" rel="noopener">Video →</a>` : ''}
+            ${showcasedCapstone.github_url ? `<a class="link" href="${escapeHtml(showcasedCapstone.github_url)}" target="_blank" rel="noopener">GitHub →</a>` : ''}
+            ${showcasedCapstone.pitch_deck_url ? `<a class="link" href="${escapeHtml(showcasedCapstone.pitch_deck_url)}" target="_blank" rel="noopener">Pitch deck →</a>` : ''}
+          </div>
+        </div>
+      ` : ''}
 
       <div class="section-head">
         <h2>Work shipped</h2>

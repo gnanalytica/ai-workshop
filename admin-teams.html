@@ -108,11 +108,35 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th><th>Description</th><th>Members</th><th>Join code</th><th>Status</th><th>Created by</th><th style="text-align:right">Actions</th>
+          <th>Name</th><th>Description</th><th>Members</th><th>Team Meet</th><th>Capstone</th><th>Join code</th><th>Status</th><th>Created by</th><th style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="teamRows"></tbody>
     </table>
+  </div>
+
+  <div class="section-head" style="margin-top:40px">
+    <h2>Auto-assign teams</h2>
+    <div class="muted" style="font-size:13px">Randomly group ungrouped confirmed students into teams.</div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <div>
+        <div class="kicker" style="margin-bottom:4px">Unassigned pool</div>
+        <div style="font-size:20px;font-weight:700" id="autoCount">0 students</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Team size</label>
+        <select id="autoSize" style="background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none">
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+        </select>
+        <button class="cta" id="autoAssignBtn">Randomly assign</button>
+        <button class="btn-sm" id="renameBtn" title="Rename teams with auto-naming scheme">Regenerate team names</button>
+      </div>
+    </div>
+    <div class="muted" style="font-size:12px;margin-top:10px">Only affects confirmed students who aren't already on a team. Existing teams aren't touched (except rename).</div>
   </div>
 
   <div class="section-head" style="margin-top:40px">
@@ -186,7 +210,16 @@
   let MEMBERS_BY_TEAM = new Map(); // team_id -> [members]
   let PROFILES = new Map(); // user_id -> profile
   let REGISTRATIONS = []; // confirmed registrations for current cohort
+  let CAPSTONES_BY_TEAM = new Map(); // team_id -> capstone row
   let EXPANDED = new Set();
+
+  const AUTO_ADJ = ['Lime','Violet','Amber','Cobalt','Crimson','Emerald','Indigo','Saffron','Teal','Coral','Jade','Sable','Magenta','Copper','Azure','Olive','Ochre','Scarlet','Mint','Ruby'];
+  const AUTO_NOUN = ['Fox','Otter','Falcon','Panther','Heron','Marmot','Koi','Lynx','Badger','Crane','Wolf','Raven','Bison','Sparrow','Ibex','Gecko','Newt','Puma','Hawk','Stag'];
+  function autoName() {
+    const a = AUTO_ADJ[Math.floor(Math.random() * AUTO_ADJ.length)];
+    const n = AUTO_NOUN[Math.floor(Math.random() * AUTO_NOUN.length)];
+    return `Team ${a} ${n}`;
+  }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -265,9 +298,22 @@
       PROFILES = new Map();
     }
 
+    // Load capstones for these teams
+    CAPSTONES_BY_TEAM = new Map();
+    if (teamIds.length) {
+      const { data: caps } = await supabase.from('capstones').select('*').in('team_id', teamIds);
+      (caps || []).forEach(c => CAPSTONES_BY_TEAM.set(c.team_id, c));
+    }
+
     renderStats();
     renderTeams();
     renderUnassigned();
+    renderAutoAssign();
+  }
+
+  function renderAutoAssign() {
+    const ids = getUnassignedUserIds();
+    $('autoCount').textContent = `${ids.length} student${ids.length === 1 ? '' : 's'}`;
   }
 
   function renderStats() {
@@ -285,7 +331,7 @@
 
   function renderTeams() {
     if (!TEAMS.length) {
-      $('teamRows').innerHTML = `<tr><td colspan="7" class="empty-state">No teams yet in this cohort.</td></tr>`;
+      $('teamRows').innerHTML = `<tr><td colspan="9" class="empty-state">No teams yet in this cohort.</td></tr>`;
       return;
     }
     const rows = [];
@@ -293,11 +339,17 @@
       const members = MEMBERS_BY_TEAM.get(t.id) || [];
       const creator = PROFILES.get(t.created_by);
       const locked = !!t.locked_at;
+      const cap = CAPSTONES_BY_TEAM.get(t.id);
+      const capCell = cap
+        ? `<div style="font-size:12.5px"><b>${esc(cap.title || '(untitled)')}</b></div><div class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">${esc(cap.status || 'in_progress')}</div>`
+        : `<span class="muted" style="font-size:12px">—</span>`;
       rows.push(`
         <tr data-team="${t.id}">
           <td><b data-role="name" data-id="${t.id}" style="cursor:text" contenteditable="true">${esc(t.name)}</b></td>
-          <td class="muted" style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span data-role="desc" data-id="${t.id}" contenteditable="true">${esc(t.description || '')}</span></td>
+          <td class="muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span data-role="desc" data-id="${t.id}" contenteditable="true">${esc(t.description || '')}</span></td>
           <td><button class="btn-sm" data-expand="${t.id}">${members.length}/${t.max_members} ${EXPANDED.has(t.id) ? '▴' : '▾'}</button></td>
+          <td><input class="inline-input" style="min-width:180px" data-meet="${t.id}" value="${esc(t.meet_link || '')}" placeholder="https://meet.google.com/…" /></td>
+          <td>${cap ? `<button class="btn-sm" data-capview="${t.id}">${capCell}</button>` : capCell}</td>
           <td><span class="mono" style="font-weight:700">${esc(t.join_code)}</span> <button class="btn-sm" data-copy="${esc(t.join_code)}">Copy</button></td>
           <td><span class="lock-pill ${locked ? 'lock-on' : 'lock-off'}">${locked ? 'locked' : 'open'}</span></td>
           <td class="muted" style="font-size:12.5px">${creator ? esc(creator.full_name || creator.email || '—') : '—'}</td>
@@ -320,12 +372,46 @@
         }).join('') || '<span class="muted" style="font-size:13px">No members yet.</span>';
         rows.push(`
           <tr class="expand-row" data-team-exp="${t.id}">
-            <td colspan="7">${chips}</td>
+            <td colspan="9">${chips}</td>
           </tr>
         `);
       }
     });
     $('teamRows').innerHTML = rows.join('');
+
+    // Save-on-blur for Team Meet
+    $('teamRows').querySelectorAll('[data-meet]').forEach(inp => {
+      inp.addEventListener('blur', async () => {
+        const tid = inp.dataset.meet;
+        const t = TEAMS.find(x => x.id === tid);
+        const val = inp.value.trim() || null;
+        if ((t?.meet_link || null) === val) return;
+        const { error } = await supabase.from('teams').update({ meet_link: val }).eq('id', tid);
+        if (error) { alert(error.message); return; }
+        if (t) t.meet_link = val;
+        toast('Team Meet saved');
+      });
+    });
+
+    $('teamRows').querySelectorAll('[data-capview]').forEach(b => {
+      b.onclick = () => {
+        const cap = CAPSTONES_BY_TEAM.get(b.dataset.capview);
+        if (!cap) return;
+        const fields = [
+          ['Title', cap.title],
+          ['Problem statement', cap.problem_statement],
+          ['Target user', cap.target_user],
+          ['Solution summary', cap.solution_summary],
+          ['Tech stack', cap.tech_stack],
+          ['GitHub', cap.github_url],
+          ['Demo', cap.demo_url],
+          ['Pitch deck', cap.pitch_deck_url],
+          ['Video', cap.video_url],
+          ['Status', cap.status],
+        ].map(([k,v]) => `${k}: ${v || '—'}`).join('\n\n');
+        alert(fields);
+      };
+    });
 
     $('teamRows').querySelectorAll('[data-expand]').forEach(b => {
       b.onclick = () => {
@@ -446,6 +532,66 @@
     toast('Assigned');
     await loadAll();
   }
+
+  // ---------- Auto-assign teams ----------
+  $('autoAssignBtn').addEventListener('click', async () => {
+    if (!COHORT_ID) return;
+    const size = parseInt($('autoSize').value, 10) || 3;
+    const pool = getUnassignedUserIds().slice();
+    if (!pool.length) { toast('No unassigned students'); return; }
+    if (!confirm(`Randomly assign ${pool.length} student${pool.length===1?'':'s'} into teams of ${size}?`)) return;
+    const btn = $('autoAssignBtn');
+    btn.disabled = true; btn.textContent = 'Assigning…';
+    try {
+      // Fisher-Yates
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const createdBy = session?.user?.id || null;
+      const chunks = [];
+      for (let i = 0; i < pool.length; i += size) chunks.push(pool.slice(i, i + size));
+      let studentsAssigned = 0;
+      for (const chunk of chunks) {
+        const { data: team, error: tErr } = await supabase.from('teams').insert({
+          cohort_id: COHORT_ID, name: autoName(), created_by: chunk[0] || createdBy,
+        }).select().single();
+        if (tErr) { alert('Team insert failed: ' + tErr.message); return; }
+        const rows = chunk.map((uid, idx) => ({
+          team_id: team.id, user_id: uid, role: idx === 0 ? 'lead' : 'member',
+        }));
+        const { error: mErr } = await supabase.from('team_members').insert(rows);
+        if (mErr) { alert('Member insert failed: ' + mErr.message); return; }
+        studentsAssigned += chunk.length;
+      }
+      toast(`Assigned ${studentsAssigned} student${studentsAssigned===1?'':'s'} to ${chunks.length} team${chunks.length===1?'':'s'}`);
+      await loadAll();
+    } finally {
+      btn.disabled = false; btn.textContent = 'Randomly assign';
+    }
+  });
+
+  $('renameBtn').addEventListener('click', async () => {
+    if (!TEAMS.length) { toast('No teams to rename'); return; }
+    if (!confirm(`Regenerate names for all ${TEAMS.length} teams in this cohort?`)) return;
+    const btn = $('renameBtn');
+    btn.disabled = true; btn.textContent = 'Renaming…';
+    try {
+      const used = new Set();
+      for (const t of TEAMS) {
+        let name, tries = 0;
+        do { name = autoName(); tries++; } while (used.has(name) && tries < 30);
+        used.add(name);
+        const { error } = await supabase.from('teams').update({ name }).eq('id', t.id);
+        if (error) { alert(error.message); return; }
+      }
+      toast(`Renamed ${TEAMS.length} teams`);
+      await loadAll();
+    } finally {
+      btn.disabled = false; btn.textContent = 'Regenerate team names';
+    }
+  });
 
   // ---------- Create team modal ----------
   $('newTeamBtn').addEventListener('click', openTeamModal);

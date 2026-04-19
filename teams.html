@@ -157,7 +157,7 @@
 
     const { data: membership } = await supabase
       .from('team_members')
-      .select('id, team_id, role, teams!inner(id, name, description, join_code, max_members, locked_at, created_by, cohort_id)')
+      .select('id, team_id, role, teams!inner(id, name, description, join_code, max_members, locked_at, created_by, cohort_id, meet_link)')
       .eq('user_id', USER.id)
       .eq('teams.cohort_id', cohort.id)
       .maybeSingle();
@@ -287,6 +287,19 @@
         </div>
       </div>
 
+      <div style="margin:6px 0 22px;padding:14px 16px;background:#0a0a12;border:1px solid var(--line);border-radius:12px">
+        <div class="kicker" style="margin-bottom:8px">Team breakout Meet</div>
+        ${isLead
+          ? `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input id="meetInput" type="text" placeholder="https://meet.google.com/…" value="${esc(TEAM.meet_link || '')}" style="flex:1;min-width:240px;background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+              <button class="btn-sm" id="saveMeetBtn">Save Meet link</button>
+              ${TEAM.meet_link ? `<a href="${esc(TEAM.meet_link)}" target="_blank" rel="noopener" class="cta ghost" style="font-size:12.5px;padding:6px 12px">Join →</a>` : ''}
+            </div>`
+          : (TEAM.meet_link
+              ? `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a href="${esc(TEAM.meet_link)}" target="_blank" rel="noopener" class="cta" style="font-size:13px">Join team Meet →</a><span class="muted" style="font-size:12.5px">${esc(TEAM.meet_link)}</span></div>`
+              : `<div class="muted" style="font-size:13px">Your team lead hasn't set a breakout Meet link yet.</div>`)}
+      </div>
+
       <h3 style="margin:0 0 12px;font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em">Members</h3>
       <div>${membersHtml}</div>
 
@@ -309,6 +322,14 @@
     if (regen) regen.onclick = regenerateCode;
     const saveBtn = $('saveMetaBtn');
     if (saveBtn) saveBtn.onclick = saveMeta;
+    const saveMeet = $('saveMeetBtn');
+    if (saveMeet) saveMeet.onclick = async () => {
+      const val = $('meetInput').value.trim() || null;
+      const { error } = await supabase.from('teams').update({ meet_link: val }).eq('id', TEAM.id);
+      if (error) { alert(error.message); return; }
+      toast('Meet link saved');
+      await loadAll();
+    };
     const lockBtn = $('lockBtn');
     if (lockBtn) lockBtn.onclick = toggleLock;
     $('leaveBtn').onclick = leaveTeam;
