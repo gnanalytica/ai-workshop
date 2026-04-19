@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Student · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .pg-hdr{display:flex;justify-content:space-between;align-items:end;margin:24px 0 18px;gap:16px;flex-wrap:wrap}
@@ -33,6 +34,7 @@
     <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
     <div style="display:flex;gap:12px;align-items:center">
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
       <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
     </div>
   </div>
@@ -93,6 +95,8 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
   import { DAYS } from './assets/days.js';
   const $ = (id) => document.getElementById(id);
   document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html');

@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <style>
   :root{
     --bg:#0a0a0f;
@@ -19,7 +20,26 @@
     --accent-3:#ff6b6b;
     --accent-4:#38bdf8;
     --card:#14141c;
+    --nav-bg:rgba(10,10,15,.72);
+    --cta-ink:#0b0b10;
   }
+  [data-theme="light"]:root, [data-theme="light"]{
+    --bg:#fafafa;
+    --bg-soft:#ffffff;
+    --ink:#0a0a10;
+    --muted:#52526b;
+    --line:#e4e4ee;
+    --accent:#6fa500;
+    --accent-2:#7c3aed;
+    --accent-3:#dc2626;
+    --accent-4:#0284c7;
+    --card:#ffffff;
+    --nav-bg:rgba(250,250,250,.82);
+    --cta-ink:#ffffff;
+  }
+  .theme-toggle{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:50%;cursor:pointer;color:var(--ink);transition:all .15s;padding:0;margin-right:4px}
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+  .theme-toggle svg{display:block}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
@@ -28,13 +48,13 @@
   .serif{font-family:"Instrument Serif",serif;font-style:italic;font-weight:400}
 
   /* NAV */
-  nav{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  nav{position:sticky;top:0;z-index:50;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
   .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
   .brand .dot{width:10px;height:10px;border-radius:3px;background:var(--accent);box-shadow:0 0 22px var(--accent)}
   .nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
   .nav-links a:hover{color:var(--ink)}
-  .cta{padding:10px 16px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:14px}
+  .cta{padding:10px 16px;border-radius:999px;background:var(--accent);color:var(--cta-ink);font-weight:600;font-size:14px}
 
   /* HERO */
   .hero{padding:96px 0 60px;position:relative;overflow:hidden}
@@ -187,6 +207,7 @@
       <a href="dashboard.html">Dashboard</a>
     </div>
     <div style="display:flex;gap:10px;align-items:center">
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
       <a href="#" onclick="openLogin();return false;" style="font-size:14px;color:var(--muted)">Sign in</a>
       <a class="cta" href="#" onclick="openModal();return false;">Enroll →</a>
     </div>
@@ -519,6 +540,8 @@
 </script>
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
 
   const SUPABASE_URL = 'https://qvqlpcnvculkrjpkdrwi.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_7XyW7RHJ28PBk_1HD1FsbQ_LIbvkJUY';

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
@@ -42,11 +43,12 @@
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
-    <div style="display:flex;gap:16px;align-items:center">
+    <div style="display:flex;gap:14px;align-items:center">
       <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
       <a href="certificate.html" id="navCert" style="font-size:13px;color:var(--muted);display:none">Certificate</a>
       <a href="#" id="navShowcase" style="font-size:13px;color:var(--muted);display:none">Showcase</a>
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
       <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
     </div>
   </div>
@@ -77,6 +79,15 @@
     <div id="regStatus"></div>
   </div>
 
+  <div class="tabs" id="dashTabs">
+    <a href="#overview" class="active" data-tab="overview">Overview</a>
+    <a href="#lessons" data-tab="lessons">Lessons</a>
+    <a href="#capstone" data-tab="capstone">Capstone</a>
+    <a href="#profile" data-tab="profile">Profile</a>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <section id="tab-overview" class="tab-panel">
   <div class="progress-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline">
       <h2 style="margin:0">Your journey</h2>
@@ -85,6 +96,9 @@
     <div class="pbar"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
     <div class="pstats"><span><b id="doneCount" style="color:var(--ink)">0</b> of 30 days done</span><span id="streak">—</span></div>
   </div>
+
+  <!-- TODAY'S FOCUS -->
+  <div id="todayCard" class="progress-wrap" style="display:none"></div>
 
   <!-- ENROLL CARD: shown only when signed in but not registered for cohort -->
   <div id="enrollCard" style="display:none">
@@ -120,10 +134,67 @@
   </div>
 
   <div id="teamCard" class="progress-wrap" style="display:none"></div>
+  </section>
 
-  <div id="weeksContainer"></div>
+  <!-- LESSONS TAB -->
+  <section id="tab-lessons" class="tab-panel" style="display:none">
+    <div id="weeksContainer"></div>
+  </section>
+
+  <!-- CAPSTONE TAB -->
+  <section id="tab-capstone" class="tab-panel" style="display:none">
+    <div class="progress-wrap">
+      <div class="kicker">Capstone milestones</div>
+      <h2 style="margin:0 0 14px">Your road to demo day</h2>
+      <ul id="milestoneList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px"></ul>
+    </div>
+    <div class="progress-wrap" id="capTeam"></div>
+    <div class="progress-wrap">
+      <div class="kicker">Your spec</div>
+      <h2 style="margin:0 0 10px">Day 15 notes</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 10px">Your locked 1-page spec lives in your Day 15 notes. Update it there.</p>
+      <a href="day.html?n=15" class="cta ghost" style="display:inline-block;margin-top:6px">Open Day 15 →</a>
+    </div>
+  </section>
+
+  <!-- PROFILE TAB -->
+  <section id="tab-profile" class="tab-panel" style="display:none">
+    <div class="progress-wrap">
+      <div class="kicker">Profile</div>
+      <h2 style="margin:0 0 14px">Your info</h2>
+      <div id="profileFields"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Public showcase</div>
+      <h2 style="margin:0 0 8px">Showcase opt-in</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 14px">Make your capstone visible on your public showcase page.</p>
+      <label style="display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer"><input type="checkbox" id="showcaseToggle" /> Show me on the public cohort gallery</label>
+      <div id="showcaseLink" style="margin-top:14px"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Certificate</div>
+      <h2 style="margin:0 0 8px">30/30 = certificate</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 12px">Complete all 30 days to auto-issue your certificate.</p>
+      <a href="certificate.html" class="cta ghost" style="display:inline-block">View certificate →</a>
+    </div>
+  </section>
 </main>
 
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+
+  // Tab switching via URL hash
+  function activateTab(name) {
+    const valid = ['overview','lessons','capstone','profile'];
+    if (!valid.includes(name)) name = 'overview';
+    document.querySelectorAll('#dashTabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = p.id === 'tab-' + name ? 'block' : 'none');
+  }
+  window.addEventListener('hashchange', () => activateTab(location.hash.replace('#','') || 'overview'));
+  activateTab(location.hash.replace('#','') || 'overview');
+</script>
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { DAYS, WEEK_TITLES } from './assets/days.js';
@@ -216,7 +287,99 @@
     renderProgress(doneSet);
     renderWeeks(user, cohort, doneSet, scheduleMap);
     renderTeamCard(user, cohort);
+    renderTodayCard(user, cohort, doneSet, scheduleMap);
+    renderMilestones(doneSet, reg);
+    renderProfile(user, profile, reg);
   }
+
+  function renderTodayCard(user, cohort, doneSet, scheduleMap) {
+    const card = document.getElementById('todayCard');
+    if (!card) return;
+    if (doneSet.size >= 30) {
+      card.innerHTML = `
+        <div class="kicker">🎓 You finished</div>
+        <h2 style="margin:0 0 10px">All 30 days complete.</h2>
+        <p class="muted" style="font-size:14px;margin:0 0 14px">Open your certificate and share your showcase.</p>
+        <a href="certificate.html" class="cta" style="display:inline-block;margin-right:10px">View certificate →</a>`;
+      card.style.display = 'block';
+      return;
+    }
+    // Find next unlocked, not-done day
+    let nextDay = null;
+    for (let n = 1; n <= 30; n++) {
+      const sched = scheduleMap.get(n);
+      if (sched?.is_unlocked && !doneSet.has(n)) { nextDay = { n, sched }; break; }
+    }
+    if (!nextDay) { card.style.display = 'none'; return; }
+    const title = DAYS.find(d => d.n === nextDay.n)?.title || '';
+    const liveAt = nextDay.sched.live_session_at ? new Date(nextDay.sched.live_session_at) : null;
+    const isSoon = liveAt && Math.abs(liveAt - Date.now()) < 12*3600*1000;
+    card.innerHTML = `
+      <div class="kicker">${isSoon ? "Today's focus" : 'Up next'}</div>
+      <h2 style="margin:0 0 8px">Day ${String(nextDay.n).padStart(2,'0')} · ${escapeHtml(title)}</h2>
+      ${liveAt ? `<p class="muted" style="font-size:14px;margin:0 0 12px">Live session: ${liveAt.toLocaleString()}</p>` : ''}
+      <a href="day.html?n=${nextDay.n}" class="cta" style="display:inline-block">Continue →</a>
+      ${nextDay.sched.meet_link && isSoon ? `<a href="${escapeHtml(nextDay.sched.meet_link)}" target="_blank" class="cta ghost" style="display:inline-block;margin-left:8px">Join Meet</a>` : ''}`;
+    card.style.display = 'block';
+  }
+
+  function renderMilestones(doneSet, reg) {
+    const list = document.getElementById('milestoneList');
+    if (!list) return;
+    const mile = [
+      { n: 10, label: 'Capstone kickoff',   desc: 'Ideathon + one-pager locked' },
+      { n: 15, label: 'Locked 1-page spec', desc: 'Design sprint + wireframes' },
+      { n: 21, label: 'v0 prototype',       desc: 'Working vibe-coded app' },
+      { n: 25, label: 'Mini-demo',          desc: '3-min peer panel' },
+      { n: 30, label: 'Final demo',         desc: 'Live panel + certificate' },
+    ];
+    list.innerHTML = mile.map(m => {
+      const done = doneSet.has(m.n);
+      const icon = done ? '✓' : '•';
+      return `<li style="display:flex;gap:14px;align-items:center;padding:12px 14px;background:${done?'rgba(195,255,54,.06)':'var(--bg-soft)'};border:1px solid ${done?'rgba(195,255,54,.3)':'var(--line)'};border-radius:12px">
+        <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:${done?'var(--accent)':'transparent'};border:1px solid ${done?'var(--accent)':'var(--line)'};color:${done?'var(--cta-ink)':'var(--muted)'};font-weight:700">${icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">Day ${m.n} · ${m.label}</div>
+          <div style="font-size:12.5px;color:var(--muted)">${m.desc}</div>
+        </div>
+        <a href="day.html?n=${m.n}" class="cta ghost" style="font-size:12.5px;padding:6px 12px">Open →</a>
+      </li>`;
+    }).join('');
+
+    // Sync the capstone tab's team card
+    const capTeam = document.getElementById('capTeam');
+    const teamCard = document.getElementById('teamCard');
+    if (capTeam && teamCard && teamCard.innerHTML) capTeam.innerHTML = teamCard.innerHTML;
+  }
+
+  function renderProfile(user, profile, reg) {
+    const box = document.getElementById('profileFields');
+    if (!box) return;
+    const p = profile || {};
+    box.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:13.5px">
+        <div><span class="muted">Name</span><br/><b>${escapeHtml(p.full_name || '—')}</b></div>
+        <div><span class="muted">Email</span><br/><b>${escapeHtml(user.email || '—')}</b></div>
+        <div><span class="muted">College</span><br/><b>${escapeHtml(p.college || '—')}</b></div>
+        <div><span class="muted">Year</span><br/><b>${escapeHtml(p.year || '—')}</b></div>
+        <div><span class="muted">Phone</span><br/><b>${escapeHtml(p.phone || '—')}</b></div>
+        <div><span class="muted">GitHub</span><br/><b>${p.github_username ? `<a href="https://github.com/${escapeHtml(p.github_username)}" target="_blank" style="color:var(--accent)">@${escapeHtml(p.github_username)}</a>` : '—'}</b></div>
+      </div>`;
+
+    const toggle = document.getElementById('showcaseToggle');
+    const link = document.getElementById('showcaseLink');
+    if (toggle && reg) {
+      toggle.checked = !!reg.showcase_public;
+      toggle.addEventListener('change', async () => {
+        await supabase.from('registrations').update({ showcase_public: toggle.checked }).eq('id', reg.id);
+      });
+    }
+    if (link) {
+      link.innerHTML = `<a href="showcase.html?u=${user.id}" target="_blank" class="cta ghost" style="display:inline-block;font-size:13px">Open your showcase →</a>`;
+    }
+  }
+
+  function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
   async function renderTeamCard(user, cohort) {
     const card = $('teamCard');

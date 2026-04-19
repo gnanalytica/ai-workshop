@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Timeline · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .tl-top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:36px 0 24px}
@@ -134,6 +135,7 @@
     <div class="brand"><span class="dot"></span> Gnanalytica · Timeline</div>
     <div style="display:flex;gap:16px;align-items:center">
       <a href="dashboard.html" class="back">← Dashboard</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
     </div>
   </div>
 </nav>
@@ -201,6 +203,8 @@
 
 <script type="module">
 import { supabase, COHORT_SLUG } from './assets/supabase.js';
+import { wireThemeToggle } from './assets/theme.js';
+wireThemeToggle();
 import { DAYS, WEEK_TITLES, CHECKPOINTS } from './assets/days.js';
 
 const $ = (id) => document.getElementById(id);
