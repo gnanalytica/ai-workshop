@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Polls · Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .stat-card .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:6px}
+  .stat-card .val{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .filters{display:flex;gap:10px;margin:10px 0 16px;flex-wrap:wrap;align-items:center}
+  .filters select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .tabs-inline{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+  .tabs-inline button{background:transparent;border:none;padding:10px 16px;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;cursor:pointer;font-family:inherit}
+  .tabs-inline button.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .kind-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;background:rgba(139,92,246,.15);color:#c9b8ff;border:1px solid rgba(139,92,246,.3)}
+  .kind-badge.k-single{background:rgba(56,189,248,.12);color:#7dd5ff;border-color:rgba(56,189,248,.3)}
+  .kind-badge.k-multi{background:rgba(195,255,54,.1);color:#c9f76a;border-color:rgba(195,255,54,.3)}
+  .kind-badge.k-text{background:rgba(255,184,64,.12);color:#ffc87a;border-color:rgba(255,184,64,.3)}
+  .kind-badge.k-questions{background:rgba(255,107,107,.1);color:#ffa0a0;border-color:rgba(255,107,107,.3)}
+  .kind-badge.k-emoji{background:rgba(195,255,54,.1);color:#c9f76a;border-color:rgba(195,255,54,.3)}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .row-actions button{padding:6px 10px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;font-family:inherit}
+  .row-actions button:hover{border-color:var(--accent)}
+  .row-actions button.primary{background:var(--accent);color:var(--cta-ink);border-color:var(--accent);font-weight:600}
+  .row-actions button.danger:hover{border-color:#ff6b6b;color:#ffa0a0}
+  .dot-open{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);margin-right:6px;vertical-align:middle}
+  .dot-closed{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:6px;vertical-align:middle}
+
+  .create-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}
+  .create-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+  .create-body{margin-top:18px;display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
+  .create-body .full{grid-column:1/-1}
+  .opt-list{display:flex;flex-direction:column;gap:8px}
+  .opt-row{display:flex;gap:6px}
+  .opt-row input{flex:1;background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--ink);font-family:inherit;font-size:13.5px}
+  .opt-row button{padding:0 10px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;font-family:inherit}
+  .add-opt{align-self:flex-start;padding:7px 12px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12.5px;cursor:pointer;font-family:inherit}
+  .add-opt:hover{border-color:var(--accent)}
+
+  .drawer-back{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;display:none}
+  .drawer-back.show{display:block}
+  .drawer{position:fixed;right:0;top:0;height:100vh;width:min(640px,92vw);background:var(--bg);border-left:1px solid var(--line);z-index:101;display:none;flex-direction:column;overflow:hidden}
+  .drawer.show{display:flex}
+  .drawer-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px}
+  .drawer-body{padding:22px 24px;overflow-y:auto;flex:1}
+  .drawer-close{background:transparent;border:1px solid var(--line);color:var(--muted);width:34px;height:34px;border-radius:8px;cursor:pointer;font-family:inherit}
+  .drawer-count{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+
+  .bar-row{margin-bottom:12px}
+  .bar-head{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .bar-label{color:var(--ink)}
+  .bar-stats{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px}
+  .bar-track{height:22px;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .bar-fill{height:100%;background:var(--accent-2);border-radius:7px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .bar-row.leader .bar-fill{background:var(--accent)}
+
+  .emoji-row{display:flex;align-items:center;gap:16px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+  .emoji-big{font-size:2.2rem;line-height:1}
+  .emoji-count{flex:1;font-family:"JetBrains Mono",monospace;color:var(--muted);font-size:13px}
+  .emoji-bar{height:6px;background:var(--bg-soft);border-radius:4px;flex:2;overflow:hidden}
+  .emoji-bar-fill{height:100%;background:var(--accent);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+  .q-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;animation:qin .35s ease-out}
+  .q-text{font-size:14px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .q-time{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.1em}
+  @keyframes qin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:none;place-items:center;padding:20px}
+  .modal-back.show{display:grid}
+  .modal{background:var(--bg);border:1px solid var(--line);border-radius:16px;max-width:560px;width:100%;padding:24px;max-height:90vh;overflow-y:auto}
+
+  @media(max-width:760px){
+    .create-body{grid-template-columns:1fr}
+    .stats-row{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card"><h2 style="text-align:center">Not authorized</h2></div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+  <div style="margin:24px 0 8px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+    <div>
+      <div class="kicker">Live session</div>
+      <h1>Polls</h1>
+    </div>
+    <div class="filters" style="margin:0">
+      <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em">Cohort</label>
+      <select id="cohortSel" class="inline"></select>
+    </div>
+  </div>
+
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="create-panel">
+    <div class="create-head" id="createHead">
+      <div>
+        <div class="kicker" style="margin-bottom:4px">New poll</div>
+        <div style="font-size:15px;font-weight:600">Create a poll</div>
+      </div>
+      <button class="cta ghost" id="createToggle" style="padding:8px 14px;font-size:13px">Expand</button>
+    </div>
+    <div class="create-body" id="createBody" style="display:none">
+      <div class="field"><label>Title</label><input type="text" id="f_title" placeholder="e.g. Warmup check" /></div>
+      <div class="field"><label>Kind</label>
+        <select id="f_kind">
+          <option value="single">Single choice</option>
+          <option value="multi">Multiple choice</option>
+          <option value="text">Text response</option>
+          <option value="questions">Questions wall</option>
+          <option value="emoji">Emoji reactions</option>
+        </select>
+      </div>
+      <div class="field full"><label>Question</label><input type="text" id="f_question" placeholder="What do you want to ask the class?" /></div>
+      <div class="field"><label>Day</label>
+        <select id="f_day">
+          <option value="">Standalone (not tied to a day)</option>
+        </select>
+      </div>
+      <div class="field" id="f_opts_wrap">
+        <label>Options</label>
+        <div class="opt-list" id="f_opts"></div>
+        <button type="button" class="add-opt" id="f_add_opt">+ Add option</button>
+      </div>
+      <div class="full" style="display:flex;gap:10px;justify-content:flex-end">
+        <button type="button" class="cta ghost" id="createCancel" style="padding:10px 18px">Cancel</button>
+        <button type="button" class="cta" id="createBtn" style="padding:10px 18px">Create poll</button>
+      </div>
+      <div class="full"><div class="msg" id="createMsg"></div></div>
+    </div>
+  </div>
+
+  <div class="tabs-inline" id="tabs">
+    <button data-tab="open" class="active">Open now</button>
+    <button data-tab="today">Today</button>
+    <button data-tab="past">Past</button>
+    <button data-tab="all">All</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Kind</th>
+          <th>Day</th>
+          <th>State</th>
+          <th>Responses</th>
+          <th>Created</th>
+          <th style="text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pollsBody">
+        <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Live view drawer -->
+<div class="drawer-back" id="drawerBack"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <div class="kicker" id="drawerKicker" style="margin-bottom:2px">Live</div>
+      <div id="drawerTitle" style="font-size:17px;font-weight:600">—</div>
+      <div class="drawer-count" id="drawerCount">0 responses so far</div>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<!-- Edit modal -->
+<div class="modal-back" id="editBack">
+  <div class="modal">
+    <div class="kicker">Edit poll</div>
+    <h2 id="editTitle" style="font-size:20px">Edit</h2>
+    <div class="field"><label>Title</label><input type="text" id="e_title" /></div>
+    <div class="field"><label>Question</label><input type="text" id="e_question" /></div>
+    <div class="field"><label>Day</label>
+      <select id="e_day">
+        <option value="">Standalone</option>
+      </select>
+    </div>
+    <div class="field" id="e_opts_wrap">
+      <label>Options</label>
+      <div class="opt-list" id="e_opts"></div>
+      <button type="button" class="add-opt" id="e_add_opt">+ Add option</button>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button type="button" class="cta ghost" id="editCancel" style="padding:10px 18px">Cancel</button>
+      <button type="button" class="cta" id="editSave" style="padding:10px 18px">Save</button>
+    </div>
+    <div class="msg" id="editMsg"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+  const $ = (id) => document.getElementById(id);
+  $('adminNav').innerHTML = renderAdminNav('admin-polls.html');
+
+  let COHORTS = [];
+  let COHORT = null;
+  let POLLS = [];
+  let COUNTS = new Map(); // poll_id -> count
+  let ACTIVE_TAB = 'open';
+  let liveChannel = null;
+  let liveState = null; // {pollId, kind, options, responses[]}
+  let rowChannel = null;
+
+  function show(id) {
+    ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none');
+    $('signoutBtn').style.display = id==='gate'?'none':'inline-block';
+  }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function rel(ts) { if (!ts) return '—'; const d = (Date.now() - new Date(ts).getTime())/1000; if (d<60) return 'just now'; if (d<3600) return Math.floor(d/60)+'m ago'; if (d<86400) return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
+
+  // ---------- Auth ----------
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    await checkAdmin(session.user);
+  }
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('loginBtn'); btn.disabled = true; btn.textContent = 'Sending…';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    $('loginMsg').className = 'msg show ' + (error ? 'err' : 'ok');
+    $('loginMsg').textContent = error ? error.message : 'Check your email.';
+    btn.textContent = error ? 'Send magic link →' : 'Sent ✓';
+    if (!error) btn.disabled = false;
+  });
+  $('signoutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
+  supabase.auth.onAuthStateChange((e, s) => { if (e === 'SIGNED_IN' && s) checkAdmin(s.user); if (e === 'SIGNED_OUT') show('gate'); });
+
+  async function checkAdmin(user) {
+    const { data: p } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!p?.is_admin) return show('denied');
+    show('panel');
+    await loadCohorts();
+    populateDayOptions($('f_day'));
+    populateDayOptions($('e_day'));
+    renderOptsEditor($('f_opts'), []);
+    wireCreate();
+    wireEdit();
+    wireTabs();
+    wireDrawer();
+    await refresh();
+    subscribeRowLevel();
+  }
+
+  async function loadCohorts() {
+    const { data } = await supabase.from('cohorts').select('id,slug,name').order('slug');
+    COHORTS = data || [];
+    const sel = $('cohortSel');
+    sel.innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name || c.slug)}</option>`).join('');
+    const def = COHORTS.find(c => c.slug === COHORT_SLUG) || COHORTS[0];
+    COHORT = def;
+    if (def) sel.value = def.id;
+    sel.addEventListener('change', async () => {
+      COHORT = COHORTS.find(c => c.id === sel.value);
+      await refresh();
+      subscribeRowLevel();
+    });
+  }
+
+  function populateDayOptions(sel) {
+    for (let i = 1; i <= 30; i++) {
+      const o = document.createElement('option');
+      o.value = String(i); o.textContent = `Day ${String(i).padStart(2,'0')}`;
+      sel.appendChild(o);
+    }
+  }
+
+  // ---------- Create ----------
+  function wireCreate() {
+    $('createHead').addEventListener('click', (e) => { if (e.target.id !== 'createToggle') toggleCreate(); });
+    $('createToggle').addEventListener('click', toggleCreate);
+    $('createCancel').addEventListener('click', () => toggleCreate(false));
+    $('f_kind').addEventListener('change', onKindChange);
+    $('f_add_opt').addEventListener('click', () => addOptRow($('f_opts'), ''));
+    $('createBtn').addEventListener('click', onCreate);
+    onKindChange();
+  }
+  function toggleCreate(force) {
+    const body = $('createBody');
+    const open = typeof force === 'boolean' ? force : body.style.display === 'none';
+    body.style.display = open ? 'grid' : 'none';
+    $('createToggle').textContent = open ? 'Collapse' : 'Expand';
+  }
+  function onKindChange() {
+    const k = $('f_kind').value;
+    const show = (k === 'single' || k === 'multi' || k === 'emoji');
+    $('f_opts_wrap').style.display = show ? '' : 'none';
+    if (show && $('f_opts').children.length === 0) {
+      if (k === 'emoji') ['👍','🤔','❤️','😂'].forEach(e => addOptRow($('f_opts'), e));
+      else { addOptRow($('f_opts'), ''); addOptRow($('f_opts'), ''); }
+    }
+  }
+  function renderOptsEditor(container, opts) {
+    container.innerHTML = '';
+    (opts || []).forEach(o => addOptRow(container, o));
+  }
+  function addOptRow(container, val) {
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    row.innerHTML = `<input type="text" value="${esc(val)}" placeholder="Option…"/><button type="button" aria-label="Remove">×</button>`;
+    row.querySelector('button').addEventListener('click', () => row.remove());
+    container.appendChild(row);
+  }
+  function collectOpts(container) {
+    return [...container.querySelectorAll('.opt-row input')].map(i => i.value.trim()).filter(Boolean);
+  }
+
+  async function onCreate() {
+    const msg = $('createMsg');
+    msg.className = 'msg'; msg.textContent = '';
+    const title = $('f_title').value.trim();
+    const question = $('f_question').value.trim();
+    const kind = $('f_kind').value;
+    const dayVal = $('f_day').value;
+    const options = (kind === 'single' || kind === 'multi' || kind === 'emoji') ? collectOpts($('f_opts')) : [];
+    if (!title || !question) { msg.className='msg show err'; msg.textContent = 'Title and question are required.'; return; }
+    if ((kind === 'single' || kind === 'multi' || kind === 'emoji') && options.length < 2) {
+      msg.className='msg show err'; msg.textContent = 'Add at least 2 options.'; return;
+    }
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from('polls').insert({
+      cohort_id: COHORT.id,
+      day_number: dayVal ? parseInt(dayVal,10) : null,
+      title, question, kind,
+      options,
+      is_open: false,
+      created_by: user.id,
+    });
+    if (error) { msg.className='msg show err'; msg.textContent = error.message; return; }
+    msg.className='msg show ok'; msg.textContent = 'Poll created.';
+    $('f_title').value = ''; $('f_question').value = ''; $('f_day').value = '';
+    $('f_opts').innerHTML = ''; onKindChange();
+    await refresh();
+    setTimeout(() => { msg.className='msg'; msg.textContent=''; toggleCreate(false); }, 900);
+  }
+
+  // ---------- Load / refresh ----------
+  async function refresh() {
+    if (!COHORT) return;
+    const { data, error } = await supabase.from('polls')
+      .select('*').eq('cohort_id', COHORT.id).order('created_at', { ascending: false });
+    if (error) { $('pollsBody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#ffa0a0">${esc(error.message)}</td></tr>`; return; }
+    POLLS = data || [];
+    await loadCounts();
+    renderStats();
+    renderList();
+  }
+
+  async function loadCounts() {
+    COUNTS = new Map();
+    if (!POLLS.length) return;
+    const { data } = await supabase.from('poll_aggregates').select('poll_id,total_responses');
+    if (data) {
+      for (const r of data) COUNTS.set(r.poll_id, r.total_responses || 0);
+      return;
+    }
+    // fallback: count via responses
+    const ids = POLLS.map(p => p.id);
+    const { data: rr } = await supabase.from('poll_responses').select('poll_id').in('poll_id', ids);
+    for (const r of rr || []) COUNTS.set(r.poll_id, (COUNTS.get(r.poll_id) || 0) + 1);
+  }
+
+  function renderStats() {
+    const total = POLLS.length;
+    const open = POLLS.filter(p => p.is_open).length;
+    const responsesTotal = [...COUNTS.values()].reduce((a,b)=>a+b,0);
+    const today = POLLS.filter(p => sameDay(p.created_at)).length;
+    $('statsRow').innerHTML = `
+      <div class="stat-card"><div class="lbl">Open now</div><div class="val">${open}</div></div>
+      <div class="stat-card"><div class="lbl">Total polls</div><div class="val">${total}</div></div>
+      <div class="stat-card"><div class="lbl">Today</div><div class="val">${today}</div></div>
+      <div class="stat-card"><div class="lbl">Responses</div><div class="val">${responsesTotal}</div></div>
+    `;
+  }
+  function sameDay(ts) {
+    if (!ts) return false;
+    const a = new Date(ts), b = new Date();
+    return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  }
+
+  function filteredPolls() {
+    if (ACTIVE_TAB === 'open') return POLLS.filter(p => p.is_open);
+    if (ACTIVE_TAB === 'today') return POLLS.filter(p => sameDay(p.created_at));
+    if (ACTIVE_TAB === 'past') return POLLS.filter(p => !p.is_open);
+    return POLLS;
+  }
+
+  function renderList() {
+    const rows = filteredPolls();
+    if (!rows.length) {
+      $('pollsBody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No polls match this filter.</td></tr>`;
+      return;
+    }
+    $('pollsBody').innerHTML = rows.map(p => {
+      const count = COUNTS.get(p.id) || 0;
+      const dayStr = p.day_number ? `Day ${String(p.day_number).padStart(2,'0')}` : 'Standalone';
+      const state = p.is_open
+        ? `<span class="dot-open"></span><span class="tag tag-ok">Open</span>`
+        : `<span class="dot-closed"></span><span class="tag tag-cancel">Closed</span>`;
+      return `<tr data-id="${esc(p.id)}">
+        <td><div style="font-weight:600">${esc(p.title)}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(p.question)}</div></td>
+        <td><span class="kind-badge k-${esc(p.kind)}">${esc(p.kind)}</span></td>
+        <td>${esc(dayStr)}</td>
+        <td>${state}</td>
+        <td style="font-family:'JetBrains Mono',monospace">${count}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">${esc(rel(p.created_at))}</td>
+        <td>
+          <div class="row-actions">
+            ${p.is_open
+              ? `<button data-act="close">Close</button>`
+              : `<button data-act="launch" class="primary">Launch</button>`}
+            <button data-act="view">View live</button>
+            <button data-act="edit">Edit</button>
+            <button data-act="delete" class="danger">Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    $('pollsBody').querySelectorAll('tr').forEach(tr => {
+      tr.querySelectorAll('button[data-act]').forEach(b => {
+        b.addEventListener('click', () => onRowAction(tr.dataset.id, b.dataset.act));
+      });
+    });
+  }
+
+  async function onRowAction(id, act) {
+    const poll = POLLS.find(p => p.id === id);
+    if (!poll) return;
+    if (act === 'launch') {
+      const { error } = await supabase.from('polls').update({ is_open: true, opened_at: new Date().toISOString(), closed_at: null }).eq('id', id);
+      if (error) alert(error.message); else refresh();
+    } else if (act === 'close') {
+      const { error } = await supabase.from('polls').update({ is_open: false, closed_at: new Date().toISOString() }).eq('id', id);
+      if (error) alert(error.message); else refresh();
+    } else if (act === 'delete') {
+      if (!confirm(`Delete poll "${poll.title}"? Responses will be deleted too.`)) return;
+      const { error } = await supabase.from('polls').delete().eq('id', id);
+      if (error) alert(error.message); else refresh();
+    } else if (act === 'edit') {
+      openEdit(poll);
+    } else if (act === 'view') {
+      openDrawer(poll);
+    }
+  }
+
+  // ---------- Tabs ----------
+  function wireTabs() {
+    $('tabs').querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        ACTIVE_TAB = b.dataset.tab;
+        $('tabs').querySelectorAll('button').forEach(x => x.classList.toggle('active', x===b));
+        renderList();
+      });
+    });
+  }
+
+  // ---------- Edit modal ----------
+  let editingId = null;
+  function wireEdit() {
+    $('e_add_opt').addEventListener('click', () => addOptRow($('e_opts'), ''));
+    $('editCancel').addEventListener('click', closeEdit);
+    $('editSave').addEventListener('click', saveEdit);
+    $('editBack').addEventListener('click', (e) => { if (e.target.id === 'editBack') closeEdit(); });
+  }
+  function openEdit(poll) {
+    editingId = poll.id;
+    $('editTitle').textContent = `Edit · ${poll.title}`;
+    $('e_title').value = poll.title || '';
+    $('e_question').value = poll.question || '';
+    $('e_day').value = poll.day_number ? String(poll.day_number) : '';
+    const needsOpts = (poll.kind === 'single' || poll.kind === 'multi' || poll.kind === 'emoji');
+    $('e_opts_wrap').style.display = needsOpts ? '' : 'none';
+    renderOptsEditor($('e_opts'), poll.options || []);
+    $('editMsg').className = 'msg'; $('editMsg').textContent = '';
+    $('editBack').classList.add('show');
+  }
+  function closeEdit() { $('editBack').classList.remove('show'); editingId = null; }
+  async function saveEdit() {
+    if (!editingId) return;
+    const poll = POLLS.find(p => p.id === editingId); if (!poll) return;
+    const upd = {
+      title: $('e_title').value.trim(),
+      question: $('e_question').value.trim(),
+      day_number: $('e_day').value ? parseInt($('e_day').value,10) : null,
+    };
+    if (poll.kind === 'single' || poll.kind === 'multi' || poll.kind === 'emoji') {
+      upd.options = collectOpts($('e_opts'));
+      if (upd.options.length < 2) { $('editMsg').className='msg show err'; $('editMsg').textContent='Need at least 2 options.'; return; }
+    }
+    const { error } = await supabase.from('polls').update(upd).eq('id', editingId);
+    if (error) { $('editMsg').className='msg show err'; $('editMsg').textContent = error.message; return; }
+    closeEdit(); await refresh();
+  }
+
+  // ---------- Drawer / live view ----------
+  function wireDrawer() {
+    $('drawerClose').addEventListener('click', closeDrawer);
+    $('drawerBack').addEventListener('click', closeDrawer);
+  }
+  async function openDrawer(poll) {
+    closeDrawer(true);
+    liveState = { pollId: poll.id, kind: poll.kind, options: poll.options || [], responses: [] };
+    $('drawerTitle').textContent = poll.title;
+    $('drawerKicker').textContent = poll.is_open ? 'Live · open' : 'Closed';
+    $('drawerCount').textContent = '0 responses so far';
+    $('drawerBody').innerHTML = '<div class="muted" style="padding:20px 0">Loading responses…</div>';
+    $('drawerBack').classList.add('show');
+    $('drawer').classList.add('show');
+    const { data } = await supabase.from('poll_responses').select('*').eq('poll_id', poll.id).order('created_at', { ascending: false }).limit(500);
+    liveState.responses = data || [];
+    renderLive();
+    if (liveChannel) supabase.removeChannel(liveChannel);
+    liveChannel = supabase.channel(`polls-live-${poll.id}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'poll_responses', filter: `poll_id=eq.${poll.id}` }, (payload) => {
+        liveState.responses.unshift(payload.new);
+        renderLive();
+        // bump count in table without full refresh
+        const cur = COUNTS.get(poll.id) || 0;
+        COUNTS.set(poll.id, cur + 1);
+        renderStats(); renderList();
+      })
+      .subscribe();
+  }
+  function closeDrawer(silent) {
+    $('drawerBack').classList.remove('show');
+    $('drawer').classList.remove('show');
+    if (liveChannel) { supabase.removeChannel(liveChannel); liveChannel = null; }
+    liveState = null;
+    if (!silent) {}
+  }
+  function renderLive() {
+    if (!liveState) return;
+    const { kind, options, responses } = liveState;
+    $('drawerCount').textContent = `${responses.length} response${responses.length===1?'':'s'} so far`;
+    const body = $('drawerBody');
+    if (kind === 'single' || kind === 'multi') {
+      const counts = new Map(options.map(o => [o, 0]));
+      for (const r of responses) {
+        if (kind === 'single') {
+          const c = r.response?.choice; if (counts.has(c)) counts.set(c, counts.get(c)+1);
+        } else {
+          for (const c of (r.response?.choices || [])) if (counts.has(c)) counts.set(c, counts.get(c)+1);
+        }
+      }
+      const max = Math.max(1, ...counts.values());
+      const total = responses.length || 1;
+      body.innerHTML = options.map(o => {
+        const c = counts.get(o) || 0;
+        const pct = Math.round((c / total) * 100);
+        const width = Math.round((c / max) * 100);
+        const leader = c > 0 && c === max ? ' leader' : '';
+        return `<div class="bar-row${leader}">
+          <div class="bar-head"><span class="bar-label">${esc(o)}</span><span class="bar-stats">${c} · ${pct}%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+        </div>`;
+      }).join('');
+    } else if (kind === 'emoji') {
+      const counts = new Map(options.map(o => [o, 0]));
+      for (const r of responses) {
+        const e = r.response?.emoji; if (counts.has(e)) counts.set(e, counts.get(e)+1);
+      }
+      const max = Math.max(1, ...counts.values());
+      body.innerHTML = options.map(o => {
+        const c = counts.get(o) || 0;
+        const w = Math.round((c / max) * 100);
+        return `<div class="emoji-row">
+          <div class="emoji-big">${esc(o)}</div>
+          <div class="emoji-bar"><div class="emoji-bar-fill" style="width:${w}%"></div></div>
+          <div class="emoji-count">${c}</div>
+        </div>`;
+      }).join('');
+    } else {
+      // text / questions
+      if (!responses.length) { body.innerHTML = `<div class="muted" style="padding:20px 0">No responses yet.</div>`; return; }
+      body.innerHTML = responses.map(r => {
+        const text = r.response?.text || '';
+        return `<div class="q-card"><div class="q-text">${esc(text)}</div><div class="q-time">${esc(rel(r.created_at))}</div></div>`;
+      }).join('');
+    }
+  }
+
+  // ---------- Row-level realtime (keep list fresh) ----------
+  function subscribeRowLevel() {
+    if (rowChannel) { supabase.removeChannel(rowChannel); rowChannel = null; }
+    if (!COHORT) return;
+    rowChannel = supabase.channel(`polls-row-${COHORT.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'polls', filter: `cohort_id=eq.${COHORT.id}` }, () => refresh())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'poll_responses' }, (payload) => {
+        const pid = payload.new?.poll_id;
+        if (!pid) return;
+        if (POLLS.some(p => p.id === pid)) {
+          COUNTS.set(pid, (COUNTS.get(pid) || 0) + 1);
+          renderStats(); renderList();
+        }
+      })
+      .subscribe();
+  }
+
+  init();
+</script>
+</body>
+</html>

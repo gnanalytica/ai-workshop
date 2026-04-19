@@ -244,6 +244,58 @@
   .lm-resources a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;transition:border-color .15s,background .15s}
   .lm-resources a:hover{border-color:#3a3a4e;background:rgba(255,255,255,.02)}
   .lm-host{font-size:11px;font-family:"JetBrains Mono",monospace}
+
+  /* ------ Live polls widget ------ */
+  .polls-mount{display:flex;flex-direction:column;gap:14px;margin:0 0 28px}
+  .polls-mount:empty{display:none}
+  .poll-card{background:linear-gradient(145deg,rgba(139,92,246,.08),var(--card));border:1px solid rgba(139,92,246,.28);border-radius:16px;padding:18px 20px;animation:poll-in .45s cubic-bezier(.2,.8,.2,1)}
+  .poll-card.poll-just-launched{box-shadow:0 0 0 3px rgba(195,255,54,.25);animation:poll-pulse 1.4s ease-out}
+  @keyframes poll-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  @keyframes poll-pulse{0%{box-shadow:0 0 0 0 rgba(195,255,54,.4)}100%{box-shadow:0 0 0 14px rgba(195,255,54,0)}}
+  .poll-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+  .poll-kicker{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9b8ff;font-weight:700}
+  .poll-badge{font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;letter-spacing:.04em}
+  .poll-badge-open{background:rgba(195,255,54,.12);color:#c9f76a;border:1px solid rgba(195,255,54,.35);display:inline-flex;align-items:center;gap:6px}
+  .poll-badge-closed{background:rgba(138,138,154,.12);color:var(--muted);border:1px solid var(--line)}
+  .poll-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:poll-blink 1.4s ease-in-out infinite}
+  @keyframes poll-blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .poll-title{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:4px 0 4px;color:var(--ink)}
+  .poll-q{font-size:14.5px;color:#d4d4dd;line-height:1.5;margin-bottom:14px}
+  .poll-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+  .poll-opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s}
+  .poll-opt:hover{border-color:rgba(195,255,54,.4);background:rgba(195,255,54,.04)}
+  .poll-opt input{accent-color:var(--accent);cursor:pointer}
+  .poll-submit{padding:10px 18px;border-radius:10px;background:var(--accent);color:var(--cta-ink);font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+  .poll-submit:disabled{opacity:.5;cursor:not-allowed}
+  .poll-textarea{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:inherit;font-size:14px;outline:none;resize:vertical;margin-bottom:10px}
+  .poll-textarea:focus{border-color:var(--accent)}
+  .poll-emojis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .poll-emoji{font-size:2rem;padding:8px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;line-height:1}
+  .poll-emoji:hover{transform:scale(1.15);border-color:var(--accent);box-shadow:0 0 0 3px rgba(195,255,54,.2)}
+  .poll-msg{font-size:12.5px;margin-top:8px;min-height:1em}
+  .poll-msg.err{color:#ffa0a0}
+  .poll-msg.ok{color:#c9f76a}
+  .poll-msg-sub{color:var(--muted);font-style:italic}
+  .poll-thanks{padding:10px 12px;background:rgba(195,255,54,.08);border:1px solid rgba(195,255,54,.25);border-radius:10px;color:#c9f76a;font-size:13.5px;margin-bottom:12px}
+  .poll-waiting{margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic}
+  .poll-results{margin-top:12px}
+  .poll-count{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .poll-bar-row{margin-bottom:10px}
+  .poll-bar-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;color:var(--ink)}
+  .poll-bar-stats{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted)}
+  .poll-bar-track{height:18px;background:var(--bg-soft);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .poll-bar-fill{height:100%;background:var(--accent-2);border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .poll-bar-row.leader .poll-bar-fill{background:var(--accent)}
+  .poll-emoji-results{display:flex;flex-direction:column;gap:8px}
+  .poll-emoji-result{display:flex;align-items:center;gap:14px;padding:6px 12px;background:var(--bg-soft);border-radius:10px}
+  .poll-emoji-big{font-size:1.8rem;line-height:1}
+  .poll-emoji-bar{flex:1;height:6px;background:var(--card);border-radius:4px;overflow:hidden}
+  .poll-emoji-bar-fill{height:100%;background:var(--accent);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .poll-emoji-n{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--muted);min-width:26px;text-align:right}
+  .poll-qwall{display:flex;flex-direction:column;gap:8px}
+  .poll-q-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;animation:poll-in .3s ease-out}
+  .poll-q-text{font-size:13.5px;color:var(--ink);line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  .poll-q-time{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);margin-top:4px;letter-spacing:.1em}
 </style>
 </head>
 <body>
@@ -316,6 +368,7 @@
     <div id="tldrBlock"></div>
     <div id="toolSections"></div>
     <div id="introBlock" class="mod-body" style="margin-bottom:28px"></div>
+    <div id="pollsWidget"></div>
     <div id="modules"></div>
     <div id="resourcesBlock"></div>
 
@@ -377,6 +430,7 @@
     renderToolSections,
     escapeHtml,
   } from './assets/content-renderer.js';
+  import { mountPollsWidget } from './assets/polls-widget.js';
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, '0');
@@ -603,6 +657,12 @@
     }
 
     $('lesson').style.display = 'grid';
+
+    // Live polls widget
+    try {
+      if (window.__pollsTeardown) window.__pollsTeardown();
+      window.__pollsTeardown = mountPollsWidget($('pollsWidget'), { user, cohort, dayNumber: n });
+    } catch (e) { /* widget is optional, don't break page */ }
 
     // Scrollspy for TOC
     setupScrollspy(modules);

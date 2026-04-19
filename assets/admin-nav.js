@@ -7,6 +7,7 @@ export const ADMIN_PAGES = [
   { href: 'admin-orgs.html',     label: 'Orgs & codes' },
   { href: 'admin-analytics.html',label: 'Analytics' },
   { href: 'admin-activity.html', label: 'Activity' },
+  { href: 'admin-polls.html',    label: 'Polls' },
   { href: 'admin-student.html',  label: 'Student' },
 ];
 
