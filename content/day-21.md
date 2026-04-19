@@ -1,157 +1,116 @@
 ---
 reading_time: 14 min
-tldr: "Prompt, RAG, or fine-tune? A decision tree, not a religion. Cost, latency, maintainability — pick for the job."
-tags: ["ai", "llms", "fine-tuning", "rag", "prompting"]
+tldr: "Direct an AI to build your app from your Day-14 spec, iterate, deploy, and ship a live URL by tonight."
+tags: ["vibe", "shipping", "capstone"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Three approaches, one task: prompting vs RAG vs LoRA fine-tune", "url": "https://github.com/unslothai/unsloth"}
-resources: [{"title": "Unsloth", "url": "https://github.com/unslothai/unsloth"}, {"title": "HuggingFace Transformers", "url": "https://huggingface.co/docs/transformers/"}, {"title": "LlamaIndex docs", "url": "https://docs.llamaindex.ai/"}, {"title": "Ollama", "url": "https://ollama.com/"}]
+lab: {"title": "Ship your first AI app to a live URL", "url": "https://bolt.new/"}
+prompt_of_the_day: "Build me a single-page web app that does the following:\n- Audience: {{who}}\n- Problem it solves: {{pain}}\n- Core flow: {{six_box_flow}}\n- Success looks like: {{shipped_criteria}}\n- Stack: Next.js + Tailwind. Keep it simple. Add clear placeholder data so I can see it working immediately."
+resources: [{"title": "bolt.new", "url": "https://bolt.new/"}, {"title": "Lovable", "url": "https://lovable.dev/"}, {"title": "v0", "url": "https://v0.dev/"}, {"title": "Cursor", "url": "https://cursor.com/"}, {"title": "Claude Code", "url": "https://www.anthropic.com/claude-code"}]
 ---
 
 ## Intro
 
-You now have three hammers: prompting, RAG, fine-tuning. Most teams pick the wrong one for the wrong reason ("we need to fine-tune because we have data"). Today we disentangle when each wins, and you'll solve the same problem three ways to feel the tradeoffs in your fingers.
+This is the day you've been prepping for. Every concept, every lab, every discussion — they all converge here. You will not write code. You will direct an AI to write code, iterate on what it gives back, and ship a live URL tonight. Week 2's thinking pays off now.
 
-## Read: Fine-tuning vs prompting vs RAG
+## Read: Vibe-coding is a real skill
 
-### The decision framework
+"Vibe-coding" is directing an AI to build software through plain-English conversation. Critics hate the name. The thing itself is real — in 2026, shipping a working MVP in an afternoon is normal, and the people who do it best share one trait: they know what they want before they start typing.
 
-Before reaching for any technique, ask: **am I trying to change what the model knows, or how it behaves?**
+### Why yesterday's spec matters today
 
-| Goal | Best technique |
-|---|---|
-| Inject new factual knowledge (product docs, internal data) | **RAG** |
-| Keep answers current (yesterday's data) | **RAG** |
-| Change tone, format, or style consistently | Prompting → then fine-tuning if budget allows |
-| Teach a new narrow task (classify, extract, route) | Fine-tuning (or strong few-shot) |
-| Make a small model behave like a bigger one on a task | Fine-tuning (distillation) |
-| Reduce latency/cost of a task you've prototyped with prompting | Fine-tuning a small model |
-| Handle a novel domain (obscure language, proprietary jargon) | Fine-tune + RAG together |
+The single biggest predictor of whether you ship a good app today is whether your Day-14 spec is sharp. A vague spec yields a vague app. A one-line "a study helper with AI" gets you exactly that — a generic chat box wrapper. A detailed spec gets you something specific and useful.
 
-Two myths to kill up front:
+Your spec already has: who it's for, what pain it removes, the six-box flow, success criteria, an anti-goal. You'll paste that, roughly, as your first message.
 
-1. **"We need to fine-tune to use our data."** No. RAG is almost always better for knowledge injection. Fine-tuning changes behavior, not memorized facts (which decay and are hard to update).
-2. **"Prompting is temporary, real engineers fine-tune."** Top production systems are ~80% prompting + RAG, ~20% fine-tuning. Prompting is permanent.
+### Pick one tool and commit
 
-### Fine-tuning, concretely
+Don't channel-surf between builders. Pick one and stay all day.
 
-Fine-tuning starts from a base model and continues training on your examples. Three flavors:
+| Tool | Best for | Deploy story |
+|---|---|---|
+| bolt.new | Full-stack web apps with backend | One-click Netlify |
+| Lovable | Polished SaaS-looking UIs, DB included | Built-in deploy + Supabase |
+| v0 | Beautiful front-end components, design-forward | One-click Vercel |
+| Cursor / Claude Code | Deeper control, working with a real repo | You manage deploy |
 
-- **Full fine-tune**: update every weight. Expensive (a 7B model full-tune is hours on an A100), needs careful hyperparameters, easy to "catastrophically forget" the base capabilities.
-- **LoRA / QLoRA** (Low-Rank Adaptation): freeze the base model, train tiny adapter matrices that sit alongside. ~0.1–1% of the parameters. Same behavior lift as full fine-tune for most tasks, runs on consumer GPUs, adapters are ~10–200MB.
-- **DPO / ORPO / Preference tuning**: train the model to prefer "good" responses over "bad" ones (replaces the old RLHF step for many teams). Needs a dataset of chosen/rejected pairs.
+For today, we recommend **bolt.new** or **Lovable**. Both run in browser, both deploy for free, both handle the full stack. v0 is gorgeous but more front-end focused. Cursor/Claude Code are the pros' choice — try them next week.
 
-In 2026, **QLoRA with Unsloth** is the default for small teams. Unsloth patches HuggingFace Transformers to 2–5× speed up training on a single consumer GPU. A 7B-param QLoRA on 1k examples takes ~1 hour on an RTX 4090.
+### The iteration loop that actually works
 
-### Cost-benefit table
+```
+Read this, don't type it
 
-| Technique | Setup time | Data needed | Compute | Latency at serve time | When to pick |
-|---|---|---|---|---|---|
-| Prompt only | minutes | 0–20 examples | none | base | Always first |
-| Few-shot | minutes | 2–8 examples | none | base + context | Classification, extraction |
-| RAG | hours | corpus of docs | CPU or small GPU | base + retrieval | Knowledge grounding |
-| LoRA fine-tune | 1–8 hours | 500–5000 examples | 1 consumer GPU | base | Narrow task, want small model |
-| Full fine-tune | days | 10k+ examples | multi-GPU | base | Rare, domain-specific |
-| Continued pretraining | weeks | 100M+ tokens | cluster | base | Almost never for app teams |
-
-**Default order of operations**: zero-shot → few-shot → RAG → fine-tune. Don't skip ahead.
-
-### When fine-tuning actually wins
-
-Reasonable fine-tune candidates:
-
-- You have a repeatable, narrow task (e.g., "classify this ticket into one of 40 internal categories"). Prompting hits 88%; fine-tuning hits 96%.
-- You're distilling: you've been paying for GPT-5 and a fine-tuned 3B model would be 100× cheaper at acceptable quality.
-- You need a specific output format that prompting can't lock down.
-- You need to bake in style (e.g., customer-service voice) that's expensive to prompt every turn.
-
-Bad fine-tune candidates:
-
-- You want the model to "know" your docs. Use RAG.
-- You have 50 examples total. Not enough.
-- The task is still being defined. Fine-tuning freezes decisions.
-
-### Unsloth + TinyLlama: the quick path
-
-```python
-# pip install unsloth
-from unsloth import FastLanguageModel
-import torch
-from trl import SFTTrainer
-from transformers import TrainingArguments
-from datasets import load_dataset
-
-model, tok = FastLanguageModel.from_pretrained(
-    "unsloth/tinyllama-chat-bnb-4bit",
-    max_seq_length=2048, load_in_4bit=True)
-model = FastLanguageModel.get_peft_model(
-    model, r=16, lora_alpha=16,
-    target_modules=["q_proj","k_proj","v_proj","o_proj"])
-
-ds = load_dataset("json", data_files="train.jsonl", split="train")
-
-trainer = SFTTrainer(
-    model=model, tokenizer=tok, train_dataset=ds,
-    dataset_text_field="text", max_seq_length=2048,
-    args=TrainingArguments(
-        per_device_train_batch_size=2, gradient_accumulation_steps=4,
-        max_steps=200, learning_rate=2e-4,
-        fp16=not torch.cuda.is_bf16_supported(), bf16=torch.cuda.is_bf16_supported(),
-        output_dir="out"))
-trainer.train()
-model.save_pretrained_gguf("out-gguf", tok)  # drop into Ollama
+ 1. Describe      ->  paste spec, get first version
+ 2. Try it        ->  click through; note what's broken
+ 3. Name it       ->  "the submit button does nothing; fix and add a loading state"
+ 4. Let AI work   ->  don't edit manually; direct it back
+ 5. Repeat        ->  10-20 tight loops beats 2 giant refactors
 ```
 
-That's a full fine-tune run. Under 50 lines, plus your dataset.
+The trap is trying to fix things yourself by reading the code. Don't. The AI wrote it, the AI can fix it. Your job is to see problems clearly and describe them precisely.
 
-### Hybrid is usually the answer
+### The three layers of your app
 
-Real systems mix all three:
+Almost every AI app has three layers. Know which one has a bug.
 
-- Fine-tune a small model for the common case (fast, cheap).
-- RAG for grounding in current data.
-- Prompting for edge cases and orchestration.
-- Route requests: "simple → local fine-tuned 3B, complex → hosted frontier."
+- Front-end. The UI the user sees. Buttons, forms, chat boxes. Bugs here are visual or interaction-based.
+- Back-end / API. The glue that calls the LLM, stores data, talks to external APIs. Bugs here are "nothing happens when I click" or "500 error."
+- Data. Database, vector store for RAG, file uploads. Bugs here are "my upload disappeared" or "it keeps showing the same answer."
 
-This is what 2026 production "AI" looks like — not a single magic model, but a pipeline of cheap and smart pieces.
+When something breaks, diagnose which layer. "The button doesn't do anything" could be front-end (button isn't wired) or back-end (API never returned). Open the browser's DevTools Network tab to see which.
 
-## Watch: Fine-tuning demystified
+### Ship criteria, revisited
 
-Look for a recent end-to-end LoRA fine-tuning walkthrough — Unsloth's own tutorials, HuggingFace courses, or a Daniel Han conference talk.
+From your Day-14 spec, you have three success criteria and one anti-goal. Tape them to your screen. At every iteration, ask: am I closer to these three, or farther? Anything that doesn't move those numbers is a distraction.
+
+### The six classic mistakes to avoid
+
+1. Changing the spec mid-build. You lose the AI's context and restart from zero.
+2. Adding auth on Day 1. Nobody needs to log in to see your demo. Skip.
+3. Making it pretty before it works. Ugly-and-working beats beautiful-and-broken.
+4. Copying errors into chat without the context. The AI needs the file, the line, and what you clicked.
+5. Quitting on the third failure. Most apps get built on the eighth attempt. Push.
+6. Shipping nothing because "it's not ready." Ship ugly. Iterate tomorrow.
+
+## Watch: A full vibe-coded app, start to URL
+
+A recorded session of a builder taking an idea from empty screen to live URL in under an hour using bolt.new or Lovable. Watch the rhythm of describe-try-name-let-AI-work.
 
 https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace with an Unsloth / LoRA walkthrough -->
+<!-- TODO: replace video -->
 
-- Focus on the data-preparation step; it dominates outcomes.
-- Watch how training loss curves are read.
-- Note when they recommend fine-tuning vs sticking with prompting.
+- Notice how short each instruction is after the first big one.
+- Watch how the builder handles errors — always by describing, never by editing.
+- Observe how they ship a broken version first, then fix in place.
 
-## Lab: One task, three approaches
+## Lab: Ship your first AI app
 
-You'll solve a single task three ways and compare. The task: classify short support messages into one of 5 categories (billing, bug, feature-request, account, other). You can use any other narrow classification task you actually care about.
+This is a 90–120 minute lab. Block the time. Close Slack. Let's go.
 
-1. Build a dataset: 100 labeled examples (80 train, 20 test). Hand-label them in a CSV. Seriously — do not generate them with an LLM; you need honest data. Save as `train.jsonl` and `test.jsonl` with `{"text": "...", "label": "..."}`.
-2. **Approach A — plain prompting.** In `a_prompt.py`, write a zero-shot and a few-shot prompt (3 examples). Use Ollama with `llama3.2:3b` or similar. Run the 20-item test set. Record accuracy.
-3. **Approach B — RAG-ish.** In `b_rag.py`, embed all 80 training examples with sentence-transformers into Chroma. For each test item, retrieve the 5 nearest training examples, inject them as dynamic few-shot in the prompt. Re-run. Record accuracy. (This is "dynamic few-shot," a form of RAG for classification.)
-4. **Approach C — LoRA fine-tune.** On Google Colab (free T4 is enough) or a local GPU, install Unsloth and run a QLoRA on TinyLlama or Llama 3.2 1B using the 80-example training set. Format each example as `"Text: {text}\nLabel: {label}"`. Train ~200 steps. Export to GGUF and pull into Ollama: `ollama create my-tuned -f Modelfile`. Run the 20 test items. Record accuracy.
-5. Build a comparison table: approach × accuracy × setup time (minutes) × inference latency × model size on disk × GPU required.
-6. Pick a winner for this task and size. Justify in 2 paragraphs.
-7. Bonus: combine B + C — dynamic few-shot on top of your fine-tuned model. Usually best-of-both.
-8. Commit `a_prompt.py`, `b_rag.py`, the Colab notebook or training script for C, the `Modelfile`, and `three-approaches.md` with your table and conclusions.
+1. Open your Day-14 spec. Read it once, out loud. Fix any vague sentence before you start.
+2. Open https://bolt.new/ (or https://lovable.dev/ — your choice, commit to one). Sign in free.
+3. Paste today's prompt-of-the-day, filling `{{who}}`, `{{pain}}`, `{{six_box_flow}}`, and `{{shipped_criteria}}` from your spec. Hit send.
+4. Wait. The AI will scaffold a project in 30–90 seconds. Click through the preview. Note three things that work and three that don't.
+5. Fix the biggest broken thing first, in one sentence. Example: "The chat input doesn't send on Enter. Also, show a loading spinner while the AI responds." Let the AI rebuild. Test again.
+6. If your app needs AI inside it (most will), add a clear instruction: "Use the OpenAI/Anthropic API for the chat. Read the key from an environment variable called OPENAI_API_KEY. Add a settings screen where I can paste my key." Most builders now handle this natively.
+7. If your app uses RAG (from Day 19), direct: "Add a file upload. When a PDF is uploaded, chunk it, embed it, store embeddings, and use them to answer questions. Show the source page in each answer." Don't worry about the technical terms — the AI has read every tutorial.
+8. Iterate until your three success criteria are met. Deploy using the builder's one-click deploy. Copy the live URL.
+9. Share the live URL with one classmate RIGHT NOW. Ask them to try one thing and tell you what broke. Fix that thing. Re-share.
 
-Budget 90–120 minutes (mostly fine-tune training).
+Your deliverable is a live URL that a stranger can open and use. Not a GitHub repo. Not a screenshot. A URL.
 
 ## Quiz
 
-Quiz on: which technique to pick for "I want the model to know our FAQ," what LoRA does structurally, when full fine-tune is worth it, how data size changes the decision, and the typical order of operations (prompt → RAG → fine-tune). No trick questions.
+Four questions today: which tool fits which job, what makes a good iteration instruction, which layer a given bug lives in, and one "spec review" item where you pick the stronger of two specs.
 
 ## Assignment
 
-Write `my-decision-framework.md` (400–600 words). Given a specific hypothetical brief — "build an assistant that answers questions about our 50-page employee handbook in a formal tone, low-latency, under $50/month infra budget, 200 queries/day" — walk through which combination of prompting / RAG / fine-tuning you'd use and why. Be concrete: name the model, the embedding approach, whether you'd fine-tune, and the guardrails.
+Submit three things in the class channel: (1) your live URL, (2) a screenshot of your best moment, (3) a 150-word reflection on what surprised you about directing an AI to build something real. Watch two classmates' submissions and leave one specific, kind comment on each.
 
-## Discuss: Picking the right hammer
+## Discuss: You shipped. Now what?
 
-- A teammate insists "we have to fine-tune because our data is proprietary." What's your response?
-- Under what conditions does a 3B fine-tuned model beat a 70B general model?
-- "Fine-tuning destroys general capability." When is that a feature, not a bug?
-- If frontier closed models keep getting cheaper, does fine-tuning open-weights still pay off in 2027?
-- Your team is three people. You have six months. One production app. Which of the three techniques would you invest the most engineering time in, and why?
+- What's the single thing about your app you're proud of, and the single thing you already want to rebuild?
+- Which worked better — bolt.new, Lovable, v0, or something else — and why?
+- When did the AI most misunderstand you, and how did you recover?
+- You now know APIs, embeddings, RAG, prompting, and shipping. Which of those will you deepen next, and why?
+- If you had one more day with this app, what would you add? What would you cut?

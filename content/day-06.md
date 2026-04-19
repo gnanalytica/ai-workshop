@@ -1,190 +1,146 @@
 ---
-reading_time: 15 min
-tldr: "Decomposition, pattern-matching, abstraction, algorithmic thinking — the thinking moves that outlive any language."
-tags: ["computational", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Decompose a decision with the four CT primitives", "url": "https://excalidraw.com/"}
-resources: [{"title": "Computational Thinking — Wikipedia", "url": "https://en.wikipedia.org/wiki/Computational_thinking"}, {"title": "Jeannette Wing's 2006 essay (search it)", "url": "https://hbr.org/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}]
+reading_time: 10 min
+tldr: "Build a full slide deck from 5 bullets, analyse a CSV with zero Excel formulas, and run a mock interview before lunch."
+tags: ["use", "productivity", "consumer"]
+video: https://www.youtube.com/embed/ZY-Z9HbB-hQ
+lab: {"title": "Build a 'My 2026 Goals' deck with Gamma", "url": "https://gamma.app/"}
+prompt_of_the_day: "You are a tough but fair interviewer for a {{role, e.g. Data Analyst Intern}} at a {{company type, e.g. fintech startup}}. Ask me 5 questions one at a time. Wait for each answer before the next. After question 5, give me a brutally honest 3-part review: what was strong, what was weak, what I should practise."
+resources: [{"title": "Gamma", "url": "https://gamma.app/"}, {"title": "Canva (Magic Studio)", "url": "https://www.canva.com/"}, {"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Perplexity", "url": "https://www.perplexity.ai/"}]
 ---
 
 ## Intro
 
-Computational thinking has nothing to do with being a programmer. It is a way of breaking messy reality into pieces a machine — or a junior teammate, or a process — can execute. Today you learn the four primitive moves that underpin every software system, and apply them without writing a single line of code.
+Today we turn AI into your operations team. Slide decks, CV polish, data analysis, meeting notes, interview prep — all in a browser, all free-tier. By the end of today you'll feel the real time dividend: things that took 2 hours now take 20 minutes. This is the day your habits start to shift.
 
-## Read: the four primitives
+## Read: The daily-ops AI stack
 
-Jeannette Wing, in a 2006 essay that launched the term into mainstream curriculum, argues computational thinking rests on four mental moves:
+Four everyday tasks, four workflows. Pick the two that match your life right now and go deep.
 
-1. **Decomposition** — break a big messy problem into smaller, well-defined parts.
-2. **Pattern recognition** — spot similarities within and across problems.
-3. **Abstraction** — hide details that don't matter for your current purpose.
-4. **Algorithmic design** — define a step-by-step procedure that produces the desired output.
+### 1. Slide decks from thin air — Gamma and Canva Magic
 
-You use these every day, just unconsciously. Making these moves explicit is what makes you dangerous.
+Writing slides is mostly busywork. AI is made for busywork.
 
-### Primitive 1 — Decomposition
+**Gamma** (`https://gamma.app/`) takes a topic or outline and generates a full visual deck in 20 seconds. Free account gives you 400 credits — enough for 5–10 decks. **Canva Magic** does the same inside Canva with more brand polish.
 
-The act of chopping. You take "plan my elective registration" and break it into "list available electives → filter by interest → check schedule conflicts → check professor ratings → rank top 3 → submit form before deadline".
-
-Good decomposition has three properties:
-
-- **Each sub-part can be understood in isolation.** If changing sub-part A forces you to rewrite sub-part B, they weren't really decomposed.
-- **The parts together cover the whole.** No hidden steps.
-- **Each part has a clear input and output.** "Check schedule conflicts" takes a list of electives and returns a filtered list.
-
-### Primitive 2 — Pattern recognition
-
-Seeing "wait — this is just like that." Planning placement prep feels like planning exam prep, which feels like planning a gym routine. The pattern is *goal-setting + recurring deliberate practice + feedback review*. Recognizing the pattern means you don't reinvent a template every time.
-
-Patterns also apply *within* a problem. If two sub-parts of a decomposition feel the same, maybe they are — and you can reuse one approach.
-
-### Primitive 3 — Abstraction
-
-Deliberate forgetting. When you write "check schedule conflicts", you hide the fact that timetables are in PDFs, slots have sub-codes, and Wednesdays have labs. At *this* level of abstraction, all you care about is: *input → a decision of conflict or no-conflict*. The details matter at a lower level, not this one.
-
-> A mental model is an abstraction. A map is an abstraction. The shortcut "mess is crowded 7:30–8:15pm" is an abstraction of thousands of lived events.
-
-The skill is knowing *which details to drop*. Drop too many and your model lies to you. Drop too few and you drown.
-
-### Primitive 4 — Algorithmic design
-
-Turning a decomposition into a procedure. A recipe. A runbook. Written so that someone else (a teammate, a future-you, a computer) can execute it without guessing.
-
-A good algorithm has:
-
-- **Defined inputs.** "Given a list of 8 electives..."
-- **Defined outputs.** "...return the 3 I should register for, ranked."
-- **Deterministic steps.** Each step has one obvious meaning.
-- **Edge cases named.** "If two electives tie in score, pick the one with the earlier class time."
-- **A stopping condition.** You know when you're done.
-
-### Worked example: "which elective should I pick?"
-
-A 3rd-year student has to pick 2 electives out of 8 options. Classic messy real-life decision. Let's run the four primitives.
-
-**Decompose:**
-
-- Gather the 8 elective options (data).
-- Score each against criteria.
-- Detect schedule conflicts between picks.
-- Pick top-ranked non-conflicting pair.
-
-**Pattern-recognize:** this is structurally identical to picking which 2 clubs to join or which 2 courses on Coursera to finish this semester. Same template.
-
-**Abstract:** you are going to ignore details like "what my parents think" or "what a specific senior said". Keep 4 clean criteria:
-
-1. Genuine interest (1–5).
-2. Career signal / resume weight (1–5).
-3. Professor quality (1–5).
-4. Schedule load (inverse — how many hours/week, lower is better, scored 1–5).
-
-**Algorithm:**
+How to use Gamma well: give it *structure*, not just a topic. A 5-bullet outline produces a far better deck than a vague topic.
 
 ```
-INPUT: list of 8 electives, each with {name, slot, hours_per_week, prof_rating}
-INPUT: my self-scored interest for each elective (1-5)
+Copy and paste this into Gamma as your prompt:
 
-STEP 1: For each elective, compute
-   score = 0.4 * interest
-         + 0.25 * career_signal
-         + 0.2 * prof_rating
-         + 0.15 * (6 - load_score)   # lower load = higher contribution
+Create a 6-slide deck called "My 2026 Goals".
+Slides:
+1. Title — my name + "2026"
+2. Career goal — one specific internship/job target with 2 reasons
+3. Skill goal — one hard skill, one soft skill, how I'll measure progress
+4. Project goal — one public thing I'll ship (hackathon / blog / repo)
+5. Personal goal — fitness, reading, or a relationship goal
+6. Accountability — how I'll track monthly and who will check on me
 
-STEP 2: Sort electives by score, descending.
-
-STEP 3: Starting from top: pick the first elective.
-        Walk down the list, pick the highest-scored elective
-        whose slot does NOT conflict with already-picked ones.
-
-STEP 4: Stop when 2 are picked.
-
-EDGE CASE: If no non-conflicting second pick exists,
-           backtrack — try the 2nd-ranked as first pick instead.
-
-OUTPUT: ranked list of 2 electives, plus a 1-line reason for each.
+Style: clean, modern, warm. Avoid corporate stock photos.
 ```
 
-This is code in spirit, not in syntax. It's executable by *you* with a pen and paper. You can also hand it to a friend and they'd make the same decision you would. *That* is the test of a good algorithm.
+You'll get a deck with visuals, formatting, and transitions already done. Edit the words and ship.
 
-### Another mini-case: a notes-sharing flow
+### 2. CV polish — the 3-prompt workflow
 
-Problem: "Share unit-3 OS notes with my study group of 5."
+Your CV is one document you'll update for years. Do this once, do it right.
 
-Decompose → `scan pages` → `check legibility` → `name file consistently` → `upload to shared drive` → `notify group`.
+```
+Copy and paste this prompt (to ChatGPT or Claude):
 
-Pattern: same structure as sharing any set of files. Reusable.
+Step 1: Rewrite each bullet on my CV using the pattern "[action verb] + [what I did] + [measurable result]". Kill vague words like "helped", "worked on", "responsible for".
 
-Abstract: we don't care whether it's OS or DBMS notes. We don't care whether Drive or Dropbox. At this level, it's "upload and notify".
+Step 2: For a {{target role}} at a {{target company type}}, re-order the bullets by relevance.
 
-Algorithm: a 5-step runbook anyone in the group can follow. Bonus: if the steps are clear, any member can do the next upload without being asked. You just removed the bottleneck that was *you*.
+Step 3: Score my CV out of 10 on: specificity, verbs, numbers, target-role fit. Suggest 3 edits.
 
-### Why this matters before AI
+Here's my CV text: {{paste CV as plain text}}
+```
 
-When you learn to prompt AI models in Week 2, a crisply decomposed problem gives you a crisply scoped prompt. A vague problem gives you vague output. Computational thinking is how you pre-digest the problem so the machine doesn't have to guess.
+This is the single most valuable AI prompt for placement season. Save it.
 
-## Watch: computational thinking without code
+### 3. Data analysis without Excel formulas
 
-A short overview of the four primitives with real-world (non-coding) examples. The visuals are the point.
+You can upload a CSV directly into ChatGPT (free tier supports small files) or Claude. No VLOOKUP, no pivot tables, no panic.
 
-https://www.youtube.com/embed/VIDEO_ID
+Example: you've got a CSV of your college club's event attendance.
+
+```
+Copy and paste this prompt (after uploading the CSV):
+
+You are a data analyst. Here's our event attendance CSV.
+
+1. Summarise the file: rows, columns, what each column likely means.
+2. Give me 3 interesting patterns (e.g., which events had highest turnout, which day of the week is best).
+3. Build a simple bar chart of attendance by event.
+4. Tell me one thing this data CANNOT answer, so I don't misuse it.
+```
+
+You get charts, summary, and honest limits — in 30 seconds.
+
+### 4. Interview prep — mock interviews at 2 AM
+
+This is the underrated superpower. AI will role-play an interviewer endlessly and never get tired of you saying "umm".
+
+The prompt-of-the-day above is your template. Run it before every interview this placement season. Follow-up moves:
+
+- *"Now ask me 3 behavioural questions in the STAR format."*
+- *"Pretend I'm stuck and I'm rambling. Interrupt me like a real interviewer would."*
+- *"Give me feedback as if I were your own younger sibling — kind but honest."*
+
+### Picking the right tool at a glance
+
+| Task | Best tool | Time saved |
+|------|-----------|-----------|
+| Slide deck from outline | Gamma | 90 min → 10 min |
+| Polished branded deck | Canva Magic | 60 min → 15 min |
+| CSV analysis | ChatGPT / Claude | Full afternoon → 20 min |
+| Mock interview | ChatGPT (voice mode even better) | Requires a friend → on-demand |
+| Meeting notes from recording | Gemini (in Google Meet) | Manual transcription → auto |
+| Recent-news research with sources | Perplexity | 30 min Googling → 3 min |
+
+### The "wow" trick of the day
+
+In ChatGPT's voice mode (free on mobile), say: *"Interview me for a Data Analyst role. Talk like a real interviewer, not a chatbot. Push me if I'm vague."* Then walk around your room and answer out loud. This is practising at a quality most students never get until their 5th real interview. Free.
+
+## Watch: Gamma, mock interviews, and CSV analysis in one sitting
+
+A combined demo of the three biggest daily-ops wins.
+
+https://www.youtube.com/embed/ZY-Z9HbB-hQ
 <!-- TODO: replace video -->
 
-- Listen for how the speaker uses the word "abstraction" — is it "simplifying" or "hiding"? The distinction matters.
-- Watch for a pattern-recognition example that is *not* from computing.
-- Count how many edge cases the speaker surfaces in their worked algorithm.
+- Notice how little typing Gamma needs to produce a usable deck.
+- Watch the mock interview segment — see how the AI follows up on weak answers.
+- Pay attention to the "what this data can't answer" move in the CSV demo.
 
-## Lab: decompose a real decision you're facing
+## Lab: A 1-page "My 2026 Goals" deck
 
-Pick a real, upcoming decision. Examples: which elective to pick, which internship to apply to, which club to commit to, whether to do a summer project vs a course.
+You'll end with a Gamma deck and a screenshot of your mock-interview feedback.
 
-1. Open Excalidraw or a blank doc. Divide the page into four quadrants, one per CT primitive.
-2. **Decompose** — write out 4–7 sub-parts of the decision, each with an input and output.
-3. **Pattern recognize** — identify at least one *other* decision you've made that had the same structure. Write 2 lines on what the shared pattern is.
-4. **Abstract** — list the 3–5 details you are deliberately choosing to ignore and 3–5 you are keeping. Yes, both lists matter.
-5. **Algorithm design** — write a pseudocode-style procedure, like the worked example above. Plain English in `STEP 1`, `STEP 2` form is fine. Must include an edge case and a stopping condition.
-6. Hand your algorithm to a cohort partner. Ask them to "execute" it verbally on your inputs. If they have to ask you clarifying questions, the algorithm isn't done yet.
-7. Tighten the algorithm based on their questions.
+1. Write a 5-bullet outline of your 2026 goals in a Notes app. Career, skill, project, personal, accountability.
+2. Open `https://gamma.app/`, sign up free, click "Create → Generate", and paste the prompt above (edited with your bullets).
+3. Let Gamma build the deck. Edit the wording on 2–3 slides so it sounds like you (use Day 4's voice-match trick).
+4. Change the theme once to something you like more. Export the deck as PDF or share link.
+5. Now switch to ChatGPT. Run the prompt-of-the-day for a mock interview for a role you actually want (intern, placement, club role — pick one).
+6. Answer all 5 questions honestly, in 2–3 lines each. Read the feedback.
+7. Bonus — ask: *"Based on my weak answers, what 3 things should I practise this week?"* Save the list.
+8. Submit the Gamma share link + screenshot of the feedback.
 
-Template:
-
-```
-DECISION: ____________________________________
-
-DECOMPOSITION (sub-parts with input → output):
-  1. _________________________ : ___ → ___
-  2. _________________________ : ___ → ___
-  3. _________________________ : ___ → ___
-  ...
-
-PATTERN: this is structurally like: _____________
-Shared template: ________________________________
-
-ABSTRACTION:
-  Dropping: ______________________________________
-  Keeping:  ______________________________________
-
-ALGORITHM:
-  INPUT:  _______________________________________
-  STEP 1: _______________________________________
-  STEP 2: _______________________________________
-  STEP 3: _______________________________________
-  EDGE:   _______________________________________
-  STOP:   _______________________________________
-  OUTPUT: _______________________________________
-```
+**Victory condition:** one Gamma deck link + one mock-interview feedback screenshot + one saved "things to practise" list.
 
 ## Quiz
 
-Quick check on the four primitives, what counts as a good decomposition, and the difference between abstraction and oversimplification. Four questions. Aim for 75%+. These primitives are the bridge between Week 1's thinking work and Week 2's building.
+Four questions: best tool for a quick deck, what Gamma needs to produce a good deck, one thing AI CSV analysis still needs you to verify, and why mock interviews work even though the AI isn't a real interviewer.
 
 ## Assignment
 
-Submit your four-quadrant worksheet as a **file upload** (image or PDF). We grade on: whether the decomposition's parts actually compose back to the whole, whether your abstraction explicitly names what is dropped, and whether the algorithm has at least one edge case and a stopping condition. Vague English counts against you.
+Drop your Gamma deck link and your mock-interview feedback screenshot. In 2 lines: which of today's four workflows are you most likely to use weekly, and why?
 
-## Discuss: where CT helps and where it misleads
+## Discuss: AI as your chief-of-staff
 
-- What does computational thinking buy you that "just think clearly" doesn't?
-- Give an example where abstraction would *harm* a decision because it hides something morally important.
-- Which of the four primitives do you use most naturally? Which do you avoid?
-- Is algorithmic design a form of intellectual laziness (offloading judgement) or rigor (making judgement explicit)?
-- How would you teach a 10-year-old to decompose a problem — without using the word "decompose"?
+- If AI can make a deck in 20 seconds, what *should* the human time be spent on?
+- Has anyone's mock interview exposed a real weakness today? Share if comfortable.
+- For placements — is using AI for CV polish the same as a senior helping you edit? Why or why not?
+- What's one "small" daily task you'd automate with AI starting tomorrow?
+- Where would you NOT trust AI at work — even a year from now?

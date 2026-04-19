@@ -1,175 +1,190 @@
 ---
-reading_time: 14 min
-tldr: "Git is a reasoning system for change. Learn to read PRs and commit graphs; AI handles the commands."
-tags: ["concepts", "git", "shipping"]
+reading_time: 15 min
+tldr: "Decomposition, pattern-matching, abstraction, algorithmic thinking — the thinking moves that outlive any language."
+tags: ["computational", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "GitHub PR walkthrough + Oh My Git!", "url": "https://ohmygit.org/"}
-resources: [{"title": "GitHub docs", "url": "https://docs.github.com/"}, {"title": "Oh My Git!", "url": "https://ohmygit.org/"}, {"title": "GitHub", "url": "https://github.com/"}]
+lab: {"title": "Decompose a decision with the four CT primitives", "url": "https://excalidraw.com/"}
+resources: [{"title": "Computational Thinking — Wikipedia", "url": "https://en.wikipedia.org/wiki/Computational_thinking"}, {"title": "Jeannette Wing's 2006 essay (search it)", "url": "https://hbr.org/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}]
 ---
 
 ## Intro
 
-Software is never written, only rewritten. Today you learn the mental model for how teams track, review, and ship changes — without typing a single git command. You'll read pull requests, annotate commit graphs, and build intuition for the workflow every company on earth uses.
+Computational thinking has nothing to do with being a programmer. It is a way of breaking messy reality into pieces a machine — or a junior teammate, or a process — can execute. Today you learn the four primitive moves that underpin every software system, and apply them without writing a single line of code.
 
-## Read: Version control as a time machine
+## Read: the four primitives
 
-### The core idea
+Jeannette Wing, in a 2006 essay that launched the term into mainstream curriculum, argues computational thinking rests on four mental moves:
 
-Imagine Google Docs' "version history", but designed by engineers who don't trust each other. That's git.
+1. **Decomposition** — break a big messy problem into smaller, well-defined parts.
+2. **Pattern recognition** — spot similarities within and across problems.
+3. **Abstraction** — hide details that don't matter for your current purpose.
+4. **Algorithmic design** — define a step-by-step procedure that produces the desired output.
 
-- Every change is a **commit** — a labeled snapshot of the whole project.
-- Commits form a **graph** — usually linear but can branch and merge.
-- Each person works on a **branch** — a parallel timeline they can mess with freely.
-- When ready, they **merge** back into `main` — the canonical timeline everyone trusts.
+You use these every day, just unconsciously. Making these moves explicit is what makes you dangerous.
 
-```
-  main:   o---o---o-----------------o---o
-               \                   /
-  feature:      o---o---o---o---o-+
-```
+### Primitive 1 — Decomposition
 
-Everything else is detail.
+The act of chopping. You take "plan my elective registration" and break it into "list available electives → filter by interest → check schedule conflicts → check professor ratings → rank top 3 → submit form before deadline".
 
-### Why teams need this
+Good decomposition has three properties:
 
-- **History**: who changed what, when, and why.
-- **Rollback**: a bad deploy? Revert the commit, redeploy the previous snapshot.
-- **Parallel work**: 5 people, 5 branches, no one overwrites the others.
-- **Review**: code is reviewed *before* it hits `main`, via pull requests.
-- **Attribution**: `git blame` (ugly name, useful feature) shows who last changed a given line.
+- **Each sub-part can be understood in isolation.** If changing sub-part A forces you to rewrite sub-part B, they weren't really decomposed.
+- **The parts together cover the whole.** No hidden steps.
+- **Each part has a clear input and output.** "Check schedule conflicts" takes a list of electives and returns a filtered list.
 
-> Git is not a backup system. It's a *reasoning* system for change over time.
+### Primitive 2 — Pattern recognition
 
-### The vocabulary, once
+Seeing "wait — this is just like that." Planning placement prep feels like planning exam prep, which feels like planning a gym routine. The pattern is *goal-setting + recurring deliberate practice + feedback review*. Recognizing the pattern means you don't reinvent a template every time.
 
-| Term | Plain English |
-|---|---|
-| Repository (repo) | A project folder tracked by git |
-| Commit | A saved snapshot with a message |
-| Branch | A parallel timeline off `main` |
-| Merge | Bringing a branch's changes into another |
-| Pull request (PR) | "Please review and merge my branch" |
-| Remote | A copy of the repo on another machine (usually GitHub) |
-| Clone | Copy a remote repo locally |
-| Push / pull | Upload / download changes |
-| Diff | The delta between two states |
-| Conflict | Two branches changed the same lines differently |
-| Revert | Undo a commit by making a new "opposite" commit |
+Patterns also apply *within* a problem. If two sub-parts of a decomposition feel the same, maybe they are — and you can reuse one approach.
 
-### The GitHub workflow (what every team actually does)
+### Primitive 3 — Abstraction
 
-```
-  1. clone       -- copy the repo to your machine
-  2. branch      -- git checkout -b fix/login-bug
-  3. work        -- edit files (AI does the typing in 2026)
-  4. commit      -- snapshot with a message
-  5. push        -- upload the branch to GitHub
-  6. open PR     -- request review
-  7. review      -- teammates comment, you iterate
-  8. CI runs     -- tests + lint automatically
-  9. merge       -- once approved + green, branch merges into main
- 10. deploy      -- main (or a release) goes to production
-```
+Deliberate forgetting. When you write "check schedule conflicts", you hide the fact that timetables are in PDFs, slots have sub-codes, and Wednesdays have labs. At *this* level of abstraction, all you care about is: *input → a decision of conflict or no-conflict*. The details matter at a lower level, not this one.
 
-This is called **trunk-based development with short-lived branches**. It's the default in 2026.
+> A mental model is an abstraction. A map is an abstraction. The shortcut "mess is crowded 7:30–8:15pm" is an abstraction of thousands of lived events.
 
-### What a commit message looks like
+The skill is knowing *which details to drop*. Drop too many and your model lies to you. Drop too few and you drown.
 
-```
-Example — you're reading, not typing.
+### Primitive 4 — Algorithmic design
 
-fix(login): handle expired session cookie gracefully
+Turning a decomposition into a procedure. A recipe. A runbook. Written so that someone else (a teammate, a future-you, a computer) can execute it without guessing.
 
-Previously, an expired cookie triggered an unhandled 500.
-Now we redirect to /login and surface a toast. Fixes #412.
-```
+A good algorithm has:
 
-A good message answers *what* and *why* — never just *what*. The AI will write these for you in Week 3; you'll learn to grade them.
+- **Defined inputs.** "Given a list of 8 electives..."
+- **Defined outputs.** "...return the 3 I should register for, ranked."
+- **Deterministic steps.** Each step has one obvious meaning.
+- **Edge cases named.** "If two electives tie in score, pick the one with the earlier class time."
+- **A stopping condition.** You know when you're done.
 
-### The commit graph, visually
+### Worked example: "which elective should I pick?"
+
+A 3rd-year student has to pick 2 electives out of 8 options. Classic messy real-life decision. Let's run the four primitives.
+
+**Decompose:**
+
+- Gather the 8 elective options (data).
+- Score each against criteria.
+- Detect schedule conflicts between picks.
+- Pick top-ranked non-conflicting pair.
+
+**Pattern-recognize:** this is structurally identical to picking which 2 clubs to join or which 2 courses on Coursera to finish this semester. Same template.
+
+**Abstract:** you are going to ignore details like "what my parents think" or "what a specific senior said". Keep 4 clean criteria:
+
+1. Genuine interest (1–5).
+2. Career signal / resume weight (1–5).
+3. Professor quality (1–5).
+4. Schedule load (inverse — how many hours/week, lower is better, scored 1–5).
+
+**Algorithm:**
 
 ```
-  *   a1b2c3  (main)  Merge PR #42
-  |\
-  | * 9f8e7d  Add CGPA filter to /students
-  | * 7c6b5a  Sketch UI for placement board
-  |/
-  *   4d3c2b  Initial schema
+INPUT: list of 8 electives, each with {name, slot, hours_per_week, prof_rating}
+INPUT: my self-scored interest for each elective (1-5)
+
+STEP 1: For each elective, compute
+   score = 0.4 * interest
+         + 0.25 * career_signal
+         + 0.2 * prof_rating
+         + 0.15 * (6 - load_score)   # lower load = higher contribution
+
+STEP 2: Sort electives by score, descending.
+
+STEP 3: Starting from top: pick the first elective.
+        Walk down the list, pick the highest-scored elective
+        whose slot does NOT conflict with already-picked ones.
+
+STEP 4: Stop when 2 are picked.
+
+EDGE CASE: If no non-conflicting second pick exists,
+           backtrack — try the 2nd-ranked as first pick instead.
+
+OUTPUT: ranked list of 2 electives, plus a 1-line reason for each.
 ```
 
-Read top to bottom, newest first. Stars are commits, lines are lineage, merges close a branch back into main. Once you can read this, you can read any project's history.
+This is code in spirit, not in syntax. It's executable by *you* with a pen and paper. You can also hand it to a friend and they'd make the same decision you would. *That* is the test of a good algorithm.
 
-### Pull requests — the atomic unit of shipping
+### Another mini-case: a notes-sharing flow
 
-A PR has four moving parts:
+Problem: "Share unit-3 OS notes with my study group of 5."
 
-1. **The diff** — exactly which lines changed.
-2. **The description** — what and why, often with screenshots or a Loom.
-3. **Reviews** — approvals, change requests, line-by-line comments.
-4. **Checks** — automated CI: tests passed? linter clean? build green?
+Decompose → `scan pages` → `check legibility` → `name file consistently` → `upload to shared drive` → `notify group`.
 
-Good PRs are small (< 400 lines changed), focused (one thing), and well-described. Bad PRs are huge, scattered, and labeled "misc fixes". You will review many PRs in your career. Starting to read them now pays compounding dividends.
+Pattern: same structure as sharing any set of files. Reusable.
 
-### CI/CD: from commit to customer
+Abstract: we don't care whether it's OS or DBMS notes. We don't care whether Drive or Dropbox. At this level, it's "upload and notify".
 
-- **CI (Continuous Integration)**: every push auto-runs tests on a fresh machine.
-- **CD (Continuous Deployment)**: once merged to main, it auto-deploys.
+Algorithm: a 5-step runbook anyone in the group can follow. Bonus: if the steps are clear, any member can do the next upload without being asked. You just removed the bottleneck that was *you*.
 
-```
-  push --> GitHub --> CI runs tests --> CD builds image --> deploy to server --> users
-```
+### Why this matters before AI
 
-In 2026, Vercel, Netlify, Cloudflare Pages, Railway, and Render give you this pipeline for free. You push; they ship. We'll use this on Day 14.
+When you learn to prompt AI models in Week 2, a crisply decomposed problem gives you a crisply scoped prompt. A vague problem gives you vague output. Computational thinking is how you pre-digest the problem so the machine doesn't have to guess.
 
-### Open source etiquette (why it matters for you)
+## Watch: computational thinking without code
 
-A strong GitHub profile is the new resume. Employers look at:
-
-- Commit frequency and cadence.
-- The quality of your README and PR descriptions.
-- Contributions to other projects.
-- Issues you've filed that are useful to others.
-
-Aim to be a good citizen. Write clear issues. Write clear PRs. Thank reviewers. Your future self is hiring your present self.
-
-## Watch: Git explained with drawings
-
-One explainer with visual branch diagrams. The second optional watch: a real PR review from a senior engineer.
+A short overview of the four primitives with real-world (non-coding) examples. The visuals are the point.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch for branches diverging and reconverging.
-- Notice how reviewers think about *why* as much as *what*.
-- Pay attention to the "squash and merge" option — it collapses messy history.
+- Listen for how the speaker uses the word "abstraction" — is it "simplifying" or "hiding"? The distinction matters.
+- Watch for a pattern-recognition example that is *not* from computing.
+- Count how many edge cases the speaker surfaces in their worked algorithm.
 
-## Lab: Read a real pull request (35 min)
+## Lab: decompose a real decision you're facing
 
-No typing. No terminal.
+Pick a real, upcoming decision. Examples: which elective to pick, which internship to apply to, which club to commit to, whether to do a summer project vs a course.
 
-1. Go to `github.com/facebook/react` (or any popular OSS repo you like — `vercel/next.js`, `tldraw/tldraw`).
-2. Click the **Pull requests** tab → filter by **Closed**. Pick any merged PR with at least 5 comments.
-3. Read the PR description. Summarize it in one sentence on your worksheet.
-4. Open the **Files changed** tab. Count the files, and estimate the diff size.
-5. Read the **Conversation** tab end to end. Note one piece of useful feedback a reviewer gave.
-6. Click the PR author's profile. Look at their contribution history. Observation: what does a serious contributor's profile look like?
-7. Switch to the repo's **Insights → Network** view. Screenshot the commit graph. Annotate one merge and one branch point in Excalidraw.
-8. (Optional) Play `https://ohmygit.org/` — the OSS card game that teaches git visually — for 15 minutes.
+1. Open Excalidraw or a blank doc. Divide the page into four quadrants, one per CT primitive.
+2. **Decompose** — write out 4–7 sub-parts of the decision, each with an input and output.
+3. **Pattern recognize** — identify at least one *other* decision you've made that had the same structure. Write 2 lines on what the shared pattern is.
+4. **Abstract** — list the 3–5 details you are deliberately choosing to ignore and 3–5 you are keeping. Yes, both lists matter.
+5. **Algorithm design** — write a pseudocode-style procedure, like the worked example above. Plain English in `STEP 1`, `STEP 2` form is fine. Must include an edge case and a stopping condition.
+6. Hand your algorithm to a cohort partner. Ask them to "execute" it verbally on your inputs. If they have to ask you clarifying questions, the algorithm isn't done yet.
+7. Tighten the algorithm based on their questions.
 
-Submit the worksheet + annotated graph.
+Template:
+
+```
+DECISION: ____________________________________
+
+DECOMPOSITION (sub-parts with input → output):
+  1. _________________________ : ___ → ___
+  2. _________________________ : ___ → ___
+  3. _________________________ : ___ → ___
+  ...
+
+PATTERN: this is structurally like: _____________
+Shared template: ________________________________
+
+ABSTRACTION:
+  Dropping: ______________________________________
+  Keeping:  ______________________________________
+
+ALGORITHM:
+  INPUT:  _______________________________________
+  STEP 1: _______________________________________
+  STEP 2: _______________________________________
+  STEP 3: _______________________________________
+  EDGE:   _______________________________________
+  STOP:   _______________________________________
+  OUTPUT: _______________________________________
+```
 
 ## Quiz
 
-4 questions: given a commit graph diagram, identify the merge; given a PR description, decide if it's good; explain why short-lived branches beat long-lived ones; define "CI" in your own words.
+Quick check on the four primitives, what counts as a good decomposition, and the difference between abstraction and oversimplification. Four questions. Aim for 75%+. These primitives are the bridge between Week 1's thinking work and Week 2's building.
 
 ## Assignment
 
-Pick any merged PR on any public repo. Write a 250-word "PR review of the PR review": what did the author do well, what could have been better, what would you as a reviewer have asked? Attach a screenshot of the PR. No code.
+Submit your four-quadrant worksheet as a **file upload** (image or PDF). We grade on: whether the decomposition's parts actually compose back to the whole, whether your abstraction explicitly names what is dropped, and whether the algorithm has at least one edge case and a stopping condition. Vague English counts against you.
 
-## Discuss: Working in the open
+## Discuss: where CT helps and where it misleads
 
-- Your teammate opened a 3,000-line PR titled "stuff". What do you do?
-- Why do companies prefer many small commits over one giant one?
-- "Move fast and break things" vs "require 2 approvals on every PR" — when is each right?
-- How would the PR workflow change if AIs are generating most of the diffs (as they will on Day 13)?
-- A famous open-source maintainer reviews 20 PRs a day. What signals let them decide quickly?
+- What does computational thinking buy you that "just think clearly" doesn't?
+- Give an example where abstraction would *harm* a decision because it hides something morally important.
+- Which of the four primitives do you use most naturally? Which do you avoid?
+- Is algorithmic design a form of intellectual laziness (offloading judgement) or rigor (making judgement explicit)?
+- How would you teach a 10-year-old to decompose a problem — without using the word "decompose"?

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Certificate · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .page{padding:60px 0 80px}
+  .pbar{height:8px;background:#0a0a12;border-radius:999px;overflow:hidden;margin-top:14px}
+  .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7affb4);transition:width .3s}
+  .progress-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px;max-width:640px;margin:40px auto;text-align:center}
+  .progress-card h2{margin:0 0 10px}
+  .progress-card .bignum{font-family:"Instrument Serif",serif;font-size:82px;line-height:1;letter-spacing:-.02em;color:var(--accent);margin:18px 0 8px}
+  .cert-actions{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+  .btn{padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;border:1px solid var(--line);background:transparent;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
+  .btn.primary{background:var(--accent);color:#0b0b10;border-color:var(--accent)}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn:hover{border-color:#3a3a4e}
+
+  .cert-wrap{display:flex;justify-content:center;margin:20px auto 10px;padding:10px}
+  .certificate{
+    width:1123px;max-width:100%;aspect-ratio:1123/794;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(195,255,54,.12), transparent 55%),
+      linear-gradient(145deg, #0f0f17 0%, #14141c 60%, #17131f 100%);
+    border:1px solid rgba(195,255,54,.35);
+    border-radius:22px;
+    position:relative;
+    overflow:hidden;
+    padding:56px 72px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.02);
+  }
+  .certificate::before{
+    content:"";position:absolute;inset:18px;border:1px solid rgba(195,255,54,.18);border-radius:14px;pointer-events:none;
+  }
+  .cert-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2}
+  .cert-org{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:-.02em;font-size:18px}
+  .cert-org .dot{width:12px;height:12px;border-radius:4px;background:var(--accent);box-shadow:0 0 22px var(--accent)}
+  .cert-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.28em;text-transform:uppercase}
+  .cert-body{position:relative;z-index:2;text-align:center;padding:12px 20px}
+  .cert-pretitle{color:var(--muted);font-size:15px;letter-spacing:.06em;margin-bottom:14px}
+  .cert-name{font-family:"Instrument Serif",serif;font-size:84px;line-height:1.02;letter-spacing:-.02em;color:var(--ink);margin:0 0 18px;font-style:italic}
+  .cert-line{max-width:720px;margin:0 auto;color:#bdbdc9;font-size:17px;line-height:1.55}
+  .cert-line b{color:var(--ink)}
+  .cert-foot{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:2;gap:20px}
+  .cert-sig{display:flex;flex-direction:column;gap:6px}
+  .sig-line{width:240px;height:1px;background:rgba(255,255,255,.18);margin-bottom:6px}
+  .sig-name{font-family:"Instrument Serif",serif;font-style:italic;font-size:22px;color:var(--ink)}
+  .sig-role{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+  .cert-id{text-align:right;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.16em}
+  .cert-id .num{color:var(--accent)}
+  .cert-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:620px;height:620px;background:radial-gradient(circle,rgba(195,255,54,.1),transparent 60%);pointer-events:none;z-index:1}
+  .cert-seal{position:absolute;top:40px;right:56px;width:86px;height:86px;border:1px solid rgba(195,255,54,.4);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;z-index:2;background:rgba(195,255,54,.05)}
+  .cert-seal span{display:block;text-align:center;line-height:1.2}
+
+  .loading{text-align:center;color:var(--muted);padding:80px 20px}
+
+  @media (max-width:1180px){
+    .certificate{padding:44px 52px}
+    .cert-name{font-size:64px}
+  }
+  @media (max-width:760px){
+    .certificate{padding:30px 28px;border-radius:16px}
+    .cert-name{font-size:44px}
+    .cert-line{font-size:14px}
+    .cert-seal{width:64px;height:64px;top:24px;right:28px;font-size:8.5px}
+    .sig-line{width:160px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Certificate</div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="dashboard.html" style="font-size:13px;color:var(--muted)">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page" id="root">
+  <div class="loading" id="loader">Loading your certificate…</div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+
+  const root = document.getElementById('root');
+
+  function gate() {
+    root.innerHTML = `
+      <div class="progress-card">
+        <div class="kicker">Sign in required</div>
+        <h2>Your certificate is waiting</h2>
+        <p class="muted" style="margin:0 0 22px">Sign in on the dashboard to access your completion certificate.</p>
+        <a class="btn primary" href="dashboard.html">Go to dashboard →</a>
+      </div>`;
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    try {
+      return new Date(d).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    } catch { return d; }
+  }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return gate();
+    const user = session.user;
+
+    const { data: cohort } = await supabase.from('cohorts')
+      .select('*').eq('slug', COHORT_SLUG).single();
+    if (!cohort) { root.innerHTML = '<div class="loading">Cohort not found.</div>'; return; }
+
+    let orgName = 'Gnanalytica';
+    if (cohort.organization_id) {
+      const { data: org } = await supabase.from('organizations')
+        .select('name').eq('id', cohort.organization_id).maybeSingle();
+      if (org?.name) orgName = org.name;
+    }
+
+    const [profileRes, progressRes] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+      supabase.from('lab_progress').select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id),
+    ]);
+    const profile = profileRes.data;
+    const done = new Set((progressRes.data || []).map(p => p.day_number).filter(n => n >= 1 && n <= 30));
+    const daysCompleted = done.size;
+
+    if (daysCompleted < 30) return renderIncomplete(daysCompleted);
+
+    renderCertificate({ user, profile, cohort, orgName });
+  }
+
+  function renderIncomplete(daysCompleted) {
+    const pct = Math.round((daysCompleted / 30) * 100);
+    root.innerHTML = `
+      <div class="progress-card">
+        <div class="kicker">Almost there</div>
+        <div class="bignum">${daysCompleted}<span style="color:var(--muted);font-size:.5em">/30</span></div>
+        <h2>Keep going — your certificate unlocks at 30/30</h2>
+        <p class="muted" style="margin:0 0 18px">Complete every day of the 30-day workshop and come back here to claim your signed certificate.</p>
+        <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+        <div class="cert-actions">
+          <a class="btn primary" href="dashboard.html">Continue on dashboard →</a>
+        </div>
+      </div>`;
+  }
+
+  function renderCertificate({ user, profile, cohort, orgName }) {
+    const name = profile?.full_name || user.email;
+    const certId = `cert-${user.id.slice(0,6)}-${cohort.slug}`;
+    const starts = formatDate(cohort.starts_on);
+    const ends = formatDate(cohort.ends_on);
+    const showcaseUrl = `${location.origin}${location.pathname.replace(/certificate\.html$/, '')}showcase.html?u=${user.id}`;
+
+    root.innerHTML = `
+      <div style="text-align:center;margin-bottom:18px">
+        <div class="kicker">Completion certificate</div>
+        <h1 style="margin:0">Congratulations — 30/30 complete.</h1>
+        <p class="muted" style="margin:10px auto 0;max-width:560px">Share your achievement. The card below is downloadable as an image and includes a verifiable certificate ID.</p>
+      </div>
+
+      <div class="cert-wrap">
+        <div class="certificate" id="cert">
+          <div class="cert-glow"></div>
+          <div class="cert-seal"><span>Verified<br/>Cohort 01</span></div>
+          <div class="cert-head">
+            <div class="cert-org"><span class="dot"></span>${escapeHtml(orgName)}</div>
+            <div class="cert-kicker">Certificate of completion</div>
+          </div>
+          <div class="cert-body">
+            <div class="cert-pretitle">This certifies that</div>
+            <h2 class="cert-name">${escapeHtml(name)}</h2>
+            <p class="cert-line">has successfully completed the <b>30-day AI workshop</b> — <b>${escapeHtml(cohort.name || 'Cohort 01')}</b> — from <b>${starts}</b> to <b>${ends}</b>.</p>
+          </div>
+          <div class="cert-foot">
+            <div class="cert-sig">
+              <div class="sig-line"></div>
+              <div class="sig-name">${escapeHtml(orgName)} Team</div>
+              <div class="sig-role">Cohort lead</div>
+            </div>
+            <div class="cert-id">
+              Certificate ID<br/>
+              <span class="num">${escapeHtml(certId)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="btn primary" id="dlBtn">Download PNG</button>
+        <a class="btn" id="liBtn" target="_blank" rel="noopener">Share on LinkedIn</a>
+        <a class="btn" href="showcase.html?u=${user.id}">View your showcase →</a>
+      </div>`;
+
+    document.getElementById('liBtn').href =
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(showcaseUrl)}`;
+
+    document.getElementById('dlBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('dlBtn');
+      const prev = btn.textContent;
+      btn.textContent = 'Rendering…';
+      btn.disabled = true;
+      try {
+        const { default: html2canvas } = await import('https://esm.sh/html2canvas@1.4.1');
+        const node = document.getElementById('cert');
+        const canvas = await html2canvas(node, {
+          backgroundColor: '#0a0a0f',
+          scale: 2,
+          useCORS: true,
+        });
+        const link = document.createElement('a');
+        link.download = `${certId}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        alert('Could not render PNG: ' + err.message);
+      } finally {
+        btn.textContent = prev;
+        btn.disabled = false;
+      }
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,154 +1,167 @@
 ---
 reading_time: 14 min
-tldr: "You are the director, not the typist. AI writes code; you shape intent, critique output, and steer."
-tags: ["concepts", "ai-tools", "vibe"]
+tldr: "Pick the capstone problem today. You'll live with it for 3 weeks — choose something you actually care about."
+tags: ["framing", "meta", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Direct an AI pair programmer (no typing)", "url": "https://cursor.com/"}
-resources: [{"title": "Cursor", "url": "https://cursor.com/"}, {"title": "Claude Code", "url": "https://www.anthropic.com/claude-code"}, {"title": "Replit", "url": "https://replit.com/"}]
+lab: {"title": "Heilmeier writeup of your capstone problem", "url": "https://excalidraw.com/"}
+resources: [{"title": "The Heilmeier Catechism", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit", "url": "https://www.designkit.org/"}, {"title": "The Systems Thinker", "url": "https://thesystemsthinker.com/"}]
 ---
 
 ## Intro
 
-The last four days gave you the mental model of software. Today you put on the director's chair. Your job is not to type code. Your job is to tell an AI what to build, read what it produced, critique it, and steer it. This is the skill that will define the next decade of work.
+Today everything from Week 1 compounds. You will pick the one problem you are going to work on for the rest of the cohort — through the Build weeks, through Ship week, into the final demo. Pick well. Pick something that will still annoy you in three weeks, because that is the only kind of problem you'll push through when it gets hard.
 
-## Read: From programmer to director
+## Read: how to pick a problem you'll still care about on day 28
 
-### The shift
+### Why the choice matters so much
 
-The word "programmer" is becoming a verb that humans do less and less. In 2026, you will spend more time:
+In Week 2 you start building. In Week 3 you start shipping. If the problem you pick today is lukewarm, the technical grind will chew through your motivation by day 14, and you'll ghost the cohort. Every year, the students who finish are almost always the ones who picked something *personal and specific* in Week 1, not something *trendy and impressive*.
 
-- describing intent,
-- reviewing diffs,
-- asking for changes,
-- and approving shipping,
+### Three filters for a good capstone problem
 
-than you spend typing. Tools like **Cursor**, **Claude Code**, **Windsurf**, **bolt.new**, **v0**, **Lovable**, and **Replit Agent** are the camera, lights, and crew. You are the director.
+Apply all three filters. If a candidate fails one, keep looking.
 
-> Andrej Karpathy coined "vibe coding": describing the *feel* of what you want and letting the model commit it into being. It is a real skill, not a gimmick.
+**Filter 1: Personal pain or personal proximity.** Either you have this problem, or someone you can text right now has this problem. You can literally get a user on the phone in 10 minutes. If you can't, the feedback loop is too long — you'll build in the dark.
 
-### The director's four verbs
+**Filter 2: Small enough to prototype in a weekend, big enough to matter.** If it's too small, you'll finish early and coast. If it's too big, you'll drown and quit. The sweet spot: a prototype that takes ~8 focused hours, aimed at a problem whose full version could reasonably occupy a year.
 
-| Verb | What you do | Analogy |
-|---|---|---|
-| Intent | Describe the goal with context | "We're shooting a heist sequence" |
-| Critique | Read output and identify what's off | "Light the face from the left" |
-| Constrain | Narrow the solution space | "Keep it under 90 seconds" |
-| Verify | Run / click / observe the result | Watch the playback |
+**Filter 3: Real-world feedback within 7 days.** You must be able to put a prototype in front of a real user and get a reaction within a week. No "we'd need approval from the university IT department to test this". If the access path is blocked, the problem is wrong *for this cohort* — even if it's a great problem in general.
 
-Bad directors skip critique and verify. They ask, accept, and ship. Then things blow up.
+### Green flags and red flags
 
-### The anatomy of a great prompt to a coding AI
+| Green flag | Red flag |
+|-----------|----------|
+| You can name 3 specific people affected | "Students" in general |
+| You have a story of when this pain hit *you* | You only heard about it third-hand |
+| You can test a prototype for free | Testing requires institutional approval |
+| You have mixed feelings about solutions | You are certain "an app is the answer" |
+| The problem has existed for years unresolved | It's a new trend you saw on LinkedIn |
 
-A weak prompt: *"make a todo app"*
+The mixed-feelings one is subtle: if you're *already certain* of the solution, you've skipped the thinking work. You want to be genuinely curious.
 
-A director's prompt:
+### Worked example: three candidate problems, one pick
 
-> Build a single-page todo app. Stack: vanilla HTML + CSS + vanilla JS in one file. Requirements: add a todo (Enter to submit), toggle done (click), delete (x button), persist in localStorage. No dependencies, no build step. Design: clean, minimal, dark mode by default, system font, responsive. When done, show me the file tree and wait for my review before making further changes.
+Student: Ananya, 3rd year, CS, interested in education.
 
-Every clause is a dial:
+**Candidate A:** "Build an AI tutor for JEE aspirants."
+- Personal proximity? Low — she's past JEE.
+- Weekend-prototype-able? Not really — content is the hard part.
+- User access in 7 days? Would need cold outreach to coaching centers.
+- **Verdict:** impressive on paper, impossible to validate in this cohort. Skip.
 
-- **Stack** constrains the solution space.
-- **Requirements** define "done".
-- **Constraints** ("no dependencies", "one file") prevent scope creep.
-- **Design** communicates taste.
-- **Protocol** ("wait for review") controls the loop.
+**Candidate B:** "Help my hostel friends decide daily what to order on Swiggy."
+- Personal proximity? Extremely — this is her WhatsApp group every night.
+- Weekend-prototype-able? Yes — a Google Form + a weighted-vote script.
+- User access? Instant — 8 friends, same hostel floor.
+- **Verdict:** passes all three, but may be too small. Keep as backup.
 
-### The context-quality axis
+**Candidate C:** "Help 1st-year students in her department pick a mentor from 2nd-year seniors, based on interests — the current process is chaotic DMs."
+- Personal proximity? Medium-high — she's a mentor and sees the chaos.
+- Weekend-prototype-able? A structured form + matching spreadsheet prototype is doable.
+- User access? 20 juniors reachable via department WhatsApp group.
+- Has existed unresolved for years? Yes.
+- She has mixed feelings about whether matching should be algorithmic or human-curated — good, that's curiosity.
+- **Verdict:** picked.
 
-AI output quality is mostly a function of the context you give it. Order of impact, roughly:
+Ananya's Heilmeier writeup becomes her Day 7 artifact — and her guiding document for the next 23 days.
 
-1. A **clear goal** (1 sentence).
-2. **Concrete constraints** (tech stack, file layout, "do not").
-3. **Examples** of the style / output you want.
-4. **The existing codebase** being in the tool's working memory (Cursor handles this; chat UIs don't).
-5. **Feedback loops** — let it run, see the result, iterate.
+### Your Day 7 artifact: the Heilmeier writeup
 
-If your output is bad, your context was bad. "The AI is dumb" is almost always wrong.
+You are going to produce a one-page Heilmeier writeup of your capstone problem. This document is the contract between today-you and day-30-you. When you're confused in Week 3, you come back and read this.
 
-### When to let the AI drive vs when to pause
+```
+CAPSTONE PROBLEM — <your name>
 
-| Let AI drive | Pause and think yourself |
-|---|---|
-| Boilerplate, setup, scaffolding | Schema / data model decisions |
-| Renaming, refactoring, porting | Security, auth, payments |
-| Fixing obvious bugs from errors | Anything irreversible (deletes, migrations) |
-| Writing tests for existing code | Architectural choices (REST vs WS, SQL vs NoSQL) |
-| UI styling iterations | Naming the product |
+1. What are you trying to do? (no jargon, one sentence):
+   __________________________________________________
 
-Rule of thumb: **the AI writes; you decide**.
+2. How is it done today, and what are the limits?
+   __________________________________________________
 
-### The critique loop
+3. What is new in your approach?
+   __________________________________________________
 
-Once the AI produces code, your job is to **read the diff like a PR reviewer**:
+4. Who cares? Name at least 3 specific affected people:
+   - ________________________________________________
+   - ________________________________________________
+   - ________________________________________________
 
-1. Does it match the intent? (Not "does it compile"; does it solve what I asked.)
-2. Is the approach sensible? (Any red flags — fake data, hard-coded secrets, needless complexity?)
-3. What did it skip or assume silently?
-4. What would break in a real user's hands?
+5. What are the main risks?
+   - ________________________________________________
+   - ________________________________________________
 
-Then respond with targeted feedback, not vague frustration. *"The delete button deletes immediately; add an undo toast that lasts 5 seconds"* beats *"the delete is bad, fix it"*.
+6. How will you test a prototype in the next 7 days?
+   __________________________________________________
 
-### Common traps
+7. What will "good enough at day 30" look like?
+   __________________________________________________
 
-- **The agreement trap**: the AI will happily agree with a wrong direction. Push back on its confidence.
-- **The hallucinated API**: it imagines a library function that doesn't exist. Always run the code.
-- **The silent skip**: it says "I've implemented it" but left a `TODO` inside a function. Read the diff.
-- **The yes-machine loop**: you ask for a change, it over-corrects, you ask again, it over-corrects back. Break the loop by restating the spec.
-- **The single-file blob**: it puts everything in one file. Ask for structure upfront.
+8. What will make you quit this problem? (know your exit triggers)
+   __________________________________________________
+```
 
-### The modern toolbelt in one table
+Question 8 is deliberately uncomfortable. Naming the quit conditions upfront — "if after 10 user tests nobody cares, I'll switch" — is what separates disciplined builders from sunk-cost prisoners.
 
-| Tool | Best for | Where it runs | You type code? |
-|---|---|---|---|
-| Cursor | Working on a real codebase, IDE-first | Desktop | Rarely; AI types |
-| Claude Code | Terminal-native agentic work | Terminal | No |
-| Windsurf | IDE with deeper agentic loops | Desktop | Rarely |
-| bolt.new | From-scratch web apps in browser | Browser | No |
-| v0 by Vercel | UI components, React/Next.js | Browser | No |
-| Lovable | End-to-end web apps with deploy | Browser | No |
-| Replit Agent | Cloud IDE that can also deploy | Browser | No |
-| ChatGPT / Claude.ai | Ad-hoc snippets, explanations | Browser | Copy-paste |
+### Weaving in everything from Week 1
 
-All of these are the pen. You are the author.
+Notice how this single artifact exercises every muscle you built this week:
 
-## Watch: Vibe-coding in practice
+- Day 2 (crisp problem statement) → Questions 1 and 4.
+- Day 3 (design thinking) → Question 6 (prototype + test).
+- Day 4 (user empathy) → Question 4's specific named people.
+- Day 5 (systems) → hidden in Question 2's "what are the limits".
+- Day 6 (computational thinking) → Question 7 demands a concrete, observable output.
 
-Watch one senior engineer stream a real session with Cursor or Claude Code. Pay attention to what they *do not* type.
+If you feel Week 1 was slow, here is where you cash in. Students who skipped the thinking work will pick bad capstones today and pay for it for the next 23 days.
+
+### A quick sanity check before you commit
+
+Before submitting, ask yourself three honest questions:
+
+1. *If this problem never gets solved, does that bother me personally?*
+2. *Can I text a real affected user, right now, without awkwardness?*
+3. *Am I excited — or am I picking this because it sounds impressive in a cohort update?*
+
+If the answer to any is shaky, go back and pick a different problem. You have one more day before Week 2 locks you in.
+
+## Watch: picking problems worth working on
+
+A short talk on how to choose what to build — focused on taste, personal stake, and the signals that separate real problems from fashionable ones.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Notice how often they stop the AI mid-stream.
-- Notice how they phrase corrections.
-- Notice that they still read every diff.
+- Watch for the distinction between a "problem" and a "market".
+- Listen for how the speaker describes their quit-conditions on past projects.
+- Note any advice about picking problems that are *unsexy but real*.
 
-## Lab: Direct an AI pair programmer (45 min)
+## Lab: write your capstone's Heilmeier writeup
 
-**If you're tempted to type code yourself, stop and ask the AI to do it.** Your hands type English only.
+This is the deliverable that carries into Week 2. Take it seriously.
 
-1. Install **Cursor** (`cursor.com`) or **Claude Code** (`anthropic.com/claude-code`). Sign in.
-2. Create an empty folder, open it in the tool. Start a new chat/agent session.
-3. Write a **director's prompt** for a small utility — e.g. "a single-page JPEG-to-WebP converter that runs entirely in the browser, no backend, with drag-and-drop and a download button". Include stack, constraints, design, and protocol. Paste your prompt into your worksheet.
-4. Let the AI generate. **Do not** edit the code yourself. Read the diff.
-5. Open the file in a browser. Try it. Find one real bug or UX flaw. Describe it in one sentence in your worksheet.
-6. Ask the AI to fix exactly that, with one constraint added (e.g. "also show original-vs-new file size"). Review the new diff.
-7. Iterate 2–3 more rounds. For each round, log: your prompt, the change, and whether you accepted or pushed back.
-8. At the end, write a 5-line retrospective: what worked, what didn't, what you'd do differently. Attach the final file and your iteration log.
-
-Submit the log + the final output.
+1. List 3–5 candidate problems you care about. Each should have a sentence of context.
+2. Apply the three filters to each candidate. Eliminate any that fail even one filter.
+3. Pick one. If more than one survives, pick the one where you can most easily name 3 affected people by first name.
+4. Write the Heilmeier writeup using the template above. Fill every line — no blanks.
+5. For question 4 (Who cares?), text or DM at least one of the named people. Ask: "Hey, if I built something to help with X, would you actually try it next week?" Capture their reply.
+6. For question 6 (test in 7 days), pick a specific prototype format: paper, Google Form, WhatsApp flow, Excalidraw click-through. No code yet.
+7. For question 8, write honest quit-triggers. "If after 5 tests nobody completes the flow, I'll pivot." "If I can't get any real user by day 14, I'll switch problems."
+8. Pair with a cohort partner. Read each other's writeups. Each person gets to ask three "are you sure?" questions.
+9. Revise your writeup based on the partner critique.
+10. Submit the final one-page artifact.
 
 ## Quiz
 
-4 questions: given a weak prompt, rewrite it as a director's prompt; identify one failure mode in a provided AI-written diff; list three tasks you should *not* offload to the AI; define "vibe coding" in one sentence.
+Quick check on the three filters, why exit triggers matter, and how Week 1's tools feed into the Heilmeier writeup. Four questions. Aim for 75%+. This is the last Week-1 quiz; Week 2 opens with Build mode.
 
 ## Assignment
 
-Compare two AI tools (e.g. Cursor vs bolt.new) on the same small spec. Submit a 1-page reflection: what each did well, which you'd choose for what job, and one screenshot each. No code from you. Submission: PDF + screenshots.
+Submit your final Heilmeier writeup as a **file upload or text submission** — one page, all eight questions answered. Must include: 3 specific named users, at least one quoted message from a real user you contacted, a prototype plan testable in 7 days, and honest exit triggers. Writeups without named users get sent back. This document becomes your capstone spine for Weeks 2–4.
 
-## Discuss: The director's chair
+## Discuss: the problem you're locking in
 
-- If AI can write most of the code, what is left for a human engineer to own?
-- What's the difference between being lazy and being a good director? They can look similar from the outside.
-- When is it worth reading every line vs trusting the AI and running the code?
-- A junior teammate vibe-codes a PR you can tell they don't fully understand. How do you respond?
-- Five years out, which parts of this workflow do you think will be gone entirely?
+- Read out your one-sentence answer to question 1. Does the group understand it without follow-up?
+- Which filter was hardest to pass honestly — personal proximity, prototype-ability, or 7-day feedback?
+- What did your real user say when you texted them? Did it change your framing?
+- What's your exit trigger, and is it specific enough that you'll actually honor it?
+- If a classmate's capstone sounds more impressive than yours, does that bother you? What does that feeling mean?

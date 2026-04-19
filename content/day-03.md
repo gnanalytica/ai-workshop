@@ -1,155 +1,130 @@
 ---
-reading_time: 15 min
-tldr: "Design thinking is a muscle — empathize, define, ideate, prototype, test — not a ceremony."
-tags: ["design", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Run a tiny problem through five stages in 45 minutes", "url": "https://excalidraw.com/"}
-resources: [{"title": "IDEO Design Kit", "url": "https://www.designkit.org/"}, {"title": "IDEO", "url": "https://www.ideo.com/"}, {"title": "Stanford d.school bootleg deck (search it)", "url": "https://hbr.org/"}]
+reading_time: 10 min
+tldr: "Turn a 20-page PDF into a 5-slide summary and 10 practice questions before your next chai break. NotebookLM is your new study buddy."
+tags: ["use", "study", "productivity"]
+video: https://www.youtube.com/embed/d8JkYJ5JQHk
+lab: {"title": "From 20-page PDF to 5-slide deck + quiz", "url": "https://notebooklm.google.com/"}
+prompt_of_the_day: "You are a patient tutor. Explain {{topic}} as if I'm a 2nd-year engineering student who just missed the class. Give me: 1) the one-line intuition, 2) the formal definition, 3) a worked example with numbers, 4) three practice questions — don't solve them yet."
+resources: [{"title": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Khanmigo", "url": "https://www.khanmigo.ai/"}]
 ---
 
 ## Intro
 
-"Design thinking" has been turned into a meme by consulting slides. Today we strip it back to what it actually is: a set of five habits that keep you honest about who you're building for. No post-it wallpaper required. By the end, you will have pushed a real problem through all five stages in under an hour.
+Today we make AI your study partner — the kind that never gets tired, never judges you for asking "but why?", and can quiz you at 2 AM. By the end of the lab, you'll have turned a terrifying 20-page reading into a 5-slide summary and 10 practice questions, in under 30 minutes. You'll also learn the one tool most students haven't discovered yet: NotebookLM.
 
-## Read: the five stages — without the sticky-note theatre
+## Read: The AI study stack
 
-Design thinking, as originally practiced at IDEO and Stanford's d.school, is not a waterfall. It is a loop you walk through many times. The five stages are:
+Studying with AI is not "ask it the answer". That's cheating yourself. Studying with AI is compression, translation, and drill. Three moves — and each has a best tool.
 
-1. **Empathize** — understand the human.
-2. **Define** — frame the problem.
-3. **Ideate** — generate many candidate solutions.
-4. **Prototype** — build the cheapest possible version.
-5. **Test** — put it in front of real users and watch.
+### Move 1 — Compress: turn long into short
 
-You will usually loop: test reveals you mis-empathized, so you redefine, re-ideate, rebuild. That is not a failure of the process; that *is* the process.
+Upload your lecture notes, a research paper, or a chapter PDF into an AI. Ask for layered summaries: a 1-line version, a 5-bullet version, and a 1-page version. Different depths for different moments — revising on the bus vs revising the night before.
 
-### Stage 1 — Empathize
+**Best tool:** **NotebookLM** by Google (`https://notebooklm.google.com/`). You can upload up to 50 sources per notebook — PDFs, Google Docs, YouTube transcripts, websites — and ask questions that cite which source the answer came from. It is free and underrated.
 
-Goal: get out of your own head and into the user's. Methods: interviews (we cover these in depth tomorrow), shadowing, "day in the life" diaries, reading complaints in real places (college subreddits, WhatsApp groups, Google reviews).
-
-> Warning: never substitute your own intuition for an actual user conversation. You are not the user. Even when you *are* the user, you are one user.
-
-### Stage 2 — Define
-
-Goal: lock a crisp problem statement (see Day 2). A common artifact here is the **POV (Point of View)** statement:
+Example prompt for a lecture PDF:
 
 ```
-[User] needs a way to [need]
-because [surprising insight].
+Copy and paste this prompt:
+
+Summarise the uploaded notes in three versions:
+1) A single tweet (under 200 chars) capturing the main idea.
+2) 7 bullet points I can memorise for a viva.
+3) A 1-page study sheet with a short intuition per concept, and one formula or code snippet per concept if relevant.
 ```
 
-Example: *A 2nd-year student juggling two electives needs a way to decide between them in under 10 minutes, because waiting for senior opinions means they miss the 48-hour registration window.*
+### Move 2 — Translate: turn jargon into intuition
 
-The "because" is the part most people skip and is the most valuable part. It forces you to name the *insight*, not just the surface need.
+Half of studying is figuring out what the textbook *meant*. AI is exceptional at this. The trick is to ask for multiple explanations at different levels.
 
-### Stage 3 — Ideate
+```
+Copy and paste this prompt:
 
-Goal: *quantity before quality*. The rookie mistake is to defend the first idea. The pro move is to generate 20 ideas in 15 minutes — including deliberately bad ones — before picking any. Bad ideas shake loose good ones.
+Explain {{topic, e.g. Kalman filters}} three times:
+- Once to a 12-year-old using a food or cricket analogy.
+- Once to a 2nd-year engineering student with the key formula.
+- Once to someone preparing for a PhD interview, with nuance and edge cases.
+```
 
-Useful ideation tools:
+The "explain it at 3 levels" move is the single best study prompt ever written. Steal it.
 
-- **Crazy 8s:** fold a page into 8 boxes, one idea per box, 60 seconds each.
-- **Worst possible idea:** what would guarantee failure? Often reveals what *must* be true of the good idea.
-- **SCAMPER:** Substitute, Combine, Adapt, Modify, Put-to-other-uses, Eliminate, Reverse.
+### Move 3 — Drill: turn reading into retention
 
-### Stage 4 — Prototype
+Passive reading is a lie. You don't remember what you don't retrieve. AI makes retrieval practice painless — it can generate flashcards, MCQs, short-answer questions, and even a mock viva.
 
-Goal: make the idea tangible *cheaply*. The prototype's only job is to provoke a reaction. Paper wireframes, a Figma mock, a WhatsApp group set up by hand, a Google Form pretending to be a backend — all valid. At this stage, real code is usually over-investment.
+```
+Copy and paste this prompt:
 
-> A prototype you can throw away in 30 minutes is better than one you'd defend for an hour.
+From the uploaded notes, generate:
+- 10 flashcards (Q on one line, A on next).
+- 5 MCQs with 4 options each, and mark the correct one only at the very end.
+- 3 "trap" questions — things students commonly get wrong on exams about this topic.
+- 1 open-ended viva question where I have to reason, not recall.
+Then quiz me one at a time. Wait for my answer before revealing the correct one.
+```
 
-### Stage 5 — Test
+That last line is magic — "wait for my answer before revealing" turns a chat into an interactive tutor.
 
-Goal: watch users meet your prototype. You are not selling; you are learning. Ask them to do a task and *shut up*. Their hesitation, their confused face, their wrong clicks — that's the data.
+### Picking the right tool for the job
 
-Three cheap test formats:
+| Task | Best tool | Why |
+|------|-----------|-----|
+| Upload 50 PDFs, ask cross-document questions | NotebookLM | Cites sources, multi-doc |
+| Deep single-document chat | Claude | Handles long context, clean writing |
+| Quick explanations, image-based questions | ChatGPT | Great multimodal, fast |
+| Math homework walkthrough | ChatGPT or Khanmigo | Step-by-step reasoning |
+| "Fetch + cite" current info (recent papers) | Perplexity | Always shows links |
 
-| Test | What it surfaces | Cost |
-|------|------------------|------|
-| 5-second test (first impression) | Does the idea register? | 5 min |
-| Task completion (give them a goal) | Usability failures | 15 min |
-| Wizard-of-Oz (you fake the backend) | Does the idea work at all? | 30 min |
+### The "wow" moment: NotebookLM's audio overview
 
-### Worked mini-case: campus event discovery
+Inside NotebookLM, after you upload sources, click **Audio Overview**. In about 5 minutes it generates a podcast — two AI hosts chatting about *your notes*, complete with banter. Put it on during your commute. It is genuinely, unreasonably good for revision. Nobody tells first-years about this. Now you know.
 
-Problem: "Nobody knows about campus events until after they happen."
+### Honesty check: what AI still gets wrong
 
-- **Empathize** — talked to 6 students; surprise: most heard about events from one or two "hub" friends on specific WhatsApp groups.
-- **Define** — *2nd/3rd-year students in Block-A need a way to see weekend events by Thursday because by Friday evening all plans are already locked in.*
-- **Ideate (10 ideas in 10 min)** — a poster wall, an Instagram page, a Telegram channel, an SMS blast, a calendar bot, a QR code on mess tables, a "this-week-in-campus" Friday newsletter, a Notion page, an event-of-the-day lock screen, a shared Google Calendar.
-- **Prototype** — Friday newsletter via Google Doc + WhatsApp forward. Built in 20 minutes.
-- **Test** — sent to 30 friends on Thursday. 18 opened. 9 said they'd pay attention weekly. Two events got attendance lifts.
+- Dates, citations, and specific numbers — always verify.
+- Niche Indian-syllabus or professor-specific content — it may invent.
+- Math with long multi-step calculations — ask it to show every step and sanity-check.
 
-Notice: no app, no database, no AI. The prototype answered the real question ("would anyone actually use this?") for a zero rupees and three hours. *That is design thinking done right.*
+Rule: use AI to *understand*. Use your own brain to *verify*. Use your own effort to *retain*.
 
-### What design thinking is NOT
+## Watch: NotebookLM for students
 
-- It is **not** a guarantee. It is a bias toward cheap iteration and real-user feedback.
-- It is **not** only for "designers". Engineers and PMs use it every week.
-- It is **not** linear. You will loop stages, and that's healthy.
-- It is **not** an excuse to spend three weeks covering walls in post-its without talking to a user.
+A short demo of uploading a PDF, asking smart questions, and using audio overview. Worth every minute.
 
-## Watch: design thinking, honestly
-
-A short talk from someone who has actually shipped things using these methods — not a consultant's slide deck.
-
-https://www.youtube.com/embed/VIDEO_ID
+https://www.youtube.com/embed/d8JkYJ5JQHk
 <!-- TODO: replace video -->
 
-- Note when the speaker uses the word "insight" vs "idea" — they are different.
-- Listen for the moment they describe a prototype that cost almost nothing.
-- Watch for how they handle a test where the user hates the prototype — the attitude matters.
+- Notice how answers include citations to the exact page of the source.
+- Watch the audio overview feature — the "wow" moment of the day.
+- See how the presenter asks follow-up questions instead of re-prompting.
 
-## Lab: 45-minute end-to-end run
+## Lab: 20-page PDF → 5-slide summary + 10 practice questions
 
-You are going to push one small problem through all five stages in 45 minutes. Yes, really. The constraint is the point — it forces you to work cheap and fast.
+You'll end with a Google Slide deck and a flashcard list you can actually use for your next test.
 
-Pick a tiny problem you have some access to. Suggestions:
+1. Pick a 15–25 page PDF from one of your current courses (or a paper you've been avoiding). If nothing comes to mind, download any chapter from NCERT or your college's shared drive.
+2. Open `https://notebooklm.google.com/`, sign in with Google, and create a new notebook. Upload your PDF as a source.
+3. In the chat, ask: *"Give me a 5-slide outline summarising this entire document. Each slide should have a title and 3 bullets. Cite which page each point is from."*
+4. Copy the outline into a new Google Slide deck (free at `slides.google.com`). One slide per section. Use Gemini-in-Slides if available, or just paste text.
+5. Back in NotebookLM, ask: *"Generate 10 practice questions — mix of 5 MCQs and 5 short-answer. Don't reveal answers yet. Quiz me one at a time."*
+6. Actually answer 5 of them. See how you score. (This is the point of the whole lab.)
+7. Try the Audio Overview feature. Listen to 2 minutes of it.
+8. Export/screenshot your slide deck and the quiz chat.
 
-- Finding a study partner before exams.
-- Getting hostel laundry back without a mix-up.
-- Deciding what to order when four friends can't agree.
-
-Steps:
-
-1. **0–5 min — Empathize.** Text or call two people who have this pain. Ask: "When was the last time this bothered you? What did you do?" Take literal notes of their words.
-2. **5–12 min — Define.** Write one POV statement in the `[User] needs a way to [need] because [insight]` format. Spend half your time on the "because".
-3. **12–22 min — Ideate.** Crazy 8s on paper or in Excalidraw. 8 ideas, 60 seconds each. Include at least one deliberately terrible idea.
-4. **22–32 min — Prototype.** Pick one idea. Sketch the smallest version you could build this weekend. Use paper or Excalidraw — no code, no Figma fidelity yet.
-5. **32–42 min — Test.** Send your sketch to one of the two people you interviewed. Ask: "Would this actually help you? What's missing?" Capture their reply verbatim.
-6. **42–45 min — Reflect.** In 3 lines: what would you change in the next loop?
-
-Template:
-
-```
-POV:
-  ______________ needs a way to ______________
-  because ________________________________________
-
-Crazy 8s (titles only):
-  1.  2.  3.  4.  5.  6.  7.  8.
-
-Prototype chosen: ____________________________
-Sketch link / photo: _________________________
-
-Test user reaction (verbatim): _________________
-_________________________________________________
-
-Next loop: ______________________________________
-```
+**Victory condition:** a 5-slide deck + a chat where you actually attempted 5 questions + you experienced the audio overview at least once.
 
 ## Quiz
 
-Quick check on the five stages, what a POV statement is, and why prototyping fidelity should stay low at first. Four questions. Aim for 75%+ before moving on — we use POV statements again heavily during user interviews tomorrow.
+Four short questions on when to use NotebookLM vs ChatGPT, what "explain at 3 levels" does, why retrieval beats re-reading, and one thing AI reliably gets wrong.
 
 ## Assignment
 
-Submit your 45-minute run-through as a **text submission** (or a photo of the paper if you worked offline). Include the POV, all 8 Crazy-8 titles, a photo/sketch link of the prototype, and the verbatim test reaction. One page max. Mark clearly what you would change in the next loop.
+Share a screenshot of your 5-slide deck + your quiz score (be honest — even 2/5 is fine, we want the attempt). Add one line: which course will you use this workflow for this semester?
 
-## Discuss: where design thinking lies to you
+## Discuss: AI and studying — line between help and crutch
 
-- Which of the five stages is most often skipped by teams you've been on, and why?
-- Design thinking is sometimes dismissed as "corporate theatre". When is that critique fair?
-- Is it okay to start at "Ideate" if you already know the user well? Defend your answer.
-- What's the smallest prototype you've ever built that taught you the most? Tell the story.
-- How does a 45-minute sprint change the quality of thinking vs. a 3-week sprint?
+- Where's the line between "AI helped me understand" and "AI did it for me"?
+- Did the audio overview feel like a real podcast? Would you actually listen?
+- Has anyone caught AI giving a confidently wrong answer about your syllabus? Share.
+- If your professor banned AI, how much of today's workflow could you still do ethically?
+- What's one subject you'd never trust AI with, and why?

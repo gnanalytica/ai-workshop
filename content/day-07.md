@@ -1,167 +1,145 @@
 ---
-reading_time: 14 min
-tldr: "Pick the capstone problem today. You'll live with it for 3 weeks — choose something you actually care about."
-tags: ["framing", "meta", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Heilmeier writeup of your capstone problem", "url": "https://excalidraw.com/"}
-resources: [{"title": "The Heilmeier Catechism", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit", "url": "https://www.designkit.org/"}, {"title": "The Systems Thinker", "url": "https://thesystemsthinker.com/"}]
+reading_time: 10 min
+tldr: "Look back at 6 real AI wins. Build your personal AI stack. Reflect. Next week we stop using tools and start thinking like builders."
+tags: ["use", "reflection", "kickoff"]
+video: https://www.youtube.com/embed/5e8u8e5Gz9U
+lab: {"title": "Build your personal AI stack worksheet", "url": "https://chat.openai.com/"}
+prompt_of_the_day: "Here are 6 AI workflows I tried this week: {{list them}}. Based on my life as a {{year, branch, college}} student, which 3 should I build into a weekly habit, and what's a realistic weekly cadence for each? Be blunt and specific."
+resources: [{"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"title": "Gamma", "url": "https://gamma.app/"}, {"title": "ImageFX", "url": "https://labs.google/fx/tools/image-fx"}]
 ---
 
 ## Intro
 
-Today everything from Week 1 compounds. You will pick the one problem you are going to work on for the rest of the cohort — through the Build weeks, through Ship week, into the final demo. Pick well. Pick something that will still annoy you in three weeks, because that is the only kind of problem you'll push through when it gets hard.
+Seven days ago you may never have uploaded a PDF to an AI. Today you've built a poster, run a mock interview, written in your own voice, and turned a 20-page doc into a quiz. Time to pause, look at what worked, and design the tiny habits that will carry these wins into the rest of the year.
 
-## Read: how to pick a problem you'll still care about on day 28
+## Read: Your Week 1 in review
 
-### Why the choice matters so much
+Six days, six concrete skills. Let's count them back.
 
-In Week 2 you start building. In Week 3 you start shipping. If the problem you pick today is lukewarm, the technical grind will chew through your motivation by day 14, and you'll ghost the cohort. Every year, the students who finish are almost always the ones who picked something *personal and specific* in Week 1, not something *trendy and impressive*.
+| Day | Skill | Artefact you produced |
+|-----|-------|----------------------|
+| 1 | First wins: summarise, explain, brainstorm | 3-screenshot collage |
+| 2 | CREATE prompting framework | Prompt-upgrade Google Doc |
+| 3 | Study with NotebookLM | 5-slide summary + quiz |
+| 4 | Writing in your own voice | 3 rewritten pieces |
+| 5 | AI creativity: images + ideas | Hostel event poster |
+| 6 | Daily ops: decks, CSVs, interviews | Gamma deck + mock feedback |
 
-### Three filters for a good capstone problem
+Look at that list. Seven days ago it didn't exist.
 
-Apply all three filters. If a candidate fails one, keep looking.
+### Which wins actually saved you the most time?
 
-**Filter 1: Personal pain or personal proximity.** Either you have this problem, or someone you can text right now has this problem. You can literally get a user on the phone in 10 minutes. If you can't, the feedback loop is too long — you'll build in the dark.
+There's a rough pattern across most students in this workshop. Be honest with yourself and circle what's true for you:
 
-**Filter 2: Small enough to prototype in a weekend, big enough to matter.** If it's too small, you'll finish early and coast. If it's too big, you'll drown and quit. The sweet spot: a prototype that takes ~8 focused hours, aimed at a problem whose full version could reasonably occupy a year.
+- **If you're a heavy reader:** Day 3 (NotebookLM) probably saved the most time. Make it a weekly ritual before every class.
+- **If you're placement-focused:** Day 6 (CV + mock interviews) wins. Make it 2x a week leading up to interviews.
+- **If you write a lot:** Day 4 (voice-matched writing) is your daily driver.
+- **If you run events / do design work:** Day 5 (images) cuts days off your schedule.
+- **If you do a lot of group projects:** Day 2 (good prompts) + Day 6 (decks) is the combo.
 
-**Filter 3: Real-world feedback within 7 days.** You must be able to put a prototype in front of a real user and get a reaction within a week. No "we'd need approval from the university IT department to test this". If the access path is blocked, the problem is wrong *for this cohort* — even if it's a great problem in general.
+Not all six will become habits. That's fine. Two out of six used weekly is a huge win.
 
-### Green flags and red flags
+### Your personal AI stack
 
-| Green flag | Red flag |
-|-----------|----------|
-| You can name 3 specific people affected | "Students" in general |
-| You have a story of when this pain hit *you* | You only heard about it third-hand |
-| You can test a prototype for free | Testing requires institutional approval |
-| You have mixed feelings about solutions | You are certain "an app is the answer" |
-| The problem has existed for years unresolved | It's a new trend you saw on LinkedIn |
+A "stack" is just the tools you *actually* open every week, plus the prompts you reuse. Keep it small. Three tools and five prompts beat ten tools and zero habits.
 
-The mixed-feelings one is subtle: if you're *already certain* of the solution, you've skipped the thinking work. You want to be genuinely curious.
-
-### Worked example: three candidate problems, one pick
-
-Student: Ananya, 3rd year, CS, interested in education.
-
-**Candidate A:** "Build an AI tutor for JEE aspirants."
-- Personal proximity? Low — she's past JEE.
-- Weekend-prototype-able? Not really — content is the hard part.
-- User access in 7 days? Would need cold outreach to coaching centers.
-- **Verdict:** impressive on paper, impossible to validate in this cohort. Skip.
-
-**Candidate B:** "Help my hostel friends decide daily what to order on Swiggy."
-- Personal proximity? Extremely — this is her WhatsApp group every night.
-- Weekend-prototype-able? Yes — a Google Form + a weighted-vote script.
-- User access? Instant — 8 friends, same hostel floor.
-- **Verdict:** passes all three, but may be too small. Keep as backup.
-
-**Candidate C:** "Help 1st-year students in her department pick a mentor from 2nd-year seniors, based on interests — the current process is chaotic DMs."
-- Personal proximity? Medium-high — she's a mentor and sees the chaos.
-- Weekend-prototype-able? A structured form + matching spreadsheet prototype is doable.
-- User access? 20 juniors reachable via department WhatsApp group.
-- Has existed unresolved for years? Yes.
-- She has mixed feelings about whether matching should be algorithmic or human-curated — good, that's curiosity.
-- **Verdict:** picked.
-
-Ananya's Heilmeier writeup becomes her Day 7 artifact — and her guiding document for the next 23 days.
-
-### Your Day 7 artifact: the Heilmeier writeup
-
-You are going to produce a one-page Heilmeier writeup of your capstone problem. This document is the contract between today-you and day-30-you. When you're confused in Week 3, you come back and read this.
+Template (fill this in the lab):
 
 ```
-CAPSTONE PROBLEM — <your name>
+MY PERSONAL AI STACK
 
-1. What are you trying to do? (no jargon, one sentence):
-   __________________________________________________
+Primary chat tool: _______ (for writing, thinking, explaining)
+Document/study tool: _______ (for PDFs, notes, long reading)
+Creative tool: _______ (for images, posters, moodboards)
 
-2. How is it done today, and what are the limits?
-   __________________________________________________
+My top 5 saved prompts (title + where I keep them):
+1. _______
+2. _______
+3. _______
+4. _______
+5. _______
 
-3. What is new in your approach?
-   __________________________________________________
-
-4. Who cares? Name at least 3 specific affected people:
-   - ________________________________________________
-   - ________________________________________________
-   - ________________________________________________
-
-5. What are the main risks?
-   - ________________________________________________
-   - ________________________________________________
-
-6. How will you test a prototype in the next 7 days?
-   __________________________________________________
-
-7. What will "good enough at day 30" look like?
-   __________________________________________________
-
-8. What will make you quit this problem? (know your exit triggers)
-   __________________________________________________
+My weekly AI rituals:
+- Every Sunday night: _______
+- Before every class/lecture: _______
+- Before every deadline: _______
 ```
 
-Question 8 is deliberately uncomfortable. Naming the quit conditions upfront — "if after 10 user tests nobody cares, I'll switch" — is what separates disciplined builders from sunk-cost prisoners.
+Keep this in your Notes app, pinned.
 
-### Weaving in everything from Week 1
+### The honesty check — what AI still doesn't fix
 
-Notice how this single artifact exercises every muscle you built this week:
+A healthy look-back has to include limits. Even at the end of Week 1:
 
-- Day 2 (crisp problem statement) → Questions 1 and 4.
-- Day 3 (design thinking) → Question 6 (prototype + test).
-- Day 4 (user empathy) → Question 4's specific named people.
-- Day 5 (systems) → hidden in Question 2's "what are the limits".
-- Day 6 (computational thinking) → Question 7 demands a concrete, observable output.
+- AI can summarise a chapter. It cannot make you *remember* it. Retrieval practice still requires you.
+- AI can draft an email. It cannot repair a real relationship with a prof you've ignored for a year.
+- AI can polish your CV. It cannot give you the internship. Projects, networking, and timing still do that.
+- AI confidently makes mistakes — dates, citations, fine numbers. Always verify the bits that matter.
 
-If you feel Week 1 was slow, here is where you cash in. Students who skipped the thinking work will pick bad capstones today and pay for it for the next 23 days.
+This isn't pessimism. This is why tools alone aren't enough — and it's the exact reason for Week 2.
 
-### A quick sanity check before you commit
+### What's coming in Week 2 — Design Thinking
 
-Before submitting, ask yourself three honest questions:
+You now have tools. But tools don't choose what to build, who to build it for, or whether it's worth building at all. Next week we shift from *using* AI to *thinking* like a builder. Topics will include:
 
-1. *If this problem never gets solved, does that bother me personally?*
-2. *Can I text a real affected user, right now, without awkwardness?*
-3. *Am I excited — or am I picking this because it sounds impressive in a cohort update?*
+- Starting from a real user problem, not a tool
+- Interview techniques for talking to users (yes, humans!)
+- Ideation, prioritisation, and the "kill your ideas" workflow
+- Prototyping a solution — still in a browser, still no code
+- Running a small test and measuring what actually worked
 
-If the answer to any is shaky, go back and pick a different problem. You have one more day before Week 2 locks you in.
+By end of Week 2 you won't just be someone *using* AI. You'll be someone deciding *what to use AI for*. That's the real skill that compounds.
 
-## Watch: picking problems worth working on
+### The "wow" move of the day — the compounding effect
 
-A short talk on how to choose what to build — focused on taste, personal stake, and the signals that separate real problems from fashionable ones.
+One last prompt to try. Ask ChatGPT or Claude:
 
-https://www.youtube.com/embed/VIDEO_ID
+```
+Copy and paste this prompt:
+
+Based on these 6 skills I learned this week ({{list}}), project forward: if I used them consistently for 90 days, what specific tangible wins would I realistically see by {{today + 90 days}}? Be concrete. No hype. No generic "you'll be more productive" — give me examples tied to my life as a {{year, branch, interests}} student.
+```
+
+The answer is your motivation for the rest of the workshop.
+
+## Watch: A Week 1 recap + what building looks like
+
+A short closing video — less how-to, more mindset. What changes when AI stops being a novelty and becomes a habit.
+
+https://www.youtube.com/embed/5e8u8e5Gz9U
 <!-- TODO: replace video -->
 
-- Watch for the distinction between a "problem" and a "market".
-- Listen for how the speaker describes their quit-conditions on past projects.
-- Note any advice about picking problems that are *unsexy but real*.
+- Notice how the most productive users keep their stack *small*.
+- Watch the shift from "what can AI do" to "what should I do".
+- Pay attention to how habits form — always tied to a ritual, not motivation.
 
-## Lab: write your capstone's Heilmeier writeup
+## Lab: Your personal AI stack worksheet
 
-This is the deliverable that carries into Week 2. Take it seriously.
+You'll end with a 1-page personal AI stack, written by you, informed by AI, ready to pin.
 
-1. List 3–5 candidate problems you care about. Each should have a sentence of context.
-2. Apply the three filters to each candidate. Eliminate any that fail even one filter.
-3. Pick one. If more than one survives, pick the one where you can most easily name 3 affected people by first name.
-4. Write the Heilmeier writeup using the template above. Fill every line — no blanks.
-5. For question 4 (Who cares?), text or DM at least one of the named people. Ask: "Hey, if I built something to help with X, would you actually try it next week?" Capture their reply.
-6. For question 6 (test in 7 days), pick a specific prototype format: paper, Google Form, WhatsApp flow, Excalidraw click-through. No code yet.
-7. For question 8, write honest quit-triggers. "If after 5 tests nobody completes the flow, I'll pivot." "If I can't get any real user by day 14, I'll switch problems."
-8. Pair with a cohort partner. Read each other's writeups. Each person gets to ask three "are you sure?" questions.
-9. Revise your writeup based on the partner critique.
-10. Submit the final one-page artifact.
+1. Open a Google Doc titled "My AI Stack — [Your Name]". Paste the template from the Read section.
+2. Fill in your 3 primary tools and your 5 saved prompts. Pull the prompts from Days 1–6 (CREATE, study-tutor, voice-match, poster, mock-interview).
+3. Go to ChatGPT. Paste the prompt-of-the-day, listing your 6 workflows and your student context.
+4. Read the AI's suggestions. Keep the ones that feel true. Reject the ones that don't. You're in charge.
+5. Write your "Weekly AI Rituals" section — 3 specific time-slots in your week when you'll use AI. Sunday planning. Before every Wednesday lab. Before every assignment deadline. Whatever fits.
+6. Run the 90-day projection prompt from the "wow" section. Paste the output at the bottom of your doc.
+7. Take 5 minutes. Write a short reflection — 5 lines — on the question: "What's one thing you believed about AI 7 days ago that you no longer believe?"
+8. Submit the Doc link + the reflection via the Week 1 reflection form.
+
+**Victory condition:** a 1-page stack doc, a 90-day projection at the bottom, and a real 5-line reflection.
 
 ## Quiz
 
-Quick check on the three filters, why exit triggers matter, and how Week 1's tools feed into the Heilmeier writeup. Four questions. Aim for 75%+. This is the last Week-1 quiz; Week 2 opens with Build mode.
+Four questions: what a "personal AI stack" is, why small beats big, one thing AI still can't fix, and what Week 2 focuses on.
 
 ## Assignment
 
-Submit your final Heilmeier writeup as a **file upload or text submission** — one page, all eight questions answered. Must include: 3 specific named users, at least one quoted message from a real user you contacted, a prototype plan testable in 7 days, and honest exit triggers. Writeups without named users get sent back. This document becomes your capstone spine for Weeks 2–4.
+Submit the Week 1 Reflection Form (link in the class channel) with: (a) your AI stack Doc link, (b) your 90-day projection paragraph, (c) one sentence on what changed in your head this week, (d) one thing you're still skeptical about. This is the only assignment this week without a "build" deliverable — we want your thinking, not your output.
 
-## Discuss: the problem you're locking in
+## Discuss: From using AI to building with AI
 
-- Read out your one-sentence answer to question 1. Does the group understand it without follow-up?
-- Which filter was hardest to pass honestly — personal proximity, prototype-ability, or 7-day feedback?
-- What did your real user say when you texted them? Did it change your framing?
-- What's your exit trigger, and is it specific enough that you'll actually honor it?
-- If a classmate's capstone sounds more impressive than yours, does that bother you? What does that feeling mean?
+- What's one thing you believed about AI 7 days ago that you no longer believe?
+- Which day's win are you most likely to still be doing in 6 months — and why?
+- Did anyone feel *worse* at something this week (e.g., writing) because you leaned on AI? Share honestly.
+- If AI can do 40% of a college student's work — what should the other 60% be?
+- What are you expecting (or dreading) about Week 2, now that we're leaving tools behind?

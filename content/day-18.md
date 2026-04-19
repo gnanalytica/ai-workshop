@@ -1,176 +1,133 @@
 ---
 reading_time: 14 min
-tldr: "Prompting is a craft with rules — clarity, context, constraints, examples. Stop guessing, start iterating."
-tags: ["ai", "llms", "prompting", "hands-on"]
+tldr: "Embeddings are coordinates for meaning. Once you see text as points in space, semantic search suddenly makes sense."
+tags: ["embeddings", "ai", "concepts"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Prompt battles: five styles on one classification task", "url": "https://python.langchain.com/docs/"}
-resources: [{"title": "LangChain Python docs", "url": "https://python.langchain.com/docs/"}, {"title": "HuggingFace Transformers", "url": "https://huggingface.co/docs/transformers/"}, {"title": "Ollama", "url": "https://ollama.com/"}]
+lab: {"title": "Play with an embedding visualizer", "url": "https://huggingface.co/spaces"}
+prompt_of_the_day: "Given these 10 phrases: {{phrases}}, group them by meaning (not keywords). Explain each group in one line."
+resources: [{"title": "HuggingFace Spaces", "url": "https://huggingface.co/spaces"}, {"title": "TensorFlow Embedding Projector", "url": "https://projector.tensorflow.org/"}, {"title": "Nomic Atlas", "url": "https://atlas.nomic.ai/"}]
 ---
 
 ## Intro
 
-"Prompt engineering" is a goofy name for a real skill: constructing inputs so a statistical text predictor behaves like a tool. Today we treat it like engineering — with evals, not vibes. You'll run the same task through five prompt styles and measure which wins.
+"Embeddings" sounds scary. It's not. By the end of this lesson you'll have a one-line definition you can teach your grandmother, plus the intuition for why Google, Spotify, and ChatGPT all feel smarter than the search engines of 2010. Tomorrow, this is what makes RAG work.
 
-## Read: Prompting as a craft
+## Read: Coordinates for meaning
 
-### The core reframe
+Here's the whole idea in one sentence: an embedding is a list of numbers that represents the meaning of a piece of text as a point in space. Similar meanings sit close together; unrelated meanings sit far apart. That's it. Everything else is details.
 
-A prompt is not a command. It's a **conditioning context**. The model sees your prompt and continues it with whatever tokens are statistically plausible given the training data. Every word in your prompt pushes the probability distribution over next tokens.
+### The 2D toy version
 
-That leads to three rules that sound obvious but people violate constantly:
-
-1. **Specificity beats politeness.** "You are an expert" is noise; "Output must be valid JSON matching this schema: {...}" changes the distribution.
-2. **Examples beat explanations.** The model learned from examples; it's much better at pattern-matching them than at following abstract instructions.
-3. **Format the output you want.** If you want JSON, show JSON. If you want bullets, show bullets. Ask for "a reply" and you'll get an essay.
-
-### The five prompting styles
-
-You'll use all of these this week. Know when to reach for each.
-
-#### 1. Zero-shot
-
-Just ask. Works when the task is common in training data.
+Imagine a map with just two axes: formality and topic.
 
 ```
-Classify the sentiment of this review as positive, negative, or neutral:
-"The phone is okay but battery dies fast."
+Read this, don't type it
+
+formal |                     "filed a petition"
+       |            "submitted an application"
+       |
+       |  "dropped an email"
+casual |  "shot a text"
+       +--------------------------------------
+          casual topic             legal topic
 ```
 
-#### 2. Few-shot
+"Submitted an application" and "filed a petition" are close on this map because they're both formal and both legal-ish. "Dropped an email" and "shot a text" cluster in the casual-everyday corner. Real embeddings live in 768 or 1536 dimensions, not 2, but the idea is identical — every piece of text becomes a point, and distance means dissimilarity.
 
-Give 2–8 examples in the prompt. The gold standard for classification, extraction, and format-following.
+### Why this beats keyword search
 
-```
-Review: "Loved it, highly recommend." → positive
-Review: "Terrible. Fell apart in a week." → negative
-Review: "It's fine, nothing special." → neutral
-Review: "The phone is okay but battery dies fast." →
-```
+Old search: match the exact words. Ask "how to pay college fees" and it won't match "tuition payment instructions." Semantic search: match the meaning. The embedding for both phrases lands in nearly the same spot, so one query finds the other. This is why modern search feels psychic — it's not magic, it's geometry.
 
-#### 3. Chain-of-thought (CoT)
+| Search type | "how to quit my part-time job" | What it finds |
+|---|---|---|
+| Keyword | Strict word match | Pages with "quit" and "part-time" |
+| Semantic (embeddings) | Nearest point in space | "resignation letter for intern," "ending a side gig politely" |
 
-Ask the model to think step-by-step before answering. Especially useful for math and multi-hop reasoning. Smaller models benefit the most.
+### How embeddings get made
 
-```
-Question: A shop had 23 apples. They sold 15 and got 8 more. How many now?
-Let's think step by step.
-```
-
-Modern "reasoning" models (DeepSeek R1, Qwen-QwQ, OpenAI o-series, Anthropic Sonnet extended-thinking) bake CoT into the model; you don't need to prompt for it.
-
-#### 4. Role / system-prompt
-
-Set behavior with a system message. Useful for tone, persona, constraints.
+You feed a piece of text into a small model (called an embedding model — Sentence Transformers, text-embedding-3-small, nomic-embed-text, etc.). Out comes a fixed-length vector of numbers — usually between 384 and 3072 numbers long. That vector IS the embedding. It is the text's coordinates on the meaning map.
 
 ```
-System: You are a terse senior engineer. Reply in at most 3 sentences.
-     Never use marketing language. If unsure, say "I don't know."
-User: How should I deploy a Python API?
+Read this, don't type it
+
+"I love placement prep"  -> [ 0.21, -0.44, 0.78, ..., 0.09 ]   (768 numbers)
+"Placements make me happy" -> [ 0.19, -0.41, 0.76, ..., 0.11 ] (nearly identical)
+"How to fix a flat tire"  -> [ -0.88, 0.30, -0.12, ..., 0.77 ] (far away)
 ```
 
-#### 5. Structured output
+The first two vectors are close because their meanings are close. The third is far. Compute distance between two vectors (usually cosine similarity, a number between -1 and 1), and you have a ranking of relevance.
 
-Demand JSON / XML / a specific schema. This is what you use in production.
+### Similarity, clustering, search — three uses
+
+Once text becomes points in space, three superpowers unlock:
+
+- Similarity. Given a query, find the top 5 closest items in a database. That's semantic search and tomorrow's RAG.
+- Clustering. Given 10,000 customer feedback quotes, group them automatically by theme. No tagging needed.
+- Classification. Given labeled examples ("spam," "not spam"), embed a new email and see which cluster it's nearest to.
+
+Everything recommendation-engine-ish — Spotify's "Daily Mix," Netflix's "Because you watched," LinkedIn's "Jobs like this" — is some flavor of "embed things, find nearest neighbors."
+
+### Embeddings vs. LLMs
+
+They're cousins, not twins.
+
+| Tool | What it outputs | Used for |
+|---|---|---|
+| LLM (Llama, GPT) | Text | Chat, writing, reasoning |
+| Embedding model | A vector of numbers | Search, clustering, RAG |
+
+An embedding model is much smaller and faster than a chat LLM. Running embeddings on a million documents on your laptop is realistic. Running a chat LLM on a million queries is not.
+
+### The 1-picture summary
 
 ```
-Respond ONLY with JSON matching this schema:
-{"sentiment": "positive|negative|neutral", "confidence": 0.0-1.0, "reason": "string"}
-No prose. No markdown. Just JSON.
+Read this, don't type it
+
+ raw text  ->  [ embedding model ]  ->  point in 768-D space
+                                         |
+                                         v
+                         compare to other points, sort by distance
+                                         |
+                                         v
+                   "these 5 items mean roughly the same thing"
 ```
 
-Most modern models (OpenAI, Anthropic, Ollama via `format=json`) support enforced JSON modes — use them when available.
+## Watch: Embeddings, visually
 
-### Prompting anti-patterns
-
-- **"Do not hallucinate."** The model has no concept of hallucination. This line is a no-op.
-- **"You are an expert in X."** Mild lift. Don't rely on it.
-- **Long preambles.** Every token costs latency and money. Be surgical.
-- **Instructions buried after context.** Models weight the start and the end of the prompt more heavily. Put critical instructions at the end.
-- **Vague "be helpful."** Define helpful in measurable terms.
-
-### Temperature and sampling
-
-- `temperature=0` → deterministic-ish; pick the most likely token every time. Use for extraction, classification, code.
-- `temperature=0.7` → creative, variable. Use for brainstorming, drafting.
-- `top_p=0.9` (nucleus sampling) → sample from the top tokens covering 90% probability mass.
-- `max_tokens` → always set a cap. Runaway outputs are the most common cause of surprise bills.
-
-### Worked example: prompting a small local model to extract invoices
-
-A 7B model, without structure, will write a friendly paragraph. With few-shot + JSON mode, it becomes a reliable extractor.
-
-```python
-import ollama, json
-
-PROMPT = """Extract invoice fields as JSON. Examples:
-
-Text: "Invoice #A-101 from Acme, total Rs 12,400, due 2026-05-01."
-Output: {"invoice_id":"A-101","vendor":"Acme","total":12400,"currency":"INR","due":"2026-05-01"}
-
-Text: "Bill #7788 Microsoft USD 99.00 15 June 2026"
-Output: {"invoice_id":"7788","vendor":"Microsoft","total":99.0,"currency":"USD","due":"2026-06-15"}
-
-Text: "{input}"
-Output:"""
-
-def extract(text):
-    r = ollama.chat(
-        model="llama3.2:3b",
-        messages=[{"role": "user", "content": PROMPT.format(input=text)}],
-        format="json",
-        options={"temperature": 0},
-    )
-    return json.loads(r["message"]["content"])
-
-print(extract("Invoice INV-0042 from Zomato, INR 580, due 10 May 2026"))
-```
-
-The difference between this working and not working is not the model — it's the prompt shape.
-
-### Evaluating prompts
-
-Never compare prompts by vibes. Build a tiny eval set (10–50 items), define a metric (exact match, JSON validity, a second LLM judge), and run both candidates through it. The winning prompt is the one with higher score, full stop.
-
-## Watch: A prompting masterclass
-
-Pick a recent, credible walkthrough — OpenAI's or Anthropic's own prompting guides have video versions; DeepLearning.AI has short courses with Andrew Ng.
+A ten-minute tour of embeddings with live visualizations of words drifting into clusters as they're embedded. Watch how "king - man + woman ≈ queen" shows up geometrically.
 
 https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace with DeepLearning.AI prompting course or similar -->
+<!-- TODO: replace video -->
 
-- Note the difference between a system message and user message.
-- Watch how few-shot examples are chosen.
-- Pay attention to structured-output patterns.
+- Notice how synonyms land near each other without anyone labeling them.
+- Watch the vector arithmetic trick — meaning has directions.
+- Observe how outliers stand out in the cluster view.
 
-## Lab: Prompt battles on a real classification task
+## Lab: See text turn into space
 
-You'll compare 5 prompt styles on the same task and score them.
+You'll play with two free browser tools — no code, no install.
 
-1. Make sure Ollama is running and `llama3.2:3b` (or another small model) is pulled.
-2. Download or create a dataset: 30 short customer reviews hand-labeled as positive/negative/neutral. Quick option: grab 30 lines from a public movie review CSV; re-label them yourself in a spreadsheet.
-3. In a Python script `prompt_battle.py`, install: `pip install ollama pandas`.
-4. Write a function `score(predictions, gold)` returning accuracy.
-5. Implement five prompt functions: `zero_shot`, `few_shot` (with 3 in-prompt examples), `cot` ("Let's think step by step. Then answer with one word."), `role` (system message framing an expert labeler), `json_structured` (force JSON with sentiment + confidence).
-6. Run each on your 30 reviews with `temperature=0`. Record outputs.
-7. For non-JSON responses, parse the last word or use a regex. Count how often parsing fails.
-8. Produce a table: prompt style × accuracy × parse-failure rate × avg tokens used.
-9. Swap the model to `qwen3:8b` or `mistral:7b`. Re-run. Does the ranking of prompt styles change?
-10. Write a one-paragraph conclusion: which prompt won, and why does that make sense given what you know about the model?
-
-Budget 60 minutes.
+1. Open the TensorFlow Embedding Projector: https://projector.tensorflow.org/. It loads a preset embedding of 10,000 English words by default. Rotate the 3D view.
+2. In the search box (right panel), type `king`. Watch the projector zoom to the point and highlight its nearest neighbors — queen, prince, throne, monarch. Those are semantic neighbors in real embedding space.
+3. Try `college`, `placement`, `resume`. Note which words cluster near your campus-life vocabulary.
+4. Open https://huggingface.co/spaces and search for "embedding visualizer" or "sentence similarity." Pick any top result (many creators maintain free Spaces for this). Paste 5 sentences of your own — mix formal and casual versions of similar ideas (e.g., "I quit" vs. "I formally tender my resignation"). See the similarity scores.
+5. Still in a HuggingFace Space, compare these three: "campus placement prep," "getting a job after college," "how to survive interviews." All should score > 0.6 similarity. Now add "how to bake a cake" — watch it score near 0.
+6. Open https://atlas.nomic.ai/ (free account). Upload a CSV of 20–50 short texts (your own notes, tweets, whatever) — Nomic will embed and cluster them into a map you can zoom around. This is the clearest "meaning as geography" experience you'll get all week.
+7. Paste today's prompt-of-the-day into any chat LLM with 10 phrases of your choosing. Compare its human-readable grouping to the geometric clusters you saw in Nomic. Same idea, two lenses.
+8. In your Prompt Library doc from yesterday, add a new section "Embeddings intuition" and paste 3 screenshots from today plus a 3-sentence reflection.
 
 ## Quiz
 
-Quiz covers: when few-shot beats zero-shot, what temperature does, why "don't hallucinate" doesn't work, the right way to demand JSON, and the role of system messages. Pull directly from the lab.
+Four quick items: what an embedding is, why semantic search beats keyword search, what cosine similarity roughly measures, and one scenario about picking embeddings vs. an LLM for a task. Lean on the "coordinates for meaning" line.
 
 ## Assignment
 
-Pick a real task from your life — classifying your emails, labeling Jira tickets, extracting events from group-chat messages. Write `prompt-brief.md` containing: the task, one golden example input+output, a zero-shot prompt, a few-shot prompt with 3 examples, and a one-paragraph plan for how you'd build a 20-item eval set. Do not implement — just design.
+Open Atlas or any Space visualizer. Embed 30 short items from one corner of your life — your WhatsApp bookmarks, your saved tweets, your lecture note headings. Share a screenshot of the cluster map in the class channel with a one-paragraph observation of what clustered unexpectedly.
 
-## Discuss: Prompt engineering, for real
+## Discuss: Meaning as geometry
 
-- Is prompt engineering a "real job" or a transient skill? Argue for a timeline.
-- If reasoning models (o-series, R1, QwQ, extended-thinking) bake CoT in, what prompting styles become obsolete? Which ones become more important?
-- When is it worth paying 2× latency for CoT vs. shipping fast with zero-shot?
-- A teammate says "I tried it, it works." How do you convince them to build an eval set without sounding pedantic?
-- Does the same prompt that works on Claude work on a local 7B? Where does it break?
+- What clustered together in your Atlas map that surprised you? What didn't cluster that you expected to?
+- Keyword search still wins in some cases — when?
+- If embeddings work on any text, could they work on code? On images? On song clips? What would break?
+- How does "meaning as distance" change how you'd build a feed of recommendations?
+- What's the scariest implication of a world where everything you type can be clustered with everything else you've ever typed?

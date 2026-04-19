@@ -1,113 +1,159 @@
 ---
-reading_time: 14 min
-tldr: "Software is just layered systems. Hold the mental model, skip the syntax — you're the director, not the typist."
-tags: ["concepts", "systems", "mental-model"]
+reading_time: 15 min
+tldr: "A vague problem is the root of every wasted sprint. Sharpen the question before you chase the answer."
+tags: ["framing", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Trace a click: devtools scavenger hunt", "url": "https://developer.mozilla.org/en-US/docs/Tools"}
-resources: [{"title": "MDN: How the web works", "url": "https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works"}, {"title": "httpbin", "url": "https://httpbin.org/"}]
+lab: {"title": "Rewrite a vague problem three times", "url": "https://excalidraw.com/"}
+resources: [{"title": "The Heilmeier Catechism (DARPA)", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit — How Might We", "url": "https://www.designkit.org/"}, {"title": "Are You Solving the Right Problem? — HBR", "url": "https://hbr.org/"}]
 ---
 
 ## Intro
 
-Week 1 was about you and the AI. Week 2 is about the thing the AI will build for you. Before we direct an AI to ship software, we need a mental model of what software actually is. No Python. No typing. Just the map.
+Most bad projects are not bad because of bad execution. They are bad because someone answered a question nobody had clearly asked. Today you learn the single highest-leverage habit of a good builder: converting vague, tangled problems into crisp statements that you — and anyone you hand the work to — can actually act on.
 
-## Read: Software is boxes passing notes
+## Read: From fog to framing
 
-Every piece of software you have ever used — Instagram, your hostel mess-app, Zerodha, WhatsApp — is a small set of **boxes** exchanging **messages**. That's it. The rest is decoration.
+### The symptom: vague problems
 
-The five boxes you should be able to draw on a napkin:
+"I want to build something for students." "We should do something with AI for education." "Hostel Wi-Fi is bad." These are not problems. They are *vibes*. Vibes cannot be solved. They can only be argued about.
 
-```
- [ Client ]  <-- request -->  [ Server ]  <-- query -->  [ Database ]
-     |                             |
-     |                             +-- talks to --> [ 3rd-party APIs ]
-     |
- [ You, the human ]
-```
+A crisp problem statement has four properties:
 
-- **Client**: the thing in front of the user — a browser tab, an Android app, a smartwatch face. It renders and captures intent.
-- **Server**: a program running on someone else's computer that receives requests, makes decisions, and sends responses.
-- **Database**: organized memory. When you close the app and reopen it, whatever is still there lives here.
-- **Third-party APIs**: other people's servers your server calls. Payment (Razorpay), maps (Mapbox), auth (Google login), SMS (Twilio).
-- **You**: the only box with taste, intent, and deadlines.
+1. **A specific user** — not "students", but "2nd-year students in Block-B hostel who commute to mess at 9:30pm".
+2. **A specific painful moment** — the instant where the current experience fails.
+3. **A measurable gap** — what is happening today vs. what should be happening.
+4. **A reason it matters now** — why bother this week instead of next year.
 
-> Everything a developer does is: decide which box gets which job, and design the notes they pass.
+### Tool 1: The Heilmeier Catechism
 
-### Frontend vs backend vs "full-stack" — the real distinction
+George Heilmeier, the former DARPA director, made every project proposer answer the same nine questions. It's brutal and clarifying:
 
-| Term | What it means in one line | College analogy |
-|---|---|---|
-| Frontend | Code that runs on the client (usually browser) | The poster on the notice board |
-| Backend | Code that runs on the server | The clerk inside the admin office |
-| Database | Durable storage | The filing cabinet in the admin office |
-| Full-stack | A person who can touch all three | The senior who knows how the whole society works |
-| DevOps / infra | Keeping the servers alive | The electricity and plumbing of the building |
+> 1. What are you trying to do? Articulate it with absolutely no jargon.
+> 2. How is it done today, and what are the limits of current practice?
+> 3. What is new in your approach and why do you think it will be successful?
+> 4. Who cares? If you're successful, what difference will it make?
+> 5. What are the risks?
+> 6. How much will it cost?
+> 7. How long will it take?
+> 8. What are the mid-term and final "exams" to check for success?
+> 9. How will you know you're done?
 
-When someone says "my app is slow", they almost always mean one of five things: slow network, slow client rendering, slow server logic, slow database query, or slow third-party API. A good mental model lets you ask **which one**.
+If you cannot answer (1) in one sentence without buzzwords, you do not understand your problem yet. Go back.
 
-### Synchronous vs asynchronous, in plain English
+### Tool 2: "How Might We…"
 
-- **Synchronous**: you ask, you wait, you get the answer, you move on. Like calling a classmate.
-- **Asynchronous**: you ask, you go do something else, the answer arrives later. Like a WhatsApp message.
+Once you know the pain, reframe it as an invitation. "How Might We" (HMW) is a prompt format invented at P&G and popularized by IDEO. It turns a complaint into a design challenge.
 
-Modern apps are mostly async because users hate waiting. When your Swiggy order says "Placed", the restaurant hasn't yet confirmed — the server said "got it, I'll update you". That update comes async.
+- Too broad: *How might we fix education?* → useless.
+- Too narrow: *How might we add a red button to the app?* → traps you into one solution.
+- Just right: *How might we help 2nd-year students decide what electives to pick before the 48-hour registration window closes?*
 
-### State: the hardest word in software
+A good HMW is specific about the user and the moment, but silent about the solution.
 
-**State** = "what is currently true". Your cart has 3 items. You are logged in. The match score is 142/6. State lives somewhere — in the browser's memory, on the server, in the database, in a cache. Most bugs are really one question: *who owns this piece of state, and is it up to date everywhere it appears?*
+### Worked example: the mess menu problem
 
-Example — WhatsApp's blue ticks. The state "message seen" lives on the receiver's phone, gets sent to the server, gets pushed to the sender's phone. Three copies. If any one is stale, the UI lies.
+Vague starting point:
 
-### Code, runtime, deployment — three different things
+> "The mess food is bad."
 
-Students mash these together. Keep them separate:
+**Heilmeier pass:**
 
-| Layer | What it is | Analogy |
-|---|---|---|
-| Source code | Text files a human (or AI) writes | A recipe |
-| Runtime | The program running right now | The dish being cooked |
-| Deployment | The running program hosted somewhere public | The dish served at a restaurant |
+| Q | Rough answer |
+|---|------|
+| What are you trying to do? | Reduce the gap between what mess residents want to eat and what is served. |
+| How is it done today? | A committee of 5 seniors picks a 4-week rotating menu in July. No feedback loop during the semester. |
+| What's new? | A 30-second weekly "what will you actually eat?" poll whose results directly adjust next week's procurement. |
+| Who cares? | 420 residents, the mess manager (food waste hits his budget), hostel warden. |
+| Risks? | Low poll response, political pushback from committee. |
+| Success metric? | Weekly plate-waste weight down 20% in 6 weeks. |
 
-When you "ship" on Day 14, all three happen: AI writes the recipe, a server cooks it, the internet serves it.
+**HMW rewrite:**
 
-## Watch: What happens when you type a URL
+> *How might we give mess residents a 30-second weekly way to shape next week's menu, so procurement can cut waste?*
 
-Watch a clear walkthrough of the journey from keystroke to rendered page. You do not need to memorize any acronym. Just let the picture settle.
+Notice: the problem is now small enough to attack, big enough to matter, and the success metric (plate-waste weight) is concrete.
+
+### The 5 Whys (when you are stuck on symptoms)
+
+Ask "why" five times in a row on the surface complaint. You usually land somewhere unexpected.
+
+1. *Mess food is bad.* Why?
+2. *The menu repeats boring items.* Why?
+3. *The committee picked items that store well, not items people like.* Why?
+4. *They don't know what people like week-to-week.* Why?
+5. *There is no feedback loop between eaters and procurement.* → **Root cause**: missing feedback loop, not bad taste.
+
+The fix is now obvious: build the feedback loop. You just avoided building a "better menu algorithm" nobody needed.
+
+### Common framing mistakes
+
+- **Solution-smuggling.** "How might we build an app for mess feedback?" smuggles in "app" as the answer. Strip it.
+- **Infinite scope.** "How might we improve campus life?" — cannot be attacked.
+- **No user.** Passive voice hides the human. If you can't name the person whose day gets better, start over.
+- **No timebox.** If the problem has been around for 10 years, why does it need to be solved *this week*?
+
+## Watch: the art of problem framing
+
+A short talk on why "solving the right problem" is the rarest skill in product work. Watch once at 1x — it rewards attention.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Notice the handoffs: browser → DNS → server → database → back.
-- Count how many separate network calls one "page load" actually is.
-- Listen for the word **render** — it means "turn data into pixels".
+- Note the framing flip around the mid-point: from "how do we fix X" to "why does X happen at all?"
+- Watch for the phrase "problem statement" vs "solution statement". The speaker is careful.
+- Notice how the worked example names a single, specific user by role.
 
-## Lab: Devtools scavenger hunt (35 min)
+## Lab: three iterations of a crisp problem
 
-You will not write a line of code. You will look.
+You will take a vague problem and rewrite it three times, each rewrite sharper than the last.
 
-1. Open Chrome or Firefox. Go to any content-heavy site you know well (Wikipedia article, your college site, Cricbuzz live score).
-2. Right-click anywhere → **Inspect** → switch to the **Network** tab. Reload the page.
-3. Count the rows. Write down the total. Most students guess 5. Reality is often 80+.
-4. Find **one** request whose "Type" is `document` — this is the HTML itself. Click it. Look at the Response tab. That text is what the server sent.
-5. Find **one** request of type `xhr` or `fetch`. This is JavaScript on the page calling a backend API after load. Note its URL.
-6. Find **one** image and **one** font request. Note their sizes in KB.
-7. Switch to the **Performance** or **Lighthouse** tab. Run an audit. Screenshot the score.
-8. On paper or in Excalidraw, draw the five-box diagram from the reading and label which boxes were involved in loading this page.
+1. Pick one of these vague starting points (or bring your own):
+   - "Placement prep is stressful."
+   - "Class notes are scattered everywhere."
+   - "Campus events have low turnout."
+   - "The library is always full during exams."
+2. Open a blank doc or Excalidraw page. Create three columns labeled **V1**, **V2**, **V3**.
+3. **V1** — write the problem as a complaint, the way a friend would say it in the canteen. One line.
+4. **V2** — run it through the 5 Whys. Write the root cause and a new problem statement naming a specific user + specific moment.
+5. **V3** — rewrite V2 as a "How Might We" that is *specific about the user and moment, silent about the solution*. No "app", "AI", "platform" allowed.
+6. Below V3, answer four Heilmeier questions in one line each: What are you trying to do? Who cares? How will we know it worked? What's the biggest risk?
+7. Pair with a cohort partner. Trade V3s. Each of you tries to break the other's: is there a user named? a moment? a measurable gap?
+8. Rewrite V3 one more time based on their critique.
 
-Submit the screenshot + the diagram.
+Use the template:
+
+```
+V1 (the complaint):
+  _________________________________________________________
+
+V2 (after 5 Whys):
+  Root cause: _____________________________________________
+  Restated:   _____________________________________________
+
+V3 (How Might We):
+  How might we __________________________________________
+  for ___________________________________________________
+  when __________________________________________________ ?
+
+Heilmeier mini-pass:
+  What:    ______________________________________________
+  Who:     ______________________________________________
+  Success: ______________________________________________
+  Risk:    ______________________________________________
+```
 
 ## Quiz
 
-Four questions on the five-box model, the difference between client and server, what "state" means, and what a deployment is. No code. If you can explain each term to a non-technical friend, you'll pass.
+Quick check on today's core moves — Heilmeier, How-Might-We, 5 Whys, and the four properties of a crisp problem statement. Aim for 75%+. If you score lower, re-read the worked example; we rely on these muscles every single day from here on.
 
 ## Assignment
 
-Pick any app on your phone you used today. Write a 250-word note answering: *where does its state live, what does its client do, what does its server probably do, and which third-party APIs does it likely call?* Attach a hand-drawn or Excalidraw diagram. No code. Submission: PDF or image.
+Submit your final **V3 statement plus the four Heilmeier answers** as a **text submission**. One problem, one page, no more. We will grade on specificity and whether your statement names a user, a moment, and a measurable gap. Solution-smuggled language (words like "app", "dashboard", "AI") gets an automatic rewrite request.
 
-## Discuss: Mental models that matter
+## Discuss: sharpening each other's framing
 
-- Which box do you think most bugs live in, and why?
-- When Instagram feels "laggy", how would you figure out whether the phone, the network, or the server is to blame — without opening any code?
-- Your college placement portal crashes every year on results day. What does the five-box model predict is happening?
-- Where does state live in a Google Doc when two people are typing at once? Who owns the truth?
-- If an AI could only touch one box for you, which would you pick first and why?
+- Read your V3 out loud. Does the group believe the user is a real, specific person — or a vague persona?
+- Which of the four properties (user / moment / gap / urgency) is the easiest to fake? Why?
+- Give an example from your past where you built something nobody wanted. What was the framing mistake?
+- When is it dishonest to solution-smuggle — and when is it fine because the solution is obvious?
+- How does a crisp problem statement change *who you would go talk to next*?

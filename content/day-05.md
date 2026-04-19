@@ -1,159 +1,129 @@
 ---
-reading_time: 15 min
-tldr: "Every hard problem is a system. Map the loops, find the leverage, avoid symptom-chasing."
-tags: ["systems", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Draw a causal-loop diagram of a campus problem", "url": "https://excalidraw.com/"}
-resources: [{"title": "The Systems Thinker", "url": "https://thesystemsthinker.com/"}, {"title": "Thinking in Systems — Donella Meadows (book)", "url": "https://hbr.org/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}]
+reading_time: 10 min
+tldr: "Generate an image, brainstorm a story, design a poster — all in a browser, all free. Today you make something nobody else has made before."
+tags: ["use", "creativity", "consumer"]
+video: https://www.youtube.com/embed/SaVeQKF2JLE
+lab: {"title": "Design a hostel event poster with AI", "url": "https://labs.google/fx/tools/image-fx"}
+prompt_of_the_day: "A {{style, e.g. vibrant flat-illustration}} poster for {{event name}}, a {{event type}} at an Indian college hostel. Mood: {{mood}}. Key visual: {{main element}}. Colour palette: {{colours}}. Include space at the top for a title. Avoid: text in the image (I'll add text separately), realistic faces, clutter."
+resources: [{"title": "ImageFX (Google)", "url": "https://labs.google/fx/tools/image-fx"}, {"title": "Adobe Firefly", "url": "https://firefly.adobe.com/"}, {"title": "Stable Diffusion Web", "url": "https://stablediffusionweb.com/"}, {"title": "DALL-E via ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Canva", "url": "https://www.canva.com/"}]
 ---
 
 ## Intro
 
-Most problems you will work on are not isolated events. They are symptoms of a *system* — interconnected parts, loops, and delays. Today you learn to see those systems. This is the single biggest unlock for anyone who wants to stop building things that fix one bug while quietly creating two more.
+Today you become a one-person creative studio. You'll generate images, brainstorm a story arc, and build a hostel event poster — no Photoshop, no design skills, no budget. The "wow" moment today hits hard: the first time an AI generates an image from your words, you'll smile involuntarily.
 
-## Read: maps, loops, leverage points
+## Read: Making stuff with AI
 
-### From events to systems
+Creativity with AI is not "press button, get art". It's a back-and-forth where your taste is the real skill. AI is the hands; you're the director. The better you describe what's in your head, the closer the output.
 
-Donella Meadows, the grandmother of modern systems thinking, describes three levels of seeing:
+### Image generation: the four free tools worth knowing
 
-1. **Events** — "the mess queue was long today."
-2. **Patterns** — "the mess queue is always long on Wednesdays."
-3. **Systems** — "Wednesday is surprise-menu day, so more people show up, mess cooks slower because they're unfamiliar, and social-media posts draw even more people — creating a reinforcing loop."
+| Tool | Strength | Free tier | URL |
+|------|----------|-----------|-----|
+| ImageFX (Google) | Photorealistic + illustration, very fast | Generous free | `labs.google/fx/tools/image-fx` |
+| Adobe Firefly | Safe for commercial use, good on text-in-image | 25 credits/month free | `firefly.adobe.com` |
+| DALL-E in ChatGPT | Best at following complex instructions | A few free/day | `chat.openai.com` |
+| Stable Diffusion Web | Style variety, community models | Free with waits | `stablediffusionweb.com` |
 
-Most arguments happen at level 1. Real solutions require level 3.
+For most students: **start with ImageFX**. Sign in with Google, type, get 4 images in 10 seconds.
 
-### The two loops you need to know
+### How to write an image prompt that doesn't look AI-generic
 
-**Reinforcing loop (R):** a change in X causes more of Y, which causes more of X. Self-amplifying. Examples: virality, compound interest, rich-get-richer, hype cycles.
+An image prompt has five slots. Fill each.
 
-**Balancing loop (B):** a change in X causes more of Y, which causes *less* of X. Self-correcting. Examples: thermostats, hunger → eat → full → stop eating, traffic congestion pushing people to alternate routes.
+1. **Subject** — what is the picture *of*? ("a student on a rooftop")
+2. **Action / scene** — what's happening? ("looking at a city skyline at dusk")
+3. **Style** — what's the visual language? ("flat vector illustration, muted pastels")
+4. **Mood / light** — feeling? ("warm, nostalgic, golden hour")
+5. **Details to avoid** — ("no text, no realistic faces, no clutter")
 
-Almost every interesting system is a few reinforcing loops tangled with a few balancing loops, often with **delays** between cause and effect. Delays are where our intuition fails — we keep pushing on a lever and nothing happens, so we push harder, then everything overshoots.
+**Bad prompt:** "cool poster for hostel event"
 
-### Causal loop diagrams (CLDs)
+**Good prompt:**
+```
+Copy and paste this prompt:
 
-A CLD is the cheapest way to map a system. Notation:
+A flat vector illustration of a college student DJ-ing on a rooftop, silhouettes of friends dancing in the foreground, Bangalore skyline at sunset in the background. Style: retro risograph print, two-tone pink and teal, slightly grainy texture. Mood: fun, late-night, freshers vibe. Leave empty space at the top for a title. No text, no realistic faces, no watermarks.
+```
 
-- Draw variables as short noun phrases (e.g., "plate waste", "student frustration", "menu variety").
-- Draw arrows between variables.
-- Label each arrow **+** (same direction — more X means more Y) or **−** (opposite — more X means less Y).
-- If a loop is dominantly reinforcing, mark it **R**. If balancing, **B**.
-- Mark delays with two parallel lines: `—‖—`.
+That gives you four poster-ready images to choose from.
 
-### Worked example: the mess queue
+### Brainstorming and story arcs
 
-Variables:
+Images are flashy but the quiet superpower is ideation. Use AI as a brainstorm partner you can't exhaust.
 
-- Queue length at mess
-- Student frustration
-- Students arriving early (to beat the queue)
-- Students skipping mess (eating outside)
-- Mess throughput (plates served per minute)
+```
+Copy and paste this prompt:
 
-Relationships:
+I'm planning a 2-minute skit for our college cultural night. Theme: engineering student vs. placement season. Give me:
+- 5 possible story arcs (1 line each)
+- For the one I'll pick, 3 act structure, 4 characters with quirks, and 2 punchline lines.
+Keep it grounded in Indian campus culture — references to 8 AM classes, Maggi at 2 AM, attendance shortage, etc.
+```
 
-- `Queue length` → **+** → `Student frustration`
-- `Student frustration` → **+** → `Students arriving early`
-- `Students arriving early` → **+** → `Queue length` (at peak windows)
-- `Student frustration` → **+** → `Students skipping mess`
-- `Students skipping mess` → **−** → `Queue length` (delay: students re-evaluate weekly)
+You now have a skit in 90 seconds. Whether you actually use it — your call.
 
-You now see two loops:
+### The combo move: text + image together
 
-- **R1 (vicious):** Queue → Frustration → Arrive-early → Queue. Reinforcing. This explains why queues get worse even as the mess tries harder.
-- **B1 (corrective, slow):** Queue → Frustration → Skip-mess → Queue-shorter. Balancing, but with a delay of days or weeks.
+Generate a moodboard, then a story, then poster art, all from the same concept. Example: you're hosting a "Retro Bollywood Night" in the hostel.
 
-The naive fix is "add a counter" or "hire more staff". The systems view suggests a different move: break R1 by *staggering* mess slot times by hostel block, which prevents early-arrival from compounding.
+1. **Moodboard prompt:** "9 image moodboard references for 1970s Bollywood aesthetic — fonts, colours, costumes, iconic props."
+2. **Tagline prompt:** "20 catchy taglines under 8 words for a hostel 'Retro Bollywood Night', mixing Hindi and English playfully."
+3. **Poster prompt:** Pick your favourite tagline and moodboard reference, feed both into ImageFX.
 
-### Leverage points (Meadows's list, simplified)
+Three prompts, one aesthetic direction. That's how designers actually work, minus the design degree.
 
-Meadows ranks leverage points — places to intervene — from weakest to strongest:
+### The "wow" trick of the day
 
-| Rank | Leverage | Example |
-|------|----------|---------|
-| Low | Parameters / numbers | Increase mess staff by 2 |
-| Medium | Feedback loops | Add a "how was today's food?" daily poll |
-| Higher | Information flows | Show live queue time on a hostel screen |
-| Higher | Rules | Stagger meal times by hostel block |
-| Very high | Goals of the system | Redefine mess success from "low cost per plate" to "low plate-waste + high satisfaction" |
-| Highest | Paradigm | "Feeding is a service, not a logistics job" |
+After you generate an image, download it, then upload it back into ChatGPT or Claude with the prompt: *"Describe this image in extreme detail as if you were writing a prompt to recreate it."* You now have a reusable prompt for that exact style. Steal your own successful outputs.
 
-Most students instinctively reach for parameters. The bigger wins are in rules, goals, and paradigms.
+### What AI images still can't do well
 
-### A second worked example: placement prep panic
+- **Text inside images** — most tools butcher text. Add text in Canva afterwards.
+- **Hands** — still weird sometimes. Prefer silhouettes or hidden hands.
+- **Specific faces** (celebrities, you) — don't try to generate real people.
+- **Consistent characters across multiple images** — hard on free tools.
 
-Variables: anxiety, prep hours, mock interviews taken, confidence.
+Rule: AI generates the background, mood, and composition. You add the text and final polish in Canva. That's the winning workflow for posters.
 
-- `Anxiety` → **+** → `Prep hours` (short term)
-- `Prep hours` → **+** → `Confidence`
-- `Confidence` → **−** → `Anxiety` (delayed)
-- `Anxiety` → **−** → `Mock interviews taken` (people avoid scary things)
-- `Mock interviews taken` → **+** → `Confidence`
+## Watch: Poster-to-print with AI in under 15 minutes
 
-Loops:
+A walkthrough of generating a poster in ImageFX, cleaning it up, and adding text in Canva.
 
-- **B1:** Anxiety → Prep → Confidence → less Anxiety. Balancing, slow.
-- **R1 (vicious):** Anxiety → Avoid mocks → less Confidence → more Anxiety. Reinforcing.
-
-Insight: *no amount of solo prep hours will fix the panic unless you break the mock-avoidance loop.* That is a structural insight, not a study-harder insight. The leverage point is changing the rule ("mocks are mandatory twice a week in small groups") rather than the parameter ("study more hours").
-
-### Delays — the hidden monster
-
-Whenever a system behaves surprisingly — overshooting, oscillating, failing despite effort — look for a delay. Scholarship disbursement, fee refund systems, campus maintenance tickets all suffer from this. The shorter the delay between action and visible feedback, the faster the system can self-correct. *Shortening a feedback delay is almost always high leverage.*
-
-## Watch: seeing systems, not events
-
-A short primer on causal loops and stock-and-flow thinking. Pay attention to how the speaker *draws* the same problem in three different ways.
-
-https://www.youtube.com/embed/VIDEO_ID
+https://www.youtube.com/embed/SaVeQKF2JLE
 <!-- TODO: replace video -->
 
-- Notice how loops are labeled R or B and why that label matters.
-- Listen for any mention of "delay" — it's where intuition breaks.
-- Watch how a low-leverage intervention is contrasted with a high-leverage one.
+- Notice how the presenter iterates — they regenerate 5–6 times before picking one.
+- Watch them explicitly avoid generating text inside the image.
+- See the final Canva step where everything gets tied together.
 
-## Lab: draw a causal-loop diagram in Excalidraw
+## Lab: Your hostel event poster
 
-You'll map one real campus problem as a causal loop diagram.
+You'll end with a finished poster you can actually put on the hostel notice board or in a WhatsApp group.
 
-1. Pick one problem with clear structure: hostel fee payment queues, library seat scarcity during exams, mess plate-waste, placement-cell email overload, or bring your own.
-2. Open Excalidraw. Create a blank canvas.
-3. List 5–8 variables as sticky notes. Keep them as short noun phrases. Resist listing actions ("students complain") — write them as *quantities* ("complaints per day").
-4. Draw arrows between them. For each arrow, label **+** or **−**.
-5. Identify at least **one reinforcing loop** and **one balancing loop**. Label them R1, B1.
-6. Mark any arrow where there is a real-world delay with a small `||` on the arrow.
-7. Circle one variable that looks like a low-leverage intervention point (e.g., a number you'd tweak).
-8. Circle one variable that looks like a high-leverage intervention point (a rule, goal, or paradigm).
-9. In a text box next to the diagram, write 3 lines: *what the system does today*, *where the highest leverage is*, *what you would test first*.
-10. Export a PNG and upload it for submission.
+1. Pick any event — real or imagined. Hostel freshers, dorm movie night, study-group launch, inter-year cricket match, fest after-party. Write one line describing the vibe.
+2. Go to `https://labs.google/fx/tools/image-fx` and sign in. Write a 5-slot prompt (subject, scene, style, mood, avoid). Generate 4 images.
+3. Not happy? Change ONE slot (usually style or mood) and regenerate. Iterate 3–4 times.
+4. Download your favourite image. No text in it yet — that's intentional.
+5. In ChatGPT or Claude, ask for 15 event taglines under 8 words each. Pick your favourite.
+6. Open `https://www.canva.com/`, create a new poster, upload your image as background, add the tagline, event date, and venue on top. Use Canva's free fonts.
+7. Bonus "wow" step: upload your final poster back into ChatGPT and ask *"What would make this poster 20% better?"* Apply one suggestion.
+8. Export as PNG. Post in the class group.
 
-Template text to include on your canvas:
-
-```
-System: _______________________________________
-Time horizon I'm looking at: ___________________
-
-Loops found:
-  R1 — ___________________________________
-  B1 — ___________________________________
-
-Highest-leverage intervention I see: ___________
-Why it beats a parameter tweak: ________________
-```
+**Victory condition:** one poster PNG, actually usable, posted in the class group.
 
 ## Quiz
 
-Quick check on reinforcing vs balancing loops, the role of delays, and Meadows's ordering of leverage points. Four questions. Aim for 75%+ before Day 6. These loops will appear again when we decompose the capstone.
+Four questions: the five slots of an image prompt, why you add text in Canva not in the image, one thing AI images fail at, and what "iteration" means in this context.
 
 ## Assignment
 
-Submit your Excalidraw PNG + the 3-line text as a **file upload**. The diagram must show: at least 5 variables, at least one reinforcing loop, at least one balancing loop, and one marked high-leverage intervention. If your diagram has no loops, you haven't modeled a system — you've drawn a flowchart. Redo it.
+Submit your final poster PNG plus the original AI-generated background (both). Add one line: what did you change between your first generation and your final one? If you used the poster for a real event, tell us.
 
-## Discuss: where loops hide
+## Discuss: AI art, taste, and the creativity question
 
-- Give an example of a vicious reinforcing loop in your own life as a student. What would break it?
-- Why do institutions usually intervene at the lowest-leverage points?
-- When is it dangerous to act on a causal loop diagram you built in 30 minutes?
-- What's the longest feedback delay you've personally experienced on campus? What does that delay do to behavior?
-- Pick someone else's diagram. What variable is missing that would change the story?
+- If AI made the image and you wrote the prompt, who's the "artist"?
+- Share one prompt that failed hilariously — what did AI do instead?
+- Is using AI images for a college magazine ethically different from a paid commercial project?
+- Did iterating feel like creating, or like shopping? Both are valid answers.
+- What's one creative thing you'd never let AI touch, and why?

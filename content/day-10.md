@@ -1,169 +1,159 @@
 ---
-reading_time: 14 min
-tldr: "APIs are contracts between systems. Learn to read them; AI writes the calls."
-tags: ["concepts", "apis", "systems"]
+reading_time: 15 min
+tldr: "The best design research is a good conversation. Shut up, listen, write exact words, not opinions."
+tags: ["empathy", "design"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Three public APIs in Hoppscotch", "url": "https://hoppscotch.io/"}
-resources: [{"title": "Postman", "url": "https://www.postman.com/"}, {"title": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com/"}, {"title": "httpbin", "url": "https://httpbin.org/"}]
+lab: {"title": "Run one 20-minute user interview", "url": "https://www.designkit.org/"}
+resources: [{"title": "IDEO Design Kit — methods", "url": "https://www.designkit.org/"}, {"title": "The Mom Test by Rob Fitzpatrick (book)", "url": "https://hbr.org/"}, {"title": "IDEO on empathy", "url": "https://www.ideo.com/"}]
 ---
 
 ## Intro
 
-If the web is a country, APIs are its common language. Every non-trivial app you've ever touched is a front-end talking to one or more APIs. Today we build the mental model without writing a single line of code.
+User interviews sound trivial — you just ask questions, right? Wrong. Most student interviews are quietly useless because they ask leading questions and reward polite lies. Today you learn the specific shape of a *useful* interview: one that makes the person tell you stories from their life, not opinions about your idea.
 
-## Read: APIs as menus, contracts, and pipes
+## Read: why most interviews are worthless, and how to fix them
 
-### What an API actually is
+### The core failure: asking about the future
 
-**API** = Application Programming Interface. Strip the jargon: it is a **menu** a server publishes so other programs know what to order.
+"Would you use an app that helps you find study partners?" → almost everyone says *"yeah sure, sounds useful."* Then nobody downloads it.
+
+People are terrible predictors of their own future behavior. They are excellent historians of their own recent past. So:
+
+> **Rule 1:** Ask about their life, not about your idea.
+
+"Tell me about the last time you looked for a study partner" beats "would you use…" every single time. The past is concrete. The future is wishful.
+
+### The Mom Test
+
+Rob Fitzpatrick's framing is called **The Mom Test**: ask questions that are so specific and past-tense that even your mom — who loves you and wants to be encouraging — could not accidentally lie to you.
+
+Three rules from the book:
+
+1. **Talk about their life, not your idea.**
+2. **Ask about specifics in the past, not opinions about the future.**
+3. **Talk less, listen more.**
+
+### Good vs bad questions
+
+| Bad | Why | Good |
+|-----|-----|------|
+| "Would you pay for this?" | Invites politeness | "What did you spend money on last month to solve this?" |
+| "Do you think study partners help?" | Invites opinion | "Walk me through the last time you studied with someone." |
+| "Would you use this app?" | Asks about future | "How did you handle this problem last week?" |
+| "Is this a good idea?" | Invites flattery | "What's the last thing that really frustrated you about X?" |
+
+### The 5-question interview skeleton
+
+Any good 20-minute interview fits into 5 beats. Memorize this shape:
+
+1. **Warm-up (2 min)** — "Tell me about yourself, what year, what you're studying." Lowers their guard.
+2. **Context (5 min)** — "When was the last time you [did the thing we care about]?" Get them into a specific memory.
+3. **Story dig (8 min)** — Follow that memory. "What happened next? What did you do? How did it make you feel?" Do not interrupt.
+4. **Workaround probe (3 min)** — "What did you do to get around the problem?" The workaround is usually the gold.
+5. **Close (2 min)** — "Who else should I talk to about this?" and "Is it okay if I check back in a week?"
+
+### The five magical follow-up phrases
+
+When you are listening and want them to say more, use these:
+
+- "Tell me more about that."
+- "What happened next?"
+- "Can you give me an example?"
+- "Why do you think that is?"
+- Silence. (Count to five in your head. They will keep talking.)
+
+### Worked example: interviewing about notes sharing
+
+Interviewer asks the bad version:
+
+> *"Would you use an app where seniors upload their notes?"*
+> *"Yeah, sounds cool."*
+
+Useless. Now the good version:
+
+> *"Tell me about the last time you were studying for an exam and you needed notes you didn't have."*
+> *"Oh god — OS mid-sem. I didn't have unit 3 notes because I skipped that week."*
+> *"Walk me through what you did."*
+> *"I messaged the group. Nobody replied till 10pm. Then I went through three seniors' Google Drive links — most were broken. I ended up photocopying from a classmate at 11pm, skipped dinner."*
+> *"What did you do with the photocopies the next day?"*
+> *"I scanned them on my phone and made a WhatsApp group with four other people to share."*
+
+You now know: the real behavior is WhatsApp-group-based, the moment of pain is 8pm the night before, the workaround is scanning + group-sharing. You did not ask about an app. You learned what was real. *That* is the interview.
+
+### Common interview mistakes
+
+- **Pitching.** The moment you describe your idea, the interview becomes a politeness contest.
+- **Leading.** "Don't you find that frustrating?" → yes, obviously. Useless data.
+- **Filling silence.** When they pause, you want to fill it. Don't.
+- **Forgetting to record.** Get permission and record. You will remember 20% otherwise. Minimum: take verbatim notes of their exact phrases.
+- **Interviewing friends only.** Friends lie to be kind. Reach out to 2nd-degree connections too.
+
+### Note-taking format
+
+Capture their words, not your summary. Later you will thank yourself.
 
 ```
-    [ Your app ]  --- GET /users/42 --->  [ Their API ]
-                                                 |
-                   <---  JSON response  ---------+
+INTERVIEW NOTES
+Who: _________________ (year, branch, relevant context)
+When: _________________   Duration: _______ min
+Recorded? Y / N
+
+Verbatim quotes (their words):
+  "_____________________________________________________"
+  "_____________________________________________________"
+
+Stories they told (bullet points, past tense):
+  - _____________________________________________________
+  - _____________________________________________________
+
+Workarounds they mentioned:
+  - _____________________________________________________
+
+Surprises (things I didn't expect):
+  - _____________________________________________________
+
+My biases I noticed while interviewing:
+  - _____________________________________________________
 ```
 
-Three metaphors, pick the one that sticks:
+## Watch: how to listen for the real problem
 
-- **Menu at a restaurant** — defined dishes, defined ingredients, defined prices. You order, kitchen produces.
-- **Contract** — if you send X with shape Y, I promise to return Z.
-- **Pipe** — structured data flows in, structured data flows out. No human involved.
-
-### Anatomy of an API call
-
-| Part | Example | What it controls |
-|---|---|---|
-| Base URL | `https://api.github.com` | Which server |
-| Endpoint | `/users/torvalds` | Which resource |
-| Method | `GET` | What to do with it |
-| Headers | `Authorization: Bearer <token>` | Who you are, what format |
-| Query params | `?per_page=5&sort=created` | Filters |
-| Body | `{ "title": "Hello" }` | Payload for POST/PUT/PATCH |
-| Response | JSON (usually) | What you get back |
-
-### REST, the dominant dialect
-
-**REST** is a style, not a technology. Core idea: treat everything as a **resource** with a URL, act on it with HTTP verbs.
-
-| Verb | Intent | Example |
-|---|---|---|
-| GET | Read | `GET /orders/42` |
-| POST | Create | `POST /orders` |
-| PUT / PATCH | Update | `PATCH /orders/42` |
-| DELETE | Delete | `DELETE /orders/42` |
-
-A campus placement portal, restful:
-
-```
-GET    /students            list students
-GET    /students/CS22B007   get one
-POST   /students            register a new one
-PATCH  /students/CS22B007   update CGPA
-DELETE /students/CS22B007   withdraw
-GET    /companies/Zoho/applicants   nested resource
-```
-
-Readable. Predictable. Learnable.
-
-### What a JSON response looks like
-
-```
-Example — you're reading, not typing.
-
-{
-  "id": "CS22B007",
-  "name": "Priya Menon",
-  "cgpa": 8.9,
-  "skills": ["python", "ml", "react"],
-  "placed": false,
-  "applications": [
-    { "company": "Zoho",   "status": "shortlisted" },
-    { "company": "Swiggy", "status": "rejected" }
-  ]
-}
-```
-
-JSON is just key–value pairs, arrays, and nesting. If you can read a WhatsApp contact card, you can read JSON.
-
-### REST vs GraphQL vs RPC — one-line mental model
-
-| Style | Mental model | When you'll meet it |
-|---|---|---|
-| REST | "GET a resource by URL" | Most public APIs (GitHub, Stripe) |
-| GraphQL | "Send a shopping list, get exactly that" | Apps with deep nested UIs (Shopify, GitHub v4) |
-| gRPC / RPC | "Call a function on another machine" | Internal microservices |
-| WebSockets | "Keep the line open, talk both ways" | Chat, live scores, collaborative editing |
-
-You don't need to pick today. You need to recognize them when an AI suggests one.
-
-### Auth: the part everyone gets wrong
-
-Most APIs need to know who's calling. Four common patterns:
-
-- **API key** — a long string in a header. Simple, for server-to-server.
-- **OAuth / login tokens** — user logs in, app gets a token on their behalf. "Sign in with Google" is this.
-- **JWT** — a self-describing token the server can verify without a database lookup.
-- **Session cookie** — the browser default; works because browsers auto-send cookies.
-
-> A leaked API key is the single most common security incident among student projects. Treat them like your password — never commit them to GitHub.
-
-### Rate limits, idempotency, versioning
-
-Three words that separate toy APIs from real ones:
-
-- **Rate limit** — "You can call me 60 times per minute. After that, 429." Twitter, GitHub, OpenAI all rate-limit.
-- **Idempotent** — calling it twice is the same as calling it once. `GET` is idempotent; naive `POST /pay` is not. Payment APIs invent an idempotency key so you don't double-charge.
-- **Versioning** — `/v1/users` vs `/v2/users`. APIs change; versions let old clients keep working.
-
-### A concrete story: the Dunzo clone
-
-Your dummy Dunzo clone needs four APIs:
-
-1. **Your own backend** — user accounts, orders.
-2. **Maps API** — distance, ETA, directions.
-3. **Payments API** — Razorpay/Stripe to charge the card.
-4. **SMS API** — Twilio/MSG91 to text the OTP.
-
-Your server is a conductor. Each box plays one instrument. Your code is the score. Tomorrow we'll see where the data itself lives.
-
-## Watch: APIs in 100 seconds, then deeper
-
-Watch a short "APIs in 100 seconds" explainer, then a longer REST walkthrough.
+A short clip on interviewing technique. Watch how the interviewer uses silence and reflects back the user's own words.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Spot the difference between an API and a website.
-- Notice how the same backend can serve a web app, an Android app, and a smartwatch.
-- Pay attention to the word **endpoint**.
+- Count the number of times the interviewer says "tell me more about that".
+- Note the ratio of talking time (aim for 20% you, 80% them).
+- Watch for the moment the interviewee says something unexpected — does the interviewer chase it or steer past it?
 
-## Lab: Three APIs in Hoppscotch (40 min)
+## Lab: one real 20-minute interview
 
-Browser-based, no install, no code.
+You are going to conduct one real interview — on a real person, about a real past problem. Not roleplay.
 
-1. Open `https://hoppscotch.io/`. Leave the method as `GET`.
-2. **API 1 — GitHub user**. Enter `https://api.github.com/users/torvalds`. Send. Look at the JSON response. On a worksheet, write: 3 fields you understand, the status code, the `content-type` response header.
-3. **API 2 — JSONPlaceholder (fake blog)**. `GET https://jsonplaceholder.typicode.com/posts/1`. Send. Change the ID to `2`, `10`, `999`. Note when you get a 404 and why.
-4. **API 3 — OpenLibrary**. `GET https://openlibrary.org/search.json?q=the+alchemist`. Send. Count how many results. Try a different query param.
-5. On httpbin, `GET https://httpbin.org/headers`. Look at what headers **your browser** sent without you realising.
-6. Try one `POST` on `https://jsonplaceholder.typicode.com/posts` with a JSON body of your choice. The API will pretend to save it and echo back an `id`.
-7. On paper, design a mini-menu for a *hostel laundry tracker* API: list 4 endpoints with method + path + one-line purpose each. Do not write code. Design only.
-8. Export the worksheet + a screenshot of one Hoppscotch response.
-
-Submit the worksheet + screenshots.
+1. Pick a small problem area relevant to your Day 7 capstone direction (placements, mess, notes, events, commute, anything).
+2. Find one classmate or junior who has experienced that problem recently. Not your best friend. Not someone you want to impress.
+3. Schedule 20 minutes. In person beats video call.
+4. Ask permission to record audio on your phone, *and* take written notes. Promise not to share the recording.
+5. Run the 5-beat skeleton above. Time yourself loosely — don't be a robot about it.
+6. Use the five follow-up phrases often. Count internally how many times you used each.
+7. After the interview, spend 10 minutes immediately writing up the notes using the template. Capture verbatim quotes while fresh.
+8. Highlight the *one surprising thing* they said — the part you didn't expect.
+9. Identify at least one workaround they mentioned. Workarounds point to unmet needs.
+10. Write 2 lines on what you would do differently in your next interview.
 
 ## Quiz
 
-4 questions: identify a method from a scenario, read a JSON response and extract a field, explain what a 429 means, describe one difference between REST and GraphQL in your own words.
+Quick check on The Mom Test rules, the 5-beat skeleton, and the difference between past-tense and future-tense questions. Four questions. Aim for 75%+ — you will interview more people this week for your capstone direction.
 
 ## Assignment
 
-Pick an app you use (Ola, Swiggy, LinkedIn, whatever). Sketch its likely **public API** as a list of 6–10 endpoints (method + path + purpose). Bonus: mark which third-party APIs it probably calls. Submission: one-page PDF or markdown doc. No code.
+Submit your completed interview notes as a **text submission** using the template. Must include: at least 2 verbatim quotes, at least 1 story in past tense, at least 1 workaround they mentioned, and 1 surprise. Also include a 2-line reflection on your interviewing technique. No names needed; anonymize if they prefer.
 
-## Discuss: Thinking in contracts
+## Discuss: where empathy breaks down
 
-- Why is `GET` idempotent but `POST` usually isn't? Give a scenario where that matters.
-- Razorpay vs UPI vs Paytm — if you were building a checkout, how would you decide which API to integrate first?
-- What's the difference between an API going down and an API returning a 500?
-- An API changes its response shape without a new version. What breaks in every app using it, and whose responsibility is the fix?
-- Could a restaurant's paper menu become "RESTful"? What would be the resource, what would be the verbs?
+- Which Mom Test rule did you violate most during your interview? Be honest.
+- Did the person you interviewed tell you a story that contradicted something you assumed? What was it?
+- When is it ethical to record an interview? When not?
+- How many interviews do you think are "enough" to see a pattern — 3, 5, 10? Defend your answer.
+- Whose voice is *missing* from the problem you're exploring? Who won't show up to a convenient interview?

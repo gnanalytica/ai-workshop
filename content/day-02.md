@@ -1,159 +1,134 @@
 ---
-reading_time: 15 min
-tldr: "A vague problem is the root of every wasted sprint. Sharpen the question before you chase the answer."
-tags: ["framing", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Rewrite a vague problem three times", "url": "https://excalidraw.com/"}
-resources: [{"title": "The Heilmeier Catechism (DARPA)", "url": "https://en.wikipedia.org/wiki/George_H._Heilmeier#Heilmeier_Catechism"}, {"title": "IDEO Design Kit — How Might We", "url": "https://www.designkit.org/"}, {"title": "Are You Solving the Right Problem? — HBR", "url": "https://hbr.org/"}]
+reading_time: 10 min
+tldr: "Bad prompts get bad answers. Learn the CREATE framework and watch AI quality jump 10x — same tool, same free account."
+tags: ["use", "prompt", "productivity"]
+video: https://www.youtube.com/embed/jC4v5AS4RIM
+lab: {"title": "Rewrite 3 prompts using CREATE", "url": "https://chat.openai.com/"}
+prompt_of_the_day: "You are a {{role, e.g. strict placement coach}}. Context: {{who I am and what I need}}. Task: {{the specific thing I want}}. Format: {{bullets / table / 200 words / email}}. Constraints: {{tone, length, must-include, must-avoid}}. Examples of what good looks like: {{paste 1-2 examples or say 'none'}}."
+resources: [{"title": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}, {"title": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"title": "Google Prompting Essentials", "url": "https://grow.google/prompting-essentials/"}]
 ---
 
 ## Intro
 
-Most bad projects are not bad because of bad execution. They are bad because someone answered a question nobody had clearly asked. Today you learn the single highest-leverage habit of a good builder: converting vague, tangled problems into crisp statements that you — and anyone you hand the work to — can actually act on.
+Yesterday you got wins. Today you get leverage. The difference between an average AI user and someone who feels like they hired a team is one skill: prompting. Same tool, same account — but 10x the quality. By the end of today you'll have a personal prompt library you can paste for the rest of your life.
 
-## Read: From fog to framing
+## Read: The CREATE framework
 
-### The symptom: vague problems
+Most people type into AI like they type into Google. That's the problem. AI is not a search box — it's a very literal collaborator. The more it knows about who you are, what you want, and what "good" looks like, the better it answers. Use this acronym. Name it. Live by it.
 
-"I want to build something for students." "We should do something with AI for education." "Hostel Wi-Fi is bad." These are not problems. They are *vibes*. Vibes cannot be solved. They can only be argued about.
+**CREATE** stands for:
 
-A crisp problem statement has four properties:
+- **C — Character / role.** Who should the AI pretend to be?
+- **R — Request.** What exactly do you want?
+- **E — Examples.** What does good look like?
+- **A — Audience / context.** Who are you, who's this for?
+- **T — Tone & format.** Voice, length, structure.
+- **E — Edge cases / constraints.** What to avoid, must-include, limits.
 
-1. **A specific user** — not "students", but "2nd-year students in Block-B hostel who commute to mess at 9:30pm".
-2. **A specific painful moment** — the instant where the current experience fails.
-3. **A measurable gap** — what is happening today vs. what should be happening.
-4. **A reason it matters now** — why bother this week instead of next year.
+You don't have to use all six every time. But if an AI answer is bad, check which letter you skipped.
 
-### Tool 1: The Heilmeier Catechism
+### Before and after (same tool, same day)
 
-George Heilmeier, the former DARPA director, made every project proposer answer the same nine questions. It's brutal and clarifying:
+**Bad prompt:** "write me a cover letter for a data science internship"
 
-> 1. What are you trying to do? Articulate it with absolutely no jargon.
-> 2. How is it done today, and what are the limits of current practice?
-> 3. What is new in your approach and why do you think it will be successful?
-> 4. Who cares? If you're successful, what difference will it make?
-> 5. What are the risks?
-> 6. How much will it cost?
-> 7. How long will it take?
-> 8. What are the mid-term and final "exams" to check for success?
-> 9. How will you know you're done?
+**Result:** Generic, robotic, uses the phrase "highly motivated individual", sounds like 50,000 other letters.
 
-If you cannot answer (1) in one sentence without buzzwords, you do not understand your problem yet. Go back.
+**CREATE prompt:**
 
-### Tool 2: "How Might We…"
+```
+Copy and paste this prompt:
 
-Once you know the pain, reframe it as an invitation. "How Might We" (HMW) is a prompt format invented at P&G and popularized by IDEO. It turns a complaint into a design challenge.
+You are a senior recruiter at a Bangalore product startup who screens 200 CVs a week.
 
-- Too broad: *How might we fix education?* → useless.
-- Too narrow: *How might we add a red button to the app?* → traps you into one solution.
-- Just right: *How might we help 2nd-year students decide what electives to pick before the 48-hour registration window closes?*
+I'm a 3rd-year ECE student with a CGPA of 8.1, two Kaggle bronze medals, and one Python-based college project on traffic signal optimisation. I'm applying for a Data Science Intern role at a logistics startup (20-person team, Series A).
 
-A good HMW is specific about the user and the moment, but silent about the solution.
+Write a cover letter of 180 words max.
 
-### Worked example: the mess menu problem
+Tone: confident, specific, no buzzwords. Sound like a real 21-year-old, not a LinkedIn bot.
 
-Vague starting point:
+Must include: my Kaggle work framed in plain English, why logistics interests me, one question I'd want to ask the founder.
 
-> "The mess food is bad."
+Avoid: "highly motivated", "passionate", "synergy", any phrase that sounds like a template.
 
-**Heilmeier pass:**
+Example of good opening line: "I spent last weekend trying to predict Bangalore auto fares from 3 GB of messy CSVs — I didn't win, but I learnt why logistics data is genuinely fun."
+```
 
-| Q | Rough answer |
-|---|------|
-| What are you trying to do? | Reduce the gap between what mess residents want to eat and what is served. |
-| How is it done today? | A committee of 5 seniors picks a 4-week rotating menu in July. No feedback loop during the semester. |
-| What's new? | A 30-second weekly "what will you actually eat?" poll whose results directly adjust next week's procurement. |
-| Who cares? | 420 residents, the mess manager (food waste hits his budget), hostel warden. |
-| Risks? | Low poll response, political pushback from committee. |
-| Success metric? | Weekly plate-waste weight down 20% in 6 weeks. |
+**Result:** You now have a letter you'd actually send. Specificity is the whole game.
 
-**HMW rewrite:**
+### The five moves that instantly upgrade any prompt
 
-> *How might we give mess residents a 30-second weekly way to shape next week's menu, so procurement can cut waste?*
+| Move | What to add | Example |
+|------|-------------|---------|
+| Give it a role | "You are a…" | "You are a harsh DSA interviewer." |
+| Give it *you* | Your background in one line | "I'm a 2nd-year CSE student, weak at recursion." |
+| Ask for a format | Bullets / table / 3 sections | "Reply as a 3-column table." |
+| Show an example | "Good looks like this: …" | Paste a paragraph you liked. |
+| Ask it to think | "Before answering, list your assumptions." | Forces slower, better reasoning. |
 
-Notice: the problem is now small enough to attack, big enough to matter, and the success metric (plate-waste weight) is concrete.
+### Your reusable prompt library (copy these into a Notes app today)
 
-### The 5 Whys (when you are stuck on symptoms)
+**Study helper**
+```
+You are a patient tutor. I'm a 2nd-year engineering student. Explain {{topic}} in this order: (1) one-line intuition, (2) formal definition, (3) worked example with numbers, (4) three practice questions — don't solve them yet.
+```
 
-Ask "why" five times in a row on the surface complaint. You usually land somewhere unexpected.
+**Writer-with-my-voice**
+```
+Rewrite this {{email / essay / message}} in my voice. My voice samples are below. Keep it under {{N}} words. Don't use em-dashes, corporate buzzwords, or the word "delve". Samples: {{paste 2-3 things you've written}}.
+```
 
-1. *Mess food is bad.* Why?
-2. *The menu repeats boring items.* Why?
-3. *The committee picked items that store well, not items people like.* Why?
-4. *They don't know what people like week-to-week.* Why?
-5. *There is no feedback loop between eaters and procurement.* → **Root cause**: missing feedback loop, not bad taste.
+**Explainer / simplifier**
+```
+Explain {{topic}} three times: (a) to a 10-year-old using a food analogy, (b) to a 2nd-year engineering student, (c) to a senior professor. Keep each version under 100 words.
+```
 
-The fix is now obvious: build the feedback loop. You just avoided building a "better menu algorithm" nobody needed.
+**Decision-helper**
+```
+I'm trying to decide between {{A}} and {{B}}. Give me: 3 reasons for A, 3 reasons for B, 3 questions I should ask myself, and finally your honest recommendation if you were me.
+```
 
-### Common framing mistakes
+### The "wow" trick of the day
 
-- **Solution-smuggling.** "How might we build an app for mess feedback?" smuggles in "app" as the answer. Strip it.
-- **Infinite scope.** "How might we improve campus life?" — cannot be attacked.
-- **No user.** Passive voice hides the human. If you can't name the person whose day gets better, start over.
-- **No timebox.** If the problem has been around for 10 years, why does it need to be solved *this week*?
+After any AI answer, type: **"What did you assume that might be wrong? What would you ask me to make this 2x better?"** The AI will reveal exactly what it guessed about your situation. Fix those, re-ask, and the next answer is dramatically better.
 
-## Watch: the art of problem framing
+## Watch: Prompt engineering basics in 10 minutes
 
-A short talk on why "solving the right problem" is the rarest skill in product work. Watch once at 1x — it rewards attention.
+One short primer on structuring prompts. Watch for the before/after demos — they're the clearest way to internalise why CREATE works.
 
-https://www.youtube.com/embed/VIDEO_ID
+https://www.youtube.com/embed/jC4v5AS4RIM
 <!-- TODO: replace video -->
 
-- Note the framing flip around the mid-point: from "how do we fix X" to "why does X happen at all?"
-- Watch for the phrase "problem statement" vs "solution statement". The speaker is careful.
-- Notice how the worked example names a single, specific user by role.
+- Notice how experts almost always give the AI a *role* first.
+- Count how many times they refine a prompt rather than re-prompt from scratch.
+- Pay attention to format instructions — "reply as a table" changes everything.
 
-## Lab: three iterations of a crisp problem
+## Lab: Rewrite three real prompts
 
-You will take a vague problem and rewrite it three times, each rewrite sharper than the last.
+You'll end with a Google Doc containing your 3 bad-vs-good prompt pairs.
 
-1. Pick one of these vague starting points (or bring your own):
-   - "Placement prep is stressful."
-   - "Class notes are scattered everywhere."
-   - "Campus events have low turnout."
-   - "The library is always full during exams."
-2. Open a blank doc or Excalidraw page. Create three columns labeled **V1**, **V2**, **V3**.
-3. **V1** — write the problem as a complaint, the way a friend would say it in the canteen. One line.
-4. **V2** — run it through the 5 Whys. Write the root cause and a new problem statement naming a specific user + specific moment.
-5. **V3** — rewrite V2 as a "How Might We" that is *specific about the user and moment, silent about the solution*. No "app", "AI", "platform" allowed.
-6. Below V3, answer four Heilmeier questions in one line each: What are you trying to do? Who cares? How will we know it worked? What's the biggest risk?
-7. Pair with a cohort partner. Trade V3s. Each of you tries to break the other's: is there a user named? a moment? a measurable gap?
-8. Rewrite V3 one more time based on their critique.
+1. Open a Google Doc. Title it "My Prompt Upgrades — Day 2".
+2. Write down 3 things you'd actually ask an AI this week: e.g. "help me study for OS midterm", "write a DM to a senior for referral", "help me plan my week".
+3. For each one, first write the *lazy* version you'd have typed on Day 1. Paste it into ChatGPT. Screenshot the answer.
+4. Now rewrite it using CREATE — all six letters. Paste the new version into the same chat. Screenshot the new answer.
+5. Under each pair, write 2 lines: what got better and why.
+6. Ask the AI: *"What did you assume that might be wrong about me?"* Paste its reply into your doc.
+7. Save one of your three as a permanent template in a Notes app called "My Prompts".
+8. Submit the Doc link.
 
-Use the template:
-
-```
-V1 (the complaint):
-  _________________________________________________________
-
-V2 (after 5 Whys):
-  Root cause: _____________________________________________
-  Restated:   _____________________________________________
-
-V3 (How Might We):
-  How might we __________________________________________
-  for ___________________________________________________
-  when __________________________________________________ ?
-
-Heilmeier mini-pass:
-  What:    ______________________________________________
-  Who:     ______________________________________________
-  Success: ______________________________________________
-  Risk:    ______________________________________________
-```
+**Victory condition:** one Google Doc with three before/after pairs and one saved template you'll reuse this semester.
 
 ## Quiz
 
-Quick check on today's core moves — Heilmeier, How-Might-We, 5 Whys, and the four properties of a crisp problem statement. Aim for 75%+. If you score lower, re-read the worked example; we rely on these muscles every single day from here on.
+Four quick questions: what CREATE stands for, which letter most people skip, the "critique your assumptions" move, and spotting which of four prompts is best.
 
 ## Assignment
 
-Submit your final **V3 statement plus the four Heilmeier answers** as a **text submission**. One problem, one page, no more. We will grade on specificity and whether your statement names a user, a moment, and a measurable gap. Solution-smuggled language (words like "app", "dashboard", "AI") gets an automatic rewrite request.
+Share your Google Doc link and pick the single biggest jump in quality from your three pairs. In 3 lines tell us: what was the lazy prompt, what did you add, and what did the AI do differently. No screenshots needed beyond your doc.
 
-## Discuss: sharpening each other's framing
+## Discuss: Why does giving AI a "role" change the answer so much?
 
-- Read your V3 out loud. Does the group believe the user is a real, specific person — or a vague persona?
-- Which of the four properties (user / moment / gap / urgency) is the easiest to fake? Why?
-- Give an example from your past where you built something nobody wanted. What was the framing mistake?
-- When is it dishonest to solution-smuggle — and when is it fine because the solution is obvious?
-- How does a crisp problem statement change *who you would go talk to next*?
+- Which letter of CREATE felt most unnatural to add — and why?
+- Share your single best prompt from today. Would you let a junior copy it?
+- Has anyone's AI pushed back or refused something after you gave more context? What happened?
+- Where should we *not* use a heavy prompt — when is a one-liner enough?
+- Does writing better prompts feel like writing better briefs for a human? Good or bad thing?

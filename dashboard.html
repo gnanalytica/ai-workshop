@@ -44,6 +44,8 @@
     <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
     <div style="display:flex;gap:16px;align-items:center">
       <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
+      <a href="certificate.html" id="navCert" style="font-size:13px;color:var(--muted);display:none">Certificate</a>
+      <a href="#" id="navShowcase" style="font-size:13px;color:var(--muted);display:none">Showcase</a>
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
       <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
     </div>
@@ -137,10 +139,17 @@
     $('signoutBtn').style.display = 'none';
   }
 
-  function showDash() {
+  function showDash(user) {
     $('gate').style.display = 'none';
     $('dash').style.display = 'block';
     $('signoutBtn').style.display = 'inline-block';
+    const cert = $('navCert');
+    const show = $('navShowcase');
+    if (cert) cert.style.display = 'inline';
+    if (show && user) {
+      show.href = `showcase.html?u=${user.id}`;
+      show.style.display = 'inline';
+    }
   }
 
   $('loginForm').addEventListener('submit', async (e) => {
@@ -178,7 +187,7 @@
   });
 
   async function loadDashboard(user) {
-    showDash();
+    showDash(user);
     const [profileRes, cohortRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', user.id).single(),
       supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single(),

@@ -1,185 +1,147 @@
 ---
 reading_time: 14 min
-tldr: "RAG = retrieval + generation. Grounded answers, lower hallucinations, domain adaptation without training."
-tags: ["ai", "rag", "hands-on", "llms"]
+tldr: "APIs, HTTP, JSON, requests — the concepts that let you direct AI to connect anything to anything."
+tags: ["web", "apis", "concepts"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Tiny RAG over local PDFs with LlamaIndex + Ollama", "url": "https://docs.llamaindex.ai/"}
-resources: [{"title": "LlamaIndex docs", "url": "https://docs.llamaindex.ai/"}, {"title": "LangChain docs", "url": "https://python.langchain.com/docs/"}, {"title": "Chroma docs", "url": "https://docs.trychroma.com/"}, {"title": "Ollama", "url": "https://ollama.com/"}]
+lab: {"title": "Hit three real APIs with Hoppscotch — no code", "url": "https://hoppscotch.io/"}
+prompt_of_the_day: "I want my app to call the {{api}} API. Explain the endpoint, what I need to send, what I'll get back, and rewrite it as a plain-English sentence I could say to Lovable/bolt.new."
+resources: [{"title": "Hoppscotch", "url": "https://hoppscotch.io/"}, {"title": "MDN Web Docs: HTTP", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP"}, {"title": "PokeAPI", "url": "https://pokeapi.co/"}, {"title": "GitHub REST API", "url": "https://docs.github.com/en/rest"}, {"title": "OpenWeather", "url": "https://openweathermap.org/api"}]
 ---
 
 ## Intro
 
-RAG — Retrieval-Augmented Generation — is the most common production AI pattern, period. It's how you keep LLMs factual, current, and grounded in your own data without retraining. Today you'll build one end-to-end, on a laptop, with open-source tools, answering questions about PDFs you pick.
+Tomorrow you direct an AI to build your app. To direct it well, you need four small concepts: what an API is, what HTTP is, what JSON looks like, and what "request / response" means. Not to write code — but to speak the language your AI builder speaks. Today's a concept-and-click day.
 
-## Read: RAG from scratch
+## Read: The plumbing under every app
 
-### What RAG actually is
+Every app you've ever used is mostly glue between APIs. Instagram's home feed? An API call. Uber's map? Two API calls. ChatGPT? An API call to OpenAI. When you describe an app to bolt.new tomorrow, you'll say things like "when the user submits, fetch X from Y and display Z." That sentence is built out of the concepts below.
 
-RAG is a pipeline, not a product. The pattern in three lines:
+### API: a menu for machines
 
-1. **Retrieve**: fetch relevant chunks from your corpus using the user's query.
-2. **Augment**: stuff those chunks into the LLM's prompt.
-3. **Generate**: have the LLM answer the question using that context.
+An API — Application Programming Interface — is a menu of things a service lets outside software do. OpenWeather's menu: "I'll give you weather for any city, here's the exact request format." GitHub's menu: "I'll give you a user's repos, their README, their profile." The API is the contract; following the contract gets you the data.
 
 ```
-User question
-     │
-     ▼
-[Embed query] ──► [Vector DB] ──► top-k chunks
-                                       │
-                                       ▼
-                          [Build prompt: system + context + question]
-                                       │
-                                       ▼
-                                    [LLM]
-                                       │
-                                       ▼
-                                    Answer
+Read this, don't type it
+
+You  -->  "Give me weather for Bengaluru"  -->  OpenWeather API
+  <--  "27 C, humid, chance of rain 40%"  <--
 ```
 
-The LLM doesn't need to "know" anything about your data. At inference, you paste the relevant bits into its context window. Done well, this kills hallucination (the model has the actual text) and keeps answers current (swap in fresher docs, no retraining).
+That exchange is a request and a response. That's essentially the whole web.
 
-### The minimum viable RAG
+### HTTP: the verbs of the web
 
-```python
-import ollama
-from sentence_transformers import SentenceTransformer
-import chromadb
+HTTP (HyperText Transfer Protocol) is the language of those exchanges. Every request uses one of a handful of verbs:
 
-emb = SentenceTransformer("BAAI/bge-small-en-v1.5")
-client = chromadb.PersistentClient("./rag-store")
-col = client.get_or_create_collection("docs")
-
-# assume col was populated with chunks earlier
-
-def rag_answer(question, k=4):
-    qv = emb.encode(question).tolist()
-    hits = col.query(query_embeddings=[qv], n_results=k)
-    context = "\n\n---\n\n".join(hits["documents"][0])
-    prompt = f"""Answer using ONLY the context below. If the answer is
-not present, say "I don't know."
-
-Context:
-{context}
-
-Question: {question}
-Answer:"""
-    r = ollama.chat(model="llama3.1:8b",
-                    messages=[{"role": "user", "content": prompt}],
-                    options={"temperature": 0})
-    return r["message"]["content"]
-```
-
-Twenty lines. Real RAG. Everything else is refinement.
-
-### Where RAG goes wrong
-
-Real RAG systems fail in predictable places. Know them.
-
-| Failure | Symptom | Fix |
+| Verb | Means | Example |
 |---|---|---|
-| Bad chunking | Relevant info split across chunks | Chunk by structure; larger overlap |
-| Bad retrieval | Top-k misses the right chunk | Hybrid search, re-ranking, query rewriting |
-| Stuffed context | Model ignores middle of prompt | Fewer, better chunks; "lost in the middle" |
-| No source attribution | Can't verify answers | Return citations with each answer |
-| Stale index | User asks about new data not yet indexed | Incremental re-indexing |
-| "I don't know" ignored | Model hallucinates anyway | Better prompt, smaller k, grounding checks |
+| GET | "Give me this thing" | GET the Pokémon named "pikachu" |
+| POST | "Make a new thing" | POST a new tweet |
+| PUT | "Replace this thing" | PUT an updated profile |
+| DELETE | "Remove this thing" | DELETE my account |
 
-"Lost in the middle" is a real phenomenon — long contexts cause models to pay more attention to the beginning and end than the middle. Keep your retrieved context tight: 4–8 good chunks beats 30 mediocre ones.
+When you browse a website, your browser is firing GETs nonstop. When you hit "submit" on a form, it's usually POSTing. You already live inside HTTP; you just didn't name it.
 
-### Re-ranking
+### URL: the address
 
-Initial vector retrieval is "dumb" (pure cosine). A **re-ranker** takes the top 20–50 vector hits and uses a smaller cross-encoder model (e.g., `BAAI/bge-reranker-v2-m3`) to score each `(query, chunk)` pair with full attention. Way more accurate — and cheap enough to run on CPU for 20 items.
+Every API request goes to a URL. The URL has structure:
 
-Typical prod pipeline: retrieve top 30 → re-rank → keep top 5 → generate.
+```
+Read this, don't type it
 
-### LlamaIndex vs LangChain vs rolling your own
+https://pokeapi.co/api/v2/pokemon/pikachu
+|_____|  |________| |_______________|
+scheme   domain     path
+```
 
-- **LlamaIndex** — focused on RAG. Best default for document-over-LLM use cases. Rich connectors, built-in evaluation.
-- **LangChain** — broader, covers agents, tools, chains. Good for complex orchestration. Heavier abstraction.
-- **Your own 80-line Python** — fine for prototypes. Total control.
+The path is usually where the "what" lives. `/api/v2/pokemon/pikachu` reads almost like English — "give me version 2 of the pokemon named pikachu."
 
-For today we'll use LlamaIndex because it hides the boring parts (loaders, chunkers, query engines) without hiding the interesting parts.
+### JSON: the shape of data
 
-### Evaluating RAG
+APIs usually talk back in JSON — JavaScript Object Notation. It's just key-value pairs in a specific syntax. If you can read a Python dict or a YAML file, you can read JSON.
 
-You cannot improve what you don't measure. Minimum eval:
+```
+Read this, don't type it
 
-1. Write 10–30 Q&A pairs by hand. Each is `(question, expected_answer, source_chunk_id)`.
-2. Metrics:
-   - **Retrieval hit rate**: did the right chunk appear in top-k?
-   - **Answer correctness**: did the generated answer match expected? Judge with a second LLM if automation is needed.
-   - **Faithfulness**: does every claim in the answer appear in the retrieved context?
-3. Re-run evals whenever you change the chunker, embedding model, LLM, or prompt.
+{
+  "name": "pikachu",
+  "height": 4,
+  "weight": 60,
+  "abilities": [
+    { "name": "static" },
+    { "name": "lightning-rod" }
+  ]
+}
+```
 
-Tools: LlamaIndex has `Evaluator` classes; `ragas` is a popular open-source eval framework.
+Three rules:
+- Curly braces `{}` hold key-value pairs (an object).
+- Square brackets `[]` hold lists.
+- Strings are in double quotes.
 
-### Worked example: the "resume RAG"
+When you tell an AI builder "use this field from the response," you point at a JSON key. That's the whole conversation.
 
-A student built this in one evening: 200 job descriptions from company career pages → chunked → embedded → queried by their own resume bullets. Each query returned the top 5 JDs closest to that skill, with a generated one-line match explanation. It surfaced 3 jobs they'd have missed via keyword search. Whole thing: ~150 lines, local models, zero API cost.
+### Headers and keys
 
-## Watch: RAG walkthrough
+Most real APIs require an API key — a password that identifies you — sent in a special spot called a header. Your header might look like `Authorization: Bearer sk-abc123…`. Don't memorize it; just know that keys live in headers, and headers are metadata you attach to the request. Think of headers as the envelope; the body is the letter.
 
-Find a current, tool-agnostic RAG explainer — Jerry Liu from LlamaIndex and Harrison Chase from LangChain both have good talks on YouTube. Alternately, a "build RAG in 100 lines" live-code video.
+### Rate limits and status codes
+
+The response also comes with a status code:
+
+| Code | Meaning |
+|---|---|
+| 200 | OK, here's your data |
+| 201 | Created, your new thing exists |
+| 401 | Not authenticated (bad or missing key) |
+| 404 | Not found (wrong URL or missing resource) |
+| 429 | Too many requests — slow down |
+| 500 | Server broke, not your fault |
+
+When bolt.new or Lovable throws an error tomorrow, 9 times out of 10 it'll reference a status code. You'll know exactly what happened.
+
+### Why this matters for AI apps
+
+Every AI app you build is made of these pieces: user sends a request to your app, your app calls an LLM API, maybe calls a weather or database API, stitches the JSON together, sends a response back. You're the conductor. The orchestra speaks HTTP and JSON.
+
+## Watch: APIs in plain English
+
+A short, no-code explainer on what APIs are, how HTTP works, and why JSON became the universal data shape. Watch until you could explain an API to a friend at dinner.
 
 https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace with a recent RAG walkthrough -->
+<!-- TODO: replace video -->
 
-- Note the retrieve / augment / generate split.
-- Watch how chunking decisions are justified.
-- Pay attention to eval — a lot of "RAG talks" skip it. The good ones don't.
+- Notice how every app they show reduces to request/response.
+- Watch for the headers/body distinction in the demo.
+- Observe how JSON mirrors real-world nesting.
 
-## Lab: Tiny RAG over your PDFs
+## Lab: Hit three real APIs in your browser
 
-Build a working RAG pipeline over a folder of real PDFs using LlamaIndex + Ollama + Chroma. All local, no API keys.
+Hoppscotch is a free browser-based API client — think Postman without the install. You'll use it to make three real API calls, no code, no login.
 
-1. Make sure Ollama has a chat model (`llama3.1:8b` or `qwen3:8b`) and an embedding model (`ollama pull nomic-embed-text`).
-2. Collect 3–10 real PDFs: lecture slides, a research paper, a product manual, your college's policy docs. Put them in `./data/`.
-3. Install: `pip install llama-index llama-index-llms-ollama llama-index-embeddings-ollama llama-index-vector-stores-chroma chromadb pypdf`.
-4. Create `build_index.py`:
-   ```python
-   from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings
-   from llama_index.llms.ollama import Ollama
-   from llama_index.embeddings.ollama import OllamaEmbedding
-   from llama_index.vector_stores.chroma import ChromaVectorStore
-   import chromadb
+1. Open https://hoppscotch.io/. You'll see a Method dropdown (defaulted to GET) and a URL bar. That's a full API client in one screen.
+2. **PokeAPI (no auth).** Set method to GET. Paste URL: `https://pokeapi.co/api/v2/pokemon/pikachu`. Click Send. Scroll the JSON response. Find the `height`, `weight`, and `abilities` fields. Note the status code — it should be 200.
+3. Change the URL to `https://pokeapi.co/api/v2/pokemon/charizard`. Send. Compare the JSON shape — same keys, different values. That consistency is what makes APIs programmable.
+4. **GitHub API (no auth for public data).** GET `https://api.github.com/users/torvalds`. You'll see Linus Torvalds' public profile as JSON. Try `https://api.github.com/users/torvalds/repos` for his repos.
+5. **OpenWeather (requires free key).** Go to https://openweathermap.org/api, sign up free, grab an API key from your account page. In Hoppscotch, GET `https://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=YOUR_KEY`. Replace YOUR_KEY. Send. Look at the `main.temp` field — that's Bengaluru's temperature in Kelvin (subtract 273 for Celsius).
+6. Deliberately break the OpenWeather call. Change the key to `wrong`. Send. You'll see a 401 status. That's authentication failing. Fix the key. Send. 200 again.
+7. Deliberately break the URL — GET `https://api.github.com/users/thisuserdoesnotexist99999`. You'll see 404. That's "not found."
+8. Paste today's prompt-of-the-day into any chat LLM with `{{api}}` set to one of the three above. Get a plain-English sentence you could paste into Lovable tomorrow. Save it.
 
-   Settings.llm = Ollama(model="llama3.1:8b", request_timeout=120)
-   Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-
-   docs = SimpleDirectoryReader("./data").load_data()
-   client = chromadb.PersistentClient("./rag-chroma")
-   col = client.get_or_create_collection("pdfs")
-   vs = ChromaVectorStore(chroma_collection=col)
-   storage = StorageContext.from_defaults(vector_store=vs)
-   index = VectorStoreIndex.from_documents(docs, storage_context=storage)
-   print("Indexed.")
-   ```
-5. Run it. Watch it chunk and embed. First run may be slow (minutes).
-6. Create `ask.py` that loads the same collection and exposes a query engine:
-   ```python
-   qe = index.as_query_engine(similarity_top_k=4, response_mode="compact")
-   print(qe.query(input("Q: ")))
-   ```
-7. Hand-write 5 Q&A pairs from your PDFs with expected answers and page numbers.
-8. Run each question through your RAG. Record: did it answer correctly? Did it cite the right section?
-9. Tune: change `similarity_top_k` to 2 and 8. Change chunk size in `Settings` (try `chunk_size=512` then `1024`). Re-run your 5 Qs each time. Keep a scoreboard.
-10. Write `rag-results.md` with your eval table, your best configuration, and one failure case with commentary on why it failed.
-
-Budget 75 minutes.
+Time permitting, look at Hoppscotch's "Generate code" button — it converts your request into a copy-paste code snippet in any language. That's what AI builders do under the hood, and you just saw it happen.
 
 ## Quiz
 
-Quiz on: the three steps of RAG, why hallucination drops with grounded context, what a re-ranker does, the lost-in-the-middle effect, and how to pick `top_k`. Directly from the lab.
+Expect questions on the four HTTP verbs, reading a JSON object, picking the right status code for a scenario, and one "explain this URL structure" item. Trust the request/response mental model.
 
 ## Assignment
 
-Take your RAG from the lab and add **source attribution**: every answer should include the PDF filename and page number it came from. LlamaIndex exposes source nodes via `response.source_nodes`. Commit the updated `ask.py` and a `rag-citations.md` doc showing three cited answers. If any answer has no valid source, the system should say "I don't know." No hallucinated citations.
+Find a real API you'd use in your capstone. Candidates: NewsAPI, a free sports-stats API, a translation API, Google Books, a LeetCode-problems API. Hit one endpoint in Hoppscotch and screenshot the JSON. Write a 3-sentence "what I'd use this for" note. Submit.
 
-## Discuss: RAG in the real world
+## Discuss: Seeing the web for what it is
 
-- If you had 1M documents and one GPU, what would change in your pipeline?
-- When does fine-tuning beat RAG? (We'll go deeper tomorrow — form a hypothesis now.)
-- Your RAG says "I don't know" 30% of the time. Is that good or bad?
-- How do you handle PDFs with tables, images, and scanned pages? Where does this pipeline break?
-- Users ask the same 20 questions 80% of the time. What's a cheap way to exploit that?
+- Which of the three APIs felt most "magical"? Which felt most boring (in a good way)?
+- An API key is a password — what goes wrong if you paste yours into a public GitHub repo?
+- Why is JSON everywhere? What's the alternative (XML, CSV) and why did JSON win?
+- Which API would make your capstone app dramatically better if you connected it?
+- When you describe tomorrow's build to an AI, which concepts from today will you actually name out loud?

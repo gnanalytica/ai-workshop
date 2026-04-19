@@ -1,179 +1,159 @@
 ---
-reading_time: 14 min
-tldr: "Apps are spreadsheets in disguise. Learn to sketch schemas and read queries; AI writes them."
-tags: ["concepts", "data", "mental-model"]
+reading_time: 15 min
+tldr: "Every hard problem is a system. Map the loops, find the leverage, avoid symptom-chasing."
+tags: ["systems", "thinking"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Schema-sketching and SQLBolt", "url": "https://sqlbolt.com/"}
-resources: [{"title": "SQLBolt", "url": "https://sqlbolt.com/"}, {"title": "MDN: Databases", "url": "https://developer.mozilla.org/en-US/docs/Glossary/Database"}]
+lab: {"title": "Draw a causal-loop diagram of a campus problem", "url": "https://excalidraw.com/"}
+resources: [{"title": "The Systems Thinker", "url": "https://thesystemsthinker.com/"}, {"title": "Thinking in Systems — Donella Meadows (book)", "url": "https://hbr.org/"}, {"title": "Excalidraw", "url": "https://excalidraw.com/"}]
 ---
 
 ## Intro
 
-Apps forget everything when they close. Databases are how software remembers. Today you learn to *think* in tables, rows, keys, and queries — without typing a single query. By the end you'll be able to sketch the data model of any app on a napkin.
+Most problems you will work on are not isolated events. They are symptoms of a *system* — interconnected parts, loops, and delays. Today you learn to see those systems. This is the single biggest unlock for anyone who wants to stop building things that fix one bug while quietly creating two more.
 
-## Read: Tables, relationships, queries
+## Read: maps, loops, leverage points
 
-### The core intuition: apps are spreadsheets in disguise
+### From events to systems
 
-Almost every app you use — Swiggy, Classroom, LinkedIn — is, under the hood, a small set of spreadsheets linked to each other. A **table** is one spreadsheet. A **row** is one record. A **column** is one attribute. A **primary key** is the unique ID per row. A **foreign key** is how one table points to another.
+Donella Meadows, the grandmother of modern systems thinking, describes three levels of seeing:
 
-Here's Dunzo's likely data model in four tables:
+1. **Events** — "the mess queue was long today."
+2. **Patterns** — "the mess queue is always long on Wednesdays."
+3. **Systems** — "Wednesday is surprise-menu day, so more people show up, mess cooks slower because they're unfamiliar, and social-media posts draw even more people — creating a reinforcing loop."
 
-```
-users                          orders
--------------                  ---------------
-id (PK)                        id (PK)
-name                           user_id  (FK -> users.id)
-phone                          restaurant_id (FK -> restaurants.id)
-created_at                     total
-                               status
-                               created_at
+Most arguments happen at level 1. Real solutions require level 3.
 
-restaurants                    order_items
--------------                  ---------------
-id (PK)                        id (PK)
-name                           order_id  (FK -> orders.id)
-lat, lng                       menu_item_id (FK -> menu_items.id)
-open_now                       quantity
-```
+### The two loops you need to know
 
-Read it twice. This is *the* mental model.
+**Reinforcing loop (R):** a change in X causes more of Y, which causes more of X. Self-amplifying. Examples: virality, compound interest, rich-get-richer, hype cycles.
 
-> A well-designed schema is 60% of a good app. Everything else is plumbing.
+**Balancing loop (B):** a change in X causes more of Y, which causes *less* of X. Self-correcting. Examples: thermostats, hunger → eat → full → stop eating, traffic congestion pushing people to alternate routes.
 
-### Why relationships matter
+Almost every interesting system is a few reinforcing loops tangled with a few balancing loops, often with **delays** between cause and effect. Delays are where our intuition fails — we keep pushing on a lever and nothing happens, so we push harder, then everything overshoots.
 
-If you kept everything in one giant table — user, their orders, the items, the restaurants — you'd have duplication, inconsistency, and chaos. Splitting into related tables is called **normalization**. Joining them back at query time gives you the view you want.
+### Causal loop diagrams (CLDs)
 
-Three common relationship shapes:
+A CLD is the cheapest way to map a system. Notation:
 
-| Shape | Example |
-|---|---|
-| One-to-one | A user has one profile |
-| One-to-many | A user has many orders |
-| Many-to-many | A student applies to many companies; a company sees many students |
+- Draw variables as short noun phrases (e.g., "plate waste", "student frustration", "menu variety").
+- Draw arrows between variables.
+- Label each arrow **+** (same direction — more X means more Y) or **−** (opposite — more X means less Y).
+- If a loop is dominantly reinforcing, mark it **R**. If balancing, **B**.
+- Mark delays with two parallel lines: `—‖—`.
 
-Many-to-many always needs a **join table** (here: `applications`).
+### Worked example: the mess queue
 
-### SQL: the language of questions
+Variables:
 
-SQL is how you **ask questions** of a database. You will not write SQL this month. You should be able to read it.
+- Queue length at mess
+- Student frustration
+- Students arriving early (to beat the queue)
+- Students skipping mess (eating outside)
+- Mess throughput (plates served per minute)
 
-```
-Example — you're reading, not typing.
+Relationships:
 
-SELECT name, cgpa
-FROM students
-WHERE cgpa > 8.5
-ORDER BY cgpa DESC
-LIMIT 10;
-```
+- `Queue length` → **+** → `Student frustration`
+- `Student frustration` → **+** → `Students arriving early`
+- `Students arriving early` → **+** → `Queue length` (at peak windows)
+- `Student frustration` → **+** → `Students skipping mess`
+- `Students skipping mess` → **−** → `Queue length` (delay: students re-evaluate weekly)
 
-Translation: *Give me the top 10 students by CGPA above 8.5, name and CGPA only.* SQL is almost English when you squint.
+You now see two loops:
 
-A join looks like this:
+- **R1 (vicious):** Queue → Frustration → Arrive-early → Queue. Reinforcing. This explains why queues get worse even as the mess tries harder.
+- **B1 (corrective, slow):** Queue → Frustration → Skip-mess → Queue-shorter. Balancing, but with a delay of days or weeks.
 
-```
-Example — you're reading, not typing.
+The naive fix is "add a counter" or "hire more staff". The systems view suggests a different move: break R1 by *staggering* mess slot times by hostel block, which prevents early-arrival from compounding.
 
-SELECT students.name, applications.company, applications.status
-FROM students
-JOIN applications ON applications.student_id = students.id
-WHERE applications.status = 'shortlisted';
-```
+### Leverage points (Meadows's list, simplified)
 
-Translation: *Show me every student shortlisted somewhere, with the company and status.*
+Meadows ranks leverage points — places to intervene — from weakest to strongest:
 
-The six keywords you'll see 95% of the time: `SELECT`, `FROM`, `WHERE`, `JOIN`, `GROUP BY`, `ORDER BY`. That's it.
+| Rank | Leverage | Example |
+|------|----------|---------|
+| Low | Parameters / numbers | Increase mess staff by 2 |
+| Medium | Feedback loops | Add a "how was today's food?" daily poll |
+| Higher | Information flows | Show live queue time on a hostel screen |
+| Higher | Rules | Stagger meal times by hostel block |
+| Very high | Goals of the system | Redefine mess success from "low cost per plate" to "low plate-waste + high satisfaction" |
+| Highest | Paradigm | "Feeding is a service, not a logistics job" |
 
-### SQL vs NoSQL, the honest intuition
+Most students instinctively reach for parameters. The bigger wins are in rules, goals, and paradigms.
 
-| | SQL (Postgres, MySQL, SQLite) | NoSQL (MongoDB, Firestore, DynamoDB) |
-|---|---|---|
-| Mental model | Spreadsheets with relationships | Nested documents (like JSON) |
-| Schema | Strict — you declare it upfront | Flexible — shape can vary per doc |
-| Good at | Complex queries, transactions, reports | Huge scale of simple lookups, changing shapes |
-| Bad at | Nested / evolving data | Complex joins across collections |
-| You'll meet it in | Most apps, always | Chat apps, real-time, specific niches |
+### A second worked example: placement prep panic
 
-Default to SQL. Reach for NoSQL when you have a concrete reason.
+Variables: anxiety, prep hours, mock interviews taken, confidence.
 
-### The three questions a schema must answer
+- `Anxiety` → **+** → `Prep hours` (short term)
+- `Prep hours` → **+** → `Confidence`
+- `Confidence` → **−** → `Anxiety` (delayed)
+- `Anxiety` → **−** → `Mock interviews taken` (people avoid scary things)
+- `Mock interviews taken` → **+** → `Confidence`
 
-When you (or an AI) designs a data model, pressure-test it with:
+Loops:
 
-1. **What's the unit?** (Is the row a user, an order, an event?)
-2. **What's unique about it?** (What's the primary key?)
-3. **What does it relate to?** (Which foreign keys?)
+- **B1:** Anxiety → Prep → Confidence → less Anxiety. Balancing, slow.
+- **R1 (vicious):** Anxiety → Avoid mocks → less Confidence → more Anxiety. Reinforcing.
 
-If you can answer those three for every table, the rest of the design falls out.
+Insight: *no amount of solo prep hours will fix the panic unless you break the mock-avoidance loop.* That is a structural insight, not a study-harder insight. The leverage point is changing the rule ("mocks are mandatory twice a week in small groups") rather than the parameter ("study more hours").
 
-### Reading vs writing, cache vs source of truth
+### Delays — the hidden monster
 
-Real apps read data 100x more often than they write it. So they **cache**. Instagram doesn't query the DB every time you open the app — it serves your feed from a cache, which is a faster, less-durable copy. The DB remains the **source of truth**. Caches go stale; sources of truth do not.
+Whenever a system behaves surprisingly — overshooting, oscillating, failing despite effort — look for a delay. Scholarship disbursement, fee refund systems, campus maintenance tickets all suffer from this. The shorter the delay between action and visible feedback, the faster the system can self-correct. *Shortening a feedback delay is almost always high leverage.*
 
-```
-   write --> [ source-of-truth DB ]
-                   |
-                   v  (refreshed occasionally)
-             [ cache ]
-                   ^
-                   |
-   read ----------+
-```
+## Watch: seeing systems, not events
 
-Stale caches are responsible for 40% of "why is my profile pic still the old one" bugs.
-
-### A campus-flavoured example: the placement data model
-
-Tables you'd sketch for a placement portal:
-
-- `students` (id, roll_no, name, branch, cgpa, resume_url)
-- `companies` (id, name, sector, ctc_min, ctc_max)
-- `jobs` (id, company_id, title, eligibility_cgpa, deadline)
-- `applications` (id, student_id, job_id, status, applied_at)
-- `interviews` (id, application_id, round, scheduled_at, result)
-
-Five tables, four relationships, and you've modelled your college's entire placement cell. That's the power of thinking in tables.
-
-## Watch: Database fundamentals in 10 minutes
-
-One clear visual explainer of tables, keys, and joins. Optional second video on SQL vs NoSQL.
+A short primer on causal loops and stock-and-flow thinking. Pay attention to how the speaker *draws* the same problem in three different ways.
 
 https://www.youtube.com/embed/VIDEO_ID
 <!-- TODO: replace video -->
 
-- Watch for the word **join**.
-- Notice that "relational" really just means "tables that point at each other".
-- Spot the moment they explain a primary key vs a foreign key.
+- Notice how loops are labeled R or B and why that label matters.
+- Listen for any mention of "delay" — it's where intuition breaks.
+- Watch how a low-leverage intervention is contrasted with a high-leverage one.
 
-## Lab: Schema-sketching + SQLBolt (45 min)
+## Lab: draw a causal-loop diagram in Excalidraw
 
-You will not write a single query. You will sketch and read.
+You'll map one real campus problem as a causal loop diagram.
 
-1. **Scenario**: your college is rolling out a campus placement portal. You're given a messy Google Sheet where someone dumped everything into one tab. On paper or Excalidraw, design the **clean schema** — 4–6 tables, with columns and primary/foreign keys marked. 10 minutes, no code.
-2. Swap with a partner (or re-read after a break). Critique: are there missing relationships? Over-normalized tables? Missing keys?
-3. Open `https://sqlbolt.com/`. Work through lessons 1, 2, and 3. These are read-heavy; the site gives you the query, you read the result.
-4. Without running new queries, **read** 5 provided SQL statements and, on your worksheet, translate each into plain English.
-5. Draw the ER diagram (entity-relationship diagram) for SQLBolt's `movies` example. Boxes for tables, lines for relationships.
-6. Identify one query that would need a **JOIN** and one that doesn't. Explain why in a sentence.
-7. On paper, list the top 3 questions you'd expect the placement cell to ask their database ("how many CS students placed?", etc.). For each, name the tables involved.
-8. Export the schema sketch + the worksheet.
+1. Pick one problem with clear structure: hostel fee payment queues, library seat scarcity during exams, mess plate-waste, placement-cell email overload, or bring your own.
+2. Open Excalidraw. Create a blank canvas.
+3. List 5–8 variables as sticky notes. Keep them as short noun phrases. Resist listing actions ("students complain") — write them as *quantities* ("complaints per day").
+4. Draw arrows between them. For each arrow, label **+** or **−**.
+5. Identify at least **one reinforcing loop** and **one balancing loop**. Label them R1, B1.
+6. Mark any arrow where there is a real-world delay with a small `||` on the arrow.
+7. Circle one variable that looks like a low-leverage intervention point (e.g., a number you'd tweak).
+8. Circle one variable that looks like a high-leverage intervention point (a rule, goal, or paradigm).
+9. In a text box next to the diagram, write 3 lines: *what the system does today*, *where the highest leverage is*, *what you would test first*.
+10. Export a PNG and upload it for submission.
 
-Submit both.
+Template text to include on your canvas:
+
+```
+System: _______________________________________
+Time horizon I'm looking at: ___________________
+
+Loops found:
+  R1 — ___________________________________
+  B1 — ___________________________________
+
+Highest-leverage intervention I see: ___________
+Why it beats a parameter tweak: ________________
+```
 
 ## Quiz
 
-4 questions: identify primary vs foreign key in a diagram, translate a simple `SELECT ... WHERE` in English, spot a many-to-many relationship, and explain why a cache and a DB can disagree.
+Quick check on reinforcing vs balancing loops, the role of delays, and Meadows's ordering of leverage points. Four questions. Aim for 75%+ before Day 6. These loops will appear again when we decompose the capstone.
 
 ## Assignment
 
-Pick an app and sketch its data model in 4–6 tables on one page. Mark primary keys, foreign keys, and at least one many-to-many. Write a one-paragraph justification for your choices. Submission: a diagram PNG/PDF + paragraph. No code.
+Submit your Excalidraw PNG + the 3-line text as a **file upload**. The diagram must show: at least 5 variables, at least one reinforcing loop, at least one balancing loop, and one marked high-leverage intervention. If your diagram has no loops, you haven't modeled a system — you've drawn a flowchart. Redo it.
 
-## Discuss: Thinking in rows
+## Discuss: where loops hide
 
-- Your hostel WhatsApp group has 200 messages a day. What would the `messages` table look like, and what indexes would you want?
-- A dating app "sees" only profiles of the opposite preference. Is this a database filter or an application-layer filter? Does it matter?
-- Why do transactions (the banking kind) almost always live in SQL, not NoSQL?
-- When Netflix shows you "trending in India" — is that computed per-request or cached? What gives it away?
-- A classmate claims "we don't need a database, we'll store everything in a JSON file". When is that fine, and when does it break?
+- Give an example of a vicious reinforcing loop in your own life as a student. What would break it?
+- Why do institutions usually intervene at the lowest-leverage points?
+- When is it dangerous to act on a causal loop diagram you built in 30 minutes?
+- What's the longest feedback delay you've personally experienced on campus? What does that delay do to behavior?
+- Pick someone else's diagram. What variable is missing that would change the story?

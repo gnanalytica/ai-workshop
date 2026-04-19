@@ -1,118 +1,87 @@
 ---
-reading_time: 14 min
-tldr: "30 days, 4 tracks: think → make → AI → ship. Treat this as a builder's gym, not a lecture hall."
-tags: ["kickoff", "meta", "thinking"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Write your learning contract", "url": "https://excalidraw.com/"}
-resources: [{"title": "Excalidraw (for sketches)", "url": "https://excalidraw.com/"}, {"title": "Deep Work notes by Cal Newport", "url": "https://hbr.org/"}]
+reading_time: 10 min
+tldr: "Open a browser, sign in, and get three real AI wins in the next 15 minutes. No code, no setup, no excuses."
+tags: ["use", "kickoff", "consumer"]
+video: https://www.youtube.com/embed/JTxsNm9IdYU
+lab: {"title": "Your first 3 AI wins in 15 minutes", "url": "https://chat.openai.com/"}
+prompt_of_the_day: "I'm a college student new to AI. In 5 bullets, summarise this text like I'm reading it for the first time and running late for class. Keep each bullet under 15 words. Text: {{paste_text_here}}"
+resources: [{"title": "ChatGPT", "url": "https://chat.openai.com/"}, {"title": "Claude", "url": "https://claude.ai/"}, {"title": "Gemini", "url": "https://gemini.google.com/"}, {"title": "Perplexity", "url": "https://www.perplexity.ai/"}]
 ---
 
 ## Intro
 
-Welcome to day one. The next 30 days are not a tutorial binge. They are a workshop — which means you will be building, breaking, and defending things you make. Today we set the contract: how this cohort runs, how you get the most out of it, and what "done" looks like at day 30. Read carefully. We come back to this.
+Welcome to Day 1. Today is not about theory, history, or "what is AI". Today is about your first real win — a moment where you go "wait, it just did that in 30 seconds?" By the end of this lesson you'll have three AI-made artefacts sitting in your chat history, a screenshot to post in the group, and a confident sense that this month is going to change how you work.
 
-## Read: How this cohort actually works
+## Read: Three tools, one tab, zero setup
 
-Most online courses fail because students confuse *watching* with *learning*. You can watch 40 hours of lectures on React and still freeze when someone asks you to build a login form. This workshop is engineered against that failure mode.
+You do not need to pick the "best" AI tool. You need to open one and start. Most of this week works in any of them. Here's the honest one-line on each so you can stop shopping and start using.
 
-The structure is simple:
+| Tool | Best for | Sign-in | Free tier |
+|------|----------|---------|-----------|
+| ChatGPT | All-round, great image generation | Google account | Yes, GPT‑5 mini / basic GPT-5 |
+| Claude | Long documents, clean writing, nuance | Google/email | Yes, Sonnet on free |
+| Gemini | Google Docs / Drive / YouTube integration | Google account | Yes, 2.5 Flash |
+| Copilot | Windows + Office files | Microsoft account | Yes |
+| Perplexity | Search with sources cited | Google/email | Yes |
 
-| Block | Days | What you do |
-|-------|------|-------------|
-| Think | 1–7 | Sharpen problem framing, empathy, systems thinking. No AI, no code. |
-| Build | 8–21 | Turn frames into working prototypes. Tools come in here. |
-| Ship | 22–30 | Take one thing to production and defend it publicly. |
+**Recommendation for Day 1:** sign into **ChatGPT** and **Claude**. Keep both as tabs. You'll compare them over the week.
 
-Every day has the same shape: a short Read, a short Watch, a hands-on Lab, a Quiz to pressure-test understanding, an Assignment you submit, and a Discuss block for the live session. If you skip the Lab, you are skipping the course. The Read is scaffolding; the Lab is where the learning actually lands.
+### What these tools actually are (in one paragraph)
 
-> **Rule of thumb:** if you finished the reading in 10 minutes and felt smart, you haven't learned yet. You learn when the Lab makes you uncomfortable.
+A chat AI is a very fast reader and writer that has read most of the public internet. You paste something in, you ask a question, it answers. It is not a search engine — it doesn't browse by default unless you turn that on. It is not always right — treat it like a brilliant intern who sometimes bluffs. Your job is to ask well and check the important bits.
 
-### Why Week 1 has no AI
+### The three tasks every student should do on Day 1
 
-Here is the uncomfortable truth: most people using AI tools today are producing slick-looking garbage because they point LLMs at badly-framed problems. Garbage in, polished garbage out. We spend this week building the muscle of *thinking clearly about a problem* so that when the AI tools come in on Day 8, you have something real to point them at.
+These are your wins today. Do all three. Screenshot each.
 
-If you already know what you want to build — great, park it. By the end of Week 1 you may realize you were solving the wrong problem. That is the point.
+**Task 1 — Summarise something long.** Grab any PDF you have open right now (a lecture slide deck, a chapter, a research paper, a placement guide). Drag it into ChatGPT or Claude. Type: *"Summarise this in 7 bullets. Then give me the 3 things I'd be asked in an exam."* Watch what happens.
 
-### A worked example: two students, two outcomes
+**Task 2 — Explain it like you're 10.** Pick one concept you half-understand. Dynamic programming. Bayes theorem. How OS page tables work. Ask: *"Explain {{topic}} to me like I'm 10. Then explain it again like I'm a 2nd-year CS student. Use an analogy with cricket or Maggi."* The double-explanation trick is gold — you get intuition AND depth.
 
-Two 3rd-year students, Aarav and Priya, both want to "build an app for college". Aarav jumps into Flutter tutorials on day one. Three weeks later he has a half-working login page and has lost interest. Priya spends her first week interviewing 12 hostel residents about mess food. She discovers the real problem is not the menu — it is that the mess committee has no signal on who is eating what, so 40% of the food gets wasted.
+**Task 3 — Brainstorm 20 ideas.** Whatever's on your plate — hostel fest theme, project topic, internship pitch, CV bullet ideas. Ask: *"Give me 20 ideas for {{X}}. Mix safe with wild. Mark the 5 you'd pick if you were me."* You'll throw out 17. Three will surprise you.
 
-By week three, Priya's prototype is a WhatsApp poll bot mock that takes 30 seconds a day. The committee loves it. It isn't a product yet, but it is a *real problem, crisply framed, with a feasible first move*. That is the Week 1 muscle.
+### Your "wow" moment for today
 
-### What "showing up" means here
+Here's the trick nobody tells you on day one: **ask it to critique itself**. After any response, say: *"Now review that answer like a strict professor. What's missing, weak, or wrong?"* The quality of the second answer will shock you. Free, in two clicks.
 
-- **Do the Lab the same day you do the Read.** Delay kills compounding.
-- **Submit the Assignment even when it's rough.** B-minus shipped beats A-plus unshipped.
-- **Show up to the live Discuss session.** Half the value is hearing how classmates framed the same problem differently.
-- **Keep a "workshop journal".** One notebook or doc. Every day, three lines: what I learned, what confused me, what I'll try tomorrow.
+## Watch: Getting set up in under 5 minutes
 
-## Watch: the 30-day arc in 6 minutes
+A quick walk-through of signing into ChatGPT, uploading a file, and running your first three prompts. Watch on 1.5x if you're in a hurry.
 
-A quick flyover of the full 30 days so you can see where today fits. Notice how much of the early work is off-screen — on paper, in conversations, in diagrams.
-
-https://www.youtube.com/embed/VIDEO_ID
+https://www.youtube.com/embed/JTxsNm9IdYU
 <!-- TODO: replace video -->
 
-- Watch for the difference between **Think**, **Build**, and **Ship** weeks.
-- Note the capstone hand-off at Day 7 — that problem locks in for the rest of the cohort.
-- Listen for the recurring phrase "earn the right to build".
+- Notice how the presenter uploads a file — you'll do this in the lab.
+- Watch how they *refine* their prompt after the first answer. That's the whole skill.
+- Ignore any paid feature shown; free tier is enough this week.
 
-## Lab: Your one-page learning contract
+## Lab: Ship your first three wins
 
-You are going to write — by hand or in Excalidraw — a one-page contract with yourself. Print it. Stick it where you see it.
+You'll end this lab with three screenshots and one short post in the class group.
 
-Use this template. Fill every line. Do not skip.
+1. Open `https://chat.openai.com/` and sign in with your Google account. Do the same in a second tab with `https://claude.ai/`.
+2. Find a PDF or long article you have right now (at least 5 pages). Drag it into ChatGPT.
+3. Paste the prompt of the day above, replacing `{{paste_text_here}}` with a paragraph — or just say "summarise the uploaded file in 5 bullets for a student running late". Screenshot the answer.
+4. Pick one concept you're shaky on. Ask Claude: *"Explain {{topic}} like I'm 10, then like I'm a 2nd-year student, with a cricket or food analogy."* Screenshot.
+5. Ask either tool: *"Give me 20 ideas for {{thing you need ideas for}}. Mark your top 5."* Screenshot.
+6. Reply to the last answer with *"Now review that list like a strict professor — what's weak or missing?"* Notice the jump in quality.
+7. Put all three screenshots into one image (any collage tool, or just a Google Slide) and save it.
+8. Post it in the class group channel with one line: "Day 1 done. My favourite win was ___."
 
-```
-LEARNING CONTRACT — 30 DAY AI WORKSHOP
-Name: ___________________________   Start date: ____________
-
-1. Why I'm here (1 sentence, not more):
-   ___________________________________________________________
-
-2. One skill I want to be visibly better at by day 30:
-   ___________________________________________________________
-
-3. A problem I suspect I want to work on (rough is fine):
-   ___________________________________________________________
-
-4. What "success" looks like at day 30 — describe the artifact:
-   ___________________________________________________________
-
-5. Hours per day I will actually protect for this (be honest):
-   _____ hours, between _____ and _____
-
-6. What I will say "no" to, to make that time:
-   ___________________________________________________________
-
-7. My accountability partner in this cohort:
-   Name: ___________   How we check in: ___________
-
-Signed: ___________________________
-```
-
-Steps:
-
-1. Open Excalidraw or grab a blank A4 sheet.
-2. Write the contract. Handwriting is fine and honestly better.
-3. Answer question 1 in under 12 words. If you need more, you haven't thought hard enough.
-4. For question 5, look at your actual calendar this week, not your fantasy calendar.
-5. For question 6, pick something real. "Scroll less" is not real. "No Instagram after 10pm on weekdays" is real.
-6. Find a partner in the cohort Slack/Discord and exchange contracts.
-7. Photograph the contract and upload it as your Day 1 submission.
+**Victory condition:** a collage of 3 screenshots posted, and you personally felt one "oh that's cool" moment. That's it.
 
 ## Quiz
 
-Quick check on the core ideas from today — the shape of the cohort, why Week 1 has no AI, and the difference between watching and learning. Four short questions. Aim for 75%+ before moving to Day 2, because tomorrow builds directly on this framing mindset.
+A quick 4-question check-in on today. You'll be asked which tool fits which task, what the "critique yourself" trick does, and whether AI should be trusted blindly. Open-book, 2 minutes.
 
 ## Assignment
 
-Submit a photo or screenshot of your completed Learning Contract as a **file upload**. Keep it to one page. We don't grade handwriting — we grade specificity. Vague answers ("get better at tech", "build a cool app") will get sent back. If your answer to question 4 could describe any student in the cohort, rewrite it until it couldn't.
+Submit a single screenshot (or collage) of your three Day 1 wins, plus two lines: (a) which task surprised you the most, and (b) one thing you want to use AI for this week. Drop it in the submission form. No judgement on prompt quality — we're just proving you showed up.
 
-## Discuss: What are you really here for
+## Discuss: What AI felt like on Day 1
 
-- What is the *honest* reason you joined this workshop — not the LinkedIn answer?
-- Where have you previously quit a learning commitment, and why? What will you do differently this time?
-- Read out question 4 of your contract. Can the rest of us picture the artifact clearly from your words alone?
-- Is there a skill you're secretly hoping to avoid learning? Name it.
-- If you had to cut one thing from your current week to make room for this workshop, what goes?
+- What did you try to get AI to do that it *couldn't* do well? Share the failure.
+- Which tool felt more natural to you — ChatGPT or Claude — and why?
+- Did anyone else feel slightly uncomfortable about how fast it answered? Let's talk about it.
+- If you had to describe today to a parent in one sentence, what would you say?
+- What task do you do every week that you'd love to never do again after this workshop?

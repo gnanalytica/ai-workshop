@@ -1,143 +1,145 @@
 ---
 reading_time: 14 min
-tldr: "Running a model on your laptop makes the abstraction concrete. Ollama + Open WebUI in 15 minutes."
-tags: ["ai", "llms", "hands-on", "ollama", "open-source"]
+tldr: "Graduate from chat tricks to a real prompting toolkit: roles, chains of thought, structured output, few-shot, and failure modes."
+tags: ["prompting", "llms", "concepts"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Install Ollama + Open WebUI, benchmark three models", "url": "https://ollama.com/"}
-resources: [{"title": "Ollama", "url": "https://ollama.com/"}, {"title": "Open WebUI docs", "url": "https://docs.openwebui.com/"}, {"title": "vLLM docs", "url": "https://docs.vllm.ai/"}, {"title": "HuggingFace model hub", "url": "https://huggingface.co/"}]
+lab: {"title": "Build your personal prompt library", "url": "https://huggingface.co/chat/"}
+prompt_of_the_day: "You are a {{role}}. Think step-by-step before you answer. Then critique your own answer and revise it once. Return final answer as JSON with keys: answer, confidence, caveats."
+resources: [{"title": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"title": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}, {"title": "HuggingFace Chat", "url": "https://huggingface.co/chat/"}]
 ---
 
 ## Intro
 
-Today stops being theory. You're going to download a real LLM, run it on your laptop with no API key, no credit card, no telemetry. By the end you will have a chat UI on `localhost` talking to a model that lives on your SSD. This is the single biggest capability jump in the workshop.
+Week 1 you learned to ask. Today you learn to direct. The five patterns in this lesson are what separate people who "use ChatGPT" from people who get reliably great work out of AI. By the end you'll have a personal prompt library you'll reuse for years.
 
-## Read: Running models on your own hardware
+## Read: Five patterns that actually work
 
-### Why run locally at all?
+A prompt is a specification. Vague spec, vague output. Rich spec, rich output. The patterns below compound — stack them, and the same model gives dramatically better answers.
 
-- **Privacy**: your prompt never leaves your machine. Essential for medical, legal, HR.
-- **Cost**: zero marginal cost once the weights are downloaded.
-- **Latency**: for small models on Apple Silicon, first-token latency can beat hosted APIs.
-- **Learning**: you see exactly what you're running; you can swap models in seconds.
-- **Offline**: flights, poor connectivity, air-gapped environments.
+### Pattern 1: Role prompting
 
-The tradeoff: open-weights models are a generation or two behind the frontier (GPT-5 / Claude Opus / Gemini Ultra). But for many tasks — summarization, classification, structured extraction, code completion — a 7B–14B local model is *plenty*.
+Start by casting the model. "You are a senior recruiter at a top-tier consulting firm reviewing this resume for a case-interview role." That one sentence changes which tokens become probable. You're not lying to the model — you're pointing its frozen intuitions toward the right subset of the internet.
 
-### The open-weights landscape (as of 2026)
+```
+Read this, don't type it
 
-| Family | Sizes | Strengths | Notes |
-|---|---|---|---|
-| Meta Llama 3.x / 4 | 1B–405B, MoE variants | Broad coverage, huge ecosystem | Community license |
-| Qwen 3 (Alibaba) | 0.5B–72B + MoE | Strong multilingual, strong code | Apache 2.0 on most sizes |
-| Mistral / Mixtral | 7B, 8x22B, Large | Fast, efficient | Apache / research |
-| Google Gemma 3 | 2B–27B | Tight sizes, multimodal | Gemma license |
-| DeepSeek V3 / R1 | MoE, huge | Reasoning, math | MIT on many releases |
-| Microsoft Phi-4 | 3B–14B | Small but strong reasoning | MIT |
-
-"MoE" (mixture of experts) models have huge total parameter counts but activate only a fraction per token — cheaper inference than the raw size suggests. Treat the list as a starting map, not gospel: rankings shift every month.
-
-### Hardware reality
-
-- **CPU only**: works for 1B–3B quantized models. Slow but usable.
-- **Apple Silicon (M1/M2/M3/M4)**: unified memory is the killer feature. An M3 Max with 64GB runs 30B-parameter 4-bit models smoothly.
-- **Consumer GPU (8–16GB)**: fits 7B in 4-bit with room to spare; 14B is tight.
-- **24GB GPU (3090/4090/5090)**: 14B comfortably, 30B with quantization.
-- **Dual 24GB or a single 48GB**: 70B-class models in 4-bit.
-
-Check `nvidia-smi` (Linux/Windows) or `ActivityMonitor` → memory (macOS) to see your RAM headroom.
-
-### The tool stack
-
-- **Ollama** — the easiest front door. Wraps `llama.cpp` with a clean CLI and REST API. `ollama pull`, `ollama run`, done.
-- **llama.cpp** — the C++ engine most local tools use under the hood. Pure-CPU or GPU-accelerated.
-- **vLLM** — the serious server-side inference engine. PagedAttention, high throughput, multi-GPU. Use when you need to serve dozens of concurrent users.
-- **HuggingFace Transformers** — Python-native, flexible, slower than llama.cpp/vLLM for inference but unbeatable for experiments.
-- **Open WebUI** — a polished ChatGPT-like frontend that talks to Ollama. Docker one-liner.
-- **LM Studio** — GUI app for non-terminal users; also useful.
-
-### Ollama in 60 seconds
-
-```bash
-# Mac / Linux
-curl -fsSL https://ollama.com/install.sh | sh
-
-ollama pull llama3.2:3b      # ~2GB, 4-bit
-ollama run llama3.2:3b
->>> Hi. What are you?
+Weak : "Review my resume"
+Strong: "You are a senior recruiter at McKinsey India. You've seen 10,000
+         resumes. Review this one for an entry-level consultant role.
+         Flag the top 3 weaknesses and suggest one fix per weakness."
 ```
 
-That's it. `ollama list` shows local models; `ollama rm` deletes them. The REST API runs at `http://localhost:11434`:
+Specificity in the role beats adjectives every time. "Senior recruiter at McKinsey India" beats "good recruiter."
 
-```bash
-curl http://localhost:11434/api/generate -d '{
-  "model": "llama3.2:3b",
-  "prompt": "Write haiku about debugging.",
-  "stream": false
-}'
+### Pattern 2: Chain of thought
+
+Ask the model to think out loud before answering. Phrases like "Let's think step by step" or "First, list the relevant facts. Then reason through them. Then give your final answer" measurably improve performance on anything requiring reasoning — math, logic puzzles, tricky analysis.
+
+Why it works: remember, the model generates one token at a time, and each token conditions the next. When it has "thinking tokens" before the answer token, the answer token lands on a much better foundation. You're giving it runway.
+
+### Pattern 3: Few-shot examples
+
+Show, don't tell. If you want a specific format or style, paste 2–3 examples before your real request. The model will pattern-match hard.
+
+```
+Read this, don't type it
+
+Q: "I missed the placement deadline"
+A: { "emotion": "anxious", "urgency": "high", "next_step": "email coordinator today" }
+
+Q: "I'm not sure which company to apply to"
+A: { "emotion": "uncertain", "urgency": "low", "next_step": "list top 5 criteria" }
+
+Q: "I bombed the aptitude test"   <-- your real question
+A:
 ```
 
-### Picking a daily driver
+The model will produce a JSON object matching the pattern. No instructions needed.
 
-Your daily driver is the model you'll reach for when coding and thinking. Criteria:
+### Pattern 4: Structured output
 
-1. Fits comfortably in your RAM with 30–40% headroom.
-2. Runs at >15 tokens/sec (anything slower feels painful).
-3. Scores well on *your* actual tasks — not leaderboards.
+Ask for JSON, XML, or a specific markdown shape. Frontier models are trained to follow schemas. This is what makes AI usable in real apps — you can parse the output programmatically on Day 21.
 
-Build a tiny eval suite (5–10 prompts you actually care about) and re-run it every time you try a new model. Leaderboards are noisy; your own task is not.
+```
+Read this, don't type it
 
-## Watch: Ollama + Open WebUI walkthrough
+Return your answer as JSON with this exact schema:
+{
+  "answer": string,
+  "confidence": "low" | "medium" | "high",
+  "sources_needed": string[]
+}
+Do not include any text outside the JSON.
+```
 
-Find any recent end-to-end Ollama + Open WebUI install video — Docker setup, model pulling, custom system prompts. Watch it before starting the lab so you know what "success" looks like.
+Many modern APIs also support a strict "JSON mode" that guarantees valid JSON. But even in plain chat, the above prompt gets you 95% of the way.
+
+### Pattern 5: Self-critique and revise
+
+A second pass almost always beats the first pass. Append: "Now critique your own answer as a harsh editor. List 3 weaknesses. Then write a revised version that fixes them." You're essentially asking the model to play two roles — author and editor — and the editor catches what the author missed.
+
+### Putting them together
+
+The best real-world prompts stack three or four patterns.
+
+| Layer | What to write |
+|---|---|
+| Role | "You are a senior data-science mentor." |
+| Task | "Given these notes, design a 2-week study plan." |
+| Thinking | "First list the topics. Then group them by difficulty. Then schedule." |
+| Format | "Return as a markdown table with columns: day, topic, est. hours." |
+| Critique | "After the table, write one paragraph on what a weaker plan would look like so I can compare." |
+
+Paste that into any modern model and you'll get a near-consultant-quality plan.
+
+### When prompts fail — and what to do
+
+Three common failure modes:
+
+- Hallucination on facts. Fix: give the model the source text in the prompt, or use RAG (Day 19).
+- Refusal / over-caution. Fix: clarify intent ("this is for my own placement prep, not for sharing"), or switch to a local model.
+- Ignoring format. Fix: few-shot it, or end the prompt with "Respond ONLY with the JSON, no preamble."
+
+If nothing works, the prompt is probably wrong, not the model. Shorten it. Simplify. Try again.
+
+## Watch: Prompt patterns in action
+
+A compact tour of chain-of-thought, role, and few-shot prompting with live before/after examples. Watch how each pattern changes the output on the same underlying question.
 
 https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace with a recent Ollama Open WebUI walkthrough -->
+<!-- TODO: replace video -->
 
-- Note where model weights get stored on your OS.
-- Watch the part about system prompts and model files.
-- See how Open WebUI handles multiple concurrent chats.
+- Watch how a single role line shifts tone dramatically.
+- Notice the accuracy lift from "think step by step."
+- See how few-shot makes JSON output almost perfect.
 
-## Lab: Local LLM rig in under an hour
+## Lab: Your personal prompt library
 
-1. Install Ollama from `https://ollama.com/`. Verify: `ollama --version`.
-2. Pull three models of different sizes:
-   ```bash
-   ollama pull llama3.2:3b
-   ollama pull qwen3:8b        # or llama3.1:8b if qwen3 tag differs
-   ollama pull mistral:7b
-   ```
-   If any tag is unavailable, swap for a current one from `ollama.com/library`. Note: total ~10–15GB download.
-3. Run a quick sanity chat: `ollama run llama3.2:3b`, type `/bye` to exit.
-4. Install Open WebUI via Docker:
-   ```bash
-   docker run -d -p 3000:8080 \
-     --add-host=host.docker.internal:host-gateway \
-     -v open-webui:/app/backend/data \
-     --name open-webui --restart always \
-     ghcr.io/open-webui/open-webui:main
-   ```
-   Open `http://localhost:3000`. Create a local admin account.
-5. In the model picker, confirm all three Ollama models show up.
-6. Create a benchmark file `my-evals.md` with 5 prompts of your own: one factual Q, one code task (e.g., reverse a linked list in Python), one summarization (paste a paragraph), one Hindi/Tamil/your-language question, one adversarial ("How many r's in strawberry?").
-7. Run the 5 prompts through each of the three models. For each, record: response time (stopwatch or watch the UI), whether the answer was correct, and a 1–5 quality score.
-8. Make a table in `local-llm-bench.md` with model × prompt = score. Add a "tokens/sec" column — Open WebUI shows this in the response metadata.
-9. Pick your daily driver. Write 3–4 sentences on why.
-10. Bonus: install `vLLM` in a venv and serve one model (`vllm serve Qwen/Qwen2.5-7B-Instruct`), hit the OpenAI-compatible endpoint at `http://localhost:8000/v1/chat/completions` with `curl`. Compare throughput.
+Goal: build a reusable library of 6 prompts you'll actually use this semester.
 
-Budget 60 minutes. Most of it is the model downloads.
+1. Open a Google Doc titled "My Prompt Library v1." Create six headings: Study, Placement Prep, Writing, Coding, Debugging, Life Admin.
+2. Open https://huggingface.co/chat/ and pick any modern frontier model. You'll test prompts here.
+3. For the Study heading, write a prompt using at least 3 of today's patterns. Example goal: "Given a topic, output a 1-day study sprint plan as JSON." Paste your prompt into the chat, test with 3 different topics, iterate until the output is consistently good. Save the final prompt to your doc.
+4. Do the same for Placement Prep. Example goal: "Given a target company, output 5 behavioral interview questions and model answers."
+5. Now for Writing. Goal: "Given a paragraph, output a harsher, tighter version and explain what you cut." Use self-critique.
+6. For Coding and Debugging, make prompts that force the model to ask a clarifying question if the user's request is ambiguous. (Hint: add "If anything is unclear, ask one question before answering.")
+7. For Life Admin, write a prompt that turns a screenshot of a messy WhatsApp chat into a clean JSON of action items.
+8. Paste today's prompt-of-the-day, fill `{{role}}`, and try it on your hardest question of the week. Save the result.
+
+Every prompt in your doc should use at least 3 of today's 5 patterns. Comment on each one explaining which patterns you stacked.
 
 ## Quiz
 
-Quiz covers: what Ollama actually wraps, the meaning of 4-bit quantization, when to prefer vLLM over Ollama, how context windows interact with RAM, and the rough size/RAM mapping. If you did the lab you'll ace it.
+Expect four checks on the five patterns, one scenario question asking which pattern fixes which failure, and one "spot the weak prompt" rewrite question. Trust the stacking principle — layered prompts win.
 
 ## Assignment
 
-Commit `local-llm-bench.md` to your workshop repo with your table and your daily-driver choice. Then add a 200-word paragraph on a real use case at your college (e.g., summarizing hostel complaint threads, answering FAQ emails) where a local 7B model would be preferable to calling an API — name the constraints (cost, privacy, latency, offline) that make local the right call.
+Pick one prompt from your library. Run it on 3 different models (two cloud, one local from yesterday). Paste all three outputs into your doc with a 2-sentence verdict per model. Submit the doc link.
 
-## Discuss: Trade-offs of going local
+## Discuss: The prompting mindset
 
-- Local 8B vs hosted frontier (GPT-5 / Claude Opus / Gemini Ultra): name three tasks where local wins and three where it loses.
-- When does Ollama stop being the right tool and vLLM starts? Be concrete about concurrency numbers.
-- Apple Silicon has unified memory. Why does that matter more than TFLOPS for local LLM inference?
-- Open-weights licenses vary — Apache, MIT, community, Gemma. Does the license affect your architecture choices at a startup?
-- If you had a $500 budget for a personal AI rig in 2026, how would you spend it?
+- Which pattern felt most like "unlocking" the model for you?
+- When does self-critique actually make things worse — if ever?
+- How do you balance "short prompts feel natural" with "long prompts work better"?
+- Which of your 6 library prompts will you actually use this week?
+- What's a task where no amount of prompting will rescue you, and you should reach for code or RAG instead?

@@ -1,136 +1,116 @@
 ---
 reading_time: 14 min
-tldr: "Tokens, attention, weights — the three primitives behind every LLM. Understand them, debug better prompts."
-tags: ["ai", "llms", "theory"]
+tldr: "Run a real LLM on your own laptop with zero cloud, zero cost, and zero data leaving your machine."
+tags: ["llms", "ai", "concepts"]
 video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Tokenization surprises with tiktoken and HuggingFace", "url": "https://github.com/openai/tiktoken"}
-resources: [{"title": "HuggingFace Transformers docs", "url": "https://huggingface.co/docs/transformers/"}, {"title": "Anthropic Transformer Circuits", "url": "https://transformer-circuits.pub/"}, {"title": "3Blue1Brown Neural Networks", "url": "https://www.3blue1brown.com/topics/neural-networks"}]
+lab: {"title": "Install Ollama and chat with three models", "url": "https://ollama.com/"}
+prompt_of_the_day: "You are a local model with no internet. Given this text: {{text}}, give me a 3-bullet summary and flag anything you are unsure about."
+resources: [{"title": "Ollama", "url": "https://ollama.com/"}, {"title": "Open WebUI", "url": "https://openwebui.com/"}, {"title": "Ollama model library", "url": "https://ollama.com/library"}]
 ---
 
 ## Intro
 
-Yesterday we said an LLM predicts the next token. Today we open the box: what's a token, what are the "weights" that everyone talks about, and what does attention actually compute? You don't need to derive the math — you need a mental model that lets you debug real systems.
+Today your laptop becomes an AI server. You'll install Ollama, pull three different open models, and chat with them through a polished browser UI — all offline. This matters more than it sounds: privacy, cost, and the freedom to tinker all come from here.
 
-## Read: Tokens, weights, attention
+## Read: What "local" actually means
 
-### Tokens: the atoms the model sees
+When you use ChatGPT, your text travels to OpenAI's servers, gets processed on thousand-dollar GPUs, and comes back. Free while free, fine for homework, terrible for a leaked offer letter or a client's private data. A local model inverts that: the weights sit on your disk, inference happens on your CPU or GPU, and nothing leaves the machine. The tradeoff is speed and smarts — but for many real tasks, the gap is smaller than you'd think.
 
-Models don't see characters or words. They see **tokens**: integer IDs that index into a learned vocabulary (typically 32k–200k entries). A tokenizer splits strings into subword pieces using algorithms like **BPE** (byte-pair encoding) or **SentencePiece**. Common subwords become single tokens; rare words get split.
+### The three reasons local matters
 
-```python
-import tiktoken
-enc = tiktoken.get_encoding("cl100k_base")  # GPT-4 family
-print(enc.encode("Hello, world!"))
-# [9906, 11, 1917, 0]
-print(enc.encode("Bengaluru"))
-# Splits into multiple tokens — rare word
+- Privacy. Your notes, your code, your chats — none of it trains anyone else's model or sits in anyone else's logs.
+- Cost. Once you've downloaded the weights, every query is free forever. No per-token pricing.
+- Offline. Plane, train, campus outage, remote village — your AI works.
+
+There's a fourth, subtler reason: understanding. When you see how slowly a 3B-parameter model streams tokens on your laptop, you feel scaling laws in your fingertips. That intuition is worth the hour.
+
+### The model zoo, briefly
+
+Every week someone releases a new open model. Here's the 2026 landscape, simplified.
+
+| Model family | Size range | Best for | Made by |
+|---|---|---|---|
+| Llama 3.2 | 1B / 3B | Fast chat, small devices | Meta |
+| Qwen 3 | 4B / 8B / 32B | Coding, reasoning, multilingual | Alibaba |
+| Mistral | 7B | Balanced general chat | Mistral AI |
+| Gemma 3 | 2B / 9B / 27B | Safe, instruction-tuned | Google |
+| Phi 4 | 4B / 14B | Punches above weight on reasoning | Microsoft |
+
+You do not need to memorize this. The rule of thumb: pick a size that fits your RAM. 3B-class models run happily on 8GB laptops. 7B-class models want 16GB. 30B+ wants a beefy GPU or serious patience.
+
+### Ollama, in one paragraph
+
+Ollama is the simplest way to run local LLMs. It's free, open source, and ships as a desktop app on macOS, Windows, and Linux. Install it once, and you get a background service that can download any supported model by name and expose it as a chat. It's the Docker of LLMs — a clean runtime for weights.
+
+### Open WebUI — putting a face on Ollama
+
+Ollama itself is minimal. Open WebUI is a free browser-based frontend that makes it feel like ChatGPT: multi-turn chats, saved conversations, model-switching, document upload, even basic RAG. You run it locally with one installer. It talks to Ollama under the hood.
+
+```
+Read this, don't type it
+
+[ Your browser ]  <-->  [ Open WebUI on localhost:3000 ]
+                              |
+                              v
+                       [ Ollama service ]
+                              |
+                              v
+                  [ Model weights on your disk ]
 ```
 
-Things that surprise people:
+All traffic stays on your machine. The network tab in your browser will show zero external requests.
 
-- **Whitespace matters.** `" Paris"` and `"Paris"` are often different tokens.
-- **Non-English is expensive.** Hindi, Tamil, Mandarin, Arabic take 2–4× more tokens per character than English. That's a direct cost and latency hit.
-- **Numbers are weird.** `"1234"` might be one token or four. This is why LLMs struggle with digit-level arithmetic.
-- **Code is dense.** Most programming tokens are well-represented, which is partly why coding works so well.
+### Cloud vs. local, honestly
 
-| String | GPT-4o tokens | Llama 3 tokens |
+| Aspect | Cloud (ChatGPT/Claude) | Local (Ollama) |
 |---|---|---|
-| "Hello" | 1 | 1 |
-| "नमस्ते" | ~5 | ~4 |
-| "antidisestablishmentarianism" | 6 | 5 |
-| "1234567890" | 4 | varies |
-| A 1-page PDF of English | ~500 | ~500 |
+| Smarts | Frontier, very high | Small to medium |
+| Speed | Fast (big GPUs) | Depends on your laptop |
+| Privacy | Data leaves your machine | Nothing leaves |
+| Cost | Per-token or subscription | One-time download, free forever |
+| Offline | No | Yes |
+| Setup | None | 10 minutes today |
 
-Every "context window" (8k, 128k, 1M) is measured in tokens. Your Hindi prompt hitting a 128k window is effectively only 30–60k characters.
+Neither is "better." They're different tools. A seasoned builder uses both: frontier for hard reasoning, local for privacy-sensitive or high-volume work.
 
-### Weights: what training produces
+## Watch: Ollama in five minutes
 
-The "model" is just a huge pile of floating-point numbers — the **weights** or **parameters** — arranged in matrices. A 7B model has 7 billion of them. Each weight starts as a random number. Training nudges each one slightly so that, across trillions of training tokens, the model's next-token predictions match what actually came next in the data.
-
-That's it. There is no symbolic database, no facts table, no rule engine. Whatever the model "knows" is baked into those numbers. Storage-wise:
-
-| Model | Params | Size (fp16) | Size (4-bit) | Fits on |
-|---|---|---|---|---|
-| Llama 3.2 3B | 3B | ~6 GB | ~2 GB | phone, laptop |
-| Llama 3.1 8B | 8B | ~16 GB | ~5 GB | 8GB GPU, M-series Mac |
-| Qwen 3 14B | 14B | ~28 GB | ~9 GB | 16GB GPU |
-| Llama 3.1 70B | 70B | ~140 GB | ~40 GB | 2x 24GB GPU, M-Ultra |
-| DeepSeek V3 / Llama 4 MoE | 200B+ | 400GB+ | 100GB+ | server cluster |
-
-Quantization (going from 16-bit to 4-bit) is a near-free compression — you lose a sliver of quality but cut memory by ~4×. You'll use 4-bit models tomorrow.
-
-### The forward pass: embed, attend, predict
-
-When you send a prompt, this happens for every token position, in parallel:
-
-1. **Embed**: look up each token ID in a matrix; get a vector (typically 2048–8192 dimensions).
-2. **Attend**: in each transformer layer, every token computes a weighted average of the other tokens' vectors. The weights come from learned `Q`, `K`, `V` projections — each token asks "who in this sequence is relevant to me?" and mixes their info in.
-3. **MLP**: a small feed-forward network transforms each vector independently.
-4. Stack this ~30–80 times (that's "layers" or "depth").
-5. **Unembed**: project the final vector onto the vocabulary; softmax to get probabilities.
-
-Attention is the key invention (the 2017 "Attention Is All You Need" paper). Before it, RNNs processed tokens sequentially, forgot early context, and couldn't parallelize. Attention lets every token see every other token in one shot.
-
-> Mental model: attention is a **soft, learned dictionary lookup** happening dozens of times per layer per token. The model is essentially asking "given what I've seen so far, which past tokens should I reweight?"
-
-### Why this explains so much
-
-- **Context windows are quadratic** in sequence length — doubling context quadruples attention cost. That's why 1M-token contexts are a research and infra feat.
-- **In-context learning works** because attention can "retrieve" relevant examples from the prompt itself.
-- **Training data leaks.** If a fact appears many times in training, the weights encode it strongly. If it appears once, the model will guess.
-
-### Worked example: walk through "The cat sat on the"
-
-Tokens: `[The, cat, sat, on, the]`. Each gets embedded into a vector. In layer 1's attention, when processing `the` (position 5), the model learns that `cat` and `sat` are relevant and mixes in their features. After 32 layers of this, the final vector at position 5 is rich with context. Unembed it → probabilities across vocab. `mat` wins (training data is saturated with this cliché). The sampler picks it. New sequence: `[The, cat, sat, on, the, mat]`. Repeat.
-
-Nothing magical. Lots of linear algebra, done fast on GPUs.
-
-## Watch: 3Blue1Brown on transformers
-
-Grant Sanderson's visual explanations are unmatched. His "But what is a GPT?" and "Attention in transformers" videos will lock in today's reading.
+A walkthrough of installing Ollama, pulling a model, and chatting through Open WebUI. Watch for the part where the presenter unplugs their Wi-Fi mid-chat — the model keeps answering.
 
 https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace with 3Blue1Brown GPT / attention video -->
+<!-- TODO: replace video -->
 
-- Focus on the geometric picture of the embedding space.
-- Note how `Q @ K.T` produces the attention pattern.
-- Notice the "unembedding" step — the final matmul back to vocab.
+- Notice how small the install actually is.
+- Watch the first token appear after the model loads into RAM.
+- Observe the RAM usage climb when a bigger model loads.
 
-## Lab: Poke the tokenizer
+## Lab: Three models, one laptop
 
-You're going to tokenize strings with two different tokenizers and discover where they disagree.
+You'll install Ollama, pull three models, and compare them side by side.
 
-1. Make a fresh folder, create a venv: `python -m venv .venv && source .venv/bin/activate`.
-2. `pip install tiktoken transformers sentencepiece`.
-3. Create `tok_lab.py`. Load two tokenizers:
-   ```python
-   import tiktoken
-   from transformers import AutoTokenizer
-   gpt = tiktoken.get_encoding("cl100k_base")
-   llama = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B")
-   # If gated, use "NousResearch/Meta-Llama-3.1-8B" or any open mirror.
-   ```
-4. Define a list of test strings that mixes English, Hindi/Tamil/your-mother-tongue, emoji (`"🙂🫠🫥"`), code (`"def f(x): return x**2"`), URLs, and numbers (`"1234567890"`, `"9.11 vs 9.9"`).
-5. For each string, print: character count, GPT token count, Llama token count, and the list of decoded tokens. Eyeball the splits.
-6. Build a bar chart with `matplotlib` comparing token counts across tokenizers for each string.
-7. Try a paragraph of English vs the same paragraph translated into your mother tongue. Record the token ratio.
-8. Answer in comments: (a) which tokenizer is cheaper for your language? (b) what happened to emoji? (c) did `"9.11"` and `"9.9"` tokenize symmetrically?
-9. Commit `tok_lab.py` and a screenshot of the chart.
+1. Go to https://ollama.com/ and download the Ollama desktop app for your OS. Install it. Launch it. You'll see a small icon in your menu bar or system tray — that's the service running.
+2. Open the Ollama app window. In the model picker, type `llama3.2:3b` and click download. Wait 2–5 minutes (it's ~2GB). This is a small, fast Meta model.
+3. Pull two more: `qwen3:4b` and `mistral:7b`. While these download, move to step 4.
+4. Open WebUI. The easiest path: open the Ollama app, go to the built-in chat window. If you want the fuller experience, visit https://openwebui.com/ and follow their "one-click install" that connects to your local Ollama. Either works for today.
+5. Chat with Llama 3.2 3B first. Ask: "Summarize the French Revolution in 3 bullets, aimed at a college student." Note the speed and quality.
+6. Switch to Qwen 3 4B using the model dropdown. Ask the exact same question. Switch to Mistral 7B. Same question. You now have a three-way comparison — paste all three answers into a Google Doc. Which sounded smartest? Which was fastest?
+7. Turn off your Wi-Fi. Ask any of the three to help you outline a placement resume. Notice it still works. That's the whole point.
+8. Paste today's prompt-of-the-day into the largest model you pulled, with a paragraph from your own notes or a news article as `{{text}}`. Save the output.
 
-Budget 40 minutes.
+If a model feels painfully slow, pick a smaller one — speed matters more than the last 10% of quality for this week.
 
 ## Quiz
 
-Quick quiz. Expect questions on: what a token is, why context windows are measured in tokens not characters, what attention computes, what a "weight" is, and why 4-bit quantization works. No math required, just the mental model.
+A short quiz on local inference. Expect questions on why you'd prefer local over cloud, what "7B" refers to, what Ollama and Open WebUI each do, and one scenario question asking you to pick the right tool for the job. Trust the privacy/cost/offline framing.
 
 ## Assignment
 
-Extend the lab: write `tokenization-report.md` answering in 300–500 words — if you were building a multilingual chatbot for a college with English + two regional languages, how would token costs shape your architecture choices (model selection, pricing, summarization vs full-context)? Include at least one concrete number from your lab.
+Record a 60-second screen capture (Loom, QuickTime, or phone camera pointed at your laptop) showing you ask the same question to two different local models and getting different answers. Upload to the class channel with a one-sentence verdict on which model you'd keep and why.
 
-## Discuss: Where tokens bite you
+## Discuss: Local first, cloud when needed
 
-- Why are there no "characters" in an LLM's world? What implications does that have for asking it to reverse a string?
-- If a 70B model is 140GB in fp16, how do people run it on a single GPU? What gets sacrificed?
-- Attention is O(n²) in sequence length. Name two engineering tricks you'd expect labs to use to push context to 1M tokens.
-- A startup claims their model is "better at Hindi." What evidence would actually convince you, beyond vibes?
-- Does understanding the architecture change how you prompt? Why or why not?
+- Which of the three models surprised you most — was it the biggest, or a smaller one?
+- What's one task you currently do in ChatGPT that you'd rather run locally, and why?
+- Running a 7B model felt slow. What would you trade for that speed — quality, privacy, or cost?
+- Have you ever pasted something into ChatGPT that you wish you hadn't? What would a local setup change about that behavior?
+- If open models keep getting better every 3 months, what changes for big AI labs like OpenAI?
