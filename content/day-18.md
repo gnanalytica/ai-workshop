@@ -126,7 +126,7 @@ Budget 45–60 minutes. Pick whichever path matches your comfort level — all t
 
 1. Collect 5–20 real PDFs for your capstone (textbook chapters, research papers, internal docs, lecture notes).
 2. **Path A — NotebookLM:** go to notebooklm.google, create a new notebook, upload your PDFs. Ask it 5 questions from your assignment list. Note which it nailed and which it fumbled.
-3. **Path B — LlamaIndex + Ollama + Chroma:** use Claude/Cursor to scaffold a `SimpleDirectoryReader → VectorStoreIndex → query_engine` pipeline. You direct; it codes.
+3. **Path B — LlamaIndex + Groq/HuggingFace + Chroma (cloud, no install):** use Claude/Cursor to scaffold a `SimpleDirectoryReader → VectorStoreIndex → query_engine` pipeline. Embeddings via HuggingFace Inference API free tier; generation via Groq. Storage in in-memory Chroma. You direct; it codes. (Only if your laptop has ≥ 8 GB RAM and you're curious, swap to Ollama's `nomic-embed-text` as a stretch.)
 4. **Path C — pgvector on Neon:** create a free Neon project, enable the `vector` extension, create a `documents(id, content, embedding vector(384))` table. Have Claude generate the ingest + query SQL.
 5. Write the 5 target questions down *before* you test — no moving the goalposts.
 6. For each question, compare: did the answer cite the right source? Was it hallucinated? Was the retrieved chunk relevant?
@@ -136,7 +136,7 @@ Budget 45–60 minutes. Pick whichever path matches your comfort level — all t
 > ⚠️ **If you get stuck**
 > - *NotebookLM refuses your PDF as "unsupported" or strips content* → the PDF is probably scanned images; run it through an OCR step first (NotebookLM needs real text) or export pages as text.
 > - *pgvector query returns nothing or wildly wrong chunks* → confirm ingest and query used the same embedder AND dimensions match your column type (`vector(384)` must match a 384-dim embedder like `all-MiniLM-L6-v2`).
-> - *Ollama embed calls hang on large PDFs* → batch chunks in groups of 16–32 instead of one mega-call; `nomic-embed-text` is faster than general-purpose chat models for embedding.
+> - *HuggingFace Inference API slow on large PDFs* → batch chunks in groups of 16–32 instead of one mega-call; use `sentence-transformers/all-MiniLM-L6-v2` (fast + free) over bigger embedders.
 
 ## After class · ~30-45 min post-work
 
@@ -145,7 +145,7 @@ Get a RAG bot answering 5 real questions from your own PDFs — no toy data, no 
 ### Ship the bot (25 min)
 - [ ] Pick your path: NotebookLM (easiest), LlamaIndex + Chroma (more control via https://trychroma.com), or pgvector on Neon (most production-shaped).
 - [ ] Run all 5 of your pre-class questions. For each, paste: question, retrieved chunk(s), final answer.
-- [ ] Tune **one** knob: chunk size (try 300 vs 800), top-K (try 3 vs 8), or embedder (swap to `nomic-embed-text` via Ollama). Record before/after.
+- [ ] Tune **one** knob: chunk size (try 300 vs 800), top-K (try 3 vs 8), or swap embedder (e.g., `all-MiniLM-L6-v2` vs `bge-small-en` on HuggingFace). Record before/after.
 
 ### Stretch (15 min)
 - [ ] Try Graphify (`/graphify` in Claude Code) or Microsoft GraphRAG at https://github.com/microsoft/graphrag on the same PDFs. Ask one multi-hop question that chunk RAG fumbled.

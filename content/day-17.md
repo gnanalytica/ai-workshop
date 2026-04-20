@@ -29,7 +29,7 @@ Yesterday you learned the rails. Today you drive. We put a real LLM on your lapt
 |---|---|---|
 | Recap + hook | 5 min | Why run an LLM locally when Groq is free? |
 | Mini-lecture | 20 min | Quantization, prompt patterns (CoT, self-critique, few-shot, JSON), what an eval actually is |
-| Live lab | 20 min | Install Ollama, pull a 1–3B model, log a first trace in Langfuse together |
+| Live lab | 20 min | Instructor demos Ollama locally; you hit Groq + HF Chat + log traces in Langfuse |
 | Q&A + discussion | 15 min | When did small beat big? Which prompt pattern moved the number most? |
 
 **Before class** (~10 min): check your laptop RAM and skim the model-size table so you know which GGUF to pull.
@@ -45,21 +45,21 @@ Yesterday you learned the rails. Today you drive. We put a real LLM on your lapt
 
 ## Before class · ~20 min pre-work
 
-**Critical: install Ollama BEFORE class or you'll waste the live lab watching a download bar.**
+**No local install needed.** Most laptops can't handle 3B+ models anyway — instructor will demo Ollama live. You'll use free cloud inference (Groq + HuggingFace Chat) which is actually *faster* than local on most laptops.
 
-### Setup (15 min)
-- [ ] Download and install the Ollama desktop app from https://ollama.com/download — Mac, Windows, or Linux.
-- [ ] Launch it once; confirm it runs silently in the background (menu bar icon on Mac, tray on Windows).
-- [ ] Check your RAM: Mac (Apple menu → About), Windows (Task Manager → Performance). Note the number — 4GB, 8GB, 16GB.
-- [ ] Based on RAM, pre-pull one model so class starts fast — run one of these in Terminal/PowerShell: `ollama pull qwen2.5:1.5b` (4GB), `ollama pull gemma2:2b` (6GB), `ollama pull phi3:mini` (8GB+).
+### Setup (10 min — web only, no downloads)
+- [ ] Sign up for **Groq** free tier at https://console.groq.com — your free, instant GPU. 30 seconds.
+- [ ] Sign up for **HuggingFace** at https://huggingface.co — gives you access to HuggingFace Chat + the model leaderboards.
+- [ ] Sign up for **Langfuse** free tier at https://langfuse.com (Google sign-in, 30 seconds).
+- [ ] *Optional, only if your laptop has ≥ 8 GB RAM and you're curious*: download Ollama from https://ollama.com/download and pull one small model (`ollama pull qwen2.5:1.5b`). Not required — skip without guilt.
 
 ### Primer (5 min)
-- [ ] Skim the Ollama docs homepage at https://ollama.com — read the "What is Ollama?" and model library sections.
-- [ ] Open https://huggingface.co/spaces/mteb/leaderboard to see what "embedding model quality" looks like (previews Day 18).
+- [ ] Open https://huggingface.co/chat/ and try one prompt on any listed model. Feel how fast it is.
+- [ ] Skim the Groq homepage — notice the "1000+ tokens/sec" claim. That's the cloud advantage.
 
 ### Bring to class
-- [ ] One task from your capstone you suspect a 2B model could handle (summarize, classify, extract). Jot 2 example inputs.
-- [ ] A free Langfuse account at https://langfuse.com (30 seconds to sign up with Google).
+- [ ] One task from your capstone you suspect a small model could handle (summarize, classify, extract). Jot 2 example inputs.
+- [ ] Your Groq API key (console.groq.com → API Keys — create one, copy it for class).
 
 ## Read: Local LLMs, prompting patterns, and evals
 
@@ -103,9 +103,9 @@ That's it. The magic is the **repeatability** — the next time you tweak your p
 
 **Tokens and context windows.** One final vocabulary drop. A **token** is roughly 3/4 of an English word. A **context window** is how many tokens a model can "see" at once. Qwen 2.5 handles 32k tokens. Llama 3.3 handles 128k. Gemini 2.5 handles 1M. When a model "forgets" what you said, you've blown the context window — not because the model is dumb, but because you exceeded its RAM.
 
-## Watch: Ollama in 10 minutes
+## Watch: Ollama in 10 minutes (instructor demo)
 
-Live walkthrough installing Ollama, pulling a small model, wiring up Open WebUI, and making the first local chat call. Then we switch to Groq for a side-by-side speed comparison.
+Live walkthrough by the instructor — installing Ollama, pulling a small model, wiring up Open WebUI, making the first local chat call. You don't install it yourself. Then we switch to Groq on *your* laptop for a side-by-side speed comparison so you see both worlds.
 
 https://www.youtube.com/embed/rIRkxZSn-A8
 
@@ -114,29 +114,30 @@ https://www.youtube.com/embed/rIRkxZSn-A8
 - Groq's free tier is faster than any local setup you'll build today.
 - Local is private; cloud is fast. Use both.
 
-## Lab: Install Ollama + 3-way prompt showdown in Langfuse
+## Lab: Cloud-first 3-way prompt showdown in Langfuse
+
+Everyone runs models in the browser — no local installs. Instructor demos Ollama on their machine so you see what "local" means, then we move to where your work actually happens: cloud inference.
 
 Budget 45–60 minutes.
 
-1. Install **Ollama** from ollama.com. Launch it; it runs as a background service.
-2. Pick your model based on RAM (see the table above). Pull it — the command you'll run from your terminal (read this, don't panic):
-
-```bash
-ollama pull qwen2.5:1.5b   # or gemma2:2b, phi3:mini
-ollama run qwen2.5:1.5b "Explain RAG in 2 sentences."
-```
-
-3. Install **Open WebUI** (follow the one-click Docker or desktop path at openwebui.com). Open `http://localhost:3000`. Select your local model in the dropdown. Say hi.
-4. Go to **langfuse.com**, sign up free, create a project. Grab your public + secret keys.
-5. Pick a task for your capstone. Write **three prompt variants** using the prompt-of-the-day scaffold: zero-shot, CoT + self-critique, few-shot with 3 examples.
-6. Build a 10-row eval set in a Google Sheet: columns `input`, `expected`. Keep inputs short and realistic (real student queries, real PDFs).
-7. Run each variant across all 10 rows — either via Open WebUI manually (tedious but educational) or via Langfuse's prompt management UI. Log every run.
-8. Score each output 1 (pass) or 0 (fail). Compute a win rate per variant. Take a screenshot of the Langfuse trace view. Crown a winner.
+1. **Watch the instructor** pull `qwen2.5:1.5b` in Ollama and chat with it in Open WebUI. ~3 minutes. This is the "why local exists" tour — privacy, offline, zero cost.
+2. In your browser, open **Groq Console** (`console.groq.com`). Go to Playground. Pick `llama-3.3-70b-versatile`. Paste: *"Explain RAG in 2 sentences."* Feel the speed.
+3. Open a second tab: **HuggingFace Chat** (`huggingface.co/chat/`). Pick a different model (Qwen 2.5 or Gemma). Paste the same prompt. Compare.
+4. Go to **Langfuse** (langfuse.com). Create a project. Grab your public + secret keys. (No code needed today — we log via the web console or Playground trace view.)
+5. Pick **one task from your capstone** you jotted in Before-class. Example: "Summarise a student's lab reflection into 3 bullets."
+6. Write **three prompt variants** using the prompt-of-the-day scaffold:
+   - V1: zero-shot ("Summarise this in 3 bullets: …")
+   - V2: CoT + self-critique ("Think step by step. Draft. Critique. Revise. …")
+   - V3: few-shot with 3 worked examples baked in.
+7. Build a **10-row eval set** in a Google Sheet: columns `input`, `expected`. Real inputs — capstone data, not synthetic.
+8. Run each variant against all 10 rows in the Groq Playground (or HuggingFace Chat). Score each output 1 (pass) or 0 (fail). Compute a win rate per variant.
+9. Screenshot the winning prompt + the Langfuse trace. Crown a winner.
 
 > ⚠️ **If you get stuck**
-> - *`ollama pull` fails or hangs on a slow network* → pull a smaller variant (`qwen2.5:0.5b`), or kill and resume — Ollama resumes partial downloads automatically.
-> - *Open WebUI can't see your Ollama model / model dropdown is empty* → confirm Ollama is actually running (`curl http://localhost:11434/api/tags` should list your models); on Docker, set `OLLAMA_BASE_URL=http://host.docker.internal:11434`.
-> - *Langfuse traces aren't appearing* → double-check you pasted both the public AND secret key, and that your region (EU vs US) in the SDK host matches the region you picked at signup.
+> - *Groq rate-limited* → wait 30s and retry, or switch the model dropdown to a smaller option (Llama 3.1 8B) — free tier has per-model quotas.
+> - *HuggingFace Chat says "loading model"* → model is cold-starting; give it 20s or pick another from the dropdown (they're all free).
+> - *Langfuse traces empty* → the web-only flow uses Playground screenshots; to actually log traces you need an API call from code (that's Day 23 material) — for today, screenshots are fine.
+> - *Small local model eager to try anyway (≥8 GB laptop)*: download Ollama at home tonight, `ollama pull qwen2.5:1.5b`, run the same prompts, compare — it's an after-class stretch, not a requirement.
 
 ## After class · ~30-45 min post-work
 
@@ -144,15 +145,18 @@ Ship the 10-row eval tonight while the lab is still fresh — this is the habit 
 
 ### Finish the eval (25 min)
 - [ ] Build the 10-row eval Google Sheet for your capstone task (`input`, `expected` columns). Real examples, not synthetic.
-- [ ] Run all three prompt variants (zero-shot, CoT+critique, few-shot) — either manually in Open WebUI or via the Langfuse prompt manager.
+- [ ] Run all three prompt variants (zero-shot, CoT+critique, few-shot) via Groq Playground.
 - [ ] Score each output 1/0 and compute win rates per variant.
 
 ### Explore (10-15 min)
-- [ ] Sign up for Groq at https://groq.com and run the same winning prompt on Llama 3.3 70B — compare speed and quality against your local model.
-- [ ] Try one more model — swap in `gemma2:2b` or `phi3:mini` from https://ollama.com/library/gemma2 / https://ollama.com/library/phi3 and see if small-vs-small changes the winner.
+- [ ] Try the **same winning prompt** on a different Groq model (Mixtral, Llama 3.1 8B) — does model matter as much as prompt did? Often no — surprising takeaway.
+- [ ] Open **HuggingFace Chat** and test the same prompt on Qwen 2.5 vs DeepSeek — rate the Indian-language versions if relevant.
+
+### Stretch (optional, only if you have a capable laptop)
+- [ ] Install Ollama at home, pull `qwen2.5:1.5b`, run the same prompt offline. Compare quality + speed vs Groq. File the one-line verdict.
 
 ### Share (5 min)
-- [ ] Post to the cohort channel: the task, the win rates (three numbers), and one surprise. Screenshot the Langfuse trace view.
+- [ ] Post to the cohort channel: the task, the win rates (three numbers), and one surprise. Screenshot the winning prompt + output.
 
 ## Quiz
 
