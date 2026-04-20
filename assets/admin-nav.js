@@ -1,4 +1,5 @@
 export const ADMIN_PAGES = [
+  { href: 'admin-home.html',       label: 'Home' },
   { href: 'admin.html',            label: 'Registrations' },
   { href: 'admin-schedule.html',   label: 'Schedule' },
   { href: 'admin-content.html',    label: 'Content' },
