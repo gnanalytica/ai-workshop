@@ -149,6 +149,18 @@
   </div>
 
   <div id="teamCard" class="progress-wrap" style="display:none"></div>
+
+  <!-- Full syllabus quick view -->
+  <div class="progress-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+      <div>
+        <div class="kicker">The full arc</div>
+        <h2 style="margin:0">30-day syllabus</h2>
+      </div>
+      <a href="#lessons" style="font-size:13px;color:var(--accent)">Open full lessons tab →</a>
+    </div>
+    <div id="syllabusList" style="margin-top:16px;display:flex;flex-direction:column;gap:10px"></div>
+  </div>
   </section>
 
   <!-- LESSONS TAB -->
@@ -245,7 +257,7 @@
 </script>
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { DAYS, WEEK_TITLES } from './assets/days.js';
+  import { DAYS, WEEK_TITLES, WEEK_OUTCOMES, CHECKPOINTS } from './assets/days.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -350,6 +362,7 @@
     renderTodayCard(user, cohort, doneSet, scheduleMap);
     renderUpcomingCard(user, cohort, scheduleMap);
     renderMilestones(doneSet, reg);
+    renderSyllabus(doneSet, scheduleMap);
     renderProfile(user, profile, reg);
     renderCapSpec(progress);
     renderCapSubs(user, cohort);
@@ -521,6 +534,43 @@
       <a href="day.html?n=${nextDay.n}" class="cta" style="display:inline-block">Continue →</a>
       ${cohortMeetBtn}${teamMeetBtn}`;
     card.style.display = 'block';
+  }
+
+  function renderSyllabus(doneSet, scheduleMap) {
+    const box = document.getElementById('syllabusList');
+    if (!box) return;
+    const weeks = [1,2,3,4,5,6];
+    box.innerHTML = weeks.map(w => {
+      const days = DAYS.filter(d => d.w === w);
+      const doneInWeek = days.filter(d => doneSet.has(d.n)).length;
+      const unlockedInWeek = days.filter(d => scheduleMap.get(d.n)?.is_unlocked).length;
+      return `
+        <details ${w === 1 ? 'open' : ''} style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:0 14px">
+          <summary style="padding:12px 0;cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase">WEEK ${String(w).padStart(2,'0')}</span>
+            <span style="flex:1;color:var(--ink)">${escapeHtml(WEEK_TITLES[w] || '')}</span>
+            <span class="mono" style="font-size:12px;color:var(--muted)">${doneInWeek}/${days.length} done · ${unlockedInWeek}/${days.length} unlocked</span>
+          </summary>
+          ${WEEK_OUTCOMES[w] ? `<div style="font-size:13px;color:var(--muted);font-style:italic;padding:0 0 10px;border-top:1px solid var(--line);padding-top:10px">${escapeHtml(WEEK_OUTCOMES[w])}</div>` : ''}
+          <ol style="list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:4px">
+            ${days.map(d => {
+              const sched = scheduleMap.get(d.n);
+              const done = doneSet.has(d.n);
+              const unlocked = sched?.is_unlocked;
+              const cp = CHECKPOINTS[d.n];
+              const linkStyle = unlocked ? 'color:var(--ink)' : 'color:var(--muted);pointer-events:none';
+              const icon = done ? '✓' : (unlocked ? '○' : '🔒');
+              const cpPill = cp ? `<span style="font-size:10.5px;padding:2px 6px;border-radius:999px;background:color-mix(in oklab,${cp.color} 15%,transparent);color:${cp.color};font-weight:600;margin-left:6px">${escapeHtml(cp.label)}</span>` : '';
+              return `<li><a href="day.html?n=${d.n}" style="display:flex;gap:10px;align-items:center;padding:6px 4px;text-decoration:none;${linkStyle};border-radius:6px;font-size:13.5px">
+                <span style="width:22px;color:${done ? 'var(--accent)' : 'var(--muted)'};flex-shrink:0;text-align:center">${icon}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;flex-shrink:0">D${String(d.n).padStart(2,'0')}</span>
+                <span style="flex:1">${escapeHtml(d.title)}</span>
+                ${cpPill}
+              </a></li>`;
+            }).join('')}
+          </ol>
+        </details>`;
+    }).join('');
   }
 
   function renderMilestones(doneSet, reg) {
