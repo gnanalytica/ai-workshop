@@ -322,7 +322,34 @@
 
   let TEAM_INFO = null; // { id, name, meet_link, role }
 
+  async function finalizePendingRegistration(user) {
+    const meta = user.user_metadata || {};
+    const pending = meta.pending_registration;
+    if (!pending) return;
+    await supabase.from('profiles').upsert({
+      id: user.id,
+      full_name: meta.full_name,
+      college: pending.college,
+      year: pending.year,
+      phone: pending.phone,
+      github_username: pending.github_username,
+      updated_at: new Date().toISOString(),
+    });
+    await supabase.from('registrations').upsert({
+      user_id: user.id,
+      cohort_id: pending.cohort_id,
+      motivation: pending.motivation,
+      status: pending.code_id ? 'confirmed' : 'pending',
+    }, { onConflict: 'user_id,cohort_id' });
+    if (pending.code_id) {
+      await supabase.rpc('increment_code_use', { code_id: pending.code_id }).catch(() => {});
+    }
+    await supabase.auth.updateUser({ data: { pending_registration: null } });
+  }
+
   async function loadDashboard(user) {
+    // Finalize registration if user arrived via magic-link with pending_registration in user_metadata
+    await finalizePendingRegistration(user);
     showDash(user);
     const [profileRes, cohortRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', user.id).single(),

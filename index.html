@@ -631,7 +631,7 @@
       const { error: otpErr } = await supabase.auth.signInWithOtp({
         email: data.email,
         options: {
-          emailRedirectTo: window.location.href,
+          emailRedirectTo: new URL('dashboard.html', window.location.href).toString(),
           data: {
             full_name: data.full_name,
             pending_registration: {
