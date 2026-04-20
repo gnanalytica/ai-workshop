@@ -12,7 +12,7 @@
   .section-head h2{margin:0}
   .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
   .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-  .filters input,.filters select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .filters input,.filters select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
   .denied{padding:40px;text-align:center;color:var(--muted)}
   .org-row{cursor:pointer}
   .org-row.active td{background:rgba(195,255,54,.06)!important;border-left:2px solid var(--accent)}
@@ -26,11 +26,11 @@
   .modal h3{margin:0 0 18px;font-size:20px;letter-spacing:-.02em}
   .modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .color-field{display:flex;gap:10px;align-items:center}
-  .color-field input[type="color"]{width:48px;height:42px;padding:2px;border-radius:10px;background:#0a0a12;border:1px solid var(--line);cursor:pointer}
+  .color-field input[type="color"]{width:48px;height:42px;padding:2px;border-radius:10px;background:var(--input-bg);border:1px solid var(--line);cursor:pointer}
   .modal-actions{display:flex;gap:10px;margin-top:18px}
   .modal-actions .submit-btn{flex:1}
   .preview-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;gap:18px;align-items:center;margin-bottom:16px}
-  .preview-logo{width:56px;height:56px;border-radius:14px;background:#0a0a12;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;flex:none}
+  .preview-logo{width:56px;height:56px;border-radius:14px;background:var(--input-bg);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;flex:none}
   .preview-logo img{width:100%;height:100%;object-fit:cover}
   .preview-logo.empty{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
   .preview-body{flex:1;min-width:0}
@@ -41,9 +41,9 @@
   .gen-btn:hover{border-color:var(--accent);color:var(--accent)}
   .code-with-btn{display:flex;gap:8px}
   .code-with-btn input{flex:1}
-  .reveal-url{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;word-break:break-all;display:none}
+  .reveal-url{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;word-break:break-all;display:none}
   .reveal-url.show{display:block}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
   .toast.show{opacity:1}
   .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
   .col-meta{color:var(--muted);font-size:12px}
@@ -165,7 +165,7 @@
         <label>Primary color</label>
         <div class="color-field">
           <input type="color" name="primary_color" value="#c3ff36" id="orgColor" />
-          <input type="text" name="primary_color_text" value="#c3ff36" id="orgColorText" style="flex:1;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px" />
+          <input type="text" name="primary_color_text" value="#c3ff36" id="orgColorText" style="flex:1;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px" />
         </div>
       </div>
       <div class="msg" id="orgMsg"></div>

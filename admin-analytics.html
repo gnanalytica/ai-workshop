@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   .top-bar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:24px 0 8px}
-  .top-bar select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;min-width:240px}
+  .top-bar select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;min-width:240px}
   .date-range{color:var(--muted);font-size:13px}
   .date-range b{color:var(--ink)}
   .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 24px}
@@ -34,13 +34,13 @@
   .bar-row{display:grid;grid-template-columns:180px 1fr 48px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
   .bar-row:last-child{border-bottom:none}
   .bar-row .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bar-row .track{background:#0a0a12;border-radius:999px;height:8px;overflow:hidden;border:1px solid var(--line)}
+  .bar-row .track{background:var(--input-bg);border-radius:999px;height:8px;overflow:hidden;border:1px solid var(--line)}
   .bar-row .fill{height:100%;background:var(--accent);border-radius:999px}
   .bar-row .val{font-family:"JetBrains Mono",monospace;font-size:12.5px;text-align:right;color:var(--muted)}
   .lb-row{display:grid;grid-template-columns:28px 1.4fr 1fr 1.4fr 60px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
   .lb-row:last-child{border-bottom:none}
   .lb-row .rank{font-family:"JetBrains Mono",monospace;color:var(--muted);font-size:12px}
-  .lb-row .bar{background:#0a0a12;border-radius:999px;height:6px;overflow:hidden;border:1px solid var(--line)}
+  .lb-row .bar{background:var(--input-bg);border-radius:999px;height:6px;overflow:hidden;border:1px solid var(--line)}
   .lb-row .bar .fill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:999px}
   .lb-row .days{font-family:"JetBrains Mono",monospace;text-align:right;font-size:12.5px}
   .loading{color:var(--muted);font-size:13px;padding:10px 0}

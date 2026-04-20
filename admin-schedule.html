@@ -10,7 +10,7 @@
 <style>
   .header-row{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0 8px}
   .cohort-picker{display:flex;gap:10px;align-items:center}
-  .cohort-picker select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;min-width:240px}
+  .cohort-picker select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;min-width:240px}
   .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 10px}
   .sum-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
   .sum-n{font-size:24px;font-weight:700;letter-spacing:-.02em}
@@ -35,7 +35,7 @@
   .switch input:checked + .slider:before{transform:translateX(16px);background:#0b0b10}
   .day-card input[type=datetime-local],
   .day-card input[type=text],
-  .day-card textarea{background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:12.5px;outline:none;width:100%;box-sizing:border-box}
+  .day-card textarea{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:12.5px;outline:none;width:100%;box-sizing:border-box}
   .day-card textarea{resize:vertical;min-height:48px;font-size:12px}
   .day-card label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px}
   .row-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
@@ -140,7 +140,7 @@
   <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px">
     <div class="kicker" style="margin-bottom:6px">Cohort Meet link</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input type="text" id="cohortMeetInput" placeholder="https://meet.google.com/…" style="flex:1;min-width:260px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+      <input type="text" id="cohortMeetInput" placeholder="https://meet.google.com/…" style="flex:1;min-width:260px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
       <button class="save-btn" id="cohortMeetSave">Save cohort Meet</button>
       <span class="saved-flash" id="cohortMeetFlash">✓ saved</span>
     </div>

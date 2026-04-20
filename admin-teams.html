@@ -12,7 +12,7 @@
   .section-head h2{margin:0}
   .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
   .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-  .filters select,.filters input{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .filters select,.filters input{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
   .denied{padding:40px;text-align:center;color:var(--muted)}
   .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
   .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
@@ -23,12 +23,12 @@
   .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
   .stat .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
   .stat .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-top:4px}
-  .member-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:#0a0a12;border:1px solid var(--line);font-size:12px;margin:2px 4px 2px 0}
+  .member-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);font-size:12px;margin:2px 4px 2px 0}
   .member-chip .x{color:var(--muted);cursor:pointer;font-weight:700;padding:0 2px}
   .member-chip .x:hover{color:#ffa0a0}
-  .expand-row{background:#0a0a12!important}
+  .expand-row{background:var(--input-bg)!important}
   .expand-row td{padding:14px 16px;border-top:0}
-  .inline-input{background:#0a0a12;border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none;width:100%}
+  .inline-input{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none;width:100%}
   .inline-input:focus{border-color:var(--accent)}
   .lock-pill{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
   .lock-on{background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.25)}
@@ -39,12 +39,12 @@
   .modal h3{margin:0 0 18px;font-size:20px;letter-spacing:-.02em}
   .modal-actions{display:flex;gap:10px;margin-top:18px}
   .modal-actions .submit-btn{flex:1}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
   .toast.show{opacity:1}
   .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
-  .multi-select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px;max-height:180px;overflow:auto}
+  .multi-select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px;max-height:180px;overflow:auto}
   .multi-select label{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:13px;cursor:pointer}
-  .multi-select label:hover{background:#14141c}
+  .multi-select label:hover{background:var(--card)}
   @media(max-width:640px){
     .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
     .stat{padding:14px}
@@ -163,7 +163,7 @@
       </div>
       <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Team size</label>
-        <select id="autoSize" style="background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none">
+        <select id="autoSize" style="background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none">
           <option value="2">2</option>
           <option value="3" selected>3</option>
           <option value="4">4</option>
@@ -195,7 +195,7 @@
   <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Day</label>
-      <select id="pairDaySel" style="background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none"></select>
+      <select id="pairDaySel" style="background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none"></select>
       <button class="cta" id="pairGenBtn">Generate pairs for Day</button>
       <button class="btn-sm danger" id="pairClearBtn" style="margin-left:auto">Clear pairs for Day</button>
     </div>
@@ -771,7 +771,7 @@
       const a = PROFILES.get(p.user_a); const b = p.user_b ? PROFILES.get(p.user_b) : null;
       const an = a?.full_name || '—';
       const bn = b ? (b.full_name || '—') : '<em style="color:var(--muted)">solo (no partner)</em>';
-      return `<div style="padding:8px 12px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center">
+      return `<div style="padding:8px 12px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:32px">#${i+1}</span>
         <span>${esc(an)} <span class="muted">↔</span> ${bn}</span>
       </div>`;
