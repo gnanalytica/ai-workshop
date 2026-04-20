@@ -37,6 +37,16 @@
   .day-t{font-size:14px;font-weight:500;margin-top:2px;letter-spacing:-.01em}
   .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
   .signout:hover{color:var(--ink)}
+  @media (max-width:640px){
+    .hero-row{margin:24px 0 20px;gap:12px}
+    .progress-wrap{padding:18px;margin-bottom:20px;border-radius:16px}
+    .day-grid{grid-template-columns:1fr;gap:10px}
+    .day-item{padding:12px 14px;gap:10px}
+    .week-head h3{font-size:17px}
+    .week-block{margin-bottom:20px}
+    nav .nav-in > div:last-child > a{display:none!important}
+    nav .nav-in > div:last-child > a[href="index.html"]{display:inline!important}
+  }
 </style>
 </head>
 <body>

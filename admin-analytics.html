@@ -52,6 +52,16 @@
     .heatmap{grid-template-columns:repeat(15,1fr)}
     .bar-row{grid-template-columns:120px 1fr 44px}
   }
+  @media(max-width:640px){
+    .kpi{padding:14px}
+    .kpi-n{font-size:26px}
+    .top-bar select{min-width:0;width:100%}
+    .heatmap{grid-template-columns:repeat(10,1fr)}
+    .chart-box{height:220px}
+    .bar-row{grid-template-columns:100px 1fr 40px;font-size:12px}
+    .lb-row{grid-template-columns:22px 1.2fr 1fr 44px;gap:8px;font-size:12px}
+    .lb-row > .bar{display:none}
+  }
 </style>
 </head>
 <body>

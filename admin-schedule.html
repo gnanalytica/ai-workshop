@@ -48,6 +48,13 @@
   .toast.show{opacity:1;transform:translateY(0)}
   .denied{padding:40px;text-align:center;color:var(--muted)}
   @media(max-width:900px){.summary{grid-template-columns:1fr}}
+  @media(max-width:640px){
+    .cohort-picker{width:100%}
+    .cohort-picker select{min-width:0;width:100%;flex:1}
+    .days-grid{grid-template-columns:1fr}
+    .bulk-row{gap:8px}
+    .bulk-btn{flex:1;min-width:120px}
+  }
 </style>
 </head>
 <body>

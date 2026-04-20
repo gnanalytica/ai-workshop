@@ -35,6 +35,15 @@
   .btn-sm.primary{border-color:rgba(195,255,54,.4);color:#c9f76a}
   .btn-sm.primary:hover{background:rgba(195,255,54,.08)}
   .empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+  @media(max-width:640px){
+    .sq-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .sq-tabs::-webkit-scrollbar{display:none}
+    .sq-tab{white-space:nowrap;flex:0 0 auto;padding:10px 12px}
+    .sq-row{grid-template-columns:1fr;gap:10px;padding:12px 14px}
+    .sq-actions{flex-direction:row;align-items:stretch;flex-wrap:wrap;justify-content:flex-start}
+    .sq-actions .btn-sm{flex:1;min-width:100px}
+    .filters select{flex:1;min-width:0}
+  }
 </style>
 </head>
 <body>

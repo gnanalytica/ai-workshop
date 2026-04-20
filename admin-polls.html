@@ -79,6 +79,21 @@
     .create-body{grid-template-columns:1fr}
     .stats-row{grid-template-columns:repeat(2,1fr)}
   }
+  @media(max-width:640px){
+    .stat-card .val{font-size:22px}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .table-wrap table{min-width:640px}
+    .drawer{width:100vw;border-left:none}
+    .drawer-head,.drawer-body{padding:16px}
+    .emoji-row{padding:8px 10px;gap:10px;flex-wrap:wrap}
+    .emoji-big{font-size:1.8rem}
+    .bar-track{height:20px}
+    .tabs-inline{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .tabs-inline::-webkit-scrollbar{display:none}
+    .tabs-inline button{white-space:nowrap;flex:0 0 auto}
+    .create-panel{padding:16px}
+    .modal{padding:18px}
+  }
 </style>
 </head>
 <body>

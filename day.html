@@ -87,6 +87,10 @@
   .tool-col li a:hover{color:var(--accent)}
   .tool-col .lm-host{font-size:10.5px;letter-spacing:.02em}
   @media(max-width:900px){.tool-grid{grid-template-columns:1fr}}
+  @media(max-width:640px){
+    .pager{grid-template-columns:1fr}
+    .stuck-modal{max-height:90vh;overflow-y:auto}
+  }
   .tldr-card{background:linear-gradient(135deg,rgba(195,255,54,.1),rgba(195,255,54,.03));border:1px solid rgba(195,255,54,.3);border-radius:14px;padding:18px 22px;margin:0 0 28px;display:flex;gap:16px;align-items:flex-start}
   .tldr-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.18em;font-weight:700;padding-top:3px;flex-shrink:0}
   .tldr-body{font-size:16px;line-height:1.55;color:var(--ink);letter-spacing:-.01em}
@@ -1330,6 +1334,13 @@
       const due = dueInfo();
       const descHtml = asgn.description ? marked.parse(asgn.description) : '';
       const rubric = asgn.rubric ? `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><br>${escapeHtml(asgn.rubric)}</div>` : '';
+      const rubricItems = Array.isArray(asgn.rubric_items) ? asgn.rubric_items : [];
+      let rubricItemsHtml = '';
+      if (rubricItems.length) {
+        const totalPts = rubricItems.reduce((s, it) => s + (Number(it.points) || 0), 0);
+        const rows = rubricItems.map(it => `<li style="margin:4px 0">${escapeHtml(it.criterion || '')} <span class="muted" style="color:var(--muted)">(${Number(it.points) || 0} pts)</span></li>`).join('');
+        rubricItemsHtml = `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><ul style="margin:6px 0 4px 18px;padding:0">${rows}</ul><div style="margin-top:4px;font-size:12px;color:var(--muted)">Total: ${totalPts} pts</div></div>`;
+      }
       const pts = asgn.points != null ? `<span class="asgn-pts">${escapeHtml(String(asgn.points))} pts</span>` : '';
 
       let form;
@@ -1338,10 +1349,23 @@
       } else if (existing) {
         const when = existing.submitted_at ? new Date(existing.submitted_at).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '';
         const preview = await renderViewPreview();
+        let rubricBreakdown = '';
+        const scores = Array.isArray(existing.rubric_scores) ? existing.rubric_scores : [];
+        if (scores.length) {
+          const total = scores.reduce((s, it) => s + (Number(it.score) || 0), 0);
+          const maxTotal = scores.reduce((s, it) => s + (Number(it.max) || 0), 0);
+          const rows = scores.map(it => {
+            const scoreText = it.score == null ? '—' : `${Number(it.score)}/${Number(it.max) || 0}`;
+            const comment = it.comment ? `<div style="font-size:12px;color:var(--muted);margin-top:2px">${escapeHtml(it.comment)}</div>` : '';
+            return `<div style="padding:6px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between;gap:10px"><span>${escapeHtml(it.criterion || '')}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">${scoreText}</span></div>${comment}</div>`;
+          }).join('');
+          rubricBreakdown = `<div style="margin-top:10px"><div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Rubric breakdown</div>${rows}<div style="margin-top:6px;font-weight:600">Total: ${total}/${maxTotal}</div></div>`;
+        }
         const grade = existing.status === 'graded'
           ? `<div class="asgn-grade">
               <div class="score">Score · ${escapeHtml(String(existing.score ?? '—'))}${asgn.points != null ? ` / ${escapeHtml(String(asgn.points))}` : ''}</div>
               <div class="fb">${existing.feedback ? marked.parse(existing.feedback) : '<span class="muted">No feedback yet.</span>'}</div>
+              ${rubricBreakdown}
             </div>`
           : '';
         form = `<div class="asgn-done">
@@ -1362,6 +1386,7 @@
           ${asgn.title ? `<h3 style="margin:6px 0 10px;font-size:18px;letter-spacing:-.01em">${escapeHtml(asgn.title)}</h3>` : ''}
           <div class="mod-body" style="font-size:15px">${descHtml}</div>
           ${rubric}
+          ${rubricItemsHtml}
           ${form}
         </div>
       `;

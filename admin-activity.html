@@ -24,6 +24,12 @@
   .refresh-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-left:auto}
   .load-more{margin:20px auto;display:block;padding:10px 20px;background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;cursor:pointer;font-family:inherit}
   .load-more:hover{border-color:var(--accent)}
+  @media(max-width:640px){
+    .evt{flex-direction:column;gap:6px;padding:10px 12px}
+    .evt-time{min-width:0}
+    .filt-row{gap:8px}
+    .refresh-toggle{margin-left:0;flex-basis:100%}
+  }
 </style>
 </head>
 <body>

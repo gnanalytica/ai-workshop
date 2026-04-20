@@ -79,6 +79,18 @@
   .kudos-btn.on{background:rgba(195,255,54,.12);border-color:rgba(195,255,54,.5);color:#c9f76a}
   .kudos-btn .n{font-family:"JetBrains Mono",monospace;font-weight:600}
   .kudos-btn[disabled]{cursor:default;opacity:.75}
+  @media(max-width:640px){
+    .stats-row{grid-template-columns:1fr;gap:16px;padding:18px}
+    .stat-big{font-size:48px}
+    .dotgrid{grid-template-columns:repeat(10,1fr);max-width:100%}
+    .gallery{grid-template-columns:1fr;gap:12px}
+    .subcard{padding:16px}
+    .people-grid{grid-template-columns:1fr;gap:12px}
+    .person{padding:16px}
+    .person .pname{font-size:22px}
+    .self-banner{padding:14px 16px}
+    .section-head{flex-wrap:wrap;gap:6px;margin:28px 0 14px}
+  }
 </style>
 </head>
 <body>

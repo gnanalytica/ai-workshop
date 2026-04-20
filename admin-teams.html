@@ -45,6 +45,17 @@
   .multi-select{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:8px;max-height:180px;overflow:auto}
   .multi-select label{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:13px;cursor:pointer}
   .multi-select label:hover{background:#14141c}
+  @media(max-width:640px){
+    .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+    .stat{padding:14px}
+    .stat .n{font-size:22px}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .table-wrap table{min-width:720px}
+    .filters{gap:8px}
+    .filters input,.filters select{flex:1;min-width:0}
+    .modal{padding:20px;border-radius:14px}
+    .modal-actions{flex-wrap:wrap}
+  }
 </style>
 </head>
 <body>

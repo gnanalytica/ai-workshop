@@ -26,6 +26,60 @@
   .picker a:hover{border-color:var(--accent)}
   .note-row{padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:13.5px}
   .note-row .nhd{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+
+  .btn{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px}
+  .modal.show{display:flex}
+  .modal-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:820px;width:100%;max-height:90vh;overflow:auto}
+  .modal-card h3{margin:0 0 10px;font-size:16px}
+  .modal-card .muted{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+
+  .asgn-preview-pdf{width:100%;max-height:700px;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+  .asgn-preview-img{max-width:100%;max-height:480px;border-radius:10px;border:1px solid var(--line);margin-top:8px;cursor:zoom-in}
+  .asgn-preview-text{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;white-space:pre-wrap;font-size:13.5px;color:var(--ink);line-height:1.55;margin-top:10px}
+  .asgn-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:rgba(56,189,248,.1);color:#7dd5ff;font-size:12.5px;border:1px solid rgba(56,189,248,.2);text-decoration:none;margin:2px}
+  .asgn-chip:hover{background:rgba(56,189,248,.18)}
+  .asgn-chip-host{font-size:10.5px;color:var(--muted);margin-left:4px}
+  .asgn-file-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#0a0a12;border:1px solid var(--line);border-radius:10px;font-size:12.5px;margin-top:6px}
+  .asgn-file-icon{width:28px;height:28px;border-radius:6px;background:rgba(56,189,248,.12);color:#7dd5ff;display:grid;place-items:center;font-size:10.5px;font-weight:700;flex-shrink:0}
+  .asgn-file-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+  .asgn-file-size{color:var(--muted);font-size:11px;margin-right:4px}
+  .asgn-link-rm{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:13px;display:inline-grid;place-items:center;text-decoration:none}
+  .asgn-link-rm:hover{color:var(--accent);border-color:var(--accent)}
+
+  .grade-box{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:14px;background:#0a0a12}
+  .grade-box .grow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grade-box label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px}
+  .grade-box input[type=number], .grade-box select, .grade-box textarea{
+    background:#06060c;border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--ink);font-family:inherit;font-size:12.5px;width:100%;box-sizing:border-box;outline:none
+  }
+  .grade-box textarea{min-height:50px;resize:vertical}
+  .sub-rubric{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .sub-rubric .rrow{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#06060c}
+  .sub-rubric .rrow .rhd{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px;font-size:12.5px}
+  .sub-rubric .rrow input[type=number]{width:70px;display:inline-block;background:#06060c;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:4px 6px;font-family:inherit;font-size:12px}
+  .sub-rubric .rrow textarea{width:100%;min-height:30px;resize:vertical;background:#06060c;border:1px solid var(--line);border-radius:6px;padding:4px 6px;color:var(--ink);font-family:inherit;font-size:11.5px;box-sizing:border-box;margin-top:4px}
+  .sub-rubric .rtot{font-size:12px;color:var(--muted);margin-top:4px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--accent);color:var(--ink);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;transform:translateY(6px);transition:.18s;z-index:1100}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast.err{border-color:#ef4444}
+  @media(max-width:640px){
+    .pg-hdr h1{font-size:24px}
+    .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tabs a{white-space:nowrap;flex:0 0 auto}
+    .day-grid-30{grid-template-columns:repeat(7,1fr)}
+    .modal{padding:12px}
+    .modal-card{padding:16px;border-radius:12px}
+    .grade-box .grow{grid-template-columns:1fr}
+    .asgn-preview-pdf{max-height:380px}
+    .modal-actions{flex-wrap:wrap}
+    .modal-actions .btn{flex:1;min-width:100px}
+  }
 </style>
 </head>
 <body>
@@ -85,12 +139,22 @@
       <a href="#timeline">Activity timeline</a>
     </div>
     <section id="progress" class="sec"><h2>Progress grid</h2><div class="day-grid-30" id="dGrid"></div></section>
-    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Kudos</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
+    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Kudos</th><th>Content</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
     <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
     <section id="notes" class="sec"><h2>Reading notes</h2><div id="notesList"></div></section>
     <section id="timeline" class="sec"><h2>Activity timeline</h2><div id="timelineList"></div></section>
   </div>
 </main>
+
+<!-- Preview / Grade modal -->
+<div class="modal" id="previewModal">
+  <div class="modal-card">
+    <h3>Submission <span style="float:right"><button class="btn" id="previewClose">Close</button></span></h3>
+    <div id="previewBody">Loading…</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
@@ -149,8 +213,8 @@
       supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
       supabase.from('registrations').select('*').eq('user_id', userId).eq('cohort_id', cohort.id).maybeSingle(),
       supabase.from('lab_progress').select('*').eq('user_id', userId).eq('cohort_id', cohort.id),
-      supabase.from('submissions').select('*, assignments!inner(id,day_number,title,points,cohort_id)').eq('user_id', userId).eq('assignments.cohort_id', cohort.id),
-      supabase.from('assignments').select('id,day_number,title,points').eq('cohort_id', cohort.id),
+      supabase.from('submissions').select('*, assignments!inner(id,day_number,title,points,rubric_items,cohort_id)').eq('user_id', userId).eq('assignments.cohort_id', cohort.id),
+      supabase.from('assignments').select('id,day_number,title,points,rubric_items').eq('cohort_id', cohort.id),
       supabase.from('quiz_attempts').select('*, quizzes!inner(day_number,title,cohort_id)').eq('user_id', userId).eq('quizzes.cohort_id', cohort.id),
       supabase.from('quizzes').select('id,day_number,title').eq('cohort_id', cohort.id),
     ]);
@@ -185,16 +249,37 @@
       const { data: kc } = await supabase.from('kudos_counts').select('submission_id,count').in('submission_id', subIds);
       (kc || []).forEach(k => kudosMap.set(k.submission_id, k.count));
     }
+    CURRENT_STUDENT_SUBS = subsMap;
+    CURRENT_ASSIGNMENTS_BY_ID = new Map((assignments.data || []).map(a => [a.id, a]));
     $('subsRows').innerHTML = (assignments.data || []).sort((a,b) => a.day_number - b.day_number).map(a => {
       const s = subsMap.get(a.id);
       const status = s ? s.status : (a.due_at && new Date(a.due_at) < new Date() ? 'overdue' : 'not started');
       const score = s?.score != null ? `${s.score}/${a.points}` : '—';
       const submitted = s?.submitted_at ? new Date(s.submitted_at).toLocaleDateString() : '—';
-      const view = s?.content_url ? `<a href="${esc(s.content_url)}" target="_blank" style="color:var(--accent)">Open</a>` : (s?.content_text ? `<span title="${esc(s.content_text.slice(0,200))}">text ✎</span>` : '');
       const kcount = s?.id ? (kudosMap.get(s.id) || 0) : 0;
       const kCell = kcount > 0 ? `<span style="color:#c9f76a;font-family:'JetBrains Mono',monospace;font-size:12px">👏 ${kcount}</span>` : '—';
-      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td>${kCell}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${view}</td></tr>`;
+      let countCell = '—';
+      let actionCell = '';
+      if (s) {
+        const linksCount = (s.content_url || '').split(/\r?\n/).filter(x => x.trim()).length;
+        const atts = Array.isArray(s.attachments) ? s.attachments : [];
+        const pdfs = atts.filter(x => x.mime === 'application/pdf').length;
+        const imgs = atts.filter(x => (x.mime || '').startsWith('image/')).length;
+        const others = atts.length - pdfs - imgs;
+        const parts = [];
+        if (s.content_text) parts.push('text');
+        if (linksCount) parts.push(`${linksCount} link${linksCount>1?'s':''}`);
+        if (pdfs) parts.push(`${pdfs} PDF${pdfs>1?'s':''}`);
+        if (imgs) parts.push(`${imgs} image${imgs>1?'s':''}`);
+        if (others) parts.push(`${others} file${others>1?'s':''}`);
+        countCell = parts.length ? parts.join(' · ') : '—';
+        actionCell = `<button class="btn" data-s-preview="${esc(s.id)}" title="Preview & grade">👁 Preview</button>`;
+      }
+      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td>${kCell}</td><td class="muted" style="font-size:12px">${esc(countCell)}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${actionCell}</td></tr>`;
     }).join('');
+    $('subsRows').querySelectorAll('[data-s-preview]').forEach(btn => {
+      btn.addEventListener('click', () => openPreviewModal(btn.dataset.sPreview));
+    });
 
     const qaMap = new Map();
     (attempts.data || []).forEach(qa => {
@@ -228,6 +313,162 @@
     document.querySelectorAll('.tabs a').forEach(x => x.classList.remove('active'));
     a.classList.add('active');
   }));
+
+  // ---------- ATTACHMENT PREVIEW + GRADING ----------
+  let CURRENT_STUDENT_SUBS = new Map();
+  let CURRENT_ASSIGNMENTS_BY_ID = new Map();
+  const previewSignedCache = new Map();
+  async function signedSubmissionUrl(path) {
+    if (previewSignedCache.has(path)) return previewSignedCache.get(path);
+    const { data, error } = await supabase.storage.from('submissions').createSignedUrl(path, 3600);
+    if (error) return null;
+    previewSignedCache.set(path, data.signedUrl);
+    return data.signedUrl;
+  }
+  function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; return (b/(1024*1024)).toFixed(1) + ' MB'; }
+  function iconOf(mime) { if (mime?.startsWith('image/')) return 'IMG'; if (mime === 'application/pdf') return 'PDF'; if (mime?.includes('zip')) return 'ZIP'; if (mime?.startsWith('text/')) return 'TXT'; return 'FILE'; }
+  function domainOf(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } }
+
+  function toast(text, kind) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = text;
+    t.className = 'toast show' + (kind === 'err' ? ' err' : '');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  async function renderSubmissionPreview(sub) {
+    const parts = [];
+    if (sub.content_text) parts.push(`<div class="asgn-preview-text">${esc(sub.content_text)}</div>`);
+    const links = (sub.content_url || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+    if (links.length) {
+      parts.push(`<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${
+        links.map(u => `<a class="asgn-chip" href="${esc(u)}" target="_blank" rel="noopener">${esc(u.length > 60 ? u.slice(0,60) + '…' : u)}<span class="asgn-chip-host">${esc(domainOf(u))}</span></a>`).join('')
+      }</div>`);
+    }
+    const atts = Array.isArray(sub.attachments) ? sub.attachments : [];
+    for (const f of atts) {
+      const url = await signedSubmissionUrl(f.path);
+      if (!url) {
+        parts.push(`<div class="asgn-file-row"><div class="asgn-file-icon">${iconOf(f.mime)}</div><div class="asgn-file-name">${esc(f.filename)}</div><span class="asgn-file-size">${fmtBytes(f.size)}</span><span class="muted" style="font-size:11px">(unavailable)</span></div>`);
+        continue;
+      }
+      if (f.mime === 'application/pdf') {
+        parts.push(`<div style="margin-top:10px"><div style="font-size:12.5px;color:var(--muted);margin-bottom:4px">${esc(f.filename)} · ${fmtBytes(f.size)}</div><iframe class="asgn-preview-pdf" src="${esc(url)}" title="${esc(f.filename)}"></iframe></div>`);
+      } else if ((f.mime || '').startsWith('image/')) {
+        parts.push(`<div><img class="asgn-preview-img" src="${esc(url)}" alt="${esc(f.filename)}" onclick="window.open('${esc(url)}','_blank')"/></div>`);
+      } else {
+        parts.push(`<div class="asgn-file-row"><div class="asgn-file-icon">${iconOf(f.mime)}</div><div class="asgn-file-name">${esc(f.filename)}</div><span class="asgn-file-size">${fmtBytes(f.size)}</span><a href="${esc(url)}" target="_blank" class="asgn-link-rm" title="Download">↓</a></div>`);
+      }
+    }
+    if (!parts.length) parts.push(`<p class="muted">No content.</p>`);
+    return parts.join('');
+  }
+
+  function renderGradeControls(sub, asgn) {
+    const rubricItems = Array.isArray(asgn?.rubric_items) ? asgn.rubric_items : [];
+    const existingScores = Array.isArray(sub.rubric_scores) ? sub.rubric_scores : [];
+    let rubricUi = '';
+    if (rubricItems.length) {
+      const rrows = rubricItems.map((it, i) => {
+        const max = Number(it.points) || 0;
+        const cur = existingScores[i] || {};
+        return `<div class="rrow" data-ri-i="${i}">
+          <div class="rhd">
+            <span>${esc(it.criterion || '')}</span>
+            <span><input type="number" data-ri-score min="0" max="${max}" value="${cur.score == null || cur.score === '' ? '' : Number(cur.score)}" /> / ${max}</span>
+          </div>
+          <textarea data-ri-comment rows="1" placeholder="Comment…">${esc(cur.comment || '')}</textarea>
+        </div>`;
+      }).join('');
+      rubricUi = `<div class="sub-rubric" id="gradeRubric">${rrows}<div class="rtot" id="gradeRubricTotal">Total: —</div></div>`;
+    }
+    const pts = asgn?.points != null ? asgn.points : '';
+    return `<div class="grade-box">
+      <div style="font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Grade</div>
+      ${rubricUi}
+      <div class="grow" style="margin-top:10px">
+        <div><label>Score${pts !== '' ? ` (of ${pts})` : ''}</label><input type="number" id="gradeScore" value="${sub.score == null ? '' : Number(sub.score)}" /></div>
+        <div><label>Status</label>
+          <select id="gradeStatus">
+            <option value="submitted" ${sub.status==='submitted'?'selected':''}>submitted</option>
+            <option value="graded" ${sub.status==='graded'?'selected':''}>graded</option>
+            <option value="returned" ${sub.status==='returned'?'selected':''}>returned</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px"><label>Feedback</label><textarea id="gradeFeedback" rows="2">${esc(sub.feedback || '')}</textarea></div>
+      <div class="modal-actions">
+        <button class="btn" id="gradeReturnBtn">Save as returned</button>
+        <button class="btn primary" id="gradeSaveBtn">Save grade</button>
+      </div>
+    </div>`;
+  }
+
+  async function openPreviewModal(subId) {
+    let sub = null;
+    for (const s of CURRENT_STUDENT_SUBS.values()) { if (s.id === subId) { sub = s; break; } }
+    if (!sub) return;
+    const asgn = sub.assignments || CURRENT_ASSIGNMENTS_BY_ID.get(sub.assignment_id);
+    const body = $('previewBody');
+    body.innerHTML = '<p class="muted">Loading…</p>';
+    $('previewModal').classList.add('show');
+    const previewHtml = await renderSubmissionPreview(sub);
+    const gradeHtml = renderGradeControls(sub, asgn);
+    body.innerHTML = previewHtml + gradeHtml;
+
+    const rubricItems = Array.isArray(asgn?.rubric_items) ? asgn.rubric_items : [];
+    function recomputeRubric() {
+      const wrap = document.getElementById('gradeRubric');
+      if (!wrap) return null;
+      let total = 0;
+      const out = [];
+      wrap.querySelectorAll('[data-ri-i]').forEach(rr => {
+        const i = Number(rr.dataset.riI);
+        const max = Number(rubricItems[i]?.points) || 0;
+        const sv = rr.querySelector('[data-ri-score]').value;
+        const score = sv === '' ? null : Math.max(0, Math.min(max, Number(sv) || 0));
+        const comment = rr.querySelector('[data-ri-comment]').value || null;
+        if (score != null) total += score;
+        out.push({ criterion: rubricItems[i]?.criterion || '', max, score, comment });
+      });
+      const totEl = document.getElementById('gradeRubricTotal');
+      const maxTotal = rubricItems.reduce((s, it) => s + (Number(it.points) || 0), 0);
+      if (totEl) totEl.textContent = `Total: ${total} / ${maxTotal}`;
+      const scoreInput = document.getElementById('gradeScore');
+      if (scoreInput) scoreInput.value = total;
+      return out;
+    }
+
+    if (rubricItems.length) {
+      body.querySelectorAll('#gradeRubric [data-ri-score], #gradeRubric [data-ri-comment]').forEach(el => {
+        el.addEventListener('input', recomputeRubric);
+      });
+      recomputeRubric();
+    }
+
+    async function saveGrade(statusOverride) {
+      const rubricScores = recomputeRubric();
+      const payload = {
+        status: statusOverride || document.getElementById('gradeStatus').value,
+        score: document.getElementById('gradeScore').value === '' ? null : Number(document.getElementById('gradeScore').value),
+        feedback: document.getElementById('gradeFeedback').value || null,
+      };
+      if (rubricScores) {
+        payload.rubric_scores = rubricScores;
+        if (!statusOverride && payload.status === 'submitted') payload.status = 'graded';
+      }
+      const { error } = await supabase.from('submissions').update(payload).eq('id', sub.id);
+      if (error) { toast(error.message, 'err'); return; }
+      toast('Grade saved ✓');
+      Object.assign(sub, payload);
+      $('previewModal').classList.remove('show');
+    }
+    document.getElementById('gradeSaveBtn').addEventListener('click', () => saveGrade(null));
+    document.getElementById('gradeReturnBtn').addEventListener('click', () => saveGrade('returned'));
+  }
+  document.getElementById('previewClose').addEventListener('click', () => $('previewModal').classList.remove('show'));
+  document.getElementById('previewModal').addEventListener('click', (e) => { if (e.target.id === 'previewModal') $('previewModal').classList.remove('show'); });
 
   init();
 </script>

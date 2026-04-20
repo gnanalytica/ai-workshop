@@ -17,5 +17,5 @@ export function renderAdminNav(active) {
     const isActive = p.href === active;
     return `<a href="${p.href}" style="padding:8px 14px;border-radius:999px;font-size:13px;${isActive ? 'background:var(--accent);color:var(--cta-ink);font-weight:600' : 'color:var(--muted);border:1px solid var(--line)'}">${p.label}</a>`;
   }).join('');
-  return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px">${items}</div>`;
+  return `<div class="admin-nav-wrap">${items}</div>`;
 }

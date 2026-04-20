@@ -75,6 +75,14 @@
     .day-row{grid-template-columns:60px minmax(0,1.2fr) 1fr 120px;gap:10px;padding:12px}
     .day-row .dtime,.day-row .dbar{display:none}
   }
+  @media(max-width:640px){
+    .day-row{grid-template-columns:50px minmax(0,1fr) 110px;gap:8px;padding:10px;font-size:12.5px}
+    .day-row .dpct{display:none}
+    .drawer{padding:14px}
+    .att-table{min-width:420px}
+    .att-table-wrap{overflow-x:auto}
+    .noshow-row{flex-wrap:wrap}
+  }
 </style>
 </head>
 <body>
