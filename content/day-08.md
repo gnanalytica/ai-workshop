@@ -41,6 +41,20 @@ Pixels used to be expensive. Designers charged for posters, film crews charged f
 - **00:30 — Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
 - **00:45 — Stand-up critique**: three volunteers hold up their draft poster on camera for 30 seconds each. Cohort shouts out one thing that works and one thing to cut. No compliments without a specific noun.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] Sign in at [Google AI Studio](https://aistudio.google.com) so Nano Banana / Imagen loads without a sign-up wall.
+- [ ] Create free accounts on [Adobe Firefly](https://firefly.adobe.com) and [Kling AI](https://klingai.com) — both gate generation behind email verify.
+
+### Primer (~5 min)
+- **Read**: The [Firefly user guide](https://firefly.adobe.com) intro on prompt structure — subject, style, composition. Same vocabulary we use for the six-slot template.
+- **Watch** (optional): A 3–5 minute image-to-video walkthrough on Kling or [Pika](https://pika.art) so text-to-video vs image-to-video is not abstract when class starts.
+
+### Bring to class
+- [ ] A locked capstone working title — one or two words, even if it changes later.
+- [ ] Two color hex codes (or named colors) you want on your poster, picked before class so you do not dither mid-lab.
+
 ## Read: Diffusion, prompts, and the state of video in 2026
 
 **A one-paragraph mental model of diffusion.** Most modern image generators are diffusion models. During training, the model sees millions of image-caption pairs and learns to turn clear images into noise, step by step. To generate, it runs the process in reverse: start from pure noise, denoise one step at a time, guided by your text prompt, until a coherent image emerges. You do not need the math. You need the intuition: the model is a sculptor removing noise until your prompt appears. Your prompt is the chisel. Video models do the same trick across time — they denoise frames that are consistent with each other.
@@ -110,6 +124,22 @@ Time: 45 minutes. Artifact: one poster image + one short video, posted to the co
 > - *Kling / Runway / Pika daily credits are exhausted* → fall back to image-to-video on the other tool you have not tried yet, or generate a subtle motion GIF from your poster in Canva Magic Studio. A 5-second clip with one deliberate motion beats a 10-second lottery.
 > - *Text on the poster comes out garbled* → stop asking Nano Banana or Firefly to render words. Export the image text-free, then composite the tagline in Canva, or regenerate just the text layer in Ideogram.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+1. Finalize your poster PNG (2:3, print-ready) in Nano Banana or Firefly, with text composited in Canva or Ideogram if needed.
+2. Export your 10-second MP4 from Kling, Runway, or Pika — one deliberate motion, no lottery.
+3. Write a one-line tagline (under 10 words) that would make a stranger understand your capstone.
+4. Post poster + video + tagline to the cohort showcase channel before 11 pm with `#day08-showcase`.
+
+### Reflect (~5 min)
+Prompt: *Which of the six prompt slots did you under-specify, and how did that show up in the image?* A good reflection picks one slot (setting, composition, modifiers…) and names the specific noun you should have used instead of an adjective — "brass tiffin on wooden bench" vs "beautiful Indian object". Shows you can debug a prompt, not just generate one.
+
+### Stretch (optional, for the curious)
+- **Extra video**: Any 5-minute [Runway](https://runwayml.com) Gen-4 or [Midjourney](https://midjourney.com) prompt-craft walkthrough — watch how a pro iterates, never accepting the first roll.
+- **Extra read**: The [Ideogram](https://ideogram.ai) docs on text-in-image — the one thing Nano Banana still garbles.
+- **Try**: Regenerate your poster in [Canva Magic Studio](https://canva.com) using the same prompt plus a brand kit. Notice what "production-ready" adds vs raw Firefly.
+
 ## Quiz
 
 Three checks. In one sentence, what is a diffusion model doing? Which tool would you trust for a commercially safe LinkedIn banner, and why not Midjourney? What is the single prompt change that most reliably improves a mediocre video — a fancier adjective, an explicit camera motion, or a longer clip?
@@ -133,3 +163,17 @@ This is your daily artifact. It is also a preview of your Friday ideathon pitch.
 | Did you label your output as AI-generated when posting? Why or why not? | Takes a position and names the audience cost/benefit. If not, explains under what conditions you would. Acknowledges C2PA tags exist regardless. |
 | When pixels are free, what becomes scarce — taste, distribution, or honesty? | Picks one and defends it with a real example from today's lab or your feed. Strong answers resist "all of the above" and commit to the one that constrains you personally. |
 | Would you pay a human designer for this poster now? At what price? | Gives a number and a scenario (portfolio, investor pitch, client work). Shows you understand what the AI did NOT do — art direction, iteration with you in the room, brand consistency. |
+
+## References
+
+### Pre-class primers
+- [Google AI Studio](https://aistudio.google.com) — where Nano Banana / Imagen lives.
+- [Firefly user guide](https://firefly.adobe.com) — prompt-structure vocabulary and commercial-safety notes.
+
+### Covered during class
+- [Nano Banana (AI Studio)](https://aistudio.google.com), [Adobe Firefly](https://firefly.adobe.com), [Kling AI](https://klingai.com) — the hands-on stack.
+- [Ideogram](https://ideogram.ai), [Runway](https://runwayml.com), [Midjourney](https://midjourney.com) — demoed for contrast.
+
+### Deep dives (post-class)
+- [Pika](https://pika.art) — fallback image-to-video when Kling credits die.
+- [Canva Magic Studio](https://canva.com) — compositing text and brand kits on top of AI-generated hero images.

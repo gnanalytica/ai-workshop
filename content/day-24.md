@@ -47,6 +47,40 @@ By the end of today you have a workflow where one agent delegates to another, wi
 - **00:45 — Handoff design breakout**: pairs draft the JSON payload Agent A hands to Agent B — inputs, outputs, what must never leak.
 - **00:55 — Skill-or-prompt debate**: one teammate argues "skill", another "just put it in the system prompt". 60 seconds each.
 
+## Before class
+
+### Setup
+- [ ] Confirm your Day 23 LangGraph agent runs end-to-end — you need a working single-agent baseline before splitting it.
+- [ ] Install either [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) (`pip install claude-agent-sdk`) OR [OpenAI Swarm](https://github.com/openai/swarm) (`pip install git+https://github.com/openai/swarm.git`).
+- [ ] Pick one capstone task that naturally splits in two roles — researcher+writer, planner+coder, intake+responder.
+- [ ] Stub two system prompts, one per role, before class.
+
+### Primer (~5 min)
+- **Read**: [Anthropic — multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) (skim the architecture diagram).
+- **Watch** (optional): [Two agents doing the tango](https://www.youtube.com/embed/wgmCjrMFoyc).
+
+### Bring to class
+- [ ] The two stub system prompts.
+- [ ] A clear handoff payload sketch (what Agent A passes to Agent B).
+- [ ] A tracing dashboard ready (Claude traces or OpenAI dashboard).
+
+## After class
+
+### Do (the assignment)
+1. Finish the 2-agent workflow in either [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) or [OpenAI Swarm](https://github.com/openai/swarm) with a typed handoff payload.
+2. Run three test cases with tracing enabled, export the traces.
+3. Draw a handoff diagram — boxes for agents, arrows labelled with payload contents — and paste into the repo README.
+4. Diagram your capstone as a 2-agent system: supervisor or swarm? Which tools move where? Include this diagram in your submission.
+5. Bonus: fork one template from [OpenClaw](https://github.com/openclaw/openclaw) and note what you changed.
+
+### Reflect (~5 min)
+Where did the handoff leak information Agent B shouldn't see, or starve Agent B of context it needed? Name one schema change you'll make tomorrow.
+
+### Stretch (optional)
+- **Extra video**: [Magentic-One](https://www.microsoft.com/en-us/research/publication/magentic-one) demo reel.
+- **Extra read**: [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/) and [CrewAI flows](https://docs.crewai.com/concepts/flows).
+- **Try**: package one piece of your workflow as a [Claude Skill](https://docs.claude.com/en/docs/build-with-claude/skills) and auto-load it.
+
 ## Read: Orchestration patterns, Swarm minimalism, Skills, and Plugins
 
 ### Why multi-agent at all
@@ -147,3 +181,28 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 | Post the moment in your capstone design when you realized one agent was not enough. | Cites a specific symptom from a trace — prompt past 4k tokens, wrong tool chosen, context contaminated with prior-task observations — not a vibe. |
 | What did the second agent do that the first could not? | Describes the narrow role and the tools removed from agent one when agent two took over. Names what got simpler, not just what got added. |
 | What is the cost of the split — in latency, tokens, or debuggability — and is it worth it? | Acknowledges the tradeoff honestly (extra handoff turn, doubled trace length) and explains why the quality gain justifies it for this use case. |
+
+## References
+
+### Pre-class primers
+- [Anthropic — multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
+- [OpenAI Swarm on GitHub](https://github.com/openai/swarm)
+
+### Covered during class
+- [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk)
+- [OpenAI Swarm](https://github.com/openai/swarm)
+- [OpenClaw](https://github.com/openclaw/openclaw)
+- [Claude Skills](https://docs.claude.com/en/docs/build-with-claude/skills)
+- [Claude Plugins](https://claude.com/plugins)
+- [Two agents doing the tango](https://www.youtube.com/embed/wgmCjrMFoyc)
+
+### Deep dives (post-class)
+- [LangGraph multi-agent](https://langchain-ai.github.io/langgraph/concepts/multi_agent/)
+- [CrewAI flows](https://docs.crewai.com/concepts/flows)
+- [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/)
+- [AutoGen](https://microsoft.github.io/autogen/)
+- [Magentic-One](https://www.microsoft.com/en-us/research/publication/magentic-one)
+- [Meta CICERO](https://ai.meta.com/research/cicero/)
+
+### Other videos worth watching
+- [DeepLearning.ai agent courses](https://deeplearning.ai) — short courses on multi-agent design.

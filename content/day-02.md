@@ -42,6 +42,23 @@ Yesterday you met three American chatbots. Today you meet twenty more — Chines
 - **00:45 — Pick-a-corner**: "India needs its own LLM" — corner 1 agree, corner 2 "fine-tune is enough", corner 3 "doesn't matter, use GPT." 45 seconds each to defend. Anyone can switch corners mid-debate — and has to say why.
 - **00:55 — One-line chat close**: *"The model I'm downloading / trying tonight is ___ because ___."*
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+
+- [ ] Create an account on Sarvam.ai playground (https://www.sarvam.ai/) — phone OTP required, do it before class to avoid the in-lab queue.
+- [ ] Open LM Arena (https://lmarena.ai/) once and confirm "Direct Chat" loads — no login needed.
+
+### Primer (~5 min)
+
+- **Read**: Skim the HuggingFace Open LLM Leaderboard (https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — notice how many top-10 names you've never heard of. That's the point.
+- **Watch** (optional): Any 3–5 min walkthrough of the HuggingFace Hub — instructor will share a specific link in the channel if one fits; otherwise just click around the Hub yourself for 3 min.
+
+### Bring to class
+
+- [ ] A one-sentence product idea you might build for an Indian user (farmer, parent, grandmother, small-shop owner) — we'll use it to stress-test Sarvam vs Qwen live.
+- [ ] Your mother tongue ready — you'll be typing in it during the lab.
+
 ## Read: Closed vs open — and why "open" is the word that matters
 
 An AI model is basically a huge file of numbers (the weights) plus a little code to run it. There are two flavours:
@@ -121,6 +138,26 @@ Watch for:
 
 **Artifact**: 1-page comparison doc. Submit as PDF via the dashboard.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+
+1. Open your Lab comparison doc (3×2 table: 3 models × 2 tasks).
+2. Rank the 3 open models you tested per task — 1 = best, 3 = worst — and write a one-line justification per ranking.
+3. Pick one of: Indian farmers / your college's alumni portal / a vernacular news reader. Write a short paragraph answering *"Which of these models would I ship for this use case, and why?"*
+4. Keep the whole doc to one page. Export as PDF.
+5. Submit via the dashboard before next class.
+
+### Reflect (~5 min)
+
+**Prompt:** *"If I had to bet my own ₹10,000 on one Indian AI company for the next 3 years, which one and why?"* A good reflection names a specific company (Sarvam, Krutrim, CoRover, or a startup you found today) and ties your bet to a concrete moat — language coverage, existing revenue, founder track record — rather than hype.
+
+### Stretch (optional, for the curious)
+
+- **Extra video**: TBD — instructor will pick based on class questions (likely a DeepSeek R1 or Qwen architecture walkthrough).
+- **Extra read**: Sarvam's own blog on Indic tokenisation (https://www.sarvam.ai/) — why Devanagari eats more tokens than English and what they did about it.
+- **Try**: Download Ollama (https://ollama.com/) and pull `qwen2.5:3b` to your laptop. Run it offline. Note the response speed vs the hosted API — you don't need this until Day 17, but previewing is useful.
+
 ## Quiz
 
 Four questions on open vs closed weights, the Chinese family, the Indian family, and why open matters. Don't memorise company logos — memorise *why* each model exists.
@@ -138,3 +175,26 @@ Take the Lab doc and expand it. Rank the 3 open models you tested on both tasks 
 | Would you trust a Chinese open model with your startup's customer data? Why or why not? | Separates the *weights* (which you can inspect and run locally) from the *hosted API* (which you cannot). A strong answer says "yes if I self-host Qwen, no if I hit a chat.qwen.ai endpoint with user PII." |
 | Does India *need* its own LLM, or is fine-tuning existing ones enough? | Distinguishes sovereignty (who controls the off-switch) from capability (does it work in Tamil). Acknowledges fine-tuning solves capability cheaper, but not sovereignty. |
 | Which model surprised you most in the lab, and what does that tell you about benchmarks? | Names the specific model + the specific task where it over- or under-performed, and generalises to: "leaderboard rank isn't the same as 'good at my job.'" |
+
+## References
+
+### Pre-class primers
+- [HuggingFace Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — the live scoreboard for open models.
+- [LM Arena](https://lmarena.ai/) — crowdsourced head-to-head model voting.
+
+### Covered during class
+- [Sarvam.ai](https://www.sarvam.ai/) — Indian-language specialist, Meesho case study.
+- [BharatGPT (CoRover)](https://corover.ai/bharatgpt/) — powers Indian Railways' AskDISHA.
+- [HuggingFace Model Hub](https://huggingface.co/models) — where open models live.
+
+### Deep dives (post-class, if curious)
+- [Qwen](https://qwenlm.github.io/) — Alibaba's open model family, strong multilingual + code.
+- [DeepSeek](https://www.deepseek.com/) — R1 reasoning model, embarrassed SF on cost.
+- [Kimi (Moonshot)](https://kimi.moonshot.cn/) — long-context champion.
+- [GLM (Zhipu)](https://chatglm.cn/) — bilingual Chinese-English open family.
+- [Phi (Microsoft)](https://huggingface.co/microsoft) — tiny models that punch up.
+- [Gemma (Google)](https://ai.google.dev/gemma) — Google's open cousin to Gemini.
+- [Krutrim](https://www.krutrim.ai/) — Ola's full-stack Indian AI bet.
+
+### Other videos worth watching
+- [Ollama](https://ollama.com/) — run open models locally; preview for Day 17.

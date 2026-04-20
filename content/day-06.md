@@ -41,6 +41,20 @@ Welcome to Week 2. Last week you learned what AI is; this week you will touch ev
 - **00:30 — Live poll**: drop in the cohort channel your current "default model". We read the tally live and ask the two outliers to defend their pick for 30 seconds each.
 - **00:45 — Breakout of three**: same prompt ("plan my next 4 Tuesday evenings") goes into three different models per trio. Regroup and vote on whose answer you would actually follow — and why.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] Create free accounts on [ChatGPT](https://chatgpt.com), [Claude](https://claude.ai), and [Gemini](https://gemini.google.com) — same email is fine, but verify login before class starts.
+- [ ] In ChatGPT Settings → Personalization, toggle **Memory** ON. In Claude Settings → Profile, open the Custom Instructions field so you know where it lives.
+
+### Primer (~5 min)
+- **Read**: Skim the [Claude Projects guide](https://claude.ai) — focus on what "Project knowledge" and "Project instructions" mean. You need those two concepts cold.
+- **Watch** (optional): A 3–5 minute clip of someone using Projects/GPTs to pin a system prompt + files. Any short demo on [Poe](https://poe.com) comparing two models on the same question also works.
+
+### Bring to class
+- [ ] Your latest resume as a PDF (even a half-page "about me" if you don't have one yet).
+- [ ] A plain text list of 5 capstone ideas you are genuinely curious about — hostel, placement, family, hobby, research. No filtering.
+
 ## Read: Five models, five personalities
 
 The big frontier chat models look identical from the outside. They all have a text box. But in 2026, the gap between the best answer and the average answer is almost entirely about knowing which model to ask, how to set it up, and how to talk to it. Most students give up on "AI" after three mediocre ChatGPT replies. The actual reason the reply was mediocre is that they asked the wrong model, with no context, in one line.
@@ -101,6 +115,21 @@ Time: 40 minutes. Artifact: a living Claude Project you will use all cohort.
 > - *Jarvis ignores your project instructions and gives generic answers* → open a fresh chat inside the project (not a regular chat), and start the turn with "Read everything in project knowledge first, then answer."
 > - *ChatGPT Memory never triggers* → confirm Memory is enabled in Settings → Personalization, then explicitly say "Remember that I am..." once; silent inference is unreliable on the free tier.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+1. Finish building your Claude Project with resume, transcript, and 5 capstone ideas uploaded.
+2. Run the same planning prompt through ChatGPT, Claude (Jarvis), and Gemini; screenshot all three answers.
+3. Write a one-sentence caption per screenshot explaining why that answer was good (or bad).
+4. Submit to the cohort Slack channel before 11 pm — screenshot of Project sidebar + three chat screenshots.
+
+### Reflect (~5 min)
+Prompt: *Which model felt most like a thinking partner tonight, and what specific behavior earned that feeling?* A good reflection names the exact turn where a model pushed back, asked a clarifying question, or refused to flatter you — and ties that moment to which kind of tasks you will route to it for the next 24 days. Vague "Claude felt smarter" does not count; quote a sentence.
+
+### Stretch (optional, for the curious)
+- **Extra read**: The [ChatGPT Custom Instructions](https://chatgpt.com) settings page — write a custom instruction that is shorter than three sentences but changes every future reply.
+- **Try**: Drop the exact same prompt into [Grok](https://grok.com), [Microsoft Copilot](https://copilot.microsoft.com), and [HuggingChat](https://huggingface.co/chat). Note which one's tone you would actually listen to on a bad day.
+
 ## Quiz
 
 Three quick questions to confirm you got the core moves. What is the difference between Memory and Projects? Which model would you ask to summarize a 90-page Google Doc your professor shared on Drive? Which model would you ask for the current status of a breaking AI news story? And why did the Claude Jarvis answer beat the blank ChatGPT answer in step 7?
@@ -123,3 +152,18 @@ This is your daily artifact. It is the ticket to Day 7.
 | What did you put into Memory that you would never tell a human stranger? | Honest about the trade-off: shares the category of detail (health, grades, family) and weighs the convenience against the privacy cost. Does not hand-wave with "nothing sensitive". |
 | If you could only use one model for the rest of the cohort, which and why? | Picks based on two or more concrete workflows in your week, not marketing claims. Names at least one thing you would lose by choosing it. |
 | What surprised you when the same prompt produced five different answers? | Points at a structural difference (length, citations, hedging, format) rather than "X was better". Connects the difference to how each model is trained or positioned. |
+
+## References
+
+### Pre-class primers
+- [Claude Projects guide](https://claude.ai) — where Project knowledge and instructions live.
+- [ChatGPT Custom Instructions](https://chatgpt.com) — the one setting that changes every future chat.
+
+### Covered during class
+- [ChatGPT](https://chatgpt.com), [Claude](https://claude.ai), [Gemini](https://gemini.google.com) — the three you will compare live.
+- [Grok](https://grok.com), [Microsoft Copilot](https://copilot.microsoft.com), [Kimi](https://kimi.moonshot.cn) — demoed side-by-side so you see the personality gap.
+
+### Deep dives (post-class)
+- [Poe](https://poe.com) — one login, many models; good for cheap A/B tests on a hard prompt.
+- [HuggingChat](https://huggingface.co/chat) — open-weights alternatives when you need a model with no memory of you.
+- [Meta AI](https://meta.ai) — worth bookmarking for WhatsApp-native flows.

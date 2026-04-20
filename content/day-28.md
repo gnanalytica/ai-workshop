@@ -122,6 +122,61 @@ Instructor walks through Karpathy's channel and demos the 3-minute arxiv skim on
 
 Afternoon: capstone build.
 
+## Before class
+
+### Setup
+- [ ] One-line answer to each of: what's my role, what are my 12-month AI goals, where are my biggest knowledge gaps?
+- [ ] Calendar open in a second tab — you'll create a recurring Friday slot live.
+- [ ] An RSS reader or bookmark folder ready (Readwise, Feedly, Raindrop, or plain Safari reading list).
+
+### Primer (~5 min)
+- **Read**: pick ONE source you'd genuinely subscribe to — a newsletter, a podcast, or a YouTube channel. Just one. Write down why it fits *you* specifically (role, commute length, attention span).
+- **Watch** (optional): 5 minutes of [Andrej Karpathy's channel](https://www.youtube.com/@AndrejKarpathy) — skim the intros to pick the one series you'd actually finish.
+
+### Bring to class
+- [ ] The ONE source you pre-picked + one sentence on why it fits you.
+- [ ] Your worst signal habit today (e.g., "30 min of X at 11pm" or "10 Substack subs, 0 reads").
+- [ ] A realistic weekly time budget for AI signal (45 min is the ceiling, not the floor).
+
+## After class
+
+### Do (the assignment — weekly deliverable)
+1. Finalise your **AI Signal Pipeline doc**: 5 sources — 1 newsletter, 1 podcast, 1 YouTube, 1 X list, 1 paper feed — with channel, frequency, and why for each.
+2. Subscribe / follow / bookmark all 5 *now*, not tomorrow.
+3. Create the recurring Friday 30-min calendar event titled "AI signal" — set it repeating weekly.
+4. Post the doc in the cohort channel so peers can steal from your list.
+5. Tag the one source you'll never miss.
+
+### Reflect (~5 min)
+If you could keep only 1 of your 5 sources for a year, which one and why? Star it in the doc.
+
+### Stretch (optional)
+- **Extra video**: one [Dwarkesh Patel](https://www.youtube.com/@DwarkeshPatel) long-form at 1.5x on your next commute.
+- **Extra read**: the most recent [State of AI Report](https://www.stateof.ai) — the single best annual cover-to-cover.
+- **Try**: the 3-minute skim on one [HuggingFace Daily Papers](https://huggingface.co/papers) pick tomorrow morning. Time yourself.
+
+## References
+
+### Pre-class primers
+- [HuggingFace Daily Papers](https://huggingface.co/papers)
+- [The Batch](https://www.deeplearning.ai/the-batch/) — beginner-friendly weekly.
+
+### Covered during class
+- [Latent Space](https://www.latent.space), [Interconnects](https://www.interconnects.ai), Import AI, TLDR AI.
+- Podcasts: Latent Space, Dwarkesh Patel, No Priors, The AI Daily Brief, Machine Learning Street Talk.
+- YouTube: [Karpathy](https://www.youtube.com/@AndrejKarpathy), 3Blue1Brown, Yannic Kilcher, AI Explained, Two Minute Papers.
+- [Artificial Analysis](https://artificialanalysis.ai) — live model landscape.
+
+### Deep dives (post-class)
+- [Stanford AI Index](https://aiindex.stanford.edu) (April, data-rich).
+- [State of AI Report](https://www.stateof.ai) (October, Nathan Benaich).
+- [Anthropic Skilljar](https://anthropic.skilljar.com) and [DeepLearning.ai Courses](https://www.deeplearning.ai/courses/).
+- [Papers With Code](https://paperswithcode.com)
+
+### Other videos worth watching
+- Karpathy "from-scratch" series — the best ML education ever recorded.
+- 3Blue1Brown's neural network series for lifelong math intuition.
+
 ## Quiz
 
 1. Why is "read everything" a failed strategy?

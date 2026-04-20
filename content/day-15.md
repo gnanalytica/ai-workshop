@@ -42,6 +42,21 @@ This is Capstone Milestone 2 — checkpoint day. By the end of today you will ha
 - **00:50 — Spec-on-a-page gate**: hold your spec up at arm's length — if it spills past page 1, you cannot share it yet; cut for 5 minutes.
 - **00:55 — Witness line**: each person says out loud "I am shipping X to Y by Z" and two cohort members acknowledge; that is the lock.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] Confirm your [Figma](https://www.figma.com) account works — you will wireframe live.
+- [ ] Optional: create a [v0.dev](https://v0.dev) account if you want to use it as a sketching partner.
+
+### Primer (~5 min)
+- **Review yesterday's causal-loop diagram + pitch** — re-read them out loud. If the leverage point or the Complication still wobbles, fix it in the first 15 minutes of class rather than locking vague foundations into a spec.
+- **Read** (optional): The "Sprint in a Day" short from the [GV Sprint methodology site](https://www.gv.com/sprint/) — skim the timebox logic.
+
+### Bring to class
+- [ ] All Day 11-14 artifacts in one doc: v3 sticky, POV statement, interview insights, CLD, SCQA pitch.
+- [ ] A pre-drafted "will NOT build" list of at least 5 items — the anti-scope list is the most important part of the spec.
+- [ ] A printed or digital 1-page template so your spec cannot bleed onto page 2 without you noticing.
+
 ## Read: The 1-day sprint, what "shipped" means, and the discipline of the spec
 
 Jake Knapp's *Sprint* compresses months of product argument into five days. You do not have five days. You have one. The good news: a compressed sprint still captures 80% of the value if you are ruthless about scope. Here is the 1-day version, sized for your capstone.
@@ -105,6 +120,23 @@ https://www.youtube.com/embed/K2vSQPh6MCE
 > - *Your Figma wireframes are turning into polished mockups with colour and real fonts* → revert to grey boxes immediately; colour is a signal you are decorating; the test is "could I redraw this on a napkin in 2 minutes?"
 > - *Your success metric reads like "validate engagement" instead of a number* → force it into the form "N users complete X in Y days"; if you cannot name N, X, and Y, you do not have a metric, you have a hope.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment — Capstone Milestone 2)
+1. **Lock the 1-page spec + wireframes — this is Milestone 2.** Nothing decorative, nothing on a second page.
+2. Export the spec as a PDF and the wireframes as a single PNG or Figma share link — frozen artifacts, not editable Notion pages.
+3. Apply at least two cuts from the Claude critique before you export.
+4. Post both files to the cohort channel with the message "This is what I am shipping. Witness me." and tag 2 cohort members.
+5. Get 2 cohort reactions before midnight — if they do not land, nudge them. Public commitment is the deliverable.
+
+### Reflect (~5 min)
+Answer privately: *Which feature hurt the most to move to the NOT-list, and what does that attachment tell me?* A strong reflection names the feature, the emotional pull (cool demo, pet peeve, investor-friendly), and accepts the cut without hedging. Bonus if you admit it was the feature you most wanted to keep.
+
+### Stretch (optional)
+- **Extra video**: A full GV design sprint retrospective — watch how teams defend timeboxes when scope creep tries to win.
+- **Extra read**: [Figma wireframing basics](https://www.figma.com/resources/learn-design/) — tighten your grey-box discipline for Week 4.
+- **Try**: Show your locked spec to a non-technical friend. If they cannot restate "what it does" and "what it will NOT do" back to you in under 30 seconds, the spec is still too soft.
+
 ## Quiz
 
 Three final checks before the weekend. Can you name three things on your NOT-list and explain *why* each one is excluded? Can you state your 14-day success metric as a number? Can you describe the user flow through your wireframes in under 45 seconds without referencing the Figma file? If any answer wobbles, iterate tonight — not Monday.
@@ -124,3 +156,19 @@ This is Milestone 2. Week 4 begins on Monday and you will build — but only aga
 | Which screen in your wireframes took the longest — and is it the most important one, or the one you were most afraid of? | Distinguishes difficulty-because-important from difficulty-because-avoided. The strong answer admits avoidance when that's the truth and names what the fear was (complexity, empty states, the "magic" step). |
 | What is the single assumption in your spec that, if false, kills the project? How will you test it first? | States the assumption crisply ("users will paste transcripts into the tool without prompting"), names a cheap test (one call, one landing page, one Wizard-of-Oz), and a deadline before Day 18. |
 | Re-read your Day 11 sticky note. What changed in one week — and what does that change say about how you frame problems now? | Quotes the v3 sticky verbatim, names the specific edits (user shrank, pain sharpened, metric appeared), and draws a generalisable lesson about their own framing defaults — not a humble-brag. |
+
+## References
+
+### Pre-class primers
+- [GV Sprint methodology](https://www.gv.com/sprint/) — the source material, compressed into today's 1-day version.
+- [Figma](https://www.figma.com) — the wireframing tool for the lab.
+
+### Covered during class
+- [v0.dev](https://v0.dev) — a sketching partner for the Crazy 8s phase.
+- [Claude](https://claude.ai) — the ruthless PM critique on your spec draft.
+- [Figma wireframing basics](https://www.figma.com/resources/learn-design/) — grey-box technique reference.
+
+### Deep dives (post-class)
+- Sprint — Jake Knapp (book).
+- The Mom Test — Rob Fitzpatrick (book) — re-read before Week 4's user tests.
+- Thinking in Systems — Donella Meadows (book) — keep the CLD muscle alive through build week.

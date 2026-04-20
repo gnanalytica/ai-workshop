@@ -41,6 +41,23 @@ Today we turn five days of input into one page of output: your AI Stack v1. Plus
 - **00:45 — Steal-a-trick stand-up**: each student names the one classmate trick they're stealing this weekend and tags them by name in chat. Fast round, one line per person, no passing.
 - **00:55 — One-line close**: *"My next bet by Day 30 is ___."* No editing. This line goes straight into the Personal AI Stack v1 draft.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+
+- [ ] No setup required — today is a show-and-tell, bring what you already have.
+- [ ] Open a blank Google Doc titled "Cohort Tricks — Week 1" so you can take notes live.
+
+### Primer (~5 min)
+
+- **Read**: Ethan Mollick's "One Useful Thing" blog (https://www.oneusefulthing.org/) — pick any one recent post. Goal is to see how a working practitioner thinks about AI weekly.
+- **Watch** (optional): Re-watch the 1–2 min of Day 1's IBM video that felt densest — you'll understand it differently after four days.
+
+### Bring to class
+
+- [ ] Your single best AI moment from Days 1–4 — a prompt, an output, a surprise, a fail — prepared as a 2-minute pitch.
+- [ ] Optional: one screenshot or one browser tab ready to demo (don't over-prepare slides — the constraint is the point).
+
 ## Read: What we learned — the one-page map
 
 ```
@@ -128,6 +145,26 @@ This IS the live class today. Most of the hour is listening to each other. 30 cl
 
 **Artifact**: your 2-minute pitch delivered, plus the cohort tricks doc you took notes in.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+
+1. Open a new document titled "Personal AI Stack v1 — [Your Name]."
+2. Write a 200-word reflection on what shifted this week — name one specific Day-0 belief that's gone.
+3. Add four short sections: **My AI Tools** (table), **My Top 10 Prompts** (your Day 3 library, cleaned), **My Red Lines** (3–5 bullets from Day 4), **My Next Bet** (one sentence — the AI skill you'll own by Day 30).
+4. Keep the whole artifact to 1–2 pages. Export as PDF.
+5. Submit via the dashboard by Sunday night. Opt into the "feature anonymously" box if you're open to it.
+
+### Reflect (~5 min)
+
+**Prompt:** *"Which classmate's trick am I actually going to steal this weekend — and will I credit them when I use it in Week 2?"* A good reflection names the person, the trick, and the specific moment next week you'll deploy it. Attribution matters here — the cohort only levels up if credit flows.
+
+### Stretch (optional, for the curious)
+
+- **Extra video**: TBD — instructor will pick a Week 2 primer based on which bucket (study / career / code / life / creative) the cohort leaned into.
+- **Extra read**: One entry from the Anthropic Cookbook (https://github.com/anthropics/anthropic-cookbook) or OpenAI Cookbook (https://cookbook.openai.com/) that matches your "next bet."
+- **Try**: Take your Personal AI Stack v1 and feed it to Claude with the prompt *"Roast this like a senior PM interviewer. Where am I fooling myself?"* Screenshot the best sentence and tape it above your desk.
+
 ## Quiz
 
 Four synthesis questions pulling across all five days — a little tokens, a little Indian models, a little prompting, a little ethics. This is the "did Week 1 stick?" checkpoint.
@@ -156,3 +193,20 @@ Submit as PDF via the dashboard. The instructor will pick 3-5 stacks to feature 
 | Is a personal AI stack overkill for a college student, or under-kill? | Rejects the framing: the stack is cheap to build, compounds weekly, and the opportunity cost of not having one is invisible but large. Or argues the opposite with specifics — not just "depends." |
 | Pick a friend who isn't in this workshop. What one thing would you tell them from Week 1 that would change their life in 10 minutes? | One concrete thing they can do *today*, not a concept. "Open Claude, paste your resume, ask it to roast you as a Razorpay hiring manager" — not "learn about prompting." |
 | What do you want Week 2 to teach you that Week 1 didn't? | Points to a specific gap you *noticed* this week — image tools, voice, a coding use-case, agents. Shows you've read the Week 2 preview enough to aim the question. |
+
+## References
+
+### Pre-class primers
+- [Ethan Mollick — One Useful Thing](https://www.oneusefulthing.org/) — the most practical weekly AI writer online.
+
+### Covered during class
+- [Claude](https://claude.ai/), [ChatGPT](https://chat.openai.com/) — today's show-and-tell tools.
+- [Anthropic Cookbook](https://github.com/anthropics/anthropic-cookbook) — recipe-style examples for Claude.
+- [OpenAI Cookbook](https://cookbook.openai.com/) — the same, for GPT.
+
+### Deep dives (post-class, if curious)
+- [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) — return here every few weeks as your needs grow.
+- [Build a Personal AI Stack (essay)](https://www.oneusefulthing.org/) — inspiration for your v2 onward.
+
+### Other videos worth watching
+- Instructor's own "hidden-gem prompts" compilation — linked in the cohort channel once recorded.

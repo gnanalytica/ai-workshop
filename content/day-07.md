@@ -41,6 +41,20 @@ Yesterday you built a thinking partner. Today you give it a library card. By the
 - **00:30 — Live citation audit**: I drop a Perplexity answer on screen with four citations. Cohort clicks each in parallel — we vote thumbs up/down on whether the source actually supports the claim.
 - **00:45 — Breakout of three**: each trio runs the DIY Deep Research pattern (5 sub-questions → 5 searches → synthesis) on one capstone question. One team reports back what the synthesis caught that single-shot search missed.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] Sign in at [Perplexity](https://www.perplexity.ai) and [NotebookLM](https://notebooklm.google.com) with your Google account.
+- [ ] Confirm [Gemini](https://gemini.google.com) shows the **Deep Research** toggle in your account (it is behind a free-tier flag for some regions).
+
+### Primer (~5 min)
+- **Read**: The [Perplexity Pro Search docs](https://www.perplexity.ai) — a 3-minute scan of what Pro Search, Focus, and Sources actually mean. You want the vocabulary before class.
+- **Watch** (optional): Any 3–5 minute NotebookLM walkthrough showing an Audio Overview generating — the [NotebookLM help](https://notebooklm.google.com) hub links to current demos.
+
+### Bring to class
+- [ ] One capstone domain written as a single-line problem statement (e.g., "hostel mess menu feedback is invisible to the mess committee").
+- [ ] 2–3 URLs, PDFs, or YouTube links related to that domain — raw material you will drop into NotebookLM.
+
 ## Read: Search is dead. Long live grounded research.
 
 For twenty years, research meant: Google, click ten blue links, skim ten tabs, take notes. The bottleneck was not finding information; it was synthesizing it. In 2026 that synthesis step is free.
@@ -97,6 +111,21 @@ Time: 45 minutes. Artifact: a 1-page Markdown brief with 5+ citations.
 > - *NotebookLM keeps citing only one of your five sources* → your other sources are probably too similar or too short; swap in one contrasting source (a critical blog post, a competing paper) and re-ask — it forces the model to triangulate.
 > - *A citation link 404s or paywalls* → do not quote the claim. Either find a second source that makes the same point, or rewrite the sentence as "one 2025 Perplexity synthesis suggested X" and flag it as unverified in your brief.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+1. Finalize `brief-<topic>.md` — one page, with at least 5 inline citations, every factual claim linked.
+2. Generate and share the NotebookLM Audio Overview link (or record a 30-second voice note reacting to it).
+3. Add one "I almost quoted this…" sentence naming a claim you had to drop or rewrite after clicking the citation.
+4. Submit all three artifacts to the cohort Slack channel before 11 pm.
+
+### Reflect (~5 min)
+Prompt: *Where did a citation not actually support the claim above it, and what did you do?* A good reflection quotes the model's sentence verbatim, quotes the source's actual words, and describes the exact decision — rewrite, drop, or find a second source. If you never hit that moment, you probably did not click enough links; go back and click five more.
+
+### Stretch (optional, for the curious)
+- **Extra read**: Try [Consensus](https://consensus.app) or [Elicit](https://elicit.com) on the single research question you cared most about today. Notice how the "yes/no/mixed" summary differs from a Perplexity paragraph.
+- **Try**: Paste your single best source into [Research Rabbit](https://researchrabbit.ai) or [Connected Papers](https://www.connectedpapers.com) and explore its citation neighborhood. Bookmark two new papers you did not know existed.
+
 ## Quiz
 
 Four questions to check the reflex. What is the difference between Perplexity Pro Search and Deep Research? Why does NotebookLM refuse to answer from the open web, and when is that a feature rather than a bug? What are the four steps of the hallucination check? And which of today's tools would you use to map the 30 most-cited papers around a niche research question?
@@ -118,3 +147,20 @@ Post to the cohort channel:
 | Did the audio overview change how you understood your own sources? | Points to a specific moment in the podcast (disagreement, emphasis, reframe) that reorganized your take. If it did not change anything, explains why — maybe your sources were too aligned. |
 | Which capstone ideas got stronger after the research, and which got killed? | Names one idea whose scope got smaller and sharper, and one that dies because research showed it is solved, saturated, or unfundable for a student. Shows you updated your priors. |
 | Is AI search replacing Google for you yet, or are you still hedging? | Honest about the hedge: identifies the query types where Google still wins (navigational, local, very recent niche) and the ones that permanently moved. No all-or-nothing declarations. |
+
+## References
+
+### Pre-class primers
+- [Perplexity Pro Search docs](https://www.perplexity.ai) — the vocabulary of Pro Search, Focus, Sources.
+- [NotebookLM help](https://notebooklm.google.com) — how Audio Overviews and source-grounding work.
+
+### Covered during class
+- [Perplexity](https://www.perplexity.ai) — quick-draw grounded answers.
+- [NotebookLM](https://notebooklm.google.com) — private index over your own sources, plus audio overviews.
+- [Gemini Deep Research](https://gemini.google.com) — the long agent run over 100+ sources.
+
+### Deep dives (post-class)
+- [Elicit](https://elicit.com) — structured answers across peer-reviewed papers.
+- [Consensus](https://consensus.app) — yes/no/mixed synthesis for scientific claims.
+- [SciSpace](https://scispace.com), [Scholarcy](https://www.scholarcy.com) — paper summarization when PDFs pile up.
+- [Research Rabbit](https://researchrabbit.ai), [Connected Papers](https://www.connectedpapers.com) — visual citation graphs for literature review.

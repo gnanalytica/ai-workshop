@@ -42,6 +42,21 @@ Every capstone problem lives inside a system — a tangle of feedback loops, inc
 - **00:45 — Leverage debate**: two volunteers argue for different leverage points on the same loop (parameter vs. paradigm); class votes which would move the system more in 30 days.
 - **00:55 — Pitch-relay**: pair up, deliver your SCQA pitch in 60 seconds; partner has to repeat the Complication back from memory — if they cannot, the Complication is not sharp enough.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] Open [Excalidraw](https://excalidraw.com) in a browser tab — no account needed.
+- [ ] Skim your Day 13 interview transcripts and highlight 3 direct quotes that surprised you.
+
+### Primer (~5 min)
+- **Read**: Donella Meadows' [Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — focus on the top-to-bottom ranking. You do not need to memorise twelve; internalise the gradient.
+- **Watch** (optional): The Meadows clip linked in the Watch section — preview it tonight to calibrate your ear for systems language.
+
+### Bring to class
+- [ ] **Pick ONE capstone problem you will map today** — no switching mid-class. If two candidates are still alive, pick the one with the sharpest Day 13 interview insight.
+- [ ] 5 variables surrounding that problem jotted on paper (people, incentives, delays, emotions, metrics).
+- [ ] The single interview quote from Day 13 that most contradicted your Day 11 belief — it will become your SCQA Complication.
+
 ## Read: Loops, leverage points, and stories that stick
 
 **Why systems thinking, now?** By Day 13 you have heard users describe their pain. Pain is a *symptom*. Systems thinking asks what *pattern of relationships* produces the pain — and which point in that pattern is worth intervening in. Most capstones fail not because the solution is bad but because it intervenes at a weak leverage point. A stronger diagram saves you weeks.
@@ -96,6 +111,23 @@ https://www.youtube.com/embed/_EMnnq3teEs
 > - *You cannot pick between two leverage points* → apply Meadows' ladder: parameters are weakest, paradigms strongest. If both candidates are parameters, neither will cascade — look one level up for a structure or a goal.
 > - *Your SCQA Complication is not actually surprising (it just restates the Situation)* → pull the Complication directly from a Day 13 interview quote that contradicted your own prior belief; if nothing did, your interviews were polite — not your pitch's fault.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+1. Finalise your causal-loop diagram in Excalidraw: at least one closed loop, polarity marks on every arrow, leverage point circled in red.
+2. Lock your 60-second SCQA pitch to under 150 words, naming one specific user.
+3. Record a 2-minute voice memo of you delivering the pitch out loud — no reading.
+4. Post the CLD screenshot, the pitch text, and the voice memo to the cohort channel tonight.
+5. Tag one cohort member to give you a single-note reaction before Day 15.
+
+### Reflect (~5 min)
+Answer privately: *Is my leverage point a parameter, a structure, or a paradigm — and which level was I tempted to default to?* A strong reflection names the Meadows level, admits the pull toward the easier fix, and explains why the chosen point actually moves the loop rather than treating a symptom.
+
+### Stretch (optional)
+- **Extra video**: A YC Demo Day pitch from the [YC Library](https://www.ycombinator.com/library) — notice the 10-second Situation and the number that lands the Complication.
+- **Extra read**: [Randy Olson on the ABT narrative](https://www.randyolsonproductions.com/abt-framework) — the 3-word compression of story structure.
+- **Try**: Paste your CLD into [Napkin AI](https://www.napkin.ai) and see whether the auto-diagram matches the story you think you are telling.
+
 ## Quiz
 
 Three sanity checks. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
@@ -113,3 +145,19 @@ Submit three artifacts to the cohort channel: (1) a screenshot of your Excalidra
 | Whose interest in your system is *not* aligned with solving the problem? (Every system has one.) | Names a specific actor — a platform, a gatekeeper, an incumbent, a user subgroup — and explains the incentive that keeps the problem alive. Avoids vague villains. |
 | Which version of your pitch — analytical, emotional, contrarian — felt most like you? Which would travel furthest through a stranger? | Distinguishes authenticity from reach; acknowledges they may differ. The strong answer picks the travelling version even if it's uncomfortable. |
 | What fact in your pitch would make a sceptic stop scrolling? | A concrete number, a counterintuitive behaviour, or a quote from a user — sourced, specific, and surprising. "AI is growing fast" does not qualify. |
+
+## References
+
+### Pre-class primers
+- [Donella Meadows — Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — the ranking you will apply to your CLD.
+- [Excalidraw](https://excalidraw.com) — the canvas for today's diagram.
+
+### Covered during class
+- [SCQA — Barbara Minto (Pyramid Principle)](https://www.barbaraminto.com) — the skeleton for the 60-second pitch.
+- [Randy Olson — ABT narrative](https://www.randyolsonproductions.com/abt-framework) — And, But, Therefore.
+- [Napkin AI](https://www.napkin.ai) — narrative-to-diagram sanity check.
+- [Y Combinator Library](https://www.ycombinator.com/library) — study compressed pitches.
+
+### Deep dives (post-class)
+- Thinking in Systems — Donella Meadows (book).
+- [Donella Meadows Institute — systems thinking resources](https://donellameadows.org/systems-thinking-resources/) — archives and exercises.

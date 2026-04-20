@@ -43,6 +43,24 @@ Yesterday you learned the rails. Today you drive. We put a real LLM on your lapt
 - **00:40 — Breakout**: in trios, rewrite one zero-shot prompt into a CoT + self-critique variant in 4 minutes; share the sharpest rewrite with the room.
 - **00:55 — Win-rate reveal**: instructor shows a real Langfuse dashboard with three prompt variants; class predicts the winner before the numbers drop.
 
+## Before class · ~20 min pre-work
+
+**Critical: install Ollama BEFORE class or you'll waste the live lab watching a download bar.**
+
+### Setup (15 min)
+- [ ] Download and install the Ollama desktop app from https://ollama.com/download — Mac, Windows, or Linux.
+- [ ] Launch it once; confirm it runs silently in the background (menu bar icon on Mac, tray on Windows).
+- [ ] Check your RAM: Mac (Apple menu → About), Windows (Task Manager → Performance). Note the number — 4GB, 8GB, 16GB.
+- [ ] Based on RAM, pre-pull one model so class starts fast — run one of these in Terminal/PowerShell: `ollama pull qwen2.5:1.5b` (4GB), `ollama pull gemma2:2b` (6GB), `ollama pull phi3:mini` (8GB+).
+
+### Primer (5 min)
+- [ ] Skim the Ollama docs homepage at https://ollama.com — read the "What is Ollama?" and model library sections.
+- [ ] Open https://huggingface.co/spaces/mteb/leaderboard to see what "embedding model quality" looks like (previews Day 18).
+
+### Bring to class
+- [ ] One task from your capstone you suspect a 2B model could handle (summarize, classify, extract). Jot 2 example inputs.
+- [ ] A free Langfuse account at https://langfuse.com (30 seconds to sign up with Google).
+
 ## Read: Local LLMs, prompting patterns, and evals
 
 Let's unpack three ideas that make you dangerous: quantization (so models fit on your laptop), prompt patterns (so small models punch above their weight), and evals (so you know which prompt actually works).
@@ -120,6 +138,22 @@ ollama run qwen2.5:1.5b "Explain RAG in 2 sentences."
 > - *Open WebUI can't see your Ollama model / model dropdown is empty* → confirm Ollama is actually running (`curl http://localhost:11434/api/tags` should list your models); on Docker, set `OLLAMA_BASE_URL=http://host.docker.internal:11434`.
 > - *Langfuse traces aren't appearing* → double-check you pasted both the public AND secret key, and that your region (EU vs US) in the SDK host matches the region you picked at signup.
 
+## After class · ~30-45 min post-work
+
+Ship the 10-row eval tonight while the lab is still fresh — this is the habit that separates tinkerers from builders.
+
+### Finish the eval (25 min)
+- [ ] Build the 10-row eval Google Sheet for your capstone task (`input`, `expected` columns). Real examples, not synthetic.
+- [ ] Run all three prompt variants (zero-shot, CoT+critique, few-shot) — either manually in Open WebUI or via the Langfuse prompt manager.
+- [ ] Score each output 1/0 and compute win rates per variant.
+
+### Explore (10-15 min)
+- [ ] Sign up for Groq at https://groq.com and run the same winning prompt on Llama 3.3 70B — compare speed and quality against your local model.
+- [ ] Try one more model — swap in `gemma2:2b` or `phi3:mini` from https://ollama.com/library/gemma2 / https://ollama.com/library/phi3 and see if small-vs-small changes the winner.
+
+### Share (5 min)
+- [ ] Post to the cohort channel: the task, the win rates (three numbers), and one surprise. Screenshot the Langfuse trace view.
+
 ## Quiz
 
 Four quick ones: Why is `Q4_K_M` the most common quantization? What does chain-of-thought actually add to a prompt — tokens, structure, or both? If Groq is faster and free, why bother with local Ollama? What's the minimum number of rows that makes an eval meaningful for you, honestly?
@@ -137,3 +171,28 @@ Build a **10-row eval set** on a task tied to your capstone. Run **three prompt 
 | Share one eval row that broke all three prompts — what does that tell you? | Describes the row, proposes a hypothesis (ambiguity, domain jargon, long input), and suggests which prompt pattern might close the gap. |
 | Would you deploy a 2B local model to real users, or always route to Groq/Claude? | Takes a position, acknowledges the latency / privacy / cost trade-off, and names a specific user-facing task boundary. |
 | What's the smallest eval set you'd trust to ship a prompt change to production? | Gives a number with a reason (variance, coverage of edge cases) and mentions when you'd augment with LLM-as-judge or human review. |
+
+## References
+
+### Local inference
+- Ollama — https://ollama.com
+- LM Studio — https://lmstudio.ai
+- WebLLM (in-browser) — https://webllm.mlc.ai
+- Open WebUI — https://openwebui.com
+
+### Cloud inference (free / cheap tiers)
+- Groq (Llama 3.3 70B @ 750 tok/s) — https://groq.com
+- Together AI — https://together.ai
+- Fireworks AI — https://fireworks.ai
+
+### Models pulled today
+- Qwen 2.5 1.5B — https://ollama.com/library/qwen2.5
+- Gemma 2 2B — https://ollama.com/library/gemma2
+- Phi-3 mini 3.8B — https://ollama.com/library/phi3
+
+### Evals + tracing
+- Langfuse — https://langfuse.com
+- LangSmith — https://smith.langchain.com
+
+### Model quality references
+- Hugging Face model cards — https://huggingface.co

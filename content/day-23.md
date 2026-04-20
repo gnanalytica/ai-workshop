@@ -46,6 +46,40 @@ This is the day the gap between "AI is cool" and "AI gets things done" closes. Y
 - **00:45 — MCP breakout**: three groups — filesystem server, fetch server, Playwright-MCP. Each group reports back the single tool they'd most miss.
 - **00:55 — Fail-mode bingo**: shout the break-mode you hit first (infinite retry / goal drift / hallucinated tool / context blow-up / premature success).
 
+## Before class
+
+### Setup
+- [ ] Confirm Python 3.11+ is available (`python --version`). If not, use a cloud notebook — Google Colab or Replit — and note it in your submission.
+- [ ] Install [LangGraph](https://langchain-ai.github.io/langgraph/) in a fresh virtual environment (`pip install langgraph langchain-anthropic`).
+- [ ] Have a Claude or OpenAI API key ready in an env var.
+- [ ] Install [Claude Desktop](https://claude.ai) or [Cursor](https://cursor.com) for the MCP half of the lab.
+
+### Primer (~5 min)
+- **Read**: the one-page [MCP intro](https://modelcontextprotocol.io) — what it is, what problem it solves.
+- **Watch** (optional): [Tracing an agent step by step](https://www.youtube.com/embed/2B7_Y-6KBSQ).
+
+### Bring to class
+- [ ] A working `python -c "import langgraph; print(langgraph.__version__)"` or a cloud notebook URL.
+- [ ] Three candidate tools you'd want your capstone agent to use — written down.
+- [ ] An open tab at the [MCP specification](https://modelcontextprotocol.io/specification).
+
+## After class
+
+### Do (the assignment)
+1. Finish the 3-tool LangGraph agent: `web_search`, `calculator`, `write_file` with a conditional-edge loop.
+2. Run the population-ratio goal end-to-end and export one successful trace (thoughts + actions + observations).
+3. Deliberately break `calculator`, capture one failed trace, then apply one loop-fix (step counter, verification tool, or error-passback) and re-run.
+4. Wire one MCP server (filesystem, fetch, or [Playwright-MCP](https://github.com/microsoft/playwright-mcp)) into Claude Desktop or Cursor and use it for one real capstone task.
+5. Submit the repo, both traces, and a one-paragraph writeup of the loop-fix.
+
+### Reflect (~5 min)
+Which of the five predictable break-modes (infinite retry, goal drift, hallucinated tools, context blow-up, premature success) hit you first today, and why your tool design invited it?
+
+### Stretch (optional)
+- **Extra video**: an [AutoGen](https://microsoft.github.io/autogen/) multi-agent demo to preview Day 24.
+- **Extra read**: [Anthropic — Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) end-to-end.
+- **Try**: add a fourth tool via [browser-use](https://github.com/browser-use/browser-use) and run a real web task.
+
 ## Read: ReAct, tool-use, planning loops, and MCP
 
 ### The ReAct loop — reason plus act
@@ -167,3 +201,25 @@ Part B — MCP:
 | If you were to publish one MCP server for your team or community, what would it wrap? | Names a specific existing capability or data source (internal wiki, a public API, a CLI tool) — not a generic category. One sentence on why it deserves to be an MCP server rather than a REST call. |
 | What three tools would it expose, with names and one-line descriptions? | Each tool has a verb-noun name, a small typed input, and a single job. No "do_everything" god tools. |
 | Who benefits, and how would they discover and install it? | Identifies the concrete user (teammates, a public community), the host they use (Claude Desktop, Cursor, custom app), and a distribution plan — even if it's just "share the repo in #eng." |
+
+## References
+
+### Pre-class primers
+- [Model Context Protocol intro](https://modelcontextprotocol.io)
+- [MCP specification](https://modelcontextprotocol.io/specification)
+
+### Covered during class
+- [LangGraph](https://langchain-ai.github.io/langgraph/) — graph-based agent framework.
+- [CrewAI](https://crewai.com) — role-based sequential agents.
+- [Anthropic — Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+- [Tracing an agent step by step](https://www.youtube.com/embed/2B7_Y-6KBSQ)
+
+### Deep dives (post-class)
+- [HuggingFace smolagents](https://huggingface.co/docs/smolagents)
+- [AutoGen](https://microsoft.github.io/autogen/)
+- [browser-use](https://github.com/browser-use/browser-use)
+- [Playwright-MCP](https://github.com/microsoft/playwright-mcp)
+- [LangChain agents](https://langchain.com)
+
+### Other videos worth watching
+- [Agent tracing walkthrough](https://www.youtube.com/embed/2B7_Y-6KBSQ) — re-watch once your agent is running.

@@ -42,6 +42,23 @@ The difference between a student who gets 3x output from AI and one who gives up
 - **00:45 — Live rewrite relay**: one student drops a real weak prompt in chat. Three volunteers each add one CREATE letter on screen — C, then R, then E — while the room watches the output quality jump between versions.
 - **00:55 — Chat close**: *"The CREATE letter I'm adding to every prompt from tomorrow is ___."*
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+
+- [ ] No new setup required — Claude and ChatGPT accounts from Day 1 are enough.
+- [ ] Create an empty Notion page, Google Doc, or markdown file called "My Prompt Library" — we start populating it today.
+
+### Primer (~5 min)
+
+- **Read**: The Anthropic Prompt Engineering overview (https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — skim the left sidebar to see which techniques exist. You don't need to understand them yet.
+- **Watch** (optional): Any 3–5 min "prompt engineering intro" video — instructor to link one in the channel if a great one surfaces, otherwise skip.
+
+### Bring to class
+
+- [ ] One real weak prompt you've typed in the past week — the worse the better. We'll rewrite it live.
+- [ ] One real task you've been putting off that AI could help with (resume bullet, DBMS notes, a difficult email) — this becomes your V1 in the lab.
+
 ## Read: CREATE — the only prompt framework you need
 
 Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.
@@ -145,6 +162,26 @@ Watch for:
 
 Artifact: Google Doc with 5 versions + one reflection sentence. Plus your first library entry.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+
+1. Open your "My Prompt Library" doc.
+2. Build 10 reusable templates — one each for: study/notes, resume/cover letter, LinkedIn post, code explanation, email/message, brainstorming, summarisation, translation, debate/devil's advocate, and a 10th of your choice.
+3. Every template must include `{{placeholder}}` variables so future-you can just fill in blanks.
+4. Each template should apply at least 3 of the CREATE letters visibly (tagged in the template itself is fine).
+5. Export to PDF or share a Notion link, and submit via the dashboard.
+
+### Reflect (~5 min)
+
+**Prompt:** *"Which of the 10 templates will I actually use this week — and which did I include just to hit the count?"* A good reflection is honest: most people have 2–3 genuinely load-bearing templates and 7 aspirational ones. Naming the gap is the whole point; it tells you where to invest next.
+
+### Stretch (optional, for the curious)
+
+- **Extra video**: TBD — instructor will pick based on which CREATE letters the class struggled with most.
+- **Extra read**: DAIR.AI's Prompt Engineering Guide (https://www.promptingguide.ai/) — the most comprehensive free resource online; bookmark, don't binge.
+- **Try**: Take your best V5 from the lab and run it on three models (Claude, ChatGPT, Gemini). Same prompt, same CREATE structure — see which model rewards structure most. That's your "writing model."
+
 ## Quiz
 
 Four questions on CREATE, zero-shot vs few-shot, CoT, and structured output. You don't have to name the framework — you have to recognize the parts.
@@ -162,3 +199,21 @@ Build a personal prompt library with **10 templates.** Categories to cover: (1) 
 | When does few-shot *hurt* instead of help? | Gives at least one case: when your examples accidentally encode a bias, when the task is genuinely novel (examples anchor the model to the wrong shape), or when examples eat your token budget on a long context. |
 | Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate? | Doesn't just say "bigger." Predicts which categories *grow* vs which stay small — based on what the student actually does every day. Shows the library is a living artifact, not a trophy. |
 | Where's the line between "prompting" and just "writing clearly"? | Concedes there isn't a hard line — great prompting IS clear writing with extra scaffolding (role, examples, output format) that you wouldn't add when writing to humans. |
+
+## References
+
+### Pre-class primers
+- [Anthropic Prompt Engineering Overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — short, official, unhyped.
+
+### Covered during class
+- [Claude](https://claude.ai/) — today's primary lab tool.
+- [Anthropic Prompt Library](https://docs.anthropic.com/en/prompt-library/library) — steal-worthy templates by the dozen.
+- [Google AI Studio](https://aistudio.google.com/) — free place to test Gemini prompts with a system prompt field.
+
+### Deep dives (post-class, if curious)
+- [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) — the encyclopedia.
+- [OpenAI Prompting Guide](https://platform.openai.com/docs/guides/prompt-engineering) — official, terse, worth a full read once.
+- [Chain-of-Thought paper](https://arxiv.org/abs/2201.11903) — the 2022 paper that made "think step by step" famous.
+
+### Other videos worth watching
+- [Anthropic "Context is King"](https://www.anthropic.com/) — the original post that coined how most practitioners now think about context vs prompts.

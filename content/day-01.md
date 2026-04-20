@@ -19,6 +19,23 @@ That's the gap we close in 30 days. Not by watching lectures. By doing. By shipp
 
 You've used ChatGPT. That's great — it's the starting line, not the finish. Today you find out what's actually inside the magic box, and why knowing that will 10x everything you do with it.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+
+- [ ] Create free accounts on ChatGPT, Claude, and Gemini using your college email (all three free tiers are enough for today).
+- [ ] Bookmark Tiktokenizer (https://tiktokenizer.vercel.app/) — no sign-up needed, we'll use it live.
+
+### Primer (~5 min)
+
+- **Read**: Skim the first two sections of Jay Alammar's "Illustrated Transformer" (https://jalammar.github.io/illustrated-transformer/) — just enough to recognise the word "token" before class.
+- **Watch** (optional): IBM's "What are Large Language Models?" (7 min) — https://www.youtube.com/watch?v=iR2O2GPbB0E — same video we use in class, pre-watching lets you ask sharper questions.
+
+### Bring to class
+
+- [ ] A short "test question" from your own life you want to ask all three chatbots (a placement worry, a study problem, a hostel dilemma — not a riddle).
+- [ ] Laptop + stable internet + one browser window with three tabs ready.
+
 ## Read: Welcome — here's what the next 30 days look like
 
 **Your mission on day 30**: stand on a stage (or Google Meet) and demo a thing *you* built with AI. Not a slide about AI. A live thing.
@@ -154,6 +171,26 @@ Three AI tools. One prompt. Spot the personality differences. Works great as a p
 
 **Artifact**: one Google Doc with three answers + your take. Drop the share link in the cohort channel.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+
+1. Open a blank text file or Notion page titled "Day 1 — What surprised me about AI today."
+2. Write 150 words in one paragraph. No AI assistance — this is your honest Day 0 baseline.
+3. Focus on one specific surprise (a tool behaviour, a token count, a hallucination, a tone shift between models), not a general "AI is cool" take.
+4. Save as `.txt`, `.md`, or export Notion to PDF.
+5. Submit via the cohort dashboard before the next class.
+
+### Reflect (~5 min)
+
+**Prompt:** *"Which of the three models felt most like 'talking to a person' — and what did that tell me about my own biases?"* A good reflection names the specific behaviour that triggered the feeling (hedging, emoji use, follow-up questions) and admits what it reveals about what you expect from a "smart" tool — even when you know it's autocomplete.
+
+### Stretch (optional, for the curious)
+
+- **Extra video**: Andrej Karpathy, "Intro to Large Language Models" (1 hr) — https://www.youtube.com/watch?v=zjkBMFhNj_g — the deepest beginner-friendly walkthrough on the internet.
+- **Extra read**: "Attention Is All You Need" — https://arxiv.org/abs/1706.03762 — don't understand the math, just scroll and notice which diagrams show up everywhere else.
+- **Try**: Re-run today's lab prompt at temperature 0 vs temperature 1 in the OpenAI playground and note how the "same" prompt diverges.
+
 ## Quiz
 
 Four quick questions on what's AI / what's not, the ML → DL → LLM hierarchy, and your first taste of tokens + attention. Don't overthink. The quiz is here to catch wobbles, not rank you.
@@ -173,3 +210,20 @@ The goal isn't a great essay. It's capturing your honest baseline so Day 30 feel
 | Name one task you'd still trust a human over any AI for, and defend it. | A concrete task (not "creativity") + a concrete reason tied to judgment, stakes, or accountability — e.g., "picking which grandparent goes into hospice care; AI has no skin in the game." |
 | How would you explain "tokens" to your parents in under 60 seconds? | No jargon. One analogy they already know (SMS chunks, ration cards, pages in a book). Ends with *why it matters to them* — cost, speed, or length limits. |
 | If AI is wrong 20% of the time, where in your life is that *already* acceptable, and where is it absolutely not? | Two specific zones with a clear line between them. "Brainstorming gift ideas: fine. Drug dosage for my dog: never." Shows awareness that stakes, reversibility, and verifiability decide the line. |
+
+## References
+
+### Pre-class primers
+- [Illustrated Transformer — Jay Alammar](https://jalammar.github.io/illustrated-transformer/) — visual intro to what's actually inside an LLM.
+- [IBM: What are LLMs? (7 min)](https://www.youtube.com/watch?v=iR2O2GPbB0E) — the single clearest short explainer.
+
+### Covered during class
+- [ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Gemini](https://gemini.google.com/) — the three chat tools in today's lab.
+- [Tiktokenizer](https://tiktokenizer.vercel.app/) — see your prompt as the model sees it.
+
+### Deep dives (post-class, if curious)
+- [Karpathy — Intro to LLMs (1 hr)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — best beginner deep-dive anywhere.
+- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — the 2017 paper that started the whole thing.
+
+### Other videos worth watching
+- [3Blue1Brown — Neural Networks playlist](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) — the math, beautifully animated.

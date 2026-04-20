@@ -92,6 +92,60 @@ A walk-through of how frontier labs red-team before release, and what you can st
 
 Afternoon is yours for capstone build.
 
+## Before class
+
+### Setup
+- [ ] Fresh Python 3.10 or 3.11 venv ready (Garak's deps still lag 3.12).
+- [ ] Capstone endpoint or a local callable wrapping your prompt — pingable from your laptop.
+- [ ] One real system prompt + one real user-input shape pasted into a scratch file.
+
+### Primer (~5 min)
+- **Read**: one failure case from the [AI Incident Database](https://incidentdatabase.ai) — pick the one closest to your capstone's domain, note the root cause in a sentence.
+- **Watch** (optional): a 5-min clip on the Hong Kong deepfake CFO scam or a similar real incident to anchor "why this matters today."
+
+### Bring to class
+- [ ] ONE AI Incident Database case you're ready to share in 30 seconds (what broke, why, who paid).
+- [ ] Your capstone's scariest user sentence — the one you'd rather not see on stage.
+- [ ] A hunch about which of the five safety patterns (stop button, citations, rate-limit, I/O filter, opt-out) you're missing.
+
+## After class
+
+### Do (the assignment)
+1. Run Garak's `promptinject` and `dan` probes end-to-end on your capstone; save the HTML report.
+2. Hand-craft 5 injection payloads targeting your actual use case and log which ones land.
+3. Capture screenshots of your top 3 failure modes.
+4. Write 3 concrete fixes with deploy ETAs *before Day 30* — vague "add guardrails" does not count.
+5. Add one "known unsupported use case" line to your README.
+
+### Reflect (~5 min)
+Which of your 3 fixes would you be most embarrassed to demo without? Ship that one first.
+
+### Stretch (optional)
+- **Extra video**: Anthropic's red-teaming walkthrough rewatched at 1.5x with notes on what you'd steal.
+- **Extra read**: skim the [EU AI Act](https://artificialinintelligenceact.eu) risk tiers and tag your capstone's tier honestly.
+- **Try**: swap in [LLM-Guard](https://llm-guard.com) as an input/output filter for 15 minutes and see what it catches.
+
+## References
+
+### Pre-class primers
+- [AI Incident Database](https://incidentdatabase.ai) — pick one case before class.
+- [Mata v. Avianca case summary](https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc.)
+
+### Covered during class
+- [Garak](https://github.com/NVIDIA/garak) — prompt-injection and jailbreak scanner.
+- [LLM-Guard](https://llm-guard.com) — I/O filter library.
+- [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)
+- [EU AI Act](https://artificialintelligenceact.eu)
+
+### Deep dives (post-class)
+- [Anthropic Responsible Scaling Policy](https://www.anthropic.com/rsp)
+- [OpenAI System Cards](https://openai.com/safety)
+- [India DPDP Act](https://www.meity.gov.in/data-protection-framework)
+- [ProtectAI](https://protectai.com)
+
+### Other videos worth watching
+- [Anthropic on red-teaming](https://www.youtube.com/embed/EBK-a94IFHY) — today's assigned watch, worth a rewatch with the lab running.
+
 ## Quiz
 
 1. What case made lawyers personally liable for AI hallucinations?

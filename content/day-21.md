@@ -46,6 +46,39 @@ This is also a checkpoint. By the end of the day you submit a local prototype an
 - **00:45 — Breakout debate**: Cursor vs bolt.new vs Antigravity for *your* capstone stack — pick one and defend in 60 seconds.
 - **00:55 — Showcase**: one volunteer screen-shares a rejected diff and the redirect prompt that fixed it.
 
+## Before class
+
+### Setup
+- [ ] Install [Cursor](https://cursor.com) OR open [bolt.new](https://bolt.new) in a fresh tab — pick one as your primary for today.
+- [ ] Pull your capstone repo locally and confirm `CLAUDE.md` from Day 19 is at the root and current.
+- [ ] Re-read your Day 15 capstone spec — highlight the single smallest end-to-end slice (input → AI call → output).
+
+### Primer (~5 min)
+- **Read**: [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices) (skim sections 1–3).
+- **Watch** (optional): [Director's-chair vibe coding walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ).
+
+### Bring to class
+- [ ] Your capstone repo open in Cursor / bolt.new / [Antigravity](https://antigravity.google.com).
+- [ ] A one-paragraph v0 scope written down — the slice you want to ship today.
+- [ ] An API key (Claude or OpenAI) in your environment.
+
+## After class
+
+### Do (the assignment)
+1. Run 5–8 spec → code → review → iterate turns on your v0 until the smallest slice works locally.
+2. Commit after every accepted diff — your git log is your director's journal.
+3. Record a 90-second screen capture of the v0 running end-to-end.
+4. Write the 200-word director's commentary: primary tool, hardest prompt, off-the-rails moment, one change next time.
+5. Submit **Capstone Milestone 3** — working v0 prototype URL (or repo) + commentary.
+
+### Reflect (~5 min)
+Where in today's loop did you stop being a director and start being a typist? Name the exact turn and what triggered it.
+
+### Stretch (optional)
+- **Extra video**: another pass through the [LCEmiRjPEtQ walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ) at 1.5x, this time with your own repo open.
+- **Extra read**: [Cursor docs](https://cursor.com/docs) agent mode section.
+- **Try**: rebuild the same v0 slice in [Lovable](https://lovable.dev) or [v0](https://v0.dev) and compare director ergonomics.
+
 ## Read: Director vs Typist — the mindset shift that unlocks AI-first building
 
 Every engineer who is still slow with AI tools in 2026 is stuck in typist mode. A typist reads a Stack Overflow answer, retypes it into their editor, runs it, and debugs line by line. A typist thinks in characters. A director thinks in intent, constraints, and acceptance criteria. The director writes a spec, hands it to a capable junior (the model), reads the output critically, and redirects. The director never touches the keyboard to write code — but they do touch it to write specs, reviews, and rejections.
@@ -137,3 +170,26 @@ https://www.youtube.com/embed/LCEmiRjPEtQ
 | Share one part of your capstone where the model consistently failed today. | Names a specific surface (e.g., "Stripe webhook signature verification in Next.js 15 app router"), not "AI is bad at backend." Includes the spec you wrote verbatim. |
 | What output did you get, and why do you think the model struggled? | Cites a concrete symptom — hallucinated import, deprecated API, silently dropped feature — and connects it to a training-data or context-window hypothesis in 1-2 sentences. |
 | What would you change in your spec to get past the block next time? | Proposes a specific additional constraint, invariant, or acceptance test. Avoids "I'd just try a better model." |
+
+## References
+
+### Pre-class primers
+- [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices)
+- [Cursor docs](https://cursor.com/docs)
+
+### Covered during class
+- [Cursor](https://cursor.com) — tight-leash IDE with agent mode.
+- [bolt.new](https://bolt.new) — one-click deployable web app builder.
+- [Google Antigravity](https://antigravity.google.com) — long-horizon agent with planning UI.
+- [Claude Code](https://claude.com/claude-code) — terminal-native agent.
+- [Director's-chair walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ)
+
+### Deep dives (post-class)
+- [Cline](https://cline.bot) — open-source VS Code vibe-coder.
+- [Continue](https://continue.dev) — self-hostable IDE copilot.
+- [Replit Agent](https://replit.com) — long-leash cloud agent.
+- [Windsurf](https://codeium.com/windsurf) — agentic IDE.
+- [Emergent](https://emergent.sh) — long-horizon shipping agent.
+
+### Other videos worth watching
+- [Director's-chair vibe coding walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ) — a second pass, with your own repo.

@@ -43,6 +43,23 @@ Here's the under-appreciated truth about AI in 2026: the biggest ROI isn't chatb
 - **00:45 — Debate**: API-first purist vs browser-agent pragmatist — two volunteers, 2 minutes each, on a task only reachable behind a login.
 - **00:55 — Dry-run check**: each student declares which node in their flow they'd wrap in human-in-the-loop approval first.
 
+## Before class · ~20 min pre-work
+
+Week 4 capstone day — come in with accounts, tokens, and a task you genuinely hate doing manually.
+
+### Setup (12 min)
+- [ ] Sign up for the **n8n.cloud** free tier at https://n8n.io — the hosted version works out of the box (self-hosting via Docker is optional).
+- [ ] Create a **Groq** account at https://groq.com and copy your API key somewhere safe — this is your free fast-brain.
+- [ ] (Optional) Skim browser-use install steps at https://docs.browser-use.com so tonight's install isn't a surprise.
+
+### Pick your target task (5 min)
+- [ ] Write down **one** boring weekly task you actually do — downloading attendance, checking job portals, sorting emails, copying prices, compiling club reports. Specific enough that you can name its trigger.
+- [ ] Estimate minutes/week it costs you. This is your baseline ROI number.
+
+### Primer (3 min)
+- [ ] Browse https://n8n.io/workflows/ — filter by "AI" and open 2-3 templates just to see what a real flow looks like.
+- [ ] Skim one of: Jina Reader at https://jina.ai/reader or Firecrawl at https://firecrawl.dev — decide which scraper you'll try first.
+
 ## Read: APIs, n8n, and browser agents
 
 **Automation is the 80% practical use case.** Ask any working professional where AI is actually saving them time this year. It's rarely "I had a deep chat with Claude". It's "every morning at 9 AM, an agent reads yesterday's support tickets, tags them by priority and topic, drafts responses for the routine ones, and posts a summary to Slack." That's not a chatbot. It's a **workflow**: trigger → data fetch → AI reasoning → action.
@@ -130,6 +147,24 @@ Budget 60 minutes. Pick boring tasks you actually do.
 > - *Webhook trigger never fires* → you're probably testing on the "Test URL" but your producer is hitting the "Production URL" (or vice versa); they are different URLs in n8n until the workflow is activated.
 > - *browser-use fails on a login page (CAPTCHA or 2FA loop)* → browser agents can't solve CAPTCHAs; run a manual first-time login with persistent browser context, then let the agent reuse the stored session.
 
+## After class · ~30-45 min post-work
+
+This is the **Week 4 capstone checkpoint** — ship both automations tonight, not "next week".
+
+### Ship the n8n flow (20 min)
+- [ ] Complete your trigger → API → AI node → output chain in n8n.cloud. Test with real data (not mock JSON).
+- [ ] Activate the workflow and confirm the trigger fires end-to-end at least once.
+- [ ] Add guardrails: dry-run mode on destructive nodes, a rate limit, and a human-approval step if the action is scary.
+
+### Ship the browser automation (15 min)
+- [ ] Install browser-use per https://docs.browser-use.com quickstart.
+- [ ] Point it at the one boring task you picked in pre-work. Run it once; note what it nailed and where it needed help (captchas, 2FA, weird popups).
+- [ ] (Alternative) Try Playwright MCP at https://github.com/microsoft/playwright-mcp if you need something more deterministic.
+
+### Record + share (10 min)
+- [ ] 60-second Loom walking through the flow + browser automation.
+- [ ] Post to cohort: Loom link, one-paragraph "what it saves me per week", and the ROI number from your pre-work estimate.
+
 ## Quiz
 
 Four: What's the difference between a trigger and a webhook? When would you reach for browser-use instead of an HTTP Request? Why is "dry-run mode" the first thing you should configure? Why would you pick Groq over GPT-5 for a flow running 10k/day?
@@ -147,3 +182,24 @@ Ship **one working n8n flow** relevant to your capstone — a real trigger, a re
 | When is browser-use genuinely useful vs. a fragile hack? | Cites a use-case with no API available AND low-frequency tolerance for flakiness; contrasts with cases where it's the wrong tool. |
 | How do you sleep at night giving an agent access to your email or Slack? | Names concrete guardrails: scoped OAuth, dry-run, allow-list of recipients, rate limits, audit logs. |
 | Where does automation stop being helpful and start being creepy or unsafe? | Draws a line around consent, scale, and reversibility — gives one concrete example that crosses it. |
+
+## References
+
+### Workflow builders
+- n8n — https://n8n.io
+- n8n templates gallery — https://n8n.io/workflows/
+- Zapier AI Actions — https://zapier.com/ai
+- Make.com — https://make.com
+
+### Browser + computer agents
+- browser-use — https://github.com/browser-use/browser-use
+- browser-use quickstart — https://docs.browser-use.com
+- Playwright MCP — https://github.com/microsoft/playwright-mcp
+- Claude computer-use — https://docs.claude.com/claude-code
+
+### Scraping for AI
+- Firecrawl — https://firecrawl.dev
+- Jina Reader — https://jina.ai/reader
+
+### Fast, cheap inference for high-volume nodes
+- Groq — https://groq.com

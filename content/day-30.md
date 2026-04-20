@@ -95,6 +95,67 @@ Instructor opens Demo Day with a look back at what this cohort shipped — by th
 > - *Your video freezes mid-demo* → pause, smile, say "of course, on stage" — laugh with the room, refresh once, and if it doesn't recover in 5 seconds, switch to the backup. Grace under failure is the story the panel remembers.
 > - *A panel question lands you sideways* → listen fully, pause one beat, and if you genuinely don't know, say "I don't know yet — here's how I'd find out." That scores higher than a bluff every single time.
 
+## Before class
+
+### Setup
+- [ ] Arrive 10 minutes early. Seriously — not 2 minutes early.
+- [ ] Bring your laptop, charger, water, and your best smile.
+- [ ] Live URL tested on a fresh browser (incognito, different wifi if you can).
+- [ ] Pre-recorded backup tab open and playable with sound.
+
+### Primer (~5 min)
+- **Read**: your own hook, out loud, once, in the mirror.
+- **Watch** (optional): 2 minutes of a favourite demo — borrow the energy, not the words.
+
+### Bring to class
+- [ ] Deep breath. Bring your A-game.
+- [ ] Your specific 30-second ask, memorised.
+- [ ] Gratitude — message one cohort peer and say thanks before you walk in.
+
+## After class
+
+### Do (the final submission)
+1. Post your **final submission** in the cohort channel: live URL, repo link, pitch deck, 30-second teaser video, 200-word "What I'll do next" reflection.
+2. Download your certificate from [/certificate.html](/certificate.html).
+3. Share your certificate + [showcase link](/showcase.html) on LinkedIn with **#GnanalyticaAIWorkshop** — tag two peers.
+4. Join the alumni channel (link in the closing slides). This is where the next 12 months happen.
+5. Group photo uploaded and reshared.
+
+### Reflect (~5 min)
+Write one sentence you'd tell Day-1 You. Pin it somewhere you'll see it in six months.
+
+### What's next
+- **This Friday**: your first 30-minute [Day 28 signal read](/day-28.html) — prove the habit is real.
+- **Next week**: ship version 2 of your capstone based on one panel question you couldn't answer cleanly.
+- **Next month**: get 10 real users on that live URL. The URL is your portfolio now.
+- **Ongoing**: stay in the alumni channel, hire each other, reference each other, celebrate each other's launches. This cohort is a 10-year asset, not a 30-day cohort.
+
+### Stretch (optional)
+- **Extra video**: rewatch your own demo in one week with fresh eyes — note what you'd change for v2.
+- **Extra read**: [State of AI Report](https://www.stateof.ai) cover-to-cover on a quiet weekend.
+- **Try**: write a short LinkedIn post about one specific thing you learned — not the workshop in general, *one thing*. That's the post that gets read.
+
+## References
+
+### Pre-class primers
+- [Your showcase entry](/showcase.html)
+- [Your live capstone URL](/showcase.html)
+
+### Covered during class
+- [Certificate](/certificate.html) — auto-issues at 30/30.
+- [Cohort showcase gallery](/showcase.html) — goes public today.
+- Panel Q&A, awards ceremony, group photo.
+
+### Deep dives (post-class)
+- [Day 28 — AI Signal Pipeline](/day-28.html) — your first Friday slot.
+- [Day 26 — safety audit](/day-26.html) — revisit before you onboard real users.
+- [Day 27 — model card](/day-27.html) — update when you swap models for v2.
+
+### Other videos worth watching
+- Your own demo, one week from now. Everything else is a distant second.
+
+Congratulations. You shipped. See you on the internet. #GnanalyticaAIWorkshop
+
 ## Quiz
 
 1. What are the three beats of your demo? (Say them out loud before you go on.)

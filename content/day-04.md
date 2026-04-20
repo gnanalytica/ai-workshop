@@ -42,6 +42,23 @@ Every tool of power has a dark side. Cars kill, electricity electrocutes, the in
 - **00:45 — Stand-and-defend on red lines**: three volunteers read their one-sentence red line aloud. The rest of the room tries to find an edge case that would break it. Volunteer either holds the line or admits the revision.
 - **00:55 — Chat close**: *"One thing I'm warning my family about this week is ___."* (Deepfakes, voice cloning, password paste habits — whatever hit hardest.)
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+
+- [ ] No new setup — ChatGPT, Claude, Gemini from Day 1 are enough.
+- [ ] Bookmark the AI Incident Database (https://incidentdatabase.ai/) — we'll reference live.
+
+### Primer (~5 min)
+
+- **Read**: OpenAI's own "Why language models hallucinate" (https://openai.com/index/why-language-models-hallucinate/) — one short essay, zero math.
+- **Watch** (optional): A 3–5 min news clip on the Hong Kong deepfake CFO scam — any reputable outlet's YouTube coverage; instructor to share one link in the channel if a clean version is found.
+
+### Bring to class
+
+- [ ] Your hometown, old school, or favourite niche hobby written down — the lab needs an area you know cold so you can spot hallucinations.
+- [ ] A one-line draft of a "red line" you already suspect you want to hold — we'll sharpen it together.
+
 ## Read: The six failure modes every user must know
 
 ### 1. Hallucination — confident lies
@@ -138,6 +155,26 @@ Artifact: 3-hallucination document with screenshots and analysis.
 
 > **Important:** this is a *defensive* exercise. You're learning to spot lies, not to weaponize them. Do not share your hallucinations as "look, AI is dumb" memes — that's not the point.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+
+1. Open a fresh doc titled "My personal AI red line."
+2. Write exactly one red line — a specific thing you will never do with AI. Not a platitude; something breakable.
+3. In 250 words, defend it: the edge case that tempted you, why you're holding the line anyway, and the rule you'd apply if a friend asked the same question.
+4. Attach the 3-hallucination lab document (screenshots + analysis) as a second page or a separate file.
+5. Submit both via the dashboard before next class.
+
+### Reflect (~5 min)
+
+**Prompt:** *"Of the six failure modes, which one am I personally most likely to cause harm with — not be a victim of?"* A good reflection flips the usual fear-of-AI framing. Most students worry about being deceived; a sharper answer owns that you might be the person pasting something you shouldn't, or shipping a biased prompt, or trusting a hallucinated citation in a submission.
+
+### Stretch (optional, for the curious)
+
+- **Extra video**: TBD — instructor will pick based on which failure mode the class fixated on most.
+- **Extra read**: Bender et al., "On the Dangers of Stochastic Parrots" (https://dl.acm.org/doi/10.1145/3442188.3445922) — the paper Google fired an author over. Dense but foundational.
+- **Try**: Browse 10 incidents on https://incidentdatabase.ai/ and pick one that could plausibly happen in India. Write a 3-line prevention plan for it.
+
 ## Quiz
 
 Four questions on hallucination, bias, privacy, and at least one famous incident. The goal is recognition, not memorisation of names and dates.
@@ -155,3 +192,21 @@ Write a **250-word "My personal AI red line"** essay. Prompt: *"What is one thin
 | If a deepfake of you appeared tomorrow, what's your 10-minute response plan? | Concrete steps in order: screenshot + timestamp, report to the hosting platform, alert close family directly (they're the target), file a cybercrime complaint at cybercrime.gov.in, draft a public clarification. Not "I'd panic." |
 | Should AI companies be legally responsible when their models hallucinate harmfully? | Separates the fluent from the negligent — did the company ship reasonable guardrails? Compares to car manufacturers, pharma, or platforms like YouTube. Takes a position and names who else shares blame (the user, the deployer). |
 | Share your personal red line — and challenge one from your peers. | Red line is specific enough to be breakable ("I'll never use AI to write a condolence message"), not a platitude ("I'll always be ethical"). Challenge targets the edge case, not the person. |
+
+## References
+
+### Pre-class primers
+- [OpenAI — Why language models hallucinate](https://openai.com/index/why-language-models-hallucinate/) — short, official, un-defensive.
+- [AI Incident Database](https://incidentdatabase.ai/) — browse real documented failures before class.
+
+### Covered during class
+- [ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Gemini](https://gemini.google.com/) — today's red-team targets.
+
+### Deep dives (post-class, if curious)
+- [Stochastic Parrots (Bender et al.)](https://dl.acm.org/doi/10.1145/3442188.3445922) — the foundational critique paper.
+- [MIT AI Risk Repository](https://airisk.mit.edu/) — a structured catalogue of ~700 risks.
+- [Alignment Forum](https://www.alignmentforum.org/) — where researchers argue about long-term AI safety.
+- [PauseAI](https://pauseai.info/) — the activist side; read to understand the strongest anti-hype position.
+
+### Other videos worth watching
+- India-specific cybercrime reporting portal: https://cybercrime.gov.in/ — bookmark, don't wait until you need it.

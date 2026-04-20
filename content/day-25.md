@@ -47,6 +47,40 @@ Structure of each demo slot in the rotation:
 - **00:11 — Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
 - **00:13 — Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
 
+## Before class
+
+### Setup
+- [ ] Rehearse your 3-minute demo **once** on webcam — hook, story, ask — and time it strictly.
+- [ ] Confirm your deployed URL from Day 22 loads on a phone and a laptop.
+- [ ] Have a 30-second [Loom](https://loom.com) backup recording of the demo ready in a tab in case the live URL hiccups.
+- [ ] Write your 30-second ask on a slide so it stays visible even if you run out of time.
+
+### Primer (~5 min)
+- **Read**: [YC — How to present to investors](https://ycombinator.com/library).
+- **Watch** (optional): any YC Demo Day clip from the [YC Demo Day archives](https://ycombinator.com/demoday).
+
+### Bring to class
+- [ ] Working deployed URL (open in a clean browser profile, no dev tools).
+- [ ] Loom backup recording.
+- [ ] A note-taking doc open for the critiques you will receive.
+
+## After class
+
+### Do (the assignment)
+1. Save your live demo recording for the portfolio — upload to [Loom](https://loom.com) or your drive.
+2. Step away for 30 minutes after the session. Come back with fresh eyes.
+3. Write the one-page action doc: three critiques verbatim, pattern, one change you WILL make, one you will NOT, how you'll measure.
+4. File the **weekly milestone deliverable** — mini-demo recording + three peer critiques received + the one-pager.
+5. Queue the one change into next week's build.
+
+### Reflect (~5 min)
+Which critique stung the most and, on reflection, was also correct? What ego defense did you notice yourself running?
+
+### Stretch (optional)
+- **Extra video**: two more YC Demo Day clips — watch for hook, story, ask structure.
+- **Extra read**: [First Round — The Art of the Demo](https://review.firstround.com).
+- **Try**: rewrite your hook three different ways and A/B test with two teammates over DM.
+
 ## Read: Demo craft, critique handling, and turning feedback into action
 
 ### Why demos matter more than decks
@@ -150,3 +184,23 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 | Share the single piece of critique today that stung the most and, on reflection, was also correct. | Quotes the critique verbatim with attribution. Names the specific feature, flow, or claim it targeted — no paraphrasing to soften it. |
 | What made it sting? | Honestly diagnoses the reaction — ego, sunk cost, a belief you'd defended before — rather than blaming tone. One or two sentences of self-awareness beats a paragraph of defense. |
 | What will you change because of it, and how will you know it worked? | Commits to one scoped change for next week plus the signal (a metric, a user moment, a follow-up demo reaction) that will prove the change landed. |
+
+## References
+
+### Pre-class primers
+- [YC — How to present to investors](https://ycombinator.com/library)
+- [YC Demo Day archives](https://ycombinator.com/demoday)
+
+### Covered during class
+- [Loom](https://loom.com) — for recording the demo and the backup.
+- [Figma Slides](https://figma.com/slides) — for the hook and ask slides.
+- [Claude](https://claude.ai) — rewrite hook, story, and ask variants.
+- [First Round — The Art of the Demo](https://review.firstround.com)
+
+### Deep dives (post-class)
+- [Pitchfork Economics](https://pitchforkeconomics.com) — context on how the money side thinks.
+- [AngelList pitch deck templates](https://angellist.com)
+- [Canva](https://canva.com) — visual polish for the demo slides.
+
+### Other videos worth watching
+- Two or three curated clips from [YC Demo Day archives](https://ycombinator.com/demoday) — study how 180-second founders compress a story.

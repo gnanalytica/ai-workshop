@@ -44,6 +44,23 @@ Welcome to Week 4. Until now you've been a power user of AI. This week you becom
 - **00:40 — Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
 - **00:55 — Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
 
+## Before class · ~20 min pre-work
+
+Come in with an account, a curiosity, and a browser tab already open — don't lose the first 15 minutes to signup flows.
+
+### Setup (10 min)
+- [ ] Create a free GitHub account at https://github.com using your college email (skip if you already have one). Add a profile photo so you look human to maintainers.
+- [ ] Open https://hoppscotch.io in a tab and click once on **GET** to confirm it loads — no install, no signup needed.
+- [ ] (Optional) Install the GitHub CLI from https://cli.github.com if you're on a laptop you own; skip on shared/college machines.
+
+### Primer (7 min)
+- [ ] Watch Fireship's "Git in 100 Seconds" on YouTube — search the title, any upload works.
+- [ ] Skim the first section of the Open Source Guides at https://opensource.guide to see what "contributing" actually looks like.
+
+### Bring to class (3 min)
+- [ ] One GitHub repo URL you're curious about (an AI tool you've used — Ollama, LangChain, n8n, anything). Paste it in the cohort channel before class starts.
+- [ ] One question about Git, GitHub, or APIs you've always been afraid to ask.
+
 ## Read: The four rails — Git, GitHub, localhost, APIs
 
 Every AI project you will ever touch sits on top of four ideas. If you understand these four, the rest of the stack becomes readable. If you don't, every tutorial feels like hieroglyphics.
@@ -120,6 +137,22 @@ Spend 30–45 minutes. No code — clicks and reads only.
 > - *GitHub Fork button is greyed out* → you're probably on your own repo or not signed in; confirm the avatar top-right and pick a different upstream repo.
 > - *`api.github.com` returns a 403 with "rate limit exceeded"* → unauthenticated GitHub API allows only 60 requests/hour per IP; slow down or add a personal access token as a Bearer header.
 
+## After class · ~30-45 min post-work
+
+Turn today's clicks into a repo presence the cohort can actually see.
+
+### Finish the lab (15 min)
+- [ ] Complete all 3 Hoppscotch API calls from the lab (OpenLibrary, GitHub, Open-Meteo) and screenshot one 200 response.
+- [ ] Trigger a 429 and a 500 on https://httpbin.org intentionally so your brain remembers what they feel like.
+
+### Stretch (15-20 min)
+- [ ] Fork one AI repo you actually use; star two others. Paste the fork URL in the cohort channel.
+- [ ] Open the `good-first-issue` filter at https://github.com/search?q=label%3Agood-first-issue&type=issues and bookmark 2 issues you could realistically tackle this month.
+- [ ] Try GitHub Skills at https://skills.github.com — the "Introduction to GitHub" course takes ~10 minutes and teaches PRs by doing.
+
+### Reflect (5 min)
+- [ ] In one line: which rail (Git / GitHub / localhost / APIs) felt most foreign, and why? Post it — honesty helps the cohort.
+
 ## Quiz
 
 Four questions to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
@@ -137,3 +170,25 @@ Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your 
 | Have you ever seen a 500 error in the wild? What was the context? | Recounts the situation, the user impact, and who was actually to blame (server vs client) — uses the status-code vocabulary from today. |
 | Does `fork → branch → PR` feel like a social ritual or an engineering one? Maybe both? | Takes a side, gives one piece of evidence for each aspect (the code review is engineering; the maintainer politeness is social). |
 | What's one API from today's lab you could imagine chaining into your capstone? | Picks one API, describes the input/output JSON shape, and names the downstream node (LLM, Slack, sheet) that would consume it. |
+
+## References
+
+### Official docs
+- Git official docs — https://git-scm.com
+- MDN Web Docs (HTTP, status codes) — https://developer.mozilla.org
+- Browser DevTools explainer — https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools
+
+### Tools used today
+- GitHub — https://github.com
+- Hoppscotch — https://hoppscotch.io
+- Open Source Guides — https://opensource.guide
+
+### Free public APIs to explore
+- JSONPlaceholder — https://jsonplaceholder.typicode.com
+- HTTPBin — https://httpbin.org
+- OpenLibrary API — https://openlibrary.org/developers/api
+- Open-Meteo — https://open-meteo.com
+
+### Keep learning
+- GitHub Skills (free interactive) — https://skills.github.com
+- GitHub good-first-issue search — https://github.com/search?q=label%3Agood-first-issue&type=issues

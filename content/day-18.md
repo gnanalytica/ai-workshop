@@ -43,6 +43,23 @@ An LLM alone knows a lot about the world but nothing about *your* world — your
 - **00:45 — Breakout**: in trios, decide for a capstone corpus — plain RAG, hierarchical chunks, or GraphRAG — and defend the call in 60 seconds.
 - **00:55 — Failure clinic**: one volunteer shares a RAG question that fumbled; class debates whether it's a chunking, retrieval, or generation bug.
 
+## Before class · ~20 min pre-work
+
+Show up with PDFs in hand and a Neon project waiting — the lab only works if your corpus is real.
+
+### Setup (10 min)
+- [ ] Sign up free at https://neon.com — pick the free tier, create a project in the region nearest you (Mumbai / Singapore).
+- [ ] Inside that project, enable the `vector` extension (Neon has it preinstalled; just toggle in the dashboard or run `CREATE EXTENSION vector;`).
+- [ ] Open https://notebooklm.google and sign in with your Google account so you skip onboarding in class.
+
+### Gather your corpus (7 min)
+- [ ] Collect **3-5 real PDFs** you care about: lecture notes, a research paper, your college handbook, internship reports. Put them in one folder called `capstone-pdfs/`.
+- [ ] Write down 5 actual questions you'd want an AI to answer from those PDFs — these become your eval set.
+
+### Primer (3 min)
+- [ ] Watch a short RAG explainer on YouTube — search "What is RAG LangChain 5 min" or "Retrieval Augmented Generation explained". Any crisp 3-5 min video works.
+- [ ] Skim https://github.com/pgvector/pgvector README — just the intro, so `vector(384)` doesn't look scary tomorrow.
+
 ## Read: Embeddings, RAG, and when graphs beat chunks
 
 **Embeddings are coordinates for meaning.** Take any piece of text — a sentence, a paragraph, a whole doc — and an **embedding model** turns it into a list of numbers called a vector, usually 384, 768, or 1536 dimensions long. The magic property: sentences with similar meaning end up close in this high-dimensional space. "The cat sat on the mat" and "A feline rested on the rug" will be neighbours, even though they share almost no words. "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess" will be near each other too.
@@ -121,6 +138,22 @@ Budget 45–60 minutes. Pick whichever path matches your comfort level — all t
 > - *pgvector query returns nothing or wildly wrong chunks* → confirm ingest and query used the same embedder AND dimensions match your column type (`vector(384)` must match a 384-dim embedder like `all-MiniLM-L6-v2`).
 > - *Ollama embed calls hang on large PDFs* → batch chunks in groups of 16–32 instead of one mega-call; `nomic-embed-text` is faster than general-purpose chat models for embedding.
 
+## After class · ~30-45 min post-work
+
+Get a RAG bot answering 5 real questions from your own PDFs — no toy data, no demo corpus.
+
+### Ship the bot (25 min)
+- [ ] Pick your path: NotebookLM (easiest), LlamaIndex + Chroma (more control via https://trychroma.com), or pgvector on Neon (most production-shaped).
+- [ ] Run all 5 of your pre-class questions. For each, paste: question, retrieved chunk(s), final answer.
+- [ ] Tune **one** knob: chunk size (try 300 vs 800), top-K (try 3 vs 8), or embedder (swap to `nomic-embed-text` via Ollama). Record before/after.
+
+### Stretch (15 min)
+- [ ] Try Graphify (`/graphify` in Claude Code) or Microsoft GraphRAG at https://github.com/microsoft/graphrag on the same PDFs. Ask one multi-hop question that chunk RAG fumbled.
+- [ ] (Optional) Explore Neo4j AuraDB free tier at https://neo4j.com/cloud/aura/ — peek at a sample graph.
+
+### Share (5 min)
+- [ ] Post the NotebookLM link (or repo URL) plus your 5 Q&A pairs plus the one-knob before/after delta to the cohort channel.
+
 ## Quiz
 
 A few mental check-ins: What's the cosine similarity between two unrelated sentences, roughly? Why does chunk overlap matter? When would GraphRAG beat plain RAG — give one concrete capstone example? Why must ingest and query use the same embedder?
@@ -138,3 +171,28 @@ Ship a **working RAG bot** that answers **5 questions** about your capstone doma
 | Where in your capstone would a knowledge graph add real value over chunks? | Names a multi-hop, comparative, or global question that no single chunk could answer alone. |
 | If embeddings are "coordinates for meaning", what would "coordinates for tone" look like? | Extends the analogy — sentiment axes, formality, persona — and admits where the metaphor breaks. |
 | Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions? | Names the guardrails they'd require: source citations, human sign-off, domain-specific evals, refusal on low confidence. |
+
+## References
+
+### Zero-code RAG
+- NotebookLM — https://notebooklm.google
+
+### Frameworks
+- LlamaIndex — https://docs.llamaindex.ai
+- LlamaIndex + Ollama tutorial — https://docs.llamaindex.ai/en/stable/examples/llm/ollama/
+
+### Vector stores
+- Neon (pgvector) — https://neon.com
+- pgvector docs — https://github.com/pgvector/pgvector
+- Chroma — https://trychroma.com
+- Qdrant — https://qdrant.tech
+- Pinecone — https://pinecone.io
+
+### Embedding models + leaderboard
+- Sentence-Transformers — https://sbert.net
+- MTEB embeddings leaderboard — https://huggingface.co/spaces/mteb/leaderboard
+
+### GraphRAG
+- Neo4j AuraDB — https://neo4j.com/cloud/aura/
+- Microsoft GraphRAG — https://github.com/microsoft/graphrag
+- Graphify — https://github.com/graphify

@@ -42,6 +42,24 @@ You've noticed the pattern by now: every time you open a new chat, you re-explai
 - **00:45 — Breakout**: in pairs, critique each other's CLAUDE.md draft — flag anything that's vague, stale, or untestable.
 - **00:55 — Rule-of-the-day vote**: each student shouts their single highest-leverage rule; class votes on the sharpest.
 
+## Before class · ~20 min pre-work
+
+The lab wants a real repo open in a real AI harness — no toy project, no scratch folder.
+
+### Setup (12 min)
+- [ ] Install **Claude Code** from https://claude.com/claude-code (preferred for this workshop) OR install **Cursor** from https://cursor.com if you don't have Claude access.
+- [ ] Open your capstone folder. If you haven't made one yet, create it now and run `git init` so the AI harness has a repo to read.
+- [ ] Confirm your harness opens the repo: from the folder, run `claude` (or open in Cursor) and ask "what's in this repo?" — sanity check.
+
+### Primer (5 min)
+- [ ] Skim the Anthropic Claude Code docs at https://docs.claude.com/claude-code — read the "Memory & CLAUDE.md" and "Slash commands" sections.
+- [ ] Open https://agents.md and read the one-page AGENTS.md spec. It's shorter than this pre-work list.
+- [ ] Browse 2-3 real CLAUDE.md examples from https://github.com/search?q=filename%3ACLAUDE.md&type=code — note structure, not content.
+
+### Bring to class (3 min)
+- [ ] One capstone repo open in your editor.
+- [ ] A list of the **3 things you re-explain to AI every chat** — stack, folder layout, that one weird rule. These become your first CLAUDE.md rules.
+
 ## Read: From prompting to context engineering
 
 **The shift in one sentence.** Prompting is what you say. Context engineering is what the AI *already knows* before you say anything.
@@ -144,6 +162,27 @@ A RAG chatbot answering student queries from the 300-page handbook PDF.
 > - *Slash command doesn't trigger when I type `/review`* → check the filename is exactly `.claude/commands/review.md` (lowercase, no spaces) and that it's a plain markdown prompt, not JSON.
 > - *Hook fires but silently fails or blocks every tool call* → tail the hook's stderr; a non-zero exit code from a `PreToolUse` hook blocks the action by design, so guard your script and log errors to a file.
 
+## After class · ~30-45 min post-work
+
+Commit a CLAUDE.md + AGENTS.md + 3 slash commands tonight — future-you will thank you on every chat.
+
+### Polish the files (20 min)
+- [ ] Tighten CLAUDE.md to 150-250 lines. Every rule testable ("no functions > 40 lines", not "clean code").
+- [ ] Write **AGENTS.md** mirroring the essentials — rules-only, vendor-neutral per https://agents.md.
+- [ ] Check Cursor rules docs at https://docs.cursor.com/context/rules if your team uses Cursor too.
+
+### Create slash commands (10 min)
+- [ ] `.claude/commands/review.md` — your diff review checklist.
+- [ ] `.claude/commands/plan.md` — your 5-step plan template.
+- [ ] `.claude/commands/explain.md` — your "onboard me" prompt.
+
+### Stretch (10 min)
+- [ ] Add one hook in `.claude/settings.json` (e.g. auto-format after edits) — see the Claude Code hooks guide at https://docs.claude.com/claude-code.
+- [ ] Do a mini "context eval": run the same task in a fresh session with and without CLAUDE.md. Note the delta.
+
+### Share (5 min)
+- [ ] Commit everything to git. Post a screenshot of your repo root and one task where CLAUDE.md made the AI noticeably smarter on the first try.
+
 ## Quiz
 
 Four to ponder: What's the difference between CLAUDE.md, AGENTS.md, and `.cursorrules`? Why is 2000 lines of CLAUDE.md worse than 200? What's a slash command actually — magic or just a saved prompt? What's a hook, and when would you choose a hook over a rule in CLAUDE.md?
@@ -161,3 +200,20 @@ Ship a working **CLAUDE.md** + **AGENTS.md** + **3 custom slash commands** for y
 | Should CLAUDE.md be checked into git publicly, or does it leak too much project detail? | Distinguishes public OSS repos from internal repos, notes what belongs in user-level vs project-level, and calls out secrets risk. |
 | What would a team-wide "house style" CLAUDE.md look like across all projects? | Names 2–3 cross-project invariants (testing stack, commit style, review checklist) and where it would extend vs override per-project files. |
 | When would a hook be a better tool than a CLAUDE.md rule? | Picks a case where a rule is easy to forget or skip (formatting, secret-scanning) and justifies harness-enforcement over memory. |
+
+## References
+
+### Harnesses
+- Claude Code — https://claude.com/claude-code
+- Cursor — https://cursor.com
+
+### Specs + docs
+- Anthropic Claude Code docs — https://docs.claude.com/claude-code
+- AGENTS.md spec — https://agents.md
+- Cursor rules docs — https://docs.cursor.com/context/rules
+- Claude Code hooks guide — https://docs.claude.com/claude-code
+
+### Examples in the wild
+- Battle-tested CLAUDE.md search — https://github.com/search?q=CLAUDE.md&type=code
+- Sample CLAUDE.md collection — https://github.com/search?q=filename%3ACLAUDE.md&type=code
+- Custom slash commands (Claude Code) — https://docs.claude.com/claude-code

@@ -44,6 +44,40 @@ Yesterday you built a v0 on your laptop. Today it goes on the internet. A capsto
 - **00:45 — Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
 - **00:55 — GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
 
+## Before class
+
+### Setup
+- [ ] Sign up for [Vercel](https://vercel.com) free tier and link your GitHub.
+- [ ] Confirm your [Supabase](https://supabase.com) account is live (you already have one) and spin up an empty project if you don't.
+- [ ] Push your Day 21 v0 code to GitHub — Vercel deploys from there.
+- [ ] Open the pricing pages for whichever models you use (Claude, OpenAI, Gemini) in tabs.
+
+### Primer (~5 min)
+- **Read**: [llmstxt.org](https://llmstxt.org) — the one-page spec.
+- **Watch** (optional): any "deploy to Vercel" 5-minute walkthrough for your stack.
+
+### Bring to class
+- [ ] Your v0 repo on GitHub, ready to import into Vercel.
+- [ ] A blank spreadsheet (Google Sheets / Numbers) for the token-cost worksheet.
+- [ ] A rough guess at how many interactions per user per month your product expects.
+
+## After class
+
+### Do (the assignment)
+1. Connect your repo to [Vercel](https://vercel.com), ship to production, capture the live URL.
+2. Wire [Supabase](https://supabase.com) (pooled pgbouncer endpoint) via env vars and redeploy.
+3. Build the token-cost worksheet at 10 / 100 / 1000 users using `interactions × (in_tokens × in_price + out_tokens × out_price)`.
+4. Publish `public/llms.txt` per [llmstxt.org](https://llmstxt.org) and verify at `yoursite.com/llms.txt`.
+5. Run the trust-stack audit (six elements) and file present / partial / missing with one-change notes.
+
+### Reflect (~5 min)
+Which of the six trust-stack elements is cheapest to add this week, and which will most change how users feel about your product?
+
+### Stretch (optional)
+- **Extra video**: a Schema.org JSON-LD walkthrough for your framework.
+- **Extra read**: [Schema.org](https://schema.org) Product + FAQ types.
+- **Try**: validate your JSON-LD in the [Schema.org validator](https://validator.schema.org) and paste the result in your submission.
+
 ## Read: Shipping, cost math, trust UX, and getting cited by AI
 
 ### Free-tier survival and cold starts
@@ -143,3 +177,26 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 | Share the number that shocked you in your token-cost worksheet. | Names the dollar figure at 100 or 1000 users and the single line-item driving it (e.g., "$48/user/mo — the 8k-token system prompt on every call"). |
 | Was it the system prompt, output length, model choice, or interaction count? | Diagnoses the dominant cost term with arithmetic, not vibes. Shows at least one multiplication ("2k in × 20 calls × $3/M = $0.12"). |
 | What change drops cost-per-user by 40% without hurting quality, and how would you verify the quality didn't drop? | Proposes a concrete lever (prompt caching, smaller model for cheap turns, retrieval instead of stuffing) and names an eval — even a 10-example side-by-side — to prove quality held. |
+
+## References
+
+### Pre-class primers
+- [llmstxt.org](https://llmstxt.org) — the spec in one page.
+- [Schema.org](https://schema.org)
+
+### Covered during class
+- [Vercel](https://vercel.com) — primary deploy target today.
+- [Supabase](https://supabase.com) — Postgres + auth + pooled connections.
+- [Figma](https://figma.com) — for the trust-UX audit sketch.
+- [Schema.org validator](https://validator.schema.org)
+
+### Deep dives (post-class)
+- [Neon](https://neon.tech) — serverless Postgres with pooled endpoints.
+- [Cloudflare Workers](https://workers.cloudflare.com) — edge alternative.
+- [Fly.io](https://fly.io), [Render](https://render.com), [Netlify](https://netlify.com), [Cloudflare Pages](https://pages.cloudflare.com), [Deno Deploy](https://deno.com/deploy) — deploy alternatives.
+- [Modal](https://modal.com), [Replicate](https://replicate.com) — GPU / inference.
+- [AWS Bedrock](https://aws.amazon.com/bedrock), [GCP Vertex AI](https://cloud.google.com/vertex-ai), [Azure AI Foundry](https://azure.microsoft.com/products/ai-foundry), [Ola Krutrim Cloud](https://olakrutrim.com) — hyperscaler model hosting.
+- [Turso](https://turso.tech) — edge SQLite.
+
+### Other videos worth watching
+- A "deploy Next.js + streaming LLM to Vercel" walkthrough for your stack.

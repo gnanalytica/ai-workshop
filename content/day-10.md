@@ -43,6 +43,20 @@ Checkpoint day. You have touched a dozen tools in nine days. Today the workshop 
 - **00:45 — Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
 - **00:55 — Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
 
+## Before class · ~20 min pre-work
+
+### Setup (if needed)
+- [ ] No setup required — your [Claude](https://claude.ai), [Perplexity](https://www.perplexity.ai), and [Gamma](https://gamma.app) accounts from earlier days are all you need.
+- [ ] Open your Jarvis Project in Claude; you will paste today's prompt-of-the-day inside it.
+
+### Primer (~5 min)
+- **Read**: The one-page [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions, two lines each. Memorize questions 1, 4, and 9; they are the ones your partner will ask you in class.
+- **Watch** (optional): Any 3–5 minute [YC Library](https://www.ycombinator.com/library) clip on "how to pick a startup idea" or Teresa Torres on [opportunity solution trees](https://www.producttalk.org). The framing transfers to capstone scoping directly.
+
+### Bring to class
+- [ ] 2–3 candidate capstone problem statements written on paper — hostel life, placement pain, exam prep, family problems all fair game.
+- [ ] For each candidate, one real human's name who might use it — even if you have not asked them yet.
+
 ## Read: How to pick a capstone worth four weeks
 
 **Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.
@@ -121,6 +135,21 @@ Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pag
 > - *No team cluster forms around your idea and you feel rejected* → this is data, not judgment. Either join the cluster closest to your idea (your skill + their problem often beats your problem), or commit to solo with a smaller scope and one named user.
 > - *You cannot name a real human user for Week 4* → stop the one-pager. Spend 15 minutes messaging three people who might hurt from this problem. If none reply by tonight, pick a different idea — "I will find users later" fails every cohort.
 
+## After class · ~30-45 min post-work
+
+### Do (the assignment)
+1. Lock your capstone one-pager and submit. Use the template exactly: Problem, Scope, Non-goals, Team, Risks, Success metric — ≤ 400 words.
+2. Make sure the "Non-goals" section is at least as long as "Scope". If not, you have not committed.
+3. Name one real human user by name (not "someone in my hostel") with a plan to contact them this week.
+4. Submit `capstone-one-pager.md` via the cohort dashboard with the tag `#milestone-1` before midnight. Scope locks tonight.
+
+### Reflect (~5 min)
+Prompt: *Which of the 3 filters (real user / small scope / you care) is weakest for your locked idea, and what is your tripwire for killing or reshaping it by Week 3?* A good reflection names the weakest filter honestly, describes the specific signal that would tell you the idea is dying (user unreachable, scope ballooning past 15 hours, motivation gone after a bad day), and pre-commits to an action — reshape, pivot, or kill — with a date.
+
+### Stretch (optional, for the curious)
+- **Extra read**: A [Paul Graham essay](https://www.ycombinator.com/library) on "how to get startup ideas" — replace "startup" with "capstone" as you read.
+- **Try**: Run your locked idea through the Heilmeier Catechism *again* with a different model (ChatGPT or Gemini) and compare which risks each one surfaces. Different models notice different failure modes.
+
 ## Quiz
 
 Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
@@ -147,3 +176,18 @@ Submit before midnight. This is the biggest deliverable of the workshop so far a
 | Is your team's "won't build" list long enough? What is missing from it? | Lists at least one tempting feature you know you will want to add in Week 3 (auth, mobile, analytics, a second user type). Writing it down is pre-committing against yourself. |
 | Who is the one user you will talk to in Week 3? How will you get them on a call? | Names a real human with a real relationship, and a concrete first-contact plan (WhatsApp today, 15-min call Friday). Vague answers ("someone in my hostel") mean you have no user yet. |
 | What would make you abandon this capstone in Week 3, and how will you prevent that? | Identifies the specific failure mode (team unavailable, tool stops working, user unreachable, you lose interest) and the tripwire that catches it early. Strong answers include a "switch point" — what you will do by end of Week 3 if the signal is red. |
+
+## References
+
+### Pre-class primers
+- [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions that every project must answer.
+- [YC Library](https://www.ycombinator.com/library) — "how to pick an idea" essays that transfer cleanly to capstones.
+
+### Covered during class
+- [Claude](https://claude.ai) — where you run today's Heilmeier prompt.
+- [Perplexity](https://www.perplexity.ai) — 30-second "does this already exist?" sanity check.
+- [Gamma](https://gamma.app) — for the pitch deck you will rebuild once scope locks.
+
+### Deep dives (post-class)
+- [Teresa Torres — Opportunity Solution Tree](https://www.producttalk.org) — the clearest framework for turning a problem into a shippable bet.
+- [Paul Graham essays](https://www.ycombinator.com/library) — the patron saint of "make something people want" thinking.

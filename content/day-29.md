@@ -105,6 +105,58 @@ Live walkthrough of a full demo with mistakes and fixes, then a critique of two 
 
 Afternoon: final capstone polish. No new features. Only fixes and polish.
 
+## Before class
+
+### Setup
+- [ ] Full 3-minute demo practice recorded on webcam — watched back at least once.
+- [ ] Polished deck (5-8 slides max) exported to PDF as a backup.
+- [ ] Live capstone URL loaded in tab 1; pre-recorded Loom backup loaded in tab 2.
+- [ ] [Loom](https://loom.com) or [Descript](https://descript.com) installed and mic tested.
+
+### Primer (~5 min)
+- **Read**: one YC Demo Day retro in the [YC Library](https://www.ycombinator.com/library) — steal one hook formula.
+- **Watch** (optional): [instructor dress rehearsal video](https://www.youtube.com/embed/Unzc731iCUY) — note the bridge-to-key-message moments.
+
+### Bring to class
+- [ ] Hook, story, ask written as three separate paragraphs in your submission doc.
+- [ ] Your webcam self-tape link (raw, not polished — we want honest feedback).
+- [ ] One demo question you're dreading — we'll workshop the bridge live.
+
+## After class
+
+### Do (the assignment)
+1. Apply the 3 line-level fixes from peer + instructor feedback — cut, rewrite, sharpen.
+2. Re-record the final rehearsal video (Loom) — this one is the one you'd be proud to ship.
+3. Toggle your [showcase.html](/showcase.html) entry live with opt-in ON; confirm URL, screenshot, and 1-line tagline.
+4. Pre-record the slow parts of your demo (any API call > 3s) as a fallback video clip.
+5. Sleep early. Hydrate. Lay out clothes for tomorrow. Seriously.
+
+### Reflect (~5 min)
+Close your laptop, say your 30-second hook out loud three times. Does it still sound like you, or like a robot? Rewrite if it's the second one.
+
+### Stretch (optional)
+- **Extra video**: one more YC Demo Day archive demo — note the specific line where they name a human.
+- **Extra read**: [Nancy Duarte on presenting](https://www.duarte.com) — skim her "resonate" framework.
+- **Try**: rehearse the demo standing up with phone recording — energy reads different on camera than sitting.
+
+## References
+
+### Pre-class primers
+- [YC Library — Demo Day tips](https://www.ycombinator.com/library)
+- [Loom](https://loom.com) / [Descript](https://descript.com) for recording.
+
+### Covered during class
+- [Instructor dress rehearsal](https://www.youtube.com/embed/Unzc731iCUY)
+- [Showcase page](/showcase.html)
+- Hook / story / ask structure; bridge-to-key-message for Q&A.
+
+### Deep dives (post-class)
+- [Nancy Duarte on presenting](https://www.duarte.com)
+- [YC Demo Day archives](https://www.ycombinator.com/library) — watch 3 more this weekend.
+
+### Other videos worth watching
+- Any Steve Jobs keynote with the sound off — watch the pauses, the eye contact, the silence after the hook line.
+
 ## Quiz
 
 1. What are the three beats of a 4-minute demo?

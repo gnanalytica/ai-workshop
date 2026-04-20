@@ -108,6 +108,59 @@ Instructor walks through the most recent frontier model release — what to beli
 
 Afternoon: implement the swap in your capstone if needed, then keep building.
 
+## Before class
+
+### Setup
+- [ ] Capstone constraints written down: max latency (ms), max cost per 1k tokens, required context window.
+- [ ] 5 *real* capstone prompts (not toy examples) saved in a scratch file, ready to paste.
+- [ ] Accounts/logins to [LM Arena](https://lmarena.ai) and [Artificial Analysis](https://artificialanalysis.ai) confirmed.
+
+### Primer (~5 min)
+- **Read**: skim the [LM Arena](https://lmarena.ai) leaderboard top 20 and write down **2 surprises** — a model you didn't expect to be that high, or a tier collapse you didn't know about.
+- **Watch** (optional): a 5-min explainer on benchmark contamination from AI Explained or similar.
+
+### Bring to class
+- [ ] Your 2 LM Arena surprises, written in one line each.
+- [ ] A shortlist hypothesis: which 3 models you *think* fit your capstone before you run the numbers.
+- [ ] The cost ceiling your capstone cannot cross (e.g., "$0.50 per session").
+
+## After class
+
+### Do (the assignment)
+1. Ship a 1-page **model card** for your capstone: chosen model + version, why (benchmark + private eval), fallback + switching criteria, cost per 1k tokens, expected monthly spend.
+2. Run your 5 real prompts against primary *and* fallback on LM Arena side-by-side; paste two diffs into the card.
+3. Check [LiveBench](https://livebench.ai) for a contamination-resistant number; note it or note its absence.
+4. Wire the fallback into your capstone code — not just the doc.
+5. Post the card link in the cohort channel.
+
+### Reflect (~5 min)
+If your primary model's API went down at 9am on Day 30, how many minutes until your fallback is serving real users? Write the number honestly.
+
+### Stretch (optional)
+- **Extra video**: a frontier model release day recap from AI Explained to practice the 3-step skim.
+- **Extra read**: one recent [SEAL leaderboard](https://scale.com/leaderboard) post — private held-out benchmarks think differently.
+- **Try**: run the same 5 prompts on an open-weight model via [HuggingFace Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) top pick — see if the gap is worth the savings.
+
+## References
+
+### Pre-class primers
+- [LM Arena](https://lmarena.ai) — primary primer.
+- [Artificial Analysis](https://artificialanalysis.ai) — quality/price/latency dashboard.
+
+### Covered during class
+- [LiveBench](https://livebench.ai) — contamination-resistant.
+- [HuggingFace Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard)
+- MMLU, GPQA, SWE-bench Verified, MT-Bench, AIME, ARC-AGI.
+
+### Deep dives (post-class)
+- [SEAL Leaderboards](https://scale.com/leaderboard)
+- [ARC Prize](https://arcprize.org)
+- [Papers With Code](https://paperswithcode.com)
+
+### Other videos worth watching
+- AI Explained — benchmark release day recaps.
+- Any recent frontier-model technical report read with the 3-step skim in hand.
+
 ## Quiz
 
 1. Why is MMLU less useful in 2026 than in 2023?
