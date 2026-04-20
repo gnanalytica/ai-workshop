@@ -67,7 +67,9 @@
     <div style="display:flex;gap:14px;align-items:center">
       <a href="search.html" style="font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:5px" title="Search lessons"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Search</a>
       <a href="classmates.html" style="font-size:13px;color:var(--muted)">Classmates</a>
+      <a href="hall-of-fame.html" style="font-size:13px;color:var(--muted)">Hall of Fame</a>
       <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
+      <a href="peer-reviews.html" style="font-size:13px;color:var(--muted)">Peer reviews</a>
       <a href="certificate.html" id="navCert" style="font-size:13px;color:var(--muted);display:none">Certificate</a>
       <a href="#" id="navShowcase" style="font-size:13px;color:var(--muted);display:none">Showcase</a>
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
@@ -162,6 +164,9 @@
   </div>
 
   <div id="teamCard" class="progress-wrap" style="display:none"></div>
+
+  <!-- This week's buddy -->
+  <div id="buddyCard" class="progress-wrap" style="display:none"></div>
 
   <!-- Full syllabus quick view -->
   <div class="progress-wrap">
@@ -399,6 +404,7 @@
     renderProgress(doneSet);
     renderWeeks(user, cohort, doneSet, scheduleMap);
     renderTeamCard(user, cohort);
+    renderBuddyCard(user, cohort);
     renderTodayCard(user, cohort, doneSet, scheduleMap);
     renderUpcomingCard(user, cohort, scheduleMap);
     renderMilestones(doneSet, reg);
@@ -845,6 +851,119 @@
   }
 
   function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  async function renderBuddyCard(user, cohort) {
+    const card = document.getElementById('buddyCard');
+    if (!card || !cohort) return;
+
+    // Compute current week (1..6)
+    const startsOn = cohort.starts_on ? new Date(cohort.starts_on) : null;
+    let week = 1;
+    if (startsOn && !isNaN(startsOn.getTime())) {
+      const diffDays = Math.floor((Date.now() - startsOn.getTime()) / (24 * 3600 * 1000));
+      week = Math.max(1, Math.min(6, Math.floor(diffDays / 7) + 1));
+    }
+
+    const { data: pair } = await supabase
+      .from('buddy_pairs').select('*')
+      .eq('cohort_id', cohort.id).eq('week_number', week)
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+      .maybeSingle();
+
+    card.style.display = 'block';
+
+    if (!pair) {
+      card.innerHTML = `
+        <div class="kicker">Accountability buddies</div>
+        <h2 style="margin:0 0 6px">This week's buddy · Week ${week}</h2>
+        <p class="muted" style="font-size:14px;margin:0">Not paired this week yet — faculty will assign soon.</p>`;
+      return;
+    }
+
+    const buddyId = pair.user_a === user.id ? pair.user_b : pair.user_a;
+    if (!buddyId) {
+      card.innerHTML = `
+        <div class="kicker">Accountability buddies</div>
+        <h2 style="margin:0 0 6px">This week's buddy · Week ${week}</h2>
+        <p class="muted" style="font-size:14px;margin:0">You're solo this week — odd student out. Use this week for deep work.</p>`;
+      return;
+    }
+
+    const { data: buddy } = await supabase.from('profiles')
+      .select('full_name, college, year, github_username')
+      .eq('id', buddyId).maybeSingle();
+
+    // Load last 5 check-ins from this pair
+    const { data: checkins } = await supabase.from('buddy_checkins')
+      .select('*').eq('buddy_pair_id', pair.id)
+      .order('created_at', { ascending: false }).limit(5);
+
+    // Who authored each check-in — we already have user.id + buddy name
+    const nameMap = new Map();
+    nameMap.set(user.id, 'You');
+    nameMap.set(buddyId, buddy?.full_name || 'Your buddy');
+
+    const gh = buddy?.github_username
+      ? `<a href="https://github.com/${escapeHtml(buddy.github_username)}" target="_blank" rel="noopener" style="color:var(--accent)">@${escapeHtml(buddy.github_username)}</a>`
+      : '<span class="muted">—</span>';
+
+    const meta = [];
+    if (buddy?.college) meta.push(escapeHtml(buddy.college));
+    if (buddy?.year) meta.push(`Year ${escapeHtml(String(buddy.year))}`);
+
+    const initials = (buddy?.full_name || '?').split(/\s+/).map(s=>s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?';
+
+    const checkinsHtml = (checkins && checkins.length)
+      ? `<div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+          ${checkins.map(ci => {
+            const who = nameMap.get(ci.user_id) || 'Someone';
+            const when = new Date(ci.created_at).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+            return `<div style="padding:10px 12px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px">
+              <div style="display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--muted);margin-bottom:4px"><span><b style="color:var(--ink)">${escapeHtml(who)}</b></span><span>${escapeHtml(when)}</span></div>
+              <div style="font-size:13.5px;line-height:1.55;white-space:pre-wrap">${escapeHtml(ci.body)}</div>
+            </div>`;
+          }).join('')}
+        </div>`
+      : `<div class="muted" style="font-size:13px;margin-top:14px;font-style:italic">No check-ins yet.</div>`;
+
+    card.innerHTML = `
+      <div class="kicker">Accountability buddies</div>
+      <h2 style="margin:0 0 12px">This week's buddy · Week ${week}</h2>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--input-bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:14px">${escapeHtml(initials)}</div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:16px;font-weight:600">${escapeHtml(buddy?.full_name || 'Your buddy')}</div>
+          <div class="muted" style="font-size:12.5px;margin-top:2px">${meta.join(' · ') || '—'}</div>
+          <div style="font-size:12.5px;margin-top:2px">GitHub: ${gh}</div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <label class="kicker" style="display:block;margin-bottom:6px">Weekly check-in</label>
+        <textarea id="buddyCheckinInput" placeholder="What did you ship this week? What's blocking you?" style="width:100%;min-height:74px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:inherit;font-size:14px;line-height:1.55;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button id="buddyCheckinBtn" class="cta" style="padding:8px 16px;font-size:13px">Post check-in</button>
+        </div>
+        <div class="msg" id="buddyCheckinMsg"></div>
+      </div>
+      ${checkinsHtml}
+    `;
+
+    document.getElementById('buddyCheckinBtn').onclick = async () => {
+      const ta = document.getElementById('buddyCheckinInput');
+      const msg = document.getElementById('buddyCheckinMsg');
+      const body = (ta?.value || '').trim();
+      if (!body) return;
+      const btn = document.getElementById('buddyCheckinBtn');
+      btn.disabled = true; btn.textContent = 'Posting…';
+      const { error } = await supabase.from('buddy_checkins').insert({
+        buddy_pair_id: pair.id, user_id: user.id, body,
+      });
+      btn.disabled = false; btn.textContent = 'Post check-in';
+      if (error) { msg.className = 'msg show err'; msg.textContent = error.message; return; }
+      ta.value = '';
+      renderBuddyCard(user, cohort);
+    };
+  }
 
   async function renderTeamCard(user, cohort) {
     const card = $('teamCard');

@@ -145,7 +145,10 @@
         <div class="kicker" style="margin-bottom:4px">New poll</div>
         <div style="font-size:15px;font-weight:600">Create a poll</div>
       </div>
-      <button class="cta ghost" id="createToggle" style="padding:8px 14px;font-size:13px">Expand</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="cta ghost" id="teamVoteBtn" style="padding:8px 14px;font-size:13px">⭐ Create team-vote poll</button>
+        <button class="cta ghost" id="createToggle" style="padding:8px 14px;font-size:13px">Expand</button>
+      </div>
     </div>
     <div class="create-body" id="createBody" style="display:none">
       <div class="field"><label>Title</label><input type="text" id="f_title" placeholder="e.g. Warmup check" /></div>
@@ -217,6 +220,33 @@
   </div>
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
+
+<!-- Team-vote modal -->
+<div class="modal-back" id="teamVoteBack">
+  <div class="modal">
+    <div class="kicker">Demo day</div>
+    <h2 style="font-size:20px;margin:0 0 4px">Create team-vote poll</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 16px">Auto-populated from the teams in this cohort. Launches immediately so students can vote during the live demo.</p>
+    <div class="field"><label>Title</label><input type="text" id="tv_title" value="Demo day — vote for best team" /></div>
+    <div class="field"><label>Question</label><input type="text" id="tv_question" value="Which team had the best demo?" /></div>
+    <div class="field"><label>Day</label>
+      <select id="tv_day">
+        <option value="25">Day 25 · Mini-demo</option>
+        <option value="30" selected>Day 30 · Final demo</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Options (teams)</label>
+      <div class="opt-list" id="tv_opts"></div>
+      <div class="muted" style="font-size:12px;margin-top:6px">One option per team in this cohort. Edit or remove as needed.</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button type="button" class="cta ghost" id="tvCancel" style="padding:10px 18px">Cancel</button>
+      <button type="button" class="cta" id="tvCreate" style="padding:10px 18px">Create + launch</button>
+    </div>
+    <div class="msg" id="tvMsg"></div>
+  </div>
+</div>
 
 <!-- Edit modal -->
 <div class="modal-back" id="editBack">
@@ -302,6 +332,7 @@
     wireEdit();
     wireTabs();
     wireDrawer();
+    wireTeamVote();
     await refresh();
     subscribeRowLevel();
   }
@@ -660,6 +691,62 @@
         }
       })
       .subscribe();
+  }
+
+  // ---------- Team-vote quick poll ----------
+  function wireTeamVote() {
+    const btn = document.getElementById('teamVoteBtn');
+    const back = document.getElementById('teamVoteBack');
+    if (!btn || !back) return;
+    btn.addEventListener('click', openTeamVote);
+    document.getElementById('tvCancel').addEventListener('click', () => back.classList.remove('show'));
+    back.addEventListener('click', (e) => { if (e.target.id === 'teamVoteBack') back.classList.remove('show'); });
+    document.getElementById('tvCreate').addEventListener('click', submitTeamVote);
+  }
+
+  async function openTeamVote() {
+    if (!COHORT) { alert('Pick a cohort first.'); return; }
+    const msg = document.getElementById('tvMsg'); msg.className = 'msg'; msg.textContent = '';
+    document.getElementById('tv_title').value = 'Demo day — vote for best team';
+    document.getElementById('tv_question').value = 'Which team had the best demo?';
+    const optsWrap = document.getElementById('tv_opts');
+    optsWrap.innerHTML = '<div class="muted" style="font-size:12px">Loading teams…</div>';
+    document.getElementById('teamVoteBack').classList.add('show');
+    const { data: teams, error } = await supabase.from('teams').select('id, name').eq('cohort_id', COHORT.id).order('name');
+    if (error) { optsWrap.innerHTML = `<div class="msg show err">${esc(error.message)}</div>`; return; }
+    if (!teams || !teams.length) {
+      optsWrap.innerHTML = `<div class="msg show err">No teams in this cohort. Add teams on the Teams page first.</div>`;
+      return;
+    }
+    optsWrap.innerHTML = '';
+    teams.forEach(t => addOptRow(optsWrap, t.name));
+  }
+
+  async function submitTeamVote() {
+    const msg = document.getElementById('tvMsg'); msg.className = 'msg';
+    const title = document.getElementById('tv_title').value.trim();
+    const question = document.getElementById('tv_question').value.trim();
+    const dayVal = document.getElementById('tv_day').value;
+    const opts = collectOpts(document.getElementById('tv_opts'));
+    if (!title || !question) { msg.className = 'msg show err'; msg.textContent = 'Title and question are required.'; return; }
+    if (opts.length < 2) { msg.className = 'msg show err'; msg.textContent = 'Need at least 2 team options.'; return; }
+    const { data: { user } } = await supabase.auth.getUser();
+    const btn = document.getElementById('tvCreate');
+    btn.disabled = true; btn.textContent = 'Creating…';
+    const { error } = await supabase.from('polls').insert({
+      cohort_id: COHORT.id,
+      day_number: dayVal ? parseInt(dayVal, 10) : null,
+      title, question, kind: 'single',
+      options: opts,
+      is_open: true,
+      opened_at: new Date().toISOString(),
+      created_by: user.id,
+    });
+    btn.disabled = false; btn.textContent = 'Create + launch';
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; return; }
+    msg.className = 'msg show ok'; msg.textContent = 'Team-vote poll launched ✓';
+    await refresh();
+    setTimeout(() => { document.getElementById('teamVoteBack').classList.remove('show'); }, 700);
   }
 
   init();

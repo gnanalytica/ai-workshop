@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hall of Fame · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .hof-hero{padding:60px 0 28px;text-align:center;border-bottom:1px solid var(--line);margin-bottom:40px}
+  .hof-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;color:var(--accent);text-transform:uppercase}
+  .hof-title{font-family:"Instrument Serif",serif;font-style:italic;font-size:clamp(48px,7vw,92px);line-height:1.02;letter-spacing:-.02em;margin:14px 0 10px}
+  .hof-sub{color:var(--muted);font-size:16px;max-width:560px;margin:0 auto}
+  .hof-grid{columns:3 320px;column-gap:18px}
+  @media(max-width:720px){.hof-grid{columns:1}}
+  .hof-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin:0 0 18px;display:flex;flex-direction:column;gap:10px;position:relative;transition:transform .15s,border-color .15s}
+  .hof-card:hover{transform:translateY(-2px);border-color:#3a3a4e}
+  .hof-card.featured{border-color:rgba(195,255,54,.4);background:linear-gradient(145deg,rgba(195,255,54,.05),var(--card))}
+  .hof-badge{position:absolute;top:14px;right:16px;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(195,255,54,.12);color:#c9f76a;border:1px solid rgba(195,255,54,.35);font-weight:600}
+  .hof-team{font-family:"Instrument Serif",serif;font-style:italic;font-size:30px;line-height:1.1;letter-spacing:-.01em;margin:0;padding-right:90px}
+  .hof-cohort{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .hof-cap-title{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.3}
+  .hof-problem{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .hof-demo{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:14px;text-decoration:none;transition:transform .12s;align-self:flex-start}
+  .hof-demo:hover{transform:translateY(-1px)}
+  .hof-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hof-chip{font-size:11.5px;padding:4px 10px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);color:var(--muted);text-decoration:none;transition:color .15s,border-color .15s}
+  .hof-chip:hover{color:var(--ink);border-color:#3a3a4e}
+  .hof-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:4px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .hof-kudos{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:600}
+  .hof-empty{padding:80px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px;font-size:15px}
+  .hof-loading{padding:80px 20px;text-align:center;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Hall of Fame</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="index.html" style="font-size:13px;color:var(--muted)">Home</a>
+      <a href="dashboard.html" style="font-size:13px;color:var(--muted)">Dashboard</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="hof-hero">
+    <div class="hof-kicker">Demo day · Showcased capstones</div>
+    <h1 class="hof-title">Hall of Fame</h1>
+    <p class="hof-sub">The best capstone projects built by our cohorts. Shipped, demoed, and featured.</p>
+  </div>
+
+  <div id="hofContent"><div class="hof-loading">Loading…</div></div>
+</main>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+  function truncate(s, n) {
+    s = String(s ?? '').trim();
+    if (s.length <= n) return s;
+    return s.slice(0, n - 1).trimEnd() + '…';
+  }
+
+  async function load() {
+    const host = document.getElementById('hofContent');
+
+    // Fetch capstones featured OR showcased, with team + cohort
+    const { data: caps, error } = await supabase
+      .from('capstones')
+      .select('*, teams!inner(id, name, description, cohort_id, cohorts(id, name, slug))')
+      .or('is_featured.eq.true,status.eq.showcased')
+      .order('is_featured', { ascending: false })
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      host.innerHTML = `<div class="hof-empty">Couldn't load capstones: ${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    const list = caps || [];
+    if (!list.length) {
+      host.innerHTML = `<div class="hof-empty">No capstones showcased yet — check back after demo day.</div>`;
+      return;
+    }
+
+    // Sort: featured first, then newest showcased by updated_at
+    list.sort((a, b) => {
+      if ((b.is_featured ? 1 : 0) !== (a.is_featured ? 1 : 0)) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+    });
+
+    // Aggregate kudos across each team's members' submissions
+    const teamIds = list.map(c => c.team_id);
+    const kudosByTeam = new Map();
+    try {
+      const { data: mem } = await supabase
+        .from('team_members').select('team_id, user_id').in('team_id', teamIds);
+      const usersByTeam = new Map();
+      (mem || []).forEach(m => {
+        const arr = usersByTeam.get(m.team_id) || [];
+        arr.push(m.user_id);
+        usersByTeam.set(m.team_id, arr);
+      });
+      const allUids = Array.from(new Set((mem || []).map(m => m.user_id)));
+      let subsByUser = new Map();
+      if (allUids.length) {
+        const { data: subs } = await supabase
+          .from('submissions').select('id, user_id').in('user_id', allUids);
+        (subs || []).forEach(s => {
+          const arr = subsByUser.get(s.user_id) || [];
+          arr.push(s.id);
+          subsByUser.set(s.user_id, arr);
+        });
+        const allSubIds = (subs || []).map(s => s.id);
+        if (allSubIds.length) {
+          const { data: counts } = await supabase
+            .from('kudos_counts').select('submission_id, count').in('submission_id', allSubIds);
+          const countBySub = new Map((counts || []).map(k => [k.submission_id, k.count || 0]));
+          usersByTeam.forEach((uids, tid) => {
+            let total = 0;
+            uids.forEach(uid => {
+              (subsByUser.get(uid) || []).forEach(sid => { total += (countBySub.get(sid) || 0); });
+            });
+            kudosByTeam.set(tid, total);
+          });
+        }
+      }
+    } catch {}
+
+    host.innerHTML = `<div class="hof-grid">${list.map(c => renderCard(c, kudosByTeam.get(c.team_id) || 0)).join('')}</div>`;
+  }
+
+  function renderCard(c, kudos) {
+    const team = c.teams || {};
+    const cohortName = team.cohorts?.name || '';
+    const chips = [];
+    if (c.pitch_deck_url) chips.push(`<a class="hof-chip" href="${escapeHtml(c.pitch_deck_url)}" target="_blank" rel="noopener">📊 Pitch deck</a>`);
+    if (c.video_url) chips.push(`<a class="hof-chip" href="${escapeHtml(c.video_url)}" target="_blank" rel="noopener">🎬 Video</a>`);
+    if (c.github_url) chips.push(`<a class="hof-chip" href="${escapeHtml(c.github_url)}" target="_blank" rel="noopener">⎘ GitHub</a>`);
+
+    return `
+      <article class="hof-card ${c.is_featured ? 'featured' : ''}">
+        ${c.is_featured ? `<span class="hof-badge">★ Featured</span>` : ''}
+        ${cohortName ? `<div class="hof-cohort">${escapeHtml(cohortName)}</div>` : ''}
+        <h2 class="hof-team">${escapeHtml(team.name || 'Team')}</h2>
+        <h3 class="hof-cap-title">${escapeHtml(c.title || 'Untitled capstone')}</h3>
+        ${c.problem_statement ? `<p class="hof-problem">${escapeHtml(truncate(c.problem_statement, 280))}</p>` : ''}
+        ${c.demo_url ? `<a class="hof-demo" href="${escapeHtml(c.demo_url)}" target="_blank" rel="noopener">Open demo →</a>` : ''}
+        ${chips.length ? `<div class="hof-chips">${chips.join('')}</div>` : ''}
+        <div class="hof-foot">
+          <span>Gnanalytica${cohortName ? ' · ' + escapeHtml(cohortName) : ''}</span>
+          <span class="hof-kudos">👏 ${kudos}</span>
+        </div>
+      </article>`;
+  }
+
+  load();
+</script>
+</body>
+</html>

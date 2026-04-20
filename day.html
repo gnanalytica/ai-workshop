@@ -297,6 +297,40 @@
   .lm-resources a:hover{border-color:#3a3a4e;background:rgba(255,255,255,.02)}
   .lm-host{font-size:11px;font-family:"JetBrains Mono",monospace}
 
+  /* ------ Discussion widget ------ */
+  .disc-gate{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:14px}
+  .disc-compose{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+  .disc-compose textarea{width:100%;min-height:76px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:inherit;font-size:14px;line-height:1.55;resize:vertical;outline:none;box-sizing:border-box}
+  .disc-compose textarea:focus{border-color:var(--accent)}
+  .disc-compose .disc-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+  .disc-post-btn{padding:8px 16px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit}
+  .disc-post-btn:disabled{opacity:.5;cursor:not-allowed}
+  .disc-cancel-btn{padding:8px 14px;border-radius:999px;background:transparent;color:var(--muted);border:1px solid var(--line);font-size:13px;cursor:pointer;font-family:inherit}
+  .disc-list{display:flex;flex-direction:column;gap:12px}
+  .disc-empty{padding:20px;text-align:center;color:var(--muted);font-size:13.5px;border:1px dashed var(--line);border-radius:12px;font-style:italic}
+  .disc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .disc-card.pinned{border-color:rgba(195,255,54,.35);background:linear-gradient(145deg,rgba(195,255,54,.04),var(--card))}
+  .disc-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .disc-av{width:32px;height:32px;border-radius:50%;background:var(--input-bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0}
+  .disc-who{flex:1;min-width:0}
+  .disc-name{font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+  .disc-time{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .disc-pin-ico{color:var(--accent);font-size:14px}
+  .disc-body{font-size:14px;line-height:1.6;color:var(--ink)}
+  .disc-body p{margin:0 0 10px}
+  .disc-body p:last-child{margin:0}
+  .disc-body code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;font-family:"JetBrains Mono",monospace;font-size:13px}
+  .disc-body pre{background:var(--input-bg);border:1px solid var(--line);padding:10px 12px;border-radius:10px;overflow-x:auto}
+  .disc-body a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+  .disc-foot{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .disc-foot button{padding:4px 10px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:11.5px;cursor:pointer;font-family:inherit;letter-spacing:.02em}
+  .disc-foot button:hover{color:var(--ink);border-color:#3a3a4e}
+  .disc-foot button.danger:hover{color:#ffa0a0;border-color:rgba(255,107,107,.4)}
+  .disc-foot button.pin-active{color:var(--accent);border-color:rgba(195,255,54,.45)}
+  .disc-replies{margin-top:12px;padding-left:18px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:10px}
+  .disc-reply{background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .disc-reply-form{margin-top:10px}
+
   /* ------ Live polls widget ------ */
   .polls-mount{display:flex;flex-direction:column;gap:14px;margin:0 0 28px}
   .polls-mount:empty{display:none}
@@ -448,6 +482,15 @@
     </div>
 
     <nav class="pager" id="pager"></nav>
+
+    <!-- Discussion -->
+    <section id="discussionBlock" style="margin-top:48px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <h3 style="margin:0;font-size:22px;letter-spacing:-.02em">Discussion</h3>
+        <div class="muted" style="font-size:12px" id="discCount"></div>
+      </div>
+      <div id="discussionHost"></div>
+    </section>
   </div>
 </main>
 
@@ -763,6 +806,279 @@
     // Mount stuck-queue widget + pair card
     mountStuckWidget({ user, cohort });
     mountPairCard({ user, cohort });
+    mountDiscussion({ user, cohort });
+  }
+
+  // ---------- Discussion widget ----------
+  let DISC_CHAN = null;
+  async function mountDiscussion({ user, cohort }) {
+    const block = document.getElementById('discussionBlock');
+    const host = document.getElementById('discussionHost');
+    if (!block || !host) return;
+
+    // If no user, show sign-in placeholder
+    if (!user) {
+      host.innerHTML = `<div class="disc-gate">Sign in to join the discussion.</div>`;
+      return;
+    }
+
+    // Check admin/faculty
+    let canModerate = false;
+    try {
+      const [{ data: prof }, { data: fac }] = await Promise.all([
+        supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle(),
+        supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id).eq('cohort_id', cohort.id),
+      ]);
+      canModerate = !!prof?.is_admin || (fac && fac.length > 0);
+    } catch {}
+
+    const state = {
+      comments: [],
+      profiles: new Map(),
+      editing: null,     // id being edited
+      replying: null,    // parent id for reply box open
+    };
+
+    function initials(name) {
+      return (name || '').split(/\s+/).map(s => s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?';
+    }
+    function relTime(iso) {
+      const d = new Date(iso); const diff = (Date.now() - d.getTime()) / 1000;
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+      if (diff < 86400*7) return Math.floor(diff/86400) + 'd ago';
+      return d.toLocaleDateString();
+    }
+
+    async function loadComments() {
+      const { data } = await supabase.from('day_comments')
+        .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
+        .order('created_at', { ascending: true });
+      state.comments = data || [];
+      // Fetch missing profiles
+      const ids = Array.from(new Set(state.comments.map(c => c.user_id)));
+      const missing = ids.filter(id => !state.profiles.has(id));
+      if (missing.length) {
+        const { data: profs } = await supabase.from('profiles').select('id, full_name').in('id', missing);
+        (profs || []).forEach(p => state.profiles.set(p.id, p));
+      }
+      render();
+    }
+
+    function render() {
+      const roots = state.comments.filter(c => !c.parent_id);
+      const byParent = new Map();
+      state.comments.filter(c => c.parent_id).forEach(c => {
+        const arr = byParent.get(c.parent_id) || [];
+        arr.push(c);
+        byParent.set(c.parent_id, arr);
+      });
+
+      // Order: pinned first, newest first
+      roots.sort((a,b) => {
+        if (!!b.pinned - !!a.pinned !== 0) return !!b.pinned - !!a.pinned;
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      document.getElementById('discCount').textContent = state.comments.length
+        ? `${state.comments.length} comment${state.comments.length===1?'':'s'}`
+        : '';
+
+      const composeBox = `
+        <div class="disc-compose">
+          <textarea id="discRootInput" placeholder="Share a question, insight, or reaction…"></textarea>
+          <div class="disc-actions">
+            <button class="disc-post-btn" id="discRootPost">Post</button>
+          </div>
+        </div>`;
+
+      const emptyBox = roots.length ? '' : `<div class="disc-empty">No comments yet — start the conversation.</div>`;
+
+      const listHtml = roots.map(c => renderComment(c, byParent.get(c.id) || [])).join('');
+
+      host.innerHTML = composeBox + `<div class="disc-list">${emptyBox}${listHtml}</div>`;
+
+      wireEvents(byParent);
+    }
+
+    function renderComment(c, replies) {
+      const prof = state.profiles.get(c.user_id);
+      const name = prof?.full_name || 'Someone';
+      const own = c.user_id === user.id;
+      const isEditing = state.editing === c.id;
+      const bodyHtml = isEditing
+        ? `<textarea class="disc-edit-area" data-id="${c.id}">${escapeHtml(c.body)}</textarea>
+           <div class="disc-actions"><button class="disc-cancel-btn" data-edit-cancel="${c.id}">Cancel</button><button class="disc-post-btn" data-edit-save="${c.id}">Save</button></div>`
+        : `<div class="disc-body">${marked.parse(c.body || '')}</div>`;
+
+      const foot = [];
+      foot.push(`<button data-reply-open="${c.id}">Reply</button>`);
+      if (canModerate) {
+        foot.push(`<button class="${c.pinned ? 'pin-active' : ''}" data-pin="${c.id}">${c.pinned ? '★ Pinned' : 'Pin'}</button>`);
+        foot.push(`<button class="danger" data-delete="${c.id}">Delete</button>`);
+      } else if (own) {
+        foot.push(`<button data-edit="${c.id}">Edit</button>`);
+        foot.push(`<button class="danger" data-delete="${c.id}">Delete</button>`);
+      }
+
+      const repliesHtml = replies
+        .slice()
+        .sort((a,b) => new Date(a.created_at) - new Date(b.created_at))
+        .map(r => renderReply(r))
+        .join('');
+
+      const replyFormHtml = state.replying === c.id
+        ? `<div class="disc-reply-form">
+             <div class="disc-compose">
+               <textarea data-reply-input="${c.id}" placeholder="Write a reply…"></textarea>
+               <div class="disc-actions">
+                 <button class="disc-cancel-btn" data-reply-cancel="${c.id}">Cancel</button>
+                 <button class="disc-post-btn" data-reply-post="${c.id}">Post reply</button>
+               </div>
+             </div>
+           </div>`
+        : '';
+
+      return `
+        <div class="disc-card ${c.pinned ? 'pinned' : ''}" data-comment="${c.id}">
+          <div class="disc-head">
+            <div class="disc-av">${escapeHtml(initials(name))}</div>
+            <div class="disc-who">
+              <div class="disc-name">${escapeHtml(name)}${c.pinned ? ' <span class="disc-pin-ico" title="Pinned">★</span>' : ''}</div>
+              <div class="disc-time">${escapeHtml(relTime(c.created_at))}${c.updated_at && c.updated_at !== c.created_at ? ' · edited' : ''}</div>
+            </div>
+          </div>
+          ${bodyHtml}
+          <div class="disc-foot">${foot.join('')}</div>
+          ${repliesHtml ? `<div class="disc-replies">${repliesHtml}</div>` : ''}
+          ${replyFormHtml}
+        </div>`;
+    }
+
+    function renderReply(c) {
+      const prof = state.profiles.get(c.user_id);
+      const name = prof?.full_name || 'Someone';
+      const own = c.user_id === user.id;
+      const isEditing = state.editing === c.id;
+      const bodyHtml = isEditing
+        ? `<textarea class="disc-edit-area" data-id="${c.id}">${escapeHtml(c.body)}</textarea>
+           <div class="disc-actions"><button class="disc-cancel-btn" data-edit-cancel="${c.id}">Cancel</button><button class="disc-post-btn" data-edit-save="${c.id}">Save</button></div>`
+        : `<div class="disc-body">${marked.parse(c.body || '')}</div>`;
+      const foot = [];
+      if (canModerate) {
+        foot.push(`<button class="danger" data-delete="${c.id}">Delete</button>`);
+      } else if (own) {
+        foot.push(`<button data-edit="${c.id}">Edit</button>`);
+        foot.push(`<button class="danger" data-delete="${c.id}">Delete</button>`);
+      }
+      return `
+        <div class="disc-reply" data-comment="${c.id}">
+          <div class="disc-head">
+            <div class="disc-av">${escapeHtml(initials(name))}</div>
+            <div class="disc-who">
+              <div class="disc-name">${escapeHtml(name)}</div>
+              <div class="disc-time">${escapeHtml(relTime(c.created_at))}${c.updated_at && c.updated_at !== c.created_at ? ' · edited' : ''}</div>
+            </div>
+          </div>
+          ${bodyHtml}
+          ${foot.length ? `<div class="disc-foot">${foot.join('')}</div>` : ''}
+        </div>`;
+    }
+
+    function wireEvents() {
+      const rootPost = document.getElementById('discRootPost');
+      if (rootPost) rootPost.onclick = async () => {
+        const ta = document.getElementById('discRootInput');
+        const body = (ta?.value || '').trim();
+        if (!body) return;
+        rootPost.disabled = true;
+        const { error } = await supabase.from('day_comments').insert({
+          cohort_id: cohort.id, day_number: n, user_id: user.id, body, parent_id: null,
+        });
+        if (error) { alert(error.message); rootPost.disabled = false; return; }
+        if (ta) ta.value = '';
+        rootPost.disabled = false;
+        // Realtime will refresh; also reload immediately
+        await loadComments();
+      };
+
+      host.querySelectorAll('[data-reply-open]').forEach(b => {
+        b.onclick = () => { state.replying = b.dataset.replyOpen; render(); };
+      });
+      host.querySelectorAll('[data-reply-cancel]').forEach(b => {
+        b.onclick = () => { state.replying = null; render(); };
+      });
+      host.querySelectorAll('[data-reply-post]').forEach(b => {
+        b.onclick = async () => {
+          const pid = b.dataset.replyPost;
+          const ta = host.querySelector(`[data-reply-input="${pid}"]`);
+          const body = (ta?.value || '').trim();
+          if (!body) return;
+          b.disabled = true;
+          const { error } = await supabase.from('day_comments').insert({
+            cohort_id: cohort.id, day_number: n, user_id: user.id, body, parent_id: pid,
+          });
+          b.disabled = false;
+          if (error) { alert(error.message); return; }
+          state.replying = null;
+          await loadComments();
+        };
+      });
+      host.querySelectorAll('[data-edit]').forEach(b => {
+        b.onclick = () => { state.editing = b.dataset.edit; render(); };
+      });
+      host.querySelectorAll('[data-edit-cancel]').forEach(b => {
+        b.onclick = () => { state.editing = null; render(); };
+      });
+      host.querySelectorAll('[data-edit-save]').forEach(b => {
+        b.onclick = async () => {
+          const id = b.dataset.editSave;
+          const ta = host.querySelector(`textarea.disc-edit-area[data-id="${id}"]`);
+          const body = (ta?.value || '').trim();
+          if (!body) return;
+          b.disabled = true;
+          const { error } = await supabase.from('day_comments')
+            .update({ body, updated_at: new Date().toISOString() }).eq('id', id);
+          b.disabled = false;
+          if (error) { alert(error.message); return; }
+          state.editing = null;
+          await loadComments();
+        };
+      });
+      host.querySelectorAll('[data-delete]').forEach(b => {
+        b.onclick = async () => {
+          if (!confirm('Delete this comment?')) return;
+          const id = b.dataset.delete;
+          const { error } = await supabase.from('day_comments').delete().eq('id', id);
+          if (error) { alert(error.message); return; }
+          await loadComments();
+        };
+      });
+      host.querySelectorAll('[data-pin]').forEach(b => {
+        b.onclick = async () => {
+          const id = b.dataset.pin;
+          const c = state.comments.find(x => x.id === id);
+          if (!c) return;
+          const { error } = await supabase.from('day_comments')
+            .update({ pinned: !c.pinned }).eq('id', id);
+          if (error) { alert(error.message); return; }
+          await loadComments();
+        };
+      });
+    }
+
+    // Realtime subscription
+    if (DISC_CHAN) { try { supabase.removeChannel(DISC_CHAN); } catch {} DISC_CHAN = null; }
+    DISC_CHAN = supabase.channel(`disc-${cohort.id}-${n}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'day_comments', filter: `cohort_id=eq.${cohort.id}` }, (payload) => {
+        const row = payload.new || payload.old;
+        if (!row || row.day_number !== n) return;
+        loadComments();
+      })
+      .subscribe();
+
+    await loadComments();
   }
 
   // ---------- Stuck queue widget ----------
@@ -1362,13 +1678,36 @@
           }).join('');
           rubricBreakdown = `<div style="margin-top:10px"><div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Rubric breakdown</div>${rows}<div style="margin-top:6px;font-weight:600">Total: ${total}/${maxTotal}</div></div>`;
         }
-        const grade = existing.status === 'graded'
+        // Milestone peer-review gate: student must complete assigned peer reviews before seeing their own feedback.
+        const MILESTONE_DAYS = new Set([10, 15, 21, 25, 30]);
+        let showGrade = existing.status === 'graded';
+        let gateHtml = '';
+        if (showGrade && MILESTONE_DAYS.has(n)) {
+          const { data: myPeerReviews } = await supabase
+            .from('peer_reviews')
+            .select('id, status, submissions:submissions!inner(assignment_id)')
+            .eq('reviewer_id', user.id)
+            .eq('submissions.assignment_id', asgn.id);
+          const assigned = myPeerReviews || [];
+          if (assigned.length > 0) {
+            const pendingCount = assigned.filter(x => x.status !== 'submitted').length;
+            if (pendingCount > 0) {
+              showGrade = false;
+              gateHtml = `<div class="asgn-grade" style="border-color:rgba(255,184,64,.4);background:rgba(255,184,64,.05)">
+                <div class="score" style="color:#ffc87a">⏳ ${pendingCount} peer review${pendingCount>1?'s':''} pending</div>
+                <div class="fb"><p style="margin:0 0 10px">Complete your assigned peer reviews to unlock your own feedback. Reading classmate submissions sharpens your own work — and keeps the cohort looping.</p>
+                <a href="peer-reviews.html" class="cta" style="display:inline-block;margin-top:6px">Open peer reviews →</a></div>
+              </div>`;
+            }
+          }
+        }
+        const grade = showGrade
           ? `<div class="asgn-grade">
               <div class="score">Score · ${escapeHtml(String(existing.score ?? '—'))}${asgn.points != null ? ` / ${escapeHtml(String(asgn.points))}` : ''}</div>
               <div class="fb">${existing.feedback ? marked.parse(existing.feedback) : '<span class="muted">No feedback yet.</span>'}</div>
               ${rubricBreakdown}
             </div>`
-          : '';
+          : gateHtml;
         form = `<div class="asgn-done">
           <div class="asgn-done-left">
             <span class="asgn-done-tag">✓ Submitted</span>

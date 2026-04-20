@@ -906,12 +906,33 @@
       `;
     }).join('');
 
+    const MILESTONE_DAYS = new Set([10, 15, 21, 25, 30]);
+    const peerSectionHtml = MILESTONE_DAYS.has(assignment.day_number)
+      ? `<div id="peerReviewSection" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <div>
+              <div class="kicker" style="margin-bottom:4px">Peer reviews</div>
+              <div style="font-size:13.5px;color:var(--muted)"><span id="prSubCount">${rows.length}</span> submission${rows.length===1?'':'s'} received · milestone day</div>
+            </div>
+            <button class="btn primary" id="prAssignBtn">Assign peer reviewers (2 per submission)</button>
+          </div>
+          <div id="peerReviewsList"><div class="small">Loading peer reviews…</div></div>
+        </div>`
+      : '';
+
     wrap.innerHTML = `
       <table class="mini">
         <thead><tr><th>Name</th><th>Submitted</th><th>Status</th><th>Score</th><th>Content</th><th>Feedback</th><th></th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
+      ${peerSectionHtml}
     `;
+
+    if (MILESTONE_DAYS.has(assignment.day_number)) {
+      loadPeerReviews(assignment, rows);
+      const btn = document.getElementById('prAssignBtn');
+      if (btn) btn.addEventListener('click', () => assignPeerReviewers(assignment, rows));
+    }
 
     const rowById = new Map(rows.map(r => [r.id, r]));
 
@@ -968,6 +989,122 @@
         toast('Submission updated ✓');
       });
     });
+  }
+
+  // ---------- PEER REVIEWS (milestone days) ----------
+  async function loadPeerReviews(assignment, submissionRows) {
+    const host = document.getElementById('peerReviewsList');
+    if (!host) return;
+    const subIds = submissionRows.map(r => r.id);
+    if (!subIds.length) { host.innerHTML = `<div class="empty">No submissions yet — assign reviewers once submissions arrive.</div>`; return; }
+    const { data, error } = await supabase
+      .from('peer_reviews')
+      .select('id, reviewer_id, submission_id, status, total_score, submitted_at, assigned_at')
+      .in('submission_id', subIds);
+    if (error) { host.innerHTML = `<div class="small">Couldn't load: ${esc(error.message)}</div>`; return; }
+    const prs = data || [];
+    if (!prs.length) {
+      host.innerHTML = `<div class="empty">No peer reviews assigned yet. Click <strong>Assign peer reviewers</strong> above to pair up submitters.</div>`;
+      return;
+    }
+    // Gather user ids (reviewers + reviewees)
+    const subById = new Map(submissionRows.map(r => [r.id, r]));
+    const reviewerIds = [...new Set(prs.map(r => r.reviewer_id))];
+    const { data: profs } = await supabase.from('profiles').select('id, full_name, email').in('id', reviewerIds);
+    const nameOf = (id) => {
+      const p = (profs || []).find(x => x.id === id);
+      return p?.full_name || p?.email || id.slice(0, 8);
+    };
+    const revieweeName = (subId) => {
+      const r = subById.get(subId);
+      return r?.profiles?.full_name || r?.profiles?.email || (r?.user_id || '').slice(0, 8);
+    };
+    prs.sort((a, b) => new Date(b.assigned_at) - new Date(a.assigned_at));
+    host.innerHTML = `
+      <table class="mini">
+        <thead><tr><th>Reviewer</th><th>Reviewee</th><th>Status</th><th>Submitted</th><th>Score</th></tr></thead>
+        <tbody>
+          ${prs.map(pr => `
+            <tr>
+              <td>${esc(nameOf(pr.reviewer_id))}</td>
+              <td>${esc(revieweeName(pr.submission_id))}</td>
+              <td>${pr.status === 'submitted' ? '<span class="pill pass">Submitted</span>' : pr.status === 'skipped' ? '<span class="pill fail">Skipped</span>' : '<span class="pill">Assigned</span>'}</td>
+              <td>${pr.submitted_at ? esc(fmtDate(pr.submitted_at)) : '—'}</td>
+              <td style="font-family:'JetBrains Mono',monospace">${pr.total_score == null ? '—' : esc(String(pr.total_score))}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  async function assignPeerReviewers(assignment, submissionRows) {
+    const btn = document.getElementById('prAssignBtn');
+    if (!btn) return;
+    if (submissionRows.length < 2) {
+      toast('Need at least 2 submissions to assign peer reviewers.', 'err'); return;
+    }
+    btn.disabled = true; btn.textContent = 'Assigning…';
+    try {
+      // Load existing peer_reviews rows for these submissions so we're idempotent.
+      const subIds = submissionRows.map(r => r.id);
+      const { data: existing } = await supabase
+        .from('peer_reviews')
+        .select('reviewer_id, submission_id')
+        .in('submission_id', subIds);
+      // Key: reviewer_id|submission_id
+      const existingSet = new Set((existing || []).map(x => `${x.reviewer_id}|${x.submission_id}`));
+      // Per reviewer, how many assignments already for THIS assignment's submissions
+      const reviewerAssigned = new Map();
+      for (const row of (existing || [])) {
+        reviewerAssigned.set(row.reviewer_id, (reviewerAssigned.get(row.reviewer_id) || 0) + 1);
+      }
+
+      // For each submitter (= reviewer), we want them to review 2 OTHER submissions (not their own).
+      // Only create missing assignments — idempotent.
+      const submitters = submissionRows.map(r => ({ userId: r.user_id, submissionId: r.id }));
+      const userToSubmission = new Map(submitters.map(s => [s.userId, s.submissionId]));
+      const toInsert = [];
+
+      for (const reviewer of submitters) {
+        const already = reviewerAssigned.get(reviewer.userId) || 0;
+        const need = Math.max(0, 2 - already);
+        if (!need) continue;
+        // Candidate submissions: not the reviewer's own, and not already assigned to this reviewer.
+        const candidates = submitters
+          .filter(s => s.userId !== reviewer.userId && !existingSet.has(`${reviewer.userId}|${s.submissionId}`))
+          .map(s => s.submissionId);
+        // Shuffle (Fisher-Yates)
+        for (let i = candidates.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+        }
+        const picks = candidates.slice(0, need);
+        for (const subId of picks) {
+          toInsert.push({
+            reviewer_id: reviewer.userId,
+            submission_id: subId,
+            status: 'assigned',
+            assigned_at: new Date().toISOString(),
+          });
+          existingSet.add(`${reviewer.userId}|${subId}`);
+          reviewerAssigned.set(reviewer.userId, (reviewerAssigned.get(reviewer.userId) || 0) + 1);
+        }
+      }
+
+      if (!toInsert.length) {
+        toast('All submitters already have 2 reviewers assigned ✓');
+      } else {
+        const { error } = await supabase.from('peer_reviews').insert(toInsert);
+        if (error) throw error;
+        toast(`Assigned ${toInsert.length} peer review${toInsert.length === 1 ? '' : 's'} ✓`);
+      }
+      await loadPeerReviews(assignment, submissionRows);
+    } catch (e) {
+      toast(e.message || 'Assign failed', 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Assign peer reviewers (2 per submission)';
+    }
   }
 
   // ---------- ATTACHMENT PREVIEW ----------

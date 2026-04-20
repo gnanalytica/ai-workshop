@@ -201,6 +201,27 @@
     </div>
     <div id="pairList" style="margin-top:14px;display:flex;flex-direction:column;gap:6px"></div>
   </div>
+
+  <div class="section-head" style="margin-top:48px">
+    <h2>Accountability buddies</h2>
+    <div class="muted" style="font-size:13px">Auto-pair confirmed students for a given week (1–6).</div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Week</label>
+      <select id="buddyWeekSel" style="background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none">
+        <option value="1">Week 1</option>
+        <option value="2">Week 2</option>
+        <option value="3">Week 3</option>
+        <option value="4">Week 4</option>
+        <option value="5">Week 5</option>
+        <option value="6">Week 6</option>
+      </select>
+      <button class="cta" id="buddyGenBtn">Auto-pair this week</button>
+      <button class="btn-sm danger" id="buddyClearBtn" style="margin-left:auto">Clear this week's pairs</button>
+    </div>
+    <div id="buddyList" style="margin-top:14px;display:flex;flex-direction:column;gap:6px"></div>
+  </div>
 </main>
 
 <!-- NEW/EDIT TEAM MODAL -->
@@ -400,6 +421,7 @@
             <div class="row-actions">
               <button class="btn-sm" data-save-meta="${t.id}">Save</button>
               <button class="btn-sm" data-lock="${t.id}">${locked ? 'Unlock' : 'Lock'}</button>
+              ${cap ? `<button class="btn-sm" data-feature="${t.id}" title="${cap.is_featured ? 'Unfeature capstone' : 'Feature on Hall of Fame'}" style="${cap.is_featured ? 'color:#c9f76a;border-color:rgba(195,255,54,.45)' : ''}">${cap.is_featured ? '★ Featured' : '☆ Feature'}</button>` : ''}
               <button class="btn-sm danger" data-delete="${t.id}">Delete</button>
             </div>
           </td>
@@ -474,6 +496,19 @@
     });
     $('teamRows').querySelectorAll('[data-delete]').forEach(b => {
       b.onclick = () => deleteTeam(b.dataset.delete);
+    });
+    $('teamRows').querySelectorAll('[data-feature]').forEach(b => {
+      b.onclick = async () => {
+        const tid = b.dataset.feature;
+        const cap = CAPSTONES_BY_TEAM.get(tid);
+        if (!cap) { toast('No capstone for this team'); return; }
+        const newVal = !cap.is_featured;
+        const { error } = await supabase.from('capstones').update({ is_featured: newVal }).eq('id', cap.id);
+        if (error) { alert(error.message); return; }
+        cap.is_featured = newVal;
+        toast(newVal ? 'Featured on Hall of Fame' : 'Unfeatured');
+        renderTeams();
+      };
     });
     $('teamRows').querySelectorAll('[data-remove]').forEach(x => {
       x.onclick = () => removeMember(x.dataset.remove);
@@ -828,9 +863,95 @@
   // Re-render pairs when cohort changes or initial load completes
   document.getElementById('cohortSel').addEventListener('change', () => setTimeout(renderPairs, 400));
   const _pairInitIv = setInterval(() => {
-    if (COHORT_ID) { clearInterval(_pairInitIv); renderPairs(); }
+    if (COHORT_ID) { clearInterval(_pairInitIv); renderPairs(); renderBuddies(); }
   }, 300);
   setTimeout(() => clearInterval(_pairInitIv), 15000);
+
+  // ---------- Accountability buddies ----------
+  $('buddyWeekSel').addEventListener('change', renderBuddies);
+  document.getElementById('cohortSel').addEventListener('change', () => setTimeout(renderBuddies, 400));
+
+  async function renderBuddies() {
+    const week = parseInt($('buddyWeekSel').value, 10);
+    if (!COHORT_ID || !week) return;
+    const { data: pairs } = await supabase.from('buddy_pairs')
+      .select('*').eq('cohort_id', COHORT_ID).eq('week_number', week)
+      .order('created_at', { ascending: true });
+    const host = $('buddyList');
+    if (!pairs || !pairs.length) { host.innerHTML = `<div class="muted" style="font-size:13px;font-style:italic">No buddies paired for Week ${week} yet.</div>`; return; }
+    const ids = new Set();
+    pairs.forEach(p => { if (p.user_a) ids.add(p.user_a); if (p.user_b) ids.add(p.user_b); });
+    const missing = [...ids].filter(id => !PROFILES.has(id));
+    if (missing.length) {
+      const { data: ps } = await supabase.from('profiles').select('id,full_name,college').in('id', missing);
+      (ps || []).forEach(p => PROFILES.set(p.id, p));
+    }
+    host.innerHTML = pairs.map((p, i) => {
+      const a = PROFILES.get(p.user_a); const b = p.user_b ? PROFILES.get(p.user_b) : null;
+      const an = a?.full_name || '—';
+      const bn = b ? (b.full_name || '—') : '<em style="color:var(--muted)">solo</em>';
+      return `<div style="padding:8px 12px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:32px">#${i+1}</span>
+        <span style="flex:1">${esc(an)} <span class="muted">↔</span> ${bn}</span>
+        <button class="btn-sm danger" data-buddy-remove="${p.id}">Remove</button>
+      </div>`;
+    }).join('');
+    host.querySelectorAll('[data-buddy-remove]').forEach(b => {
+      b.onclick = async () => {
+        if (!confirm('Remove this buddy pair?')) return;
+        const { error } = await supabase.from('buddy_pairs').delete().eq('id', b.dataset.buddyRemove);
+        if (error) { alert(error.message); return; }
+        toast('Pair removed');
+        renderBuddies();
+      };
+    });
+  }
+
+  $('buddyGenBtn').addEventListener('click', async () => {
+    const week = parseInt($('buddyWeekSel').value, 10);
+    if (!COHORT_ID || !week) return;
+    const btn = $('buddyGenBtn');
+    btn.disabled = true; btn.textContent = 'Pairing…';
+    try {
+      const { data: existing } = await supabase.from('buddy_pairs')
+        .select('user_a,user_b').eq('cohort_id', COHORT_ID).eq('week_number', week);
+      const already = new Set();
+      (existing || []).forEach(p => { if (p.user_a) already.add(p.user_a); if (p.user_b) already.add(p.user_b); });
+      const pool = REGISTRATIONS.map(r => r.user_id).filter(id => !already.has(id));
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const createdBy = session?.user?.id || null;
+      const rows = [];
+      for (let i = 0; i < pool.length; i += 2) {
+        rows.push({
+          cohort_id: COHORT_ID, week_number: week,
+          user_a: pool[i], user_b: pool[i + 1] || null,
+          created_by: createdBy,
+        });
+      }
+      if (!rows.length) { toast('No new students to pair'); return; }
+      const { error } = await supabase.from('buddy_pairs').insert(rows);
+      if (error) { alert('Could not pair: ' + error.message); return; }
+      toast(`${rows.length} buddy pair${rows.length===1?'':'s'} created`);
+      await renderBuddies();
+    } finally {
+      btn.disabled = false; btn.textContent = 'Auto-pair this week';
+    }
+  });
+
+  $('buddyClearBtn').addEventListener('click', async () => {
+    const week = parseInt($('buddyWeekSel').value, 10);
+    if (!COHORT_ID || !week) return;
+    if (!confirm(`Clear all buddy pairs for Week ${week}?`)) return;
+    const { error } = await supabase.from('buddy_pairs').delete()
+      .eq('cohort_id', COHORT_ID).eq('week_number', week);
+    if (error) { alert(error.message); return; }
+    toast('Pairs cleared');
+    await renderBuddies();
+  });
 
   init();
 </script>
