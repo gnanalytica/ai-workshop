@@ -35,6 +35,14 @@ Short morning, long afternoon. By noon you should know exactly which model your 
 **Before class** (~10 min): list your capstone's latency, cost, and context-window constraints, and have 5 real capstone prompts ready to paste into LM Arena.
 **After class** (~30 min tonight): ship the 1-page model card (chosen model + why + fallback + cost per 1k tokens) and continue capstone build.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold open**: instructor shows two leaderboard charts side-by-side with the model names blurred; cohort guesses which model is actually better for a coding capstone, then reveal.
+- **00:15 — Teaching beat**: 10 minutes on contamination, saturation, and the three-step release skim — with one live example from a recent launch.
+- **00:25 — Back to your team's build**: open Artificial Analysis, filter by your latency and cost constraints, shortlist 3 candidates. Instructor does rounds, raise hand for unblocking.
+- **00:40 — Back to your team's build**: run your 5 real capstone prompts on LM Arena side-by-side. Instructor rotates to teams flagged "stuck on cost math."
+- **00:55 — Back to your team's build**: write your 2-line "primary + fallback + why." Drop it in chat as you finish — instructor reads the best three aloud.
+
 ## Read: The Benchmark Literacy Crash Course (600 words)
 
 Every model launch comes with a chart. Every chart makes that model look like the best. Your job is to see through the chart.
@@ -93,6 +101,11 @@ Instructor walks through the most recent frontier model release — what to beli
 3. Pick one domain-specific benchmark (SWE-bench for coding, MATH for math, MT-Bench for chat) and check your candidates' scores on LiveBench (5 min).
 4. Pick primary + fallback. Write a 2-line why (5 min).
 
+> ⚠️ **If you get stuck**
+> - *Artificial Analysis filters hide the model you wanted to compare* → clear filters, sort by the quality metric you care about, then re-apply constraints one at a time to see which one excluded it.
+> - *LM Arena side-by-side returns near-identical answers on your prompts* → your prompts are too generic; paste a real capstone prompt with actual user data shape and edge cases, not a toy example.
+> - *You can't find a LiveBench number for a model you're considering* → that itself is the signal. Note it on your card as "no contamination-resistant benchmark available" and lean harder on your private eval before committing.
+
 Afternoon: implement the swap in your capstone if needed, then keep building.
 
 ## Quiz
@@ -115,4 +128,10 @@ Continue capstone build. Demo day is three days away.
 
 ## Discuss: The Benchmark That Fooled You
 
-Post one benchmark headline from the last year that oversold a model. What did the chart hide? What private eval would have caught it? Two replies minimum.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Post one benchmark headline from the last year that oversold a model. | Names the specific headline and the delta claimed, identifies which of the four lie-categories (contamination, overfit, narrow-claim, evaluator bias) applied, and links to the release or chart. |
+| What did the chart hide? | Points at the missing axis — cost, latency, context, or a benchmark the release skipped — and explains why that omission changed the real-world picture. |
+| What private eval would have caught it? | Describes a concrete 20-prompt test tied to a real use case, with a pass/fail criterion, not "we'd vibe-check it." |
+
+Two replies minimum.

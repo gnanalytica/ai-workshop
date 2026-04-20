@@ -33,6 +33,14 @@ Today we turn five days of input into one page of output: your AI Stack v1. Plus
 
 **After class** (45 min this weekend): finalise your Personal AI Stack v1 PDF (the big weekly deliverable).
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Fist-of-5 cold open**: on camera, 1–5 fingers for *"how different does AI feel to me today vs five days ago?"* Instructor calls on one 5 and one 2 for a single sentence each.
+- **00:15 — Think-pair-share**: 90 seconds on *"What belief about AI did you enter Day 1 with that you're leaving Day 5 without?"* Each pair volunteers the sharper of the two beliefs.
+- **00:30 — Live vote during show-and-tell**: as students pitch, everyone ranks in a running chat tally — *Most Useful / Most Creative / Most Surprising*. Instructor reads the top three out loud at the end of the round.
+- **00:45 — Steal-a-trick stand-up**: each student names the one classmate trick they're stealing this weekend and tags them by name in chat. Fast round, one line per person, no passing.
+- **00:55 — One-line close**: *"My next bet by Day 30 is ___."* No editing. This line goes straight into the Personal AI Stack v1 draft.
+
 ## Read: What we learned — the one-page map
 
 ```
@@ -104,6 +112,11 @@ Watch for:
 
 This IS the live class today. Most of the hour is listening to each other. 30 classmates × 2 min = 60 min of collective wisdom.
 
+> ⚠️ **If you get stuck**
+> - *You feel like you have no "win" worth sharing* → you do. The best pitches of the week are almost always someone saying "I thought this would work and it didn't, here's what I learned." Share that instead. Fails teach the room more than wins.
+> - *Your screenshot / live demo breaks during your 2 minutes* → keep going with words. Describe the prompt, the output, and the aha. Instructor will not extend your clock — the constraint is the point, not the demo.
+> - *You took no notes and suddenly it's "name the trick you're stealing" time* → fine. Name the presenter who stuck with you most and the one-line gist you remember. Ask them for the prompt afterwards. That's the whole ritual.
+
 1. Before class, pick your single best AI moment from Days 1-4. Could be a great prompt, a surprise answer, a hallucination you caught, a translation that nailed it, a small workflow that saved you an hour.
 2. Prepare a 2-minute pitch with three parts: (a) what the task was, (b) what you did, (c) why it worked (or why it surprisingly didn't).
 3. Optionally prepare one screenshot or a live demo. Keep it to one window.
@@ -136,8 +149,10 @@ Submit as PDF via the dashboard. The instructor will pick 3-5 stacks to feature 
 
 ## Discuss: Live session prompts
 
-- Which single classmate's trick will you actually use next week — and why theirs and not yours?
-- What belief about AI did you enter Day 1 with that you're leaving Day 5 without?
-- Is a personal AI stack overkill for a college student, or under-kill?
-- Pick a friend who isn't in this workshop. What one thing would you tell them from Week 1 that would change their life in 10 minutes?
-- What do you want Week 2 to teach you that Week 1 didn't?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which single classmate's trick will you actually use next week — and why theirs and not yours? | Names the classmate and the specific trick (not "their whole approach"). Explains the gap in your own workflow it fills. Shows you actually listened, not just voted. |
+| What belief about AI did you enter Day 1 with that you're leaving Day 5 without? | A specific belief, stated as you believed it on Day 0 ("I thought Claude and ChatGPT were basically the same product"). Then what replaced it, and what piece of evidence flipped it. |
+| Is a personal AI stack overkill for a college student, or under-kill? | Rejects the framing: the stack is cheap to build, compounds weekly, and the opportunity cost of not having one is invisible but large. Or argues the opposite with specifics — not just "depends." |
+| Pick a friend who isn't in this workshop. What one thing would you tell them from Week 1 that would change their life in 10 minutes? | One concrete thing they can do *today*, not a concept. "Open Claude, paste your resume, ask it to roast you as a Razorpay hiring manager" — not "learn about prompting." |
+| What do you want Week 2 to teach you that Week 1 didn't? | Points to a specific gap you *noticed* this week — image tools, voice, a coding use-case, agents. Shows you've read the Week 2 preview enough to aim the question. |

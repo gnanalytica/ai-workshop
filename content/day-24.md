@@ -39,6 +39,14 @@ By the end of today you have a workflow where one agent delegates to another, wi
 **Before class** (~10 min): pick one capstone task that naturally splits in two (researcher+writer, planner+coder, intake+responder) and stub the two system prompts.
 **After class** (~30 min tonight): run three test cases with tracing on, export the traces, draw the handoff diagram, and submit the repo with your one-paragraph rationale.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: in 10 words, why did your Day 23 single agent get confused?
+- **00:15 — Think-pair-share**: 90 seconds — name a two-role split in your capstone; partner tries to collapse it back to one agent. Who wins?
+- **00:30 — Live poll**: supervisor, swarm, or hierarchical for your capstone? Post S / W / H with one-line reason.
+- **00:45 — Handoff design breakout**: pairs draft the JSON payload Agent A hands to Agent B — inputs, outputs, what must never leak.
+- **00:55 — Skill-or-prompt debate**: one teammate argues "skill", another "just put it in the system prompt". 60 seconds each.
+
 ## Read: Orchestration patterns, Swarm minimalism, Skills, and Plugins
 
 ### Why multi-agent at all
@@ -115,6 +123,11 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 6. Draw a diagram — boxes for agents, arrows for handoffs, labels for what each arrow carries. Paste or sketch it in your repo's README.
 7. Bonus: fork one template from OpenClaw and note what changed between it and your design.
 
+> ⚠️ **If you get stuck**
+> - *Swarm agents hand off back and forth forever (A → B → A → B)* → add a handoff counter to shared state and refuse a handoff when the counter exceeds 3; or promote one agent to supervisor so handoffs go through a single decider.
+> - *Agent B receives a blob of text from Agent A instead of structured data* → define a Pydantic / Zod schema for the handoff payload and have Agent A emit JSON matching it; reject unstructured handoffs at the boundary.
+> - *Tracing shows both agents calling the same tool on the same input* → their system prompts overlap. Tighten each agent's "you do NOT handle X" clause, and remove the duplicate tool from whichever agent shouldn't own it.
+
 ## Quiz
 
 1. Name the three orchestration patterns and one situation where each is the right choice.
@@ -129,4 +142,8 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 
 ## Discuss: When did one agent become two?
 
-Post the moment in your capstone design when you realized one agent was not enough. What symptom pushed you to split? Bloated prompt, tool confusion, mixed responsibilities? What did the second agent do that the first could not?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Post the moment in your capstone design when you realized one agent was not enough. | Cites a specific symptom from a trace — prompt past 4k tokens, wrong tool chosen, context contaminated with prior-task observations — not a vibe. |
+| What did the second agent do that the first could not? | Describes the narrow role and the tools removed from agent one when agent two took over. Names what got simpler, not just what got added. |
+| What is the cost of the split — in latency, tokens, or debuggability — and is it worth it? | Acknowledges the tradeoff honestly (extra handoff turn, doubled trace length) and explains why the quality gain justifies it for this use case. |

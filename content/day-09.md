@@ -34,6 +34,13 @@ Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build
 **Before class** (~10 min): have a one-paragraph description of your capstone idea ready to feed Otter/Gamma.
 **After class** (~30 min tonight): post your 5-slide deck PDF + 30-second MP4 + one-line self-review to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — 60-second cold-open pitch**: unmute and pitch your capstone to the person on your left in one breath. No slides, no tools. We are baselining your talking voice before the machines enter.
+- **00:15 — Think-pair-share**: in 90 seconds, trade one-paragraph capstone descriptions with a partner and each identify the one sentence that is the real "insight" — the thing a slide-gen tool should anchor on. Most paragraphs have exactly one.
+- **00:30 — Live Gamma demo + vote**: I paste one volunteer's paragraph into Gamma on screen. Before it finishes, cohort votes in chat on how many of the 5 slides will violate the "one idea per slide" rule. We count afterward.
+- **00:45 — Uncanny-valley debate**: two volunteers play their HeyGen avatars. Cohort votes: "ship it to LinkedIn" or "dial it back." Debate for 3 minutes on where the line lives for student pitches.
+
 ## Read: Talk, listen, present — all automated
 
 **Transcription: Whisper vs Otter, open vs closed.** The baseline has shifted. In 2026, transcribing any meeting or lecture is effectively free and surprisingly accurate, even in Indian English with code-mixing. Two paths:
@@ -88,6 +95,11 @@ Time: 45 minutes. Artifact: 5-slide deck (PDF) + 30-second MP4.
 7. Open https://heygen.com. Pick a stock avatar (or upload yourself if you have consent for yourself, which you do). Paste the same script OR upload the ElevenLabs MP3 as the audio track. Generate a 30-second video.
 8. Export Gamma to PDF. Post deck PDF + avatar MP4 to the cohort channel with the tag `#day09-pitch`.
 
+> ⚠️ **If you get stuck**
+> - *Gamma generates 11 slides instead of 5* → don't manually delete until you fix the outline. Re-prompt with "compress into exactly 5 slides, one idea each, max 6 words per bullet"; the structure problem is in your input paragraph.
+> - *ElevenLabs voice sounds robotic or rushes the punchlines* → add punctuation where you want pauses (commas and periods, even ungrammatical ones), break long sentences into two, and pick a different voice model — "Adam" and "Rachel" handle Indian-English phrasing poorly; try less-default voices.
+> - *HeyGen free-tier rejects your upload or caps video length* → skip the custom avatar, pick a stock avatar, and feed it the ElevenLabs MP3 as the audio track. The pitch does not need your face; it needs your idea on time.
+
 ## Quiz
 
 Four checks. Which tool would you pick for transcribing a private interview with a professor about a sensitive research topic? What is the single most common mistake in AI-generated decks (hint: a layout rule)? When is it okay to clone a voice in ElevenLabs? What should you always say at the start of a meeting you are recording?
@@ -104,8 +116,10 @@ This is your final warm-up before tomorrow. Your deck is not locked yet — afte
 
 ## Discuss: Voice, face, and trust
 
-- Did your AI voice feel like you, like a stranger, or like a polished version of you?
-- Was the avatar video helpful, or did it feel dishonest?
-- Should AI-generated pitches be labeled at cohort demo day? What is the norm we want?
-- Which one of today's tools will you still use in a year?
-- What did Otter's transcript reveal about how you talk about your own idea?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Did your AI voice feel like you, like a stranger, or like a polished version of you? | Describes a specific phoneme, pause, or emotional register that did or did not transfer. Takes a position on whether "polished you" is still you for the purposes of a pitch. |
+| Was the avatar video helpful, or did it feel dishonest? | Weighs the production value against the audience's reasonable expectations. Strong answers name the channel (LinkedIn vs. demo day vs. cold email) because the honesty bar moves with context. |
+| Should AI-generated pitches be labeled at cohort demo day? What is the norm we want? | Proposes a concrete rule (a tag, a disclosure line, a time threshold) rather than "it depends." Anticipates the edge case — what about a deck written with AI but delivered live by a human? |
+| Which one of today's tools will you still use in a year? | Names one tool and a specific recurring workflow where it saves you ≥2 hours per week. Also names one tool you think will be absorbed into a bigger suite and become irrelevant. |
+| What did Otter's transcript reveal about how you talk about your own idea? | Quotes one verbatim phrase you actually used (filler, hedge, confident claim) and what it exposed about your conviction. Names the sentence you will cut from your pitch tomorrow. |

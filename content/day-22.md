@@ -36,6 +36,14 @@ Yesterday you built a v0 on your laptop. Today it goes on the internet. A capsto
 **Before class** (~10 min): have your capstone repo pushed to GitHub, Vercel and Supabase accounts ready, and the model pricing pages open in tabs.
 **After class** (~30 min tonight): submit the live URL, finish the token-cost worksheet at 10/100/1000 users, publish and verify `yoursite.com/llms.txt`, and add Schema.org JSON-LD to your landing page.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
+- **00:15 — Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
+- **00:30 — Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
+- **00:45 — Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
+- **00:55 — GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
+
 ## Read: Shipping, cost math, trust UX, and getting cited by AI
 
 ### Free-tier survival and cold starts
@@ -111,6 +119,11 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 4. Do a **trust-UX audit** of your live product in Figma or on paper. For each of the six trust-stack elements, mark present / partial / missing and note one change.
 5. Create `public/llms.txt` following llmstxt.org. Include project summary, three important URLs, and author. Deploy. Verify at `yoursite.com/llms.txt`.
 
+> ⚠️ **If you get stuck**
+> - *Vercel build fails with "Module not found" even though it runs locally* → check filename casing (macOS is case-insensitive, Linux is not) and confirm the import path matches the file exactly.
+> - *Serverless function times out on the first LLM call* → switch the route to a streaming response and raise `maxDuration` in the route config; non-streamed LLM calls routinely exceed the 10s default.
+> - *Supabase connection errors under light load ("too many connections")* → you're using the direct connection string. Swap to the pooled (pgbouncer) endpoint from the Supabase dashboard and redeploy.
+
 ## Quiz
 
 1. Why do cold starts hurt perceived performance more than steady-state latency?
@@ -125,4 +138,8 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 
 ## Discuss: The cost surprise
 
-Share the number that shocked you in your token-cost worksheet. Was it the system prompt size? The output length? The model choice? Post your before-and-after: one change you could make that drops cost per user by 40% without hurting quality.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Share the number that shocked you in your token-cost worksheet. | Names the dollar figure at 100 or 1000 users and the single line-item driving it (e.g., "$48/user/mo — the 8k-token system prompt on every call"). |
+| Was it the system prompt, output length, model choice, or interaction count? | Diagnoses the dominant cost term with arithmetic, not vibes. Shows at least one multiplication ("2k in × 20 calls × $3/M = $0.12"). |
+| What change drops cost-per-user by 40% without hurting quality, and how would you verify the quality didn't drop? | Proposes a concrete lever (prompt caching, smaller model for cheap turns, retrieval instead of stuffing) and names an eval — even a 10-example side-by-side — to prove quality held. |

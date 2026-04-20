@@ -34,6 +34,13 @@ Pixels used to be expensive. Designers charged for posters, film crews charged f
 **Before class** (~10 min): lock your capstone working title and pick two colors for your poster palette.
 **After class** (~30 min tonight): post your final poster PNG + 10-second MP4 + one-line tagline to the cohort showcase.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — One-line cold open**: type your capstone tagline into the chat in under 10 words. We read three at random and guess what the product is — if we cannot guess, your tagline is the first problem.
+- **00:15 — Think-pair-share**: in 90 seconds, swap prompts with a neighbor. Each person rewrites the other's prompt using the six-slot template (subject, action, setting, style, composition, modifiers). Notice how many adjectives get replaced by nouns.
+- **00:30 — Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
+- **00:45 — Stand-up critique**: three volunteers hold up their draft poster on camera for 30 seconds each. Cohort shouts out one thing that works and one thing to cut. No compliments without a specific noun.
+
 ## Read: Diffusion, prompts, and the state of video in 2026
 
 **A one-paragraph mental model of diffusion.** Most modern image generators are diffusion models. During training, the model sees millions of image-caption pairs and learns to turn clear images into noise, step by step. To generate, it runs the process in reverse: start from pure noise, denoise one step at a time, guided by your text prompt, until a coherent image emerges. You do not need the math. You need the intuition: the model is a sculptor removing noise until your prompt appears. Your prompt is the chisel. Video models do the same trick across time — they denoise frames that are consistent with each other.
@@ -98,6 +105,11 @@ Time: 45 minutes. Artifact: one poster image + one short video, posted to the co
 7. If Kling credits run out, fall back to https://runwayml.com or https://pika.art free tier.
 8. Export the 10-second MP4. Post poster + video to the cohort showcase with a one-line capstone tagline.
 
+> ⚠️ **If you get stuck**
+> - *Every poster comes out looking generic or stock-photo-ish* → you have too many adjectives and not enough nouns. Replace "beautiful modern" with "brass tiffin, hostel corridor, 50mm, golden hour" and specify composition (center, 2:3, negative space top).
+> - *Kling / Runway / Pika daily credits are exhausted* → fall back to image-to-video on the other tool you have not tried yet, or generate a subtle motion GIF from your poster in Canva Magic Studio. A 5-second clip with one deliberate motion beats a 10-second lottery.
+> - *Text on the poster comes out garbled* → stop asking Nano Banana or Firefly to render words. Export the image text-free, then composite the tagline in Canva, or regenerate just the text layer in Ideogram.
+
 ## Quiz
 
 Three checks. In one sentence, what is a diffusion model doing? Which tool would you trust for a commercially safe LinkedIn banner, and why not Midjourney? What is the single prompt change that most reliably improves a mediocre video — a fancier adjective, an explicit camera motion, or a longer clip?
@@ -114,8 +126,10 @@ This is your daily artifact. It is also a preview of your Friday ideathon pitch.
 
 ## Discuss: Taste, speed, and slop
 
-- Did any of your generations feel generic? What was missing from the prompt?
-- Which tool's aesthetic felt most "you"?
-- Did you label your output as AI-generated when posting? Why or why not?
-- When pixels are free, what becomes scarce — taste, distribution, or honesty?
-- Would you pay a human designer for this poster now? At what price?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Did any of your generations feel generic? What was missing from the prompt? | Diagnoses against the six slots (subject, action, setting, style, composition, modifiers). Names the specific slot you under-specified and the noun you should have used instead of an adjective. |
+| Which tool's aesthetic felt most "you"? | Ties taste to a concrete output attribute — color palette, framing, realism vs. illustration, attitude toward Indian contexts. Not "vibes" but features. |
+| Did you label your output as AI-generated when posting? Why or why not? | Takes a position and names the audience cost/benefit. If not, explains under what conditions you would. Acknowledges C2PA tags exist regardless. |
+| When pixels are free, what becomes scarce — taste, distribution, or honesty? | Picks one and defends it with a real example from today's lab or your feed. Strong answers resist "all of the above" and commit to the one that constrains you personally. |
+| Would you pay a human designer for this poster now? At what price? | Gives a number and a scenario (portfolio, investor pitch, client work). Shows you understand what the AI did NOT do — art direction, iteration with you in the room, brand consistency. |

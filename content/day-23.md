@@ -38,6 +38,14 @@ This is the day the gap between "AI is cool" and "AI gets things done" closes. Y
 **Before class** (~10 min): install Python + LangGraph, have a Claude or OpenAI API key handy, and install Cursor or Claude Desktop for the MCP half.
 **After class** (~30 min tonight): export one successful trace and one failed trace, apply a loop-fix, and submit the repo plus the one-paragraph writeup of the fix.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: name the last "agent" demo you saw that actually worked end-to-end. One sentence on why.
+- **00:15 — Think-pair-share**: 90 seconds — your partner names three tools their capstone agent would need; you spot which one has the fuzziest description.
+- **00:30 — Live trace-read**: paste the instructor's agent trace in chat. Where would you cut context? Vote A/B/C.
+- **00:45 — MCP breakout**: three groups — filesystem server, fetch server, Playwright-MCP. Each group reports back the single tool they'd most miss.
+- **00:55 — Fail-mode bingo**: shout the break-mode you hit first (infinite retry / goal drift / hallucinated tool / context blow-up / premature success).
+
 ## Read: ReAct, tool-use, planning loops, and MCP
 
 ### The ReAct loop — reason plus act
@@ -135,6 +143,11 @@ Part B — MCP:
 2. Configure Cursor or Claude Desktop to connect to it. Verify the tools appear in the client.
 3. Use it for one real task in your capstone workflow.
 
+> ⚠️ **If you get stuck**
+> - *LangGraph agent loops forever on the same tool call* → your conditional edge isn't checking for a final-answer signal; add a step counter and a max-steps fallback that routes to END, and pass the previous error back in the next turn.
+> - *MCP server doesn't appear in Claude Desktop or Cursor* → check the client config file path (`claude_desktop_config.json` for Claude, settings JSON for Cursor), confirm the command works standalone in a terminal, and fully restart the client — hot reload is unreliable.
+> - *Model keeps inventing a tool name that doesn't exist* → your tool descriptions are too vague or overlap. Rename for specificity (`read_file` not `fs`) and reject unknown tool calls loudly instead of silently failing.
+
 ## Quiz
 
 1. What does ReAct stand for and what are the two kinds of model output each turn?
@@ -149,4 +162,8 @@ Part B — MCP:
 
 ## Discuss: The MCP server you would build next
 
-If you were to publish one MCP server for your team or community to use, what would it wrap? Post the name, the three tools it would expose, and who would benefit. We will vote on the best ideas and encourage a few of you to actually build and publish them this week.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| If you were to publish one MCP server for your team or community, what would it wrap? | Names a specific existing capability or data source (internal wiki, a public API, a CLI tool) — not a generic category. One sentence on why it deserves to be an MCP server rather than a REST call. |
+| What three tools would it expose, with names and one-line descriptions? | Each tool has a verb-noun name, a small typed input, and a single job. No "do_everything" god tools. |
+| Who benefits, and how would they discover and install it? | Identifies the concrete user (teammates, a public community), the host they use (Claude Desktop, Cursor, custom app), and a distribution plan — even if it's just "share the repo in #eng." |

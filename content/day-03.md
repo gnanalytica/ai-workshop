@@ -34,6 +34,14 @@ The difference between a student who gets 3x output from AI and one who gives up
 **Before class** (~10 min): skim the main read section below.
 **After class** (~30 min tonight): finish the 5-version prompt iteration lab and start your personal prompt library with its first entry.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open prompt read-aloud**: instructor pastes a terrible 8-word prompt on screen. Students shout in chat which CREATE letter is missing most. First correct answer gets credit for the day.
+- **00:15 — Think-pair-share**: 90 seconds on *"Which CREATE letter do you skip most often — and what's it costing you?"* Each pair names their shared skip and one concrete cost.
+- **00:30 — Live poll**: *"Is asking for JSON output cheating or just how adults use LLMs?"* Bars appear. Instructor calls on a "cheating" voter and a "adult" voter to steelman the other side in 20 seconds each.
+- **00:45 — Live rewrite relay**: one student drops a real weak prompt in chat. Three volunteers each add one CREATE letter on screen — C, then R, then E — while the room watches the output quality jump between versions.
+- **00:55 — Chat close**: *"The CREATE letter I'm adding to every prompt from tomorrow is ___."*
+
 ## Read: CREATE — the only prompt framework you need
 
 Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.
@@ -121,6 +129,11 @@ Watch for:
 
 35 minutes. One prompt. Five rewrites. You'll feel the curve.
 
+> ⚠️ **If you get stuck**
+> - *Your V2–V5 outputs all look basically the same* → your "real task" is probably too generic ("write me a LinkedIn post"). Pick something with constraints reality actually has — a specific internship, a specific reader, a word limit — then the CREATE letters have something to bite into.
+> - *Claude asks you to verify email / hits a usage limit mid-lab* → switch to ChatGPT for the remaining versions. Note the switch in your doc. The framework works identically across models; that's the point.
+> - *V5 JSON output comes back with surrounding prose ("Sure, here's your JSON:…")* → add one line at the end: *"Return ONLY valid JSON, no preamble, no code fences."* If it still adds fences, that's usually fine — the content is the artifact, not the wrapper.
+
 1. Pick a real task you actually need done. Suggestions: *"Draft 3 LinkedIn posts about my last internship" / "Summarise my DBMS notes into exam flashcards" / "Plan my study week for end-sems."* Whatever you pick, it must be real.
 2. Open Claude. Write your first prompt in 10 seconds — however you'd normally ask. Save the output as V1.
 3. Rewrite using **C** and **R** only (add context + role). Save as V2.
@@ -142,8 +155,10 @@ Build a personal prompt library with **10 templates.** Categories to cover: (1) 
 
 ## Discuss: Live session prompts
 
-- Which of the six CREATE letters do you skip most often — and what's it costing you?
-- Is asking for JSON "cheating," or is it how adults use LLMs?
-- When does few-shot *hurt* instead of help?
-- Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate?
-- Where's the line between "prompting" and just "writing clearly"?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which of the six CREATE letters do you skip most often — and what's it costing you? | Names one specific letter (not "all of them") and one specific failure mode it causes — e.g., "I skip Examples, so the model defaults to LinkedIn-bro tone every time." Shows self-awareness, not guilt. |
+| Is asking for JSON "cheating," or is it how adults use LLMs? | Reframes the question: structured output isn't a trick, it's the bridge between "AI text" and "software that uses AI." Mentions a real use (spreadsheets, APIs, pipelines). |
+| When does few-shot *hurt* instead of help? | Gives at least one case: when your examples accidentally encode a bias, when the task is genuinely novel (examples anchor the model to the wrong shape), or when examples eat your token budget on a long context. |
+| Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate? | Doesn't just say "bigger." Predicts which categories *grow* vs which stay small — based on what the student actually does every day. Shows the library is a living artifact, not a trophy. |
+| Where's the line between "prompting" and just "writing clearly"? | Concedes there isn't a hard line — great prompting IS clear writing with extra scaffolding (role, examples, output format) that you wouldn't add when writing to humans. |

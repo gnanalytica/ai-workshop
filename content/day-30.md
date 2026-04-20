@@ -41,6 +41,14 @@ Today is short on lecture and long on you. Let's go.
 **Before class** (~10 min): test your live URL on a fresh browser, confirm your pre-recorded backup plays, and say your hook out loud once.
 **After class** (~30 min tonight): share your certificate + showcase link on LinkedIn (cohort tag: #GnanalyticaAIWorkshop).
 
+### In-class moments (minute-by-minute)
+
+- **00:00 — Opening**: instructor's one-minute welcome, panel introductions, demo order drawn live. Cohort applauds every name as it's called.
+- **00:05 — Team demos begin**: 5 minutes per team (4 min demo + 1 min panel Q&A), rotating through all teams. Stay in the room, watch every demo, cheer loudly.
+- **00:45 — Panel Q&A round**: cross-team questions, judges probe the riskiest assumption of each capstone. Answers scored on honesty, not polish.
+- **00:52 — Awards ceremony**: panel reads awards and citations aloud; certificate auto-issues on /certificate.html for everyone at 30/30.
+- **00:58 — Close + group photo**: instructor's send-off, alumni channel link shared, showcase gallery goes public, group photo (non-negotiable).
+
 ## Read: Go Time (400 words)
 
 The structure you have rehearsed works. Trust it.
@@ -82,6 +90,11 @@ Instructor opens Demo Day with a look back at what this cohort shipped — by th
 - Certificate auto-issues on certificate.html for everyone at 30/30.
 - Group photo. Non-negotiable.
 
+> ⚠️ **If you get stuck**
+> - *Screen share won't connect when your turn comes* → don't debug on stage; switch immediately to your pre-recorded backup tab, narrate over it, and save the live URL for the Q&A. The panel will not penalize a graceful fallback.
+> - *Your video freezes mid-demo* → pause, smile, say "of course, on stage" — laugh with the room, refresh once, and if it doesn't recover in 5 seconds, switch to the backup. Grace under failure is the story the panel remembers.
+> - *A panel question lands you sideways* → listen fully, pause one beat, and if you genuinely don't know, say "I don't know yet — here's how I'd find out." That scores higher than a bluff every single time.
+
 ## Quiz
 
 1. What are the three beats of your demo? (Say them out loud before you go on.)
@@ -103,6 +116,12 @@ Post in the cohort channel. Tag two people you want to keep building with.
 
 ## Discuss: What You'll Carry Forward
 
-One paragraph. What you believed about AI on Day 1 that you no longer believe. What you believe now that you didn't then. What you'll be working on in six months. Read every single other post before you close the tab tonight — that is how you leave.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| What you believed about AI on Day 1 that you no longer believe. | Names a specific belief in plain language — a tool you overrated, a fear you outgrew, a hype you bought — and the exact moment in the cohort that shifted it. Celebrate the change; you earned it. |
+| What you believe now that you didn't then. | A concrete conviction you'll defend — a pattern, a principle, a non-negotiable — not a buzzword. One sentence is enough if it's sharp. |
+| What you'll be working on in six months. | A shippable goal with a rough date and a real user in mind. "Version 2 of my capstone with 10 paying users by October" beats "keep learning." |
+
+Read every single other post before you close the tab tonight — that is how you leave.
 
 Congratulations. You shipped. See you on the internet.

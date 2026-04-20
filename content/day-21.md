@@ -38,6 +38,14 @@ This is also a checkpoint. By the end of the day you submit a local prototype an
 **Before class** (~10 min): open your capstone repo, confirm your Day 19 CLAUDE.md is current, pick one small end-to-end slice you want to ship first.
 **After class** (~30 min tonight): finish 5–8 iteration turns on your v0, commit after each accepted diff, record the 90-second screen capture, and write the 200-word director's commentary.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open confession**: raise a hand if you typed more code than you specced yesterday. Keep it up if you regretted it.
+- **00:15 — Think-pair-share**: in 90 seconds, each partner reads the other's 4-part spec out loud; catch the one missing acceptance criterion.
+- **00:30 — Live poll**: tight leash or long leash for your next change? Post T or L in chat with one-line reason.
+- **00:45 — Breakout debate**: Cursor vs bolt.new vs Antigravity for *your* capstone stack — pick one and defend in 60 seconds.
+- **00:55 — Showcase**: one volunteer screen-shares a rejected diff and the redirect prompt that fixed it.
+
 ## Read: Director vs Typist — the mindset shift that unlocks AI-first building
 
 Every engineer who is still slow with AI tools in 2026 is stuck in typist mode. A typist reads a Stack Overflow answer, retypes it into their editor, runs it, and debugs line by line. A typist thinks in characters. A director thinks in intent, constraints, and acceptance criteria. The director writes a spec, hands it to a capable junior (the model), reads the output critically, and redirects. The director never touches the keyboard to write code — but they do touch it to write specs, reviews, and rejections.
@@ -105,6 +113,11 @@ https://www.youtube.com/embed/LCEmiRjPEtQ
 5. Commit after every accepted diff. Your git log is your director's journal.
 6. Record a 90-second screen capture of the v0 running.
 
+> ⚠️ **If you get stuck**
+> - *Cursor keeps asking permission for every file edit* → switch to Agent mode and whitelist your repo folder in Cursor settings, or pre-approve with "yolo" mode only inside a disposable branch.
+> - *Model invents a library that doesn't exist (`npm ERR! 404`)* → paste the exact error back, add the line "do not use packages unless they appear in package.json" to your spec, and re-run.
+> - *Conversation has drifted — the model keeps re-introducing a bug you already fixed* → end the session, open a fresh one, attach CLAUDE.md + the current diff, and restate the goal in one sentence.
+
 ## Quiz
 
 1. What are the four parts of a good spec?
@@ -119,4 +132,8 @@ https://www.youtube.com/embed/LCEmiRjPEtQ
 
 ## Discuss: Where does vibe coding stop working?
 
-Share one part of your capstone where the model consistently failed today. Was it a domain-specific library, a subtle UX call, a security concern, a weird framework version? Post the spec you wrote, the output you got, and your theory about why the model struggled. The class will vote on the most interesting failure mode.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Share one part of your capstone where the model consistently failed today. | Names a specific surface (e.g., "Stripe webhook signature verification in Next.js 15 app router"), not "AI is bad at backend." Includes the spec you wrote verbatim. |
+| What output did you get, and why do you think the model struggled? | Cites a concrete symptom — hallucinated import, deprecated API, silently dropped feature — and connects it to a training-data or context-window hypothesis in 1-2 sentences. |
+| What would you change in your spec to get past the block next time? | Proposes a specific additional constraint, invariant, or acceptance test. Avoids "I'd just try a better model." |

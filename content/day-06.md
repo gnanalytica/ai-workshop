@@ -34,6 +34,13 @@ Welcome to Week 2. Last week you learned what AI is; this week you will touch ev
 **Before class** (~10 min): have your resume PDF, transcript, and 5 capstone ideas ready to upload.
 **After class** (~30 min tonight): finish the 3-model comparison, post screenshots of your Claude Project + 3 best chats to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Fist-of-5 cold open**: on the count of three, show fingers — how many of the five frontier chat models have you used in the last 7 days. Scan the room; we are calibrating the gap.
+- **00:15 — Think-pair-share**: in 90 seconds with the person next to you, each name one task you currently do in ChatGPT that probably belongs in Claude or Gemini instead. Be specific about the task, not the tool.
+- **00:30 — Live poll**: drop in the cohort channel your current "default model". We read the tally live and ask the two outliers to defend their pick for 30 seconds each.
+- **00:45 — Breakout of three**: same prompt ("plan my next 4 Tuesday evenings") goes into three different models per trio. Regroup and vote on whose answer you would actually follow — and why.
+
 ## Read: Five models, five personalities
 
 The big frontier chat models look identical from the outside. They all have a text box. But in 2026, the gap between the best answer and the average answer is almost entirely about knowing which model to ask, how to set it up, and how to talk to it. Most students give up on "AI" after three mediocre ChatGPT replies. The actual reason the reply was mediocre is that they asked the wrong model, with no context, in one line.
@@ -89,6 +96,11 @@ Time: 40 minutes. Artifact: a living Claude Project you will use all cohort.
 7. Screenshot all three final responses side by side. Notice how much better the Claude answer is because of context.
 8. Back in Claude, ask Jarvis: "Given today was Day 6 of a 30-day workshop and Day 10 is an ideathon, what should I think about this week to be ready?" Save the reply in a note called `capstone-scratch.md`.
 
+> ⚠️ **If you get stuck**
+> - *Claude rejects your PDF upload as too large* → split the file (e.g., resume + transcript as two PDFs) or export pages as a single compressed PDF; free-tier limits are per-file, not per-project.
+> - *Jarvis ignores your project instructions and gives generic answers* → open a fresh chat inside the project (not a regular chat), and start the turn with "Read everything in project knowledge first, then answer."
+> - *ChatGPT Memory never triggers* → confirm Memory is enabled in Settings → Personalization, then explicitly say "Remember that I am..." once; silent inference is unreliable on the free tier.
+
 ## Quiz
 
 Three quick questions to confirm you got the core moves. What is the difference between Memory and Projects? Which model would you ask to summarize a 90-page Google Doc your professor shared on Drive? Which model would you ask for the current status of a breaking AI news story? And why did the Claude Jarvis answer beat the blank ChatGPT answer in step 7?
@@ -104,8 +116,10 @@ This is your daily artifact. It is the ticket to Day 7.
 
 ## Discuss: Which model is your default?
 
-- Which model felt most like a friend and which felt most like a vending machine? Why?
-- Did any model refuse something you thought was reasonable? Did any model over-agree?
-- What did you put into Memory that you would never tell a human stranger?
-- If you could only use one model for the rest of the cohort, which and why?
-- What surprised you when the same prompt produced five different answers?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which model felt most like a friend and which felt most like a vending machine? Why? | Names a specific interaction moment (a clarifying question, a tone shift, a push-back) rather than a vibe. Ties the "friend" feeling to a concrete model behavior you can reproduce. |
+| Did any model refuse something you thought was reasonable? Did any model over-agree? | Describes the exact prompt and the refusal/agreement verbatim. Distinguishes between a policy refusal, a safety hedge, and sycophancy — and says what you would try differently. |
+| What did you put into Memory that you would never tell a human stranger? | Honest about the trade-off: shares the category of detail (health, grades, family) and weighs the convenience against the privacy cost. Does not hand-wave with "nothing sensitive". |
+| If you could only use one model for the rest of the cohort, which and why? | Picks based on two or more concrete workflows in your week, not marketing claims. Names at least one thing you would lose by choosing it. |
+| What surprised you when the same prompt produced five different answers? | Points at a structural difference (length, citations, hedging, format) rather than "X was better". Connects the difference to how each model is trained or positioned. |

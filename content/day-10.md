@@ -35,6 +35,14 @@ Checkpoint day. You have touched a dozen tools in nine days. Today the workshop 
 **Before class** (~10 min): come with 2–3 capstone ideas on paper — hostel life, placement pain, family problems all fair game.
 **After class** (~30 min tonight): lock your capstone one-pager and submit via dashboard with the tag `#milestone-1`.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
+- **00:15 — Silent solo brainstorm with 3 sticky notes**: one idea per sticky, no editing, three minutes each. No phones, no Claude yet — this round is pen and paper so the obvious ideas clear out first.
+- **00:30 — Shape in pairs using Heilmeier template**: partners take turns. Pitcher has 2 minutes; listener must ask questions 1, 4, and 9 from the Heilmeier list (objective, who cares, metrics) before the timer ends. Swap.
+- **00:45 — Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
+- **00:55 — Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
+
 ## Read: How to pick a capstone worth four weeks
 
 **Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.
@@ -108,6 +116,11 @@ Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pag
 7. **Write the one-pager (10 min).** Use the template: Problem, User, Scope, Non-goals, Team, Risks, Metric. Keep it to one page. Draft in Claude if stuck; rewrite in your own words.
 8. **Submit.** Post `capstone-one-pager.md` to the cohort channel with the tag `#milestone-1`. This is your commitment.
 
+> ⚠️ **If you get stuck**
+> - *Your three candidate ideas all feel too big and Claude keeps encouraging them* → add this line to the Heilmeier prompt: "For each idea, rewrite it 3x smaller — same user, same pain, one-tenth the scope." Pick the smallest version that still feels worth doing.
+> - *No team cluster forms around your idea and you feel rejected* → this is data, not judgment. Either join the cluster closest to your idea (your skill + their problem often beats your problem), or commit to solo with a smaller scope and one named user.
+> - *You cannot name a real human user for Week 4* → stop the one-pager. Spend 15 minutes messaging three people who might hurt from this problem. If none reply by tonight, pick a different idea — "I will find users later" fails every cohort.
+
 ## Quiz
 
 Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
@@ -127,8 +140,10 @@ Submit before midnight. This is the biggest deliverable of the workshop so far a
 
 ## Discuss: The idea you fell in love with and had to kill
 
-- Which idea did you almost pick that failed the 3-filter test? What killed it?
-- When your partner pushed back on your best idea, did you defend it or did it shrink? Which was the right response?
-- Is your team's "won't build" list long enough? What is missing from it?
-- Who is the one user you will talk to in Week 3? How will you get them on a call?
-- What would make you abandon this capstone in Week 3, and how will you prevent that?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which idea did you almost pick that failed the 3-filter test? What killed it? | Names the specific filter (real user / small scope / you care) and the exact test moment it broke. Avoids romanticizing — strong answers sound like a post-mortem, not a eulogy. |
+| When your partner pushed back on your best idea, did you defend it or did it shrink? Which was the right response? | Distinguishes between defending the problem (good) and defending the solution (often bad). Shows one specific pushback where shrinking made the idea better, with the "before vs after" sentence. |
+| Is your team's "won't build" list long enough? What is missing from it? | Lists at least one tempting feature you know you will want to add in Week 3 (auth, mobile, analytics, a second user type). Writing it down is pre-committing against yourself. |
+| Who is the one user you will talk to in Week 3? How will you get them on a call? | Names a real human with a real relationship, and a concrete first-contact plan (WhatsApp today, 15-min call Friday). Vague answers ("someone in my hostel") mean you have no user yet. |
+| What would make you abandon this capstone in Week 3, and how will you prevent that? | Identifies the specific failure mode (team unavailable, tool stops working, user unreachable, you lose interest) and the tripwire that catches it early. Strong answers include a "switch point" — what you will do by end of Week 3 if the signal is red. |

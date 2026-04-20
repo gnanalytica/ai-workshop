@@ -34,6 +34,14 @@ You picked your capstone on Day 10. Today we stress-test how you describe it. Mo
 **Before class** (~10 min): write your current capstone problem in one sentence — exactly as you'd say it to a stranger.
 **After class** (~30 min tonight): finish the three rewrites of your statement and paste the final version into the dashboard.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: in one breath, say your capstone out loud to the person next to you; they raise a hand the moment they hear a weasel word.
+- **00:15 — Think-pair-share**: 90 seconds each — swap v1 statements and circle every abstract noun ("users," "productivity," "experience") on your partner's draft.
+- **00:30 — Live poll**: instructor reads 4 anonymised statements; class votes "mood" or "statement" with thumbs up/down and defends the call.
+- **00:45 — Heilmeier gauntlet**: one volunteer stands; three classmates each fire one Heilmeier question; volunteer must answer in 15 seconds each, no jargon.
+- **00:55 — Sticky-note test**: everyone writes v3 on a physical or virtual 3x3 box; if it overflows, cut one clause before leaving.
+
 ## Read: Why a crisp problem statement is half the work
 
 Walk into any product review at a well-run company and you will notice something: the first ten minutes are not about solutions. They are about re-stating the problem. People argue over a single verb. They replace "help users find things" with "reduce time-to-first-relevant-result for new users on mobile." That fight is the work. Everything downstream — architecture, model choice, UX, metrics — is just execution of whatever was agreed upon in those first ten minutes.
@@ -90,6 +98,11 @@ You will need paper, a pen, and Claude open in a second window.
 
 Photograph all three drafts plus the sticky note. You will compare them on Day 15.
 
+> ⚠️ **If you get stuck**
+> - *Claude keeps generating a generic rewrite that sounds like a press release* → paste your v1 and add the constraint "Ban the words leverage, holistic, seamless, AI-powered, users. Refuse to write the statement until I name one specific person."
+> - *Your sticky note keeps overflowing* → force the cut by deleting every adjective first, then every compound noun; if it still does not fit, your user is too broad — swap "users" for one named person with a job title.
+> - *Your 5 Whys loop back on itself by the third "why?"* → you are asking about the solution, not the pain; restart from the user's most recent concrete bad moment, not from your feature idea.
+
 ## Quiz
 
 Three quick checks, no Googling. Can you name all nine Heilmeier questions from memory? Can you explain the difference between a symptom and a root cause using an example from your own capstone? Can you spot the solution-smuggling in this statement: "We will build an AI assistant that helps busy professionals be more productive"? If you hesitated on any, re-read the Read section.
@@ -100,8 +113,10 @@ Submit your v3 sticky-note problem statement plus the HMW reframe to the cohort 
 
 ## Discuss: What does your problem refuse to admit?
 
-- Which weasel word was hardest to cut from your v1, and why do you think you reached for it?
-- Who is the specific person in your v3 — and when did you last talk to someone like them?
-- What is the smallest version of "it worked" you could honestly measure in 30 days?
-- If a skeptical investor asked "why you, why now?" about your capstone, what is your real answer — not the polished one?
-- What would have to be true for this problem to not be worth solving at all?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which weasel word was hardest to cut from your v1, and why do you think you reached for it? | Names the specific word, admits what it was hiding (scope, uncertainty, ego), and links it to a concrete fear — 2-3 sentences, self-aware, not a generic "I was being lazy." |
+| Who is the specific person in your v3 — and when did you last talk to someone like them? | First name, age, role, context in one sentence; then a date (or "never") for the last real conversation. If the answer is "never," that is the honest answer — say it. |
+| What is the smallest version of "it worked" you could honestly measure in 30 days? | A number with a timeframe and a unit — "3 beta users complete the core flow twice in week 2," not "engagement improves." If you cannot count it, it is not a metric. |
+| If a skeptical investor asked "why you, why now?" about your capstone, what is your real answer — not the polished one? | A personal reason (scar, obsession, unfair advantage) plus an external trigger that explains why this year, not last year. Avoid "AI is hot right now." |
+| What would have to be true for this problem to not be worth solving at all? | Names the kill-criterion: a market size, a user behaviour, a regulatory fact, or a cheaper existing workaround that, if true, ends the project. Specific, falsifiable. |

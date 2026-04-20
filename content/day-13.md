@@ -34,6 +34,14 @@ Most founders' user interviews are a slow way to hear themselves think. They ask
 **Before class** (~10 min): draft 5 interview questions for your capstone user — NO questions about your idea.
 **After class** (~30 min tonight): run one real interview before Day 15, write up quotes + one JTBD insight, submit notes via dashboard.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: instructor reads 3 interview questions aloud; class shouts "leading" or "clean" after each — winners get to grill the loser.
+- **00:15 — Think-pair-share**: 90 seconds — tell your partner the last time YOU experienced your capstone's problem; if you never have, say so.
+- **00:30 — Verb-hunt**: pair up, swap your 5 draft questions, circle every future-tense verb ("would," "could," "might") on your partner's list.
+- **00:45 — Paired drill**: 8-minute interview, no pitching, no idea mention; observer counts every leading question and reports back.
+- **00:55 — Commitment test**: each interviewer names the real next step they earned (referral, meeting, access); if the answer is "they said it was cool," the class calls it polite enthusiasm, not signal.
+
 ## Read: The Mom Test, JTBD, and listening for what is not said
 
 Rob Fitzpatrick's *The Mom Test* starts from a simple premise: even your mom will lie to you about your business idea, not out of malice but out of love. So stop asking people if they like your idea. Instead, ask about their life. His three rules:
@@ -89,6 +97,11 @@ You will pair with another cohort member. You interview them about *their* capst
 7. **Run the Claude analysis (10 min).** Paste the transcript into Claude using today's Prompt of the Day. Record the 3 surprising behaviours, 3 JTBD hypotheses, and 5 follow-up questions.
 8. **Plan interviews #2 and #3.** Text two real candidate users (friends, family, acquaintances) now. Book 20-minute slots before Day 15.
 
+> ⚠️ **If you get stuck**
+> - *Your partner keeps volunteering opinions on your idea even though you did not mention it* → cut them off politely ("before we get there, can you walk me through the last time X happened?") and return to a past-tense question; train the conversation back onto their life.
+> - *Otter's transcript has speaker labels swapped or missing* → re-label in Otter's editor before pasting into Claude; otherwise the JTBD hypotheses will attribute your words to the user, which is worse than no transcript.
+> - *You run out of questions at minute 8 and panic-pitch your idea* → keep one rescue question on a sticky note: "What did you try before that didn't work?" It resets the interview to past-behaviour mode.
+
 ## Quiz
 
 Three rapid calls. Which of these is Mom-Test-compliant: (a) "Would you pay for a tool that does X?" (b) "What did you do the last time X happened?" (c) "Do you think other people have this problem?" Only (b) survives. Why? Because it asks for past behaviour from the person in front of you, not future opinions about strangers. Write that sentence on a sticky note.
@@ -99,8 +112,10 @@ By end of Day 15, submit: (1) your Otter transcript from the classmate interview
 
 ## Discuss: What did the user *not* say?
 
-- Which of your questions was still leading, even after you thought you fixed it?
-- Where in the transcript did the user's tone shift — and what were they talking about at that moment?
-- What workaround did you see that you did not expect? What does it reveal about the real job?
-- Did you get a real commitment — or a polite one? How can you tell the difference?
-- What belief from your Day 11 problem statement did this interview just break?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which of your questions was still leading, even after you thought you fixed it? | Quotes the exact question, names the hidden assumption it smuggled in, and rewrites it past-tense. Self-critical without being self-flagellating. |
+| Where in the transcript did the user's tone shift — and what were they talking about at that moment? | Cites a timestamp or a specific quote, describes the shift (frustration, laugh-cover, long pause), and links it to the real job — not the tidy one they stated up top. |
+| What workaround did you see that you did not expect? What does it reveal about the real job? | Describes a concrete artifact — a spreadsheet, a group chat, a reminder, a second tab — and infers what job it is being "hired" for. Avoids generalising to "users are creative." |
+| Did you get a real commitment — or a polite one? How can you tell the difference? | Names what the user actually gave up (time, a referral, credentials, money) vs. what they said ("sounds great"); the strong answer admits it was polite if it was. |
+| What belief from your Day 11 problem statement did this interview just break? | Quotes the old belief, names the evidence that broke it, and proposes one concrete edit to the v3 sticky note. "Nothing broke" is a warning sign — re-read the transcript. |

@@ -35,6 +35,14 @@ Morning lecture is short because the habit you build this afternoon matters more
 **Before class** (~10 min): list your role, goals, and current knowledge gaps so you can pick sources that actually fit you.
 **After class** (~30 min tonight): subscribe to your 5 picks, post your Signal Pipeline doc in the cohort channel, and continue capstone build — two days from demo.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold open**: one-line write-in — "the last AI thing you read that actually changed how you build." No lurking; everyone posts.
+- **00:15 — Teaching beat**: 10 minutes demoing the 3-minute paper skim live on a paper from HuggingFace Daily Papers that dropped this week.
+- **00:25 — Back to your team's build**: pick your 5 sources (1 newsletter, 1 podcast, 1 YouTube, 1 X list, 1 paper feed). Instructor does rounds, raise hand for unblocking.
+- **00:40 — Back to your team's build**: calendar the recurring Friday slot and subscribe/follow live. Instructor rotates and checks that "calendar event created" is actually true.
+- **00:55 — Back to your team's build**: paste your 5-source doc in the cohort channel. One-liner per team on the one source you'll never miss.
+
 ## Read: The Signal Pipeline (650 words)
 
 The AI field ships faster than you can read. A new frontier model every six weeks, a new agent framework every Tuesday, a thousand arxiv papers a day. If you try to read everything, you read nothing. If you read nothing, you are six months stale in six weeks.
@@ -107,6 +115,11 @@ Instructor walks through Karpathy's channel and demos the 3-minute arxiv skim on
 3. Create a simple doc: source, channel, frequency, why (10 min).
 4. Subscribe / follow / bookmark all 5 right now (5 min).
 
+> ⚠️ **If you get stuck**
+> - *You can't decide between two newsletters* → pick the one with a lower frequency first; you can always add the second in week 3 once you know whether you actually read the first.
+> - *X feed is a firehose even with a List* → mute terms aggressively (hype, launch, "breaking"), and switch the List to "Latest" not algorithmic. If it's still noise, swap X for an RSS reader on the same accounts' blogs.
+> - *The 30-min Friday slot keeps getting overrun by work meetings* → move it to Monday morning and shrink it to 20 min; a consistent small slot beats an aspirational big one that never happens.
+
 Afternoon: capstone build.
 
 ## Quiz
@@ -123,4 +136,9 @@ Afternoon: capstone build.
 
 ## Discuss: The Source That Changed How You Think
 
-Name one source (person, paper, podcast, newsletter) from this list — or outside it — that has actually changed how you think about AI. One sentence on what shifted. The cohort will leave with a shared curated list.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Name one source that has actually changed how you think about AI. | Names the specific person, paper, podcast, or newsletter (with a link), not a whole platform. Specific beats famous. |
+| One sentence on what shifted. | Describes a before/after belief in concrete terms — "I used to think X, now I design for Y because of what this source showed me." Avoids generic praise like "great takes." |
+
+The cohort will leave with a shared curated list.

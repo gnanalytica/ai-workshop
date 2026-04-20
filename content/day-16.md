@@ -36,6 +36,14 @@ Welcome to Week 4. Until now you've been a power user of AI. This week you becom
 **Before class** (~10 min): create a GitHub account with your college email and skim a README of any repo you're curious about.
 **After class** (~30 min tonight): finish the Hoppscotch API calls, open one draft issue on a repo you care about, and paste your 3 links in the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
+- **00:15 — Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
+- **00:25 — Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
+- **00:40 — Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
+- **00:55 — Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
+
 ## Read: The four rails — Git, GitHub, localhost, APIs
 
 Every AI project you will ever touch sits on top of four ideas. If you understand these four, the rest of the stack becomes readable. If you don't, every tutorial feels like hieroglyphics.
@@ -107,6 +115,11 @@ Spend 30–45 minutes. No code — clicks and reads only.
 7. Third call: `GET https://api.open-meteo.com/v1/forecast?latitude=12.97&longitude=77.59&current_weather=true` — Bengaluru's live weather. No API key needed.
 8. Bonus: `GET https://httpbin.org/status/429` — deliberately trigger a 429. Notice the status code. Try `/status/500`.
 
+> ⚠️ **If you get stuck**
+> - *Hoppscotch shows a CORS error or "network error"* → switch the Hoppscotch interceptor to "Browser extension" or "Proxy" in the bottom-right dropdown; the direct browser fetch is blocked by some APIs.
+> - *GitHub Fork button is greyed out* → you're probably on your own repo or not signed in; confirm the avatar top-right and pick a different upstream repo.
+> - *`api.github.com` returns a 403 with "rate limit exceeded"* → unauthenticated GitHub API allows only 60 requests/hour per IP; slow down or add a personal access token as a Bearer header.
+
 ## Quiz
 
 Four questions to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
@@ -117,8 +130,10 @@ Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your 
 
 ## Discuss: Becoming native to the dev world
 
-- Which part of today's four rails felt most foreign? Git, GitHub, localhost, or APIs?
-- Share a good-first-issue from any repo you found interesting and pitch why.
-- Have you ever seen a 500 error in the wild? What was the context?
-- Does `fork → branch → PR` feel like a social ritual or an engineering one? Maybe both?
-- What's one API from today's lab you could imagine chaining into your capstone?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which part of today's four rails felt most foreign? Git, GitHub, localhost, or APIs? | Names the rail, points to a specific sub-concept (e.g. "diffs" inside Git), and connects it to a tutorial that stopped making sense in the past. |
+| Share a good-first-issue from any repo you found interesting and pitch why. | Links the issue, names the repo's purpose in one line, and identifies the exact files the fix would touch. |
+| Have you ever seen a 500 error in the wild? What was the context? | Recounts the situation, the user impact, and who was actually to blame (server vs client) — uses the status-code vocabulary from today. |
+| Does `fork → branch → PR` feel like a social ritual or an engineering one? Maybe both? | Takes a side, gives one piece of evidence for each aspect (the code review is engineering; the maintainer politeness is social). |
+| What's one API from today's lab you could imagine chaining into your capstone? | Picks one API, describes the input/output JSON shape, and names the downstream node (LLM, Slack, sheet) that would consume it. |

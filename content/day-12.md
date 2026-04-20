@@ -34,6 +34,14 @@ Design thinking has a reputation problem. It has been diluted into colourful sti
 **Before class** (~10 min): list 3 assumptions you're making about your capstone user that you have NOT verified.
 **After class** (~30 min tonight): map all five design-thinking stages onto your capstone in FigJam and submit the link.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: raise a hand if you have already decided what to build. Instructor calls on 2 hands and asks "which stage did you skip to get there?"
+- **00:15 — Think-pair-share**: 90 seconds — tell your partner one assumption about your user you have NOT verified, and what evidence would change your mind.
+- **00:30 — Diverge drill**: everyone generates 10 capstone ideas in 3 minutes; no judgement, no editing; count them out loud.
+- **00:45 — Converge debate**: two volunteers defend opposite POV statements for the same problem; class votes which one names a surprising insight vs. restates the premise.
+- **00:55 — Prototype gut-check**: shout out the cheapest prototype you could build tonight; if anyone says "a Figma mockup," the class says "not cheap enough."
+
 ## Read: The five stages, and the traps inside each one
 
 Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype, Test**. The linear diagrams lie — you will bounce between them many times before shipping. What matters is not the order but the *rhythm* inside each stage: diverge (widen the possibility space), then converge (commit to one thing and move on). Skipping either half is the most common failure.
@@ -81,6 +89,11 @@ https://www.youtube.com/embed/ldYzbV0NDp8
 
 Screenshot the final board.
 
+> ⚠️ **If you get stuck**
+> - *You can only think of 5 ideas in the Ideate column, not 20* → add a forced constraint: rewrite the brief as "what if it cost $1," "what if it had no screen," "what if a 7-year-old had to use it" — each constraint unlocks a different 5.
+> - *Your POV statement's "surprising insight" slot is empty* → write "I have not yet earned this insight" and move on; do not fabricate one. Day 13 interviews are where you earn it.
+> - *Claude's critique feels generic ("add more detail")* → re-run the prompt with the specific column that feels weakest pasted on its own, and ask "what would a skeptical d.school coach say is missing from THIS stage only?"
+
 ## Quiz
 
 Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
@@ -91,8 +104,10 @@ Submit a screenshot of your full 5-column FigJam board to the cohort channel. In
 
 ## Discuss: Where did your process cheat?
 
-- Which stage did you rush, and what would slowing down by 2x cost you?
-- What "surprising insight" slot did you struggle to fill — and what does that tell you about your empathy work so far?
-- Which of your 20 ideas was the best *bad* idea, and why might it actually contain a real one?
-- When did you last feel the urge to build before defining? What triggered it?
-- If you had to pick between a crude prototype tomorrow and a polished one in a week, which serves learning more — and which serves your ego?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which stage did you rush, and what would slowing down by 2x cost you? | Names the specific stage and the real cost (a week of build time, a delayed launch) — not a vague "I'd have more clarity." Honest about the tradeoff, not just virtuous. |
+| What "surprising insight" slot did you struggle to fill — and what does that tell you about your empathy work so far? | Admits whether the gap is "I have not talked to enough people" vs. "I talked but did not listen for surprise"; points at a concrete next action before Day 13. |
+| Which of your 20 ideas was the best *bad* idea, and why might it actually contain a real one? | Picks one deliberately absurd idea (no-screen, $1 version, 7-year-old version) and extracts the principle inside it — a constraint, a form factor, a user assumption worth testing. |
+| When did you last feel the urge to build before defining? What triggered it? | Specific moment (yesterday at 2am, in a call), specific trigger (excitement, fear of falling behind, a flashy demo); connects the urge to a pattern in past projects. |
+| If you had to pick between a crude prototype tomorrow and a polished one in a week, which serves learning more — and which serves your ego? | Names the crude one as serving learning and admits the ego pull of polish; may note one case where polish genuinely matters (e.g., testing aesthetic response). |

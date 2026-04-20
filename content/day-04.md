@@ -34,6 +34,14 @@ Every tool of power has a dark side. Cars kill, electricity electrocutes, the in
 **Before class** (~10 min): skim the main read section below.
 **After class** (~30 min tonight): finish the 3-hallucination screenshot doc and write your 250-word "My personal AI red line" essay.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open vote**: instructor reads the NY-lawyer fake-cases story in 30 seconds, then asks in chat: *"Fineable offense, career-ending, or just embarrassing?"* One-word answers only. Reveal the actual outcome after ten replies land.
+- **00:15 — Think-pair-share**: 90 seconds on *"Which of the six failure modes scares you most for India specifically?"* Each pair names a scenario that would play out differently here than in the US.
+- **00:30 — Live poll**: *"Is it ethical to use ChatGPT for a graded college assignment?"* Options: always / never / depends on the assignment / depends if you disclose. Watch the split — then pick the smallest group and ask them to defend.
+- **00:45 — Stand-and-defend on red lines**: three volunteers read their one-sentence red line aloud. The rest of the room tries to find an edge case that would break it. Volunteer either holds the line or admits the revision.
+- **00:55 — Chat close**: *"One thing I'm warning my family about this week is ___."* (Deepfakes, voice cloning, password paste habits — whatever hit hardest.)
+
 ## Read: The six failure modes every user must know
 
 ### 1. Hallucination — confident lies
@@ -112,6 +120,11 @@ Watch for:
 
 40 minutes. Your job: get ChatGPT, Claude, and Gemini to each invent something confidently wrong. Then document how you did it.
 
+> ⚠️ **If you get stuck**
+> - *The model keeps correctly saying "I don't know" or "I can't verify that"* → you're testing on post-training-cutoff facts, which most 2025+ models now refuse on. Pivot to *obscure but dateable* questions: a 2012 college principal, a 2016 district cricket final, minor local history. Pre-2022 niche facts are the hallucination goldmine.
+> - *You can't tell if the answer is wrong because you don't actually know the real answer* → pick a different topic. The exercise only works on facts *you can verify*. Your hometown, your school, a show you've watched twice — not Wikipedia trivia you just Googled.
+> - *Model backs down the moment you ask "are you sure?"* → that's still useful data — note it. Then try a different angle: ask for a citation URL, then try to open it. A fabricated arxiv link is often the cleanest evidence of a hallucination.
+
 1. Open all three models side by side.
 2. Pick an area you know well — your hometown, your college, your favourite video game, a niche hobby.
 3. Ask each model a very specific question with a factual answer you know. Example: *"Who was the principal of [your college] in 2018?"* or *"What was the score of the 2014 IPL final?"*
@@ -135,8 +148,10 @@ Write a **250-word "My personal AI red line"** essay. Prompt: *"What is one thin
 
 ## Discuss: Live session prompts
 
-- Which of the six failure modes scares you most *for India specifically*?
-- Is it ethical to use ChatGPT for a college assignment that will be graded? Where's the line?
-- If a deepfake of you appeared tomorrow, what's your 10-minute response plan?
-- Should AI companies be legally responsible when their models hallucinate harmfully?
-- Share your personal red line — and challenge one from your peers.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which of the six failure modes scares you most *for India specifically*? | Picks one (deepfakes, privacy, bias) and explains why the *Indian context* makes it worse — UPI scam surface area, low digital literacy among parents, voice-cloning over WhatsApp, vernacular misinformation speed. Not a generic "privacy is bad" answer. |
+| Is it ethical to use ChatGPT for a college assignment that will be graded? Where's the line? | Distinguishes learning from submitting. Names specific uses that are clearly fine (brainstorming, outline critique), clearly not (generating and submitting as original), and the messy middle (grammar cleanup, citation formatting). Proposes a personal rule. |
+| If a deepfake of you appeared tomorrow, what's your 10-minute response plan? | Concrete steps in order: screenshot + timestamp, report to the hosting platform, alert close family directly (they're the target), file a cybercrime complaint at cybercrime.gov.in, draft a public clarification. Not "I'd panic." |
+| Should AI companies be legally responsible when their models hallucinate harmfully? | Separates the fluent from the negligent — did the company ship reasonable guardrails? Compares to car manufacturers, pharma, or platforms like YouTube. Takes a position and names who else shares blame (the user, the deployer). |
+| Share your personal red line — and challenge one from your peers. | Red line is specific enough to be breakable ("I'll never use AI to write a condolence message"), not a platitude ("I'll always be ethical"). Challenge targets the edge case, not the person. |

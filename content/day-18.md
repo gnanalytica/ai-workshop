@@ -35,6 +35,14 @@ An LLM alone knows a lot about the world but nothing about *your* world — your
 **Before class** (~10 min): gather 5–20 real PDFs for your capstone (lecture notes, research papers, internal docs) in one folder.
 **After class** (~30 min tonight): ship a working RAG bot that answers 5 questions from your own PDFs; tune one knob (chunk size, top-K, or embedder) and post the before/after.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: instructor asks plain ChatGPT a question from their own college handbook; watches it hallucinate; asks "what does the model NOT know?"
+- **00:15 — Think-pair-share**: in 90 seconds, name one document you wish AI "knew" and the exact 5 questions you'd ask it.
+- **00:30 — Live embedding demo**: instructor embeds "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess"; class guesses cosine similarity before the reveal.
+- **00:45 — Breakout**: in trios, decide for a capstone corpus — plain RAG, hierarchical chunks, or GraphRAG — and defend the call in 60 seconds.
+- **00:55 — Failure clinic**: one volunteer shares a RAG question that fumbled; class debates whether it's a chunking, retrieval, or generation bug.
+
 ## Read: Embeddings, RAG, and when graphs beat chunks
 
 **Embeddings are coordinates for meaning.** Take any piece of text — a sentence, a paragraph, a whole doc — and an **embedding model** turns it into a list of numbers called a vector, usually 384, 768, or 1536 dimensions long. The magic property: sentences with similar meaning end up close in this high-dimensional space. "The cat sat on the mat" and "A feline rested on the rug" will be neighbours, even though they share almost no words. "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess" will be near each other too.
@@ -108,6 +116,11 @@ Budget 45–60 minutes. Pick whichever path matches your comfort level — all t
 7. Tune **one** knob: chunk size OR top-K OR embedder. Rerun. Was it better?
 8. Optional: run **Graphify** or Microsoft GraphRAG on the same PDFs. Ask a multi-hop question. Did the graph version win?
 
+> ⚠️ **If you get stuck**
+> - *NotebookLM refuses your PDF as "unsupported" or strips content* → the PDF is probably scanned images; run it through an OCR step first (NotebookLM needs real text) or export pages as text.
+> - *pgvector query returns nothing or wildly wrong chunks* → confirm ingest and query used the same embedder AND dimensions match your column type (`vector(384)` must match a 384-dim embedder like `all-MiniLM-L6-v2`).
+> - *Ollama embed calls hang on large PDFs* → batch chunks in groups of 16–32 instead of one mega-call; `nomic-embed-text` is faster than general-purpose chat models for embedding.
+
 ## Quiz
 
 A few mental check-ins: What's the cosine similarity between two unrelated sentences, roughly? Why does chunk overlap matter? When would GraphRAG beat plain RAG — give one concrete capstone example? Why must ingest and query use the same embedder?
@@ -118,8 +131,10 @@ Ship a **working RAG bot** that answers **5 questions** about your capstone doma
 
 ## Discuss: Chunks, graphs, and what your corpus needs
 
-- Did NotebookLM surprise you — in a good or bad way?
-- Which of your 5 questions failed, and was it a chunking problem or a retrieval problem?
-- Where in your capstone would a knowledge graph add real value over chunks?
-- If embeddings are "coordinates for meaning", what would "coordinates for tone" look like?
-- Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Did NotebookLM surprise you — in a good or bad way? | Names a specific question it nailed or fumbled and hypothesizes why (chunking, citation, source weighting). |
+| Which of your 5 questions failed, and was it a chunking problem or a retrieval problem? | Separates the two: did the right chunk exist AND get retrieved? Inspected the top-K before blaming generation. |
+| Where in your capstone would a knowledge graph add real value over chunks? | Names a multi-hop, comparative, or global question that no single chunk could answer alone. |
+| If embeddings are "coordinates for meaning", what would "coordinates for tone" look like? | Extends the analogy — sentiment axes, formality, persona — and admits where the metaphor breaks. |
+| Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions? | Names the guardrails they'd require: source citations, human sign-off, domain-specific evals, refusal on low confidence. |

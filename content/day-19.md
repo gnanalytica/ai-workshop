@@ -34,6 +34,14 @@ You've noticed the pattern by now: every time you open a new chat, you re-explai
 **Before class** (~10 min): open your capstone folder (or create one + `git init`) so Claude Code has something to read.
 **After class** (~30 min tonight): polish CLAUDE.md + AGENTS.md, add 3 slash commands (`/review`, `/plan`, `/explain`), commit, and post a before/after example to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: instructor opens two fresh Claude Code sessions on the same repo — one with a strong CLAUDE.md, one without — asks the same question; class times the difference.
+- **00:15 — Think-pair-share**: in 90 seconds, list the 3 things you re-explain to AI every single chat on your capstone.
+- **00:30 — Live draft**: instructor writes a "Common Pitfalls" section on-screen from a real bug they hit; class nominates the next rule to add.
+- **00:45 — Breakout**: in pairs, critique each other's CLAUDE.md draft — flag anything that's vague, stale, or untestable.
+- **00:55 — Rule-of-the-day vote**: each student shouts their single highest-leverage rule; class votes on the sharpest.
+
 ## Read: From prompting to context engineering
 
 **The shift in one sentence.** Prompting is what you say. Context engineering is what the AI *already knows* before you say anything.
@@ -131,6 +139,11 @@ A RAG chatbot answering student queries from the 300-page handbook PDF.
 7. (Bonus) Add one hook in `.claude/settings.json` — e.g., auto-run your linter after any file edit.
 8. Test it. Open a fresh Claude Code session and ask it to implement one small capstone feature. Notice how much *less* you have to re-explain.
 
+> ⚠️ **If you get stuck**
+> - *Claude Code doesn't seem to "know" my CLAUDE.md rules* → confirm the file is in the repo root (or `.claude/CLAUDE.md`) and that you opened Claude Code *inside* that directory; it's scoped by cwd.
+> - *Slash command doesn't trigger when I type `/review`* → check the filename is exactly `.claude/commands/review.md` (lowercase, no spaces) and that it's a plain markdown prompt, not JSON.
+> - *Hook fires but silently fails or blocks every tool call* → tail the hook's stderr; a non-zero exit code from a `PreToolUse` hook blocks the action by design, so guard your script and log errors to a file.
+
 ## Quiz
 
 Four to ponder: What's the difference between CLAUDE.md, AGENTS.md, and `.cursorrules`? Why is 2000 lines of CLAUDE.md worse than 200? What's a slash command actually — magic or just a saved prompt? What's a hook, and when would you choose a hook over a rule in CLAUDE.md?
@@ -141,8 +154,10 @@ Ship a working **CLAUDE.md** + **AGENTS.md** + **3 custom slash commands** for y
 
 ## Discuss: Leverage you can't unsee
 
-- Which single rule in your CLAUDE.md do you expect to save the most hours?
-- Which section (Architecture? Pitfalls? Slash Commands?) was hardest to write — and why?
-- Should CLAUDE.md be checked into git publicly, or does it leak too much project detail?
-- What would a team-wide "house style" CLAUDE.md look like across all projects?
-- When would a hook be a better tool than a CLAUDE.md rule?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which single rule in your CLAUDE.md do you expect to save the most hours? | Quotes the exact rule (not a paraphrase), names the past pain it prevents, and explains how you'd know if the AI violated it. |
+| Which section (Architecture? Pitfalls? Slash Commands?) was hardest to write — and why? | Picks one, explains whether the hard part was knowing the truth, writing it tersely, or keeping it current. |
+| Should CLAUDE.md be checked into git publicly, or does it leak too much project detail? | Distinguishes public OSS repos from internal repos, notes what belongs in user-level vs project-level, and calls out secrets risk. |
+| What would a team-wide "house style" CLAUDE.md look like across all projects? | Names 2–3 cross-project invariants (testing stack, commit style, review checklist) and where it would extend vs override per-project files. |
+| When would a hook be a better tool than a CLAUDE.md rule? | Picks a case where a rule is easy to forget or skip (formatting, secret-scanning) and justifies harness-enforcement over memory. |

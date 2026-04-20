@@ -35,6 +35,14 @@ Yesterday you learned the rails. Today you drive. We put a real LLM on your lapt
 **Before class** (~10 min): check your laptop RAM and skim the model-size table so you know which GGUF to pull.
 **After class** (~30 min tonight): finish the 10-row eval set for your capstone task, run all three prompt variants, and post win rates to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open bet**: instructor runs the same prompt on Qwen 1.5B and Groq Llama 3.3 70B side by side; class votes which answer is "better" before the reveal.
+- **00:15 — Think-pair-share**: in 90 seconds, tell your neighbour which task from your capstone would be "shockingly fine" on a 2B local model.
+- **00:30 — Live poll**: RAM check — 4GB / 8GB / 16GB+ — instructor recommends a model per hand raised.
+- **00:40 — Breakout**: in trios, rewrite one zero-shot prompt into a CoT + self-critique variant in 4 minutes; share the sharpest rewrite with the room.
+- **00:55 — Win-rate reveal**: instructor shows a real Langfuse dashboard with three prompt variants; class predicts the winner before the numbers drop.
+
 ## Read: Local LLMs, prompting patterns, and evals
 
 Let's unpack three ideas that make you dangerous: quantization (so models fit on your laptop), prompt patterns (so small models punch above their weight), and evals (so you know which prompt actually works).
@@ -107,6 +115,11 @@ ollama run qwen2.5:1.5b "Explain RAG in 2 sentences."
 7. Run each variant across all 10 rows — either via Open WebUI manually (tedious but educational) or via Langfuse's prompt management UI. Log every run.
 8. Score each output 1 (pass) or 0 (fail). Compute a win rate per variant. Take a screenshot of the Langfuse trace view. Crown a winner.
 
+> ⚠️ **If you get stuck**
+> - *`ollama pull` fails or hangs on a slow network* → pull a smaller variant (`qwen2.5:0.5b`), or kill and resume — Ollama resumes partial downloads automatically.
+> - *Open WebUI can't see your Ollama model / model dropdown is empty* → confirm Ollama is actually running (`curl http://localhost:11434/api/tags` should list your models); on Docker, set `OLLAMA_BASE_URL=http://host.docker.internal:11434`.
+> - *Langfuse traces aren't appearing* → double-check you pasted both the public AND secret key, and that your region (EU vs US) in the SDK host matches the region you picked at signup.
+
 ## Quiz
 
 Four quick ones: Why is `Q4_K_M` the most common quantization? What does chain-of-thought actually add to a prompt — tokens, structure, or both? If Groq is faster and free, why bother with local Ollama? What's the minimum number of rows that makes an eval meaningful for you, honestly?
@@ -117,8 +130,10 @@ Build a **10-row eval set** on a task tied to your capstone. Run **three prompt 
 
 ## Discuss: When small wins and when big wins
 
-- Which task surprised you with how well a small local model handled it?
-- Did CoT help or just add latency? When was few-shot worth the token cost?
-- Share one eval row that broke all three prompts — what does that tell you?
-- Would you deploy a 2B local model to real users, or always route to Groq/Claude?
-- What's the smallest eval set you'd trust to ship a prompt change to production?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which task surprised you with how well a small local model handled it? | Names the task, the exact model + quantization, and one quality dimension (latency, format, tone) where it matched a frontier model. |
+| Did CoT help or just add latency? When was few-shot worth the token cost? | Cites a measured delta from the eval (e.g. "+20% on classification, +3s latency"), not a vibe. |
+| Share one eval row that broke all three prompts — what does that tell you? | Describes the row, proposes a hypothesis (ambiguity, domain jargon, long input), and suggests which prompt pattern might close the gap. |
+| Would you deploy a 2B local model to real users, or always route to Groq/Claude? | Takes a position, acknowledges the latency / privacy / cost trade-off, and names a specific user-facing task boundary. |
+| What's the smallest eval set you'd trust to ship a prompt change to production? | Gives a number with a reason (variance, coverage of edge cases) and mentions when you'd augment with LLM-as-judge or human review. |

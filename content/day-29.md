@@ -37,6 +37,14 @@ Say this out loud: "I will not add a feature today." Good. Now let's make your e
 **Before class** (~10 min): have your demo URL loaded in one tab and your pre-recorded backup in a second tab; hook, story, and ask written out as three paragraphs.
 **After class** (~30 min tonight): apply the 3 line-level fixes from feedback, re-record the final rehearsal video, confirm your showcase entry is live with opt-in ON, and sleep early — demo day tomorrow.
 
+### In-class moments (minute-by-minute)
+
+- **00:00 — Setup**: projector/screen share confirmed, rehearsal order drawn live, timer on screen visible to all.
+- **00:05 — Team 1 dry-run (4 min)** → **00:09 — 2 min feedback**: one "keep," one "cut," one "sharpen" from peers; instructor adds a line-level rewrite.
+- **00:11 — Team 2 dry-run (4 min)** → **00:15 — 2 min feedback**: same structure; timer is strict — when it buzzes, the hook has to have landed.
+- **00:17 — Team 3 dry-run → 2 min feedback**; **00:23 — Team 4 dry-run → 2 min feedback**; **00:29 — Team 5 dry-run → 2 min feedback**. Rotate through remaining teams in the same 6-minute slots.
+- **00:50 — Showcase polish Q&A**: page live, opt-in ON, URL/screenshot/tagline confirmed. Final go/no-go per team before tomorrow.
+
 ## Read: Stage-craft for Four-Minute Demos (550 words)
 
 A demo is not a product walkthrough. It's a story with a product in it. Four minutes, three beats: hook, story, ask.
@@ -90,6 +98,11 @@ Live walkthrough of a full demo with mistakes and fixes, then a critique of two 
 3. **Dry run #2** — record again. This one goes to the cohort (10 min).
 4. **Showcase page** — toggle your entry live on showcase.html, confirm URL, screenshot, 1-line tagline, opt-in public flag ON (3 min).
 
+> ⚠️ **If you get stuck**
+> - *Loom/phone recording cuts your screen share or audio* → record screen and audio in two separate files and sync in Descript; don't burn rehearsal time debugging one tool on demo-minus-one.
+> - *Your live API freezes mid-rehearsal* → that is exactly why you pre-record the slow parts; swap to the backup tab now and practice the graceful handoff line ("of course, on stage — here's the recording") so it's muscle memory tomorrow.
+> - *You keep running over 4 minutes* → cut the second half of the story, not the hook or the ask; the middle is where bloat hides, and the panel will never miss a feature they didn't know existed.
+
 Afternoon: final capstone polish. No new features. Only fixes and polish.
 
 ## Quiz
@@ -108,4 +121,9 @@ Afternoon: final capstone polish. No new features. Only fixes and polish.
 
 ## Discuss: Your Hook, Workshopped
 
-Post your 30-second hook as a single paragraph. Read three others. Comment on each with one line: what landed, what to cut, what to sharpen. The cohort that workshops hooks together demos better together.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Post your 30-second hook as a single paragraph. | Opens with a human and a specific pain (named cost, named moment), not a product category. Reads in 25-30 seconds when spoken aloud. No "Hi, I'm X and I built Y." |
+| Read three others and comment with "what landed, what to cut, what to sharpen." | Each of the three comments quotes the exact phrase that worked or didn't. Concrete rewrites beat vague praise — "swap 'users' for 'my mother'" is the bar. |
+
+The cohort that workshops hooks together demos better together.

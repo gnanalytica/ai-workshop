@@ -52,6 +52,14 @@ Everything in between is scaffolding to get you there.
 **Before class** (10 min): skim the roadmap table above so you know where we're going.
 **After class** (~30 min tonight): finish reading below + watch the first 30 min of Karpathy's video + write your 150-word reflection.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Fist-of-5 on AI confidence**: on camera, hold up 1–5 fingers for "how confident am I I actually understand what's inside ChatGPT." Instructor calls on one 5 and one 1 for a sentence each. Sets the honesty baseline.
+- **00:15 — Think-pair-share**: 90 seconds in breakout pairs on "explain 'tokens' to your parents in under 60 seconds." One pair reports back; the room rewrites the weakest line together.
+- **00:30 — Live poll**: launch a poll in the chat — *"Which felt most human: ChatGPT / Claude / Gemini / 'they all felt the same'?"* Watch the bars move in real time, call out whichever option shocks you, ask one voter on each side to defend their pick.
+- **00:45 — Pick-a-corner debate**: "An LLM is just autocomplete" — agree (left side of Zoom gallery), disagree (right side), unsure (middle). Two volunteers per side, 45 seconds each, no slides. Instructor keeps time hard.
+- **00:55 — One-line close**: every student drops one sentence in chat: *"The thing I'll remember from today is ___."* No editing, no deleting.
+
 ## Read: What AI is — and what AI isn't
 
 Half your peers will quote Elon Musk about AI destroying the world. The other half will claim AI wrote an entire Flipkart clone for them in 2 hours. Both are lying (or confused). Here's the actual shape.
@@ -130,6 +138,11 @@ Watch for:
 
 Three AI tools. One prompt. Spot the personality differences. Works great as a pair activity — one person drives, one observes, swap halfway.
 
+> ⚠️ **If you get stuck**
+> - *Claude or Gemini asks for a phone number / isn't available in your region* → sign in with a different Google account or use the Gemini-in-Google-Search sidebar; if Claude still blocks, skip to a second ChatGPT run with temperature nudged via "be more creative" phrasing and note the blocker in your doc.
+> - *Tiktokenizer shows a different token count than you expected* → double-check the model dropdown (GPT-4o vs Llama tokenise differently) and paste the exact prompt, not a reworded one. Token counts are model-specific, not universal.
+> - *All three answers look suspiciously similar* → you probably gave a very generic prompt. Add one specific detail ("7.8 CGPA", "CSE", "Bengaluru") and re-run — personality gaps show up when there's something to personalise to.
+
 1. Open all three chat tools from the "Hands-on" box above. Sign up with your college email if needed — free tiers are enough.
 2. Copy this prompt exactly: *"You are my college placement mentor. I'm a 3rd-year CSE student with a 7.8 CGPA and one internship at a startup. List the 5 highest-leverage things I should do in the next 90 days."*
 3. Paste into ChatGPT. Save the reply in a Google Doc labelled "ChatGPT".
@@ -153,8 +166,10 @@ The goal isn't a great essay. It's capturing your honest baseline so Day 30 feel
 
 ## Discuss: Live session prompts
 
-- Which of the three models *felt* most human to you — and why do you think that is?
-- If an LLM is "just autocomplete," why does it feel like it understands you?
-- Name one task you'd still trust a human over any AI for, and defend it.
-- How would you explain "tokens" to your parents in under 60 seconds?
-- If AI is wrong 20% of the time, where in your life is that *already* acceptable, and where is it absolutely not?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which of the three models *felt* most human to you — and why do you think that is? | Specific model name + a named behaviour ("Claude hedged before answering", "Gemini kept citing links") + a guess at why (RLHF style / training data / system prompt). Not just "vibes." |
+| If an LLM is "just autocomplete," why does it feel like it understands you? | Distinguishes pattern-match from comprehension; mentions the priors the model already holds about English / your topic; concedes there's an illusion but explains why the illusion is *useful*. |
+| Name one task you'd still trust a human over any AI for, and defend it. | A concrete task (not "creativity") + a concrete reason tied to judgment, stakes, or accountability — e.g., "picking which grandparent goes into hospice care; AI has no skin in the game." |
+| How would you explain "tokens" to your parents in under 60 seconds? | No jargon. One analogy they already know (SMS chunks, ration cards, pages in a book). Ends with *why it matters to them* — cost, speed, or length limits. |
+| If AI is wrong 20% of the time, where in your life is that *already* acceptable, and where is it absolutely not? | Two specific zones with a clear line between them. "Brainstorming gift ideas: fine. Drug dosage for my dog: never." Shows awareness that stakes, reversibility, and verifiability decide the line. |

@@ -37,6 +37,16 @@ Today's reading is about demo craft: the 30-second hook, the 2-minute story, the
 **Before class** (~10 min): rehearse your 3-min demo out loud once, test your live URL on a friend's phone.
 **After class** (~30 min tonight): file the weekly deliverable: demo recording + 3 peer critiques received.
 
+### In-class moments (minute-by-minute)
+
+Structure of each demo slot in the rotation:
+
+- **00:00 — Team setup**: 30 seconds to share screen, confirm audio, load live URL.
+- **00:07 — Demo starts**: 30-sec hook → 2-min story with live product → 30-sec ask. Timer visible on screen.
+- **00:10 — Panel Q&A opens**: one panelist asks the "shape-of-problem" question first.
+- **00:11 — Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
+- **00:13 — Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
+
 ## Read: Demo craft, critique handling, and turning feedback into action
 
 ### Why demos matter more than decks
@@ -116,6 +126,11 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 6. Record your own demo live for your portfolio.
 7. After all demos, step away for 30 minutes. Come back and write the one-page action doc.
 
+> ⚠️ **If you get stuck**
+> - *Live URL stops responding mid-demo (cold start or rate limit)* → have a 30-second Loom backup open in another tab; narrate "here's what it does live" while you cut to the recording — never freeze on a spinner.
+> - *You run over 3 minutes and panel cuts you off before the ask* → pre-write the ask into the last slide so it's visible even if spoken-you gets cut; rehearse with a hard timer, not a vibes timer.
+> - *A panelist delivers confused critique and you start explaining the whole product again* → stop. Ask "what part of the demo made that unclear?" and move on. Re-explaining in-room is the single biggest time sink today.
+
 ## Quiz
 
 1. What are the three jobs of a 30-second hook?
@@ -130,4 +145,8 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 
 ## Discuss: The critique that stung — and was right
 
-Share the single piece of critique today that stung the most and, on reflection, was also correct. What made it sting? What will you change because of it? The bravest posts win a shout-out on Monday.
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Share the single piece of critique today that stung the most and, on reflection, was also correct. | Quotes the critique verbatim with attribution. Names the specific feature, flow, or claim it targeted — no paraphrasing to soften it. |
+| What made it sting? | Honestly diagnoses the reaction — ego, sunk cost, a belief you'd defended before — rather than blaming tone. One or two sentences of self-awareness beats a paragraph of defense. |
+| What will you change because of it, and how will you know it worked? | Commits to one scoped change for next week plus the signal (a metric, a user moment, a follow-up demo reaction) that will prove the change landed. |

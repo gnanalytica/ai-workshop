@@ -34,6 +34,14 @@ Every capstone problem lives inside a system — a tangle of feedback loops, inc
 **Before class** (~10 min): jot 5 variables (people, incentives, delays) that surround your capstone problem.
 **After class** (~30 min tonight): finalise your causal-loop diagram + a 60-second SCQA pitch and submit both via the dashboard.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open**: name one variable that secretly drives your capstone problem but nobody talks about — shout it out, one word.
+- **00:15 — Think-pair-share**: 90 seconds — draw your partner's simplest loop (3 nodes, 3 arrows) from their verbal description; compare to their mental model.
+- **00:30 — Polarity poll**: instructor names pairs of variables ("anxiety" and "inbox-checking"); class signals + or − with hands; defend any disagreement in one sentence.
+- **00:45 — Leverage debate**: two volunteers argue for different leverage points on the same loop (parameter vs. paradigm); class votes which would move the system more in 30 days.
+- **00:55 — Pitch-relay**: pair up, deliver your SCQA pitch in 60 seconds; partner has to repeat the Complication back from memory — if they cannot, the Complication is not sharp enough.
+
 ## Read: Loops, leverage points, and stories that stick
 
 **Why systems thinking, now?** By Day 13 you have heard users describe their pain. Pain is a *symptom*. Systems thinking asks what *pattern of relationships* produces the pain — and which point in that pattern is worth intervening in. Most capstones fail not because the solution is bad but because it intervenes at a weak leverage point. A stronger diagram saves you weeks.
@@ -83,6 +91,11 @@ https://www.youtube.com/embed/_EMnnq3teEs
 7. **Run Claude (10 min).** Paste your pitch using today's Prompt of the Day. Pick the strongest of the three versions it generates — or merge.
 8. **Pair and deliver (10 min).** Pair with a classmate. Deliver your pitch verbally in 60 seconds. Let them time you. Swap. Give one note: where did the Complication land or fail?
 
+> ⚠️ **If you get stuck**
+> - *Your diagram has no closed loops — only one-way arrows from cause to symptom* → you have drawn a tree, not a system; ask "what does the symptom cause?" and follow that arrow back to an earlier node to close the loop.
+> - *You cannot pick between two leverage points* → apply Meadows' ladder: parameters are weakest, paradigms strongest. If both candidates are parameters, neither will cascade — look one level up for a structure or a goal.
+> - *Your SCQA Complication is not actually surprising (it just restates the Situation)* → pull the Complication directly from a Day 13 interview quote that contradicted your own prior belief; if nothing did, your interviews were polite — not your pitch's fault.
+
 ## Quiz
 
 Three sanity checks. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
@@ -93,8 +106,10 @@ Submit three artifacts to the cohort channel: (1) a screenshot of your Excalidra
 
 ## Discuss: Where is the real leverage?
 
-- Which loop in your diagram was the biggest surprise? Did you know it was there before you drew it?
-- Is your leverage point a parameter, a structure, or a paradigm? Which level were you tempted to default to, and why?
-- Whose interest in your system is *not* aligned with solving the problem? (Every system has one.)
-- Which version of your pitch — analytical, emotional, contrarian — felt most like you? Which would travel furthest through a stranger?
-- What fact in your pitch would make a sceptic stop scrolling?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which loop in your diagram was the biggest surprise? Did you know it was there before you drew it? | Names the specific loop (3+ nodes), describes what it reinforces or balances, and admits whether drawing it changed your view of the problem or just confirmed it. |
+| Is your leverage point a parameter, a structure, or a paradigm? Which level were you tempted to default to, and why? | Classifies the point using Meadows' ladder, admits the default (usually parameter) and the pull toward it (easier to build, easier to explain), and why the chosen level actually moves the loop. |
+| Whose interest in your system is *not* aligned with solving the problem? (Every system has one.) | Names a specific actor — a platform, a gatekeeper, an incumbent, a user subgroup — and explains the incentive that keeps the problem alive. Avoids vague villains. |
+| Which version of your pitch — analytical, emotional, contrarian — felt most like you? Which would travel furthest through a stranger? | Distinguishes authenticity from reach; acknowledges they may differ. The strong answer picks the travelling version even if it's uncomfortable. |
+| What fact in your pitch would make a sceptic stop scrolling? | A concrete number, a counterintuitive behaviour, or a quote from a user — sourced, specific, and surprising. "AI is growing fast" does not qualify. |

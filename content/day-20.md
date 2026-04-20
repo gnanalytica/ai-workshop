@@ -35,6 +35,14 @@ Here's the under-appreciated truth about AI in 2026: the biggest ROI isn't chatb
 **Before class** (~10 min): sign up for n8n.cloud free tier and pick one boring task you actually do every week.
 **After class** (~30 min tonight): finish the n8n flow, wire up one browser-use automation you hate doing manually, record a 60-second Loom, and post it to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open math**: instructor writes "4 min per ticket × 40 tickets × 5 days = ?" on the board; class shouts the hours saved per week.
+- **00:15 — Think-pair-share**: in 90 seconds, tell your neighbour the single most boring task in your week and what triggers it.
+- **00:30 — Live build**: instructor drags the Google Form trigger, AI Agent, and Slack nodes on-screen; class calls out what prompt goes into the AI node.
+- **00:45 — Debate**: API-first purist vs browser-agent pragmatist — two volunteers, 2 minutes each, on a task only reachable behind a login.
+- **00:55 — Dry-run check**: each student declares which node in their flow they'd wrap in human-in-the-loop approval first.
+
 ## Read: APIs, n8n, and browser agents
 
 **Automation is the 80% practical use case.** Ask any working professional where AI is actually saving them time this year. It's rarely "I had a deep chat with Claude". It's "every morning at 9 AM, an agent reads yesterday's support tickets, tags them by priority and topic, drafts responses for the routine ones, and posts a summary to Slack." That's not a chatbot. It's a **workflow**: trigger → data fetch → AI reasoning → action.
@@ -117,6 +125,11 @@ Budget 60 minutes. Pick boring tasks you actually do.
 7. Now switch to **browser-use**. Install via the quickstart at docs.browser-use.com. Pick one task you hate — "download attendance from college portal", "scrape job listings from careers page", "check Amazon price every morning".
 8. Give browser-use the task in plain English. Watch it actually operate the browser. Note what it got right and where a human still needs to help.
 
+> ⚠️ **If you get stuck**
+> - *n8n AI Agent node throws 401 / "invalid API key"* → the credential is bound to the node; open "Credentials" in the node panel and re-paste the Groq or OpenAI key (n8n doesn't auto-sync environment variables).
+> - *Webhook trigger never fires* → you're probably testing on the "Test URL" but your producer is hitting the "Production URL" (or vice versa); they are different URLs in n8n until the workflow is activated.
+> - *browser-use fails on a login page (CAPTCHA or 2FA loop)* → browser agents can't solve CAPTCHAs; run a manual first-time login with persistent browser context, then let the agent reuse the stored session.
+
 ## Quiz
 
 Four: What's the difference between a trigger and a webhook? When would you reach for browser-use instead of an HTTP Request? Why is "dry-run mode" the first thing you should configure? Why would you pick Groq over GPT-5 for a flow running 10k/day?
@@ -127,8 +140,10 @@ Ship **one working n8n flow** relevant to your capstone — a real trigger, a re
 
 ## Discuss: What you'll never do manually again
 
-- Which manual task in your week is first on the chopping block?
-- What went wrong in your n8n flow the first time — data shape, auth, or the AI node?
-- When is browser-use genuinely useful vs. a fragile hack?
-- How do you sleep at night giving an agent access to your email or Slack?
-- Where does automation stop being helpful and start being creepy or unsafe?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which manual task in your week is first on the chopping block? | Names the task, its frequency, the trigger, and a rough minutes-saved-per-week number — not just "email stuff". |
+| What went wrong in your n8n flow the first time — data shape, auth, or the AI node? | Picks one, describes the red-node error message, and how they debugged it (inspect JSON, pin test data, retry). |
+| When is browser-use genuinely useful vs. a fragile hack? | Cites a use-case with no API available AND low-frequency tolerance for flakiness; contrasts with cases where it's the wrong tool. |
+| How do you sleep at night giving an agent access to your email or Slack? | Names concrete guardrails: scoped OAuth, dry-run, allow-list of recipients, rate limits, audit logs. |
+| Where does automation stop being helpful and start being creepy or unsafe? | Draws a line around consent, scale, and reversibility — gives one concrete example that crosses it. |

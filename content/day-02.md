@@ -34,6 +34,14 @@ Yesterday you met three American chatbots. Today you meet twenty more — Chines
 **Before class** (10 min): skim the table below about why open matters.
 **After class** (~30 min tonight): finish Task B of the lab (Indian-language apology), submit the 1-page comparison doc.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Raise-a-finger cold open**: "How many open-source LLMs can you name in 10 seconds?" Count fingers on camera. Instructor calls on the highest number to list them — then the lowest to react.
+- **00:15 — Think-pair-share**: 90 seconds on *"Would you trust a Chinese open model with your startup's customer data? Why or why not?"* Each pair picks one worry and one mitigation to report back.
+- **00:30 — Live poll**: drop a poll — *"Sarvam or Krutrim: which bet is bolder?"* Watch the split. Ask one voter from each side to name the thing that would flip them.
+- **00:45 — Pick-a-corner**: "India needs its own LLM" — corner 1 agree, corner 2 "fine-tune is enough", corner 3 "doesn't matter, use GPT." 45 seconds each to defend. Anyone can switch corners mid-debate — and has to say why.
+- **00:55 — One-line chat close**: *"The model I'm downloading / trying tonight is ___ because ___."*
+
 ## Read: Closed vs open — and why "open" is the word that matters
 
 An AI model is basically a huge file of numbers (the weights) plus a little code to run it. There are two flavours:
@@ -97,6 +105,11 @@ Watch for:
 
 40 minutes. Put three open models head-to-head on two realistic tasks. Works best in pairs — one drives, one observes, swap at the halfway mark.
 
+> ⚠️ **If you get stuck**
+> - *LM Arena's Direct Chat is rate-limited or the model dropdown is missing Qwen* → fall back to the "Arena (battle)" mode and keep hitting "new round" until Qwen is one of the two anonymous models, or open the Qwen chat directly at chat.qwen.ai. Note the substitution in your doc.
+> - *Sarvam playground rejects your phone number / OTP doesn't arrive* → try an alternate email signup, or pair up with a classmate who's already in and screen-share. Don't skip Task B — the Indian-language comparison is the whole point.
+> - *Your mother tongue's script isn't showing up properly (boxes/question marks)* → that's usually a font issue on your OS, not the model. Paste the output into a Google Doc — Docs renders Indic scripts reliably even when your browser doesn't.
+
 1. Open LM Arena (`lmarena.ai`). Click "Direct Chat" and pick `qwen2.5-72b-instruct` from the dropdown.
 2. Open Sarvam.ai playground in a second tab. Sign up with phone/email.
 3. Open a third tab with any one of: DeepSeek chat, Kimi chat, or GLM chat.
@@ -118,8 +131,10 @@ Take the Lab doc and expand it. Rank the 3 open models you tested on both tasks 
 
 ## Discuss: Live session prompts
 
-- If open models are almost as good and free — why does OpenAI still make billions?
-- Sarvam or Krutrim: which bet is safer, and which is bolder?
-- Would you trust a Chinese open model with your startup's customer data? Why or why not?
-- Does India *need* its own LLM, or is fine-tuning existing ones enough?
-- Which model surprised you most in the lab, and what does that tell you about benchmarks?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| If open models are almost as good and free — why does OpenAI still make billions? | Names at least two moats that aren't raw model quality: distribution (ChatGPT app), integration (Microsoft, enterprise), reliability/SLA, and the cost of running a 400B model yourself. "Free to download" ≠ "free to serve." |
+| Sarvam or Krutrim: which bet is safer, and which is bolder? | Treats "safer" and "bolder" as different axes. Safer = narrower focus (Indian languages, existing revenue via Meesho). Bolder = full-stack (silicon + model + apps). Picks and defends, doesn't hedge. |
+| Would you trust a Chinese open model with your startup's customer data? Why or why not? | Separates the *weights* (which you can inspect and run locally) from the *hosted API* (which you cannot). A strong answer says "yes if I self-host Qwen, no if I hit a chat.qwen.ai endpoint with user PII." |
+| Does India *need* its own LLM, or is fine-tuning existing ones enough? | Distinguishes sovereignty (who controls the off-switch) from capability (does it work in Tamil). Acknowledges fine-tuning solves capability cheaper, but not sovereignty. |
+| Which model surprised you most in the lab, and what does that tell you about benchmarks? | Names the specific model + the specific task where it over- or under-performed, and generalises to: "leaderboard rank isn't the same as 'good at my job.'" |

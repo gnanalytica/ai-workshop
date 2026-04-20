@@ -34,6 +34,13 @@ Yesterday you built a thinking partner. Today you give it a library card. By the
 **Before class** (~10 min): pick one capstone domain and write a one-line problem statement.
 **After class** (~30 min tonight): finalize `brief-<topic>.md` with 5+ inline citations and post the NotebookLM audio overview to the cohort channel.
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Raise-a-finger vote**: "In the last month, how many times did you click past page 1 of Google?" Zero, one, or more — we map the room's search habits.
+- **00:15 — Think-pair-share**: in 90 seconds, each person names one factual claim they once quoted from ChatGPT without checking. Confess out loud; we set the tone for citation discipline.
+- **00:30 — Live citation audit**: I drop a Perplexity answer on screen with four citations. Cohort clicks each in parallel — we vote thumbs up/down on whether the source actually supports the claim.
+- **00:45 — Breakout of three**: each trio runs the DIY Deep Research pattern (5 sub-questions → 5 searches → synthesis) on one capstone question. One team reports back what the synthesis caught that single-shot search missed.
+
 ## Read: Search is dead. Long live grounded research.
 
 For twenty years, research meant: Google, click ten blue links, skim ten tabs, take notes. The bottleneck was not finding information; it was synthesizing it. In 2026 that synthesis step is free.
@@ -85,6 +92,11 @@ Time: 45 minutes. Artifact: a 1-page Markdown brief with 5+ citations.
 7. Open https://gemini.google.com and toggle on **Deep Research**. Submit a refined version of your question. Let it run in the background.
 8. Combine the Perplexity answer, the NotebookLM synthesis, and the Deep Research excerpts into a single 1-page Markdown brief. Every factual claim must carry a citation. Save as `brief-<topic>.md`.
 
+> ⚠️ **If you get stuck**
+> - *Perplexity Pro Search hits the daily free-tier cap mid-lab* → switch to plain Perplexity for follow-up sub-queries, or run the same question on Gemini with grounding on; save Pro Search for the single hardest question.
+> - *NotebookLM keeps citing only one of your five sources* → your other sources are probably too similar or too short; swap in one contrasting source (a critical blog post, a competing paper) and re-ask — it forces the model to triangulate.
+> - *A citation link 404s or paywalls* → do not quote the claim. Either find a second source that makes the same point, or rewrite the sentence as "one 2025 Perplexity synthesis suggested X" and flag it as unverified in your brief.
+
 ## Quiz
 
 Four questions to check the reflex. What is the difference between Perplexity Pro Search and Deep Research? Why does NotebookLM refuse to answer from the open web, and when is that a feature rather than a bug? What are the four steps of the hallucination check? And which of today's tools would you use to map the 30 most-cited papers around a niche research question?
@@ -99,8 +111,10 @@ Post to the cohort channel:
 
 ## Discuss: Trusting the machine
 
-- Did any of your tools disagree on a factual claim? Which did you believe and why?
-- When is it okay to skip clicking citations, and when is it negligent?
-- Did the audio overview change how you understood your own sources?
-- Which capstone ideas got stronger after the research, and which got killed?
-- Is AI search replacing Google for you yet, or are you still hedging?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Did any of your tools disagree on a factual claim? Which did you believe and why? | Quotes both claims verbatim, names the sources behind each, and describes the tiebreaker you used (recency, publisher credibility, whether the source actually says what was claimed). "I just went with Perplexity" is not enough. |
+| When is it okay to skip clicking citations, and when is it negligent? | Draws a line based on stakes (casual curiosity vs. capstone brief vs. medical/legal/financial). Mentions at least one failure mode you personally hit today when you skipped a click. |
+| Did the audio overview change how you understood your own sources? | Points to a specific moment in the podcast (disagreement, emphasis, reframe) that reorganized your take. If it did not change anything, explains why — maybe your sources were too aligned. |
+| Which capstone ideas got stronger after the research, and which got killed? | Names one idea whose scope got smaller and sharper, and one that dies because research showed it is solved, saturated, or unfundable for a student. Shows you updated your priors. |
+| Is AI search replacing Google for you yet, or are you still hedging? | Honest about the hedge: identifies the query types where Google still wins (navigational, local, very recent niche) and the ones that permanently moved. No all-or-nothing declarations. |

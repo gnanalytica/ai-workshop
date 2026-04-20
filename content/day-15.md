@@ -33,6 +33,15 @@ This is Capstone Milestone 2 — checkpoint day. By the end of today you will ha
 **Before class** (~10 min): bring your Day 11-14 artifacts (problem statement, interview insights, causal loop, pitch) — all in one doc.
 **After class** (~30 min tonight): lock your 1-page spec + wireframes and submit via dashboard (this is a cohort milestone).
 
+### In-class moments (minute-by-minute)
+
+- **00:05 — Check-in shout**: one sentence each — "what I am locking today" — no hedges, no "probably."
+- **00:10 — Ruthless cut**: each pair picks 1 item on their "will build" list that secretly belongs on the NOT list; write it on a sticky and hand it to their partner.
+- **00:25 — Studio checkpoint**: instructor roams; every team shows their Crazy 8s and gets one 30-second note before returning to heads-down wireframing.
+- **00:35 — Walk-and-feedback**: walk to another pair, give 1 sentence of feedback on their wireframes ("your primary action is buried on screen 2"), then walk back.
+- **00:50 — Spec-on-a-page gate**: hold your spec up at arm's length — if it spills past page 1, you cannot share it yet; cut for 5 minutes.
+- **00:55 — Witness line**: each person says out loud "I am shipping X to Y by Z" and two cohort members acknowledge; that is the lock.
+
 ## Read: The 1-day sprint, what "shipped" means, and the discipline of the spec
 
 Jake Knapp's *Sprint* compresses months of product argument into five days. You do not have five days. You have one. The good news: a compressed sprint still captures 80% of the value if you are ruthless about scope. Here is the 1-day version, sized for your capstone.
@@ -91,6 +100,11 @@ https://www.youtube.com/embed/K2vSQPh6MCE
 7. **Export and lock (10 min).** Export the wireframes as PNG and the spec as PDF. These are frozen for the week.
 8. **Publicly commit.** Post both to the cohort channel with the message: "This is what I am shipping. Witness me." Tag 2 cohort members to hold you to it.
 
+> ⚠️ **If you get stuck**
+> - *Your spec bleeds onto page 2 and you cannot decide what to cut* → delete the "Week-by-week plan" first (it is the most re-writable), then strip adjectives from "What it does"; if still overflowing, your NOT-list is too short — move two items across.
+> - *Your Figma wireframes are turning into polished mockups with colour and real fonts* → revert to grey boxes immediately; colour is a signal you are decorating; the test is "could I redraw this on a napkin in 2 minutes?"
+> - *Your success metric reads like "validate engagement" instead of a number* → force it into the form "N users complete X in Y days"; if you cannot name N, X, and Y, you do not have a metric, you have a hope.
+
 ## Quiz
 
 Three final checks before the weekend. Can you name three things on your NOT-list and explain *why* each one is excluded? Can you state your 14-day success metric as a number? Can you describe the user flow through your wireframes in under 45 seconds without referencing the Figma file? If any answer wobbles, iterate tonight — not Monday.
@@ -103,8 +117,10 @@ This is Milestone 2. Week 4 begins on Monday and you will build — but only aga
 
 ## Discuss: What did you cut, and why did it hurt?
 
-- Which feature was hardest to move from your "will build" list to your "will NOT build" list — and what does that reveal about your attachment?
-- Is your success metric genuinely measurable in 14 days, or is it a comfortable proxy?
-- Which screen in your wireframes took the longest — and is it the most important one, or the one you were most afraid of?
-- What is the single assumption in your spec that, if false, kills the project? How will you test it first?
-- Re-read your Day 11 sticky note. What changed in one week — and what does that change say about how you frame problems now?
+| Prompt | What a strong answer sounds like |
+|---|---|
+| Which feature was hardest to move from your "will build" list to your "will NOT build" list — and what does that reveal about your attachment? | Names the feature, admits the emotional pull (cool demo, pet peeve, investor-friendly), and accepts the cut without hedging. Bonus if it was the one you most wanted to keep. |
+| Is your success metric genuinely measurable in 14 days, or is it a comfortable proxy? | States the metric as a number with a deadline, then stress-tests it: who collects the data, what counts as a "user," what failure would look like. Admits if it's a proxy and names a sharper one. |
+| Which screen in your wireframes took the longest — and is it the most important one, or the one you were most afraid of? | Distinguishes difficulty-because-important from difficulty-because-avoided. The strong answer admits avoidance when that's the truth and names what the fear was (complexity, empty states, the "magic" step). |
+| What is the single assumption in your spec that, if false, kills the project? How will you test it first? | States the assumption crisply ("users will paste transcripts into the tool without prompting"), names a cheap test (one call, one landing page, one Wizard-of-Oz), and a deadline before Day 18. |
+| Re-read your Day 11 sticky note. What changed in one week — and what does that change say about how you frame problems now? | Quotes the v3 sticky verbatim, names the specific edits (user shrank, pain sharpened, metric appeared), and draws a generalisable lesson about their own framing defaults — not a humble-brag. |
