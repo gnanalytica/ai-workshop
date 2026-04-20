@@ -37,6 +37,16 @@
   .day-t{font-size:14px;font-weight:500;margin-top:2px;letter-spacing:-.01em}
   .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
   .signout:hover{color:var(--ink)}
+  .anno{position:relative;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:14px 44px 14px 16px}
+  .anno.s-info{border-left-color:#38bdf8}
+  .anno.s-success{border-left-color:#c3ff36}
+  .anno.s-warning{border-left-color:#ffc87a}
+  .anno.s-urgent{border-left-color:#ff6b6b}
+  .anno-title{font-weight:600;font-size:14.5px;margin:0 0 4px;letter-spacing:-.01em}
+  .anno-body{font-size:13px;color:#c9c9d3;line-height:1.55;white-space:pre-wrap;margin:0}
+  .anno-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.1em;margin-top:6px}
+  .anno-close{position:absolute;top:8px;right:10px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+  .anno-close:hover{color:var(--ink);background:var(--bg-soft)}
   @media (max-width:640px){
     .hero-row{margin:24px 0 20px;gap:12px}
     .progress-wrap{padding:18px;margin-bottom:20px;border-radius:16px}
@@ -55,6 +65,8 @@
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
     <div style="display:flex;gap:14px;align-items:center">
+      <a href="search.html" style="font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:5px" title="Search lessons"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Search</a>
+      <a href="classmates.html" style="font-size:13px;color:var(--muted)">Classmates</a>
       <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
       <a href="certificate.html" id="navCert" style="font-size:13px;color:var(--muted);display:none">Certificate</a>
       <a href="#" id="navShowcase" style="font-size:13px;color:var(--muted);display:none">Showcase</a>
@@ -100,6 +112,7 @@
 
   <!-- OVERVIEW TAB -->
   <section id="tab-overview" class="tab-panel">
+  <div id="announcementsBanner" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
   <div class="progress-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline">
       <h2 style="margin:0">Your journey</h2>
@@ -395,6 +408,54 @@
     renderCapSubs(user, cohort);
     renderActivity(user, cohort, progress);
     renderCapstoneEditor(user, cohort);
+    renderAnnouncements(cohort);
+  }
+
+  let ANN_SUB = null;
+  function getDismissed() {
+    try { return new Set(JSON.parse(localStorage.getItem('dismissed_announcements') || '[]')); } catch { return new Set(); }
+  }
+  function dismissAnn(id) {
+    const s = getDismissed(); s.add(id);
+    localStorage.setItem('dismissed_announcements', JSON.stringify([...s]));
+  }
+  async function renderAnnouncements(cohort) {
+    const host = document.getElementById('announcementsBanner');
+    if (!host || !cohort) return;
+    const twoDaysAgo = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
+    const { data } = await supabase
+      .from('announcements')
+      .select('*')
+      .eq('cohort_id', cohort.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    const now = Date.now();
+    const active = (data || []).filter(a => {
+      if (a.pinned_until) return new Date(a.pinned_until).getTime() > now;
+      return new Date(a.created_at).getTime() > new Date(twoDaysAgo).getTime();
+    });
+    const dismissed = getDismissed();
+    const visible = active.filter(a => !dismissed.has(a.id));
+    if (!visible.length) { host.innerHTML = ''; return; }
+    host.innerHTML = visible.map(a => `
+      <div class="anno s-${escapeHtml(a.severity || 'info')}" data-id="${escapeHtml(a.id)}">
+        <button class="anno-close" aria-label="Dismiss" title="Dismiss">×</button>
+        <div class="anno-title">${escapeHtml(a.title)}</div>
+        <div class="anno-body">${escapeHtml(a.body)}</div>
+        <div class="anno-meta">${escapeHtml((a.severity || 'info').toUpperCase())} · ${escapeHtml(new Date(a.created_at).toLocaleString())}</div>
+      </div>`).join('');
+    host.querySelectorAll('.anno').forEach(el => {
+      el.querySelector('.anno-close').addEventListener('click', () => {
+        dismissAnn(el.dataset.id);
+        el.remove();
+      });
+    });
+
+    if (!ANN_SUB) {
+      ANN_SUB = supabase.channel(`ann-dash-${cohort.id}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'announcements', filter: `cohort_id=eq.${cohort.id}` }, () => renderAnnouncements(cohort))
+        .subscribe();
+    }
   }
 
   function renderUpcomingCard(user, cohort, scheduleMap) {

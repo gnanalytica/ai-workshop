@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Search lessons · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .srch-wrap{max-width:860px;margin:0 auto;padding:30px 24px 80px}
+  .srch-in{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 14px}
+  .srch-in svg{flex-shrink:0;color:var(--muted)}
+  .srch-in input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:inherit;font-size:17px;padding:10px 4px}
+  .srch-state{font-size:12.5px;color:var(--muted);margin-top:10px;font-family:'JetBrains Mono',monospace}
+  .res-week{margin:28px 0 10px;font-size:12px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+  .res-item{display:block;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;text-decoration:none;color:inherit;transition:border-color .15s}
+  .res-item:hover{border-color:var(--accent)}
+  .res-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:6px}
+  .res-day{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.14em}
+  .res-title{font-weight:600;font-size:15.5px;letter-spacing:-.01em}
+  .res-snip{font-size:13.5px;color:#c9c9d3;line-height:1.55;white-space:pre-wrap}
+  .res-snip mark{background:rgba(195,255,54,.25);color:var(--ink);border-radius:3px;padding:0 2px}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Search</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<main class="srch-wrap">
+  <div style="margin-bottom:14px">
+    <div class="kicker">Find anything</div>
+    <h1 style="margin:4px 0 4px">Search lessons</h1>
+    <p class="muted" style="font-size:14px;margin:0">All 30 days, searched locally in your browser.</p>
+  </div>
+
+  <div class="srch-in">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <input type="search" id="q" placeholder="e.g. RAG, prompt, capstone, embeddings…" autofocus />
+  </div>
+  <div class="srch-state" id="state">Loading lessons…</div>
+
+  <div id="results"></div>
+</main>
+
+<script type="module">
+  import { DAYS, WEEK_TITLES } from './assets/days.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+
+  const $ = (id) => document.getElementById(id);
+  const CACHE_KEY = 'lesson_search_cache_v1';
+  let INDEX = []; // [{n, w, title, text}]
+
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  function stripMarkdown(raw) {
+    // Remove frontmatter
+    let t = raw.replace(/^---[\s\S]*?---\s*/m, '');
+    // Remove fenced code blocks
+    t = t.replace(/```[\s\S]*?```/g, ' ');
+    // Remove inline code, links (keep text), headers, emphasis, images
+    t = t.replace(/`[^`]*`/g, ' ');
+    t = t.replace(/!\[[^\]]*\]\([^)]*\)/g, ' ');
+    t = t.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+    t = t.replace(/^#+\s+/gm, '');
+    t = t.replace(/[*_]{1,3}([^*_]+)[*_]{1,3}/g, '$1');
+    t = t.replace(/^>\s?/gm, '');
+    t = t.replace(/\|/g, ' ');
+    t = t.replace(/\s+/g, ' ').trim();
+    return t;
+  }
+
+  async function loadAll() {
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length === DAYS.length) {
+          INDEX = parsed;
+          $('state').textContent = `${INDEX.length} lessons indexed · cached`;
+          return;
+        }
+      }
+    } catch {}
+
+    const results = await Promise.all(DAYS.map(async d => {
+      const nn = String(d.n).padStart(2, '0');
+      try {
+        const res = await fetch(`content/day-${nn}.md`);
+        if (!res.ok) return { n: d.n, w: d.w, title: d.title, text: '' };
+        const raw = await res.text();
+        return { n: d.n, w: d.w, title: d.title, text: stripMarkdown(raw) };
+      } catch {
+        return { n: d.n, w: d.w, title: d.title, text: '' };
+      }
+    }));
+    INDEX = results;
+    try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(INDEX)); } catch {}
+    $('state').textContent = `${INDEX.length} lessons indexed`;
+  }
+
+  function snippet(text, query) {
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf(query);
+    if (idx < 0) return '';
+    const start = Math.max(0, idx - 90);
+    const end = Math.min(text.length, idx + query.length + 160);
+    const prefix = start > 0 ? '… ' : '';
+    const suffix = end < text.length ? ' …' : '';
+    return prefix + text.slice(start, end) + suffix;
+  }
+
+  function highlight(snip, query) {
+    if (!query) return esc(snip);
+    const escaped = esc(snip);
+    const qEsc = esc(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escaped.replace(new RegExp(qEsc, 'ig'), m => `<mark>${m}</mark>`);
+  }
+
+  function render(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) { $('results').innerHTML = `<div class="empty">Type to search all 30 days.</div>`; return; }
+    const hits = [];
+    for (const row of INDEX) {
+      const titleMatch = row.title.toLowerCase().includes(q);
+      const textMatch = row.text.toLowerCase().includes(q);
+      if (titleMatch || textMatch) {
+        const snip = textMatch ? snippet(row.text, q) : '';
+        hits.push({ ...row, snip, titleMatch });
+      }
+    }
+    if (!hits.length) { $('results').innerHTML = `<div class="empty">No matches for “${esc(query)}”.</div>`; return; }
+
+    // Group by week
+    const byWeek = new Map();
+    for (const h of hits) {
+      if (!byWeek.has(h.w)) byWeek.set(h.w, []);
+      byWeek.get(h.w).push(h);
+    }
+    const weeks = [...byWeek.keys()].sort((a,b) => a - b);
+    $('results').innerHTML = weeks.map(w => {
+      const items = byWeek.get(w).sort((a,b) => a.n - b.n);
+      return `<div class="res-week">Week ${String(w).padStart(2,'0')} · ${esc(WEEK_TITLES[w] || '')}</div>` +
+        items.map(h => `<a class="res-item" href="day.html?n=${h.n}">
+          <div class="res-head">
+            <span class="res-day">DAY ${String(h.n).padStart(2,'0')}</span>
+          </div>
+          <div class="res-title">${highlight(h.title, q)}</div>
+          ${h.snip ? `<div class="res-snip" style="margin-top:6px">${highlight(h.snip, q)}</div>` : ''}
+        </a>`).join('');
+    }).join('');
+  }
+
+  let t;
+  $('q').addEventListener('input', e => {
+    clearTimeout(t);
+    t = setTimeout(() => render(e.target.value), 80);
+  });
+
+  // Prefill from ?q=
+  const initialQ = new URLSearchParams(location.search).get('q') || '';
+  if (initialQ) $('q').value = initialQ;
+
+  (async () => {
+    await loadAll();
+    render($('q').value);
+  })();
+</script>
+</body>
+</html>

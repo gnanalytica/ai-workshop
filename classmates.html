@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Classmates · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .cm-filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+  .cm-filters input, .cm-filters select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .cm-filters input{flex:1;min-width:220px}
+  .cm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .cm-card{display:flex;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;align-items:center}
+  .cm-av{width:44px;height:44px;border-radius:50%;background:var(--input-bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0}
+  .cm-body{flex:1;min-width:0}
+  .cm-name{font-weight:600;font-size:14px;margin:0;letter-spacing:-.01em}
+  .cm-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .cm-links{display:flex;gap:10px;margin-top:6px;font-size:12px}
+  .cm-links a{color:var(--accent-4,#38bdf8)}
+  .cm-anon{opacity:.75}
+  .team-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  .team-name{font-weight:600;font-size:15px;margin:0 0 8px}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);color:var(--ink)}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin:28px 0 8px}
+  .sec-head h2{margin:0;font-size:20px;letter-spacing:-.02em}
+  .sec-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Classmates</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Sign in required</div>
+    <h2>Please sign in to see your cohort</h2>
+    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-align:center;text-decoration:none">Go to Dashboard →</a>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div style="margin:24px 0 0">
+    <div class="kicker">Your cohort</div>
+    <h1 id="cmTitle">Classmates</h1>
+  </div>
+
+  <div class="cm-filters">
+    <input type="search" id="cmSearch" placeholder="Search by name or college…" />
+    <select id="cmCollege"><option value="">All colleges</option></select>
+    <select id="cmYear"><option value="">All years</option></select>
+  </div>
+
+  <div class="sec-head"><h2 id="teamsHead">Teams</h2><span class="sec-count" id="teamsCount">—</span></div>
+  <div id="teamsList"></div>
+
+  <div class="sec-head"><h2>Members</h2><span class="sec-count" id="peopleCount">—</span></div>
+  <div class="cm-grid" id="cmGrid"></div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+
+  const $ = (id) => document.getElementById(id);
+  let PEOPLE = [];
+
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function initials(name){ return (name || '').split(/\s+/).map(s => s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?'; }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { $('gate').style.display = 'grid'; return; }
+    $('panel').style.display = 'block';
+
+    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).maybeSingle();
+    if (!cohort) return;
+    $('cmTitle').textContent = `Classmates · ${cohort.name}`;
+
+    const { data: regs } = await supabase
+      .from('registrations')
+      .select('user_id, showcase_public, status')
+      .eq('cohort_id', cohort.id)
+      .eq('status', 'confirmed');
+
+    const userIds = (regs || []).map(r => r.user_id);
+    const { data: profiles } = userIds.length
+      ? await supabase.from('profiles').select('id, full_name, college, year, github_username').in('id', userIds)
+      : { data: [] };
+    const profMap = new Map((profiles || []).map(p => [p.id, p]));
+
+    PEOPLE = (regs || []).map(r => {
+      const p = profMap.get(r.user_id) || {};
+      return {
+        id: r.user_id,
+        showcase_public: !!r.showcase_public,
+        full_name: p.full_name || '',
+        college: p.college || '',
+        year: p.year || '',
+        github_username: p.github_username || '',
+      };
+    });
+
+    // Populate filter dropdowns
+    const colleges = [...new Set(PEOPLE.map(p => p.college).filter(Boolean))].sort();
+    const years = [...new Set(PEOPLE.map(p => p.year).filter(Boolean))].sort();
+    $('cmCollege').innerHTML = `<option value="">All colleges</option>` + colleges.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    $('cmYear').innerHTML = `<option value="">All years</option>` + years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('');
+
+    renderPeople();
+    await loadTeams(cohort);
+
+    ['cmSearch','cmCollege','cmYear'].forEach(id => $(id).addEventListener('input', renderPeople));
+  }
+
+  function renderPeople() {
+    const q = ($('cmSearch').value || '').toLowerCase();
+    const col = $('cmCollege').value;
+    const yr = $('cmYear').value;
+    const filtered = PEOPLE.filter(p => {
+      const searchName = p.showcase_public ? p.full_name.toLowerCase() : '';
+      const hay = (searchName + ' ' + (p.college || '').toLowerCase());
+      if (q && !hay.includes(q)) return false;
+      if (col && p.college !== col) return false;
+      if (yr && String(p.year) !== String(yr)) return false;
+      return true;
+    });
+    $('peopleCount').textContent = `${filtered.length} member${filtered.length === 1 ? '' : 's'}`;
+    if (!filtered.length) { $('cmGrid').innerHTML = `<div class="muted" style="padding:30px;text-align:center;grid-column:1/-1">No classmates match.</div>`; return; }
+    $('cmGrid').innerHTML = filtered.map(p => {
+      const isPublic = p.showcase_public;
+      const display = isPublic ? (p.full_name || '—') : `Anonymous student`;
+      const metaBits = [];
+      if (p.college) metaBits.push(esc(p.college));
+      if (p.year) metaBits.push(esc(p.year));
+      const links = [];
+      if (isPublic && p.github_username) links.push(`<a href="https://github.com/${esc(p.github_username)}" target="_blank" rel="noopener">@${esc(p.github_username)}</a>`);
+      if (isPublic) links.push(`<a href="showcase.html?u=${encodeURIComponent(p.id)}">Showcase →</a>`);
+      return `<div class="cm-card ${isPublic ? '' : 'cm-anon'}">
+        <div class="cm-av">${esc(initials(isPublic ? p.full_name : '?'))}</div>
+        <div class="cm-body">
+          <p class="cm-name">${esc(display)}</p>
+          <div class="cm-meta">${metaBits.join(' · ') || '—'}</div>
+          ${links.length ? `<div class="cm-links">${links.join('<span style="color:var(--muted)">·</span>')}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadTeams(cohort) {
+    const { data: teams } = await supabase
+      .from('teams')
+      .select('id, name, description, max_members, locked_at')
+      .eq('cohort_id', cohort.id)
+      .order('name');
+    const teamList = teams || [];
+    $('teamsCount').textContent = `${teamList.length} team${teamList.length === 1 ? '' : 's'} formed`;
+    if (!teamList.length) { $('teamsList').innerHTML = `<div class="muted" style="padding:20px;text-align:center">No teams formed yet.</div>`; return; }
+
+    const teamIds = teamList.map(t => t.id);
+    const { data: members } = await supabase
+      .from('team_members')
+      .select('team_id, user_id, role, profiles(full_name)')
+      .in('team_id', teamIds);
+
+    const publicById = new Map(PEOPLE.map(p => [p.id, p.showcase_public]));
+    const byTeam = new Map();
+    (members || []).forEach(m => {
+      if (!byTeam.has(m.team_id)) byTeam.set(m.team_id, []);
+      byTeam.get(m.team_id).push(m);
+    });
+
+    $('teamsList').innerHTML = teamList.map(t => {
+      const mems = byTeam.get(t.id) || [];
+      const chips = mems.map(m => {
+        const pub = publicById.get(m.user_id);
+        const name = pub ? (m.profiles?.full_name || '—') : 'Anonymous';
+        const badge = m.role === 'captain' ? ' ★' : '';
+        return `<span class="chip">${esc(name)}${badge}</span>`;
+      }).join('');
+      return `<div class="team-card">
+        <h3 class="team-name">${esc(t.name)}${t.locked_at ? ' · locked' : ''}</h3>
+        ${t.description ? `<div class="muted" style="font-size:12.5px;margin-bottom:8px">${esc(t.description)}</div>` : ''}
+        <div class="chip-row">${chips || '<span class="muted" style="font-size:12px">No members yet</span>'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  init();
+</script>
+</body>
+</html>
