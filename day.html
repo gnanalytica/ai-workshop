@@ -185,10 +185,34 @@
   .asgn-due.overdue{background:rgba(255,107,107,.1);color:#ffa0a0;border:1px solid rgba(255,107,107,.3)}
   .asgn-due.ok{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--line)}
   .asgn-rubric{font-size:13px;color:var(--muted);background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0 16px;line-height:1.6}
-  .asgn-form{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-  .asgn-form input[type=url],.asgn-form input[type=text],.asgn-form textarea{background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:inherit;font-size:14.5px;outline:none}
-  .asgn-form textarea{min-height:140px;line-height:1.6;resize:vertical}
+  .asgn-form{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+  .asgn-form input[type=url],.asgn-form input[type=text],.asgn-form textarea{background:var(--input-bg,#0a0a12);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:inherit;font-size:14.5px;outline:none}
+  .asgn-form textarea{min-height:110px;line-height:1.6;resize:vertical}
   .asgn-form input:focus,.asgn-form textarea:focus{border-color:var(--accent)}
+  .asgn-section-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:6px;display:block}
+  .asgn-links-list{display:flex;flex-direction:column;gap:6px}
+  .asgn-link-row{display:flex;gap:6px;align-items:center}
+  .asgn-link-row input{flex:1}
+  .asgn-link-rm{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;width:32px;height:36px;cursor:pointer;font-size:14px}
+  .asgn-link-rm:hover{color:#ffa0a0;border-color:rgba(255,107,107,.35)}
+  .asgn-add-link{align-self:flex-start;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+  .asgn-add-link:hover{color:var(--accent);border-color:var(--accent)}
+  .asgn-drop{border:1.5px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted);font-size:13.5px;cursor:pointer;transition:all .15s}
+  .asgn-drop.drag{border-color:var(--accent);background:rgba(195,255,54,.05);color:var(--ink)}
+  .asgn-drop strong{color:var(--ink);font-weight:600}
+  .asgn-files-list{display:flex;flex-direction:column;gap:6px}
+  .asgn-file-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:10px;font-size:13px}
+  .asgn-file-icon{width:28px;height:28px;border-radius:6px;background:rgba(56,189,248,.12);color:#7dd5ff;display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0}
+  .asgn-file-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+  .asgn-file-size{color:var(--muted);font-size:11.5px;margin-right:4px}
+  .asgn-file-bar{height:3px;background:rgba(195,255,54,.15);border-radius:2px;overflow:hidden;flex-basis:100%;margin-top:6px}
+  .asgn-file-bar div{height:100%;background:var(--accent);transition:width .2s}
+  .asgn-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:rgba(56,189,248,.1);color:#7dd5ff;font-size:12.5px;border:1px solid rgba(56,189,248,.2);text-decoration:none;margin:2px}
+  .asgn-chip:hover{background:rgba(56,189,248,.18)}
+  .asgn-chip-host{font-size:10.5px;color:var(--muted);margin-left:4px}
+  .asgn-preview-pdf{width:100%;max-height:700px;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+  .asgn-preview-img{max-width:100%;max-height:480px;border-radius:10px;border:1px solid var(--line);margin-top:8px;cursor:zoom-in}
+  .asgn-preview-text{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;white-space:pre-wrap;font-size:14px;color:var(--ink);line-height:1.6;margin-top:10px}
   .asgn-submit{padding:10px 18px;border-radius:999px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:13.5px;border:none;cursor:pointer;font-family:inherit;align-self:flex-start}
   .asgn-note{font-size:12px;color:var(--muted);font-style:italic}
   /* stuck widget */
@@ -1193,7 +1217,10 @@
       .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
       .maybeSingle();
     if (!asgn) {
-      container.innerHTML = '<div class="asgn-empty">No assignment for this day.</div>';
+      // Hide entirely on non-assignment days
+      const moduleEl = container.closest('.mod-card');
+      if (moduleEl) moduleEl.style.display = 'none';
+      container.innerHTML = '';
       return;
     }
 
@@ -1203,51 +1230,114 @@
     let existing = fetched || null;
 
     let mode = existing ? 'view' : 'edit';
+    const linksFromString = (s) => (s || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean);
     let draft = {
-      content_url: existing?.content_url || '',
       content_text: existing?.content_text || '',
+      links: existing ? linksFromString(existing.content_url) : [],
+      attachments: Array.isArray(existing?.attachments) ? [...existing.attachments] : [],
     };
+    if (!draft.links.length) draft.links = [''];
+    const signedUrlCache = new Map();
+
+    async function signedUrl(path) {
+      if (signedUrlCache.has(path)) return signedUrlCache.get(path);
+      const { data, error } = await supabase.storage.from('submissions').createSignedUrl(path, 3600);
+      if (error) return null;
+      signedUrlCache.set(path, data.signedUrl);
+      return data.signedUrl;
+    }
 
     render();
 
     function dueInfo() {
       if (!asgn.due_at) return { cls: 'ok', text: 'No due date' };
       const due = new Date(asgn.due_at);
-      const now = new Date();
-      const diff = due - now;
+      const diff = due - Date.now();
       const fmt = due.toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
       if (diff < 0) return { cls: 'overdue', text: `Overdue · was due ${fmt}` };
       if (diff < 48 * 3600 * 1000) return { cls: 'soon', text: `Due ${fmt}` };
       return { cls: 'ok', text: `Due ${fmt}` };
     }
 
-    function render() {
+    function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; return (b/(1024*1024)).toFixed(1) + ' MB'; }
+    function iconOf(mime) { if (mime?.startsWith('image/')) return 'IMG'; if (mime === 'application/pdf') return 'PDF'; if (mime?.includes('zip')) return 'ZIP'; if (mime?.startsWith('text/')) return 'TXT'; return 'FILE'; }
+    function domainOf(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } }
+
+    function renderEdit() {
+      const linksHtml = draft.links.map((url, i) => `
+        <div class="asgn-link-row">
+          <input type="url" placeholder="https://…" value="${escapeHtml(url)}" data-link-idx="${i}" />
+          <button type="button" class="asgn-link-rm" data-link-rm="${i}" title="Remove">✕</button>
+        </div>
+      `).join('');
+
+      const filesHtml = draft.attachments.length ? `<div class="asgn-files-list">${draft.attachments.map((f, i) => `
+        <div class="asgn-file-row">
+          <div class="asgn-file-icon">${iconOf(f.mime)}</div>
+          <div class="asgn-file-name">${escapeHtml(f.filename)}</div>
+          <span class="asgn-file-size">${fmtBytes(f.size)}</span>
+          <button type="button" class="asgn-link-rm" data-file-rm="${i}" title="Remove">✕</button>
+        </div>
+      `).join('')}</div>` : '';
+
+      return `<form class="asgn-form" id="asgnForm">
+        <div>
+          <span class="asgn-section-label">Text (reflection, answer, notes)</span>
+          <textarea id="asgnText" placeholder="Write your submission here…">${escapeHtml(draft.content_text)}</textarea>
+        </div>
+        <div>
+          <span class="asgn-section-label">Links (GitHub, demo, Figma, Drive…)</span>
+          <div class="asgn-links-list" id="asgnLinksList">${linksHtml}</div>
+          <button type="button" class="asgn-add-link" id="asgnAddLink">+ Add link</button>
+        </div>
+        <div>
+          <span class="asgn-section-label">Files (PDF, images, zip — up to 10 MB each)</span>
+          <label class="asgn-drop" id="asgnDrop">
+            <input type="file" id="asgnFileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.md,.zip" style="display:none" />
+            <strong>Drop files here</strong> or click to browse
+          </label>
+          ${filesHtml}
+        </div>
+        <button class="asgn-submit" type="submit">${existing ? 'Update submission' : 'Submit'}</button>
+      </form>`;
+    }
+
+    async function renderViewPreview() {
+      const parts = [];
+      if (existing.content_text) parts.push(`<div class="asgn-preview-text">${escapeHtml(existing.content_text)}</div>`);
+      const links = linksFromString(existing.content_url);
+      if (links.length) {
+        parts.push(`<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${
+          links.map(u => `<a class="asgn-chip" href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u.length > 60 ? u.slice(0,60) + '…' : u)}<span class="asgn-chip-host">${escapeHtml(domainOf(u))}</span></a>`).join('')
+        }</div>`);
+      }
+      const atts = Array.isArray(existing.attachments) ? existing.attachments : [];
+      for (const f of atts) {
+        const url = await signedUrl(f.path);
+        if (!url) continue;
+        if (f.mime === 'application/pdf') {
+          parts.push(`<div style="margin-top:10px"><div style="font-size:12.5px;color:var(--muted);margin-bottom:4px">${escapeHtml(f.filename)} · ${fmtBytes(f.size)}</div><iframe class="asgn-preview-pdf" src="${escapeHtml(url)}" title="${escapeHtml(f.filename)}"></iframe></div>`);
+        } else if (f.mime?.startsWith('image/')) {
+          parts.push(`<div><img class="asgn-preview-img" src="${escapeHtml(url)}" alt="${escapeHtml(f.filename)}" onclick="window.open('${escapeHtml(url)}', '_blank')"/></div>`);
+        } else {
+          parts.push(`<div class="asgn-file-row" style="margin-top:8px"><div class="asgn-file-icon">${iconOf(f.mime)}</div><div class="asgn-file-name">${escapeHtml(f.filename)}</div><span class="asgn-file-size">${fmtBytes(f.size)}</span><a href="${escapeHtml(url)}" target="_blank" class="asgn-link-rm" style="width:auto;padding:0 12px;text-decoration:none;display:inline-grid;place-items:center">↓</a></div>`);
+        }
+      }
+      return parts.join('');
+    }
+
+    async function render() {
       const due = dueInfo();
       const descHtml = asgn.description ? marked.parse(asgn.description) : '';
       const rubric = asgn.rubric ? `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><br>${escapeHtml(asgn.rubric)}</div>` : '';
       const pts = asgn.points != null ? `<span class="asgn-pts">${escapeHtml(String(asgn.points))} pts</span>` : '';
 
-      let form = '';
+      let form;
       if (mode === 'edit') {
-        const submitType = asgn.submission_type || 'link';
-        let input = '';
-        if (submitType === 'text') {
-          input = `<textarea id="asgnText" placeholder="Paste or type your submission…">${escapeHtml(draft.content_text)}</textarea>`;
-        } else if (submitType === 'file') {
-          input = `<input type="url" id="asgnLink" placeholder="https://link-to-your-file" value="${escapeHtml(draft.content_url)}" />
-                   <div class="asgn-note">Note: paste a link to a cloud-hosted file (Drive, Dropbox, S3). Direct file upload coming soon.</div>`;
-        } else {
-          input = `<input type="url" id="asgnLink" placeholder="https://…" value="${escapeHtml(draft.content_url)}" />`;
-        }
-        form = `<form class="asgn-form" id="asgnForm">
-          ${input}
-          <button class="asgn-submit" type="submit">${existing ? 'Update submission' : 'Submit'}</button>
-        </form>`;
+        form = renderEdit();
       } else if (existing) {
         const when = existing.submitted_at ? new Date(existing.submitted_at).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '';
-        const preview = existing.content_url
-          ? `<div class="asgn-content-preview"><a href="${escapeHtml(existing.content_url)}" target="_blank" rel="noopener">${escapeHtml(existing.content_url)}</a></div>`
-          : (existing.content_text ? `<div class="asgn-content-preview">${escapeHtml(existing.content_text)}</div>` : '');
+        const preview = await renderViewPreview();
         const grade = existing.status === 'graded'
           ? `<div class="asgn-grade">
               <div class="score">Score · ${escapeHtml(String(existing.score ?? '—'))}${asgn.points != null ? ` / ${escapeHtml(String(asgn.points))}` : ''}</div>
@@ -1275,36 +1365,88 @@
           ${form}
         </div>
       `;
+      wireHandlers();
+    }
 
+    function wireHandlers() {
       const formEl = container.querySelector('#asgnForm');
       if (formEl) {
         formEl.addEventListener('submit', onSubmit);
-        const linkEl = container.querySelector('#asgnLink');
-        if (linkEl) linkEl.addEventListener('input', (e) => draft.content_url = e.target.value);
         const textEl = container.querySelector('#asgnText');
         if (textEl) textEl.addEventListener('input', (e) => draft.content_text = e.target.value);
+
+        // Links
+        container.querySelectorAll('[data-link-idx]').forEach(el => {
+          el.addEventListener('input', (e) => { draft.links[+el.dataset.linkIdx] = e.target.value; });
+        });
+        container.querySelectorAll('[data-link-rm]').forEach(el => {
+          el.addEventListener('click', () => { draft.links.splice(+el.dataset.linkRm, 1); if (!draft.links.length) draft.links = ['']; render(); });
+        });
+        const addLinkBtn = container.querySelector('#asgnAddLink');
+        if (addLinkBtn) addLinkBtn.addEventListener('click', () => { draft.links.push(''); render(); });
+
+        // Files
+        const drop = container.querySelector('#asgnDrop');
+        const input = container.querySelector('#asgnFileInput');
+        if (drop && input) {
+          drop.addEventListener('click', (e) => { if (e.target !== input) input.click(); });
+          drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drag'); });
+          drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+          drop.addEventListener('drop', async (e) => { e.preventDefault(); drop.classList.remove('drag'); await handleFiles(e.dataTransfer.files); });
+          input.addEventListener('change', async () => { await handleFiles(input.files); input.value = ''; });
+          container.querySelectorAll('[data-file-rm]').forEach(el => {
+            el.addEventListener('click', async () => {
+              const idx = +el.dataset.fileRm;
+              const f = draft.attachments[idx];
+              if (f?.path) await supabase.storage.from('submissions').remove([f.path]).catch(() => {});
+              draft.attachments.splice(idx, 1);
+              render();
+            });
+          });
+        }
       }
       const editBtn = container.querySelector('#asgnEdit');
       if (editBtn) editBtn.addEventListener('click', () => { mode = 'edit'; render(); });
     }
 
+    async function handleFiles(fileList) {
+      const files = Array.from(fileList || []);
+      for (const file of files) {
+        if (file.size > 10 * 1024 * 1024) { alert(`"${file.name}" is over 10 MB — skipped.`); continue; }
+        const ts = Date.now();
+        const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `${user.id}/${asgn.id}/${ts}-${safe}`;
+        const { error } = await supabase.storage.from('submissions').upload(path, file, {
+          contentType: file.type || 'application/octet-stream',
+          upsert: false,
+        });
+        if (error) { alert(`Upload failed for ${file.name}: ${error.message}`); continue; }
+        draft.attachments.push({ path, filename: file.name, mime: file.type || 'application/octet-stream', size: file.size });
+      }
+      render();
+    }
+
     async function onSubmit(e) {
       e.preventDefault();
+      const linkStr = draft.links.map(x => x.trim()).filter(Boolean).join('\n');
+      const text = (draft.content_text || '').trim();
+      if (!linkStr && !text && !draft.attachments.length) {
+        alert('Please add text, a link, or a file.');
+        return;
+      }
       const payload = {
         user_id: user.id,
         assignment_id: asgn.id,
-        content_url: draft.content_url || null,
-        content_text: draft.content_text || null,
+        content_url: linkStr || null,
+        content_text: text || null,
+        attachments: draft.attachments,
         submitted_at: new Date().toISOString(),
         status: existing?.status === 'graded' ? existing.status : 'submitted',
       };
       const { data, error } = await supabase.from('submissions')
         .upsert(payload, { onConflict: 'user_id,assignment_id' })
         .select().single();
-      if (error) {
-        alert(`Submit failed: ${error.message}`);
-        return;
-      }
+      if (error) { alert(`Submit failed: ${error.message}`); return; }
       existing = data || { ...payload };
       mode = 'view';
       render();
