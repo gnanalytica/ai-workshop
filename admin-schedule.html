@@ -155,12 +155,13 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { DAYS, WEEK_TITLES } from './assets/days.js';
 
   const $ = (id) => document.getElementById(id);
-  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-schedule.html');
+  let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
 
   let COHORTS = [];
   let CURRENT_COHORT = null;
@@ -194,20 +195,25 @@
   });
 
   async function checkAdmin(user) {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return showDenied();
+    const r = await checkAdminOrFaculty(user);
+    IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
+    if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-schedule.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadCohorts();
   }
 
   async function loadCohorts() {
-    const { data, error } = await supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    let q = supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    if (!IS_ADMIN) q = q.in('id', FACULTY_COHORT_IDS);
+    const { data, error } = await q;
     if (error) { topMsg(error.message, 'err'); return; }
     COHORTS = data || [];
     const sel = $('cohortSel');
     sel.innerHTML = COHORTS.map(c => `<option value="${c.id}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
     const def = COHORTS.find(c => c.slug === COHORT_SLUG) || COHORTS[0];
-    if (!def) { topMsg('No cohorts found.', 'err'); return; }
+    if (!def) { topMsg(IS_ADMIN ? 'No cohorts found.' : "You're not assigned to any cohort yet — ask an admin.", 'err'); return; }
     sel.value = def.id;
     sel.addEventListener('change', () => loadSchedule(sel.value));
     await loadSchedule(def.id);

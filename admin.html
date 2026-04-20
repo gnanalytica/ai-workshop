@@ -111,10 +111,13 @@
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   const $ = (id) => document.getElementById(id);
-  document.getElementById('adminNav').innerHTML = renderAdminNav('admin.html');
   let ALL_ROWS = [];
   let COHORT = null;
+  let IS_ADMIN = false;
+  let IS_FACULTY = false;
+  let FACULTY_COHORT_IDS = [];
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -144,14 +147,30 @@
   });
 
   async function checkAdmin(user) {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return showDenied();
+    const r = await checkAdminOrFaculty(user);
+    IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
+    if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadData();
   }
 
   async function loadData() {
-    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    let cohortQuery = supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG);
+    if (!IS_ADMIN) cohortQuery = cohortQuery.in('id', FACULTY_COHORT_IDS);
+    let { data: cohort } = await cohortQuery.maybeSingle();
+    if (!cohort) {
+      // Fallback: pick the first cohort assigned to this faculty
+      if (!IS_ADMIN && FACULTY_COHORT_IDS.length) {
+        const { data: fc } = await supabase.from('cohorts').select('*').in('id', FACULTY_COHORT_IDS).order('starts_on', { ascending: false }).limit(1).maybeSingle();
+        cohort = fc;
+      }
+      if (!cohort) {
+        $('rows').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px" class="muted">You're not assigned to any cohort yet — ask an admin.</td></tr>`;
+        return;
+      }
+    }
     COHORT = cohort;
 
     const { data: regs } = await supabase.from('registrations').select('*').eq('cohort_id', cohort.id).order('created_at', { ascending: false });

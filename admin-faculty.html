@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Faculty · Admin · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
+  .section-head h2{margin:0}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  .add-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+  .add-grid{display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:10px;align-items:end}
+  .add-grid label{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+  .add-grid input, .add-grid select{width:100%;background:#0a0a12;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .add-grid .cta{padding:10px 16px}
+  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.danger:hover{border-color:#ff6b6b;color:#ffa0a0}
+  .role-sel{padding:6px 10px;border-radius:8px;background:#0a0a12;border:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:12px}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#14141c;border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .toast.err{border-color:#ff6b6b;color:#ffa0a0}
+  .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
+  .kicker-tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(195,255,54,.12);color:var(--accent);border:1px solid rgba(195,255,54,.25)}
+  .kicker-tag.ta{background:rgba(120,170,255,.12);color:#7aa7ff;border-color:rgba(120,170,255,.3)}
+  .kicker-tag.lead{background:rgba(255,170,90,.14);color:#ffb977;border-color:rgba(255,170,90,.3)}
+  @media(max-width:800px){
+    .add-grid{grid-template-columns:1fr}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .table-wrap table{min-width:620px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only super-admins can manage faculty.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- DENIED -->
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Admin only</h2>
+      <p>Faculty management is restricted to super-admins. <a href="admin.html">Back to dashboard</a>.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div style="margin:24px 0 8px">
+    <div class="kicker">Platform</div>
+    <h1>Faculty</h1>
+    <p class="muted" style="font-size:14px;margin:6px 0 0">Assign lead instructors, faculty, and TAs to specific cohorts. Faculty get scoped admin access to their cohort's student data.</p>
+  </div>
+
+  <div class="section-head"><h2>Add faculty</h2></div>
+  <div class="add-card">
+    <div class="add-grid">
+      <div>
+        <label>User (email or user-id)</label>
+        <input id="f_user" type="text" placeholder="someone@example.com or UUID" autocomplete="off" />
+      </div>
+      <div>
+        <label>Cohort</label>
+        <select id="f_cohort"></select>
+      </div>
+      <div>
+        <label>Role</label>
+        <select id="f_role">
+          <option value="lead">Lead</option>
+          <option value="faculty" selected>Faculty</option>
+          <option value="ta">TA</option>
+        </select>
+      </div>
+      <div>
+        <button class="cta" id="addBtn">Add →</button>
+      </div>
+    </div>
+    <div class="msg" id="addMsg" style="margin-top:10px"></div>
+  </div>
+
+  <div class="section-head"><h2>Current faculty</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Cohort</th><th>Role</th><th>Added</th><th style="text-align:right">Actions</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+  const $ = (id) => document.getElementById(id);
+
+  let COHORTS = [];
+  let ROWS = [];
+  let PROFILES = new Map();
+
+  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function toast(msg, kind='ok') { const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (kind==='err'?' err':''); setTimeout(()=>{ t.className='toast'; }, 2400); }
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    await checkAdmin(session.user);
+  }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'); const msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
+    else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
+  });
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
+    if (event === 'SIGNED_OUT') show('gate');
+  });
+
+  async function checkAdmin(user) {
+    // Strict admin-only
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!profile?.is_admin) return show('denied');
+    show('panel');
+    $('adminNav').innerHTML = renderAdminNav('admin-faculty.html', { role: 'admin' });
+    await loadCohorts();
+    await loadRows();
+    wireAdd();
+  }
+
+  async function loadCohorts() {
+    const { data } = await supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    COHORTS = data || [];
+    $('f_cohort').innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
+  }
+
+  async function loadRows() {
+    const { data, error } = await supabase.from('cohort_faculty').select('*').order('created_at', { ascending: false });
+    if (error) { toast(error.message, 'err'); return; }
+    ROWS = data || [];
+    const userIds = [...new Set(ROWS.map(r => r.user_id))];
+    if (userIds.length) {
+      const { data: profs } = await supabase.from('profiles').select('id,full_name,college').in('id', userIds);
+      PROFILES = new Map((profs || []).map(p => [p.id, p]));
+    } else {
+      PROFILES = new Map();
+    }
+    render();
+  }
+
+  function render() {
+    const cohortMap = new Map(COHORTS.map(c => [c.id, c]));
+    if (!ROWS.length) {
+      $('rows').innerHTML = `<tr><td colspan="5" class="empty-state">No faculty assigned yet. Add someone above.</td></tr>`;
+      return;
+    }
+    $('rows').innerHTML = ROWS.map(r => {
+      const p = PROFILES.get(r.user_id) || {};
+      const cohort = cohortMap.get(r.cohort_id);
+      const roleCls = r.role === 'lead' ? 'lead' : (r.role === 'ta' ? 'ta' : '');
+      return `
+        <tr data-id="${esc(r.id)}">
+          <td>
+            <b>${esc(p.full_name || '—')}</b>
+            <div class="muted" style="font-size:11.5px">${esc(p.college || '')}</div>
+            <div class="mono muted" style="font-size:11px">${esc(r.user_id)}</div>
+          </td>
+          <td>${esc(cohort?.name || r.cohort_id)}<div class="muted" style="font-size:11.5px">${esc(cohort?.slug || '')}</div></td>
+          <td>
+            <select class="role-sel" data-id="${esc(r.id)}" data-current="${esc(r.role)}">
+              ${['lead','faculty','ta'].map(v => `<option value="${v}" ${v===r.role?'selected':''}>${v}</option>`).join('')}
+            </select>
+            <span class="kicker-tag ${roleCls}" style="margin-left:6px">${esc(r.role)}</span>
+          </td>
+          <td class="muted" style="font-size:12px">${new Date(r.created_at).toLocaleDateString()}</td>
+          <td style="text-align:right"><button class="btn-sm danger" data-remove="${esc(r.id)}">Remove</button></td>
+        </tr>
+      `;
+    }).join('');
+
+    $('rows').querySelectorAll('select.role-sel').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const id = sel.dataset.id;
+        const newRole = sel.value;
+        sel.disabled = true;
+        const { error } = await supabase.from('cohort_faculty').update({ role: newRole }).eq('id', id);
+        sel.disabled = false;
+        if (error) { toast(error.message, 'err'); sel.value = sel.dataset.current; return; }
+        sel.dataset.current = newRole;
+        const row = ROWS.find(r => r.id === id);
+        if (row) row.role = newRole;
+        toast('Role updated');
+        render();
+      });
+    });
+
+    $('rows').querySelectorAll('button[data-remove]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.remove;
+        if (!confirm('Remove this faculty assignment?')) return;
+        btn.disabled = true;
+        const { error } = await supabase.from('cohort_faculty').delete().eq('id', id);
+        if (error) { toast(error.message, 'err'); btn.disabled = false; return; }
+        ROWS = ROWS.filter(r => r.id !== id);
+        toast('Removed');
+        render();
+      });
+    });
+  }
+
+  function wireAdd() {
+    $('addBtn').addEventListener('click', async () => {
+      const raw = $('f_user').value.trim();
+      const cohort_id = $('f_cohort').value;
+      const role = $('f_role').value;
+      const msg = $('addMsg');
+      msg.className = 'msg';
+      if (!raw || !cohort_id) { msg.className = 'msg show err'; msg.textContent = 'Enter a user (email or UUID) and pick a cohort.'; return; }
+      $('addBtn').disabled = true;
+
+      let user_id = null;
+      if (UUID_RE.test(raw)) {
+        user_id = raw;
+      } else if (raw.includes('@')) {
+        const { data, error } = await supabase.rpc('admin_find_user_by_email', { target_email: raw });
+        if (error) { msg.className = 'msg show err'; msg.textContent = error.message; $('addBtn').disabled = false; return; }
+        if (!data) { msg.className = 'msg show err'; msg.textContent = 'No user found with that email (they need to sign in at least once).'; $('addBtn').disabled = false; return; }
+        user_id = data;
+      } else {
+        msg.className = 'msg show err'; msg.textContent = 'Enter a valid email or user UUID.';
+        $('addBtn').disabled = false; return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const { error } = await supabase.from('cohort_faculty').insert({
+        cohort_id, user_id, role, created_by: session?.user?.id || null,
+      });
+      $('addBtn').disabled = false;
+      if (error) { msg.className = 'msg show err'; msg.textContent = error.message; return; }
+      msg.className = 'msg show ok'; msg.textContent = 'Added.';
+      $('f_user').value = '';
+      await loadRows();
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>

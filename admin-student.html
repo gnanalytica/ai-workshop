@@ -159,18 +159,33 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { DAYS } from './assets/days.js';
   const $ = (id) => document.getElementById(id);
-  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html');
+  let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
+
+  async function resolveCohort() {
+    let cq = supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG);
+    if (!IS_ADMIN) cq = cq.in('id', FACULTY_COHORT_IDS);
+    let { data: cohort } = await cq.maybeSingle();
+    if (!cohort && !IS_ADMIN && FACULTY_COHORT_IDS.length) {
+      const { data: fc } = await supabase.from('cohorts').select('*').in('id', FACULTY_COHORT_IDS).order('starts_on', { ascending: false }).limit(1).maybeSingle();
+      cohort = fc;
+    }
+    return cohort;
+  }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return show('gate');
-    const { data: p } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
-    if (!p?.is_admin) return show('denied');
+    const r = await checkAdminOrFaculty(session.user);
+    IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
+    if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     const params = new URLSearchParams(location.search);
     const u = params.get('u');
     if (u) loadStudent(u); else loadPicker();
@@ -194,7 +209,8 @@
   async function loadPicker() {
     $('studentPicker').style.display = 'block';
     $('studentDetail').style.display = 'none';
-    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    const cohort = await resolveCohort();
+    if (!cohort) { $('pickerList').innerHTML = `<p class="muted">You're not assigned to any cohort yet — ask an admin.</p>`; return; }
     const { data: regs } = await supabase.from('registrations').select('user_id,status').eq('cohort_id', cohort.id);
     const ids = (regs || []).map(r => r.user_id);
     const { data: profiles } = await supabase.from('profiles').select('id,full_name,college,year').in('id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']);
@@ -208,7 +224,8 @@
   async function loadStudent(userId) {
     $('studentPicker').style.display = 'none';
     $('studentDetail').style.display = 'block';
-    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
+    const cohort = await resolveCohort();
+    if (!cohort) { $('studentDetail').innerHTML = `<p class="muted" style="padding:40px;text-align:center">You're not assigned to any cohort yet — ask an admin.</p>`; return; }
     const [profile, reg, progress, subs, assignments, attempts, quizzes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
       supabase.from('registrations').select('*').eq('user_id', userId).eq('cohort_id', cohort.id).maybeSingle(),

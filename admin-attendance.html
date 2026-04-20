@@ -158,12 +158,13 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { DAYS } from './assets/days.js';
 
   const $ = (id) => document.getElementById(id);
-  document.getElementById('adminNav').innerHTML = renderAdminNav('admin-attendance.html');
+  let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
 
   let COHORTS = [];
   let SELECTED = null;
@@ -201,14 +202,19 @@
   });
 
   async function checkAdmin(user) {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return showDenied();
+    const r = await checkAdminOrFaculty(user);
+    IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
+    if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-attendance.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadCohorts();
   }
 
   async function loadCohorts() {
-    const { data } = await supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    let q = supabase.from('cohorts').select('*').order('starts_on', { ascending: false });
+    if (!IS_ADMIN) q = q.in('id', FACULTY_COHORT_IDS);
+    const { data } = await q;
     COHORTS = data || [];
     const sel = $('cohortSel');
     sel.innerHTML = COHORTS.map(c => `<option value="${c.id}">${esc(c.name)} (${esc(c.slug)})</option>`).join('');
