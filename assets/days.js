@@ -1,9 +1,9 @@
 export const DAYS = [
   // Week 1 — Foundations
-  { n: 1,  w: 1, title: "What AI is + inside an LLM" },
-  { n: 2,  w: 1, title: "Open-model landscape + Indian AI" },
-  { n: 3,  w: 1, title: "Prompts + context engineering intro" },
-  { n: 4,  w: 1, title: "Ethics + AI failures workshop" },
+  { n: 1,  w: 1, title: "What AI is + where it's used in real life" },
+  { n: 2,  w: 1, title: "Inside an LLM: tokens + attention" },
+  { n: 3,  w: 1, title: "The AI tool landscape — which tool for which job" },
+  { n: 4,  w: 1, title: "Prompts + context engineering intro" },
   { n: 5,  w: 1, title: "Workshop: AI wins show-and-tell" },
 
   // Week 2 — Exposure → Capstone kickoff

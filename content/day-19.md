@@ -7,7 +7,7 @@ lab: {"title": "Write your capstone's first CLAUDE.md + AGENTS.md + 3 slash comm
 prompt_of_the_day: "You are a context engineer. Given my capstone description {{capstone_description}} and stack {{stack}}, draft a CLAUDE.md with these sections: Project Overview, Architecture, Coding Rules, File Locations, Testing Patterns, Common Pitfalls, Slash Commands. Make every rule actionable."
 tools_hands_on: [{"name": "Google Antigravity", "url": "https://antigravity.google.com"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
 tools_demo: [{"name": "Battle-tested CLAUDE.md examples", "url": "https://github.com/search?q=CLAUDE.md&type=code"}, {"name": "Custom slash commands (Claude Code)", "url": "https://docs.claude.com/claude-code"}]
-tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}]
+tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}, {"name": "Google Code Assist", "url": "https://codeassist.google/"}, {"name": "aider", "url": "https://aider.chat"}]
 resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/search?q=filename%3ACLAUDE.md&type=code"}, {"name": "Claude Code hooks guide", "url": "https://docs.claude.com/claude-code"}]
 ---
 
@@ -50,8 +50,10 @@ The lab wants a real repo open in a real AI harness — no toy project, no scrat
 - [ ] Pick one harness that your laptop supports — in order of weight/heaviness:
   - **Google Antigravity** (`antigravity.google.com`) — web-based + free with Google account, no local install, lightest option for weak laptops.
   - **Google AI Studio** (`aistudio.google.com`) — web playground, create a "Build" project, also works fully in browser.
+  - **Google Code Assist** (`codeassist.google/`) — free Gemini-powered VS Code / JetBrains plugin; individual tier has no credit card requirement. Good IDE option if you want inline completions without leaving VS Code.
   - **Claude Code** (`claude.com/claude-code`) — local CLI, needs Claude Pro or equivalent access.
   - **Cursor** (`cursor.com`) — local desktop app, free tier OK.
+  - **aider** (`aider.chat`) — OSS CLI pair-programmer, bring-your-own-key. Slick command-line harness if you prefer terminal over IDE.
 - [ ] Open your capstone folder. If you haven't made one yet, create it now and run `git init` so the AI harness has a repo to read.
 - [ ] Confirm your harness opens the repo: from the folder, run `claude` (or open in Cursor) and ask "what's in this repo?" — sanity check.
 
@@ -210,6 +212,8 @@ Ship a working **CLAUDE.md** + **AGENTS.md** + **3 custom slash commands** for y
 ### Harnesses
 - Claude Code — https://claude.com/claude-code
 - Cursor — https://cursor.com
+- Google Code Assist — https://codeassist.google/ (free Gemini-powered VS Code / JetBrains plugin)
+- aider — https://aider.chat (OSS CLI pair-programmer, bring-your-own-key)
 
 ### Specs + docs
 - Anthropic Claude Code docs — https://docs.claude.com/claude-code

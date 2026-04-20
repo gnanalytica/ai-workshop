@@ -1,212 +1,219 @@
 ---
 reading_time: 14 min
-tldr: "AI lies beautifully, leaks quietly, and amplifies whatever bias you feed it. Your job is to stop being surprised by it."
+tldr: "A good prompt is not a magic spell. It's a well-briefed junior — context, role, examples, constraints, tone, evaluation."
 tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/N9_a_MUHpB4
-lab: {"title": "Make three models hallucinate — on purpose", "url": "https://claude.ai/"}
-prompt_of_the_day: "Give me 5 recent peer-reviewed papers (2023-2025) on {{niche topic}}. For each, include title, authors, journal, DOI, and one-line finding. Mark any you're less than 95% confident about."
-tools_hands_on: [{"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}, {"name": "Gemini", "url": "https://gemini.google.com/"}]
-tools_demo: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai/"}]
-tools_reference: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai/"}, {"name": "PauseAI", "url": "https://pauseai.info/"}, {"name": "Alignment Forum", "url": "https://www.alignmentforum.org/"}, {"name": "MIT AI Risk Repository", "url": "https://airisk.mit.edu/"}]
-resources: [{"title": "Why LLMs Hallucinate (OpenAI paper)", "url": "https://openai.com/index/why-language-models-hallucinate/"}, {"title": "Stochastic Parrots paper (Bender et al.)", "url": "https://dl.acm.org/doi/10.1145/3442188.3445922"}]
+video: https://www.youtube.com/embed/T9aRN5JkmL8
+lab: {"title": "Iterate one prompt five times", "url": "https://claude.ai/"}
+prompt_of_the_day: "You are a {{role}}. Context: {{one paragraph about the situation}}. Task: {{what you want done}}. Constraints: {{bullet list of must-dos and must-nots}}. Examples: {{1-2 good examples}}. Output format: {{JSON / markdown / table}}."
+tools_hands_on: [{"name": "Claude", "url": "https://claude.ai/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}]
+tools_demo: [{"name": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com/"}]
+tools_reference: [{"name": "Anthropic Prompt Engineering Guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}, {"name": "DAIR.AI Prompt Engineering Guide", "url": "https://www.promptingguide.ai/"}, {"name": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}]
+resources: [{"title": "Chain-of-Thought paper", "url": "https://arxiv.org/abs/2201.11903"}, {"title": "Anthropic 'Context is King' post", "url": "https://www.anthropic.com/"}]
 ---
 
 ## Intro
 
-Every tool of power has a dark side. Cars kill, electricity electrocutes, the internet trolls. AI's dark side is more subtle — it lies without malice, it reflects bias it didn't choose, and it forgets nothing you tell it. Today is the day you stop being naive.
+Yesterday you mapped tools to jobs. Today you learn how to *actually talk* to whichever tool you picked. The difference between a student who gets 3x output from AI and one who gives up saying "AI is mid" — is not intelligence. It's prompt craft. Today you learn the only framework you'll ever need, and a small taste of what's coming in Week 3: *context engineering.*
 
 > 🧠 **Quick glossary**
-> - **Hallucination** = when AI confidently makes up facts that sound true but aren't.
-> - **Bias** = the model reflecting skewed patterns from its internet training data (gender, race, geography).
-> - **Jailbreak** = a clever prompt trick that bypasses the model's safety guardrails.
-> - **Deepfake** = AI-generated fake video, image, or voice of a real person.
-> - **Red-team** = deliberately attacking a model to find where it breaks — so you can defend against it.
+> - **Prompt** = the instruction you give the AI. Everything you type is a prompt.
+> - **Context** = extra info you give the AI beyond the instruction (your notes, a file, a role).
+> - **Zero-shot** = ask without examples ("summarise this").
+> - **Few-shot** = give 2–3 examples inside the prompt so AI mimics the pattern.
+> - **Chain-of-thought (CoT)** = ask AI to "think step by step" before answering.
 
 ### Today's 1-hour live session
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min  | Yesterday you learned to prompt — today, why prompting alone isn't enough |
-| Mini-lecture | 20 min | The six failure modes: hallucination, bias, privacy, deepfakes, copyright, jailbreaks |
-| Live lab     | 20 min | Red-team three models — make each one hallucinate on purpose |
-| Q&A + discussion | 15 min | Share your personal AI red line + debate one from a peer |
+| Recap + hook | 5 min  | This week's tool landscape — today, how to actually *talk* to any of them |
+| Mini-lecture | 20 min | The CREATE framework + zero-shot vs few-shot vs chain-of-thought |
+| Live lab     | 20 min | Iterate one real prompt five times — watch quality climb |
+| Q&A + discussion | 15 min | Which CREATE letter do you skip — and what's it costing you? |
 
 **Before class** (~10 min): skim the main read section below.
-**After class** (~30 min tonight): finish the 3-hallucination screenshot doc and write your 250-word "My personal AI red line" essay.
+**After class** (~30 min tonight): finish the 5-version prompt iteration lab and start your personal prompt library with its first entry.
 
 ### In-class moments (minute-by-minute)
 
-- **00:05 — Cold-open vote**: instructor reads the NY-lawyer fake-cases story in 30 seconds, then asks in chat: *"Fineable offense, career-ending, or just embarrassing?"* One-word answers only. Reveal the actual outcome after ten replies land.
-- **00:15 — Think-pair-share**: 90 seconds on *"Which of the six failure modes scares you most for India specifically?"* Each pair names a scenario that would play out differently here than in the US.
-- **00:30 — Live poll**: *"Is it ethical to use ChatGPT for a graded college assignment?"* Options: always / never / depends on the assignment / depends if you disclose. Watch the split — then pick the smallest group and ask them to defend.
-- **00:45 — Stand-and-defend on red lines**: three volunteers read their one-sentence red line aloud. The rest of the room tries to find an edge case that would break it. Volunteer either holds the line or admits the revision.
-- **00:55 — Chat close**: *"One thing I'm warning my family about this week is ___."* (Deepfakes, voice cloning, password paste habits — whatever hit hardest.)
+- **00:05 — Cold-open prompt read-aloud**: instructor pastes a terrible 8-word prompt on screen. Students shout in chat which CREATE letter is missing most. First correct answer gets credit for the day.
+- **00:15 — Think-pair-share**: 90 seconds on *"Which CREATE letter do you skip most often — and what's it costing you?"* Each pair names their shared skip and one concrete cost.
+- **00:30 — Live poll**: *"Is asking for JSON output cheating or just how adults use LLMs?"* Bars appear. Instructor calls on a "cheating" voter and a "adult" voter to steelman the other side in 20 seconds each.
+- **00:45 — Live rewrite relay**: one student drops a real weak prompt in chat. Three volunteers each add one CREATE letter on screen — C, then R, then E — while the room watches the output quality jump between versions.
+- **00:55 — Chat close**: *"The CREATE letter I'm adding to every prompt from tomorrow is ___."*
 
 ## Before class · ~20 min pre-work
 
 ### Setup (if needed)
 
-- [ ] No new setup — ChatGPT, Claude, Gemini from Day 1 are enough.
-- [ ] Bookmark the AI Incident Database (https://incidentdatabase.ai/) — we'll reference live.
+- [ ] No new setup required — Claude and ChatGPT accounts from Day 1 are enough.
+- [ ] Create an empty Notion page, Google Doc, or markdown file called "My Prompt Library" — we start populating it today.
 
 ### Primer (~5 min)
 
-- **Read**: OpenAI's own "Why language models hallucinate" (https://openai.com/index/why-language-models-hallucinate/) — one short essay, zero math.
-- **Watch** (optional): A 3–5 min news clip on the Hong Kong deepfake CFO scam — any reputable outlet's YouTube coverage; instructor to share one link in the channel if a clean version is found.
+- **Read**: The Anthropic Prompt Engineering overview (https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — skim the left sidebar to see which techniques exist. You don't need to understand them yet.
+- **Watch** (optional): Any 3–5 min "prompt engineering intro" video — instructor to link one in the channel if a great one surfaces, otherwise skip.
 
 ### Bring to class
 
-- [ ] Your hometown, old school, or favourite niche hobby written down — the lab needs an area you know cold so you can spot hallucinations.
-- [ ] A one-line draft of a "red line" you already suspect you want to hold — we'll sharpen it together.
+- [ ] One real weak prompt you've typed in the past week — the worse the better. We'll rewrite it live.
+- [ ] One real task you've been putting off that AI could help with (resume bullet, DBMS notes, a difficult email) — this becomes your V1 in the lab.
 
-## Read: The six failure modes every user must know
+## Read: CREATE — the only prompt framework you need
 
-### 1. Hallucination — confident lies
+Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.
 
-The model predicts the *most likely* next token, not the *true* next token. If truth isn't in its training data, it will still generate *something that sounds right*. This is hallucination.
+**C — Context.** What's the situation? Who am I? What's already been tried?
+**R — Role.** Who should the AI be? (Expert? Peer? Critic?)
+**E — Examples.** Show, don't just tell. Even one example 5x the output quality.
+**A — Active constraints.** What MUST the output do, and what MUST it NOT do?
+**T — Tone.** Formal? Casual? Sarcastic? Hinglish?
+**E — Evaluation.** How will you judge the answer? Tell the model.
 
-> A New York lawyer used ChatGPT to research a case in 2023. It cited six court decisions. All six were fake. Judge fined him $5,000. Career damaged. He's a warning, not a villain — he just didn't know the rules.
+Worked example. Compare these two prompts:
 
-Why it happens: the model has never been rewarded for saying "I don't know." It's been rewarded for fluency.
+> **Weak:** "Write me a cover letter for SDE internship."
 
-Worked example. Ask any model: *"Summarise the 2024 paper by Dr. Rajesh Sharma from IIT Delhi on quantum-inspired LLM compression."* If no such paper exists, the model may invent the title, journal, and findings — *in great detail.* It's not lying. It's autocompleting your question plausibly.
+> **Strong:** "**Context:** I'm a 3rd-year CSE student at VIT Vellore, CGPA 8.1, two hackathon wins, one React side project. Applying to Razorpay SDE-Intern. **Role:** You are a senior engineer at Razorpay who's reviewed 500 intern applications. **Examples:** [paste one cover letter you like]. **Constraints:** Under 250 words, mention one specific Razorpay product, no clichés like 'passionate' or 'go-getter'. **Tone:** confident but humble, Indian English. **Evaluation:** If a hiring manager would skim past this, it fails."
 
-**How to defend:** ask for sources, verify one at random, say "if you're not sure, say so" in the prompt.
+The second one takes 90 seconds longer to write. It saves 30 minutes of editing.
 
-### 2. Bias — the internet's fingerprints
+### Zero-shot, few-shot, chain-of-thought — three patterns to know
 
-The model learned from the internet. The internet is not neutral. Ask for "CEO" and early image models drew men. Ask for "nurse" and they drew women. Ask for "criminal" and… you see the problem.
+**Zero-shot:** Ask without any example. Fastest. Works for simple tasks.
+*"Summarise this article in 3 bullets."*
 
-Famous incidents:
-- **Amazon** scrapped an AI hiring tool in 2018 because it downgraded resumes that mentioned "women's" (as in "women's chess club captain").
-- **Google Photos** tagged Black users as "gorillas" in 2015. Google's fix? Remove the "gorilla" tag entirely. The underlying bias wasn't fixed — it was hidden.
+**Few-shot:** Give 1-5 examples first. Dramatically better for formatting or style tasks.
 
-Your job isn't to fix model bias. Your job is to notice it before you ship something.
+```
+Example 1:
+Input: "Prof cancelled class yaar"
+Sentiment: relieved
+Reason: "class cancelled" + "yaar" signals relief
 
-### 3. Privacy — the things you paste
+Example 2:
+Input: "Mess food was peak today, I'm cooked"
+Sentiment: positive
+Reason: "peak" is Gen-Z slang for excellent
 
-Every prompt you type to a free chatbot may be used for training. Pasted your company's source code? It's in the training set now. Pasted your patient's medical records? Same. A Samsung engineer did this in 2023. Samsung banned ChatGPT company-wide the next week.
+Now classify:
+Input: "Placements list dropped and I'm not on it"
+```
 
-| What to never paste into a public chatbot |
-|---|
-| Your Aadhaar, PAN, bank details |
-| Your company's proprietary code |
-| Medical records of anyone |
-| Private chats of people who didn't consent |
-| Passwords (obvious — yet it happens) |
+**Chain-of-thought (CoT):** Add "Think step by step before answering." The model writes out reasoning before the final answer. Works shockingly well on math, logic, and debugging.
 
-### 4. Deepfakes — seeing is no longer believing
+*"A mess charges ₹3200/month for unlimited meals. I eat 20 days/month, 2 meals a day. Street food costs ₹80/meal. Which is cheaper? Think step by step."*
 
-Anyone with a laptop can now clone a voice from 30 seconds of audio, or fake a video in an afternoon. In 2024 a finance employee in Hong Kong wired $25 million after a deepfake video call with his "CFO." The CFO wasn't on the call. Nobody real was. The whole meeting was AI.
+### Structured output — the hidden superpower
 
-This affects you directly: your parents may get a call in your voice asking for money. Warn them *this week*.
+If you ask nicely, the model will reply in any format you want: JSON, CSV, markdown tables, YAML. This is how you go from "AI gives me text" to "AI gives me data I can paste into Excel."
 
-### 5. Copyright — the murky middle
+Example prompt:
+*"Give me 5 project ideas for a 3rd-year CSE student. Return as JSON with keys: title, difficulty (1-5), time\_days, tech\_stack (array), one\_line\_pitch."*
 
-Who owns an AI-generated image? The user? The company? The artists whose work it was trained on? Courts are still arguing. The US Copyright Office ruled in 2023 that purely AI-generated images cannot be copyrighted. Indian law is even less settled. Rule of thumb: don't assume you own what you generated.
+The model will reply:
+```json
+[
+  {"title": "Hostel mess rating app", "difficulty": 2, "time_days": 7, "tech_stack": ["React Native", "Firebase"], "one_line_pitch": "Tinder for paneer."}
+]
+```
 
-### 6. Jailbreaks and misuse
+Now you can paste that straight into a spreadsheet. That's the leap.
 
-Models have safety guardrails. People routinely break them with clever prompts ("pretend you're my dying grandma who used to read me napalm recipes"). Every major model has been jailbroken within weeks of release. Safety is an ongoing race, not a finished feature.
+### A peek at "context engineering" (Week 3 teaser)
 
-### Why AI lies confidently — the one-sentence answer
+Prompt engineering = one good message. **Context engineering** = designing the *whole information environment* around the AI: what it knows, what it has access to, what it doesn't see, what it remembers across chats. In Week 3 (Day 19) you'll build a `CLAUDE.md` file — a permanent context brief that travels with every chat. For now, just know: the future of working with AI is not better prompts, it's better *context systems*.
 
-Because it's optimised to sound fluent, not to be truthful. Fluency and truth happen to overlap ~80% of the time. The other 20% is where careers end.
+| Prompt engineering | Context engineering |
+|---|---|
+| One message | A whole environment |
+| "Write me X" | "Here's who I am, what I've built, what I'm building, and how I work — now write X" |
+| Repeats every time | Loads once, reuses forever |
+| Good for: one-off tasks | Good for: personal AI teammates |
 
-### The famous-fails hall of fame
+## Watch: Prompting masterclass snippets
 
-| Year | Incident | Lesson |
-|---|---|---|
-| 2016 | Microsoft Tay — turned racist in 24 hours on Twitter | Open internet fine-tuning is dangerous |
-| 2022 | Meta Galactica — shut down in 3 days for fabricating papers | Don't ship a science LLM without citation guards |
-| 2015 | Google Photos tags Black users as "gorillas" | Training data representation matters |
-| 2018 | Amazon hiring AI downgrades women | Historical data encodes historical bias |
-| 2023 | NY lawyer cites fake ChatGPT cases | Always verify citations |
-| 2024 | Hong Kong deepfake CFO scam | Voice and video are no longer proof |
+Short curated clip covering CREATE, few-shot, CoT, and structured output.
 
-## Watch: AI failures — a 15-minute tour
-
-https://www.youtube.com/embed/N9_a_MUHpB4
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Watch for:
-- How quickly Tay turned (under 16 hours)
-- The Galactica demo that embarrassed Meta
-- Why the Amazon tool's bias was *mathematically* baked in
+- Why "think step by step" doubles accuracy on reasoning tasks
+- How role-prompting changes tone without you asking
+- The one-example trick that beats zero-shot every time
 
-## Lab: Make three models hallucinate — on purpose
+## Lab: Iterate one prompt five times
 
-40 minutes. Your job: get ChatGPT, Claude, and Gemini to each invent something confidently wrong. Then document how you did it.
+35 minutes. One prompt. Five rewrites. You'll feel the curve.
 
 > ⚠️ **If you get stuck**
-> - *The model keeps correctly saying "I don't know" or "I can't verify that"* → you're testing on post-training-cutoff facts, which most 2025+ models now refuse on. Pivot to *obscure but dateable* questions: a 2012 college principal, a 2016 district cricket final, minor local history. Pre-2022 niche facts are the hallucination goldmine.
-> - *You can't tell if the answer is wrong because you don't actually know the real answer* → pick a different topic. The exercise only works on facts *you can verify*. Your hometown, your school, a show you've watched twice — not Wikipedia trivia you just Googled.
-> - *Model backs down the moment you ask "are you sure?"* → that's still useful data — note it. Then try a different angle: ask for a citation URL, then try to open it. A fabricated arxiv link is often the cleanest evidence of a hallucination.
+> - *Your V2–V5 outputs all look basically the same* → your "real task" is probably too generic ("write me a LinkedIn post"). Pick something with constraints reality actually has — a specific internship, a specific reader, a word limit — then the CREATE letters have something to bite into.
+> - *Claude asks you to verify email / hits a usage limit mid-lab* → switch to ChatGPT for the remaining versions. Note the switch in your doc. The framework works identically across models; that's the point.
+> - *V5 JSON output comes back with surrounding prose ("Sure, here's your JSON:…")* → add one line at the end: *"Return ONLY valid JSON, no preamble, no code fences."* If it still adds fences, that's usually fine — the content is the artifact, not the wrapper.
 
-1. Open all three models side by side.
-2. Pick an area you know well — your hometown, your college, your favourite video game, a niche hobby.
-3. Ask each model a very specific question with a factual answer you know. Example: *"Who was the principal of [your college] in 2018?"* or *"What was the score of the 2014 IPL final?"*
-4. If it gets it right, dig deeper until you find a question it gets wrong. Niche sports stats, obscure local history, and "recent" events (past 6 months) are goldmines.
-5. Once it hallucinates, ask *"Are you sure? Please double-check."* Note whether it backs down or doubles down.
-6. Screenshot three hallucinations — one per model.
-7. In a Google Doc, paste each screenshot and write: (a) what you asked, (b) what it said, (c) the real answer, (d) your guess at *why* it hallucinated.
-8. Add one paragraph: *"The red flag I'll watch for next time is ___."*
+1. Pick a real task you actually need done. Suggestions: *"Draft 3 LinkedIn posts about my last internship" / "Summarise my DBMS notes into exam flashcards" / "Plan my study week for end-sems."* Whatever you pick, it must be real.
+2. Open Claude. Write your first prompt in 10 seconds — however you'd normally ask. Save the output as V1.
+3. Rewrite using **C** and **R** only (add context + role). Save as V2.
+4. Rewrite adding **E** (one example of what good output looks like). Save as V3.
+5. Rewrite adding **A** and **T** (constraints + tone). Save as V4.
+6. Rewrite adding structured output (ask for JSON, table, or markdown with headings). Save as V5.
+7. Line up V1 through V5 in a Google Doc. Read them in order. Write one sentence: *"The biggest jump happened between V__ and V__ because __."*
+8. Pick the best of the five. Clean it up. Add it to a new note called "My Prompt Library" — this is your first entry.
 
-Artifact: 3-hallucination document with screenshots and analysis.
-
-> **Important:** this is a *defensive* exercise. You're learning to spot lies, not to weaponize them. Do not share your hallucinations as "look, AI is dumb" memes — that's not the point.
+Artifact: Google Doc with 5 versions + one reflection sentence. Plus your first library entry.
 
 ## After class · ~30-45 min post-work
 
 ### Do (the assignment)
 
-1. Open a fresh doc titled "My personal AI red line."
-2. Write exactly one red line — a specific thing you will never do with AI. Not a platitude; something breakable.
-3. In 250 words, defend it: the edge case that tempted you, why you're holding the line anyway, and the rule you'd apply if a friend asked the same question.
-4. Attach the 3-hallucination lab document (screenshots + analysis) as a second page or a separate file.
-5. Submit both via the dashboard before next class.
+1. Open your "My Prompt Library" doc.
+2. Build 10 reusable templates — one each for: study/notes, resume/cover letter, LinkedIn post, code explanation, email/message, brainstorming, summarisation, translation, debate/devil's advocate, and a 10th of your choice.
+3. Every template must include `{{placeholder}}` variables so future-you can just fill in blanks.
+4. Each template should apply at least 3 of the CREATE letters visibly (tagged in the template itself is fine).
+5. Export to PDF or share a Notion link, and submit via the dashboard.
 
 ### Reflect (~5 min)
 
-**Prompt:** *"Of the six failure modes, which one am I personally most likely to cause harm with — not be a victim of?"* A good reflection flips the usual fear-of-AI framing. Most students worry about being deceived; a sharper answer owns that you might be the person pasting something you shouldn't, or shipping a biased prompt, or trusting a hallucinated citation in a submission.
+**Prompt:** *"Which of the 10 templates will I actually use this week — and which did I include just to hit the count?"* A good reflection is honest: most people have 2–3 genuinely load-bearing templates and 7 aspirational ones. Naming the gap is the whole point; it tells you where to invest next.
 
 ### Stretch (optional, for the curious)
 
-- **Extra video**: TBD — instructor will pick based on which failure mode the class fixated on most.
-- **Extra read**: Bender et al., "On the Dangers of Stochastic Parrots" (https://dl.acm.org/doi/10.1145/3442188.3445922) — the paper Google fired an author over. Dense but foundational.
-- **Try**: Browse 10 incidents on https://incidentdatabase.ai/ and pick one that could plausibly happen in India. Write a 3-line prevention plan for it.
+- **Extra video**: TBD — instructor will pick based on which CREATE letters the class struggled with most.
+- **Extra read**: DAIR.AI's Prompt Engineering Guide (https://www.promptingguide.ai/) — the most comprehensive free resource online; bookmark, don't binge.
+- **Try**: Take your best V5 from the lab and run it on three models (Claude, ChatGPT, Gemini). Same prompt, same CREATE structure — see which model rewards structure most. That's your "writing model."
 
 ## Quiz
 
-Four questions on hallucination, bias, privacy, and at least one famous incident. The goal is recognition, not memorisation of names and dates.
+Four questions on CREATE, zero-shot vs few-shot, CoT, and structured output. You don't have to name the framework — you have to recognize the parts.
 
 ## Assignment
 
-Write a **250-word "My personal AI red line"** essay. Prompt: *"What is one thing I will never do with AI — and why?"* Examples of red lines students have written: *"I will never let AI write my condolence messages." / "I will never paste a classmate's code into AI without asking." / "I will never use AI to write anything I'll claim as purely my own work in an application."* Your red line must be specific, defendable, and real for *you* — not a generic ethics-class answer.
+Build a personal prompt library with **10 templates.** Categories to cover: (1) study/notes, (2) resume/cover letter, (3) LinkedIn post, (4) code explanation, (5) email/message, (6) brainstorming, (7) summarisation, (8) translation, (9) debate/devil's advocate, (10) free choice. Each template must have visible `{{placeholders}}` so you can reuse it. Store in Notion, Google Docs, or a plain markdown file. This is an artifact you'll *actually* use for the next two years.
 
 ## Discuss: Live session prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
-| Which of the six failure modes scares you most *for India specifically*? | Picks one (deepfakes, privacy, bias) and explains why the *Indian context* makes it worse — UPI scam surface area, low digital literacy among parents, voice-cloning over WhatsApp, vernacular misinformation speed. Not a generic "privacy is bad" answer. |
-| Is it ethical to use ChatGPT for a college assignment that will be graded? Where's the line? | Distinguishes learning from submitting. Names specific uses that are clearly fine (brainstorming, outline critique), clearly not (generating and submitting as original), and the messy middle (grammar cleanup, citation formatting). Proposes a personal rule. |
-| If a deepfake of you appeared tomorrow, what's your 10-minute response plan? | Concrete steps in order: screenshot + timestamp, report to the hosting platform, alert close family directly (they're the target), file a cybercrime complaint at cybercrime.gov.in, draft a public clarification. Not "I'd panic." |
-| Should AI companies be legally responsible when their models hallucinate harmfully? | Separates the fluent from the negligent — did the company ship reasonable guardrails? Compares to car manufacturers, pharma, or platforms like YouTube. Takes a position and names who else shares blame (the user, the deployer). |
-| Share your personal red line — and challenge one from your peers. | Red line is specific enough to be breakable ("I'll never use AI to write a condolence message"), not a platitude ("I'll always be ethical"). Challenge targets the edge case, not the person. |
+| Which of the six CREATE letters do you skip most often — and what's it costing you? | Names one specific letter (not "all of them") and one specific failure mode it causes — e.g., "I skip Examples, so the model defaults to LinkedIn-bro tone every time." Shows self-awareness, not guilt. |
+| Is asking for JSON "cheating," or is it how adults use LLMs? | Reframes the question: structured output isn't a trick, it's the bridge between "AI text" and "software that uses AI." Mentions a real use (spreadsheets, APIs, pipelines). |
+| When does few-shot *hurt* instead of help? | Gives at least one case: when your examples accidentally encode a bias, when the task is genuinely novel (examples anchor the model to the wrong shape), or when examples eat your token budget on a long context. |
+| Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate? | Doesn't just say "bigger." Predicts which categories *grow* vs which stay small — based on what the student actually does every day. Shows the library is a living artifact, not a trophy. |
+| Where's the line between "prompting" and just "writing clearly"? | Concedes there isn't a hard line — great prompting IS clear writing with extra scaffolding (role, examples, output format) that you wouldn't add when writing to humans. |
 
 ## References
 
 ### Pre-class primers
-- [OpenAI — Why language models hallucinate](https://openai.com/index/why-language-models-hallucinate/) — short, official, un-defensive.
-- [AI Incident Database](https://incidentdatabase.ai/) — browse real documented failures before class.
+- [Anthropic Prompt Engineering Overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — short, official, unhyped.
 
 ### Covered during class
-- [ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Gemini](https://gemini.google.com/) — today's red-team targets.
+- [Claude](https://claude.ai/) — today's primary lab tool.
+- [Anthropic Prompt Library](https://docs.anthropic.com/en/prompt-library/library) — steal-worthy templates by the dozen.
+- [Google AI Studio](https://aistudio.google.com/) — free place to test Gemini prompts with a system prompt field.
 
 ### Deep dives (post-class, if curious)
-- [Stochastic Parrots (Bender et al.)](https://dl.acm.org/doi/10.1145/3442188.3445922) — the foundational critique paper.
-- [MIT AI Risk Repository](https://airisk.mit.edu/) — a structured catalogue of ~700 risks.
-- [Alignment Forum](https://www.alignmentforum.org/) — where researchers argue about long-term AI safety.
-- [PauseAI](https://pauseai.info/) — the activist side; read to understand the strongest anti-hype position.
+- [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) — the encyclopedia.
+- [OpenAI Prompting Guide](https://platform.openai.com/docs/guides/prompt-engineering) — official, terse, worth a full read once.
+- [Chain-of-Thought paper](https://arxiv.org/abs/2201.11903) — the 2022 paper that made "think step by step" famous.
 
 ### Other videos worth watching
-- India-specific cybercrime reporting portal: https://cybercrime.gov.in/ — bookmark, don't wait until you need it.
+- [Anthropic "Context is King"](https://www.anthropic.com/) — the original post that coined how most practitioners now think about context vs prompts.

@@ -6,7 +6,7 @@ video: https://www.youtube.com/embed/rIRkxZSn-A8
 lab: {"title": "Install Ollama + run a 1-3B model + log 10 evals in Langfuse", "url": "https://ollama.com/download"}
 prompt_of_the_day: "Act as a prompt engineer. My task is {{task_description}}. Generate three prompt variants: (A) zero-shot, (B) chain-of-thought with self-critique, (C) few-shot with 3 examples. Output each as a clearly labelled code block so I can paste them into Langfuse."
 tools_hands_on: [{"name": "Ollama", "url": "https://ollama.com"}, {"name": "Open WebUI", "url": "https://openwebui.com"}, {"name": "Langfuse", "url": "https://langfuse.com"}]
-tools_demo: [{"name": "Groq (free Llama 3.3 70B @ 750 tok/s)", "url": "https://groq.com"}, {"name": "Hugging Face model cards", "url": "https://huggingface.co"}]
+tools_demo: [{"name": "Groq (free Llama 3.3 70B @ 750 tok/s)", "url": "https://groq.com"}, {"name": "Hugging Face model cards", "url": "https://huggingface.co"}, {"name": "OpenRouter", "url": "https://openrouter.ai"}]
 tools_reference: [{"name": "LM Studio", "url": "https://lmstudio.ai"}, {"name": "WebLLM (in-browser)", "url": "https://webllm.mlc.ai"}, {"name": "Together AI", "url": "https://together.ai"}, {"name": "Fireworks AI", "url": "https://fireworks.ai"}, {"name": "LangSmith", "url": "https://smith.langchain.com"}]
 resources: [{"name": "Qwen 2.5 1.5B", "url": "https://ollama.com/library/qwen2.5"}, {"name": "Gemma 2 2B", "url": "https://ollama.com/library/gemma2"}, {"name": "Phi-3 mini 3.8B", "url": "https://ollama.com/library/phi3"}]
 ---
@@ -79,7 +79,7 @@ Let's unpack three ideas that make you dangerous: quantization (so models fit on
 
 These small models (SLMs) won't replace GPT-5 or Claude, but for summarization, classification, structured extraction, and routing, they're shockingly competent — and **free, offline, private**.
 
-**Cloud fallback — your free GPU.** When local is too slow for the demo, cloud inference APIs give you 70B-class models at ridiculous speeds. **Groq** serves Llama 3.3 70B at ~750 tokens/sec on a free tier. **Together AI** and **Fireworks AI** offer wide model catalogues with per-token billing. The workflow: prototype locally with Ollama, switch the endpoint URL to Groq when you need more brain, and your app code barely changes.
+**Cloud fallback — your free GPU.** When local is too slow for the demo, cloud inference APIs give you 70B-class models at ridiculous speeds. **Groq** serves Llama 3.3 70B at ~750 tokens/sec on a free tier. **Together AI** and **Fireworks AI** offer wide model catalogues with per-token billing. **OpenRouter** (https://openrouter.ai) is the cheat code when you want to A/B many models without juggling keys — one API key routes to 100+ models (OpenAI, Anthropic, Mistral, Llama, DeepSeek, Qwen) behind a single OpenAI-compatible endpoint, with a free tier on several models. Perfect for today's eval work. The workflow: prototype locally with Ollama, switch the endpoint URL to Groq or OpenRouter when you need more brain, and your app code barely changes.
 
 **Prompting patterns that actually move numbers.** Prompting is not magic words — it's a set of reusable patterns. Four that you should internalize today:
 
@@ -190,6 +190,7 @@ Build a **10-row eval set** on a task tied to your capstone. Run **three prompt 
 - Groq (Llama 3.3 70B @ 750 tok/s) — https://groq.com
 - Together AI — https://together.ai
 - Fireworks AI — https://fireworks.ai
+- OpenRouter — https://openrouter.ai (one key, 100+ models, great for eval sweeps)
 
 ### Models pulled today
 - Qwen 2.5 1.5B — https://ollama.com/library/qwen2.5

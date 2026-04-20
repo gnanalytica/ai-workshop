@@ -6,8 +6,8 @@ video: https://www.youtube.com/embed/LCEmiRjPEtQ
 lab: {"title": "Vibe-code your capstone v0", "url": "https://cursor.com/docs"}
 prompt_of_the_day: "You are my pair-programmer. Read {{CLAUDE.md}} and the current file tree. I want to build {{feature}}. Before writing code, propose a 3-step plan, call out the riskiest assumption, and wait for my sign-off."
 tools_hands_on: [{"name": "Cursor", "url": "https://cursor.com"}, {"name": "bolt.new", "url": "https://bolt.new"}, {"name": "Google Antigravity", "url": "https://antigravity.google.com"}]
-tools_demo: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cline", "url": "https://cline.bot"}]
-tools_reference: [{"name": "Continue", "url": "https://continue.dev"}, {"name": "Lovable", "url": "https://lovable.dev"}, {"name": "v0", "url": "https://v0.dev"}, {"name": "Emergent", "url": "https://emergent.sh"}, {"name": "Replit Agent", "url": "https://replit.com"}, {"name": "Windsurf", "url": "https://codeium.com/windsurf"}]
+tools_demo: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cline", "url": "https://cline.bot"}, {"name": "Dify", "url": "https://dify.ai"}]
+tools_reference: [{"name": "Continue", "url": "https://continue.dev"}, {"name": "Lovable", "url": "https://lovable.dev"}, {"name": "v0", "url": "https://v0.dev"}, {"name": "Emergent", "url": "https://emergent.sh"}, {"name": "Replit Agent", "url": "https://replit.com"}, {"name": "Windsurf", "url": "https://codeium.com/windsurf"}, {"name": "Google Code Assist", "url": "https://codeassist.google/"}, {"name": "aider", "url": "https://aider.chat"}]
 resources: [{"name": "Anthropic: Claude Code best practices", "url": "https://www.anthropic.com/engineering/claude-code-best-practices"}, {"name": "Cursor: the AI Code Editor", "url": "https://cursor.com"}]
 ---
 
@@ -133,6 +133,8 @@ And the nuclear option: **ask for two solutions, pick one**. "Give me two differ
 
 You have three tools to try today — Cursor, bolt.new, Antigravity — but you will pick one as your primary. The choice is less about capability (they all work) and more about where your capstone lives. If you have an existing repo on your machine, Cursor is strongest. If you are building a web app from scratch and want it deployable in one click, bolt.new shines. If you want an agent running long-horizon tasks across many files with a planning UI, Antigravity is the new hotness. Try all three on the same small task first — rebuilding a landing page, say — then commit to one for the real work.
 
+A few alternatives worth knowing so you don't feel locked in. If you prefer the command line, **aider** (OSS, bring-your-own-key) is a slick CLI pair-programmer worth knowing — it sits in your terminal and edits files via git commits. If you live in VS Code or JetBrains and want free Gemini-powered inline completions without a card, **Google Code Assist** (`codeassist.google/`) plugs right in. And if you don't want to touch an IDE at all, **Dify** (`dify.ai`) is an open-source visual LLM-app builder — self-hostable or free cloud tier — that lets you ship a working chatbot / RAG app from drag-and-drop blocks. Good escape hatch if your capstone is mostly prompt-flow orchestration rather than code.
+
 ## Watch: Director's-chair vibe coding walkthrough
 
 https://www.youtube.com/embed/LCEmiRjPEtQ
@@ -190,6 +192,9 @@ https://www.youtube.com/embed/LCEmiRjPEtQ
 - [Replit Agent](https://replit.com) — long-leash cloud agent.
 - [Windsurf](https://codeium.com/windsurf) — agentic IDE.
 - [Emergent](https://emergent.sh) — long-horizon shipping agent.
+- [Google Code Assist](https://codeassist.google/) — free Gemini-powered VS Code / JetBrains plugin; individual tier requires no card.
+- [aider](https://aider.chat) — OSS CLI pair-programmer, bring-your-own-key.
+- [Dify](https://dify.ai) — open-source visual LLM-app builder; no-code alternative if you don't want to touch an IDE.
 
 ### Other videos worth watching
 - [Director's-chair vibe coding walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ) — a second pass, with your own repo.

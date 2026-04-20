@@ -700,7 +700,8 @@
     }, { onConflict: 'user_id,cohort_id' });
 
     if (pending.code_id) {
-      await supabase.rpc('increment_code_use', { code_id: pending.code_id }).catch(() => {});
+      try { await supabase.rpc('increment_code_use', { code_id: pending.code_id }); }
+      catch (_) { /* non-critical; ignore */ }
     }
 
     await supabase.auth.updateUser({ data: { pending_registration: null } });

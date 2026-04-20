@@ -7,7 +7,7 @@ lab: {"title": "Build a 3-tool LangGraph agent and wire up an MCP server", "url"
 prompt_of_the_day: "You are an agent with tools: {{tool_list}}. Goal: {{goal}}. Before each tool call, state your reasoning in one sentence. After each tool result, state what you learned in one sentence. Stop when the goal is met or after 6 steps."
 tools_hands_on: [{"name": "LangGraph", "url": "https://langchain-ai.github.io/langgraph/"}, {"name": "Model Context Protocol", "url": "https://modelcontextprotocol.io"}]
 tools_demo: [{"name": "CrewAI", "url": "https://crewai.com"}, {"name": "LangChain agents", "url": "https://langchain.com"}]
-tools_reference: [{"name": "HuggingFace smolagents", "url": "https://huggingface.co/docs/smolagents"}, {"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}, {"name": "Playwright-MCP", "url": "https://github.com/microsoft/playwright-mcp"}]
+tools_reference: [{"name": "HuggingFace smolagents", "url": "https://huggingface.co/docs/smolagents"}, {"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}, {"name": "Playwright-MCP", "url": "https://github.com/microsoft/playwright-mcp"}, {"name": "OpenRouter", "url": "https://openrouter.ai"}]
 resources: [{"name": "Anthropic: Building effective agents", "url": "https://www.anthropic.com/engineering/building-effective-agents"}, {"name": "MCP specification", "url": "https://modelcontextprotocol.io/specification"}]
 ---
 
@@ -112,6 +112,8 @@ A tool is a function the model can call. But to the model, a tool is three thing
 - **Schema** — typed inputs and outputs, usually JSON schema.
 
 Good tools have small surface area. `write_file(path, content)` is great. `filesystem(operation, path, content, mode, flags)` is a pit of despair — the model will fill in `flags` wrong every time. A tool should do one thing and describe itself in one sentence.
+
+For model-agnostic agent setups, **OpenRouter** (`openrouter.ai`) is worth knowing — one API key routes your agent to 100+ models (Anthropic, OpenAI, Mistral, Llama, DeepSeek) via a single OpenAI-compatible endpoint. Handy when you want to swap the underlying brain without rewriting your LangGraph nodes.
 
 Return values matter as much as inputs. Return structured data the model can parse. Return errors with a hint about how to fix them: `{"error": "file not found", "suggestion": "try listing the directory first"}`. The model is a reader; give it good prose.
 
@@ -220,6 +222,7 @@ Part B — MCP:
 - [browser-use](https://github.com/browser-use/browser-use)
 - [Playwright-MCP](https://github.com/microsoft/playwright-mcp)
 - [LangChain agents](https://langchain.com)
+- [OpenRouter](https://openrouter.ai) — one key, 100+ models; useful for model-agnostic agent setups.
 
 ### Other videos worth watching
 - [Agent tracing walkthrough](https://www.youtube.com/embed/2B7_Y-6KBSQ) — re-watch once your agent is running.

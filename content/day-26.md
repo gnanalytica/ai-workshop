@@ -13,6 +13,8 @@ resources: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai
 
 ## Intro
 
+You've used AI for 4 weeks. You've built things, shipped things, stuck your head into weird places. Today is the honest conversation — where AI breaks, how it hurts people, and what your role is when you deploy these tools on real users.
+
 Welcome to launch week. Today's short lecture leaves you the afternoon for capstone polish. We spend the morning on one thing: ethics as engineering, not philosophy. By 1pm you'll have a red-teamed capstone with three concrete fixes scheduled. The rest of the day is yours to build.
 
 Every shipped AI product eventually meets a hostile user, a biased dataset, or a regulator. You are shipping in four days. Better to find your failure modes now than on stage.

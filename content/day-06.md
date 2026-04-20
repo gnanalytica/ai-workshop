@@ -7,7 +7,7 @@ lab: {"title": "Build your personal Jarvis in Claude Projects", "url": "https://
 prompt_of_the_day: "You are my personal Jarvis for {{context: e.g. 3rd-year CSE at NITK}}. My goals this month are {{goals}}. My constraints are {{time, budget, tools}}. My thinking style is {{style}}. For every answer: (1) ask one clarifying question first if the task is ambiguous, (2) give the shortest honest answer, (3) end with one next step I can do in 10 minutes."
 tools_hands_on: [{"name": "ChatGPT", "url": "https://chatgpt.com"}, {"name": "Claude", "url": "https://claude.ai"}, {"name": "Gemini", "url": "https://gemini.google.com"}]
 tools_demo: [{"name": "Grok", "url": "https://grok.com"}, {"name": "Microsoft Copilot", "url": "https://copilot.microsoft.com"}, {"name": "Kimi", "url": "https://kimi.moonshot.cn"}]
-tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}]
+tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}, {"name": "Mistral Le Chat", "url": "https://chat.mistral.ai"}]
 resources: [{"name": "Claude Projects guide", "url": "https://claude.ai"}, {"name": "ChatGPT Custom Instructions", "url": "https://chatgpt.com"}]
 ---
 
@@ -167,3 +167,4 @@ This is your daily artifact. It is the ticket to Day 7.
 - [Poe](https://poe.com) — one login, many models; good for cheap A/B tests on a hard prompt.
 - [HuggingChat](https://huggingface.co/chat) — open-weights alternatives when you need a model with no memory of you.
 - [Meta AI](https://meta.ai) — worth bookmarking for WhatsApp-native flows.
+- [Mistral Le Chat](https://chat.mistral.ai) — free web chat from Mistral; worth adding as a sixth comparison model when you want a European, Apache-licensed voice in the mix.
