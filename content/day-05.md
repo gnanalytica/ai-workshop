@@ -13,7 +13,7 @@ resources: [{"title": "Build a Personal AI Stack (essay)", "url": "https://www.o
 
 ## Intro
 
-Week 1 — done. Five days ago you only had ChatGPT. Today you know the difference between closed and open, you've used Indian AI, you've made a model hallucinate on purpose, you've got a personal prompt library, and you've written your red lines. **You now know more about how AI actually works than 90% of people on LinkedIn posting about it.**
+Week 1 — done. Five days ago you only had ChatGPT. Today you know where AI actually shows up in real life, what's going on inside an LLM (tokens, attention), the seven families of tools and which job each one's for, and how to write a prompt that doesn't waste the model's time. **You now know more about how AI actually works than 90% of people on LinkedIn posting about it.**
 
 Today we turn five days of input into one page of output: your AI Stack v1. Plus — we steal the best tricks from the room. Because 30 students running experiments for a week = 150 experiments, and you only saw 5 of them.
 
@@ -61,14 +61,14 @@ Today we turn five days of input into one page of output: your AI Stack v1. Plus
 ## Read: What we learned — the one-page map
 
 ```
-Day 1: What AI is + inside an LLM          → tokens, weights, attention
-Day 2: Open-model landscape + Indian AI    → Chinese, Indian, tiny families
-Day 3: Prompts + context engineering       → CREATE framework, few-shot, CoT
-Day 4: Ethics + AI failures                → hallucination, bias, privacy, red lines
+Day 1: What AI is + real-life applications → where AI already shows up around you
+Day 2: Inside an LLM                       → tokens, weights, attention
+Day 3: The AI tool landscape               → 7 tool families, which job → which tool
+Day 4: Prompts + context engineering       → CREATE framework, few-shot, CoT
 Day 5: Show-and-tell + personal stack      → today
 ```
 
-Zoom out and you see the pattern: we went from *"what is this machine"* to *"how do I speak to it"* to *"what can go wrong"* to *"what's my personal relationship with it."* That's not an accident — it's the only sensible order.
+Zoom out and you see the pattern: we went from *"where does AI even live"* to *"what's actually inside the box"* to *"which box for which job"* to *"how do I speak to it"* to *"what's my personal stack."* That's not an accident — it's the only sensible order. (Ethics + failure modes come in Week 4 Day 26, once you've actually shipped things worth being careful about.)
 
 ### The myth of the "AI hack"
 
@@ -102,8 +102,8 @@ A personal AI stack is a 1-page document with four sections:
 | Section | What goes in |
 |---|---|
 | **My AI tools** | Which models/apps you use, and for what (e.g., "Claude = writing, ChatGPT = quick Qs, Sarvam = Kannada") |
-| **My top 10 prompts** | Your prompt library from Day 3, starred favourites |
-| **My red lines** | What you refuse to do with AI (Day 4 assignment) |
+| **My top 10 prompts** | Your prompt library from Day 4, starred favourites |
+| **My top 3 use cases** | The three jobs where AI already saves you the most time (from Day 3's tool audit) |
 | **My next bet** | One specific AI skill you want to own by Day 30 |
 
 You'll revise this stack every Sunday for the next four weeks. By Day 30 you'll have v5 — and it will be the single most valuable artifact in your college AI folder, more than any certificate.
@@ -151,7 +151,7 @@ This IS the live class today. Most of the hour is listening to each other. 30 cl
 
 1. Open a new document titled "Personal AI Stack v1 — [Your Name]."
 2. Write a 200-word reflection on what shifted this week — name one specific Day-0 belief that's gone.
-3. Add four short sections: **My AI Tools** (table), **My Top 10 Prompts** (your Day 3 library, cleaned), **My Red Lines** (3–5 bullets from Day 4), **My Next Bet** (one sentence — the AI skill you'll own by Day 30).
+3. Add four short sections: **My AI Tools** (table from Day 3's tool audit), **My Top 10 Prompts** (your Day 4 library, cleaned), **My Top 3 Use Cases** (the three jobs where AI saves you the most time right now), **My Next Bet** (one sentence — the AI skill you'll own by Day 30).
 4. Keep the whole artifact to 1–2 pages. Export as PDF.
 5. Submit via the dashboard by Sunday night. Opt into the "feature anonymously" box if you're open to it.
 
@@ -177,9 +177,9 @@ This is the big one. Submit by Sunday night.
 
 Structure:
 1. **Reflection (200 words):** What shifted in how you see AI this week? Be specific — name one belief you had on Day 0 that's now gone.
-2. **My AI Tools:** short table — tool / what I use it for / why this one.
-3. **My Top 10 Prompts:** your Day 3 library, cleaned up.
-4. **My Red Lines:** your Day 4 essay, condensed to 3-5 bullets.
+2. **My AI Tools:** short table from your Day 3 tool audit — tool / what I use it for / why this one.
+3. **My Top 10 Prompts:** your Day 4 library, cleaned up.
+4. **My Top 3 Use Cases:** the three jobs where AI already saves you the most time — one line each, concrete.
 5. **My Next Bet:** one sentence — the specific AI skill you want to own by Day 30.
 
 Submit as PDF via the dashboard. The instructor will pick 3-5 stacks to feature (anonymously if you prefer) in Week 2 Day 1. You'll update this stack every Sunday for the rest of the workshop.

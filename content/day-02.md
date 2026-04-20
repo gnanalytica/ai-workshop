@@ -1,200 +1,221 @@
 ---
 reading_time: 14 min
-tldr: "Open models are closing the gap with GPT-4, and the next decade of AI won't be written only in San Francisco — it'll be written in Hangzhou, Paris, and Bengaluru."
+tldr: "An LLM is extremely well-read autocomplete. Tokens, weights, attention — the three words that save you hours of confusion."
 tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/VIDEO_ID
-lab: {"title": "Three models, two tasks, one winner", "url": "https://lmarena.ai/"}
-prompt_of_the_day: "Translate this English paragraph into {{language}} as spoken by a college student in {{city}}, not textbook formal: {{paragraph}}"
-tools_hands_on: [{"name": "Sarvam.ai", "url": "https://www.sarvam.ai/"}, {"name": "BharatGPT (CoRover)", "url": "https://corover.ai/bharatgpt/"}, {"name": "LM Arena", "url": "https://lmarena.ai/"}]
-tools_demo: [{"name": "HuggingFace Model Hub", "url": "https://huggingface.co/models"}, {"name": "Ollama (preview — install Day 17)", "url": "https://ollama.com/"}]
-tools_reference: [{"name": "Qwen", "url": "https://qwenlm.github.io/"}, {"name": "DeepSeek", "url": "https://www.deepseek.com/"}, {"name": "Kimi (Moonshot)", "url": "https://kimi.moonshot.cn/"}, {"name": "GLM (Zhipu)", "url": "https://chatglm.cn/"}, {"name": "Phi (Microsoft)", "url": "https://huggingface.co/microsoft"}, {"name": "Gemma (Google)", "url": "https://ai.google.dev/gemma"}, {"name": "Krutrim", "url": "https://www.krutrim.ai/"}]
-resources: [{"title": "HuggingFace Open LLM Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}, {"title": "Meesho x Sarvam case study", "url": "https://www.sarvam.ai/"}]
+video: https://www.youtube.com/embed/zjkBMFhNj_g
+lab: {"title": "Tokenize everything: see how the model actually reads", "url": "https://tiktokenizer.vercel.app/"}
+prompt_of_the_day: "Explain {{concept}} as if I'm a 2nd-year engineering student who's used ChatGPT but never looked under the hood. Use one analogy from hostel life."
+tools_hands_on: [{"name": "Tiktokenizer", "url": "https://tiktokenizer.vercel.app/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}]
+tools_demo: [{"name": "3Blue1Brown Neural Networks", "url": "https://www.3blue1brown.com/topics/neural-networks"}, {"name": "Attention visualizer (bbycroft)", "url": "https://bbycroft.net/llm"}]
+tools_reference: [{"name": "Karpathy — Intro to LLMs (1h)", "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g"}, {"name": "Jay Alammar — Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/"}]
+resources: [{"title": "Attention is All You Need (the paper)", "url": "https://arxiv.org/abs/1706.03762"}]
 ---
 
 ## Intro
 
-Yesterday you met three American chatbots. Today you meet twenty more — Chinese, Indian, European, tiny, huge. Here's the secret your LinkedIn feed won't tell you: most of the real progress in AI right now is happening *outside* OpenAI. Once you know this landscape, you stop being a ChatGPT user and start being an AI professional.
+Yesterday you met AI in your daily life — Netflix, Maps, UPI, WhatsApp. Today you open the box. No math, no jargon parade. Just the three words that unlock everything: **tokens, weights, attention**. After today, when someone says "context window", "parameters" or "hallucination", you'll nod with actual understanding instead of polite confusion.
 
 > 🧠 **Quick glossary for today**
-> - **Model** = the AI itself (a huge file of numbers + a little code to run it).
-> - **Weights** = the "numbers" part. The brain.
-> - **Open weights** = the brain file is public. Anyone can download and run it.
-> - **Closed weights** = the brain file is private. You only talk to it via the company's website/API.
-> - **Fine-tune** = teach an open model new tricks with your own data. (We'll do this Week 3.)
+> - **Token** = a chunk of text the model reads (roughly ¾ of a word).
+> - **Weights** = the billions of numbers inside the model — the "brain" trained on the internet.
+> - **Attention** = how the model picks which parts of your prompt matter for the next word.
+> - **Context window** = how many tokens the model can see at once.
+> - **Temperature** = a dial that controls how random the output is (0 = safe, 1 = creative).
 
 ### Today's 1-hour live session
 
 | Block | Time | What |
 |---|---|---|
-| Recap Day 1 + hook | 5 min | One-liner: "LLM = well-read autocomplete" |
-| Mini-lecture: closed vs open + Indian AI | 20 min | Model families tour |
-| Live lab: Task A together | 20 min | Reasoning task across 3 open models |
-| Q&A + discussion | 15 min | What surprised you? |
+| Recap Day 1 + hook | 5 min | "AI is autocomplete" — now let's see autocomplete from the inside |
+| Mini-lecture | 20 min | Stack (AI→ML→DL→LLMs→Agents), tokens/weights/attention, temperature |
+| Live lab | 20 min | Tokenize wild strings in Tiktokenizer; watch surprises live |
+| Q&A + discussion | 15 min | What finally clicked? What's still murky? |
 
-**Before class** (10 min): skim the table below about why open matters.
-**After class** (~30 min tonight): finish Task B of the lab (Indian-language apology), submit the 1-page comparison doc.
+**Before class** (~10 min): skim the glossary above and hold on to your Day 1 "three brains" doc — we'll build on it.
+**After class** (~30 min tonight): write the 150-word tokenizer reflection + (optional) watch the first 30 min of Karpathy's "Intro to LLMs".
 
 ### In-class moments (minute-by-minute)
 
-- **00:05 — Raise-a-finger cold open**: "How many open-source LLMs can you name in 10 seconds?" Count fingers on camera. Instructor calls on the highest number to list them — then the lowest to react.
-- **00:15 — Think-pair-share**: 90 seconds on *"Would you trust a Chinese open model with your startup's customer data? Why or why not?"* Each pair picks one worry and one mitigation to report back.
-- **00:30 — Live poll**: drop a poll — *"Sarvam or Krutrim: which bet is bolder?"* Watch the split. Ask one voter from each side to name the thing that would flip them.
-- **00:45 — Pick-a-corner**: "India needs its own LLM" — corner 1 agree, corner 2 "fine-tune is enough", corner 3 "doesn't matter, use GPT." 45 seconds each to defend. Anyone can switch corners mid-debate — and has to say why.
-- **00:55 — One-line chat close**: *"The model I'm downloading / trying tonight is ___ because ___."*
+- **00:05 — Cold-open guess**: instructor types "I'm cooked" into Tiktokenizer. Class guesses how many tokens before the reveal. (It's 4.)
+- **00:15 — Think-pair-share**: in 90 seconds, try to explain "tokens" to your neighbour without using the word "word". Hardest 90 seconds of the day.
+- **00:30 — Live tokenizer poll**: everyone types their full name, their hostel mess's name, and one Hindi/regional word into Tiktokenizer. Share the most surprising token counts in chat.
+- **00:45 — Temperature demo**: instructor runs the same prompt at temperature 0, 0.5, 1, 1.5 — class predicts which one will go off the rails first.
+- **00:55 — One-line close**: "The thing that finally clicked today was ___."
 
 ## Before class · ~20 min pre-work
 
 ### Setup (if needed)
 
-- [ ] Create an account on Sarvam.ai playground (https://www.sarvam.ai/) — phone OTP required, do it before class to avoid the in-lab queue.
-- [ ] Open LM Arena (https://lmarena.ai/) once and confirm "Direct Chat" loads — no login needed.
+- [ ] No install. Just open https://tiktokenizer.vercel.app/ once to confirm it loads. That's our whole lab environment.
 
 ### Primer (~5 min)
 
-- **Read**: Skim the HuggingFace Open LLM Leaderboard (https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — notice how many top-10 names you've never heard of. That's the point.
-- **Watch** (optional): Any 3–5 min walkthrough of the HuggingFace Hub — instructor will share a specific link in the channel if one fits; otherwise just click around the Hub yourself for 3 min.
+- **Read**: Skim the glossary above. That's it.
+- **Watch** (optional, 3 min): clip from Karpathy's "Intro to LLMs" where he explains tokens with a slider — https://www.youtube.com/watch?v=zjkBMFhNj_g (you'll come back for the full hour later).
 
 ### Bring to class
 
-- [ ] A one-sentence product idea you might build for an Indian user (farmer, parent, grandmother, small-shop owner) — we'll use it to stress-test Sarvam vs Qwen live.
-- [ ] Your mother tongue ready — you'll be typing in it during the lab.
+- [ ] Your Day 1 "three brains" Google Doc — we'll reference it.
+- [ ] 3 random strings to tokenize: your full name, one emoji you use often, one Hindi/regional word. We'll throw them into the tokenizer together.
 
-## Read: Closed vs open — and why "open" is the word that matters
+## Read: The stack — from "AI" to the chatbot on your phone
 
-An AI model is basically a huge file of numbers (the weights) plus a little code to run it. There are two flavours:
+Everybody says "AI" and means five different things. Let's fix that once and for all.
 
-**Closed weights.** The company keeps the file secret. You can only talk to it through their website or API. Examples: GPT-4o (OpenAI), Claude (Anthropic), Gemini (Google).
+```
+AI  (big umbrella: anything that mimics thinking)
+ └── Machine Learning  (programs that learn from examples, not rules)
+      └── Deep Learning  (ML using big neural networks)
+           └── LLMs  (deep nets trained on text — ChatGPT, Claude, Gemini)
+                └── Agents  (LLMs that take actions: search, click, code)
+```
 
-**Open weights.** The company publishes the file for anyone to download. You can run it on your laptop, your company's server, or a rented GPU. You can also modify it. Examples: Llama (Meta), Qwen (Alibaba), DeepSeek, Mistral.
+Think of it like your college:
+- **AI** is the university.
+- **ML** is the engineering department.
+- **Deep Learning** is the CSE branch.
+- **LLMs** are the AI/ML specialisation.
+- **Agents** are the final-year students who actually *do* projects.
 
-Why does "open" matter for *you*?
+Each inner circle is more specific, more powerful, and newer. For the rest of this week we're zooming in on LLMs — the machine behind ChatGPT, Claude, Gemini, and every other chatbot you'll use.
 
-| Reason | What it means for a college student |
-|---|---|
-| Free to run | No ₹1700/month ChatGPT Plus bills |
-| Private | Your data doesn't leave your laptop |
-| Customisable | You can fine-tune it on your college's notes |
-| No rate limits | Run it 24/7 for your side project |
-| Works offline | Hostel Wi-Fi is down? Still works |
+## Read: Tokens, weights, attention — the three words that save you hours
 
-The catch: open models are usually *slightly* behind the best closed ones on the hardest tasks. In 2023 they were miles behind. In 2026 the gap is often a single point on a benchmark — close enough that for most real work, you can't tell the difference. (We'll do actual benchmarking on Day 27. Today is just the tour.)
+Don't memorise. Just meet them. You'll see them everywhere for the next 29 days.
 
-### The Chinese family — loud, fast, and free
+### Tokens
 
-For two years now, Chinese labs have been the most prolific *open* releasers on the planet. You should know these names:
+A **token** is a chunk of text the model reads. Not a letter. Not exactly a word. Roughly 3–4 characters — about ¾ of an English word on average.
 
-- **Qwen** (Alibaba) — the most complete family. Sizes from 0.5B to 400B+. Very strong at code, reasoning, and multilingual work. If you pick one Chinese model to explore, pick this.
-- **DeepSeek** — famous for "DeepSeek R1" which embarrassed Silicon Valley by matching OpenAI's o1 reasoning model at a fraction of the training cost.
-- **Kimi** (Moonshot AI) — the long-context champion. Feeds in whole textbooks.
-- **GLM** (Zhipu / Tsinghua) — strong bilingual (Chinese + English) and one of the oldest open families.
+Examples (we'll check these live):
 
-### The "small is beautiful" family
+- `"Hello"` → 1 token
+- `"Bengaluru"` → 3 tokens
+- `"LOL"` → 1 token
+- `"I'm cooked"` → 4 tokens
+- `"Kadak"` → 2 tokens (the model hasn't seen it enough)
+- Full resume ≈ 1,100 tokens
+- A WhatsApp group rant from last Sunday ≈ 4,000 tokens
 
-- **Phi** (Microsoft) — tiny models (~3B) that punch above their weight. Runs on a laptop.
-- **Gemma** (Google) — Google's open cousin to Gemini. Popular for on-device work.
-- **Mistral** (France) — the European contender. Efficient, multilingual, strong at reasoning.
+**Why you care**:
+1. You pay per token (API pricing is always per 1K or per 1M tokens).
+2. Long prompts are slow (more tokens = more time).
+3. The **context window** is measured in tokens — exceed it, the model forgets the start of your prompt.
 
-### The India family — this is the part no one else teaches you
+### Weights
 
-India is building AI. Not importing it. Three names to memorise:
+The **weights** are the numbers inside the model. Billions of them. Trained for months on trillions of tokens (basically the public internet + books + code).
 
-- **Sarvam AI** — Bengaluru. Founded 2023. Indian-language specialists. Their models handle Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia in ways GPT-4 still fumbles. **Meesho** uses Sarvam to power its voice assistant for sellers who don't read English — real deployment, not a demo.
-- **BharatGPT** (by CoRover) — a voice-and-text conversational platform already running inside Indian Railways' "AskDISHA" assistant, handling millions of queries in 14+ Indian languages.
-- **Krutrim** (Ola) — funded by Bhavish Aggarwal. Building a full-stack Indian AI — from silicon to model. Aggressive, ambitious, worth watching.
+Think of them as a giant mixing board with 175 billion knobs (GPT-3 had about 175B; modern models have 1T+). During training, those knobs got nudged until the model got really, really good at one task: **predict the next token**. That's it. That's the whole show.
 
-Worked example — why Indian models matter. Ask GPT-4: *"Translate 'The mess food was kadak today yaar' into formal English."* It'll get it, sort of. Now ask it to reply in Tamil like a 20-year-old from Chennai. Watch it flail. Now try Sarvam. You'll see the difference. That gap — the *cultural and linguistic* gap — is where Indian AI will win.
+After training, the weights are **frozen**. The model doesn't learn from your chat. Every new conversation starts with exactly the same brain.
 
-> **Why should you care?** Because the companies hiring AI talent in India in 2027 won't just be Google and OpenAI. They'll be Sarvam, Krutrim, Fractal, Ola, Flipkart, Meesho, and ten startups that don't exist yet. Knowing this ecosystem gives you a hiring edge your classmates don't have.
+### Attention
 
-## Watch: HuggingFace Hub tour + India AI snapshot
+The killer move inside transformers. When the model is about to predict the next token, **attention** is how it decides *which earlier tokens matter most*.
 
-A 12-minute screencast walking through the HuggingFace hub and the Sarvam playground. Goal: you should be able to find any open model in under 30 seconds after watching this.
+Think of reading this paragraph: when you hit the word "it" at the end, you automatically reach back to find what "it" refers to. Attention does that math explicitly — for every new token, it computes a weighted score across all previous tokens and focuses on the relevant ones.
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+That's why LLMs can handle "In the mess menu I shared earlier, which item has paneer?" — attention scrolls back to the mess menu part of your message and mostly ignores your rant about Wi-Fi.
+
+### The one-line summary
+
+> **tokenise → weigh → attend → predict → repeat.**
+
+That's the whole loop. Every chatbot you've ever used does exactly this, one token at a time, hundreds of times per response.
+
+## Read: Why the same prompt gives different answers
+
+Two reasons:
+
+**1. Temperature.** A dial the developer sets between 0 and ~1.5. At temperature 0 the model always picks the single most likely next token. Boring but consistent — good for code, structured output, classification. At temperature 0.7 (the default for most chatbots) the model samples from the top few likely tokens with some randomness. At temperature 1.5+ it gets weird, sometimes gloriously, sometimes disastrously.
+
+**2. Different weights.** ChatGPT, Claude, and Gemini read *roughly the same internet* during training, but they were trained differently — different data mixes, different reinforcement from humans, different system prompts. Three toppers, same syllabus, different essays.
+
+That's why yesterday's "three brains" lab gave you three different answers to the same prompt. Same input, three different weight sets, three different personalities.
+
+## Watch: Karpathy — "Intro to LLMs" (first 30 min today, rest this week)
+
+Andrej Karpathy co-founded OpenAI and led AI at Tesla. This is still the clearest single intro on the internet. Watch the first 30 minutes in class; finish the rest this week.
+
+https://www.youtube.com/embed/zjkBMFhNj_g
 
 Watch for:
-- How to read a model card (license, size, language)
-- The "Spaces" tab — try models in-browser, zero install
-- The difference between "Instruct" and "Base" versions
+- The "two files" analogy (weights + run-code) — clicks the whole stack
+- Why training costs millions of dollars but running is cheap
+- The "dream" explanation of hallucination
 
-## Lab: Three models, two tasks, one winner (pair-friendly)
+## Lab: Tokenize everything (30 min)
 
-40 minutes. Put three open models head-to-head on two realistic tasks. Works best in pairs — one drives, one observes, swap at the halfway mark.
+Today's lab is web-only. No installs. Budget 30 min, optionally in pairs — one drives, one predicts before each reveal.
+
+1. Open **Tiktokenizer** — https://tiktokenizer.vercel.app/
+2. In the model dropdown, pick `gpt-4o` (or `cl100k_base` — same family).
+3. Type your full name. How many tokens? Screenshot it.
+4. Type an emoji you use often (🔥 or 😂). 1 token? 2? 3? Note it.
+5. Type one Hindi / Tamil / Bengali word in its native script. Compare vs its English spelling.
+6. Type `"The mess food was kadak today yaar"`. Count tokens. Hypothesise why.
+7. Paste in a 500-word paragraph from your college syllabus. Note the total.
+8. Now switch the model dropdown to `Llama 3`. Tokenize the same paragraph. Why is the count different?
+9. Final step — paste *"Roses are red, violets are"* and stop there. Read about `token-by-token` generation underneath.
 
 > ⚠️ **If you get stuck**
-> - *LM Arena's Direct Chat is rate-limited or the model dropdown is missing Qwen* → fall back to the "Arena (battle)" mode and keep hitting "new round" until Qwen is one of the two anonymous models, or open the Qwen chat directly at chat.qwen.ai. Note the substitution in your doc.
-> - *Sarvam playground rejects your phone number / OTP doesn't arrive* → try an alternate email signup, or pair up with a classmate who's already in and screen-share. Don't skip Task B — the Indian-language comparison is the whole point.
-> - *Your mother tongue's script isn't showing up properly (boxes/question marks)* → that's usually a font issue on your OS, not the model. Paste the output into a Google Doc — Docs renders Indic scripts reliably even when your browser doesn't.
+> - *Tiktokenizer shows `?` for Indic characters* — that's a font fallback, not the tokenizer. The count is still correct; copy the paragraph into Google Docs to verify the script renders.
+> - *Dropdown doesn't have your model* — use `gpt-4o` as the default; tokenization is very similar across GPT-4-class models.
+> - *Your full name tokenizes weirdly (e.g., 7 tokens)* — that's the model having never seen you before. Celebrate briefly.
 
-1. Open LM Arena (`lmarena.ai`). Click "Direct Chat" and pick `qwen2.5-72b-instruct` from the dropdown.
-2. Open Sarvam.ai playground in a second tab. Sign up with phone/email.
-3. Open a third tab with any one of: DeepSeek chat, Kimi chat, or GLM chat.
-4. **Task A (reasoning):** *"I have ₹50,000 for a 5-day trip. Goa, Manali, or Meghalaya? Pick one and give me a day-by-day budget breakdown."* Paste into all three.
-5. **Task B (Indian language):** *"Write a 100-word WhatsApp apology to my mom in [your mother tongue] for not calling her in 2 weeks. Make it sound like a college student, not a greeting card."* Paste into all three.
-6. Create a 1-page Google Doc with a 3×2 table: rows are models, columns are tasks. Paste outputs.
-7. Write one sentence per cell: *"This was good / bad because…"*
-8. Declare a winner per task at the bottom. Note whether the "winner" is the same for both tasks. (Spoiler: it usually isn't.)
-
-**Artifact**: 1-page comparison doc. Submit as PDF via the dashboard.
+**Artifact**: one Google Doc titled *"My tokenizer notebook"* with 5–10 strings, their token counts, and one sentence each on what surprised you.
 
 ## After class · ~30-45 min post-work
 
 ### Do (the assignment)
 
-1. Open your Lab comparison doc (3×2 table: 3 models × 2 tasks).
-2. Rank the 3 open models you tested per task — 1 = best, 3 = worst — and write a one-line justification per ranking.
-3. Pick one of: Indian farmers / your college's alumni portal / a vernacular news reader. Write a short paragraph answering *"Which of these models would I ship for this use case, and why?"*
-4. Keep the whole doc to one page. Export as PDF.
-5. Submit via the dashboard before next class.
+1. Open your tokenizer notebook from the lab.
+2. Add three more strings: your most-used WhatsApp group name, a song lyric in your mother tongue, and one code snippet from any project you've touched.
+3. Write a 150-word paragraph titled *"Three things that surprised me about how LLMs see text."*
+4. Submit via the dashboard before next class.
 
 ### Reflect (~5 min)
 
-**Prompt:** *"If I had to bet my own ₹10,000 on one Indian AI company for the next 3 years, which one and why?"* A good reflection names a specific company (Sarvam, Krutrim, CoRover, or a startup you found today) and ties your bet to a concrete moat — language coverage, existing revenue, founder track record — rather than hype.
+**Prompt**: *"Explain tokens to your parents in under 60 seconds. What analogy would you use?"* A good reflection drops the jargon completely, picks one familiar analogy (paying per SMS character, sliced bread, etc.), and doesn't sneak the word "LLM" back in.
 
 ### Stretch (optional, for the curious)
 
-- **Extra video**: TBD — instructor will pick based on class questions (likely a DeepSeek R1 or Qwen architecture walkthrough).
-- **Extra read**: Sarvam's own blog on Indic tokenisation (https://www.sarvam.ai/) — why Devanagari eats more tokens than English and what they did about it.
-- **Try**: Download Ollama (https://ollama.com/) and pull `qwen2.5:3b` to your laptop. Run it offline. Note the response speed vs the hosted API — you don't need this until Day 17, but previewing is useful.
+- **Extra video**: finish Karpathy's full hour at https://www.youtube.com/watch?v=zjkBMFhNj_g — especially the hallucination section.
+- **Extra read**: Jay Alammar's illustrated transformer — https://jalammar.github.io/illustrated-transformer/ — beautiful, still the best visual explainer after 7 years.
+- **Try**: open bbycroft.net/llm — a real-time 3D visualization of a running transformer. Watch attention happen token by token.
 
 ## Quiz
 
-Four questions on open vs closed weights, the Chinese family, the Indian family, and why open matters. Don't memorise company logos — memorise *why* each model exists.
+Four quick ones on tokens, weights, attention, and the AI → ML → DL → LLM → Agents hierarchy. Aim for 70%+ to feel solid going into tomorrow's tool landscape.
 
 ## Assignment
 
-Take the Lab doc and expand it. Rank the 3 open models you tested on both tasks (1 = best, 3 = worst). Add a short paragraph: *"If I were building an app for [pick: Indian farmers / my college's alumni portal / a vernacular news reader], which model would I use and why?"* Keep it to one page. This is the comparison you'd cite in a product manager interview.
+Your 150-word reflection + tokenizer notebook (PDF). Submit via the dashboard before next class.
 
 ## Discuss: Live session prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
-| If open models are almost as good and free — why does OpenAI still make billions? | Names at least two moats that aren't raw model quality: distribution (ChatGPT app), integration (Microsoft, enterprise), reliability/SLA, and the cost of running a 400B model yourself. "Free to download" ≠ "free to serve." |
-| Sarvam or Krutrim: which bet is safer, and which is bolder? | Treats "safer" and "bolder" as different axes. Safer = narrower focus (Indian languages, existing revenue via Meesho). Bolder = full-stack (silicon + model + apps). Picks and defends, doesn't hedge. |
-| Would you trust a Chinese open model with your startup's customer data? Why or why not? | Separates the *weights* (which you can inspect and run locally) from the *hosted API* (which you cannot). A strong answer says "yes if I self-host Qwen, no if I hit a chat.qwen.ai endpoint with user PII." |
-| Does India *need* its own LLM, or is fine-tuning existing ones enough? | Distinguishes sovereignty (who controls the off-switch) from capability (does it work in Tamil). Acknowledges fine-tuning solves capability cheaper, but not sovereignty. |
-| Which model surprised you most in the lab, and what does that tell you about benchmarks? | Names the specific model + the specific task where it over- or under-performed, and generalises to: "leaderboard rank isn't the same as 'good at my job.'" |
+| If an LLM is "just autocomplete," why does it *feel* like it understands you? | Distinguishes pattern-match from comprehension; mentions priors the model already holds from training; concedes there's a real illusion but names a specific failure mode that reveals the illusion. |
+| How would you explain "tokens" to your parents in under 60 seconds? | Uses a concrete analogy (per-character SMS pricing, sliced loaf), avoids the word "LLM", and names one practical consequence ("that's why long questions are slower"). |
+| The same prompt gave you different answers across ChatGPT, Claude, Gemini yesterday. What's ACTUALLY different between them? | Mentions both weights AND training choices (RLHF, data mix, system prompt). Bonus: mentions temperature as the controllable dial. |
+| Why does "Bengaluru" tokenize into 3 tokens but "hello" into 1? | Training data frequency — common English words get one token; less common ones (including Indian place names) split into sub-words. Implication: non-English tokenizes less efficiently. |
+| If weights are frozen after training, how does ChatGPT "remember" things you told it last week? | Separates *model weights* (frozen) from *memory layer* (app feature — Claude Projects, ChatGPT memory). The model doesn't learn; the app shovels prior context back in. |
 
 ## References
 
 ### Pre-class primers
-- [HuggingFace Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — the live scoreboard for open models.
-- [LM Arena](https://lmarena.ai/) — crowdsourced head-to-head model voting.
+- [Tiktokenizer](https://tiktokenizer.vercel.app/) — our lab playground.
 
 ### Covered during class
-- [Sarvam.ai](https://www.sarvam.ai/) — Indian-language specialist, Meesho case study.
-- [BharatGPT (CoRover)](https://corover.ai/bharatgpt/) — powers Indian Railways' AskDISHA.
-- [HuggingFace Model Hub](https://huggingface.co/models) — where open models live.
+- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — first 30 min in class.
+- [3Blue1Brown — Neural Networks series](https://www.3blue1brown.com/topics/neural-networks) — visual, beautiful.
 
 ### Deep dives (post-class, if curious)
-- [Qwen](https://qwenlm.github.io/) — Alibaba's open model family, strong multilingual + code.
-- [DeepSeek](https://www.deepseek.com/) — R1 reasoning model, embarrassed SF on cost.
-- [Kimi (Moonshot)](https://kimi.moonshot.cn/) — long-context champion.
-- [GLM (Zhipu)](https://chatglm.cn/) — bilingual Chinese-English open family.
-- [Phi (Microsoft)](https://huggingface.co/microsoft) — tiny models that punch up.
-- [Gemma (Google)](https://ai.google.dev/gemma) — Google's open cousin to Gemini.
-- [Krutrim](https://www.krutrim.ai/) — Ola's full-stack Indian AI bet.
+- [Jay Alammar — Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — the classic visual explainer.
+- [bbycroft.net/llm](https://bbycroft.net/llm) — watch a transformer generate in 3D, token by token.
+- [Attention is All You Need](https://arxiv.org/abs/1706.03762) — the 2017 paper that started this whole era. Read the abstract + figure 1; skip the math.
 
 ### Other videos worth watching
-- [Ollama](https://ollama.com/) — run open models locally; preview for Day 17.
+- Finish the rest of Karpathy's video — it covers hallucination, training cost, and the jailbreak economy.
