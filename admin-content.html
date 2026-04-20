@@ -6,6 +6,7 @@
 <title>Admin · Content · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .header-row{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0 8px}
@@ -151,6 +152,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -200,6 +202,7 @@
     <div class="cohort-picker">
       <label class="muted" style="font-size:12px">Cohort</label>
       <select id="cohortSel"></select>
+      <button class="bulk-btn" id="exportGradesBtn" style="display:none" title="Download CSV of all milestone grades">Export all grades (CSV)</button>
     </div>
   </div>
 
@@ -229,7 +232,7 @@
 </main>
 
 <!-- Duplicate modal -->
-<div class="modal" id="dupModal">
+<div class="modal" id="dupModal" role="dialog" aria-modal="true" aria-label="Duplicate">
   <div class="modal-card">
     <h3>Duplicate from day</h3>
     <p class="muted">Copy quiz and assignment from another day into day <span id="dupTargetDay"></span>. Existing content on the target day will be replaced.</p>
@@ -245,7 +248,7 @@
 </div>
 
 <!-- Clear modal -->
-<div class="modal" id="clearModal">
+<div class="modal" id="clearModal" role="dialog" aria-modal="true" aria-label="Confirm clear">
   <div class="modal-card">
     <h3>Clear day</h3>
     <p class="muted">Delete the quiz and assignment on day <span id="clearTargetDay"></span>? This cannot be undone.</p>
@@ -257,7 +260,7 @@
 </div>
 
 <!-- Preview modal -->
-<div class="modal" id="previewModal">
+<div class="modal" id="previewModal" role="dialog" aria-modal="true" aria-label="Submission preview">
   <div class="modal-card preview">
     <h3>Submission preview <span style="float:right"><button class="btn" id="previewClose">Close</button></span></h3>
     <div id="previewBody" class="muted" style="font-size:12.5px">Loading…</div>
@@ -343,6 +346,7 @@
   async function loadContent(cohortId) {
     CURRENT_COHORT = COHORTS.find(c => c.id === cohortId);
     $('cohortKicker').textContent = CURRENT_COHORT ? `${CURRENT_COHORT.name} · starts ${CURRENT_COHORT.starts_on || '—'}` : 'Content';
+    $('exportGradesBtn').style.display = CURRENT_COHORT ? 'inline-block' : 'none';
 
     const [qres, ares] = await Promise.all([
       supabase.from('quizzes').select('*').eq('cohort_id', cohortId),
@@ -492,9 +496,9 @@
           <div class="opt-row" data-oi="${oi}">
             <input type="text" data-opt-text value="${esc(o.text || '')}" placeholder="Option ${oi+1}" />
             <label><input type="checkbox" data-opt-correct ${o.correct ? 'checked' : ''} /> correct</label>
-            <button class="ico-btn x" data-act="opt-del" title="Remove option">×</button>
-            <button class="ico-btn" data-act="opt-up" title="Move up">↑</button>
-            <button class="ico-btn" data-act="opt-dn" title="Move down">↓</button>
+            <button class="ico-btn x" data-act="opt-del" title="Remove option" aria-label="Remove option">×</button>
+            <button class="ico-btn" data-act="opt-up" title="Move up" aria-label="Move up">↑</button>
+            <button class="ico-btn" data-act="opt-dn" title="Move down" aria-label="Move down">↓</button>
           </div>
         `).join('')}
       </div>
@@ -511,8 +515,8 @@
             <option value="text" ${q.type==='text'?'selected':''}>Text</option>
           </select>
           <div class="arrows">
-            <button class="ico-btn" data-act="q-up" ${i===0?'disabled':''}>↑</button>
-            <button class="ico-btn" data-act="q-dn" ${i===total-1?'disabled':''}>↓</button>
+            <button class="ico-btn" data-act="q-up" aria-label="Move question up" ${i===0?'disabled':''}>↑</button>
+            <button class="ico-btn" data-act="q-dn" aria-label="Move question down" ${i===total-1?'disabled':''}>↓</button>
             <button class="ico-btn x" data-act="q-del">Remove</button>
           </div>
         </div>
@@ -650,7 +654,7 @@
         <div class="stat"><div class="n">${completed.length}/${rows.length}</div><div class="l">Completed</div></div>
       </div>
       <table class="mini">
-        <thead><tr><th>User</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead>
+        <thead><tr><th scope="col">User</th><th scope="col">Score</th><th scope="col">Passed</th><th scope="col">Completed</th></tr></thead>
         <tbody>
           ${rows.map(r => `
             <tr>
@@ -677,7 +681,7 @@
         <div class="rubric-row" data-ri="${i}">
           <input type="text" data-ri-crit value="${esc(it.criterion || '')}" placeholder="Criterion" />
           <input type="number" data-ri-pts min="0" value="${Number(it.points) || 0}" placeholder="Pts" />
-          <button class="ico-btn x" data-act="ri-del" title="Remove">×</button>
+          <button class="ico-btn x" data-act="ri-del" title="Remove" aria-label="Remove rubric item">×</button>
         </div>
       `).join('');
       const riTotal = d.rubric_items.reduce((s, it) => s + (Number(it.points) || 0), 0);
@@ -898,7 +902,7 @@
             </select>
           </td>
           <td style="max-width:70px"><input type="number" data-s-score value="${r.score == null ? '' : Number(r.score)}" /></td>
-          <td style="max-width:160px;font-size:11.5px;color:var(--muted)">${esc(countCell)} <button class="btn" style="margin-left:4px;padding:3px 8px" data-s-preview title="Preview">👁</button></td>
+          <td style="max-width:160px;font-size:11.5px;color:var(--muted)">${esc(countCell)} <button class="btn" style="margin-left:4px;padding:3px 8px" data-s-preview title="Preview" aria-label="Preview submission">👁</button></td>
           <td style="min-width:160px"><textarea data-s-feedback rows="1" placeholder="Feedback…">${esc(r.feedback || '')}</textarea></td>
           <td><button class="btn" data-s-save>Save</button></td>
         </tr>
@@ -922,7 +926,7 @@
 
     wrap.innerHTML = `
       <table class="mini">
-        <thead><tr><th>Name</th><th>Submitted</th><th>Status</th><th>Score</th><th>Content</th><th>Feedback</th><th></th></tr></thead>
+        <thead><tr><th scope="col">Name</th><th scope="col">Submitted</th><th scope="col">Status</th><th scope="col">Score</th><th scope="col">Content</th><th scope="col">Feedback</th><th scope="col"></th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
       ${peerSectionHtml}
@@ -1022,7 +1026,7 @@
     prs.sort((a, b) => new Date(b.assigned_at) - new Date(a.assigned_at));
     host.innerHTML = `
       <table class="mini">
-        <thead><tr><th>Reviewer</th><th>Reviewee</th><th>Status</th><th>Submitted</th><th>Score</th></tr></thead>
+        <thead><tr><th scope="col">Reviewer</th><th scope="col">Reviewee</th><th scope="col">Status</th><th scope="col">Submitted</th><th scope="col">Score</th></tr></thead>
         <tbody>
           ${prs.map(pr => `
             <tr>
@@ -1240,6 +1244,76 @@
       $('clearConfirm').disabled = false; $('clearConfirm').textContent = 'Delete both';
     }
   });
+
+  // ---------- BULK CSV EXPORT ----------
+  const MILESTONE_DAYS = [5, 10, 15, 20, 21, 25, 30];
+  $('exportGradesBtn').addEventListener('click', exportGradesCSV);
+
+  async function exportGradesCSV() {
+    if (!CURRENT_COHORT) { toast('Pick a cohort first.', 'err'); return; }
+    const btn = $('exportGradesBtn');
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Exporting…';
+    try {
+      const [regsRes, assnRes] = await Promise.all([
+        supabase.from('registrations').select('user_id,status').eq('cohort_id', CURRENT_COHORT.id).eq('status', 'confirmed'),
+        supabase.from('assignments').select('id,day_number,points').eq('cohort_id', CURRENT_COHORT.id).in('day_number', MILESTONE_DAYS),
+      ]);
+      if (regsRes.error) throw regsRes.error;
+      if (assnRes.error) throw assnRes.error;
+      const userIds = (regsRes.data || []).map(r => r.user_id);
+      const assignments = assnRes.data || [];
+      const assnByDay = new Map(assignments.map(a => [a.day_number, a]));
+      const assnIds = assignments.map(a => a.id);
+
+      const [profRes, subRes] = await Promise.all([
+        userIds.length ? supabase.from('profiles').select('id,full_name,college,year').in('id', userIds) : Promise.resolve({ data: [] }),
+        assnIds.length && userIds.length ? supabase.from('submissions').select('user_id,assignment_id,score').in('assignment_id', assnIds).in('user_id', userIds) : Promise.resolve({ data: [] }),
+      ]);
+      const profs = new Map((profRes.data || []).map(p => [p.id, p]));
+      // map user -> day -> score (latest wins if duplicates)
+      const scoreMap = new Map();
+      (subRes.data || []).forEach(s => {
+        const a = assignments.find(x => x.id === s.assignment_id);
+        if (!a) return;
+        const key = s.user_id + '|' + a.day_number;
+        scoreMap.set(key, s.score);
+      });
+
+      const header = ['Name','College','Year', ...MILESTONE_DAYS.map(d => 'D'+d), 'Total','Percentage'];
+      const maxTotal = MILESTONE_DAYS.reduce((sum, d) => sum + (assnByDay.get(d)?.points || 0), 0);
+      const csvCell = (v) => {
+        const s = v == null ? '' : String(v);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const lines = [header.map(csvCell).join(',')];
+      // Sort by name
+      userIds.map(id => profs.get(id) || { id }).sort((a,b) => (a.full_name || '').localeCompare(b.full_name || '')).forEach(p => {
+        const uid = p.id;
+        const cells = [p.full_name || '', p.college || '', p.year || ''];
+        let total = 0, have = false;
+        MILESTONE_DAYS.forEach(d => {
+          const sc = scoreMap.get(uid + '|' + d);
+          if (sc != null) { cells.push(sc); total += Number(sc) || 0; have = true; }
+          else cells.push('-');
+        });
+        cells.push(have ? total : '-');
+        cells.push(have && maxTotal ? Math.round((total / maxTotal) * 100) + '%' : '-');
+        lines.push(cells.map(csvCell).join(','));
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `grades-${CURRENT_COHORT.slug || 'cohort'}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('Grades CSV downloaded.');
+    } catch (err) {
+      toast(err.message || 'Export failed', 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = orig;
+    }
+  }
 
   // ---------- UTILS ----------
   function toast(text, kind) {

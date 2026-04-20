@@ -6,6 +6,7 @@
 <title>Dashboard · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
@@ -13,6 +14,27 @@
   .pbar{height:8px;background:var(--input-bg);border-radius:999px;overflow:hidden;margin-top:14px}
   .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7affb4);transition:width .3s}
   .pstats{display:flex;justify-content:space-between;font-size:13px;margin-top:10px;color:var(--muted)}
+  .sub-bars{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  .sub-bar-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .sub-bar-head b{color:var(--ink);font-weight:600;margin-right:6px}
+  .sub-bar-track{height:6px;background:var(--input-bg);border-radius:999px;overflow:hidden}
+  .sub-bar-fill{height:100%;transition:width .3s;border-radius:999px}
+  .sub-bar-fill.b-lessons{background:linear-gradient(90deg,var(--accent),#7affb4)}
+  .sub-bar-fill.b-subs{background:linear-gradient(90deg,#8b5cf6,#c9b8ff)}
+  .sub-bar-fill.b-quiz{background:linear-gradient(90deg,#38bdf8,#7dd5ff)}
+  .sub-bar-fill.b-att{background:linear-gradient(90deg,#f59e0b,#ffc87a)}
+  .rhythm-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:14px}
+  .rhythm-cell{aspect-ratio:1/1;border-radius:8px;border:1px solid var(--line);background:var(--input-bg);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;position:relative;transition:.15s}
+  .rhythm-cell:hover{transform:scale(1.05);border-color:var(--accent)}
+  .rhythm-cell.done{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:700}
+  .rhythm-cell.done::after{content:'✓';position:absolute;top:3px;right:5px;font-size:9px}
+  .rhythm-cell.unlocked{background:rgba(195,255,54,.1);color:var(--ink);border-color:rgba(195,255,54,.25)}
+  .rhythm-cell.locked{opacity:.4;cursor:not-allowed;pointer-events:none}
+  .rhythm-cell.today{box-shadow:0 0 0 2px var(--accent);animation:rhythm-pulse 1.8s ease-in-out infinite}
+  @keyframes rhythm-pulse{0%,100%{box-shadow:0 0 0 2px var(--accent)}50%{box-shadow:0 0 0 4px rgba(195,255,54,.4)}}
+  .rhythm-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:11.5px;color:var(--muted)}
+  .rhythm-legend span{display:inline-flex;align-items:center;gap:5px}
+  .rhythm-legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;border:1px solid var(--line)}
   .week-block{margin-bottom:28px}
   .week-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
   .week-head .wn{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.15em}
@@ -60,6 +82,7 @@
 </style>
 </head>
 <body>
+<a href="#dash" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -122,10 +145,43 @@
     </div>
     <div class="pbar"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
     <div class="pstats"><span><b id="doneCount" style="color:var(--ink)">0</b> of 30 days done</span><span id="streak">—</span></div>
+
+    <div class="sub-bars" id="subBars">
+      <div>
+        <div class="sub-bar-head"><span><b>Lessons</b><span id="sbLessonsCount">0/30</span></span><span id="sbLessonsPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-lessons" id="sbLessonsFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Submissions</b><span id="sbSubsCount">0/7</span></span><span id="sbSubsPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-subs" id="sbSubsFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Quizzes</b><span id="sbQuizCount">0 passed / 0</span></span><span id="sbQuizPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-quiz" id="sbQuizFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Attendance</b><span id="sbAttCount">0/0</span></span><span id="sbAttPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-att" id="sbAttFill" style="width:0%"></div></div>
+      </div>
+    </div>
   </div>
 
   <!-- TODAY'S FOCUS -->
   <div id="todayCard" class="progress-wrap" style="display:none"></div>
+
+  <!-- 30-DAY RHYTHM HEATMAP -->
+  <div class="progress-wrap" id="rhythmCard" style="display:none">
+    <div class="kicker">Your rhythm</div>
+    <h2 style="margin:0">Your 30-day rhythm</h2>
+    <p class="muted" style="font-size:13.5px;margin:6px 0 0">A glance at where you are across the six weeks.</p>
+    <div class="rhythm-grid" id="rhythmGrid"></div>
+    <div class="rhythm-legend">
+      <span><span class="sw" style="background:var(--accent);border-color:var(--accent)"></span> Completed</span>
+      <span><span class="sw" style="background:rgba(195,255,54,.15);border-color:rgba(195,255,54,.3)"></span> Unlocked</span>
+      <span><span class="sw" style="background:transparent;opacity:.4"></span> Locked</span>
+      <span><span class="sw" style="background:transparent;box-shadow:0 0 0 2px var(--accent) inset"></span> Today</span>
+    </div>
+  </div>
 
   <!-- UPCOMING -->
   <div id="upcomingCard" class="progress-wrap" style="display:none"></div>
@@ -238,6 +294,12 @@
       <p class="muted" style="font-size:14px;margin:0 0 14px">Make your capstone visible on your public showcase page.</p>
       <label style="display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer"><input type="checkbox" id="showcaseToggle" /> Show me on the public cohort gallery</label>
       <div id="showcaseLink" style="margin-top:14px"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="kicker">Daily digest</div>
+      <h2 style="margin:0 0 8px">Morning email</h2>
+      <p class="muted" style="font-size:14px;margin:0 0 14px">One email each morning at 6:30 AM IST with today's lesson, live session link, and your pending items.</p>
+      <label style="display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer"><input type="checkbox" id="digestToggle" /> Send me the daily digest</label>
     </div>
     <div class="progress-wrap">
       <div class="kicker">Theme preference</div>
@@ -402,6 +464,8 @@
     const scheduleMap = new Map((scheduleRes.data || []).map(d => [d.day_number, d]));
 
     renderProgress(doneSet);
+    renderRhythm(doneSet, scheduleMap);
+    renderStackedBars(user, cohort, doneSet, scheduleMap);
     renderWeeks(user, cohort, doneSet, scheduleMap);
     renderTeamCard(user, cohort);
     renderBuddyCard(user, cohort);
@@ -541,11 +605,11 @@
     } else {
       attempts.sort((a,b) => new Date(b.completed_at) - new Date(a.completed_at));
       qWrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Quiz</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Passed</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Date</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Quiz</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Passed</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Date</th>
         </tr></thead><tbody>${
         attempts.map(qa => `<tr>
           <td style="padding:10px 12px;border-bottom:1px solid var(--line)">${qa.quizzes.day_number}</td>
@@ -562,11 +626,11 @@
     } else {
       subs.sort((a,b) => a.assignments.day_number - b.assignments.day_number);
       sWrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Title</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Status</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
-        <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Submitted</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Day</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Title</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Status</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Score</th>
+        <th scope="col" style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em">Submitted</th>
         </tr></thead><tbody>${
         subs.map(s => {
           const score = s.score != null ? `${s.score}/${s.assignments.points}` : '—';
@@ -821,6 +885,15 @@
     }
     if (link) {
       link.innerHTML = `<a href="showcase.html?u=${user.id}" target="_blank" class="cta ghost" style="display:inline-block;font-size:13px">Open your showcase →</a>`;
+    }
+
+    // Daily digest opt-in
+    const digestToggle = document.getElementById('digestToggle');
+    if (digestToggle) {
+      digestToggle.checked = (p.daily_digest_opt_in === undefined || p.daily_digest_opt_in === null) ? true : !!p.daily_digest_opt_in;
+      digestToggle.addEventListener('change', async () => {
+        await supabase.from('profiles').update({ daily_digest_opt_in: digestToggle.checked }).eq('id', user.id);
+      });
     }
 
     // Theme preference radios
@@ -1105,6 +1178,81 @@
     $('pct').textContent = pct;
     $('pbarFill').style.width = pct + '%';
     $('streak').textContent = done === 30 ? 'Completed 🏆' : `${30 - done} days to go`;
+    const el = document.getElementById('sbLessonsFill');
+    if (el) {
+      el.style.width = pct + '%';
+      document.getElementById('sbLessonsCount').textContent = ` ${done}/30`;
+      document.getElementById('sbLessonsPct').textContent = pct + '%';
+    }
+  }
+
+  function renderRhythm(doneSet, scheduleMap) {
+    const host = document.getElementById('rhythmGrid');
+    const card = document.getElementById('rhythmCard');
+    if (!host || !card) return;
+    const now = Date.now();
+    host.innerHTML = DAYS.map(d => {
+      const sched = scheduleMap.get(d.n);
+      const unlocked = sched?.is_unlocked;
+      const liveAt = sched?.live_session_at ? new Date(sched.live_session_at).getTime() : null;
+      const isToday = liveAt && Math.abs(liveAt - now) < 12*3600*1000;
+      const done = doneSet.has(d.n);
+      let cls = 'rhythm-cell';
+      let status = 'locked';
+      if (done) { cls += ' done'; status = 'completed'; }
+      else if (unlocked) { cls += ' unlocked'; status = 'unlocked'; }
+      else { cls += ' locked'; }
+      if (isToday) { cls += ' today'; status = 'today'; }
+      const tip = `Day ${d.n} · ${d.title} · ${status}`;
+      const href = unlocked || done ? `day.html?n=${d.n}` : '#';
+      return `<a class="${cls}" href="${escapeHtml(href)}" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${d.n}</a>`;
+    }).join('');
+    card.style.display = 'block';
+  }
+
+  async function renderStackedBars(user, cohort, doneSet, scheduleMap) {
+    const milestoneDays = [5,10,15,20,21,25,30];
+    const [subsRes, attemptsRes, attRes] = await Promise.all([
+      supabase.from('submissions').select('assignment_id,status,assignments!inner(day_number,cohort_id)').eq('user_id', user.id).eq('assignments.cohort_id', cohort.id),
+      supabase.from('quiz_attempts').select('quiz_id,score,passed,quizzes!inner(day_number,cohort_id)').eq('user_id', user.id).eq('quizzes.cohort_id', cohort.id),
+      supabase.from('attendance').select('day_number,checked_in_at').eq('user_id', user.id).eq('cohort_id', cohort.id),
+    ]);
+    const subs = subsRes.data || [];
+    const attempts = attemptsRes.data || [];
+    const attendance = attRes.data || [];
+
+    const submittedDays = new Set(
+      subs.filter(s => s.assignments && milestoneDays.includes(s.assignments.day_number))
+          .map(s => s.assignments.day_number)
+    );
+    const subDone = submittedDays.size;
+    const subTotal = milestoneDays.length;
+    const subPct = Math.round((subDone / subTotal) * 100);
+    document.getElementById('sbSubsFill').style.width = subPct + '%';
+    document.getElementById('sbSubsCount').textContent = ` ${subDone}/${subTotal}`;
+    document.getElementById('sbSubsPct').textContent = subPct + '%';
+
+    const bestPerQuiz = new Map();
+    attempts.forEach(a => {
+      const prev = bestPerQuiz.get(a.quiz_id);
+      if (!prev || (a.score ?? 0) > (prev.score ?? 0)) bestPerQuiz.set(a.quiz_id, a);
+    });
+    const attempted = bestPerQuiz.size;
+    const passed = [...bestPerQuiz.values()].filter(a => a.passed).length;
+    const qPct = attempted ? Math.round((passed / attempted) * 100) : 0;
+    document.getElementById('sbQuizFill').style.width = qPct + '%';
+    document.getElementById('sbQuizCount').textContent = ` ${passed} passed / ${attempted}`;
+    document.getElementById('sbQuizPct').textContent = attempted ? (qPct + '%') : '—';
+
+    const now = Date.now();
+    const sessionDays = [...scheduleMap.values()].filter(d => d.live_session_at && new Date(d.live_session_at).getTime() <= now);
+    const totalSessions = sessionDays.length;
+    const attendedSet = new Set(attendance.map(a => a.day_number));
+    const attended = sessionDays.filter(d => attendedSet.has(d.day_number)).length;
+    const aPct = totalSessions ? Math.round((attended / totalSessions) * 100) : 0;
+    document.getElementById('sbAttFill').style.width = aPct + '%';
+    document.getElementById('sbAttCount').textContent = ` ${attended}/${totalSessions}`;
+    document.getElementById('sbAttPct').textContent = totalSessions ? (aPct + '%') : '—';
   }
 
   function renderWeeks(user, cohort, doneSet, scheduleMap) {
@@ -1156,12 +1304,12 @@
       if (cb) cb.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleDay(user, cohort, el, doneSet);
+        toggleDay(user, cohort, el, doneSet, scheduleMap);
       });
     });
   }
 
-  async function toggleDay(user, cohort, el, doneSet) {
+  async function toggleDay(user, cohort, el, doneSet, scheduleMap) {
     const day = parseInt(el.dataset.day, 10);
     const isDone = doneSet.has(day);
     el.classList.toggle('done');
@@ -1176,6 +1324,7 @@
       });
     }
     renderProgress(doneSet);
+    if (scheduleMap) renderRhythm(doneSet, scheduleMap);
   }
 
   init();

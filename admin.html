@@ -6,6 +6,7 @@
 <title>Admin · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:32px 0}
@@ -30,6 +31,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -83,7 +85,7 @@
   </div>
 
   <div class="filters">
-    <input type="text" id="search" placeholder="Search name, email, college…" />
+    <input type="search" id="search" placeholder="Search name, email, college…" aria-label="Search students" />
     <select id="filterStatus">
       <option value="">All statuses</option>
       <option value="pending">Pending</option>
@@ -98,7 +100,7 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th><th>College</th><th>Year</th><th>Phone</th><th>Progress</th><th>Status</th><th>Joined</th>
+          <th scope="col">Name</th><th scope="col">College</th><th scope="col">Year</th><th scope="col">Phone</th><th scope="col">Progress</th><th scope="col">Status</th><th scope="col">Joined</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>

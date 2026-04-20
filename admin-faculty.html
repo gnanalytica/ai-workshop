@@ -6,6 +6,7 @@
 <title>Faculty · Admin · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
@@ -36,6 +37,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -113,7 +115,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Name</th><th>Cohort</th><th>Role</th><th>Added</th><th style="text-align:right">Actions</th></tr>
+        <tr><th scope="col">Name</th><th scope="col">Cohort</th><th scope="col">Role</th><th scope="col">Added</th><th scope="col" style="text-align:right">Actions</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>

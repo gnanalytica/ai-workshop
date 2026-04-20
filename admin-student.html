@@ -6,6 +6,7 @@
 <title>Student · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .pg-hdr{display:flex;justify-content:space-between;align-items:end;margin:24px 0 18px;gap:16px;flex-wrap:wrap}
@@ -83,6 +84,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
@@ -139,15 +141,15 @@
       <a href="#timeline">Activity timeline</a>
     </div>
     <section id="progress" class="sec"><h2>Progress grid</h2><div class="day-grid-30" id="dGrid"></div></section>
-    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Status</th><th>Score</th><th>Kudos</th><th>Content</th><th>Submitted</th><th></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
-    <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th>Day</th><th>Title</th><th>Score</th><th>Passed</th><th>Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
+    <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th scope="col">Day</th><th scope="col">Title</th><th scope="col">Status</th><th scope="col">Score</th><th scope="col">Kudos</th><th scope="col">Content</th><th scope="col">Submitted</th><th scope="col"></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
+    <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th scope="col">Day</th><th scope="col">Title</th><th scope="col">Score</th><th scope="col">Passed</th><th scope="col">Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
     <section id="notes" class="sec"><h2>Reading notes</h2><div id="notesList"></div></section>
     <section id="timeline" class="sec"><h2>Activity timeline</h2><div id="timelineList"></div></section>
   </div>
 </main>
 
 <!-- Preview / Grade modal -->
-<div class="modal" id="previewModal">
+<div class="modal" id="previewModal" role="dialog" aria-modal="true" aria-label="Submission">
   <div class="modal-card">
     <h3>Submission <span style="float:right"><button class="btn" id="previewClose">Close</button></span></h3>
     <div id="previewBody">Loading…</div>

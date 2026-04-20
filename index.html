@@ -213,6 +213,7 @@
 </style>
 </head>
 <body>
+<a href="#main" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -235,7 +236,7 @@
 </nav>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero" id="main" tabindex="-1">
   <div class="wrap hero-in">
     <span class="eyebrow"><span class="pulse"></span> 30 days · cohort starts soon · 3rd & 4th year · fully open-source</span>
     <h1>Build, ship &amp; <span class="serif">think</span> with <span class="hl">AI.</span><br/>In 30 days.</h1>
@@ -480,7 +481,7 @@
 </section>
 
 <!-- REGISTRATION MODAL -->
-<div class="modal" id="regModal">
+<div class="modal" id="regModal" role="dialog" aria-modal="true" aria-label="Enroll">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
     <h3>Join the cohort</h3>
@@ -514,7 +515,7 @@
 </div>
 
 <!-- LOGIN MODAL -->
-<div class="modal" id="loginModal">
+<div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-label="Sign in">
   <div class="modal-card">
     <button class="modal-close" onclick="closeLogin()" aria-label="Close">×</button>
     <h3>Welcome back</h3>

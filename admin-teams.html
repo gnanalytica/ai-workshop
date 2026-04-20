@@ -6,6 +6,7 @@
 <title>Teams · Admin · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
@@ -59,6 +60,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -119,7 +121,7 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th><th>Description</th><th>Members</th><th>Team Meet</th><th>Capstone</th><th>Join code</th><th>Status</th><th>Created by</th><th style="text-align:right">Actions</th>
+          <th scope="col">Name</th><th scope="col">Description</th><th scope="col">Members</th><th scope="col">Team Meet</th><th scope="col">Capstone</th><th scope="col">Join code</th><th scope="col">Status</th><th scope="col">Created by</th><th scope="col" style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="teamRows"></tbody>
@@ -182,7 +184,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Name</th><th>Email</th><th>College</th><th style="text-align:right">Assign</th></tr>
+        <tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">College</th><th scope="col" style="text-align:right">Assign</th></tr>
       </thead>
       <tbody id="unassignedRows"></tbody>
     </table>
@@ -226,7 +228,7 @@
 
 <!-- NEW/EDIT TEAM MODAL -->
 <div class="modal-backdrop" id="teamModal">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Team">
     <h3 id="teamModalTitle">New team</h3>
     <form id="teamForm">
       <input type="hidden" name="id" />

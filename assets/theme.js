@@ -51,6 +51,33 @@ export function wireThemeToggle(root = document) {
 // Auto-init on import so data-theme is correct before paint (when imported early).
 initTheme();
 
+// Global Esc-to-close for modals. Any element with `.modal.open`, `.modal-backdrop.show`,
+// or `.drawer.open` will be closed and its `.open`/`.show` classes removed. Focus is
+// restored to the previously focused element if captured via `data-prev-focus`.
+export function closeModal(el){
+  if (!el) return;
+  el.classList.remove('open');
+  el.classList.remove('show');
+  const id = el.dataset && el.dataset.prevFocus;
+  if (id) { const target = document.getElementById(id); if (target) target.focus(); }
+}
+export function openModal(el){
+  if (!el) return;
+  if (document.activeElement && document.activeElement.id){
+    el.dataset.prevFocus = document.activeElement.id;
+  }
+  el.classList.add('open');
+  if (!el.getAttribute('role')) el.setAttribute('role','dialog');
+  el.setAttribute('aria-modal','true');
+  const first = el.querySelector('input, button, textarea, select, a[href]');
+  if (first) { try { first.focus(); } catch(_){} }
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal.open, .modal-backdrop.show, .drawer.open').forEach(m => closeModal(m));
+  }
+});
+
 // Flash-of-unauthenticated-content (FOUC-auth) guard.
 // Pages keep body hidden (via `html:not(.ready) body { visibility:hidden }` in app.css)
 // until Supabase auth settles. We import supabase here lazily so this module

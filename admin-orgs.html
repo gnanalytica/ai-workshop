@@ -6,6 +6,7 @@
 <title>Orgs & Codes · Admin · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
@@ -60,6 +61,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 
 <nav>
   <div class="wrap nav-in">
@@ -119,7 +121,7 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th><th>Slug</th><th>Cohorts</th><th>Registrations</th><th>Created</th><th style="text-align:right">Actions</th>
+          <th scope="col">Name</th><th scope="col">Slug</th><th scope="col">Cohorts</th><th scope="col">Registrations</th><th scope="col">Created</th><th scope="col" style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="orgRows"></tbody>
@@ -141,7 +143,7 @@
     <table>
       <thead>
         <tr>
-          <th>Code</th><th>Organization</th><th>Cohort</th><th>Uses</th><th>Expires</th><th>Created</th><th style="text-align:right">Actions</th>
+          <th scope="col">Code</th><th scope="col">Organization</th><th scope="col">Cohort</th><th scope="col">Uses</th><th scope="col">Expires</th><th scope="col">Created</th><th scope="col" style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="codeRows"></tbody>
@@ -151,7 +153,7 @@
 
 <!-- ORG MODAL -->
 <div class="modal-backdrop" id="orgModal">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Organization">
     <h3 id="orgModalTitle">New organization</h3>
     <form id="orgForm">
       <input type="hidden" name="id" />
@@ -179,7 +181,7 @@
 
 <!-- CODE MODAL -->
 <div class="modal-backdrop" id="codeModal">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Join code">
     <h3>New enrollment code</h3>
     <form id="codeForm">
       <div class="field">

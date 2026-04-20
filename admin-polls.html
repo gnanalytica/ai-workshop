@@ -6,6 +6,7 @@
 <title>Polls · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
@@ -97,6 +98,7 @@
 </style>
 </head>
 <body>
+<a href="#panel" class="skip-link">Skip to main content</a>
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
@@ -191,13 +193,13 @@
     <table>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Kind</th>
-          <th>Day</th>
-          <th>State</th>
-          <th>Responses</th>
-          <th>Created</th>
-          <th style="text-align:right">Actions</th>
+          <th scope="col">Title</th>
+          <th scope="col">Kind</th>
+          <th scope="col">Day</th>
+          <th scope="col">State</th>
+          <th scope="col">Responses</th>
+          <th scope="col">Created</th>
+          <th scope="col" style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="pollsBody">
@@ -223,7 +225,7 @@
 
 <!-- Team-vote modal -->
 <div class="modal-back" id="teamVoteBack">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Create team-vote poll">
     <div class="kicker">Demo day</div>
     <h2 style="font-size:20px;margin:0 0 4px">Create team-vote poll</h2>
     <p class="muted" style="font-size:13px;margin:0 0 16px">Auto-populated from the teams in this cohort. Launches immediately so students can vote during the live demo.</p>
@@ -250,7 +252,7 @@
 
 <!-- Edit modal -->
 <div class="modal-back" id="editBack">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Edit poll">
     <div class="kicker">Edit poll</div>
     <h2 id="editTitle" style="font-size:20px">Edit</h2>
     <div class="field"><label>Title</label><input type="text" id="e_title" /></div>
@@ -394,7 +396,7 @@
   function addOptRow(container, val) {
     const row = document.createElement('div');
     row.className = 'opt-row';
-    row.innerHTML = `<input type="text" value="${esc(val)}" placeholder="Option…"/><button type="button" aria-label="Remove">×</button>`;
+    row.innerHTML = `<input type="text" value="${esc(val)}" placeholder="Option…" aria-label="Option text"/><button type="button" aria-label="Remove option">×</button>`;
     row.querySelector('button').addEventListener('click', () => row.remove());
     container.appendChild(row);
   }

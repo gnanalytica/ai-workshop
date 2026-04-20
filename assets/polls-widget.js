@@ -127,13 +127,13 @@ export function mountPollsWidget(root, ctx) {
         `;
       } else if (p.kind === 'text') {
         wrap.innerHTML = `
-          <textarea class="poll-textarea" placeholder="Type your answer…" rows="3"></textarea>
+          <textarea class="poll-textarea" placeholder="Type your answer…" rows="3" aria-label="Your answer"></textarea>
           <button class="poll-submit" data-act="submit-text">Submit</button>
           <div class="poll-msg"></div>
         `;
       } else if (p.kind === 'questions') {
         wrap.innerHTML = `
-          <textarea class="poll-textarea" placeholder="Drop a question — the instructor will address it." rows="3"></textarea>
+          <textarea class="poll-textarea" placeholder="Drop a question — the instructor will address it." rows="3" aria-label="Your question"></textarea>
           <button class="poll-submit" data-act="submit-question">Send question</button>
           <div class="poll-msg poll-msg-sub">Questions are shared anonymously with other students.</div>
         `;
