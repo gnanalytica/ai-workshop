@@ -5,7 +5,7 @@ tags: ["build", "technical"]
 video: https://www.youtube.com/embed/ASAaKhK1B5w
 lab: {"title": "Write your capstone's first CLAUDE.md + AGENTS.md + 3 slash commands", "url": "https://claude.com/claude-code"}
 prompt_of_the_day: "You are a context engineer. Given my capstone description {{capstone_description}} and stack {{stack}}, draft a CLAUDE.md with these sections: Project Overview, Architecture, Coding Rules, File Locations, Testing Patterns, Common Pitfalls, Slash Commands. Make every rule actionable."
-tools_hands_on: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
+tools_hands_on: [{"name": "Google Antigravity", "url": "https://antigravity.google.com"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
 tools_demo: [{"name": "Battle-tested CLAUDE.md examples", "url": "https://github.com/search?q=CLAUDE.md&type=code"}, {"name": "Custom slash commands (Claude Code)", "url": "https://docs.claude.com/claude-code"}]
 tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}]
 resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/search?q=filename%3ACLAUDE.md&type=code"}, {"name": "Claude Code hooks guide", "url": "https://docs.claude.com/claude-code"}]
@@ -47,7 +47,11 @@ You've noticed the pattern by now: every time you open a new chat, you re-explai
 The lab wants a real repo open in a real AI harness — no toy project, no scratch folder.
 
 ### Setup (12 min)
-- [ ] Install **Claude Code** from https://claude.com/claude-code (preferred for this workshop) OR install **Cursor** from https://cursor.com if you don't have Claude access.
+- [ ] Pick one harness that your laptop supports — in order of weight/heaviness:
+  - **Google Antigravity** (`antigravity.google.com`) — web-based + free with Google account, no local install, lightest option for weak laptops.
+  - **Google AI Studio** (`aistudio.google.com`) — web playground, create a "Build" project, also works fully in browser.
+  - **Claude Code** (`claude.com/claude-code`) — local CLI, needs Claude Pro or equivalent access.
+  - **Cursor** (`cursor.com`) — local desktop app, free tier OK.
 - [ ] Open your capstone folder. If you haven't made one yet, create it now and run `git init` so the AI harness has a repo to read.
 - [ ] Confirm your harness opens the repo: from the folder, run `claude` (or open in Cursor) and ask "what's in this repo?" — sanity check.
 

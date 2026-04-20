@@ -48,8 +48,9 @@ Yesterday you learned the rails. Today you drive. We put a real LLM on your lapt
 **No local install needed.** Most laptops can't handle 3B+ models anyway — instructor will demo Ollama live. You'll use free cloud inference (Groq + HuggingFace Chat) which is actually *faster* than local on most laptops.
 
 ### Setup (10 min — web only, no downloads)
-- [ ] Sign up for **Groq** free tier at https://console.groq.com — your free, instant GPU. 30 seconds.
-- [ ] Sign up for **HuggingFace** at https://huggingface.co — gives you access to HuggingFace Chat + the model leaderboards.
+- [ ] Sign up for **Groq** free tier at https://console.groq.com — your free, instant GPU (Llama 3.3 70B at 750 tok/sec).
+- [ ] Sign in to **Google AI Studio** at https://aistudio.google.com (your Google account works) — free Gemini 2.5 Pro + Flash in a web playground.
+- [ ] Sign up for **HuggingFace** at https://huggingface.co — HuggingFace Chat + model leaderboards.
 - [ ] Sign up for **Langfuse** free tier at https://langfuse.com (Google sign-in, 30 seconds).
 - [ ] *Optional, only if your laptop has ≥ 8 GB RAM and you're curious*: download Ollama from https://ollama.com/download and pull one small model (`ollama pull qwen2.5:1.5b`). Not required — skip without guilt.
 
@@ -122,7 +123,8 @@ Budget 45–60 minutes.
 
 1. **Watch the instructor** pull `qwen2.5:1.5b` in Ollama and chat with it in Open WebUI. ~3 minutes. This is the "why local exists" tour — privacy, offline, zero cost.
 2. In your browser, open **Groq Console** (`console.groq.com`). Go to Playground. Pick `llama-3.3-70b-versatile`. Paste: *"Explain RAG in 2 sentences."* Feel the speed.
-3. Open a second tab: **HuggingFace Chat** (`huggingface.co/chat/`). Pick a different model (Qwen 2.5 or Gemma). Paste the same prompt. Compare.
+3. Open **Google AI Studio** (`aistudio.google.com`). Pick Gemini 2.5 Flash. Paste the same prompt. Compare the formatting + reasoning style.
+4. Open a third tab: **HuggingFace Chat** (`huggingface.co/chat/`). Pick Qwen 2.5 or Gemma. Paste the same prompt. Three answers, three models — notice the personality differences.
 4. Go to **Langfuse** (langfuse.com). Create a project. Grab your public + secret keys. (No code needed today — we log via the web console or Playground trace view.)
 5. Pick **one task from your capstone** you jotted in Before-class. Example: "Summarise a student's lab reflection into 3 bullets."
 6. Write **three prompt variants** using the prompt-of-the-day scaffold:
