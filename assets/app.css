@@ -1,3 +1,6 @@
+/* Flash-of-unauthenticated-content guard: body hidden until theme.js marks .ready */
+html:not(.ready) body{visibility:hidden}
+
 :root{
   --bg:#0a0a0f;--bg-soft:#111119;--ink:#ececf2;--muted:#8a8a9a;
   --line:#22222e;--accent:#c3ff36;--accent-2:#8b5cf6;--accent-3:#ff6b6b;

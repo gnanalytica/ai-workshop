@@ -50,3 +50,23 @@ export function wireThemeToggle(root = document) {
 
 // Auto-init on import so data-theme is correct before paint (when imported early).
 initTheme();
+
+// Flash-of-unauthenticated-content (FOUC-auth) guard.
+// Pages keep body hidden (via `html:not(.ready) body { visibility:hidden }` in app.css)
+// until Supabase auth settles. We import supabase here lazily so this module
+// stays lightweight for pages that don't need auth.
+(async function markReady() {
+  const reveal = () => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.documentElement.classList.add('ready');
+    }));
+  };
+  // Failsafe: reveal no later than 900ms regardless of auth state.
+  const failsafe = setTimeout(reveal, 900);
+  try {
+    const { supabase } = await import('./supabase.js');
+    await supabase.auth.getSession();
+  } catch (_) {}
+  clearTimeout(failsafe);
+  reveal();
+})();
