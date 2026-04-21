@@ -106,6 +106,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast } from './assets/dialog.js';
   wireThemeToggle();
 
   const root = document.getElementById('root');
@@ -239,7 +240,7 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
       } catch (err) {
-        alert('Could not render PNG: ' + err.message);
+        toast('Could not render PNG: ' + err.message, { error: true });
       } finally {
         btn.textContent = prev;
         btn.disabled = false;

@@ -132,6 +132,7 @@
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { DAYS, WEEK_TITLES } from './assets/days.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast } from './assets/dialog.js';
   wireThemeToggle();
 
   const root = document.getElementById('root');
@@ -415,13 +416,13 @@
           const { error } = await supabase.from('kudos').delete()
             .eq('from_user', viewerId).eq('submission_id', sid);
           if (!error) { btn.classList.remove('on'); nEl.textContent = Math.max(0, n - 1); }
-          else alert(error.message);
+          else toast(error.message, { error: true });
         } else {
           const { error } = await supabase.from('kudos').insert({
             from_user: viewerId, to_user: toUser, submission_id: sid,
           });
           if (!error) { btn.classList.add('on'); nEl.textContent = n + 1; }
-          else alert(error.message);
+          else toast(error.message, { error: true });
         }
         btn.disabled = false;
         btn.setAttribute('aria-pressed', btn.classList.contains('on'));
@@ -443,7 +444,7 @@
       if (error) {
         toggle.classList.toggle('on');
         lbl.textContent = turnOff ? 'Public' : 'Private';
-        alert('Could not update: ' + error.message);
+        toast('Could not update: ' + error.message, { error: true });
       } else if (turnOff) {
         setTimeout(() => location.reload(), 500);
       }
@@ -475,7 +476,7 @@
         const { error } = await supabase.from('registrations')
           .update({ showcase_public: true })
           .eq('user_id', userId).eq('cohort_id', cohort.id);
-        if (error) { alert(error.message); btn.disabled = false; btn.textContent = 'Go public →'; return; }
+        if (error) { toast(error.message, { error: true }); btn.disabled = false; btn.textContent = 'Go public →'; return; }
         location.reload();
       });
       return;

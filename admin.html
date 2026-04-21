@@ -111,6 +111,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast } from './assets/dialog.js';
   wireThemeToggle();
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
@@ -236,7 +237,7 @@
         sel.disabled = true;
         const { error } = await supabase.from('registrations').update({ status: newStatus }).eq('id', id);
         sel.disabled = false;
-        if (error) { alert(error.message); sel.value = sel.dataset.current; return; }
+        if (error) { toast(error.message, { error: true }); sel.value = sel.dataset.current; return; }
         sel.dataset.current = newStatus;
         const row = ALL_ROWS.find(r => r.id === id);
         if (row) row.status = newStatus;

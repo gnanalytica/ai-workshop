@@ -20,6 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/nav-search.css" />
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <style>
   :root{
@@ -201,11 +202,6 @@
   .msg.ok{background:rgba(195,255,54,.08);color:#c9f76a;border:1px solid rgba(195,255,54,.25)}
   .msg.err{background:rgba(255,107,107,.08);color:#ffa0a0;border:1px solid rgba(255,107,107,.25)}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  .site-nav-search{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:999px;background:var(--input-bg);padding:0 2px 0 10px;margin-right:6px;max-width:min(220px,36vw)}
-  .site-nav-search input[type=search]{flex:1;min-width:0;width:120px;border:none;background:transparent;color:var(--ink);font-family:inherit;font-size:12.5px;padding:7px 4px;outline:none}
-  .site-nav-search input[type=search]::placeholder{color:var(--muted);opacity:.85}
-  .site-nav-search-btn{display:grid;place-items:center;width:30px;height:30px;border:none;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;padding:0}
-  .site-nav-search-btn:hover{color:var(--accent)}
 
   /* RESPONSIVE */
   @media(max-width:1024px){
@@ -241,7 +237,7 @@
       <a href="#curriculum">Curriculum</a>
       <a href="#tools">Stack</a>
       <a href="#capstone">Capstone</a>
-      <a href="search.html" style="display:inline-flex;align-items:center;gap:5px" title="Search lessons"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Search</a>
+      <a href="find.html" style="display:inline-flex;align-items:center;gap:5px" title="Find lessons, people, and admin shortcuts (includes full-text lesson search)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Find</a>
       <a href="hall-of-fame.html">Hall of Fame</a>
       <a href="dashboard.html">Dashboard</a>
     </div>

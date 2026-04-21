@@ -11,7 +11,7 @@ export const ADMIN_PAGES = [
   { href: 'admin-stuck.html',      label: 'Stuck queue' },
   { href: 'admin-polls.html',      label: 'Polls' },
   { href: 'admin-announcements.html', label: 'Announcements' },
-  { href: 'admin-student.html',    label: 'Student' },
+  { href: 'admin-student.html',    label: 'Student work' },
   { href: 'admin-faculty.html',    label: 'Faculty', adminOnly: true },
   { href: 'admin-pods.html',       label: 'Pods',    adminOnly: true },
 ];

@@ -140,6 +140,7 @@
   import { renderAdminNav } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { loadPodsForCohort, loadEnrolledStudents, loadCohortFaculty, callPodFacultyEvent, parsePodCsv } from './assets/pods.js';
+  import { confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
 
@@ -396,7 +397,8 @@
 
       card.querySelectorAll('button[data-remove-fac]').forEach(b => {
         b.addEventListener('click', async () => {
-          if (!confirm('Remove this faculty from the pod?')) return;
+          const ok = await confirmDialog('Remove this faculty from the pod?', { title: 'Remove faculty', confirmText: 'Remove', danger: true });
+          if (!ok) return;
           try { await callPodFacultyEvent(podId, 'removed', b.dataset.removeFac, null, null); toast('Faculty removed'); }
           catch (err) { toast(err.message, 'err'); }
           await refresh();
@@ -434,14 +436,16 @@
       });
 
       card.querySelector('button[data-clear]')?.addEventListener('click', async () => {
-        if (!confirm('Remove all members from this pod?')) return;
+        const ok = await confirmDialog('Remove all members from this pod?', { title: 'Clear pod', confirmText: 'Clear members', danger: true });
+        if (!ok) return;
         const { error } = await supabase.from('pod_members').delete().eq('pod_id', podId);
         if (error) return toast(error.message, 'err');
         toast('Pod cleared'); await refresh();
       });
 
       card.querySelector('button[data-delete-pod]')?.addEventListener('click', async () => {
-        if (!confirm('Delete this pod? Members return to Unassigned.')) return;
+        const ok = await confirmDialog('Delete this pod? Members return to Unassigned.', { title: 'Delete pod', confirmText: 'Delete', danger: true });
+        if (!ok) return;
         // Clear members first so they go back to unassigned (also cascaded by FK).
         await supabase.from('pod_members').delete().eq('pod_id', podId);
         const { error } = await supabase.from('cohort_pods').delete().eq('id', podId);

@@ -259,6 +259,7 @@
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { DAYS } from './assets/days.js';
+  import { toast as appToast, confirmDialog, infoDialog } from './assets/dialog.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -454,14 +455,14 @@
         const val = inp.value.trim() || null;
         if ((t?.meet_link || null) === val) return;
         const { error } = await supabase.from('teams').update({ meet_link: val }).eq('id', tid);
-        if (error) { alert(error.message); return; }
+        if (error) { appToast(error.message, { error: true }); return; }
         if (t) t.meet_link = val;
         toast('Team Meet saved');
       });
     });
 
     $('teamRows').querySelectorAll('[data-capview]').forEach(b => {
-      b.onclick = () => {
+      b.onclick = async () => {
         const cap = CAPSTONES_BY_TEAM.get(b.dataset.capview);
         if (!cap) return;
         const fields = [
@@ -476,7 +477,7 @@
           ['Video', cap.video_url],
           ['Status', cap.status],
         ].map(([k,v]) => `${k}: ${v || '—'}`).join('\n\n');
-        alert(fields);
+        await infoDialog(fields, { title: 'Capstone submission' });
       };
     });
 
@@ -506,7 +507,7 @@
         if (!cap) { toast('No capstone for this team'); return; }
         const newVal = !cap.is_featured;
         const { error } = await supabase.from('capstones').update({ is_featured: newVal }).eq('id', cap.id);
-        if (error) { alert(error.message); return; }
+        if (error) { appToast(error.message, { error: true }); return; }
         cap.is_featured = newVal;
         toast(newVal ? 'Featured on Hall of Fame' : 'Unfeatured');
         renderTeams();
@@ -524,7 +525,7 @@
     const description = (descEl?.textContent || '').trim() || null;
     if (!name) { toast('Name required'); return; }
     const { error } = await supabase.from('teams').update({ name, description }).eq('id', teamId);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Saved');
     await loadAll();
   }
@@ -534,7 +535,7 @@
     if (!t) return;
     const newVal = t.locked_at ? null : new Date().toISOString();
     const { error } = await supabase.from('teams').update({ locked_at: newVal }).eq('id', teamId);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast(newVal ? 'Locked' : 'Unlocked');
     await loadAll();
   }
@@ -542,18 +543,24 @@
   async function deleteTeam(teamId) {
     const t = TEAMS.find(x => x.id === teamId);
     if (!t) return;
-    if (!confirm(`Delete team "${t.name}"? All memberships are removed. This cannot be undone.`)) return;
+    const ok = await confirmDialog(`Delete team "${t.name}"? All memberships are removed. This cannot be undone.`, {
+      title: 'Delete team',
+      confirmText: 'Delete',
+      danger: true,
+    });
+    if (!ok) return;
     await supabase.from('team_members').delete().eq('team_id', teamId);
     const { error } = await supabase.from('teams').delete().eq('id', teamId);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Team deleted');
     await loadAll();
   }
 
   async function removeMember(memberRowId) {
-    if (!confirm('Remove this member from their team?')) return;
+    const ok = await confirmDialog('Remove this member from their team?', { title: 'Remove member', confirmText: 'Remove', danger: true });
+    if (!ok) return;
     const { error } = await supabase.from('team_members').delete().eq('id', memberRowId);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Member removed');
     await loadAll();
   }
@@ -608,7 +615,7 @@
 
   async function assignToTeam(userId, teamId) {
     const { error } = await supabase.from('team_members').insert({ team_id: teamId, user_id: userId, role: 'member' });
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Assigned');
     await loadAll();
   }
@@ -658,7 +665,8 @@
     const size = parseInt($('autoSize').value, 10) || 3;
     const pool = getUnassignedUserIds().slice();
     if (!pool.length) { toast('No unassigned students'); return; }
-    if (!confirm(`Randomly assign ${pool.length} student${pool.length===1?'':'s'} into teams of ${size}?`)) return;
+    const okRand = await confirmDialog(`Randomly assign ${pool.length} student${pool.length===1?'':'s'} into teams of ${size}?`, { title: 'Auto-assign teams', confirmText: 'Assign' });
+    if (!okRand) return;
     const btn = $('autoAssignBtn');
     btn.disabled = true; btn.textContent = 'Assigning…';
     try {
@@ -676,12 +684,12 @@
         const { data: team, error: tErr } = await supabase.from('teams').insert({
           cohort_id: COHORT_ID, name: autoName(), created_by: chunk[0] || createdBy,
         }).select().single();
-        if (tErr) { alert('Team insert failed: ' + tErr.message); return; }
+        if (tErr) { appToast('Team insert failed: ' + tErr.message, { error: true }); return; }
         const rows = chunk.map((uid, idx) => ({
           team_id: team.id, user_id: uid, role: idx === 0 ? 'lead' : 'member',
         }));
         const { error: mErr } = await supabase.from('team_members').insert(rows);
-        if (mErr) { alert('Member insert failed: ' + mErr.message); return; }
+        if (mErr) { appToast('Member insert failed: ' + mErr.message, { error: true }); return; }
         studentsAssigned += chunk.length;
       }
       toast(`Assigned ${studentsAssigned} student${studentsAssigned===1?'':'s'} to ${chunks.length} team${chunks.length===1?'':'s'}`);
@@ -693,7 +701,8 @@
 
   $('renameBtn').addEventListener('click', async () => {
     if (!TEAMS.length) { toast('No teams to rename'); return; }
-    if (!confirm(`Regenerate names for all ${TEAMS.length} teams in this cohort?`)) return;
+    const okRen = await confirmDialog(`Regenerate names for all ${TEAMS.length} teams in this cohort?`, { title: 'Regenerate names', confirmText: 'Regenerate' });
+    if (!okRen) return;
     const btn = $('renameBtn');
     btn.disabled = true; btn.textContent = 'Renaming…';
     try {
@@ -703,7 +712,7 @@
         do { name = autoName(); tries++; } while (used.has(name) && tries < 30);
         used.add(name);
         const { error } = await supabase.from('teams').update({ name }).eq('id', t.id);
-        if (error) { alert(error.message); return; }
+        if (error) { appToast(error.message, { error: true }); return; }
       }
       toast(`Renamed ${TEAMS.length} teams`);
       await loadAll();
@@ -843,7 +852,7 @@
       }
       if (!rows.length) { toast('No new students to pair'); return; }
       const { error } = await supabase.from('pair_matches').insert(rows);
-      if (error) { alert('Could not generate: ' + error.message); return; }
+      if (error) { appToast('Could not generate: ' + error.message, { error: true }); return; }
       toast(`${rows.length} pair${rows.length===1?'':'s'} created`);
       await renderPairs();
     } finally {
@@ -854,10 +863,11 @@
   $('pairClearBtn').addEventListener('click', async () => {
     const day = parseInt($('pairDaySel').value, 10);
     if (!COHORT_ID || !day) return;
-    if (!confirm(`Clear all pair matches for Day ${day}?`)) return;
+    const okClr = await confirmDialog(`Clear all pair matches for Day ${day}?`, { title: 'Clear pairs', confirmText: 'Clear', danger: true });
+    if (!okClr) return;
     const { error } = await supabase.from('pair_matches').delete()
       .eq('cohort_id', COHORT_ID).eq('day_number', day);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Pairs cleared');
     await renderPairs();
   });
@@ -900,9 +910,10 @@
     }).join('');
     host.querySelectorAll('[data-buddy-remove]').forEach(b => {
       b.onclick = async () => {
-        if (!confirm('Remove this buddy pair?')) return;
+        const okRm = await confirmDialog('Remove this buddy pair?', { title: 'Remove pair', confirmText: 'Remove', danger: true });
+        if (!okRm) return;
         const { error } = await supabase.from('buddy_pairs').delete().eq('id', b.dataset.buddyRemove);
-        if (error) { alert(error.message); return; }
+        if (error) { appToast(error.message, { error: true }); return; }
         toast('Pair removed');
         renderBuddies();
       };
@@ -936,7 +947,7 @@
       }
       if (!rows.length) { toast('No new students to pair'); return; }
       const { error } = await supabase.from('buddy_pairs').insert(rows);
-      if (error) { alert('Could not pair: ' + error.message); return; }
+      if (error) { appToast('Could not pair: ' + error.message, { error: true }); return; }
       toast(`${rows.length} buddy pair${rows.length===1?'':'s'} created`);
       await renderBuddies();
     } finally {
@@ -947,10 +958,11 @@
   $('buddyClearBtn').addEventListener('click', async () => {
     const week = parseInt($('buddyWeekSel').value, 10);
     if (!COHORT_ID || !week) return;
-    if (!confirm(`Clear all buddy pairs for Week ${week}?`)) return;
+    const okBw = await confirmDialog(`Clear all buddy pairs for Week ${week}?`, { title: 'Clear buddy pairs', confirmText: 'Clear', danger: true });
+    if (!okBw) return;
     const { error } = await supabase.from('buddy_pairs').delete()
       .eq('cohort_id', COHORT_ID).eq('week_number', week);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Pairs cleared');
     await renderBuddies();
   });

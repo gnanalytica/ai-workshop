@@ -277,6 +277,7 @@
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   import { DAYS, WEEK_TITLES } from './assets/days.js';
 
@@ -649,7 +650,8 @@
   }
 
   async function deleteQuiz(id) {
-    if (!confirm('Delete this quiz? This cannot be undone.')) return;
+    const ok = await confirmDialog('Delete this quiz? This cannot be undone.', { title: 'Delete quiz', confirmText: 'Delete', danger: true });
+    if (!ok) return;
     const { error } = await supabase.from('quizzes').delete().eq('id', id);
     if (error) { toast(error.message, 'err'); return; }
     QUIZZES.delete(SELECTED_DAY);
@@ -862,7 +864,8 @@
   }
 
   async function deleteAssignment(id) {
-    if (!confirm('Delete this assignment? This cannot be undone.')) return;
+    const ok = await confirmDialog('Delete this assignment? This cannot be undone.', { title: 'Delete assignment', confirmText: 'Delete', danger: true });
+    if (!ok) return;
     const { error } = await supabase.from('assignments').delete().eq('id', id);
     if (error) { toast(error.message, 'err'); return; }
     ASSIGNMENTS.delete(SELECTED_DAY);

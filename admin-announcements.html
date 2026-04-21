@@ -92,6 +92,7 @@
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast, confirmDialog, promptField } from './assets/dialog.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -176,23 +177,24 @@
 
   async function act(id, a, row) {
     if (a === 'delete') {
-      if (!confirm('Delete this announcement?')) return;
+      const ok = await confirmDialog('Delete this announcement?', { title: 'Delete', confirmText: 'Delete', danger: true });
+      if (!ok) return;
       const { error } = await supabase.from('announcements').delete().eq('id', id);
-      if (error) alert(error.message); else load();
+      if (error) toast(error.message, { error: true }); else load();
     } else if (a === 'pin') {
       const until = new Date(Date.now() + 24*3600*1000).toISOString();
       const { error } = await supabase.from('announcements').update({ pinned_until: until }).eq('id', id);
-      if (error) alert(error.message); else load();
+      if (error) toast(error.message, { error: true }); else load();
     } else if (a === 'unpin') {
       const { error } = await supabase.from('announcements').update({ pinned_until: null }).eq('id', id);
-      if (error) alert(error.message); else load();
+      if (error) toast(error.message, { error: true }); else load();
     } else if (a === 'edit') {
-      const title = prompt('Title', row.title);
-      if (title == null) return;
-      const body = prompt('Body', row.body);
-      if (body == null) return;
+      const title = await promptField({ title: 'Edit announcement', label: 'Title', defaultValue: row.title });
+      if (title === null) return;
+      const body = await promptField({ title: 'Edit announcement', label: 'Body', defaultValue: row.body, multiline: true });
+      if (body === null) return;
       const { error } = await supabase.from('announcements').update({ title, body }).eq('id', id);
-      if (error) alert(error.message); else load();
+      if (error) toast(error.message, { error: true }); else load();
     }
   }
 

@@ -103,6 +103,7 @@
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { DAYS } from './assets/days.js';
+  import { toast } from './assets/dialog.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
@@ -238,7 +239,7 @@
     if (act === 'resolved') patch.resolved_at = new Date().toISOString();
     else if (act === 'pending') patch.resolved_at = null;
     const { error } = await supabase.from('stuck_queue').update(patch).eq('id', id);
-    if (error) alert('Update failed: ' + error.message);
+    if (error) toast('Update failed: ' + error.message, { error: true });
     btn.disabled = false;
     // realtime will reload
   });

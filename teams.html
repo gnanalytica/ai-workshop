@@ -127,6 +127,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast as appToast, confirmDialog, infoDialog } from './assets/dialog.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -338,7 +339,7 @@
     if (saveMeet) saveMeet.onclick = async () => {
       const val = $('meetInput').value.trim() || null;
       const { error } = await supabase.from('teams').update({ meet_link: val }).eq('id', TEAM.id);
-      if (error) { alert(error.message); return; }
+      if (error) { appToast(error.message, { error: true }); return; }
       toast('Meet link saved');
       await loadAll();
     };
@@ -372,10 +373,11 @@
   }
 
   async function regenerateCode() {
-    if (!confirm('Regenerate the join code? Old code will stop working.')) return;
+    const ok = await confirmDialog('Regenerate the join code? Old code will stop working.', { title: 'Regenerate code', confirmText: 'Regenerate' });
+    if (!ok) return;
     const newCode = randomCode(6);
     const { error } = await supabase.from('teams').update({ join_code: newCode }).eq('id', TEAM.id);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('New code generated');
     await loadAll();
   }
@@ -383,9 +385,10 @@
   async function kickMember(memberRowId) {
     const m = MEMBERS.find(x => x.id === memberRowId);
     if (!m) return;
-    if (!confirm(`Remove ${m.profiles?.full_name || 'this member'} from the team?`)) return;
+    const okKick = await confirmDialog(`Remove ${m.profiles?.full_name || 'this member'} from the team?`, { title: 'Remove member', confirmText: 'Remove', danger: true });
+    if (!okKick) return;
     const { error } = await supabase.from('team_members').delete().eq('id', memberRowId);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     toast('Member removed');
     await loadAll();
   }
@@ -394,12 +397,13 @@
     const isLead = MEMBERSHIP.role === 'lead';
     const others = MEMBERS.filter(m => m.user_id !== USER.id);
     if (isLead && others.length > 0) {
-      alert('You are the lead. Transfer leadership first by removing yourself only after promoting another member, or remove all members and delete the team.');
+      await infoDialog('You are the lead. Transfer leadership first by removing yourself only after promoting another member, or remove all members and delete the team.', { title: 'Cannot leave yet' });
       return;
     }
-    if (!confirm('Leave this team?')) return;
+    const okLeave = await confirmDialog('Leave this team?', { title: 'Leave team', confirmText: 'Leave', danger: true });
+    if (!okLeave) return;
     const { error } = await supabase.from('team_members').delete().eq('id', MEMBERSHIP.id);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     if (isLead && others.length === 0) {
       await supabase.from('teams').delete().eq('id', TEAM.id);
     }

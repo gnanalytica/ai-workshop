@@ -162,6 +162,7 @@
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast } from './assets/dialog.js';
   wireThemeToggle();
   import { DAYS } from './assets/days.js';
 
@@ -438,7 +439,7 @@
           user_id: uid, cohort_id: SELECTED.id, day_number: dn,
           checked_in_at: new Date().toISOString(),
         }, { onConflict: 'user_id,cohort_id,day_number' });
-        if (error) { alert(error.message); b.disabled = false; b.textContent = 'Mark as attended'; return; }
+        if (error) { toast(error.message, { error: true }); b.disabled = false; b.textContent = 'Mark as attended'; return; }
         await refresh();
       });
     });

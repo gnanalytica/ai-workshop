@@ -220,6 +220,7 @@
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast as appToast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -456,9 +457,10 @@
   async function deleteOrg(id) {
     const o = ORGS.find(x => x.id === id);
     if (!o) return;
-    if (!confirm(`Delete "${o.name}"?\n\nThis will CASCADE delete all cohorts, enrollment codes, and potentially registrations linked to them. This cannot be undone.`)) return;
+    const ok = await confirmDialog(`Delete "${o.name}"?\n\nThis will CASCADE delete all cohorts, enrollment codes, and potentially registrations linked to them. This cannot be undone.`, { title: 'Delete organization', confirmText: 'Delete', danger: true });
+    if (!ok) return;
     const { error } = await supabase.from('organizations').delete().eq('id', id);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     if (ACTIVE_ORG_ID === id) ACTIVE_ORG_ID = null;
     await loadAll();
     toast('Organization deleted ✓');
@@ -551,7 +553,7 @@
       : `<option value="">— no cohorts for this org —</option>`;
   }
   $('newCodeBtn').addEventListener('click', () => {
-    if (!ORGS.length) { alert('Create an organization first.'); return; }
+    if (!ORGS.length) { appToast('Create an organization first.', { error: true }); return; }
     openCodeModal();
   });
   $('codeCancel').addEventListener('click', () => $('codeModal').classList.remove('show'));
@@ -593,9 +595,10 @@
   async function deleteCode(id) {
     const c = CODES.find(x => x.id === id);
     if (!c) return;
-    if (!confirm(`Delete code "${c.code}"? This cannot be undone.`)) return;
+    const ok = await confirmDialog(`Delete code "${c.code}"? This cannot be undone.`, { title: 'Delete code', confirmText: 'Delete', danger: true });
+    if (!ok) return;
     const { error } = await supabase.from('enrollment_codes').delete().eq('id', id);
-    if (error) { alert(error.message); return; }
+    if (error) { appToast(error.message, { error: true }); return; }
     await loadCodes();
     renderCodes();
     toast('Code deleted ✓');

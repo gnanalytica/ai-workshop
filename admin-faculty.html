@@ -134,6 +134,7 @@
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
 
@@ -264,7 +265,8 @@
     $('rows').querySelectorAll('button[data-remove]').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.remove;
-        if (!confirm('Remove this faculty assignment?')) return;
+        const okRm = await confirmDialog('Remove this faculty assignment?', { title: 'Remove faculty', confirmText: 'Remove', danger: true });
+        if (!okRm) return;
         btn.disabled = true;
         // Guardrail: block removal if the faculty still owns pods in this cohort.
         const row = ROWS.find(x => x.id === id);

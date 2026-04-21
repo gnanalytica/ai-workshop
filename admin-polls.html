@@ -280,6 +280,7 @@
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { toast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
@@ -527,14 +528,15 @@
     if (!poll) return;
     if (act === 'launch') {
       const { error } = await supabase.from('polls').update({ is_open: true, opened_at: new Date().toISOString(), closed_at: null }).eq('id', id);
-      if (error) alert(error.message); else refresh();
+      if (error) toast(error.message, { error: true }); else refresh();
     } else if (act === 'close') {
       const { error } = await supabase.from('polls').update({ is_open: false, closed_at: new Date().toISOString() }).eq('id', id);
-      if (error) alert(error.message); else refresh();
+      if (error) toast(error.message, { error: true }); else refresh();
     } else if (act === 'delete') {
-      if (!confirm(`Delete poll "${poll.title}"? Responses will be deleted too.`)) return;
+      const ok = await confirmDialog(`Delete poll "${poll.title}"? Responses will be deleted too.`, { title: 'Delete poll', confirmText: 'Delete', danger: true });
+      if (!ok) return;
       const { error } = await supabase.from('polls').delete().eq('id', id);
-      if (error) alert(error.message); else refresh();
+      if (error) toast(error.message, { error: true }); else refresh();
     } else if (act === 'edit') {
       openEdit(poll);
     } else if (act === 'view') {
@@ -707,7 +709,7 @@
   }
 
   async function openTeamVote() {
-    if (!COHORT) { alert('Pick a cohort first.'); return; }
+    if (!COHORT) { toast('Pick a cohort first.', { error: true }); return; }
     const msg = document.getElementById('tvMsg'); msg.className = 'msg'; msg.textContent = '';
     document.getElementById('tv_title').value = 'Demo day — vote for best team';
     document.getElementById('tv_question').value = 'Which team had the best demo?';
