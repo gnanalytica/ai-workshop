@@ -73,7 +73,10 @@
       <div class="kicker">Faculty</div>
       <h1 id="fHello">Good to see you.</h1>
     </div>
-    <select id="fCohortSel"></select>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div id="viewSwitcher"></div>
+      <select id="fCohortSel"></select>
+    </div>
   </header>
 
   <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px">
@@ -92,7 +95,7 @@
 <script type="module">
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG, renderViewSwitcher } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountFacultyTab } from './assets/faculty-tabs.js';
   wireThemeToggle();
@@ -130,6 +133,7 @@
     STATE.user = user; STATE.isAdmin = isAdmin; STATE.isFaculty = isFaculty;
     if (!isFaculty && !isAdmin) return show('denied');
     applyFacultyBrandLabel(isAdmin, isFaculty);
+    document.getElementById('viewSwitcher').innerHTML = renderViewSwitcher(isAdmin, isFaculty, 'faculty');
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: isAdmin ? 'admin' : 'faculty' });
 
