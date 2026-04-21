@@ -23,7 +23,9 @@ The day-by-day manual for running a cohort on this platform.
 
 6. **Assign faculty** (if any) — `/admin-faculty.html` → paste email + pick cohort + role.
 
-7. **Test enrollment** — sign up with a throwaway email using the code. Verify magic link arrives and redirects to dashboard.
+7. **Create mentor pods** (if any) — `/admin-pods.html` → create pods, attach one or more faculty per pod (one marked primary), bulk-assign students or CSV-import a `student_email,pod_name` file. Faculty land on `/faculty.html` after sign-in with Today / My pod / Whole cohort / Analytics / Handbook tabs. Students see their mentor on `/dashboard.html`.
+
+8. **Test enrollment** — sign up with a throwaway email using the code. Verify magic link arrives and redirects to dashboard.
 
 ---
 

@@ -1,13 +1,37 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
-## Status
+## What this is
 
-Repository is currently empty. Update this file once the project's stack, build commands, and architecture are established.
+A 30-day AI workshop delivery platform: static HTML pages + a Supabase backend (Postgres, Auth, Edge Functions, Storage). No build step, no framework — every page is a standalone `.html` file with ES-module `<script type="module">` blocks importing shared helpers from `assets/`.
 
-## To fill in later
+## Key surfaces
 
-- **Commands**: build, lint, test (including single-test invocation), dev server
-- **Architecture**: high-level structure and cross-file concepts that aren't obvious from browsing
-- **Conventions**: anything project-specific that overrides defaults
+- `index.html` — public landing + magic-link sign-in.
+- `dashboard.html` — student home after sign-in.
+- `day.html` + `content/day-XX.md` — per-day curriculum pages.
+- `admin-*.html` — admin surfaces (one page per concern: home, content, schedule, teams, attendance, stuck, polls, faculty, pods, analytics, …).
+- `faculty.html` — faculty landing (Today / My pod / Whole cohort / Analytics / Handbook).
+- `supabase/migrations/` — timestamped SQL migrations, applied in filename order via Supabase dashboard or CLI.
+- `supabase/functions/` — edge functions (digest email, registration email).
+
+## Architecture notes that aren't obvious
+
+- **No direct `cohort_id` on `submissions`** — filter via `assignments!inner(cohort_id)`.
+- **Enrolled students** = `registrations` rows with `status='confirmed'` (not an `enrollments` table).
+- **Per-day progress** lives in `lab_progress`; day metadata in `cohort_days`.
+- **Faculty auth** goes through `assets/admin-auth.js::checkAdminOrFaculty`. Admin-only pages have `adminOnly: true` in `assets/admin-nav.js`.
+- **Mentor pods**: `cohort_pods` → `pod_faculty` (many, one `is_primary`) → `pod_members`. Atomic mutations go through the `rpc_pod_faculty_event` SECURITY DEFINER RPC; `pod_faculty_events` is the audit log. Students read their pod via the `my_pod(cohort uuid)` RPC.
+- **RLS**: faculty permissions widen via `faculty_cohort_ids()` helper; grants read+write across all cohort students, not just pod members.
+
+## Conventions
+
+- New admin surfaces copy the `admin-faculty.html` skeleton: gate → denied → panel, toast component, theme toggle, shared nav.
+- Mutations go inline (prompt/confirm are acceptable for v1 interim flows).
+- Migrations are timestamped `YYYYMMDD_HHMM_description.sql`. Policies use `drop policy if exists` + `create policy` (Postgres has no `CREATE POLICY IF NOT EXISTS`).
+- Specs live in `docs/superpowers/specs/`; plans in `docs/superpowers/plans/`.
+
+## Commands
+
+No build or test harness. Verify by opening pages directly in a browser against a staging Supabase project; apply migrations via dashboard SQL editor or `supabase db push`.
