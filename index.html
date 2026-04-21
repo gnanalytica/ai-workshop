@@ -33,8 +33,10 @@
     --accent-3:#ff6b6b;
     --accent-4:#38bdf8;
     --card:#14141c;
+    --input-bg:#0a0a12;
     --nav-bg:rgba(10,10,15,.72);
     --cta-ink:#0b0b10;
+    color-scheme:dark;
   }
   [data-theme="light"]:root, [data-theme="light"]{
     --bg:#fafafa;
@@ -47,8 +49,10 @@
     --accent-3:#dc2626;
     --accent-4:#0284c7;
     --card:#ffffff;
+    --input-bg:#ffffff;
     --nav-bg:rgba(250,250,250,.82);
     --cta-ink:#ffffff;
+    color-scheme:light;
   }
   .theme-toggle{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:50%;cursor:pointer;color:var(--ink);transition:all .15s;padding:0;margin-right:4px}
   .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
@@ -172,8 +176,16 @@
   .modal{position:fixed;inset:0;background:rgba(5,5,10,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
   .modal.open{display:flex}
   .modal-card{background:linear-gradient(145deg,#15151f,#0d0d14);border:1px solid var(--line);border-radius:22px;padding:36px;width:100%;max-width:480px;position:relative}
-  .modal-card h3{margin:0 0 6px;font-size:26px;letter-spacing:-.02em}
+  .modal-card h3{margin:0 0 6px;font-size:26px;letter-spacing:-.02em;color:var(--ink)}
   .modal-card .sub{margin:0 0 22px;color:var(--muted);font-size:14px;max-width:none}
+  .access-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 18px;padding:4px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.2)}
+  [data-theme="light"] .access-seg{background:rgba(0,0,0,.04)}
+  .access-seg button{margin:0;padding:10px 8px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:color .15s,background .15s,border-color .15s}
+  .access-seg button:hover{color:var(--ink)}
+  .access-seg button.active{background:rgba(195,255,54,.1);border-color:rgba(195,255,54,.35);color:var(--ink)}
+  [data-theme="light"] .access-seg button.active{background:rgba(111,165,0,.12);border-color:rgba(111,165,0,.35)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--muted);opacity:.85}
+  .field input:-webkit-autofill,.field textarea:-webkit-autofill{-webkit-text-fill-color:var(--ink);box-shadow:0 0 0 1000px var(--input-bg) inset;transition:background-color 9999s ease-out}
   .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;font-size:18px;display:grid;place-items:center}
   .modal-close:hover{color:var(--ink);border-color:#3a3a4e}
   .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
@@ -229,8 +241,7 @@
     </div>
     <div style="display:flex;gap:10px;align-items:center">
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-      <a href="#" onclick="openLogin();return false;" style="font-size:14px;color:var(--muted)">Sign in</a>
-      <a class="cta" href="#" onclick="openModal();return false;">Enroll →</a>
+      <a class="cta" href="#" onclick="openAccess();return false;">Sign in / Enroll →</a>
     </div>
   </div>
 </nav>
@@ -480,53 +491,46 @@
   </div>
 </section>
 
-<!-- REGISTRATION MODAL -->
-<div class="modal" id="regModal" role="dialog" aria-modal="true" aria-label="Enroll">
+<!-- SIGN IN / ENROLL (single flow) -->
+<div class="modal" id="accessModal" role="dialog" aria-modal="true" aria-label="Sign in or enroll">
   <div class="modal-card">
-    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
-    <h3>Join the cohort</h3>
-    <p class="sub">Cohort 01 starts <b style="color:var(--ink)">May 15, 2026</b>. 40 seats. We'll email you a magic link to confirm.</p>
-    <form id="regForm">
-      <div class="field"><label>Enrollment code</label><input type="text" name="code" id="codeInput" required placeholder="Ask your cohort host" style="text-transform:uppercase" /></div>
-      <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@college.edu" /></div>
-      <div class="row2">
-        <div class="field"><label>Full name</label><input type="text" name="full_name" required /></div>
-        <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91…" /></div>
-      </div>
-      <div class="field"><label>College</label><input type="text" name="college" required /></div>
-      <div class="row2">
-        <div class="field"><label>Year</label>
-          <select name="year" required>
-            <option value="">Select</option>
-            <option value="3">3rd year</option>
-            <option value="4">4th year</option>
-            <option value="2">2nd year</option>
-            <option value="pg">PG</option>
-            <option value="other">Other</option>
-          </select>
+    <button class="modal-close" onclick="closeAccess()" aria-label="Close">×</button>
+    <h3 id="accessHeading">Get started</h3>
+    <p class="sub" id="accessIntro">Pick how you are joining, then use the same green button — we will email you a magic link.</p>
+    <div class="access-seg" role="tablist" aria-label="Access type">
+      <button type="button" role="tab" class="active" id="modeReturning" data-access-mode="returning" aria-selected="true">Returning</button>
+      <button type="button" role="tab" id="modeNew" data-access-mode="new" aria-selected="false">New student</button>
+      <button type="button" role="tab" id="modeFaculty" data-access-mode="faculty" aria-selected="false">Faculty</button>
+    </div>
+    <form id="accessForm">
+      <input type="hidden" name="access_mode" id="accessModeField" value="returning" />
+      <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email" placeholder="you@college.edu" /></div>
+      <div id="facultyHint" class="sub" style="display:none;margin:-6px 0 14px;font-size:13px">Faculty and mentors are invited by an admin on the backend. Use the <span style="color:var(--ink);font-weight:600">same work email</span> you were set up with — we will send a magic link. There is no student-style enrollment code for faculty; if you cannot sign in, ask your cohort admin.</div>
+      <div id="newStudentFields" style="display:none">
+        <div class="field"><label>Cohort ID</label><input type="text" name="cohort_slug" id="cohortSlugInput" placeholder="e.g. cohort-01" autocapitalize="none" spellcheck="false" /></div>
+        <div class="field"><label>Enrollment code</label><input type="text" name="code" id="codeInput" placeholder="From your cohort host" style="text-transform:uppercase" /></div>
+        <div class="row2">
+          <div class="field"><label>Full name</label><input type="text" name="full_name" /></div>
+          <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91…" /></div>
         </div>
-        <div class="field"><label>GitHub</label><input type="text" name="github_username" placeholder="optional" /></div>
+        <div class="field"><label>College</label><input type="text" name="college" /></div>
+        <div class="row2">
+          <div class="field"><label>Year</label>
+            <select name="year">
+              <option value="">Select</option>
+              <option value="3">3rd year</option>
+              <option value="4">4th year</option>
+              <option value="2">2nd year</option>
+              <option value="pg">PG</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>GitHub</label><input type="text" name="github_username" placeholder="optional" /></div>
+        </div>
+        <div class="field"><label>Why this cohort?</label><textarea name="motivation" rows="2" placeholder="One line is fine"></textarea></div>
       </div>
-      <div class="field"><label>Why this cohort?</label><textarea name="motivation" rows="2" placeholder="One line is fine"></textarea></div>
-      <button type="submit" class="submit-btn" id="submitBtn">Send magic link →</button>
-      <div class="msg" id="regMsg"></div>
-    </form>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-label="Sign in">
-  <div class="modal-card">
-    <button class="modal-close" onclick="closeLogin()" aria-label="Close">×</button>
-    <h3>Welcome back</h3>
-    <p class="sub">Enter your email — we'll send you a magic link to your dashboard.</p>
-    <form id="loginForm">
-      <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@college.edu" /></div>
-      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
-      <div class="msg" id="loginMsg"></div>
-      <div style="margin-top:14px;font-size:13px;color:var(--muted);text-align:center">
-        New here? <a href="#" onclick="closeLogin();openModal();return false;" style="color:var(--accent)">Enroll instead →</a>
-      </div>
+      <button type="submit" class="submit-btn" id="accessBtn">Email me a magic link →</button>
+      <div class="msg" id="accessMsg"></div>
     </form>
   </div>
 </div>
@@ -569,89 +573,141 @@
   const COHORT_SLUG = 'cohort-01';
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const accessModal = document.getElementById('accessModal');
+  const accessForm = document.getElementById('accessForm');
+  const accessBtn = document.getElementById('accessBtn');
+  const accessMsg = document.getElementById('accessMsg');
+  const accessHeading = document.getElementById('accessHeading');
+  const accessIntro = document.getElementById('accessIntro');
+  const newStudentFields = document.getElementById('newStudentFields');
+  const facultyHint = document.getElementById('facultyHint');
+  const accessModeField = document.getElementById('accessModeField');
+  const cohortSlugInput = document.getElementById('cohortSlugInput');
+  const codeInput = document.getElementById('codeInput');
+
+  let accessMode = 'returning';
+
   const urlParams = new URLSearchParams(window.location.search);
   const prefillCode = urlParams.get('code');
-  if (prefillCode) {
-    const el = document.getElementById('codeInput');
-    if (el) el.value = prefillCode.toUpperCase();
-  }
+  if (prefillCode && codeInput) codeInput.value = prefillCode.toUpperCase();
 
-  window.openModal = () => document.getElementById('regModal').classList.add('open');
-  window.closeModal = () => document.getElementById('regModal').classList.remove('open');
-  window.openLogin = () => document.getElementById('loginModal').classList.add('open');
-  window.closeLogin = () => document.getElementById('loginModal').classList.remove('open');
-  document.getElementById('regModal').addEventListener('click', e => {
-    if (e.target.id === 'regModal') closeModal();
-  });
-  document.getElementById('loginModal').addEventListener('click', e => {
-    if (e.target.id === 'loginModal') closeLogin();
-  });
-
-  const loginForm = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginMsg = document.getElementById('loginMsg');
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    loginBtn.disabled = true;
-    loginBtn.textContent = 'Sending…';
-    loginMsg.className = 'msg';
-    const email = new FormData(loginForm).get('email');
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: new URL('dashboard.html', window.location.href).toString() },
+  function setNewFieldRequired(isNew) {
+    const sel = '#newStudentFields input, #newStudentFields select, #newStudentFields textarea';
+    newStudentFields.querySelectorAll(sel).forEach((el) => {
+      el.disabled = !isNew;
+      if (el.name === 'github_username' || el.name === 'motivation' || el.name === 'phone') return;
+      if (isNew) el.setAttribute('required', 'required');
+      else el.removeAttribute('required');
     });
-    if (error) {
-      loginMsg.className = 'msg show err';
-      loginMsg.textContent = error.message;
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Send magic link →';
-    } else {
-      loginMsg.className = 'msg show ok';
-      loginMsg.textContent = "Check your email — we'll drop you into your dashboard.";
-      loginBtn.textContent = 'Sent ✓';
-    }
-  });
-
-  const form = document.getElementById('regForm');
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('regMsg');
-
-  function showMsg(text, kind) {
-    msg.textContent = text;
-    msg.className = 'msg show ' + kind;
   }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-    msg.className = 'msg';
+  function applyAccessMode(mode) {
+    accessMode = mode;
+    accessModeField.value = mode;
+    document.querySelectorAll('.access-seg [data-access-mode]').forEach((btn) => {
+      const on = btn.dataset.accessMode === mode;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    const isNew = mode === 'new';
+    const isFac = mode === 'faculty';
+    newStudentFields.style.display = isNew ? 'block' : 'none';
+    facultyHint.style.display = isFac ? 'block' : 'none';
+    setNewFieldRequired(isNew);
+    if (isNew && cohortSlugInput && !cohortSlugInput.value.trim()) cohortSlugInput.value = COHORT_SLUG;
+    if (mode === 'returning') {
+      accessHeading.textContent = 'Welcome back';
+      accessIntro.textContent = 'Enter your email — we will send a magic link to your dashboard.';
+      accessBtn.textContent = 'Email me a magic link →';
+    } else if (isNew) {
+      accessHeading.textContent = 'Join the cohort';
+      accessIntro.textContent = 'Cohort 01 starts May 15, 2026. Confirm your cohort ID, then your host enrollment code — we will email you a link to finish.';
+      accessBtn.textContent = 'Email me a magic link →';
+    } else {
+      accessHeading.textContent = 'Faculty sign-in';
+      accessIntro.textContent = 'Same magic link as returning users — read the note below.';
+      accessBtn.textContent = 'Email me a magic link →';
+    }
+  }
 
-    const data = Object.fromEntries(new FormData(form).entries());
+  function showAccessMsg(text, kind) {
+    accessMsg.textContent = text;
+    accessMsg.className = 'msg show ' + kind;
+  }
+
+  window.openAccess = (preset) => {
+    if (preset) applyAccessMode(preset);
+    accessBtn.disabled = false;
+    accessBtn.textContent = 'Email me a magic link →';
+    accessMsg.className = 'msg';
+    accessMsg.textContent = '';
+    accessModal.classList.add('open');
+  };
+  window.closeAccess = () => accessModal.classList.remove('open');
+  window.openModal = () => window.openAccess('new');
+  window.closeModal = window.closeAccess;
+  window.openLogin = () => window.openAccess('returning');
+
+  accessModal.addEventListener('click', (e) => {
+    if (e.target.id === 'accessModal') closeAccess();
+  });
+
+  document.querySelector('.access-seg')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-access-mode]');
+    if (!btn) return;
+    applyAccessMode(btn.dataset.accessMode);
+  });
+
+  applyAccessMode(prefillCode ? 'new' : 'returning');
+
+  accessForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    accessBtn.disabled = true;
+    accessBtn.textContent = 'Sending…';
+    accessMsg.className = 'msg';
+    const data = Object.fromEntries(new FormData(accessForm).entries());
+    const email = (data.email || '').trim();
 
     try {
-      // Validate enrollment code
+      if (accessMode === 'returning' || accessMode === 'faculty') {
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: new URL('dashboard.html', window.location.href).toString() },
+        });
+        if (error) throw error;
+        showAccessMsg("Check your email — we'll drop you into your dashboard.", 'ok');
+        accessBtn.textContent = 'Sent ✓';
+        return;
+      }
+
+      const slug = ((data.cohort_slug || '').trim() || COHORT_SLUG).toLowerCase();
       const codeRaw = (data.code || '').trim().toUpperCase();
       if (!codeRaw) throw new Error('Enrollment code is required.');
+      if (!(data.full_name || '').trim()) throw new Error('Full name is required.');
+      if (!(data.college || '').trim()) throw new Error('College is required.');
+      if (!(data.year || '').trim()) throw new Error('Year is required.');
+
+      const { data: cohortBySlug, error: slugErr } = await supabase
+        .from('cohorts').select('id').eq('slug', slug).maybeSingle();
+      if (slugErr) throw slugErr;
+      if (!cohortBySlug) throw new Error('Unknown cohort ID. Use the slug your host gave you (e.g. cohort-01).');
+
       const { data: codeRow, error: codeErr } = await supabase
         .from('enrollment_codes').select('*').eq('code', codeRaw).maybeSingle();
       if (codeErr) throw codeErr;
       if (!codeRow) throw new Error('Invalid enrollment code.');
+      if (codeRow.cohort_id !== cohortBySlug.id) throw new Error('That enrollment code does not match this cohort ID.');
       if (codeRow.expires_at && new Date(codeRow.expires_at) < new Date()) throw new Error('This code has expired.');
       if (codeRow.max_uses && codeRow.used_count >= codeRow.max_uses) throw new Error('This code has reached its use limit.');
 
-      const { data: cohort, error: cohortErr } = await supabase
-        .from('cohorts').select('id').eq('id', codeRow.cohort_id).single();
-      if (cohortErr) throw cohortErr;
-
       const { error: otpErr } = await supabase.auth.signInWithOtp({
-        email: data.email,
+        email,
         options: {
           emailRedirectTo: new URL('dashboard.html', window.location.href).toString(),
           data: {
             full_name: data.full_name,
             pending_registration: {
-              cohort_id: cohort.id,
+              cohort_id: cohortBySlug.id,
               college: data.college,
               year: data.year,
               phone: data.phone,
@@ -663,14 +719,13 @@
         },
       });
       if (otpErr) throw otpErr;
-
-      showMsg('Check your email for a magic link to finish signing up.', 'ok');
-      btn.textContent = 'Sent ✓';
+      showAccessMsg('Check your email for a magic link to finish signing up.', 'ok');
+      accessBtn.textContent = 'Sent ✓';
     } catch (err) {
       console.error(err);
-      showMsg(err.message || 'Something went wrong. Try again.', 'err');
-      btn.disabled = false;
-      btn.textContent = 'Send magic link →';
+      showAccessMsg(err.message || 'Something went wrong. Try again.', 'err');
+      accessBtn.disabled = false;
+      accessBtn.textContent = 'Email me a magic link →';
     }
   });
 
@@ -706,8 +761,9 @@
 
     await supabase.auth.updateUser({ data: { pending_registration: null } });
 
-    openModal();
-    showMsg("You're in. We'll email cohort details soon.", 'ok');
+    accessModal.classList.add('open');
+    applyAccessMode('new');
+    showAccessMsg("You're in. We'll email cohort details soon.", 'ok');
   });
 </script>
 </body>
