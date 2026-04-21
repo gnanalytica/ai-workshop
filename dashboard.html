@@ -338,12 +338,15 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { DAYS, WEEK_TITLES, WEEK_OUTCOMES, CHECKPOINTS } from './assets/days.js';
+  import { routeAfterSignIn } from './assets/admin-auth.js';
 
   const $ = (id) => document.getElementById(id);
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return showGate();
+    // Faculty-only users land on faculty.html; redirect if applicable.
+    if (await routeAfterSignIn(session.user)) return;
     await loadDashboard(session.user);
   }
 
@@ -395,8 +398,11 @@
     location.reload();
   });
 
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) loadDashboard(session.user);
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      if (await routeAfterSignIn(session.user)) return;
+      loadDashboard(session.user);
+    }
     if (event === 'SIGNED_OUT') showGate();
   });
 

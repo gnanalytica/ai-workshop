@@ -24,3 +24,23 @@ export function applyFacultyBrandLabel(isAdmin, isFaculty) {
 
 // Returns the "no cohort" HTML message.
 export const NO_COHORT_MSG = `<div style="padding:40px;text-align:center;color:var(--muted)">You're not assigned to any cohort yet — ask an admin.</div>`;
+
+// Post-sign-in router: send faculty-only users to faculty.html.
+// Admins and students are left alone so existing flows (admin index, dashboard)
+// keep their current behavior. Returns true if a redirect was initiated.
+export async function routeAfterSignIn(user) {
+  if (!user) return false;
+  try {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (profile?.is_admin) return false;
+    const { data: fac } = await supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id).limit(1);
+    if (fac && fac.length) {
+      // Avoid redirect loop if we're already on faculty.html.
+      if (!/faculty\.html(\?|#|$)/.test(window.location.pathname + window.location.search + window.location.hash)) {
+        window.location.href = 'faculty.html';
+        return true;
+      }
+    }
+  } catch (_) { /* non-critical */ }
+  return false;
+}

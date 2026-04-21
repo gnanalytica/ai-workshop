@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Faculty · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  .add-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
+  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.active{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
+  .f-tab{padding:10px 14px;border-radius:10px 10px 0 0;font-size:13.5px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
+  .f-tab.active{color:var(--ink);background:var(--card);border-color:var(--line)}
+  .f-tab:hover{color:var(--ink)}
+  .kicker-tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(195,255,54,.12);color:var(--accent);border:1px solid rgba(195,255,54,.25)}
+  .kicker-tag.warn{background:rgba(255,170,90,.14);color:#ffb977;border-color:rgba(255,170,90,.3)}
+  details summary{cursor:pointer;padding:8px 0;font-size:14px}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .toast.err{border-color:#ff6b6b;color:#ffa0a0}
+  select{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Faculty login</div>
+    <h2>Sign in</h2>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Not authorized</h2>
+      <p>You're signed in but not assigned as faculty on any cohort. Ask an admin.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <header style="margin:24px 0 8px;display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
+    <div>
+      <div class="kicker">Faculty</div>
+      <h1 id="fHello">Good to see you.</h1>
+    </div>
+    <select id="fCohortSel"></select>
+  </header>
+
+  <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px">
+    <a href="#today" data-tab="today" class="f-tab">Today</a>
+    <a href="#my-pod" data-tab="my-pod" class="f-tab">My pod</a>
+    <a href="#cohort" data-tab="cohort" class="f-tab">Whole cohort</a>
+    <a href="#analytics" data-tab="analytics" class="f-tab">Analytics</a>
+    <a href="#handbook" data-tab="handbook" class="f-tab">Handbook</a>
+  </nav>
+
+  <section id="fPanel"></section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG } from './assets/admin-auth.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  import { mountFacultyTab } from './assets/faculty-tabs.js';
+  wireThemeToggle();
+  const $ = (id) => document.getElementById(id);
+
+  const STATE = { user: null, cohortId: null, cohorts: [], isAdmin: false, isFaculty: false };
+  window.__FACULTY_STATE__ = STATE;
+
+  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    await gate(session.user);
+  }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'); const msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
+    else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
+  });
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) gate(session.user);
+    if (event === 'SIGNED_OUT') show('gate');
+  });
+
+  async function gate(user) {
+    const { isAdmin, isFaculty, facultyCohortIds } = await checkAdminOrFaculty(user);
+    STATE.user = user; STATE.isAdmin = isAdmin; STATE.isFaculty = isFaculty;
+    if (!isFaculty && !isAdmin) return show('denied');
+    applyFacultyBrandLabel(isAdmin, isFaculty);
+    show('panel');
+    $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: isAdmin ? 'admin' : 'faculty' });
+
+    // Greeting
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    $('fHello').textContent = `${greet}.`;
+
+    await loadCohorts(facultyCohortIds, isAdmin);
+    wireTabs();
+    await mountActiveTab();
+  }
+
+  async function loadCohorts(facultyIds, isAdmin) {
+    let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    if (!isAdmin) {
+      if (!facultyIds.length) { $('fPanel').innerHTML = NO_COHORT_MSG; STATE.cohortId = null; return; }
+      q = q.in('id', facultyIds);
+    }
+    const { data } = await q;
+    STATE.cohorts = data || [];
+    $('fCohortSel').innerHTML = STATE.cohorts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+    STATE.cohortId = STATE.cohorts[0]?.id || null;
+    $('fCohortSel').addEventListener('change', async () => {
+      STATE.cohortId = $('fCohortSel').value;
+      await mountActiveTab();
+    });
+  }
+
+  function wireTabs() {
+    window.addEventListener('hashchange', mountActiveTab);
+  }
+
+  async function mountActiveTab() {
+    if (!STATE.cohortId) return;
+    const tab = (location.hash || '#today').replace('#', '');
+    document.querySelectorAll('.f-tab').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+    await mountFacultyTab(tab, { state: STATE, container: $('fPanel') });
+  }
+
+  init();
+</script>
+</body>
+</html>
