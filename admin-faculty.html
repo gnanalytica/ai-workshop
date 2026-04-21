@@ -30,6 +30,10 @@
   .kicker-tag.ta{background:rgba(120,170,255,.12);color:#7aa7ff;border-color:rgba(120,170,255,.3)}
   .kicker-tag.lead{background:rgba(255,170,90,.14);color:#ffb977;border-color:rgba(255,170,90,.3)}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .bulk-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:10px 14px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;font-size:13px}
+  .bulk-bar .btn-sm.danger:disabled{opacity:.45;cursor:not-allowed}
+  th.chk,td.chk{width:40px;text-align:center}
+  th.chk input,td.chk input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
   @media(max-width:800px){
     .add-grid{grid-template-columns:1fr}
     .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -115,13 +119,24 @@
   <div class="section-head"><h2>Current faculty</h2></div>
   <div style="margin:0 0 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
     <label class="sr-only" for="facSearch">Filter faculty list</label>
-    <input type="search" id="facSearch" placeholder="Filter by name, college, cohort, role, user id…" autocomplete="off"
+    <input type="search" id="facSearch" placeholder="Filter by name, email, college, cohort, role, user id…" autocomplete="off"
       style="flex:1;min-width:200px;max-width:480px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+  </div>
+  <div class="bulk-bar" id="facBulkBar">
+    <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--muted)">
+      <input type="checkbox" id="facSelectAll" title="Select all rows matching current filter" />
+      <span>Select visible</span>
+    </label>
+    <span class="muted" id="facBulkCount">0 selected</span>
+    <button type="button" class="btn-sm danger" id="facBulkRemove" disabled>Remove selected</button>
   </div>
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th scope="col">Name</th><th scope="col">Cohort</th><th scope="col">Role</th><th scope="col">Added</th><th scope="col" style="text-align:right">Actions</th></tr>
+        <tr>
+          <th class="chk" scope="col"><span class="sr-only">Select</span></th>
+          <th scope="col">Name</th><th scope="col">Cohort</th><th scope="col">Role</th><th scope="col">Added</th><th scope="col" style="text-align:right">Actions</th>
+        </tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -141,6 +156,64 @@
   let COHORTS = [];
   let ROWS = [];
   let PROFILES = new Map();
+  let facBulkWired = false;
+
+  async function tryRemoveFacultyAssignment(rowId) {
+    const row = ROWS.find(x => x.id === rowId);
+    if (!row) return { ok: false, err: 'Row not found' };
+    const { data: ownedPods } = await supabase
+      .from('pod_faculty')
+      .select('pod_id,cohort_pods!inner(name,cohort_id)')
+      .eq('faculty_user_id', row.user_id)
+      .eq('cohort_pods.cohort_id', row.cohort_id);
+    if (ownedPods?.length) {
+      return { ok: false, err: `Still on pods: ${ownedPods.map(o => o.cohort_pods.name).join(', ')}. Handoff first.` };
+    }
+    const { error } = await supabase.from('cohort_faculty').delete().eq('id', rowId);
+    if (error) return { ok: false, err: error.message };
+    ROWS = ROWS.filter(r => r.id !== rowId);
+    return { ok: true };
+  }
+
+  function updateFacBulkUi() {
+    const n = document.querySelectorAll('#rows input.fac-pick:checked').length;
+    const c = $('facBulkCount');
+    const b = $('facBulkRemove');
+    if (c) c.textContent = `${n} selected`;
+    if (b) b.disabled = n === 0;
+  }
+
+  function ensureFacBulkHandlers() {
+    if (facBulkWired) return;
+    facBulkWired = true;
+    $('facSelectAll')?.addEventListener('change', (e) => {
+      document.querySelectorAll('#rows input.fac-pick').forEach(cb => { cb.checked = e.target.checked; });
+      updateFacBulkUi();
+    });
+    $('facBulkRemove')?.addEventListener('click', async () => {
+      const picked = [...document.querySelectorAll('#rows input.fac-pick:checked')];
+      if (!picked.length) return;
+      const ids = picked.map(cb => cb.dataset.fid);
+      const ok = await confirmDialog(
+        `Remove ${ids.length} faculty assignment${ids.length === 1 ? '' : 's'}? Anyone still assigned to a pod in that cohort will be skipped until handoff.`,
+        { title: 'Remove faculty', confirmText: 'Remove', danger: true },
+      );
+      if (!ok) return;
+      const btn = $('facBulkRemove');
+      btn.disabled = true;
+      let okN = 0;
+      const skip = [];
+      for (const id of ids) {
+        const r = await tryRemoveFacultyAssignment(id);
+        if (r.ok) okN += 1;
+        else skip.push(r.err);
+      }
+      btn.disabled = false;
+      if (okN) toast(`Removed ${okN} assignment${okN === 1 ? '' : 's'}.`);
+      if (skip.length) toast([...new Set(skip)].slice(0, 3).join(' · '), 'err');
+      render();
+    });
+  }
 
   function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
@@ -191,7 +264,7 @@
     ROWS = data || [];
     const userIds = [...new Set(ROWS.map(r => r.user_id))];
     if (userIds.length) {
-      const { data: profs } = await supabase.from('profiles').select('id,full_name,college').in('id', userIds);
+      const { data: profs } = await supabase.from('profiles').select('id,full_name,college,email').in('id', userIds);
       PROFILES = new Map((profs || []).map(p => [p.id, p]));
     } else {
       PROFILES = new Map();
@@ -202,19 +275,20 @@
   function facultyHay(r, cohortMap) {
     const p = PROFILES.get(r.user_id) || {};
     const cohort = cohortMap.get(r.cohort_id);
-    return `${p.full_name || ''} ${p.college || ''} ${r.user_id} ${cohort?.name || ''} ${cohort?.slug || ''} ${r.role || ''}`.toLowerCase();
+    return `${p.full_name || ''} ${p.email || ''} ${p.college || ''} ${r.user_id} ${cohort?.name || ''} ${cohort?.slug || ''} ${r.role || ''}`.toLowerCase();
   }
 
   function render() {
+    ensureFacBulkHandlers();
     const cohortMap = new Map(COHORTS.map(c => [c.id, c]));
     if (!ROWS.length) {
-      $('rows').innerHTML = `<tr><td colspan="5" class="empty-state">No faculty assigned yet. Add someone above.</td></tr>`;
+      $('rows').innerHTML = `<tr><td colspan="6" class="empty-state">No faculty assigned yet. Add someone above.</td></tr>`;
       return;
     }
     const fq = ($('facSearch')?.value || '').trim().toLowerCase();
     const visible = fq ? ROWS.filter(r => facultyHay(r, cohortMap).includes(fq)) : ROWS;
     if (!visible.length) {
-      $('rows').innerHTML = `<tr><td colspan="5" class="empty-state">No rows match this filter.</td></tr>`;
+      $('rows').innerHTML = `<tr><td colspan="6" class="empty-state">No rows match this filter.</td></tr>`;
       return;
     }
     $('rows').innerHTML = visible.map(r => {
@@ -223,8 +297,10 @@
       const roleCls = r.role === 'lead' ? 'lead' : (r.role === 'ta' ? 'ta' : '');
       return `
         <tr data-id="${esc(r.id)}">
+          <td class="chk"><input type="checkbox" class="fac-pick" data-fid="${esc(r.id)}" aria-label="Select ${esc(p.full_name || r.user_id)}" /></td>
           <td>
             <b>${esc(p.full_name || '—')}</b>
+            <div class="muted" style="font-size:11.5px">${esc(p.email || '')}</div>
             <div class="muted" style="font-size:11.5px">${esc(p.college || '')}</div>
             <div class="mono muted" style="font-size:11px">${esc(r.user_id)}</div>
           </td>
@@ -245,6 +321,13 @@
       $('facSearch').dataset.wired = '1';
       $('facSearch').addEventListener('input', () => render());
     }
+
+    const fs = $('facSelectAll');
+    if (fs) fs.checked = false;
+    updateFacBulkUi();
+    $('rows').querySelectorAll('input.fac-pick').forEach(cb => {
+      cb.addEventListener('change', updateFacBulkUi);
+    });
 
     $('rows').querySelectorAll('select.role-sel').forEach(sel => {
       sel.addEventListener('change', async () => {
@@ -268,23 +351,9 @@
         const okRm = await confirmDialog('Remove this faculty assignment?', { title: 'Remove faculty', confirmText: 'Remove', danger: true });
         if (!okRm) return;
         btn.disabled = true;
-        // Guardrail: block removal if the faculty still owns pods in this cohort.
-        const row = ROWS.find(x => x.id === id);
-        if (row) {
-          const { data: ownedPods } = await supabase
-            .from('pod_faculty')
-            .select('pod_id,cohort_pods!inner(name,cohort_id)')
-            .eq('faculty_user_id', row.user_id)
-            .eq('cohort_pods.cohort_id', row.cohort_id);
-          if (ownedPods?.length) {
-            toast(`Cannot remove — still on pods: ${ownedPods.map(o=>o.cohort_pods.name).join(', ')}. Handoff first.`, 'err');
-            btn.disabled = false;
-            return;
-          }
-        }
-        const { error } = await supabase.from('cohort_faculty').delete().eq('id', id);
-        if (error) { toast(error.message, 'err'); btn.disabled = false; return; }
-        ROWS = ROWS.filter(r => r.id !== id);
+        const r = await tryRemoveFacultyAssignment(id);
+        btn.disabled = false;
+        if (!r.ok) { toast(r.err, 'err'); return; }
         toast('Removed');
         render();
       });

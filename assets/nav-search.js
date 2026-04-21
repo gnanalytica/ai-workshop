@@ -22,13 +22,13 @@ function bindGlobalFindShortcut() {
 
 export function prependNavFind(root = document) {
   const navIn = root.querySelector('nav .nav-in');
-  if (!navIn) return;
-  const right = navIn.children[navIn.children.length - 1];
-  if (!right || right.querySelector('.site-search--nav')) return;
+  if (!navIn || navIn.querySelector(':scope > .site-search--nav')) return;
+  const brand = navIn.querySelector(':scope > .brand');
+  if (!brand) return;
   const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || '');
   const kbd = isMac ? '⌘K' : 'Ctrl K';
-  right.insertAdjacentHTML(
-    'afterbegin',
+  brand.insertAdjacentHTML(
+    'afterend',
     `<form class="site-search site-search--nav" action="find.html" method="get" role="search" title="Search workshop (Enter). ${kbd} from anywhere.">
       <span class="site-search__icon" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>

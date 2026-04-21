@@ -14,9 +14,17 @@
   .stat-n{font-size:32px;font-weight:700;letter-spacing:-.03em}
   .stat-l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-top:4px}
   .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
   .filters input{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;min-width:260px;outline:none}
   .filters select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .bulk-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:10px 14px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;font-size:13px}
+  .bulk-bar button{padding:8px 14px;border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+  .bulk-bar button.danger{border-color:rgba(255,107,107,.5);color:#ffa0a0}
+  .bulk-bar button:disabled{opacity:.45;cursor:not-allowed}
+  .bulk-bar button:not(:disabled):hover{border-color:var(--accent);color:var(--accent)}
+  .bulk-bar button.danger:not(:disabled):hover{border-color:#ff6b6b;color:#ff6b6b}
+  th.chk,td.chk{width:40px;text-align:center}
+  th.chk input,td.chk input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
   .denied{padding:40px;text-align:center;color:var(--muted)}
   @media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){
@@ -24,7 +32,7 @@
     .stat-card{padding:14px}
     .stat-n{font-size:24px}
     .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .table-wrap table{min-width:640px}
+    .table-wrap table{min-width:760px}
     .filters input{min-width:0;width:100%}
     .filters{gap:8px}
   }
@@ -85,7 +93,7 @@
   </div>
 
   <div class="filters">
-    <input type="search" id="search" placeholder="Search name, email, college…" aria-label="Search students" />
+    <input type="search" id="search" placeholder="Search by name or email…" aria-label="Search registrations by name or email" />
     <select id="filterStatus">
       <option value="">All statuses</option>
       <option value="pending">Pending</option>
@@ -96,11 +104,21 @@
     <button class="cta ghost" id="exportBtn" style="margin-left:auto">Export CSV</button>
   </div>
 
+  <div class="bulk-bar" id="regBulkBar">
+    <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--muted)">
+      <input type="checkbox" id="regSelectAll" title="Select all rows matching current filter" />
+      <span>Select visible</span>
+    </label>
+    <span class="muted" id="regBulkCount">0 selected</span>
+    <button type="button" class="danger" id="regBulkRemove" disabled>Remove selected from cohort</button>
+  </div>
+
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th scope="col">Name</th><th scope="col">College</th><th scope="col">Year</th><th scope="col">Phone</th><th scope="col">Progress</th><th scope="col">Status</th><th scope="col">Joined</th>
+          <th class="chk" scope="col"><span class="sr-only">Select</span></th>
+          <th scope="col">Name</th><th scope="col">Email</th><th scope="col">College</th><th scope="col">Year</th><th scope="col">Phone</th><th scope="col">Progress</th><th scope="col">Status</th><th scope="col">Joined</th><th scope="col" style="text-align:right">Actions</th>
         </tr>
       </thead>
       <tbody id="rows"></tbody>
@@ -111,7 +129,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
-  import { toast } from './assets/dialog.js';
+  import { toast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   import { renderAdminNav } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
@@ -121,6 +139,80 @@
   let IS_ADMIN = false;
   let IS_FACULTY = false;
   let FACULTY_COHORT_IDS = [];
+  let regBulkWired = false;
+
+  async function cohortCleanupBeforeUnenroll(userIds, cohortId) {
+    const uids = [...new Set(userIds)].filter(Boolean);
+    if (!uids.length || !cohortId) return;
+    const { data: pods } = await supabase.from('cohort_pods').select('id').eq('cohort_id', cohortId);
+    const podIds = (pods || []).map(p => p.id);
+    if (podIds.length) {
+      await supabase.from('pod_members').delete().in('pod_id', podIds).in('student_user_id', uids);
+    }
+    const { data: teams } = await supabase.from('teams').select('id').eq('cohort_id', cohortId);
+    const teamIds = (teams || []).map(t => t.id);
+    if (teamIds.length) {
+      await supabase.from('team_members').delete().in('team_id', teamIds).in('user_id', uids);
+    }
+    await supabase.from('lab_progress').delete().eq('cohort_id', cohortId).in('user_id', uids);
+    await supabase.from('attendance').delete().eq('cohort_id', cohortId).in('user_id', uids);
+    await supabase.from('stuck_queue').delete().eq('cohort_id', cohortId).in('user_id', uids);
+  }
+
+  async function removeRegistrationsByIds(regIds, userIds) {
+    const cohortId = COHORT?.id;
+    if (!cohortId || !regIds.length) return { error: new Error('No cohort') };
+    await cohortCleanupBeforeUnenroll(userIds, cohortId);
+    const { error } = await supabase.from('registrations').delete().in('id', regIds);
+    return { error };
+  }
+
+  function regHaystack(r) {
+    const p = r.profile || {};
+    return `${p.full_name || ''} ${p.college || ''} ${p.year || ''} ${p.phone || ''} ${p.github_username || ''} ${p.email || ''} ${r.user_id} ${r.motivation || ''} ${r.status || ''} ${r.id || ''}`.toLowerCase();
+  }
+
+  function updateRegBulkUi() {
+    const n = document.querySelectorAll('#rows input.reg-pick:checked').length;
+    const c = document.getElementById('regBulkCount');
+    const b = document.getElementById('regBulkRemove');
+    if (c) c.textContent = `${n} selected`;
+    if (b) b.disabled = n === 0;
+  }
+
+  function ensureRegBulkHandlers() {
+    if (regBulkWired) return;
+    regBulkWired = true;
+    const selAll = document.getElementById('regSelectAll');
+    const bulkBtn = document.getElementById('regBulkRemove');
+    if (selAll) {
+      selAll.addEventListener('change', (e) => {
+        document.querySelectorAll('#rows input.reg-pick').forEach(cb => { cb.checked = e.target.checked; });
+        updateRegBulkUi();
+      });
+    }
+    if (bulkBtn) {
+      bulkBtn.addEventListener('click', async () => {
+        const picked = [...document.querySelectorAll('#rows input.reg-pick:checked')];
+        if (!picked.length) return;
+        const regIds = picked.map(cb => cb.dataset.rid);
+        const userIds = picked.map(cb => cb.dataset.uid);
+        const ok = await confirmDialog(
+          `Remove ${regIds.length} student${regIds.length === 1 ? '' : 's'} from this cohort? Their registration, pod/team placement for this cohort, lab progress, attendance, and stuck-queue rows here will be cleared. This does not delete their auth account.`,
+          { title: 'Remove from cohort', confirmText: 'Remove', danger: true },
+        );
+        if (!ok) return;
+        bulkBtn.disabled = true;
+        const { error } = await removeRegistrationsByIds(regIds, userIds);
+        bulkBtn.disabled = false;
+        if (error) { toast(error.message, { error: true }); return; }
+        toast(`Removed ${regIds.length} registration${regIds.length === 1 ? '' : 's'}.`);
+        ALL_ROWS = ALL_ROWS.filter(r => !regIds.includes(r.id));
+        renderStats();
+        render();
+      });
+    }
+  }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -170,7 +262,7 @@
         cohort = fc;
       }
       if (!cohort) {
-        $('rows').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px" class="muted">You're not assigned to any cohort yet — ask an admin.</td></tr>`;
+        $('rows').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px" class="muted">You're not assigned to any cohort yet — ask an admin.</td></tr>`;
         return;
       }
     }
@@ -206,17 +298,19 @@
   }
 
   function render() {
+    ensureRegBulkHandlers();
     const q = $('search').value.trim().toLowerCase();
     const st = $('filterStatus').value;
     const rows = ALL_ROWS.filter(r => {
       if (st && r.status !== st) return false;
       if (!q) return true;
-      const hay = `${r.profile.full_name || ''} ${r.profile.college || ''} ${r.profile.year || ''} ${r.profile.phone || ''} ${r.profile.github_username || ''} ${r.profile.email || ''} ${r.user_id}`.toLowerCase();
-      return hay.includes(q);
+      return regHaystack(r).includes(q);
     });
     $('rows').innerHTML = rows.map(r => `
       <tr>
+        <td class="chk"><input type="checkbox" class="reg-pick" data-rid="${esc(r.id)}" data-uid="${esc(r.user_id)}" aria-label="Select ${esc(r.profile.full_name || r.user_id)}" /></td>
         <td><b>${esc(r.profile.full_name || '—')}</b><br/><span class="muted" style="font-size:11.5px">${esc(r.profile.github_username || '')}</span></td>
+        <td class="mono" style="font-size:12px;max-width:220px;word-break:break-all">${esc(r.profile.email || '—')}</td>
         <td>${esc(r.profile.college || '—')}</td>
         <td>${esc(r.profile.year || '—')}</td>
         <td class="mono" style="font-size:12.5px">${esc(r.profile.phone || '—')}</td>
@@ -227,8 +321,39 @@
           </select>
         </td>
         <td class="muted" style="font-size:12px">${new Date(r.created_at).toLocaleDateString()}</td>
+        <td style="text-align:right">
+          <button type="button" class="reg-remove-one" data-rid="${esc(r.id)}" data-uid="${esc(r.user_id)}" style="padding:6px 10px;border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer;border:1px solid rgba(255,107,107,.45);background:transparent;color:#ffa0a0">Remove</button>
+        </td>
       </tr>
-    `).join('') || `<tr><td colspan="7" style="text-align:center;padding:40px" class="muted">No registrations match.</td></tr>`;
+    `).join('') || `<tr><td colspan="10" style="text-align:center;padding:40px" class="muted">No registrations match.</td></tr>`;
+
+    const selAll = $('regSelectAll');
+    if (selAll) selAll.checked = false;
+    updateRegBulkUi();
+
+    $('rows').querySelectorAll('input.reg-pick').forEach(cb => {
+      cb.addEventListener('change', updateRegBulkUi);
+    });
+
+    $('rows').querySelectorAll('button.reg-remove-one').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const rid = btn.dataset.rid;
+        const uid = btn.dataset.uid;
+        const ok = await confirmDialog(
+          'Remove this student from the cohort? Their registration and cohort-scoped activity (pods/teams for this cohort, lab progress, attendance, stuck queue) will be cleared. Their auth account is not deleted.',
+          { title: 'Remove from cohort', confirmText: 'Remove', danger: true },
+        );
+        if (!ok) return;
+        btn.disabled = true;
+        const { error } = await removeRegistrationsByIds([rid], [uid]);
+        btn.disabled = false;
+        if (error) { toast(error.message, { error: true }); return; }
+        toast('Student removed from cohort.');
+        ALL_ROWS = ALL_ROWS.filter(r => r.id !== rid);
+        renderStats();
+        render();
+      });
+    });
 
     $('rows').querySelectorAll('select.inline').forEach(sel => {
       sel.addEventListener('change', async (e) => {
@@ -249,9 +374,9 @@
   $('search').addEventListener('input', render);
   $('filterStatus').addEventListener('change', render);
   $('exportBtn').addEventListener('click', () => {
-    const header = ['name','college','year','phone','github','status','progress','joined'];
+    const header = ['name','email','college','year','phone','github','status','progress','joined'];
     const lines = [header.join(',')].concat(ALL_ROWS.map(r => [
-      r.profile.full_name || '', r.profile.college || '', r.profile.year || '',
+      r.profile.full_name || '', r.profile.email || '', r.profile.college || '', r.profile.year || '',
       r.profile.phone || '', r.profile.github_username || '', r.status,
       r.progress, new Date(r.created_at).toISOString(),
     ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')));
