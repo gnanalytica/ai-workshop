@@ -186,6 +186,12 @@
   <!-- UPCOMING -->
   <div id="upcomingCard" class="progress-wrap" style="display:none"></div>
 
+  <!-- MENTOR CARD (populated from my_pod RPC; hidden if no pod) -->
+  <section id="mentorCard" class="add-card" style="display:none;margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+    <div class="kicker">Your mentor</div>
+    <div id="mentorBody" style="margin-top:6px"></div>
+  </section>
+
   <!-- ENROLL CARD: shown only when signed in but not registered for cohort -->
   <div id="enrollCard" style="display:none">
     <div class="progress-wrap" style="border-color:rgba(195,255,54,.3);background:linear-gradient(145deg,rgba(195,255,54,.04),var(--card))">
@@ -486,6 +492,39 @@
     renderActivity(user, cohort, progress);
     renderCapstoneEditor(user, cohort);
     renderAnnouncements(cohort);
+    renderMentor(cohort);
+  }
+
+  async function renderMentor(cohort) {
+    const card = document.getElementById('mentorCard');
+    const body = document.getElementById('mentorBody');
+    if (!card || !body || !cohort) return;
+    try {
+      const { data, error } = await supabase.rpc('my_pod', { p_cohort: cohort.id });
+      if (error || !data) { card.style.display = 'none'; return; }
+      // RPC may return a single row or an array — normalise.
+      const rows = Array.isArray(data) ? data : [data];
+      if (!rows.length) { card.style.display = 'none'; return; }
+      const pod = rows[0];
+      const faculty = Array.isArray(pod.faculty) ? pod.faculty : [];
+      const primary = faculty.find(f => f.is_primary) || faculty[0];
+      if (!primary) { card.style.display = 'none'; return; }
+      const others = faculty.filter(f => f !== primary);
+
+      body.innerHTML = `
+        <div style="display:flex;gap:12px;align-items:center">
+          <div>
+            <b>${escapeHtml(primary.full_name || 'Mentor')}</b>
+            <div class="muted" style="font-size:12px">${escapeHtml(primary.college || '')}</div>
+          </div>
+        </div>
+        ${pod.mentor_note ? `<p style="margin:10px 0 0">${escapeHtml(pod.mentor_note)}</p>` : ''}
+        ${primary.contact_note ? `<p class="muted" style="margin:6px 0 0;font-size:12.5px">${escapeHtml(primary.contact_note)}</p>` : ''}
+        ${others.length ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${others.map(f => `<span class="kicker-tag">${escapeHtml(f.full_name || 'Co-faculty')}</span>`).join('')}</div>` : ''}`;
+      card.style.display = 'block';
+    } catch (_) {
+      card.style.display = 'none';
+    }
   }
 
   let ANN_SUB = null;
