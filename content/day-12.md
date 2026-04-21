@@ -9,11 +9,45 @@ tools_hands_on: [{"name": "Figma / FigJam", "url": "https://www.figma.com/figjam
 tools_demo: [{"name": "tldraw", "url": "https://www.tldraw.com"}, {"name": "Stanford d.school case studies", "url": "https://dschool.stanford.edu/resources"}]
 tools_reference: [{"name": "IDEO Design Kit", "url": "https://www.designkit.org"}, {"name": "Stanford d.school toolkit", "url": "https://dschool.stanford.edu/resources"}]
 resources: [{"name": "IDEO Design Kit — Methods", "url": "https://www.designkit.org/methods.html"}, {"name": "d.school Design Thinking Bootleg", "url": "https://dschool.stanford.edu/resources/design-thinking-bootleg"}]
+objective:
+  topic: "Design thinking as discipline — the five-stage loop on your own capstone"
+  tools: ["Figma / FigJam", "Claude"]
+  end_goal: "A full 5-column FigJam board (Empathize, Define, Ideate, Prototype, Test) + a POV statement + one Claude critique captured — submitted to the cohort channel tonight."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Design thinking has a reputation problem. It has been diluted into colourful sticky notes, two-hour "workshops," and the smug sense that wandering around a whiteboard counts as work. It does not. Done properly, design thinking is a hard, iterative discipline that alternates between opening up ideas and ruthlessly closing them. Today you run the real version on your own capstone.
+**Topic.** Design thinking done properly — diverge then converge, five stages, on your own capstone. No sticky-note theatre.
+
+**Tools you'll use.** Figma / FigJam (the canvas), Claude (the d.school coach).
+
+**End goal.** By the end of today you will have:
+1. A 5-column FigJam board (Empathize, Define, Ideate, Prototype, Test) with at least 20 ideas in the Ideate column.
+2. A Point of View statement: *[specific user] needs [verb-based need] because [surprising insight]*.
+3. One Claude critique and a one-line plan to close the biggest gap before Day 14.
+
+> *Why this matters:* Week 3 is the week your capstone becomes a *design* artifact, not just a tool demo. Every day this week builds on the previous — and tomorrow's user interviews are only useful if today's Empathize assumptions are written down.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 11) you rewrote your capstone problem three times — v1 Heilmeier long-form, v2 150 words, v3 on a sticky note — plus a 5-Whys root cause and a How Might We reframe. That v3 sticky note is *today's Define column anchor*. The three weasel words you cut from v1? Those are your clue to the assumptions hiding in Empathize. The HMW line is the bridge between Define and Ideate. Bring all of it into FigJam — today is not fresh thinking, it is the thinking of Day 11 in structured form.
+
+### Setup (required)
+
+- [ ] Create a free [FigJam account](https://www.figma.com/figjam/) if you do not already have one — you will need it for the lab.
+
+### Primer (~5 min)
+
+- **Watch**: A 5-minute design-thinking clip from the [Stanford d.school resources library](https://dschool.stanford.edu/resources) — pick any "Design Thinking in Action" case. Watch for the moment the team throws away their first POV statement; that pivot is the whole skill.
+- **Read** (optional): Skim the [IDEO Design Kit methods page](https://www.designkit.org/methods.html) — pick three methods whose names you do not recognise.
+
+### Bring to class
+
+- [ ] A list of 3 assumptions about your capstone user that you have NOT yet verified with a real human.
+- [ ] Your Day 11 v3 sticky-note problem statement (you will build the DT map on top of it).
+- [ ] A willingness to generate deliberately bad ideas — the $1 version, the no-screen version, the 7-year-old version.
 
 > 🧠 **Quick glossary**
 > - **Design thinking** = a five-stage loop (empathize → define → ideate → prototype → test) for solving fuzzy human problems.
@@ -22,7 +56,11 @@ Design thinking has a reputation problem. It has been diluted into colourful sti
 > - **Prototype** = the cheapest possible thing you can put in front of a user to learn something true.
 > - **HMW ("How Might We")** = the reframing question that turns a defined problem into fuel for ideation.
 
-### Today's 1-hour live session
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
@@ -30,9 +68,6 @@ Design thinking has a reputation problem. It has been diluted into colourful sti
 | Mini-lecture | 20 min | The five stages and the specific trap inside each |
 | Live lab     | 20 min | Run one diverge → converge cycle on a volunteer's capstone |
 | Q&A + discussion | 15 min | Where does your process cheat? |
-
-**Before class** (~10 min): list 3 assumptions you're making about your capstone user that you have NOT verified.
-**After class** (~30 min tonight): map all five design-thinking stages onto your capstone in FigJam and submit the link.
 
 ### In-class moments (minute-by-minute)
 
@@ -42,21 +77,7 @@ Design thinking has a reputation problem. It has been diluted into colourful sti
 - **00:45 — Converge debate**: two volunteers defend opposite POV statements for the same problem; class votes which one names a surprising insight vs. restates the premise.
 - **00:55 — Prototype gut-check**: shout out the cheapest prototype you could build tonight; if anyone says "a Figma mockup," the class says "not cheap enough."
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] Create a free [FigJam account](https://www.figma.com/figjam/) if you do not already have one — you will need it for the lab.
-
-### Primer (~5 min)
-- **Watch**: A 5-minute design-thinking clip from the [Stanford d.school resources library](https://dschool.stanford.edu/resources) — pick any "Design Thinking in Action" case. Watch for the moment the team throws away their first POV statement; that pivot is the whole skill.
-- **Read** (optional): Skim the [IDEO Design Kit methods page](https://www.designkit.org/methods.html) — pick three methods whose names you do not recognise.
-
-### Bring to class
-- [ ] A list of 3 assumptions about your capstone user that you have NOT yet verified with a real human.
-- [ ] Your Day 11 v3 sticky-note problem statement (you will build the DT map on top of it).
-- [ ] A willingness to generate deliberately bad ideas — the $1 version, the no-screen version, the 7-year-old version.
-
-## Read: The five stages, and the traps inside each one
+### Read: The five stages, and the traps inside each one
 
 Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype, Test**. The linear diagrams lie — you will bounce between them many times before shipping. What matters is not the order but the *rhythm* inside each stage: diverge (widen the possibility space), then converge (commit to one thing and move on). Skipping either half is the most common failure.
 
@@ -80,7 +101,7 @@ Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype
 
 IDEO built the original Design Kit at designkit.org with over 50 methods, each with instructions and timeboxes. Stanford's d.school publishes the "Bootleg" — a playful toolkit of every method they teach. Both are free and you will use them repeatedly over the next three weeks. Bookmark them now.
 
-## Watch: A real design-thinking case from Stanford d.school
+### Watch: A real design-thinking case from Stanford d.school
 
 Watch a short d.school walk-through of a project that cycled through all five stages. Notice how much time was spent in Empathize relative to Prototype — and how the POV statement changed twice before the team committed.
 
@@ -90,7 +111,7 @@ https://www.youtube.com/embed/ldYzbV0NDp8
 - The prototype was crude on purpose; polish would have delayed learning.
 - The team's strongest insight came from a user they had initially dismissed as "not the target."
 
-## Lab: Map the full cycle on your capstone in FigJam (45 min)
+### Lab: Map the full cycle on your capstone in FigJam (45 min)
 
 1. **Open FigJam (figma.com/figjam)** and create a new board titled "[Your capstone name] — DT map v1."
 2. **Draw five columns** left to right: Empathize, Define, Ideate, Prototype, Test.
@@ -108,32 +129,7 @@ Screenshot the final board.
 > - *Your POV statement's "surprising insight" slot is empty* → write "I have not yet earned this insight" and move on; do not fabricate one. Day 13 interviews are where you earn it.
 > - *Claude's critique feels generic ("add more detail")* → re-run the prompt with the specific column that feels weakest pasted on its own, and ask "what would a skeptical d.school coach say is missing from THIS stage only?"
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-1. Finish mapping all five columns (Empathize, Define, Ideate, Prototype, Test) on your FigJam board.
-2. Write the POV statement in the Define column using the format *[specific user] needs [verb-based need] because [surprising insight]* — if the insight slot is empty, say so in writing.
-3. Run today's Prompt of the Day on your exported board and capture the one critique that stung hardest.
-4. Screenshot the board and post it to the cohort channel with your POV as plain text.
-5. Add a one-line plan to close the biggest gap before Day 14.
-
-### Reflect (~5 min)
-Answer privately: *Where did I converge too early today?* A strong reflection names the exact stage (usually Ideate), the idea you clung to before you had earned it, and the specific evidence you still need before locking it in.
-
-### Stretch (optional)
-- **Extra video**: A d.school bootleg walkthrough — watch how teams move between stages non-linearly.
-- **Extra read**: The [d.school Design Thinking Bootleg](https://dschool.stanford.edu/resources/design-thinking-bootleg) — try one method you have never used.
-- **Try**: Apply the five-stage loop to a non-capstone annoyance from your own week (e.g., a broken commute, a messy inbox). Practising on low-stakes problems builds the muscle.
-
-## Quiz
-
-Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
-
-## Assignment
-
-Submit a screenshot of your full 5-column FigJam board to the cohort channel. Include your POV statement in the post body as plain text. Also share the one gap Claude surfaced that stung the most — and how you plan to close it before Day 14.
-
-## Discuss: Where did your process cheat?
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -143,17 +139,69 @@ Submit a screenshot of your full 5-column FigJam board to the cohort channel. In
 | When did you last feel the urge to build before defining? What triggered it? | Specific moment (yesterday at 2am, in a call), specific trigger (excitement, fear of falling behind, a flashy demo); connects the urge to a pattern in past projects. |
 | If you had to pick between a crude prototype tomorrow and a polished one in a week, which serves learning more — and which serves your ego? | Names the crude one as serving learning and admits the ego pull of polish; may note one case where polish genuinely matters (e.g., testing aesthetic response). |
 
-## References
+---
 
-### Pre-class primers
-- [Stanford d.school resources](https://dschool.stanford.edu/resources) — short case studies; pick one as your primer clip.
-- [Figma / FigJam](https://www.figma.com/figjam/) — the canvas for today's lab.
+## 📝 Post-class · ~2 hour focused block
 
-### Covered during class
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: finish the 5-column board + POV (~50 min)
+
+1. Finish mapping all five columns (Empathize, Define, Ideate, Prototype, Test) on your FigJam board.
+2. Write the POV statement in the Define column using the format *[specific user] needs [verb-based need] because [surprising insight]* — if the insight slot is empty, say so in writing.
+3. Run today's Prompt of the Day on your exported board and capture the one critique that stung hardest.
+4. Screenshot the board and post it to the cohort channel with your POV as plain text.
+5. Add a one-line plan to close the biggest gap before Day 14.
+
+### 2. Reflect (~10 min)
+
+*Where did I converge too early today?* A strong reflection names the exact stage (usually Ideate), the idea you clung to before you had earned it, and the specific evidence you still need before locking it in.
+
+### 3. Quiz (~15 min)
+
+Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
+
+### 4. Submit (~5 min)
+
+Submit a screenshot of your full 5-column FigJam board to the cohort channel. Include your POV statement in the post body as plain text. Also share the one gap Claude surfaced that stung the most — and how you plan to close it before Day 14.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: A d.school bootleg walkthrough — watch how teams move between stages non-linearly.
+- **Extra read**: The [d.school Design Thinking Bootleg](https://dschool.stanford.edu/resources/design-thinking-bootleg) — try one method you have never used.
+- **Try**: Apply the five-stage loop to a non-capstone annoyance from your own week (e.g., a broken commute, a messy inbox). Practising on low-stakes problems builds the muscle.
+
+### 6. Prep for Day 13 (~30-40 min — important)
+
+**Tomorrow is The Mom Test — user interviews.** You will draft questions, run a live 8-minute paired drill, plan two real candidate-user interviews before Day 15. The Empathize assumptions you wrote today are what you will test in real conversations.
+
+- [ ] **Skim ahead**: the intro page of [The Mom Test](https://www.momtestbook.com) — the three rules fit on one card (talk about their life, past specifics not future generics, listen more than talk). Memorise them before you walk in.
+- [ ] **Think**: identify 2 real people willing to be interviewed this week — a friend, a family member, an acquaintance who plausibly hits your capstone's problem. Get a "yes" by text before class tomorrow; book 20-minute slots before Day 15. Also draft 5 interview questions tonight — and make sure NONE of them mention your idea.
+- [ ] **Set up**: create a free [Otter.ai](https://otter.ai) account — you will record and transcribe during class. Test your microphone and headphones. Keep your Day 12 POV statement ready; it guides your questions but never gets pitched.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [Stanford d.school resources](https://dschool.stanford.edu/resources) — short case studies; any "Design Thinking in Action" clip.
+- A d.school bootleg walkthrough on non-linear movement between stages.
+
+### Reading
+
 - [IDEO Design Kit — Methods](https://www.designkit.org/methods.html) — 50+ methods with instructions and timeboxes.
-- [tldraw](https://www.tldraw.com) — an alternate sketching surface if FigJam feels heavy.
-- [Claude](https://claude.ai) — the d.school coach in step 8 of the lab.
-
-### Deep dives (post-class)
 - [d.school Design Thinking Bootleg](https://dschool.stanford.edu/resources/design-thinking-bootleg) — the canonical toolkit, free.
 - [IDEO Design Kit (full site)](https://www.designkit.org) — case studies, mindsets, and methods.
+
+### Play
+
+- [tldraw](https://www.tldraw.com) — an alternate sketching surface if FigJam feels heavy.
+- Run the five-stage loop on a non-capstone problem from your week (a broken commute, a messy inbox). Low-stakes reps build the muscle.
+
+### If you're hungry for a rabbit hole
+
+- Tim Brown (IDEO) — *Change by Design*, for the full origin story of design thinking in practice.
+- The history of Stanford d.school — how the method moved from consultancy work into academia.

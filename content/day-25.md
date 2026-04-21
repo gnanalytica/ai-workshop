@@ -9,13 +9,30 @@ tools_hands_on: [{"name": "Loom", "url": "https://loom.com"}, {"name": "Figma Sl
 tools_demo: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Canva", "url": "https://canva.com"}]
 tools_reference: [{"name": "YC Demo Day archives", "url": "https://ycombinator.com/demoday"}, {"name": "Pitchfork Economics", "url": "https://pitchforkeconomics.com"}, {"name": "AngelList pitch deck templates", "url": "https://angellist.com"}]
 resources: [{"name": "YC: How to present to investors", "url": "https://ycombinator.com/library"}, {"name": "First Round: The Art of the Demo", "url": "https://review.firstround.com"}]
+objective:
+  topic: "Mini-Demo Day (Ideathon 2) — 3-minute live demo + critique + one-page action plan"
+  tools: ["Loom", "Figma Slides", "Claude", "Canva"]
+  end_goal: "Deliver your 3-minute live demo to a peer panel, receive critique, and ship a one-page action doc that feeds next week's build."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Five days ago your capstone was a spec. Today it demos to a panel. This is Ideathon 2 and Mini-Demo Day — the checkpoint that closes Week 5 and opens the final stretch of the workshop. You present a three-minute live demo of your capstone v0 to a rotating panel of five peers. You get critique. You turn that critique into a one-page plan. That plan is next week's fuel.
+**Topic.** Demo craft — the 30-second hook, the 2-minute story, the 30-second ask — and turning peer critique into a scoped one-page plan. This is **Ideathon 2 and Mini-Demo Day**, the Week 5 checkpoint.
 
-Today's reading is about demo craft: the 30-second hook, the 2-minute story, the 30-second ask, and the harder work of hearing critique without flinching and without capitulating.
+**Tools you'll use.** Your deployed capstone URL, Loom for backup recording and portfolio, Figma Slides or Canva for hook/ask slides, Claude for rewriting variants.
+
+**End goal.** By the end of today you will have:
+1. Presented a 3-minute live demo of your capstone v0 to a rotating panel of five peers.
+2. Received and labelled critique (signal / taste / confused) from multiple panelists.
+3. Filed the weekly milestone: demo recording + three peer critiques + a one-page "what I will change and what I will not" doc.
+
+> *Why this matters:* Five days from demo day. A probe now, honest feedback now, and a scoped fix list is the fuel for Week 6.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Day 24 you split one agent into two and shipped a handoff diagram. That architecture clarity is what makes a 3-minute demo possible — you now have a story with a clean role split and a working capstone v0 deployed from Day 22. Today you put that v0 in front of humans.
 
 ### Quick glossary
 
@@ -24,30 +41,6 @@ Today's reading is about demo craft: the 30-second hook, the 2-minute story, the
 - **Panel Q&A** — the rotating peer panel that scores clarity, demo craft, and shape-of-problem.
 - **Critique vs feedback** — signal (specific, real), taste (preference), or confused (communication miss) — each needs a different response.
 - **Rotation** — groups cycle so every team sees and critiques different demos.
-
-### Today's 1-hour live session
-
-| Block | Time | What |
-|---|---|---|
-| Opening + format recap | 5 min  | Rules: 3-min demo, 1-min Q&A per team |
-| Mini-demos (rotating) | 40 min | ≈6 teams × 6 min total each |
-| Panel feedback + vote | 10 min | Peers score: clarity, demo craft, shape-of-problem |
-| Closing + week wrap | 5 min  | What's ahead next week |
-
-**Before class** (~10 min): rehearse your 3-min demo out loud once, test your live URL on a friend's phone.
-**After class** (~30 min tonight): file the weekly deliverable: demo recording + 3 peer critiques received.
-
-### In-class moments (minute-by-minute)
-
-Structure of each demo slot in the rotation:
-
-- **00:00 — Team setup**: 30 seconds to share screen, confirm audio, load live URL.
-- **00:07 — Demo starts**: 30-sec hook → 2-min story with live product → 30-sec ask. Timer visible on screen.
-- **00:10 — Panel Q&A opens**: one panelist asks the "shape-of-problem" question first.
-- **00:11 — Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
-- **00:13 — Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
-
-## Before class
 
 ### Setup
 - [ ] Rehearse your 3-minute demo **once** on webcam — hook, story, ask — and time it strictly.
@@ -64,32 +57,38 @@ Structure of each demo slot in the rotation:
 - [ ] Loom backup recording.
 - [ ] A note-taking doc open for the critiques you will receive.
 
-## After class
+---
 
-### Do (the assignment)
-1. Save your live demo recording for the portfolio — upload to [Loom](https://loom.com) or your drive.
-2. Step away for 30 minutes after the session. Come back with fresh eyes.
-3. Write the one-page action doc: three critiques verbatim, pattern, one change you WILL make, one you will NOT, how you'll measure.
-4. File the **weekly milestone deliverable** — mini-demo recording + three peer critiques received + the one-pager.
-5. Queue the one change into next week's build.
+## 🎥 During class · 60 min live session
 
-### Reflect (~5 min)
-Which critique stung the most and, on reflection, was also correct? What ego defense did you notice yourself running?
+### Agenda
 
-### Stretch (optional)
-- **Extra video**: two more YC Demo Day clips — watch for hook, story, ask structure.
-- **Extra read**: [First Round — The Art of the Demo](https://review.firstround.com).
-- **Try**: rewrite your hook three different ways and A/B test with two teammates over DM.
+| Block | Time | What |
+|---|---|---|
+| Opening + format recap | 5 min  | Rules: 3-min demo, 1-min Q&A per team |
+| Mini-demos (rotating) | 40 min | ≈6 teams × 6 min total each |
+| Panel feedback + vote | 10 min | Peers score: clarity, demo craft, shape-of-problem |
+| Closing + week wrap | 5 min  | What's ahead next week |
 
-## Read: Demo craft, critique handling, and turning feedback into action
+### In-class moments (minute-by-minute)
 
-### Why demos matter more than decks
+Structure of each demo slot in the rotation:
+
+- **00:00 — Team setup**: 30 seconds to share screen, confirm audio, load live URL.
+- **00:07 — Demo starts**: 30-sec hook → 2-min story with live product → 30-sec ask. Timer visible on screen.
+- **00:10 — Panel Q&A opens**: one panelist asks the "shape-of-problem" question first.
+- **00:11 — Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
+- **00:13 — Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
+
+### Read: Demo craft, critique handling, and turning feedback into action
+
+#### Why demos matter more than decks
 
 In the AI era, decks are cheap. Anyone can generate a deck in ten minutes. A live demo — a working product, on your screen, that does a thing — is the only artifact that cannot be faked. When investors, customers, and collaborators see a demo, they update their model of you in a way slides never trigger. Demos transfer belief.
 
 This is why every high-performing founder school — YC, South Park Commons, the top accelerators — orients around demo day, not pitch day. The demo is the content. The words around it are just wrapping.
 
-### The 30-second hook
+#### The 30-second hook
 
 You have 30 seconds before the audience decides whether you are worth their attention. Your hook must do three things in that window:
 
@@ -99,7 +98,7 @@ You have 30 seconds before the audience decides whether you are worth their atte
 
 Write the hook. Read it aloud. Cut it in half. Read it again. If it takes more than 25 seconds to say, it is still too long.
 
-### The 2-minute story
+#### The 2-minute story
 
 The middle is a story, not a feature list. Features make audiences passive; stories make them participate. A story has:
 
@@ -110,7 +109,7 @@ The middle is a story, not a feature list. Features make audiences passive; stor
 
 Two minutes is strict. Rehearse until you hit it on the nose. Cut any feature that does not serve the story, even the one you are most proud of. Demo craft is composition; features are notes. A good composition has silence between the notes.
 
-### The 30-second ask
+#### The 30-second ask
 
 End with a specific request. Vague asks get vague responses. Concrete asks get action. Examples:
 
@@ -120,7 +119,7 @@ End with a specific request. Vague asks get vague responses. Concrete asks get a
 
 The ask is not a grovel. It is a menu. Make it easy for the audience to say yes to one specific thing.
 
-### Handling critique
+#### Handling critique
 
 Peer critique today will land in three flavors. Learn to recognize each in real time and respond differently.
 
@@ -132,7 +131,7 @@ Peer critique today will land in three flavors. Learn to recognize each in real 
 
 A pro move: after each critique, summarize it back to the reviewer in one sentence. "So what you are saying is: the third step of onboarding is killing adoption and I should compress it." If they nod, you heard right. If they correct you, you just learned something even better.
 
-### Turning feedback into action
+#### Turning feedback into action
 
 The one-page action doc is the deliverable, not the demo itself. The demo was a probe. The feedback is the data. The plan is the output.
 
@@ -146,11 +145,11 @@ Structure for your one-pager:
 
 This pattern — probe, listen, choose, ship, measure — is every founder's loop. Today you run it for the first time. You will run it a thousand more.
 
-## Watch: Instructor pitches a capstone live, panel critiques, founder responds
+### Watch: Instructor pitches a capstone live, panel critiques, founder responds
 
 <!-- TODO: replace video -->
 
-## Lab: Mini-Demo Day
+### Lab: Mini-Demo Day
 
 1. Prep a 3-minute demo of your capstone v0: 30-second hook, 2-minute story with live product usage, 30-second ask.
 2. Rehearse three times. Cut to fit. Record one rehearsal for yourself.
@@ -165,19 +164,7 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 > - *You run over 3 minutes and panel cuts you off before the ask* → pre-write the ask into the last slide so it's visible even if spoken-you gets cut; rehearse with a hard timer, not a vibes timer.
 > - *A panelist delivers confused critique and you start explaining the whole product again* → stop. Ask "what part of the demo made that unclear?" and move on. Re-explaining in-room is the single biggest time sink today.
 
-## Quiz
-
-1. What are the three jobs of a 30-second hook?
-2. What are the four beats of the 2-minute story structure?
-3. What makes an ask strong vs weak?
-4. Name the three flavors of critique and the correct response to each.
-5. Why does the one-pager include a "what I will NOT change" section?
-
-## Assignment
-
-**Weekly deliverable (checkpoint):** Submit (a) a recording of your 3-minute mini-demo, (b) three verbatim critiques you received with attribution, and (c) your one-page "what I will change and what I will not, with reasoning" document. This is the artifact that feeds your Week 6 work.
-
-## Discuss: The critique that stung — and was right
+### Live discussion prompts — The critique that stung — and was right
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -185,7 +172,49 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 | What made it sting? | Honestly diagnoses the reaction — ego, sunk cost, a belief you'd defended before — rather than blaming tone. One or two sentences of self-awareness beats a paragraph of defense. |
 | What will you change because of it, and how will you know it worked? | Commits to one scoped change for next week plus the signal (a metric, a user moment, a follow-up demo reaction) that will prove the change landed. |
 
-## References
+---
+
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action (~40 min)
+1. Save your live demo recording for the portfolio — upload to [Loom](https://loom.com) or your drive.
+2. Step away for 30 minutes after the session. Come back with fresh eyes.
+3. Write the one-page action doc: three critiques verbatim, pattern, one change you WILL make, one you will NOT, how you'll measure.
+4. File the **weekly milestone deliverable** — mini-demo recording + three peer critiques received + the one-pager.
+5. Queue the one change into next week's build.
+
+### 2. Reflect (~10 min)
+Which critique stung the most and, on reflection, was also correct? What ego defense did you notice yourself running?
+
+### 3. Quiz (~15 min)
+1. What are the three jobs of a 30-second hook?
+2. What are the four beats of the 2-minute story structure?
+3. What makes an ask strong vs weak?
+4. Name the three flavors of critique and the correct response to each.
+5. Why does the one-pager include a "what I will NOT change" section?
+
+### 4. Submit the weekly deliverable (~5 min)
+**Weekly deliverable (checkpoint):** Submit (a) a recording of your 3-minute mini-demo, (b) three verbatim critiques you received with attribution, and (c) your one-page "what I will change and what I will not, with reasoning" document. This is the artifact that feeds your Week 6 work.
+
+### 5. Deepen (optional ~30 min)
+- **Extra video**: two more YC Demo Day clips — watch for hook, story, ask structure.
+- **Extra read**: [First Round — The Art of the Demo](https://review.firstround.com).
+- **Try**: rewrite your hook three different ways and A/B test with two teammates over DM.
+
+### 6. Prep for Day 26 (~30-40 min — important)
+
+**Tomorrow opens Launch Week** — the honest conversation on ethics, red-teaming, and the five safety patterns every shipped AI product needs. Short morning lecture; afternoon is yours for capstone polish.
+
+- [ ] **Set up**: fresh Python 3.10 or 3.11 venv (Garak's deps still lag 3.12); have your capstone endpoint or a local callable wrapping your prompt ready to ping.
+- [ ] **Read**: one failure case from the [AI Incident Database](https://incidentdatabase.ai) — pick the one closest to your capstone's domain, note the root cause in a sentence.
+- [ ] **Bring**: the AI Incident Database case you'll share in 30 seconds, your capstone's scariest user sentence, and a hunch about which of the five safety patterns (stop button, citations, rate-limit, I/O filter, opt-out) you're missing.
+- [ ] **Watch** (optional): a 5-min clip on the Hong Kong deepfake CFO scam.
+
+---
+
+## 📚 Extra / additional references
 
 ### Pre-class primers
 - [YC — How to present to investors](https://ycombinator.com/library)

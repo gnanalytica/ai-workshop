@@ -9,39 +9,30 @@ tools_hands_on: [{"name": "Perplexity", "url": "https://www.perplexity.ai/"}, {"
 tools_demo: [{"name": "LM Arena", "url": "https://lmarena.ai/"}, {"name": "HuggingFace Model Hub", "url": "https://huggingface.co/models"}, {"name": "Mistral Le Chat", "url": "https://chat.mistral.ai"}]
 tools_reference: [{"name": "Qwen", "url": "https://qwenlm.github.io/"}, {"name": "DeepSeek", "url": "https://www.deepseek.com/"}, {"name": "Kimi", "url": "https://kimi.moonshot.cn/"}, {"name": "BharatGPT (CoRover)", "url": "https://corover.ai/bharatgpt/"}, {"name": "Krutrim", "url": "https://www.krutrim.ai/"}, {"name": "Meta AI", "url": "https://meta.ai"}]
 resources: [{"title": "HuggingFace Open LLM Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}, {"title": "Meesho x Sarvam case study", "url": "https://www.sarvam.ai/"}]
+objective:
+  topic: "The AI tool landscape — 7 classes, closed-vs-open, Indian AI stack"
+  tools: ["Perplexity", "NotebookLM", "Sarvam.ai", "Mistral Le Chat"]
+  end_goal: "Walk away with a 5-task Tool Audit PDF mapping real jobs from your life to tool classes — and a named personal stack (chat / research / Indian / creative / code) you'll actually use."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-If you've seen the "1,200 AI tools you must try" LinkedIn graphic, take a breath — nobody uses 1,200 AI tools. Good operators pick **one per job family** and go deep. Today's move: stop evaluating tools by hype, start evaluating them by *which class of job they fit*. You'll leave with a personal tool stack that actually matches your life.
+**Topic.** Stop chasing "1,200 AI tools." Learn the 7 classes, the closed-vs-open divide, and the Indian AI stack — then match tool class to job.
 
-> 🧠 **Quick glossary for today**
-> - **Closed vs open weights** = whether the model file is publicly downloadable (open: Llama, Qwen, Gemma) or locked behind a company (closed: GPT-4o, Claude, Gemini).
-> - **Indian AI stack** = Sarvam, BharatGPT, Krutrim — models tuned for Indian languages + culture.
-> - **Tool class** = a *category* of AI tool (chat, research, creativity, code, voice, etc.), not a specific product.
-> - **Fit** = the match between a tool's strengths and your specific job.
+**Tools you'll use.** Perplexity (research), NotebookLM (grounded docs), Sarvam (Indian language), Mistral Le Chat (European/open-ish), plus ChatGPT/Claude from Day 1.
 
-### Today's 1-hour live session
+**End goal.** By the end of today you will have:
+1. A 1-page Tool Audit mapping 5 real tasks from your life → tool class → primary tool + backup.
+2. A named personal AI stack across 5 categories (chat, research, Indian AI, creative, code).
+3. A working mental model for "is this a conversation or a search?" and "is this my private data?" — the two questions that route 90% of tool decisions.
 
-| Block | Time | What |
-|---|---|---|
-| Recap Day 2 + hook | 5 min | "Autocomplete" is everywhere — now let's map the tools that wrap it |
-| Mini-lecture | 20 min | 7 tool classes, open-vs-closed, Indian AI, "which tool for which job" heuristics |
-| Live lab: tool audit | 20 min | Map 3 tasks from your life → 3 tool classes → try one prompt on each |
-| Q&A + discussion | 15 min | Where did the "obvious" tool lose? Where did an Indian or open-source option surprise you? |
+> *Why this matters:* most people plateau at ChatGPT because nobody told them the other six tool classes exist. After today, you pick the right tool before you start typing.
 
-**Before class** (~10 min): browse lmarena.ai once; skim HuggingFace leaderboard to feel how many models exist.
-**After class** (~30 min tonight): finish a 1-page Tool Audit — 5 real tasks from your life matched to tool classes + 1 primary pick per task.
+---
 
-### In-class moments (minute-by-minute)
+## ⏪ Pre-class · ~20 min
 
-- **00:05 — Cold-open shout-out**: "Name a job you did this week where AI would have helped but you didn't use it." Call on 3 students. Instructor classifies each job into a tool class live.
-- **00:15 — Think-pair-share**: 90 seconds on *"Which AI tool do you use daily? Which have you never opened even once?"* Spot the asymmetry.
-- **00:30 — Live demo**: instructor does the same research prompt on ChatGPT, Perplexity, and Sarvam. Three outputs, three personalities. Class votes which won.
-- **00:45 — Corner debate**: "Closed models are always better than open." Corner 1 agree, 2 disagree, 3 "depends on the job." 45 seconds each. Switch corners mid-debate with a reason.
-- **00:55 — One-line close**: "The tool I'll try tonight is ___ because I keep doing ___."
-
-## Before class · ~20 min pre-work
+**Revision / context.** Yesterday you opened the box — tokens, weights, attention. You tokenized your name, a Hindi word, an emoji, and watched why "Bengaluru" costs 3 tokens while "hello" costs 1. Crucially: weights are the model's "brain," and different models have different weights. Today that idea gets operational. If weights are the brain, then **open weights** = brain you can download and inspect; **closed weights** = brain behind an API. That distinction routes half your tool decisions.
 
 ### Setup (if needed)
 
@@ -59,11 +50,38 @@ If you've seen the "1,200 AI tools you must try" LinkedIn graphic, take a breath
 - [ ] A one-sentence product idea you might build for an Indian user (farmer, parent, grandmother, small-shop owner). We'll use it to compare Sarvam vs Qwen live.
 - [ ] Your mother tongue ready — you'll be typing in it during the lab.
 
-## Read: The 7 tool classes every AI user should know
+> 🧠 **Quick glossary for today**
+> - **Closed vs open weights** = whether the model file is publicly downloadable (open: Llama, Qwen, Gemma) or locked behind a company (closed: GPT-4o, Claude, Gemini).
+> - **Indian AI stack** = Sarvam, BharatGPT, Krutrim — models tuned for Indian languages + culture.
+> - **Tool class** = a *category* of AI tool (chat, research, creativity, code, voice, etc.), not a specific product.
+> - **Fit** = the match between a tool's strengths and your specific job.
+
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
+
+| Block | Time | What |
+|---|---|---|
+| Recap Day 2 + hook | 5 min | "Autocomplete" is everywhere — now let's map the tools that wrap it |
+| Mini-lecture | 20 min | 7 tool classes, open-vs-closed, Indian AI, "which tool for which job" heuristics |
+| Live lab: tool audit | 20 min | Map 3 tasks from your life → 3 tool classes → try one prompt on each |
+| Q&A + discussion | 15 min | Where did the "obvious" tool lose? Where did an Indian or open-source option surprise you? |
+
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open shout-out**: "Name a job you did this week where AI would have helped but you didn't use it." Call on 3 students. Instructor classifies each job into a tool class live.
+- **00:15 — Think-pair-share**: 90 seconds on *"Which AI tool do you use daily? Which have you never opened even once?"* Spot the asymmetry.
+- **00:30 — Live demo**: instructor does the same research prompt on ChatGPT, Perplexity, and Sarvam. Three outputs, three personalities. Class votes which won.
+- **00:45 — Corner debate**: "Closed models are always better than open." Corner 1 agree, 2 disagree, 3 "depends on the job." 45 seconds each. Switch corners mid-debate with a reason.
+- **00:55 — One-line close**: "The tool I'll try tonight is ___ because I keep doing ___."
+
+### Read: The 7 tool classes every AI user should know
 
 You don't need to memorise brands. You need to know which **class** fits which job.
 
-### 1. Everyday chat
+#### 1. Everyday chat
 
 Your daily thinking partner. Good for: summarise, explain, rewrite, brainstorm, classify, rough-draft anything.
 
@@ -75,7 +93,7 @@ Major options:
 - **Mistral Le Chat** — free European option, fast, underrated.
 - **Meta AI** (meta.ai) — free Llama, works in WhatsApp and Instagram.
 
-### 2. Open-source / local-capable
+#### 2. Open-source / local-capable
 
 The models you can download, fine-tune, run on your laptop. Good for: privacy, free scaling, offline, custom training.
 
@@ -86,7 +104,7 @@ Major options:
 - **Gemma** (Google) — open cousin to Gemini, great for on-device.
 - **Phi** (Microsoft) — tiny models that punch way above their weight.
 
-### 3. Indian AI stack
+#### 3. Indian AI stack
 
 India is building AI, not importing it. Three names to remember:
 - **Sarvam AI** — Bengaluru, Indian-language specialists. Powers Meesho's voice assistant for non-English-reading sellers. Real deployment.
@@ -95,7 +113,7 @@ India is building AI, not importing it. Three names to remember:
 
 > **Why this matters**: the companies hiring AI talent in India in 2027 won't just be OpenAI or Google. They'll be Sarvam, Krutrim, Fractal, Ola, Flipkart, Meesho, and startups that don't exist yet. Knowing this ecosystem is a hiring edge.
 
-### 4. Research / knowledge work
+#### 4. Research / knowledge work
 
 Not general chat — tools optimised for citations, sources, deep research.
 
@@ -103,14 +121,14 @@ Not general chat — tools optimised for citations, sources, deep research.
 - **NotebookLM** (Google) — upload your own docs, ask grounded questions. Audio overviews.
 - **Gemini Deep Research** — multi-step research mode inside gemini.google.com.
 
-### 5. Creative (images, video, voice, music)
+#### 5. Creative (images, video, voice, music)
 
 - **Images**: Nano Banana (free in Google AI Studio), Firefly (Adobe, free tier), Ideogram, Midjourney.
 - **Video**: Kling, Runway, Pika, Veo (Google Labs).
 - **Voice**: ElevenLabs (free tier), HeyGen (avatars), Whisper (transcription).
 - **Decks**: Gamma, Tome, Canva Magic Design.
 
-### 6. Code & vibe-coding
+#### 6. Code & vibe-coding
 
 Different from chat — these sit *inside* your editor or run your whole app build.
 
@@ -120,11 +138,11 @@ Different from chat — these sit *inside* your editor or run your whole app bui
 
 We'll go deep on these in Weeks 4–5. Today you just need to know they exist.
 
-### 7. Automation
+#### 7. Automation
 
 - **n8n, Zapier, Make** — connect AI to APIs + triggers. "When X happens, tell AI to do Y."
 
-## Read: Closed vs open — the cheat sheet
+### Read: Closed vs open — the cheat sheet
 
 You'll hear these terms constantly. Here's the no-BS version:
 
@@ -141,7 +159,7 @@ You'll hear these terms constantly. Here's the no-BS version:
 | Hostel Wi-Fi is dead | Open, running locally |
 | Indian languages done right | Sarvam, BharatGPT, Krutrim |
 
-## Read: The "which tool for which job" heuristics
+### Read: The "which tool for which job" heuristics
 
 Three shortcuts that work 90% of the time:
 
@@ -151,7 +169,7 @@ Three shortcuts that work 90% of the time:
 
 Memorise those three and you'll save yourself 10 hours of tool-switching.
 
-## Watch: HuggingFace Hub tour + Indian AI snapshot
+### Watch: HuggingFace Hub tour + Indian AI snapshot
 
 A 10-minute screencast walking through HuggingFace's model hub and the Sarvam playground. Goal: find any open model in under 30 seconds after this.
 
@@ -163,9 +181,14 @@ Watch for:
 - The "Spaces" tab — try models in-browser, zero install.
 - The difference between "Instruct" and "Base" versions of the same model.
 
-## Lab: Tool audit — 3 tasks, 3 tool classes, 3 tries (40 min)
+### Lab: Tool audit — 3 tasks, 3 tool classes, 3 tries (40 min)
 
 Works best in pairs — one drives, one observes, swap halfway.
+
+> ⚠️ **If you get stuck**
+> - *Perplexity rate-limits the free tier* → fall back to NotebookLM (free, unlimited if logged in) or Gemini Deep Research mode.
+> - *Sarvam phone OTP doesn't arrive* → pair up with a classmate and use their session, or switch Task 3 to BharatGPT (CoRover) demo — same role, different vendor.
+> - *Your mother tongue's script renders as boxes* → paste into Google Docs; it renders Indic scripts reliably even when your browser doesn't.
 
 1. On a fresh Google Doc, write down **3 tasks you actually did this week**: one short (a message you sent), one medium (a summary you wrote), one Indian-language (a WhatsApp to a parent/relative).
 2. For each task, name the *tool class* that fits (see the 7 classes above). Write it down.
@@ -178,42 +201,9 @@ Works best in pairs — one drives, one observes, swap halfway.
 6. Bonus round: pick *one task* and also run it on Mistral Le Chat or Qwen Chat. How does an open-source / European option compare?
 7. End with one line: *"The tool class I'd pick first for each task is ___, ___, ___, because ___."*
 
-> ⚠️ **If you get stuck**
-> - *Perplexity rate-limits the free tier* → fall back to NotebookLM (free, unlimited if logged in) or Gemini Deep Research mode.
-> - *Sarvam phone OTP doesn't arrive* → pair up with a classmate and use their session, or switch Task 3 to BharatGPT (CoRover) demo — same role, different vendor.
-> - *Your mother tongue's script renders as boxes* → paste into Google Docs; it renders Indic scripts reliably even when your browser doesn't.
-
 **Artifact**: 1-page tool-audit Google Doc. Share the link in the cohort channel.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-
-1. Open the lab Google Doc.
-2. Extend it to **5 real tasks** from your life — add 2 more tasks you'd like AI help with (CV polish, exam revision, pitch-deck drafting, poster design, …).
-3. For each, pick a **primary tool** and a **backup tool**. Backup is for when the primary fails or is rate-limited.
-4. Add one paragraph at the bottom: *"My personal AI stack for the next 30 days is — {chat tool}, {research tool}, {Indian AI tool}, {creative tool}, {code tool}. I picked them because…"*
-5. Export as PDF, submit via the dashboard.
-
-### Reflect (~5 min)
-
-**Prompt**: *"If you had ₹10,000 to bet on one Indian AI company for the next 3 years, which one and why?"* A good reflection names a specific company, ties your bet to a concrete moat (language coverage, existing revenue, founder track record), and doesn't just repeat hype.
-
-### Stretch (optional, for the curious)
-
-- **Extra video**: instructor will drop a DeepSeek R1 or Qwen architecture walkthrough in the channel based on class questions.
-- **Extra read**: Sarvam's blog on Indic tokenisation (https://www.sarvam.ai/) — why Devanagari eats more tokens than English and what they did about it.
-- **Try**: compare *the exact same prompt* on Mistral Le Chat vs ChatGPT vs Claude. Which one has the most distinctive personality?
-
-## Quiz
-
-Four quick ones on tool classes, open vs closed weights, the Indian AI stack, and the "which tool for which job" heuristics. Don't memorise brands — memorise *why* each class exists.
-
-## Assignment
-
-Your 5-task Tool Audit (PDF, 1 page). Submit via the dashboard.
-
-## Discuss: Live session prompts
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -223,20 +213,73 @@ Your 5-task Tool Audit (PDF, 1 page). Submit via the dashboard.
 | Does India *need* its own LLM, or is fine-tuning existing ones enough? | Distinguishes sovereignty (who controls the off-switch) from capability (does it work in Tamil). Acknowledges fine-tuning solves capability cheaper, but not sovereignty. |
 | Which tool class did you under-use this week? | Names the specific class + the specific job where a different tool would have saved time. Usually "research" (people default to ChatGPT when Perplexity would've been faster). |
 
-## References
+---
 
-### Pre-class primers
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate: extend the tool audit to 5 tasks + name your stack (~40 min)
+
+1. Open the lab Google Doc.
+2. Extend it to **5 real tasks** from your life — add 2 more tasks you'd like AI help with (CV polish, exam revision, pitch-deck drafting, poster design, …).
+3. For each, pick a **primary tool** and a **backup tool**. Backup is for when the primary fails or is rate-limited.
+4. Add one paragraph at the bottom: *"My personal AI stack for the next 30 days is — {chat tool}, {research tool}, {Indian AI tool}, {creative tool}, {code tool}. I picked them because…"*
+5. Export as PDF — you'll submit it in step 4.
+
+### 2. Reflect (~10 min)
+
+**Prompt**: *"If you had ₹10,000 to bet on one Indian AI company for the next 3 years, which one and why?"* A good reflection names a specific company, ties your bet to a concrete moat (language coverage, existing revenue, founder track record), and doesn't just repeat hype. Jot a few lines for your own record.
+
+### 3. Quiz (~15 min)
+
+Four quick ones on tool classes, open vs closed weights, the Indian AI stack, and the "which tool for which job" heuristics. Available on the dashboard. Don't memorise brands — memorise *why* each class exists.
+
+### 4. Submit the assignment (~5 min)
+
+Submit your 5-task Tool Audit PDF via the dashboard before next class.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: instructor will drop a DeepSeek R1 or Qwen architecture walkthrough in the channel based on class questions.
+- **Extra read**: Sarvam's blog on Indic tokenisation (https://www.sarvam.ai/) — why Devanagari eats more tokens than English and what they did about it. Ties back to yesterday's tokenizer work.
+- **Try**: compare *the exact same prompt* on Mistral Le Chat vs ChatGPT vs Claude. Which one has the most distinctive personality?
+
+### 6. Prep for Day 4 (~35 min — important)
+
+**Tomorrow we learn to actually talk to these tools.** Day 4 introduces the **CREATE** framework (Context, Role, Examples, Active constraints, Tone, Evaluation) plus zero-shot / few-shot / chain-of-thought patterns and structured output. You'll iterate one real prompt five times and watch quality climb.
+
+- [ ] **Skim ahead**: the Anthropic Prompt Engineering Overview — https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview. Just skim the left sidebar to see which techniques exist.
+- [ ] **Think**: pick one real weak prompt you typed in the past week — the worse the better. We'll rewrite it live. Also pick one real task you've been putting off that AI could help with (resume bullet, DBMS notes, a tough email) — this becomes your V1 in the lab.
+- [ ] **Set up**: create an empty Notion page, Google Doc, or markdown file titled **"My Prompt Library"** — we start populating it tomorrow.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- DeepSeek R1 architecture explainer — instructor will drop a link in the channel based on class questions.
+- Any short Perplexity demo on YouTube to feel AI-search vs chat.
+
+### Reading
+
 - [LM Arena](https://lmarena.ai/) — crowdsourced model-vs-model voting.
 - [HuggingFace Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — the live open-model scoreboard.
+- [Meesho x Sarvam case study](https://www.sarvam.ai/) — Indian-scale AI in production.
 
-### Covered during class
-- [Sarvam.ai](https://www.sarvam.ai/) — Indian-language specialist.
+### Play
+
+- [Sarvam.ai](https://www.sarvam.ai/) — type in your mother tongue, see the difference vs English-first models.
 - [BharatGPT (CoRover)](https://corover.ai/bharatgpt/) — powers Indian Railways' AskDISHA.
 - [Perplexity](https://www.perplexity.ai/) — AI search with citations.
 - [NotebookLM](https://notebooklm.google.com/) — grounded research on your own docs.
 - [Mistral Le Chat](https://chat.mistral.ai) — free EU chat option.
 
-### Deep dives (post-class, if curious)
+### If you're hungry for a rabbit hole
+
 - [Qwen](https://qwenlm.github.io/) — Alibaba's open family.
 - [DeepSeek](https://www.deepseek.com/) — R1 reasoning model.
 - [Kimi (Moonshot)](https://kimi.moonshot.cn/) — long-context champion.
@@ -244,6 +287,3 @@ Your 5-task Tool Audit (PDF, 1 page). Submit via the dashboard.
 - [Phi (Microsoft)](https://huggingface.co/microsoft) — tiny models that punch up.
 - [Krutrim](https://www.krutrim.ai/) — Ola's full-stack Indian AI bet.
 - [Meta AI](https://meta.ai) — free Llama in WhatsApp / Instagram.
-
-### Other videos worth watching
-- DeepSeek R1 architecture explainer — instructor will drop a link based on class questions.

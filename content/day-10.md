@@ -9,11 +9,45 @@ tools_hands_on: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Perpl
 tools_demo: [{"name": "ChatGPT", "url": "https://chatgpt.com"}]
 tools_reference: [{"name": "Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil"}, {"name": "YC Library", "url": "https://www.ycombinator.com/library"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org"}]
 resources: [{"name": "Heilmeier Catechism", "url": "https://www.darpa.mil"}, {"name": "Paul Graham essays", "url": "https://www.ycombinator.com/library"}]
+objective:
+  topic: "Capstone ideathon — brainstorm, shape, pitch, vote, lock a one-pager"
+  tools: ["Claude", "Perplexity", "Gamma"]
+  end_goal: "By tonight: a locked capstone one-pager (problem, scope, non-goals, team, risks, metric) submitted as Milestone 1 — the foundation for Weeks 3 and 4."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Checkpoint day. You have touched a dozen tools in nine days. Today the workshop changes gears: from exposure to commitment. By 9 pm you will have a locked capstone one-pager and a team of two or three. Everything in Weeks 3 and 4 is built on what you decide today.
+**Topic.** The workshop changes gears from exposure to commitment. You run a live ideathon, pick a capstone, form a team, and lock a one-pager.
+
+**Tools you'll use.** Claude (Heilmeier + 3-filter), Perplexity (does-this-exist check), Gamma (future pitch rebuild).
+
+**End goal.** By the end of today you will have:
+1. Run three candidate ideas through the Heilmeier Catechism.
+2. Picked a team of 2–3 (or committed to solo with sharper scope).
+3. Submitted a locked `capstone-one-pager.md` with the tag `#milestone-1`. Scope locks tonight.
+
+> *Why this matters:* Day 30 you demo. Between now and then every day points at *this* one-pager. The non-goals you write tonight are a gift to your future self in Week 3 at 2 am.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 9) you shipped a 5-slide Gamma deck + a 30-second voiced/avatar intro for your capstone — the dress rehearsal. The Otter transcript from that exercise revealed how you actually talk about your idea (the filler words, the hedges, the one sentence of real insight). Today the vehicle for that talk gets scope-checked. The deck gets rebuilt next week against whatever one-pager you lock tonight; today's work makes sure it's the right one to rebuild.
+
+### Setup (required)
+
+- [ ] No setup required — your [Claude](https://claude.ai), [Perplexity](https://www.perplexity.ai), and [Gamma](https://gamma.app) accounts from earlier days are all you need.
+- [ ] Open your Jarvis Project in Claude; you will paste today's prompt-of-the-day inside it.
+
+### Primer (~5 min)
+
+- **Read**: The one-page [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions, two lines each. Memorize questions 1, 4, and 9; they are the ones your partner will ask you in class.
+- **Watch** (optional): Any 3–5 minute [YC Library](https://www.ycombinator.com/library) clip on "how to pick a startup idea" or Teresa Torres on [opportunity solution trees](https://www.producttalk.org). The framing transfers to capstone scoping directly.
+
+### Bring to class
+
+- [ ] 2–3 candidate capstone problem statements written on paper — hostel life, placement pain, exam prep, family problems all fair game.
+- [ ] For each candidate, one real human's name who might use it — even if you have not asked them yet.
 
 > 🧠 **Quick glossary**
 > - **Capstone** = the one thing you'll build and demo live on Day 30.
@@ -22,7 +56,13 @@ Checkpoint day. You have touched a dozen tools in nine days. Today the workshop 
 > - **Non-goals** = the "won't build" list — the most important section of your one-pager.
 > - **Steelman** = the strongest honest version of an argument, made before critiquing it.
 
-### Today's 1-hour live session — ideathon format
+---
+
+## 🎥 During class · 60 min live session
+
+Today's live session is an **ideathon format**, not the standard agenda: brainstorm → shape → pitch → vote → team-lock. Inside class we run the first half; you finish the one-pager in the post-class block.
+
+### Agenda — ideathon format
 
 | Block | Time | What |
 |---|---|---|
@@ -32,9 +72,6 @@ Checkpoint day. You have touched a dozen tools in nine days. Today the workshop 
 | Pitches (rotating groups, 2 min each) | 20 min | Everyone pitches — partner asks one Heilmeier question per idea |
 | Vote + form teams | 10 min | Commit to a capstone team + problem, start the one-pager |
 
-**Before class** (~10 min): come with 2–3 capstone ideas on paper — hostel life, placement pain, family problems all fair game.
-**After class** (~30 min tonight): lock your capstone one-pager and submit via dashboard with the tag `#milestone-1`.
-
 ### In-class moments (minute-by-minute)
 
 - **00:05 — Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
@@ -43,21 +80,7 @@ Checkpoint day. You have touched a dozen tools in nine days. Today the workshop 
 - **00:45 — Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
 - **00:55 — Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] No setup required — your [Claude](https://claude.ai), [Perplexity](https://www.perplexity.ai), and [Gamma](https://gamma.app) accounts from earlier days are all you need.
-- [ ] Open your Jarvis Project in Claude; you will paste today's prompt-of-the-day inside it.
-
-### Primer (~5 min)
-- **Read**: The one-page [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions, two lines each. Memorize questions 1, 4, and 9; they are the ones your partner will ask you in class.
-- **Watch** (optional): Any 3–5 minute [YC Library](https://www.ycombinator.com/library) clip on "how to pick a startup idea" or Teresa Torres on [opportunity solution trees](https://www.producttalk.org). The framing transfers to capstone scoping directly.
-
-### Bring to class
-- [ ] 2–3 candidate capstone problem statements written on paper — hostel life, placement pain, exam prep, family problems all fair game.
-- [ ] For each candidate, one real human's name who might use it — even if you have not asked them yet.
-
-## Read: How to pick a capstone worth four weeks
+### Read: How to pick a capstone worth four weeks
 
 **Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.
 
@@ -107,7 +130,7 @@ Poorly-scoped versions of the same ideas: "a full mess management platform", "an
 
 **Why "what I won't build" matters more than "what I will build".** Scope creep kills every cohort project. The non-goals section is a commitment to your future self: in Week 3 when you are tempted to add auth, mobile, analytics, and payments, the one-pager says no. Locking this today — while you are calm — protects you from yourself later.
 
-## Watch: Steelmanning three cohort ideas
+### Watch: Steelmanning three cohort ideas
 
 The instructor picks the three most-voted ideas from the morning and steelmans each for four minutes — strongest version of the argument, then the one risk that will kill it. Watch how an idea sharpens when you defend it generously before critiquing it.
 
@@ -117,7 +140,7 @@ https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
 - Listen for the moment an idea gets smaller and better in the same sentence.
 - Watch the instructor refuse to rescue a too-big idea — the kindness is the refusal.
 
-## Lab: Run the ideathon
+### Lab: Run the ideathon
 
 Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pager.md` for your team.
 
@@ -135,39 +158,7 @@ Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pag
 > - *No team cluster forms around your idea and you feel rejected* → this is data, not judgment. Either join the cluster closest to your idea (your skill + their problem often beats your problem), or commit to solo with a smaller scope and one named user.
 > - *You cannot name a real human user for Week 4* → stop the one-pager. Spend 15 minutes messaging three people who might hurt from this problem. If none reply by tonight, pick a different idea — "I will find users later" fails every cohort.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-1. Lock your capstone one-pager and submit. Use the template exactly: Problem, Scope, Non-goals, Team, Risks, Success metric — ≤ 400 words.
-2. Make sure the "Non-goals" section is at least as long as "Scope". If not, you have not committed.
-3. Name one real human user by name (not "someone in my hostel") with a plan to contact them this week.
-4. Submit `capstone-one-pager.md` via the cohort dashboard with the tag `#milestone-1` before midnight. Scope locks tonight.
-
-### Reflect (~5 min)
-Prompt: *Which of the 3 filters (real user / small scope / you care) is weakest for your locked idea, and what is your tripwire for killing or reshaping it by Week 3?* A good reflection names the weakest filter honestly, describes the specific signal that would tell you the idea is dying (user unreachable, scope ballooning past 15 hours, motivation gone after a bad day), and pre-commits to an action — reshape, pivot, or kill — with a date.
-
-### Stretch (optional, for the curious)
-- **Extra read**: A [Paul Graham essay](https://www.ycombinator.com/library) on "how to get startup ideas" — replace "startup" with "capstone" as you read.
-- **Try**: Run your locked idea through the Heilmeier Catechism *again* with a different model (ChatGPT or Gemini) and compare which risks each one surfaces. Different models notice different failure modes.
-
-## Quiz
-
-Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
-
-## Assignment — CAPSTONE MILESTONE 1
-
-Your team submits a locked capstone one-pager (Markdown, ≤ 400 words) containing:
-
-1. **Problem** — who hurts, in one sentence. Name a real user if possible.
-2. **Scope** — what the Week-4 demo will do, in one sentence.
-3. **Non-goals** — 3–5 bullet list of what you will explicitly NOT build.
-4. **Team** — names, roles, primary comms channel.
-5. **Risks** — top 2, with a one-line mitigation each.
-6. **Success metric** — one measurable thing that tells you at demo day whether it worked.
-
-Submit before midnight. This is the biggest deliverable of the workshop so far and the foundation for Weeks 3–4. Once submitted, your scope is locked — changes after today require instructor approval.
-
-## Discuss: The idea you fell in love with and had to kill
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -177,17 +168,73 @@ Submit before midnight. This is the biggest deliverable of the workshop so far a
 | Who is the one user you will talk to in Week 3? How will you get them on a call? | Names a real human with a real relationship, and a concrete first-contact plan (WhatsApp today, 15-min call Friday). Vague answers ("someone in my hostel") mean you have no user yet. |
 | What would make you abandon this capstone in Week 3, and how will you prevent that? | Identifies the specific failure mode (team unavailable, tool stops working, user unreachable, you lose interest) and the tripwire that catches it early. Strong answers include a "switch point" — what you will do by end of Week 3 if the signal is red. |
 
-## References
+---
 
-### Pre-class primers
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: submit your locked one-pager — CAPSTONE MILESTONE 1 (~60 min)
+
+1. Lock your capstone one-pager using the template exactly: Problem, Scope, Non-goals, Team, Risks, Success metric — ≤ 400 words.
+2. Make sure the "Non-goals" section is at least as long as "Scope". If not, you have not committed.
+3. Name one real human user by name (not "someone in my hostel") with a plan to contact them this week.
+4. Your team submits a locked capstone one-pager (Markdown, ≤ 400 words) containing:
+   - **Problem** — who hurts, in one sentence. Name a real user if possible.
+   - **Scope** — what the Week-4 demo will do, in one sentence.
+   - **Non-goals** — 3–5 bullet list of what you will explicitly NOT build.
+   - **Team** — names, roles, primary comms channel.
+   - **Risks** — top 2, with a one-line mitigation each.
+   - **Success metric** — one measurable thing that tells you at demo day whether it worked.
+
+### 2. Reflect (~10 min)
+
+*Which of the 3 filters (real user / small scope / you care) is weakest for your locked idea, and what is your tripwire for killing or reshaping it by Week 3?* A good reflection names the weakest filter honestly, describes the specific signal that would tell you the idea is dying (user unreachable, scope ballooning past 15 hours, motivation gone after a bad day), and pre-commits to an action — reshape, pivot, or kill — with a date.
+
+### 3. Quiz (~15 min)
+
+Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
+
+### 4. Submit (~5 min)
+
+Submit `capstone-one-pager.md` via the cohort dashboard with the tag `#milestone-1` before midnight. This is Capstone Milestone 1 — the biggest deliverable of the workshop so far and the foundation for Weeks 3–4. Once submitted, your scope is locked — changes after today require instructor approval.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra read**: A [Paul Graham essay](https://www.ycombinator.com/library) on "how to get startup ideas" — replace "startup" with "capstone" as you read.
+- **Try**: Run your locked idea through the Heilmeier Catechism *again* with a different model (ChatGPT or Gemini) and compare which risks each one surfaces. Different models notice different failure modes.
+
+### 6. Prep for Day 11 (~30-40 min — important)
+
+**Tomorrow we stress-test how you *describe* your capstone.** Day 11 rewrites your problem statement three times — Heilmeier long-form (v1) → 150 words (v2) → sticky note (v3) — plus a 5-Whys root cause and a How Might We reframe.
+
+- [ ] **Skim ahead**: the [Heilmeier Catechism one-pager](https://www.darpa.mil/work-with-us/heilmeier-catechism) once more — tomorrow it becomes the attack template against your own v1. Also glance at [5 Whys (Lean)](https://www.lean.org/lexicon-terms/5-whys/) and [How Might We (IDEO)](https://www.designkit.org/methods/how-might-we.html).
+- [ ] **Think**: write your current capstone problem in ONE sentence — exactly as you would say it to a stranger in a lift. List the three fuzziest weasel words in that sentence (the ones hiding scope).
+- [ ] **Set up**: paper and pen for tomorrow (v1 is written by hand, no typing). Grab an actual sticky note or draw a 3x3 inch box on paper — v3 must fit inside it. Keep Claude open in a browser tab for the attack phase.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [YC Library — how to pick an idea](https://www.ycombinator.com/library) — any 3–5 minute clip on picking a startup idea transfers cleanly to capstones.
+- [Teresa Torres on Opportunity Solution Trees](https://www.producttalk.org) — a more structured approach to turning problems into bets.
+
+### Reading
+
 - [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions that every project must answer.
-- [YC Library](https://www.ycombinator.com/library) — "how to pick an idea" essays that transfer cleanly to capstones.
-
-### Covered during class
-- [Claude](https://claude.ai) — where you run today's Heilmeier prompt.
-- [Perplexity](https://www.perplexity.ai) — 30-second "does this already exist?" sanity check.
-- [Gamma](https://gamma.app) — for the pitch deck you will rebuild once scope locks.
-
-### Deep dives (post-class)
+- [Paul Graham essays](https://www.ycombinator.com/library) — the patron saint of "make something people want."
 - [Teresa Torres — Opportunity Solution Tree](https://www.producttalk.org) — the clearest framework for turning a problem into a shippable bet.
-- [Paul Graham essays](https://www.ycombinator.com/library) — the patron saint of "make something people want" thinking.
+
+### Play
+
+- Run your locked idea through Heilmeier again with a different model (ChatGPT or Gemini) and compare risks surfaced.
+- Pitch your one-pager to a non-cohort friend in 60 seconds. If they can restate "who hurts" and "what won't you build" back to you, it's sharp enough.
+
+### If you're hungry for a rabbit hole
+
+- YC Demo Day archive — compressed pitch masterclass; notice how the best ones earn their Complication in under 10 seconds.
+- The history of DARPA's research portfolio — see Heilmeier's questions in the wild.

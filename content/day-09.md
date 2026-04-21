@@ -9,11 +9,45 @@ tools_hands_on: [{"name": "Otter", "url": "https://otter.ai"}, {"name": "Gamma",
 tools_demo: [{"name": "HeyGen", "url": "https://heygen.com"}, {"name": "Whisper (OpenAI)", "url": "https://openai.com/research/whisper"}, {"name": "Napkin AI", "url": "https://napkin.ai"}]
 tools_reference: [{"name": "Tome", "url": "https://tome.app"}, {"name": "Canva Magic Design", "url": "https://canva.com"}]
 resources: [{"name": "Gamma templates", "url": "https://gamma.app"}, {"name": "ElevenLabs voice library", "url": "https://elevenlabs.io"}]
+objective:
+  topic: "AI that listens, speaks, and presents — transcription, deck-gen, voice, avatars"
+  tools: ["Otter", "Gamma", "ElevenLabs", "HeyGen"]
+  end_goal: "Ship a 5-slide deck PDF + a 30-second avatar/voiced intro MP4 for your capstone pitch — warm-up for tomorrow's ideathon."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build the pitch materials and the voice to deliver it. Meetings, decks, voices, avatars — four categories that used to take a week. You will do all four in 45 minutes and still have time for dinner.
+**Topic.** AI listens, AI speaks, AI decks — the four production categories (transcription, deck-gen, voice synthesis, avatars) that used to take a week, now one hour.
+
+**Tools you'll use.** Otter (or Whisper), Gamma, ElevenLabs, HeyGen. Free tiers cover everything today.
+
+**End goal.** By the end of today you will have:
+1. A 5-slide Gamma deck (PDF) — one idea per slide, six words per bullet.
+2. A 30-second intro as MP4 — either HeyGen avatar or ElevenLabs-voiced.
+3. A one-line self-review naming your weakest slide.
+
+> *Why this matters:* Tomorrow is Day 10, the ideathon. You pitch your capstone to peers. Today is the dress rehearsal — and the Otter transcript of you talking about your idea is the cheapest feedback you'll get all week.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 8) you made pixels free — a poster in Nano Banana/Firefly and a 10-second video in Kling for your capstone. Today you give that visual a voice and a structure. The six-slot prompt template from Day 8 (subject, action, setting, style, composition, modifiers) reappears tonight in a slightly different form: outline → slide, paragraph → narration. Same discipline, different medium.
+
+### Setup (required)
+
+- [ ] Create free accounts on [Otter](https://otter.ai), [Gamma](https://gamma.app), [ElevenLabs](https://elevenlabs.io), and [HeyGen](https://heygen.com) — all four gate output behind email verify.
+- [ ] Test your laptop mic by recording a 10-second voice note. ElevenLabs cloning needs clean audio.
+
+### Primer (~5 min)
+
+- **Read**: Skim [Gamma templates](https://gamma.app) — notice how outlines, not slides, drive the layout. You will write an outline tonight, not slides.
+- **Watch** (optional): A 3–5 minute demo from the [ElevenLabs voice library](https://elevenlabs.io) showing a voice clone generated from 30 seconds of reference audio.
+
+### Bring to class
+
+- [ ] A one-paragraph description of your capstone idea — the kind you would say to a friend, not a professor. Otter and Gamma both eat paragraphs.
+- [ ] Headphones, so voice-synth playback does not wake the hostel.
 
 > 🧠 **Quick glossary**
 > - **Whisper** = OpenAI's open-source speech-to-text model; free, private, runs locally.
@@ -22,7 +56,11 @@ Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build
 > - **AI avatar** = a photorealistic talking head synced to generated speech (HeyGen).
 > - **Speaker notes** = the off-slide text you say aloud — where detail lives, not on the slide.
 
-### Today's 1-hour live session
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
@@ -31,9 +69,6 @@ Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build
 | Live lab     | 20 min | Build a 5-slide deck + record a 30-second AI-avatar intro |
 | Q&A + discussion | 15 min | Voice, face, trust — should pitches be labeled as AI? |
 
-**Before class** (~10 min): have a one-paragraph description of your capstone idea ready to feed Otter/Gamma.
-**After class** (~30 min tonight): post your 5-slide deck PDF + 30-second MP4 + one-line self-review to the cohort channel.
-
 ### In-class moments (minute-by-minute)
 
 - **00:05 — 60-second cold-open pitch**: unmute and pitch your capstone to the person on your left in one breath. No slides, no tools. We are baselining your talking voice before the machines enter.
@@ -41,21 +76,7 @@ Tomorrow you pitch a capstone idea to your peers in two minutes. Today you build
 - **00:30 — Live Gamma demo + vote**: I paste one volunteer's paragraph into Gamma on screen. Before it finishes, cohort votes in chat on how many of the 5 slides will violate the "one idea per slide" rule. We count afterward.
 - **00:45 — Uncanny-valley debate**: two volunteers play their HeyGen avatars. Cohort votes: "ship it to LinkedIn" or "dial it back." Debate for 3 minutes on where the line lives for student pitches.
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] Create free accounts on [Otter](https://otter.ai), [Gamma](https://gamma.app), [ElevenLabs](https://elevenlabs.io), and [HeyGen](https://heygen.com) — all four gate output behind email verify.
-- [ ] Test your laptop mic by recording a 10-second voice note. ElevenLabs cloning needs clean audio.
-
-### Primer (~5 min)
-- **Read**: Skim [Gamma templates](https://gamma.app) — notice how outlines, not slides, drive the layout. You will write an outline tonight, not slides.
-- **Watch** (optional): A 3–5 minute demo from the [ElevenLabs voice library](https://elevenlabs.io) showing a voice clone generated from 30 seconds of reference audio.
-
-### Bring to class
-- [ ] A one-paragraph description of your capstone idea — the kind you would say to a friend, not a professor. Otter and Gamma both eat paragraphs.
-- [ ] Headphones, so voice-synth playback does not wake the hostel.
-
-## Read: Talk, listen, present — all automated
+### Read: Talk, listen, present — all automated
 
 **Transcription: Whisper vs Otter, open vs closed.** The baseline has shifted. In 2026, transcribing any meeting or lecture is effectively free and surprisingly accurate, even in Indian English with code-mixing. Two paths:
 
@@ -86,7 +107,7 @@ Otter is the default for class notes and team meetings. It records, transcribes 
 
 **Privacy once more.** Never transcribe a conversation without telling the other people. This is both ethics and, in many jurisdictions, the law. Say it at the top of the call: "I am recording and transcribing this for my notes; let me know if you'd rather I didn't."
 
-## Watch: From blank page to pitch deck in 8 minutes
+### Watch: From blank page to pitch deck in 8 minutes
 
 A live run where we take a one-paragraph capstone idea, generate a deck in Gamma, replace the default diagrams with Napkin, and record a 30-second intro with an ElevenLabs voice and a HeyGen avatar. The whole pipeline, no cuts.
 
@@ -96,7 +117,7 @@ https://www.youtube.com/embed/KgRGp_MSqNs
 - Watch how Napkin's diagram replaces a wall of bullets.
 - See the moment the HeyGen avatar crosses into uncanny — and how to dial it back.
 
-## Lab: Deck + avatar intro
+### Lab: Deck + avatar intro
 
 Time: 45 minutes. Artifact: 5-slide deck (PDF) + 30-second MP4.
 
@@ -114,37 +135,7 @@ Time: 45 minutes. Artifact: 5-slide deck (PDF) + 30-second MP4.
 > - *ElevenLabs voice sounds robotic or rushes the punchlines* → add punctuation where you want pauses (commas and periods, even ungrammatical ones), break long sentences into two, and pick a different voice model — "Adam" and "Rachel" handle Indian-English phrasing poorly; try less-default voices.
 > - *HeyGen free-tier rejects your upload or caps video length* → skip the custom avatar, pick a stock avatar, and feed it the ElevenLabs MP3 as the audio track. The pitch does not need your face; it needs your idea on time.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-1. Lock your 5-slide Gamma deck — one idea per slide, max six words per bullet — and export as PDF.
-2. Record a 30-second avatar or ElevenLabs-voiced intro and export as MP4.
-3. Write a one-line self-review: "the weakest slide is slide X because…" — be specific.
-4. Submit all three to the cohort Slack channel before 11 pm with the tag `#day09-pitch`.
-
-### Reflect (~5 min)
-Prompt: *What did the Otter transcript reveal about how you actually talk about your idea?* A good reflection quotes one verbatim phrase — a filler, a hedge, or a surprisingly confident claim — and names the sentence you will cut before tomorrow's ideathon. The transcript is the cheapest feedback you will get all week; do not waste it.
-
-### Stretch (optional, for the curious)
-- **Extra video**: A [HeyGen](https://heygen.com) demo on multilingual dubbing — record once in English, ship in Hindi/Tamil/Kannada with lipsync.
-- **Extra read**: The [Whisper (OpenAI)](https://openai.com/research/whisper) research page — know when to run transcription locally for privacy.
-- **Try**: Generate the same deck in [Tome](https://tome.app) or [Canva Magic Design](https://canva.com) from the same paragraph. Notice which tool's defaults survive your edits.
-
-## Quiz
-
-Four checks. Which tool would you pick for transcribing a private interview with a professor about a sensitive research topic? What is the single most common mistake in AI-generated decks (hint: a layout rule)? When is it okay to clone a voice in ElevenLabs? What should you always say at the start of a meeting you are recording?
-
-## Assignment
-
-Post to the cohort Slack:
-
-1. Your 5-slide deck as a PDF.
-2. Your 30-second AI-avatar (or ElevenLabs-voiced) intro as an MP4.
-3. A one-line self-review: "the weakest slide is slide X because…".
-
-This is your final warm-up before tomorrow. Your deck is not locked yet — after the ideathon you will likely rebuild slide 5. That is fine.
-
-## Discuss: Voice, face, and trust
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -154,16 +145,75 @@ This is your final warm-up before tomorrow. Your deck is not locked yet — afte
 | Which one of today's tools will you still use in a year? | Names one tool and a specific recurring workflow where it saves you ≥2 hours per week. Also names one tool you think will be absorbed into a bigger suite and become irrelevant. |
 | What did Otter's transcript reveal about how you talk about your own idea? | Quotes one verbatim phrase you actually used (filler, hedge, confident claim) and what it exposed about your conviction. Names the sentence you will cut from your pitch tomorrow. |
 
-## References
+---
 
-### Pre-class primers
-- [Gamma templates](https://gamma.app) — outline-first thinking, not slide-first.
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: lock the deck + avatar intro (~45 min)
+
+1. Lock your 5-slide Gamma deck — one idea per slide, max six words per bullet — and export as PDF.
+2. Record a 30-second avatar or ElevenLabs-voiced intro and export as MP4.
+3. Write a one-line self-review: "the weakest slide is slide X because…" — be specific.
+
+### 2. Reflect (~10 min)
+
+*What did the Otter transcript reveal about how you actually talk about your idea?* A good reflection quotes one verbatim phrase — a filler, a hedge, or a surprisingly confident claim — and names the sentence you will cut before tomorrow's ideathon. The transcript is the cheapest feedback you will get all week; do not waste it.
+
+### 3. Quiz (~15 min)
+
+Four checks. Which tool would you pick for transcribing a private interview with a professor about a sensitive research topic? What is the single most common mistake in AI-generated decks (hint: a layout rule)? When is it okay to clone a voice in ElevenLabs? What should you always say at the start of a meeting you are recording?
+
+### 4. Submit (~5 min)
+
+Post to the cohort Slack with the tag `#day09-pitch` before 11 pm:
+
+1. Your 5-slide deck as a PDF.
+2. Your 30-second AI-avatar (or ElevenLabs-voiced) intro as an MP4.
+3. A one-line self-review: "the weakest slide is slide X because…".
+
+This is your final warm-up before tomorrow. Your deck is not locked yet — after the ideathon you will likely rebuild slide 5. That is fine.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: A [HeyGen](https://heygen.com) demo on multilingual dubbing — record once in English, ship in Hindi/Tamil/Kannada with lipsync.
+- **Extra read**: The [Whisper (OpenAI)](https://openai.com/research/whisper) research page — know when to run transcription locally for privacy.
+- **Try**: Generate the same deck in [Tome](https://tome.app) or [Canva Magic Design](https://canva.com) from the same paragraph. Notice which tool's defaults survive your edits.
+
+### 6. Prep for Day 10 (~30-40 min — important)
+
+**Tomorrow is the ideathon — Capstone Milestone 1.** By 9 pm tomorrow you lock a capstone one-pager and a team of two or three. Everything in Weeks 3 and 4 builds on what you decide.
+
+- [ ] **Skim ahead**: the [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions, two lines each. Memorize questions 1, 4, and 9 — those are the ones a partner will grill you on. Also skim any [YC Library](https://www.ycombinator.com/library) essay on picking an idea.
+- [ ] **Think**: come up with 2–3 candidate capstone ideas on paper tonight. Hostel life, placement pain, exam prep, family problems are all fair game. For each candidate, jot one real human's name who might use it — even if you have not asked them yet.
+- [ ] **Set up**: open your Day 9 deck alongside your Day 8 poster tomorrow morning — that's the idea you'll stress-test first. Have Claude, Perplexity, and Gamma browser tabs ready. No new accounts required.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [HeyGen multilingual demo](https://heygen.com) — record once in English, dub into Hindi/Tamil/Kannada with lipsync.
 - [ElevenLabs voice library](https://elevenlabs.io) — pick a voice that matches your content's tone.
 
-### Covered during class
-- [Otter](https://otter.ai), [Gamma](https://gamma.app), [ElevenLabs](https://elevenlabs.io) — hands-on transcription, deck-gen, voice.
-- [HeyGen](https://heygen.com), [Whisper (OpenAI)](https://openai.com/research/whisper), [Napkin AI](https://napkin.ai) — demoed for avatars, private transcription, and text-to-diagram.
+### Reading
 
-### Deep dives (post-class)
+- [Gamma templates](https://gamma.app) — outline-first thinking, not slide-first.
+- [Whisper (OpenAI) research page](https://openai.com/research/whisper) — when to run transcription locally for privacy.
 - [Tome](https://tome.app) — an alternative deck-gen with a different default aesthetic.
 - [Canva Magic Design](https://canva.com) — when you need brand-kit consistency on top of AI output.
+
+### Play
+
+- Transcribe a 10-minute YouTube lecture in Otter, then paste it into Claude and ask for three quiz questions. Five minutes, real output.
+- Clone your own voice in ElevenLabs and have it read a paragraph you wrote. Notice what transfers and what doesn't.
+- Generate the same deck in Gamma, Tome, and Canva Magic Design. Watch which defaults survive your edits.
+
+### If you're hungry for a rabbit hole
+
+- Napkin AI's text-to-diagram gallery — how far narrative-to-visual has come.
+- HeyGen's multilingual lipsync showcase — the moment AI dubbing stops feeling uncanny.

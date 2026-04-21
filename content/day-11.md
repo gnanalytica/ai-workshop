@@ -9,11 +9,45 @@ tools_hands_on: [{"name": "Paper + pen", "url": "https://www.darpa.mil/work-with
 tools_demo: [{"name": "DARPA Heilmeier Catechism", "url": "https://www.darpa.mil/work-with-us/heilmeier-catechism"}]
 tools_reference: [{"name": "Lenny's Newsletter", "url": "https://www.lennysnewsletter.com"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org/opportunity-solution-tree/"}]
 resources: [{"name": "The Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil/work-with-us/heilmeier-catechism"}, {"name": "5 Whys — Lean Enterprise Institute", "url": "https://www.lean.org/lexicon-terms/5-whys/"}, {"name": "How Might We — IDEO", "url": "https://www.designkit.org/methods/how-might-we.html"}]
+objective:
+  topic: "Sharpening the capstone problem statement — Heilmeier, 5 Whys, How Might We"
+  tools: ["Paper + pen", "Claude"]
+  end_goal: "Three drafts of your problem statement (v1 long-form, v2 150-word, v3 sticky note) + 5-Whys root cause + HMW reframe — all submitted tonight."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-You picked your capstone on Day 10. Today we stress-test how you describe it. Most capstones fail not because the tech is hard, but because the problem statement was fuzzy on day one and the fuzziness compounded for four weeks. A sharp problem statement is leverage: it forces honest scope, kills bad features early, and makes every later decision easier.
+**Topic.** A crisp problem statement is half the work. Today you stress-test how you describe your capstone — three rewrites, one root cause, one HMW reframe.
+
+**Tools you'll use.** Paper + pen (for v1 and v3) and Claude (for the attack pass on v1).
+
+**End goal.** By the end of today you will have:
+1. v1 Heilmeier long-form (handwritten), v2 in 150 words, v3 on a physical sticky note.
+2. A 5-Whys root cause underneath the pain in v2.
+3. v3 reframed into a single "How Might We …" question.
+
+> *Why this matters:* A sharp, wrong statement is infinitely better than a soft, possibly-right one. The point of crispness today is not to be right — it is to be wrong fast and visibly, so that an interview on Day 13 can knock it over.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 10) you locked Capstone Milestone 1 — a team, a problem, a non-goals list, a success metric. The one-pager told the world *what* you're building. Today we stress-test *how you describe it* — because the same problem described vaguely and described sharply are two different projects. Your Milestone 1 one-pager is today's raw material; by tonight, the "Problem" sentence inside it is v3, and the v3 sticky note is a much sharper version than what you submitted last night.
+
+### Setup (required)
+
+- [ ] No setup required — paper, a pen, and Claude open in a browser tab is enough.
+
+### Primer (~5 min)
+
+- **Read**: The [Heilmeier Catechism one-pager](https://www.darpa.mil/work-with-us/heilmeier-catechism) — nine questions, no jargon. Notice how every question forces a number, a name, or a date. That is the bar today.
+- **Watch** (optional): The 4-min explainer linked in the Watch section below — preview it tonight if you want a head start.
+
+### Bring to class
+
+- [ ] Your current capstone problem written out in ONE sentence — exactly how you would say it to a stranger in a lift.
+- [ ] A list of the three fuzziest words in that sentence (the weasel words you already suspect are hiding scope).
+- [ ] An actual sticky note or a 3x3 inch box drawn on paper — you will use it for draft v3.
 
 > 🧠 **Quick glossary**
 > - **Problem statement** = a one-sentence description of who hurts, where, and why it matters — written before any solution.
@@ -22,7 +56,11 @@ You picked your capstone on Day 10. Today we stress-test how you describe it. Mo
 > - **5 Whys** = ask "why?" five times in a row to drill from symptom to root cause.
 > - **JTBD (Jobs To Be Done)** = the "job" the user hires your product to do — the underlying motivation, not the feature.
 
-### Today's 1-hour live session
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
@@ -30,9 +68,6 @@ You picked your capstone on Day 10. Today we stress-test how you describe it. Mo
 | Mini-lecture | 20 min | Heilmeier, HMW, 5 Whys, JTBD — and the traps in each |
 | Live lab     | 20 min | Rewrite one volunteer's capstone statement three times, live |
 | Q&A + discussion | 15 min | Stress-test statements, call out fuzziness |
-
-**Before class** (~10 min): write your current capstone problem in one sentence — exactly as you'd say it to a stranger.
-**After class** (~30 min tonight): finish the three rewrites of your statement and paste the final version into the dashboard.
 
 ### In-class moments (minute-by-minute)
 
@@ -42,21 +77,7 @@ You picked your capstone on Day 10. Today we stress-test how you describe it. Mo
 - **00:45 — Heilmeier gauntlet**: one volunteer stands; three classmates each fire one Heilmeier question; volunteer must answer in 15 seconds each, no jargon.
 - **00:55 — Sticky-note test**: everyone writes v3 on a physical or virtual 3x3 box; if it overflows, cut one clause before leaving.
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] No setup required — paper, a pen, and Claude open in a browser tab is enough.
-
-### Primer (~5 min)
-- **Read**: The [Heilmeier Catechism one-pager](https://www.darpa.mil/work-with-us/heilmeier-catechism) — nine questions, no jargon. Notice how every question forces a number, a name, or a date. That is the bar today.
-- **Watch** (optional): The 4-min explainer linked in the Watch section below — preview it tonight if you want a head start.
-
-### Bring to class
-- [ ] Your current capstone problem written out in ONE sentence — exactly how you would say it to a stranger in a lift.
-- [ ] A list of the three fuzziest words in that sentence (the weasel words you already suspect are hiding scope).
-- [ ] An actual sticky note or a 3x3 inch box drawn on paper — you will use it for draft v3.
-
-## Read: Why a crisp problem statement is half the work
+### Read: Why a crisp problem statement is half the work
 
 Walk into any product review at a well-run company and you will notice something: the first ten minutes are not about solutions. They are about re-stating the problem. People argue over a single verb. They replace "help users find things" with "reduce time-to-first-relevant-result for new users on mobile." That fight is the work. Everything downstream — architecture, model choice, UX, metrics — is just execution of whatever was agreed upon in those first ten minutes.
 
@@ -88,7 +109,7 @@ One warning. Do not confuse a crisp problem statement with a *correct* one. You 
 
 By the end of today you should be able to say, out loud, in under 30 seconds: *who* has *what pain* in *what context*, *how often*, and what *measurable change* you will cause. If you stumble, you are not ready for Day 12.
 
-## Watch: How to pitch a hard problem in 60 seconds
+### Watch: How to pitch a hard problem in 60 seconds
 
 Watch this short explainer on the Heilmeier Catechism and why research funders still use it today. Notice how every answer is concrete — numbers, names, timeframes — and how the speaker refuses abstractions.
 
@@ -98,7 +119,7 @@ https://www.youtube.com/embed/XGNBFRcQMng
 - "Who cares?" is the fastest way to kill a bad project. Answer it first.
 - If an answer needs a footnote or a diagram, it is not crisp yet.
 
-## Lab: Rewrite your capstone problem statement three times (45 min)
+### Lab: Rewrite your capstone problem statement three times (45 min)
 
 You will need paper, a pen, and Claude open in a second window.
 
@@ -117,32 +138,7 @@ Photograph all three drafts plus the sticky note. You will compare them on Day 1
 > - *Your sticky note keeps overflowing* → force the cut by deleting every adjective first, then every compound noun; if it still does not fit, your user is too broad — swap "users" for one named person with a job title.
 > - *Your 5 Whys loop back on itself by the third "why?"* → you are asking about the solution, not the pain; restart from the user's most recent concrete bad moment, not from your feature idea.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-1. Finish all three drafts (v1 Heilmeier long-form, v2 150-word, v3 sticky note) if you did not complete them in the live lab.
-2. Run the 5 Whys on the core pain in v2 and write the root cause under your sticky.
-3. Convert v3 into a single "How Might We ..." question.
-4. Photograph the sticky note AND the HMW line, and post BOTH plus your 5-Whys root cause to the cohort channel tonight.
-5. One post, three artifacts, no commentary — submit via the cohort channel thread.
-
-### Reflect (~5 min)
-Answer in your private notebook: *Which weasel word did I fight hardest to keep, and what was it protecting me from?* A good reflection names the word, names the fear (scope, ego, uncertainty), and commits to one concrete thing you will verify on Day 13 instead of assuming.
-
-### Stretch (optional)
-- **Extra video**: A second pass on the Heilmeier explainer — this time pausing after each question and answering aloud for your own capstone.
-- **Extra read**: Teresa Torres on the [Opportunity Solution Tree](https://www.producttalk.org/opportunity-solution-tree/) — it pairs beautifully with HMW and previews Day 13.
-- **Try**: Run the Heilmeier Catechism on someone else's side project (a friend, a classmate). Teaching the frame is the fastest way to internalise it.
-
-## Quiz
-
-Three quick checks, no Googling. Can you name all nine Heilmeier questions from memory? Can you explain the difference between a symptom and a root cause using an example from your own capstone? Can you spot the solution-smuggling in this statement: "We will build an AI assistant that helps busy professionals be more productive"? If you hesitated on any, re-read the Read section.
-
-## Assignment
-
-Submit your v3 sticky-note problem statement plus the HMW reframe to the cohort channel. One sticky-note photo, one line of HMW, no commentary. Also post your root cause from the 5 Whys. Due tonight. Tomorrow we map the full design-thinking cycle on top of this statement — so if yours is still vague, Day 12 will be painful.
-
-## Discuss: What does your problem refuse to admit?
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -152,16 +148,70 @@ Submit your v3 sticky-note problem statement plus the HMW reframe to the cohort 
 | If a skeptical investor asked "why you, why now?" about your capstone, what is your real answer — not the polished one? | A personal reason (scar, obsession, unfair advantage) plus an external trigger that explains why this year, not last year. Avoid "AI is hot right now." |
 | What would have to be true for this problem to not be worth solving at all? | Names the kill-criterion: a market size, a user behaviour, a regulatory fact, or a cheaper existing workaround that, if true, ends the project. Specific, falsifiable. |
 
-## References
+---
 
-### Pre-class primers
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: finish the three drafts (~50 min)
+
+1. Finish all three drafts (v1 Heilmeier long-form, v2 150-word, v3 sticky note) if you did not complete them in the live lab.
+2. Run the 5 Whys on the core pain in v2 and write the root cause under your sticky.
+3. Convert v3 into a single "How Might We ..." question.
+4. Photograph the sticky note AND the HMW line.
+5. One post, three artifacts, no commentary — submit via the cohort channel thread.
+
+### 2. Reflect (~10 min)
+
+*Which weasel word did I fight hardest to keep, and what was it protecting me from?* A good reflection names the word, names the fear (scope, ego, uncertainty), and commits to one concrete thing you will verify on Day 13 instead of assuming.
+
+### 3. Quiz (~15 min)
+
+Three quick checks, no Googling. Can you name all nine Heilmeier questions from memory? Can you explain the difference between a symptom and a root cause using an example from your own capstone? Can you spot the solution-smuggling in this statement: "We will build an AI assistant that helps busy professionals be more productive"? If you hesitated on any, re-read the Read section.
+
+### 4. Submit (~5 min)
+
+Submit your v3 sticky-note problem statement plus the HMW reframe to the cohort channel. One sticky-note photo, one line of HMW, no commentary. Also post your root cause from the 5 Whys. Due tonight. Tomorrow we map the full design-thinking cycle on top of this statement — so if yours is still vague, Day 12 will be painful.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: A second pass on the Heilmeier explainer — this time pausing after each question and answering aloud for your own capstone.
+- **Extra read**: Teresa Torres on the [Opportunity Solution Tree](https://www.producttalk.org/opportunity-solution-tree/) — it pairs beautifully with HMW and previews Day 13.
+- **Try**: Run the Heilmeier Catechism on someone else's side project (a friend, a classmate). Teaching the frame is the fastest way to internalise it.
+
+### 6. Prep for Day 12 (~30-40 min — important)
+
+**Tomorrow we map the full design-thinking loop on top of your v3 statement.** Day 12 is the five stages — Empathize, Define, Ideate, Prototype, Test — in a FigJam board, with a Claude critique at the end.
+
+- [ ] **Skim ahead**: the [IDEO Design Kit methods page](https://www.designkit.org/methods.html) — pick three methods whose names you do not recognise. Also glance at [Stanford d.school resources](https://dschool.stanford.edu/resources) for a 5-minute case clip.
+- [ ] **Think**: list 3 assumptions you're making about your capstone user that you have NOT yet verified with a real human. These become the Empathize column tomorrow. Also prepare to generate deliberately bad ideas (the $1 version, the no-screen version, the 7-year-old version).
+- [ ] **Set up**: create a free [FigJam account](https://www.figma.com/figjam/) tonight — you will wireframe the 5-column DT map live. Have your Day 11 v3 sticky note open alongside; it becomes the anchor of the Define column.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- The 4-min Heilmeier Catechism explainer linked in class — rewatch pausing after each question to answer for your own capstone.
+
+### Reading
+
 - [The Heilmeier Catechism (DARPA)](https://www.darpa.mil/work-with-us/heilmeier-catechism) — the nine questions, one page, no fluff.
-
-### Covered during class
-- [5 Whys — Lean Enterprise Institute](https://www.lean.org/lexicon-terms/5-whys/) — Toyota's root-cause drill, used in step 5 of the lab.
-- [How Might We — IDEO Design Kit](https://www.designkit.org/methods/how-might-we.html) — the reframing trick for step 7.
-- [Claude](https://claude.ai) — the attack partner for draft v1.
-
-### Deep dives (post-class)
-- [Teresa Torres — Opportunity Solution Tree](https://www.producttalk.org/opportunity-solution-tree/) — connects problem framing to discovery, sets up Day 13.
+- [5 Whys — Lean Enterprise Institute](https://www.lean.org/lexicon-terms/5-whys/) — Toyota's root-cause drill.
+- [How Might We — IDEO Design Kit](https://www.designkit.org/methods/how-might-we.html) — the reframing trick.
+- [Teresa Torres — Opportunity Solution Tree](https://www.producttalk.org/opportunity-solution-tree/) — connects problem framing to discovery.
 - [Lenny's Newsletter](https://www.lennysnewsletter.com) — working PMs on how real problem statements get sharpened inside shipping teams.
+
+### Play
+
+- Run the Heilmeier Catechism on a friend's side project. Teaching the frame is the fastest way to internalise it.
+- Write a v3 sticky for a problem that is *not* your capstone (a broken commute, a messy inbox). The muscle generalises.
+
+### If you're hungry for a rabbit hole
+
+- Barbara Minto's Pyramid Principle — the structured-writing bible behind SCQA; half of Day 14 is downstream of this.
+- DARPA's research portfolio archives — see Heilmeier's catechism in the wild.
