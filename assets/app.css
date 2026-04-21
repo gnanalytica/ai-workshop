@@ -138,3 +138,10 @@ select.inline{background:var(--input-bg);border:1px solid var(--line);border-rad
 @media (max-width:640px){
   .modal,.modal-card,.drawer{max-height:90vh;overflow-y:auto;width:min(440px,calc(100% - 32px))!important;max-width:calc(100% - 32px)}
 }
+
+/* Student detail drawer (faculty + admin shared) */
+#studentDrawer{position:fixed;inset:0;z-index:400;display:none}
+#studentDrawer.open{display:block}
+#studentDrawer .sd-back{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#studentDrawer .sd-panel{position:absolute;top:0;right:0;height:100vh;width:min(560px,100%);background:var(--card);border-left:1px solid var(--line);box-shadow:-8px 0 30px rgba(0,0,0,.35);display:flex;flex-direction:column}
+#studentDrawer h3{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 6px}
