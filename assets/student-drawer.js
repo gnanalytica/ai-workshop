@@ -6,12 +6,8 @@
 // - submissions: has no cohort_id; join assignments!inner for cohort filtering.
 //   Grade column is `score` (not `grade`). Feedback column is `feedback`.
 //   Status values include 'submitted', 'graded'.
-// - stuck_queue: reply pattern mirrors admin-stuck.html (status='resolved',
-//   resolved_at=now). There is no "response" column on stuck_queue; the
-//   reply text is stored in `message` or elsewhere, so the inline-reply
-//   here only resolves the item and surfaces the admin's text via prompt.
-//   TODO: verify final reply column name once staging is live; extend
-//   this module to persist the reply text if a column is added.
+// - stuck_queue: resolve sets status='resolved', resolved_at, and persists
+//   optional response text (schema: response column added in migration 0410).
 // - peer_reviews: no direct reviewee_id; join submissions!inner(user_id).
 
 import { supabase } from './supabase.js';
@@ -62,7 +58,7 @@ export async function openDrawer(userId, { cohortId }) {
         .eq('assignments.cohort_id', cohortId)
         .order('submitted_at', { ascending: false }),
       supabase.from('stuck_queue')
-        .select('id,day_number,message,status,created_at,resolved_at')
+        .select('id,day_number,message,status,created_at,resolved_at,response')
         .eq('user_id', userId)
         .eq('cohort_id', cohortId)
         .order('created_at', { ascending: false }),
@@ -104,7 +100,8 @@ export async function openDrawer(userId, { cohortId }) {
         <li style="padding:8px 0;border-bottom:1px solid var(--line)">
           <div>Day ${s.day_number ?? '—'} · ${new Date(s.created_at).toLocaleDateString()} · <span class="kicker-tag${s.status==='resolved' ? '' : ' warn'}">${esc(s.status)}</span></div>
           ${s.message ? `<div style="margin-top:4px">${esc(s.message)}</div>` : ''}
-          ${s.status !== 'resolved' ? `<div style="margin-top:4px"><button class="btn-sm" data-resolve="${esc(s.id)}">Mark resolved…</button></div>` : ''}
+          ${s.response ? `<div class="muted" style="font-size:12px;margin-top:4px">↳ ${esc(s.response)}</div>` : ''}
+          ${s.status !== 'resolved' ? `<div style="margin-top:4px"><button class="btn-sm" data-resolve="${esc(s.id)}">Reply & resolve…</button></div>` : ''}
         </li>`).join('') || '<li class="muted">None.</li>'}</ul>
 
       <h3 style="margin:16px 0 6px">Peer reviews</h3>
@@ -126,16 +123,17 @@ function wireDrawerActions(userId, cohortId) {
       if (!Number.isFinite(scoreNum)) return alert('Not a number.');
       const note = prompt('Feedback (optional):') || null;
       const { error } = await supabase.from('submissions')
-        .update({ score: scoreNum, feedback: note, status: 'graded' })
+        .update({ score: scoreNum, feedback: note, status: 'graded', graded_at: new Date().toISOString() })
         .eq('id', b.dataset.grade);
       if (error) alert(error.message); else openDrawer(userId, { cohortId });
     });
   });
   document.querySelectorAll('#sdBody button[data-resolve]').forEach(b => {
     b.addEventListener('click', async () => {
-      if (!confirm('Mark this stuck item resolved?')) return;
+      const response = prompt('Reply to the student (optional, will be visible to them):');
+      if (response === null) return;
       const { error } = await supabase.from('stuck_queue')
-        .update({ status: 'resolved', resolved_at: new Date().toISOString() })
+        .update({ status: 'resolved', resolved_at: new Date().toISOString(), response: response || null })
         .eq('id', b.dataset.resolve);
       if (error) alert(error.message); else openDrawer(userId, { cohortId });
     });

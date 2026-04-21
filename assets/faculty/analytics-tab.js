@@ -48,12 +48,13 @@ export async function renderAnalytics({ state, container }) {
   async function showFaculty() {
     const rows = await loadFacultyAnalytics(state.cohortId);
     document.getElementById('analyticsBody').innerHTML = barTable(
-      ['Faculty', 'Mentored', 'Avg % complete', 'Students graded (sum)', 'Handoffs in/out'],
+      ['Faculty', 'Mentored', 'Avg % complete', 'Graded', 'Median turnaround (h)', 'Handoffs in/out'],
       rows.map(r => [
         esc(r.faculty.full_name || r.faculty.id),
         r.studentsMentored,
         pctBar(r.avgPct),
         r.gradedCount,
+        r.gradingMedianHrs != null ? r.gradingMedianHrs.toFixed(1) : '—',
         `${r.handoffsIn} / ${r.handoffsOut}`,
       ])
     );

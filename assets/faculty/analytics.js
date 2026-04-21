@@ -1,12 +1,11 @@
 // Analytics loaders: pod-vs-pod and faculty-vs-faculty.
 //
-// Schema corrections vs plan:
+// Schema notes:
 // - pod_members has a cohort_id column (denormalised) — use it directly.
-// - submissions has no cohort_id or graded_by column. We compute
-//   "students-with-graded-submissions" counts for the faculty's mentees
-//   rather than "submissions graded by me". Turnaround uses submitted_at
-//   only (no graded_at assumed). TODO: verify after staging whether a
-//   graded_at column exists; if so, add median turnaround here.
+// - submissions has no graded_by column; we report graded-submission counts
+//   for each faculty's mentees. Grading turnaround uses submitted_at →
+//   graded_at (column added in migration 0400) and reports the pod-wide
+//   median for the faculty's mentee pool.
 
 import { supabase } from '../supabase.js';
 import { loadStudentSignals } from './signals.js';
@@ -69,6 +68,22 @@ export async function loadFacultyAnalytics(cohortId) {
   const allStudentIds = [...new Set((members || []).map(m => m.student_user_id))];
   const signals = await loadStudentSignals(cohortId, allStudentIds);
 
+  // Pull graded submissions for the whole mentee pool once; compute per-faculty medians by membership.
+  const gradedSubs = allStudentIds.length
+    ? (await supabase.from('submissions')
+        .select('user_id,submitted_at,graded_at,assignments!inner(cohort_id)')
+        .in('user_id', allStudentIds)
+        .eq('assignments.cohort_id', cohortId)
+        .not('graded_at', 'is', null)
+        .not('submitted_at', 'is', null)).data || []
+    : [];
+
+  function median(xs) {
+    if (!xs.length) return null;
+    const s = [...xs].sort((a,b)=>a-b);
+    return s[Math.floor(s.length/2)];
+  }
+
   return ids.map(uid => {
     const podsOwned = (podFac || []).filter(pf => pf.faculty_user_id === uid).map(pf => pf.pod_id);
     const studentSet = new Set();
@@ -77,9 +92,13 @@ export async function loadFacultyAnalytics(cohortId) {
     const n = sigs.length || 1;
     const avgPct = sigs.reduce((s, x) => s + (x.daysTotal ? x.daysDone / x.daysTotal : 0), 0) / n * 100;
 
-    // Students-with-graded-submissions count (proxy for grading load; we don't
-    // have graded_by on submissions).
     const gradedCount = sigs.reduce((s, x) => s + (x.subsGraded || 0), 0);
+
+    const turnaroundsHrs = gradedSubs
+      .filter(g => studentSet.has(g.user_id))
+      .map(g => (new Date(g.graded_at) - new Date(g.submitted_at)) / 3600000)
+      .filter(h => Number.isFinite(h) && h >= 0);
+    const gradingMedianHrs = median(turnaroundsHrs);
 
     const handoffsIn = (events || []).filter(e => e.to_user_id === uid && (e.kind === 'handoff' || e.kind === 'primary_transfer')).length;
     const handoffsOut = (events || []).filter(e => e.from_user_id === uid && e.kind === 'handoff').length;
@@ -89,6 +108,7 @@ export async function loadFacultyAnalytics(cohortId) {
       studentsMentored: studentSet.size,
       avgPct,
       gradedCount,
+      gradingMedianHrs,
       handoffsIn,
       handoffsOut,
     };

@@ -987,6 +987,7 @@
           payload.rubric_scores = rubricScores;
           if (payload.status === 'submitted') payload.status = 'graded';
         }
+        if (payload.status === 'graded') payload.graded_at = new Date().toISOString();
         const { error } = await supabase.from('submissions').update(payload).eq('id', id);
         btn.disabled = false; btn.textContent = 'Save';
         if (error) { toast(error.message, 'err'); return; }
