@@ -289,13 +289,39 @@
         $('addBtn').disabled = false; return;
       }
 
+      const { data: existing } = await supabase
+        .from('cohort_faculty')
+        .select('id,role')
+        .eq('cohort_id', cohort_id)
+        .eq('user_id', user_id)
+        .maybeSingle();
+
       const { data: { session } } = await supabase.auth.getSession();
-      const { error } = await supabase.from('cohort_faculty').insert({
-        cohort_id, user_id, role, created_by: session?.user?.id || null,
-      });
+      let error = null;
+      if (existing) {
+        if (existing.role === role) {
+          $('addBtn').disabled = false;
+          msg.className = 'msg show err';
+          msg.textContent = 'This user is already faculty for this cohort. Change their role in the table above, or remove the row first.';
+          return;
+        }
+        ({ error } = await supabase.from('cohort_faculty').update({ role }).eq('id', existing.id));
+      } else {
+        ({ error } = await supabase.from('cohort_faculty').insert({
+          cohort_id, user_id, role, created_by: session?.user?.id || null,
+        }));
+      }
       $('addBtn').disabled = false;
-      if (error) { msg.className = 'msg show err'; msg.textContent = error.message; return; }
-      msg.className = 'msg show ok'; msg.textContent = 'Added.';
+      if (error) {
+        const dup = /cohort_faculty_cohort_id_user_id_key|23505/i.test(error.message || '') || error.code === '23505';
+        msg.className = 'msg show err';
+        msg.textContent = dup
+          ? 'This user is already faculty for this cohort (race or stale form). Refresh the list.'
+          : error.message;
+        return;
+      }
+      msg.className = 'msg show ok';
+      msg.textContent = existing ? 'Role updated.' : 'Added.';
       $('f_user').value = '';
       await loadRows();
     });
