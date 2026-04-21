@@ -41,6 +41,15 @@ export async function renderCohort({ state, container }) {
     else ok++;
   }
 
+  const findBar =
+    profs.length > 0
+      ? `<div class="add-card" style="padding:10px 14px;margin-bottom:12px">
+      <label class="sr-only" for="cohortStudentFind">Filter students</label>
+      <input type="search" id="cohortStudentFind" placeholder="Filter students by name, college, or id…" autocomplete="off"
+        style="width:100%;max-width:420px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13px;outline:none" />
+    </div>`
+      : '';
+
   const snapshot =
     profs.length > 0
       ? `<div class="add-card" style="padding:14px 16px;margin-bottom:14px">
@@ -59,6 +68,7 @@ export async function renderCohort({ state, container }) {
       : '';
 
   container.innerHTML = `
+    ${findBar}
     ${snapshot}
     <div class="add-card" style="padding:10px 14px">
       <div style="overflow-x:auto">
@@ -68,6 +78,16 @@ export async function renderCohort({ state, container }) {
         </table>
       </div>
     </div>`;
+
+  const findIn = container.querySelector('#cohortStudentFind');
+  if (findIn) {
+    findIn.addEventListener('input', () => {
+      const q = findIn.value.trim().toLowerCase();
+      container.querySelectorAll('tbody tr[data-find]').forEach((tr) => {
+        tr.style.display = !q || (tr.dataset.find || '').includes(q) ? '' : 'none';
+      });
+    });
+  }
 
   if (profs.length) {
     try {

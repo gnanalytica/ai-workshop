@@ -29,6 +29,7 @@
   .kicker-tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(195,255,54,.12);color:var(--accent);border:1px solid rgba(195,255,54,.25)}
   .kicker-tag.ta{background:rgba(120,170,255,.12);color:#7aa7ff;border-color:rgba(120,170,255,.3)}
   .kicker-tag.lead{background:rgba(255,170,90,.14);color:#ffb977;border-color:rgba(255,170,90,.3)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   @media(max-width:800px){
     .add-grid{grid-template-columns:1fr}
     .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -112,6 +113,11 @@
   </div>
 
   <div class="section-head"><h2>Current faculty</h2></div>
+  <div style="margin:0 0 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <label class="sr-only" for="facSearch">Filter faculty list</label>
+    <input type="search" id="facSearch" placeholder="Filter by name, college, cohort, role, user id…" autocomplete="off"
+      style="flex:1;min-width:200px;max-width:480px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -192,13 +198,25 @@
     render();
   }
 
+  function facultyHay(r, cohortMap) {
+    const p = PROFILES.get(r.user_id) || {};
+    const cohort = cohortMap.get(r.cohort_id);
+    return `${p.full_name || ''} ${p.college || ''} ${r.user_id} ${cohort?.name || ''} ${cohort?.slug || ''} ${r.role || ''}`.toLowerCase();
+  }
+
   function render() {
     const cohortMap = new Map(COHORTS.map(c => [c.id, c]));
     if (!ROWS.length) {
       $('rows').innerHTML = `<tr><td colspan="5" class="empty-state">No faculty assigned yet. Add someone above.</td></tr>`;
       return;
     }
-    $('rows').innerHTML = ROWS.map(r => {
+    const fq = ($('facSearch')?.value || '').trim().toLowerCase();
+    const visible = fq ? ROWS.filter(r => facultyHay(r, cohortMap).includes(fq)) : ROWS;
+    if (!visible.length) {
+      $('rows').innerHTML = `<tr><td colspan="5" class="empty-state">No rows match this filter.</td></tr>`;
+      return;
+    }
+    $('rows').innerHTML = visible.map(r => {
       const p = PROFILES.get(r.user_id) || {};
       const cohort = cohortMap.get(r.cohort_id);
       const roleCls = r.role === 'lead' ? 'lead' : (r.role === 'ta' ? 'ta' : '');
@@ -221,6 +239,11 @@
         </tr>
       `;
     }).join('');
+
+    if (!$('facSearch').dataset.wired) {
+      $('facSearch').dataset.wired = '1';
+      $('facSearch').addEventListener('input', () => render());
+    }
 
     $('rows').querySelectorAll('select.role-sel').forEach(sel => {
       sel.addEventListener('change', async () => {

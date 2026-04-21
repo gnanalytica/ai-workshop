@@ -191,6 +191,8 @@
     }));
 
     renderStats();
+    const preq = new URLSearchParams(location.search).get('q');
+    if (preq) $('search').value = preq;
     render();
   }
 
@@ -208,7 +210,7 @@
     const rows = ALL_ROWS.filter(r => {
       if (st && r.status !== st) return false;
       if (!q) return true;
-      const hay = `${r.profile.full_name || ''} ${r.profile.college || ''} ${r.user_id}`.toLowerCase();
+      const hay = `${r.profile.full_name || ''} ${r.profile.college || ''} ${r.profile.year || ''} ${r.profile.phone || ''} ${r.profile.github_username || ''} ${r.profile.email || ''} ${r.user_id}`.toLowerCase();
       return hay.includes(q);
     });
     $('rows').innerHTML = rows.map(r => `

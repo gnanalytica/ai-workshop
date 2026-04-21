@@ -9,8 +9,9 @@ function chip(text, tone='') {
 export function renderStudentRow(profile, signals, { tagMine = false } = {}) {
   const s = signals || {};
   const pct = s.daysTotal ? Math.round((s.daysDone / s.daysTotal) * 100) : 0;
+  const findHay = `${profile.full_name || ''} ${profile.college || ''} ${profile.id || ''}`.toLowerCase();
   return `
-    <tr data-uid="${escape(profile.id)}">
+    <tr data-uid="${escape(profile.id)}" data-find=${JSON.stringify(findHay)}>
       <td>
         <b>${escape(profile.full_name || '—')}</b>
         ${tagMine ? '<span class="kicker-tag" style="margin-left:6px">mine</span>' : ''}

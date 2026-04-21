@@ -215,6 +215,9 @@
           <button class="bulk-btn" id="clearBtn" disabled>Clear day</button>
         </div>
       </div>
+      <label class="sr-only" for="daySearch">Filter days</label>
+      <input type="search" id="daySearch" placeholder="Filter days by number, title, or week…" autocomplete="off"
+        style="width:100%;margin:0 0 12px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13px;outline:none" />
       <div id="daysContainer"></div>
       <div class="small" id="legend">
         <span class="dot-mini on">Q</span> quiz exists &nbsp;·&nbsp; <span class="dot-mini on">A</span> assignment exists
@@ -324,6 +327,10 @@
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-content.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
+    if (!$('daySearch').dataset.wired) {
+      $('daySearch').dataset.wired = '1';
+      $('daySearch').addEventListener('input', filterDayPicker);
+    }
     await loadCohorts();
   }
 
@@ -387,6 +394,26 @@
     $('daysContainer').innerHTML = weeks;
     $('daysContainer').querySelectorAll('[data-day]').forEach(el => {
       el.addEventListener('click', () => selectDay(Number(el.dataset.day)));
+    });
+    filterDayPicker();
+  }
+
+  function filterDayPicker() {
+    const q = ($('daySearch')?.value || '').trim().toLowerCase();
+    const grids = $('daysContainer').querySelectorAll('.days-grid');
+    if (!grids.length) return;
+    grids.forEach((grid) => {
+      const label = grid.previousElementSibling;
+      let any = false;
+      grid.querySelectorAll('.day-cell').forEach((cell) => {
+        const title = (cell.querySelector('.dt')?.textContent || '').toLowerCase();
+        const hay = `${cell.dataset.day || ''} ${title} ${(label && label.classList.contains('week-label') ? label.textContent : '')}`.toLowerCase();
+        const ok = !q || hay.includes(q);
+        cell.style.display = ok ? '' : 'none';
+        if (ok) any = true;
+      });
+      if (label && label.classList.contains('week-label')) label.style.display = any ? '' : 'none';
+      grid.style.display = any ? '' : 'none';
     });
   }
 

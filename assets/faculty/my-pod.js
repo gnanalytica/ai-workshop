@@ -37,7 +37,13 @@ export async function renderMyPod({ state, container }) {
   ]);
   const profById = new Map((profs || []).map(p => [p.id, p]));
 
-  container.innerHTML = pods.map(p => {
+  const findBar = `<div class="add-card" style="padding:10px 14px;margin-bottom:14px">
+    <label class="sr-only" for="myPodStudentFind">Filter students</label>
+    <input type="search" id="myPodStudentFind" placeholder="Filter students across your pods (name, college, id)…" autocomplete="off"
+      style="width:100%;max-width:480px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13px;outline:none" />
+  </div>`;
+
+  container.innerHTML = findBar + pods.map(p => {
     const uids = byPod.get(p.pod_id) || [];
     const rows = uids.map(uid => renderStudentRow(profById.get(uid) || { id: uid }, signals.get(uid), { tagMine: true })).join('');
     const primaryTag = p.is_primary ? '<span class="kicker-tag" style="margin-left:8px">primary</span>' : '';
@@ -52,6 +58,24 @@ export async function renderMyPod({ state, container }) {
         </div>
       </details>`;
   }).join('');
+
+  const findIn = container.querySelector('#myPodStudentFind');
+  if (findIn) {
+    findIn.addEventListener('input', () => {
+      const q = findIn.value.trim().toLowerCase();
+      container.querySelectorAll('tbody tr[data-find]').forEach((tr) => {
+        tr.style.display = !q || (tr.dataset.find || '').includes(q) ? '' : 'none';
+      });
+      container.querySelectorAll('details').forEach((det) => {
+        if (!q) {
+          det.style.display = '';
+          return;
+        }
+        const any = [...det.querySelectorAll('tbody tr[data-find]')].some((tr) => tr.style.display !== 'none');
+        det.style.display = any ? '' : 'none';
+      });
+    });
+  }
 
   container.querySelectorAll('button[data-open-drawer]').forEach(b => {
     b.addEventListener('click', () => openDrawer(b.dataset.openDrawer, { cohortId: state.cohortId }));

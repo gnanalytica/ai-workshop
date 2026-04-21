@@ -31,6 +31,7 @@
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Search</div>
     <div style="display:flex;gap:14px;align-items:center">
+      <a href="find.html" class="muted" style="font-size:13px">Find</a>
       <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
     </div>
@@ -41,7 +42,7 @@
   <div style="margin-bottom:14px">
     <div class="kicker">Find anything</div>
     <h1 style="margin:4px 0 4px">Search lessons</h1>
-    <p class="muted" style="font-size:14px;margin:0">All 30 days, searched locally in your browser.</p>
+    <p class="muted" style="font-size:14px;margin:0">All 30 days, searched locally in your browser. For shortcuts to classmates, admin tools, and title-only matches, use <a href="find.html" style="color:var(--accent)">Find</a>.</p>
   </div>
 
   <div class="srch-in">
@@ -176,6 +177,10 @@
     await loadAll();
     render($('q').value);
   })();
+</script>
+<script type="module">
+  import { prependNavFind } from './assets/nav-search.js';
+  prependNavFind();
 </script>
 </body>
 </html>
