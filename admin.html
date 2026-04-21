@@ -270,7 +270,13 @@
 
     const { data: regs } = await supabase.from('registrations').select('*').eq('cohort_id', cohort.id).order('created_at', { ascending: false });
     const userIds = (regs || []).map(r => r.user_id);
-    const { data: profiles } = await supabase.from('profiles').select('*').in('id', userIds.length ? userIds : ['00000000-0000-0000-0000-000000000000']);
+    const { data: profiles, error: profileErr } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', userIds.length ? userIds : ['00000000-0000-0000-0000-000000000000']);
+    if (profileErr) {
+      toast('Could not load profiles: ' + profileErr.message, { error: true });
+    }
     const { data: progressRows } = await supabase.from('lab_progress').select('user_id,day_number').eq('cohort_id', cohort.id);
 
     const profileMap = new Map((profiles || []).map(p => [p.id, p]));
