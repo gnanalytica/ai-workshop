@@ -243,6 +243,20 @@
         const id = btn.dataset.remove;
         if (!confirm('Remove this faculty assignment?')) return;
         btn.disabled = true;
+        // Guardrail: block removal if the faculty still owns pods in this cohort.
+        const row = ROWS.find(x => x.id === id);
+        if (row) {
+          const { data: ownedPods } = await supabase
+            .from('pod_faculty')
+            .select('pod_id,cohort_pods!inner(name,cohort_id)')
+            .eq('faculty_user_id', row.user_id)
+            .eq('cohort_pods.cohort_id', row.cohort_id);
+          if (ownedPods?.length) {
+            toast(`Cannot remove — still on pods: ${ownedPods.map(o=>o.cohort_pods.name).join(', ')}. Handoff first.`, 'err');
+            btn.disabled = false;
+            return;
+          }
+        }
         const { error } = await supabase.from('cohort_faculty').delete().eq('id', id);
         if (error) { toast(error.message, 'err'); btn.disabled = false; return; }
         ROWS = ROWS.filter(r => r.id !== id);

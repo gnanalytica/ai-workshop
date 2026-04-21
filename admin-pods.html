@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pods · Admin · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;gap:12px;flex-wrap:wrap}
+  .section-head h2{margin:0}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  .add-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-sm.danger:hover{border-color:#ff6b6b;color:#ffa0a0}
+  .cta{padding:10px 16px;background:var(--accent);color:#0b0b10;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .toast.err{border-color:#ff6b6b;color:#ffa0a0}
+  .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:13.5px}
+  select,input[type=text],input[type=file]{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+  .chip{display:inline-flex;gap:4px;align-items:center;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(195,255,54,.06);font-size:12px}
+  .chip .star{background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;padding:0}
+  .chip .x{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0 0 0 2px}
+  .chip .x:hover{color:#ffa0a0}
+  dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:520px;width:90%}
+  dialog::backdrop{background:rgba(0,0,0,.6)}
+  dialog h3{margin:0 0 12px;font-size:16px}
+  dialog .row{margin-bottom:10px}
+  dialog label{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+  dialog input, dialog select, dialog textarea{width:100%;box-sizing:border-box}
+  @media(max-width:900px){.pods-grid{grid-template-columns:1fr !important}}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only super-admins can manage pods.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Admin only</h2>
+      <p>Pod management is restricted to super-admins. <a href="admin.html">Back to dashboard</a>.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+  <div style="margin:24px 0 8px">
+    <div class="kicker">Platform</div>
+    <h1>Pods</h1>
+    <p class="muted" style="font-size:14px;margin:6px 0 0">Group students within a cohort and attach mentor faculty. Faculty get a pod-scoped landing page.</p>
+  </div>
+
+  <div class="section-head">
+    <h2>Cohort</h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <select id="cohortSel"></select>
+      <button class="btn-sm" id="csvBtn">Import CSV…</button>
+      <button class="cta" id="newPodBtn">+ New pod</button>
+    </div>
+  </div>
+
+  <div class="pods-grid" style="display:grid;grid-template-columns:320px 1fr;gap:16px">
+    <section id="unassignedPanel" class="table-wrap"></section>
+    <section id="podsPanel" style="display:grid;gap:12px"></section>
+  </div>
+</main>
+
+<dialog id="newPodDialog">
+  <h3>New pod</h3>
+  <div class="row"><label>Name</label><input type="text" id="newPodName" placeholder="Pod A — Priya's group" /></div>
+  <div class="row"><label>Primary faculty</label><select id="newPodPrimary"></select></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+    <button class="btn-sm" data-close="newPodDialog">Cancel</button>
+    <button class="cta" id="newPodSubmit">Create</button>
+  </div>
+</dialog>
+
+<dialog id="handoffDialog">
+  <h3>Handoff pod</h3>
+  <input type="hidden" id="handoffPodId" />
+  <div class="row"><label>New primary faculty</label><select id="handoffNewPrimary"></select></div>
+  <div class="row"><label>Note (optional)</label><textarea id="handoffNote" rows="3"></textarea></div>
+  <div class="row">
+    <label style="display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink)">
+      <input type="checkbox" id="handoffRemoveOld" style="width:auto" /> Remove old primary from pod after handoff
+    </label>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+    <button class="btn-sm" data-close="handoffDialog">Cancel</button>
+    <button class="cta" id="handoffSubmit">Handoff</button>
+  </div>
+</dialog>
+
+<dialog id="csvDialog">
+  <h3>CSV import</h3>
+  <p class="muted" style="font-size:12.5px;margin:0 0 10px">Expected columns: <code>student_email,pod_name</code>. Missing pods are auto-created (no faculty attached).</p>
+  <div class="row"><input type="file" id="csvFile" accept=".csv,text/csv" /></div>
+  <div id="csvPreview" style="max-height:300px;overflow:auto;font-size:12px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+    <button class="btn-sm" data-close="csvDialog">Cancel</button>
+    <button class="cta" id="csvCommit" disabled>Commit</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav } from './assets/admin-nav.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  import { loadPodsForCohort, loadEnrolledStudents, loadCohortFaculty, callPodFacultyEvent, parsePodCsv } from './assets/pods.js';
+  wireThemeToggle();
+  const $ = (id) => document.getElementById(id);
+
+  let COHORTS = [];
+  let STATE = {
+    cohortId: null, me: null,
+    pods: [], students: [], faculty: [],
+    selectedUnassigned: new Set(),
+    selectedByPod: new Map(),
+  };
+
+  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function toast(msg, kind='ok') { const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (kind==='err'?' err':''); setTimeout(()=>{ t.className='toast'; }, 2800); }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    await checkAdmin(session.user);
+  }
+
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('loginBtn'); const msg = $('loginMsg');
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+    const email = new FormData(e.target).get('email');
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
+    else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
+  });
+  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
+    if (event === 'SIGNED_OUT') show('gate');
+  });
+
+  async function checkAdmin(user) {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (!profile?.is_admin) return show('denied');
+    STATE.me = user.id;
+    show('panel');
+    $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: 'admin' });
+    await loadCohorts();
+    wireHeader();
+    wireDialogs();
+    if (STATE.cohortId) await refresh();
+  }
+
+  async function loadCohorts() {
+    const { data } = await supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    COHORTS = data || [];
+    $('cohortSel').innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
+    STATE.cohortId = COHORTS[0]?.id || null;
+    $('cohortSel').addEventListener('change', async () => {
+      STATE.cohortId = $('cohortSel').value;
+      STATE.selectedUnassigned.clear();
+      STATE.selectedByPod.clear();
+      await refresh();
+    });
+  }
+
+  function wireHeader() {
+    $('newPodBtn').addEventListener('click', () => openNewPod());
+    $('csvBtn').addEventListener('click', () => openCsv());
+  }
+
+  function wireDialogs() {
+    document.querySelectorAll('dialog button[data-close]').forEach(b => {
+      b.addEventListener('click', () => { $(b.dataset.close).close(); });
+    });
+    $('newPodSubmit').addEventListener('click', submitNewPod);
+    $('handoffSubmit').addEventListener('click', submitHandoff);
+    $('csvFile').addEventListener('change', handleCsvFile);
+    $('csvCommit').addEventListener('click', commitCsv);
+  }
+
+  async function refresh() {
+    if (!STATE.cohortId) return;
+    try {
+      const [pods, students, faculty] = await Promise.all([
+        loadPodsForCohort(STATE.cohortId),
+        loadEnrolledStudents(STATE.cohortId),
+        loadCohortFaculty(STATE.cohortId),
+      ]);
+      STATE.pods = pods; STATE.students = students; STATE.faculty = faculty;
+      renderUnassigned();
+      renderPods();
+    } catch (e) {
+      toast(e.message || 'Load failed', 'err');
+    }
+  }
+
+  function renderUnassigned() {
+    const assigned = new Set(STATE.pods.flatMap(p => p.members.map(m => m.student_user_id)));
+    const unassigned = STATE.students.filter(s => !assigned.has(s.id));
+    const html = `
+      <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+        <b>Unassigned <span class="muted" style="font-weight:400">(${unassigned.length})</span></b>
+        <div style="display:flex;gap:6px">
+          <button class="btn-sm" id="selAllU">All</button>
+          <button class="btn-sm" id="selNoneU">None</button>
+        </div>
+      </div>
+      <div style="padding:10px 14px">
+        <input id="uSearch" placeholder="Search…" style="width:100%" />
+      </div>
+      <ul id="uList" style="list-style:none;padding:0 8px 10px;margin:0;max-height:60vh;overflow:auto">
+        ${unassigned.map(s => `
+          <li style="display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:8px" data-name="${esc((s.full_name||'').toLowerCase())}">
+            <input type="checkbox" data-uid="${esc(s.id)}" ${STATE.selectedUnassigned.has(s.id)?'checked':''} />
+            <div><b>${esc(s.full_name||'—')}</b><div class="muted" style="font-size:11.5px">${esc(s.college||'')}</div></div>
+          </li>`).join('')}
+      </ul>
+      ${unassigned.length && STATE.pods.length ? `
+        <div style="padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center">
+          <select id="uAssignTo"><option value="">Assign selected to…</option>${STATE.pods.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select>
+          <button class="cta" id="uAssignBtn">Assign</button>
+        </div>` : ''}`;
+    $('unassignedPanel').innerHTML = html;
+    wireUnassigned();
+  }
+
+  function wireUnassigned() {
+    const list = $('uList'); if (!list) return;
+    list.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) STATE.selectedUnassigned.add(cb.dataset.uid);
+        else STATE.selectedUnassigned.delete(cb.dataset.uid);
+      });
+    });
+    $('selAllU')?.addEventListener('click', () => {
+      list.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = true; STATE.selectedUnassigned.add(cb.dataset.uid); });
+    });
+    $('selNoneU')?.addEventListener('click', () => {
+      list.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = false; });
+      STATE.selectedUnassigned.clear();
+    });
+    $('uSearch')?.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      list.querySelectorAll('li').forEach(li => {
+        li.style.display = !q || li.dataset.name.includes(q) ? '' : 'none';
+      });
+    });
+    $('uAssignBtn')?.addEventListener('click', async () => {
+      const targetPodId = $('uAssignTo').value;
+      if (!targetPodId) return toast('Pick a pod.', 'err');
+      if (!STATE.selectedUnassigned.size) return toast('No students selected.', 'err');
+      const rows = Array.from(STATE.selectedUnassigned).map(uid => ({
+        pod_id: targetPodId, student_user_id: uid, cohort_id: STATE.cohortId, assigned_by: STATE.me,
+      }));
+      const { error } = await supabase.from('pod_members').insert(rows);
+      if (error) return toast(error.message, 'err');
+      toast(`Assigned ${rows.length}`);
+      STATE.selectedUnassigned.clear();
+      await refresh();
+    });
+  }
+
+  function renderPods() {
+    if (!STATE.pods.length) {
+      $('podsPanel').innerHTML = `<div class="empty-state" style="border:1px dashed var(--line);border-radius:12px">No pods yet — click "+ New pod".</div>`;
+      return;
+    }
+    const profById = new Map(STATE.students.map(s => [s.id, s]));
+    const facById = new Map(STATE.faculty.map(f => [f.user_id, f.profile]));
+
+    $('podsPanel').innerHTML = STATE.pods.map(pod => {
+      const chips = pod.faculty.map(f => {
+        const prof = facById.get(f.faculty_user_id) || {};
+        const star = f.is_primary ? '★' : '☆';
+        return `<span class="chip" data-fid="${esc(f.faculty_user_id)}" title="${f.is_primary?'primary':'click star to promote'}">
+          <button class="star" data-promote="${esc(f.faculty_user_id)}" data-pod="${esc(pod.id)}">${star}</button>
+          ${esc(prof.full_name || f.faculty_user_id)}
+          <button class="x" data-remove-fac="${esc(f.faculty_user_id)}" data-pod="${esc(pod.id)}">×</button>
+        </span>`;
+      }).join('');
+
+      const members = pod.members.map(m => {
+        const p = profById.get(m.student_user_id) || {};
+        return `<li style="display:flex;gap:8px;align-items:center;padding:6px 0">
+          <input type="checkbox" data-pid="${esc(pod.id)}" data-uid="${esc(m.student_user_id)}" />
+          <b>${esc(p.full_name || m.student_user_id)}</b>
+          <span class="muted" style="font-size:11.5px">${esc(p.college||'')}</span>
+          <button class="btn-sm danger" style="margin-left:auto" data-unassign-one="${esc(m.student_user_id)}" data-pod="${esc(pod.id)}">×</button>
+        </li>`;
+      }).join('');
+
+      const availableFac = STATE.faculty.filter(f => !pod.faculty.some(pf => pf.faculty_user_id === f.user_id));
+
+      return `
+        <article class="add-card" data-pod="${esc(pod.id)}">
+          <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+            <input class="pod-name" data-pod="${esc(pod.id)}" value="${esc(pod.name)}" style="font-weight:700;font-size:15px;border:none;background:transparent;color:var(--ink);outline:none;flex:1;min-width:120px" />
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn-sm" data-handoff="${esc(pod.id)}">Handoff…</button>
+              <button class="btn-sm" data-clear="${esc(pod.id)}">Clear members</button>
+              <button class="btn-sm danger" data-delete-pod="${esc(pod.id)}">Delete</button>
+            </div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            ${chips}
+            ${availableFac.length ? `<select data-add-fac="${esc(pod.id)}"><option value="">+ add faculty</option>${availableFac.map(f=>`<option value="${esc(f.user_id)}">${esc(f.profile.full_name||f.user_id)}</option>`).join('')}</select>` : ''}
+          </div>
+          <ul style="list-style:none;padding:0;margin:10px 0 0">${members || '<li class="muted" style="padding:6px 0">No students.</li>'}</ul>
+          ${pod.members.length ? `
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <select data-move="${esc(pod.id)}"><option value="">Move selected to…</option>${STATE.pods.filter(p=>p.id!==pod.id).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select>
+              <button class="btn-sm" data-bulk-move="${esc(pod.id)}">Move</button>
+              <button class="btn-sm danger" data-bulk-unassign="${esc(pod.id)}">Unassign selected</button>
+            </div>` : ''}
+        </article>`;
+    }).join('');
+    wirePods();
+  }
+
+  function podSelection(podId) {
+    if (!STATE.selectedByPod.has(podId)) STATE.selectedByPod.set(podId, new Set());
+    return STATE.selectedByPod.get(podId);
+  }
+
+  function wirePods() {
+    document.querySelectorAll('#podsPanel article').forEach(card => {
+      const podId = card.dataset.pod;
+
+      card.querySelectorAll('input[type=checkbox][data-uid]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const sel = podSelection(podId);
+          if (cb.checked) sel.add(cb.dataset.uid); else sel.delete(cb.dataset.uid);
+        });
+      });
+
+      card.querySelector('input.pod-name')?.addEventListener('change', async (e) => {
+        const name = e.target.value.trim();
+        if (!name) return;
+        const { error } = await supabase.from('cohort_pods').update({ name }).eq('id', podId);
+        if (error) return toast(error.message, 'err');
+        toast('Renamed'); await refresh();
+      });
+
+      card.querySelector('select[data-add-fac]')?.addEventListener('change', async (e) => {
+        const facId = e.target.value; if (!facId) return;
+        try { await callPodFacultyEvent(podId, 'added', null, facId, null); toast('Faculty added'); }
+        catch (err) { toast(err.message, 'err'); }
+        await refresh();
+      });
+
+      card.querySelectorAll('button[data-promote]').forEach(b => {
+        b.addEventListener('click', async () => {
+          try { await callPodFacultyEvent(podId, 'primary_transfer', null, b.dataset.promote, null); toast('Primary set'); }
+          catch (err) { toast(err.message, 'err'); }
+          await refresh();
+        });
+      });
+
+      card.querySelectorAll('button[data-remove-fac]').forEach(b => {
+        b.addEventListener('click', async () => {
+          if (!confirm('Remove this faculty from the pod?')) return;
+          try { await callPodFacultyEvent(podId, 'removed', b.dataset.removeFac, null, null); toast('Faculty removed'); }
+          catch (err) { toast(err.message, 'err'); }
+          await refresh();
+        });
+      });
+
+      card.querySelectorAll('button[data-unassign-one]').forEach(b => {
+        b.addEventListener('click', async () => {
+          const { error } = await supabase.from('pod_members').delete()
+            .eq('pod_id', podId).eq('student_user_id', b.dataset.unassignOne);
+          if (error) return toast(error.message, 'err');
+          toast('Unassigned'); await refresh();
+        });
+      });
+
+      card.querySelector('button[data-bulk-move]')?.addEventListener('click', async () => {
+        const sel = card.querySelector('select[data-move]');
+        const target = sel.value; if (!target) return toast('Pick a destination pod', 'err');
+        const uids = Array.from(podSelection(podId));
+        if (!uids.length) return toast('No students selected', 'err');
+        const { error } = await supabase.from('pod_members')
+          .update({ pod_id: target })
+          .eq('pod_id', podId).in('student_user_id', uids);
+        if (error) return toast(error.message, 'err');
+        toast(`Moved ${uids.length}`); STATE.selectedByPod.delete(podId); await refresh();
+      });
+
+      card.querySelector('button[data-bulk-unassign]')?.addEventListener('click', async () => {
+        const uids = Array.from(podSelection(podId));
+        if (!uids.length) return toast('No students selected', 'err');
+        const { error } = await supabase.from('pod_members').delete()
+          .eq('pod_id', podId).in('student_user_id', uids);
+        if (error) return toast(error.message, 'err');
+        toast(`Unassigned ${uids.length}`); STATE.selectedByPod.delete(podId); await refresh();
+      });
+
+      card.querySelector('button[data-clear]')?.addEventListener('click', async () => {
+        if (!confirm('Remove all members from this pod?')) return;
+        const { error } = await supabase.from('pod_members').delete().eq('pod_id', podId);
+        if (error) return toast(error.message, 'err');
+        toast('Pod cleared'); await refresh();
+      });
+
+      card.querySelector('button[data-delete-pod]')?.addEventListener('click', async () => {
+        if (!confirm('Delete this pod? Members return to Unassigned.')) return;
+        // Clear members first so they go back to unassigned (also cascaded by FK).
+        await supabase.from('pod_members').delete().eq('pod_id', podId);
+        const { error } = await supabase.from('cohort_pods').delete().eq('id', podId);
+        if (error) return toast(error.message, 'err');
+        toast('Pod deleted'); await refresh();
+      });
+
+      card.querySelector('button[data-handoff]')?.addEventListener('click', () => openHandoff(podId));
+    });
+  }
+
+  function openNewPod() {
+    if (!STATE.cohortId) return toast('Pick a cohort first', 'err');
+    if (!STATE.faculty.length) return toast('Add cohort faculty first in admin-faculty.', 'err');
+    $('newPodName').value = '';
+    $('newPodPrimary').innerHTML = STATE.faculty.map(f => `<option value="${esc(f.user_id)}">${esc(f.profile.full_name || f.user_id)}</option>`).join('');
+    $('newPodDialog').showModal();
+  }
+
+  async function submitNewPod() {
+    const name = $('newPodName').value.trim();
+    const primaryFacultyId = $('newPodPrimary').value;
+    if (!name) return toast('Name is required', 'err');
+    if (!primaryFacultyId) return toast('Pick a primary faculty', 'err');
+    try {
+      const { data: pod, error } = await supabase.from('cohort_pods').insert({
+        cohort_id: STATE.cohortId, name, created_by: STATE.me,
+      }).select('id').single();
+      if (error) throw error;
+      await callPodFacultyEvent(pod.id, 'added', null, primaryFacultyId, null);
+      await callPodFacultyEvent(pod.id, 'primary_transfer', null, primaryFacultyId, null);
+      $('newPodDialog').close();
+      toast('Pod created');
+      await refresh();
+    } catch (e) { toast(e.message, 'err'); }
+  }
+
+  function openHandoff(podId) {
+    const pod = STATE.pods.find(p => p.id === podId); if (!pod) return;
+    const currentPrimary = pod.faculty.find(f => f.is_primary)?.faculty_user_id || null;
+    const candidates = STATE.faculty.filter(f => f.user_id !== currentPrimary);
+    $('handoffPodId').value = podId;
+    $('handoffNewPrimary').innerHTML = candidates.map(f => `<option value="${esc(f.user_id)}">${esc(f.profile.full_name || f.user_id)}</option>`).join('');
+    $('handoffNote').value = '';
+    $('handoffRemoveOld').checked = false;
+    $('handoffDialog').showModal();
+  }
+
+  async function submitHandoff() {
+    const podId = $('handoffPodId').value;
+    const newPrimary = $('handoffNewPrimary').value;
+    const note = $('handoffNote').value.trim() || null;
+    const removeOld = $('handoffRemoveOld').checked;
+    if (!podId || !newPrimary) return toast('Pick a new primary', 'err');
+    const pod = STATE.pods.find(p => p.id === podId);
+    const oldPrimary = pod?.faculty.find(f => f.is_primary)?.faculty_user_id || null;
+    try {
+      await callPodFacultyEvent(podId, 'handoff', oldPrimary, newPrimary, note);
+      if (removeOld && oldPrimary && oldPrimary !== newPrimary) {
+        await callPodFacultyEvent(podId, 'removed', oldPrimary, null, note);
+      }
+      $('handoffDialog').close();
+      toast('Handoff complete');
+      await refresh();
+    } catch (e) { toast(e.message, 'err'); }
+  }
+
+  // ===== CSV import =====
+  let CSV_PREVIEW = null; // { rows: [{email,pod,userId,status}], podsToCreate: Set<string> }
+
+  function openCsv() {
+    if (!STATE.cohortId) return toast('Pick a cohort first', 'err');
+    $('csvFile').value = '';
+    $('csvPreview').innerHTML = '';
+    $('csvCommit').disabled = true;
+    CSV_PREVIEW = null;
+    $('csvDialog').showModal();
+  }
+
+  async function handleCsvFile(e) {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = parsePodCsv(text);
+      // Map emails → user_id using admin_find_user_by_email
+      const enrolledById = new Map(STATE.students.map(s => [s.id, s]));
+      const assignedNow = new Set(STATE.pods.flatMap(p => p.members.map(m => m.student_user_id)));
+      const podByName = new Map(STATE.pods.map(p => [p.name, p]));
+
+      const rows = [];
+      for (const r of parsed) {
+        const { data: uid } = await supabase.rpc('admin_find_user_by_email', { target_email: r.email });
+        let status = 'ok';
+        if (!uid) status = 'unknown_email';
+        else if (!enrolledById.has(uid)) status = 'not_enrolled';
+        else if (assignedNow.has(uid)) status = 'already_in_pod';
+        rows.push({ email: r.email, pod: r.pod, userId: uid || null, status });
+      }
+      const podsToCreate = new Set(rows.filter(r => r.status === 'ok' && !podByName.has(r.pod)).map(r => r.pod));
+      CSV_PREVIEW = { rows, podsToCreate };
+      $('csvPreview').innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="text-align:left;border-bottom:1px solid var(--line)"><th>Email</th><th>Pod</th><th>Status</th></tr></thead>
+          <tbody>${rows.map(r => `<tr><td>${esc(r.email)}</td><td>${esc(r.pod)}${podsToCreate.has(r.pod)?' <em class="muted">(will create)</em>':''}</td><td style="color:${r.status==='ok'?'var(--accent)':'#ffa0a0'}">${r.status}</td></tr>`).join('')}</tbody>
+        </table>`;
+      $('csvCommit').disabled = rows.filter(r => r.status === 'ok').length === 0;
+    } catch (err) {
+      toast(err.message, 'err');
+      $('csvPreview').innerHTML = `<div style="color:#ffa0a0">${esc(err.message)}</div>`;
+    }
+  }
+
+  async function commitCsv() {
+    if (!CSV_PREVIEW) return;
+    const { rows, podsToCreate } = CSV_PREVIEW;
+    try {
+      // Create missing pods first (no faculty — admin attaches later).
+      const podIdByName = new Map(STATE.pods.map(p => [p.name, p.id]));
+      for (const name of podsToCreate) {
+        const { data: pod, error } = await supabase.from('cohort_pods').insert({
+          cohort_id: STATE.cohortId, name, created_by: STATE.me,
+        }).select('id').single();
+        if (error) throw error;
+        podIdByName.set(name, pod.id);
+      }
+      // Insert pod_members for ok rows
+      const ok = rows.filter(r => r.status === 'ok');
+      const inserts = ok.map(r => ({
+        pod_id: podIdByName.get(r.pod),
+        student_user_id: r.userId,
+        cohort_id: STATE.cohortId,
+        assigned_by: STATE.me,
+      }));
+      if (inserts.length) {
+        const { error } = await supabase.from('pod_members').insert(inserts);
+        if (error) throw error;
+      }
+      $('csvDialog').close();
+      toast(`Imported ${inserts.length} · created ${podsToCreate.size} pod(s)`);
+      await refresh();
+    } catch (e) { toast(e.message, 'err'); }
+  }
+
+  init();
+</script>
+</body>
+</html>
