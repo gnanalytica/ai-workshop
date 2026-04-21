@@ -264,8 +264,16 @@
     ROWS = data || [];
     const userIds = [...new Set(ROWS.map(r => r.user_id))];
     if (userIds.length) {
-      const { data: profs } = await supabase.from('profiles').select('id,full_name,college,email').in('id', userIds);
-      PROFILES = new Map((profs || []).map(p => [p.id, p]));
+      const { data: profs, error: pe } = await supabase
+        .from('profiles')
+        .select('id,full_name,college,email')
+        .in('id', userIds);
+      if (pe) {
+        toast('Could not load names: ' + pe.message + ' — apply migration 0510_profiles_admin_read_email.sql if email column or admin RLS is missing.', 'err');
+        PROFILES = new Map();
+      } else {
+        PROFILES = new Map((profs || []).map(p => [p.id, p]));
+      }
     } else {
       PROFILES = new Map();
     }
