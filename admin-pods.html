@@ -54,7 +54,7 @@
   <div class="gate-card">
     <div class="kicker">Admin login</div>
     <h2>Sign in</h2>
-    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only super-admins can manage pods.</p>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Super-admins and cohort faculty can open this page; faculty can assign students to existing pods.</p>
     <form id="loginForm">
       <div class="field"><label>Email</label><input type="email" name="email" required /></div>
       <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
@@ -66,8 +66,8 @@
 <div class="gate" id="denied" style="display:none">
   <div class="gate-card">
     <div class="denied">
-      <h2 style="text-align:center">Admin only</h2>
-      <p>Pod management is restricted to super-admins. <a href="admin.html">Back to dashboard</a>.</p>
+      <h2 style="text-align:center">Not available</h2>
+      <p>You need cohort faculty access or a super-admin account to manage pods. <a href="faculty.html">Faculty home</a> · <a href="admin-home.html">Admin home</a>.</p>
       <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
     </div>
   </div>
@@ -78,7 +78,7 @@
   <div style="margin:24px 0 8px">
     <div class="kicker">Platform</div>
     <h1>Pods</h1>
-    <p class="muted" style="font-size:14px;margin:6px 0 0">Group students within a cohort and attach mentor faculty. Faculty get a pod-scoped landing page.</p>
+    <p class="muted" style="font-size:14px;margin:6px 0 0">Group students within a cohort and attach mentor faculty. <span id="podsRoleHint" class="muted"></span></p>
   </div>
 
   <div class="section-head">
@@ -138,12 +138,14 @@
 <script type="module">
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { loadPodsForCohort, loadEnrolledStudents, loadCohortFaculty, callPodFacultyEvent, parsePodCsv } from './assets/pods.js';
   import { confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
 
+  let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
   let COHORTS = [];
   let STATE = {
     cohortId: null, me: null,
@@ -178,11 +180,22 @@
   });
 
   async function checkAdmin(user) {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return show('denied');
+    const r = await checkAdminOrFaculty(user);
+    IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
+    if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     STATE.me = user.id;
     show('panel');
-    $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: 'admin' });
+    $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
+    const hint = $('podsRoleHint');
+    if (hint) {
+      hint.textContent = IS_ADMIN
+        ? 'Super-admins can create pods, import CSV, and delete pods. Cohort faculty can assign students and edit pod names.'
+        : 'As cohort faculty you can assign students to pods, move them, and update pod names. Ask an admin to create new pods or run bulk CSV import.';
+    }
+    const csvBtn = $('csvBtn'); const newBtn = $('newPodBtn');
+    if (csvBtn) csvBtn.style.display = IS_ADMIN ? '' : 'none';
+    if (newBtn) newBtn.style.display = IS_ADMIN ? '' : 'none';
     await loadCohorts();
     wireHeader();
     wireDialogs();
@@ -190,10 +203,17 @@
   }
 
   async function loadCohorts() {
-    const { data } = await supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    if (!IS_ADMIN) q = q.in('id', FACULTY_COHORT_IDS.length ? FACULTY_COHORT_IDS : ['00000000-0000-0000-0000-000000000000']);
+    const { data } = await q;
     COHORTS = data || [];
     $('cohortSel').innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
     STATE.cohortId = COHORTS[0]?.id || null;
+    if (!COHORTS.length) {
+      $('unassignedPanel').innerHTML = `<div class="empty-state" style="padding:20px">No cohorts available for your account — ask an admin.</div>`;
+      $('podsPanel').innerHTML = '';
+      return;
+    }
     $('cohortSel').addEventListener('change', async () => {
       STATE.cohortId = $('cohortSel').value;
       STATE.selectedUnassigned.clear();
@@ -301,7 +321,10 @@
 
   function renderPods() {
     if (!STATE.pods.length) {
-      $('podsPanel').innerHTML = `<div class="empty-state" style="border:1px dashed var(--line);border-radius:12px">No pods yet — click "+ New pod".</div>`;
+      const emptyHint = IS_ADMIN
+        ? 'No pods yet — click "+ New pod".'
+        : 'No pods yet — ask a super-admin to create a pod and assign you (or another faculty member) as primary on it.';
+      $('podsPanel').innerHTML = `<div class="empty-state" style="border:1px dashed var(--line);border-radius:12px">${emptyHint}</div>`;
       return;
     }
     const profById = new Map(STATE.students.map(s => [s.id, s]));
@@ -337,7 +360,7 @@
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="btn-sm" data-handoff="${esc(pod.id)}">Handoff…</button>
               <button class="btn-sm" data-clear="${esc(pod.id)}">Clear members</button>
-              <button class="btn-sm danger" data-delete-pod="${esc(pod.id)}">Delete</button>
+              ${IS_ADMIN ? `<button class="btn-sm danger" data-delete-pod="${esc(pod.id)}">Delete</button>` : ''}
             </div>
           </div>
           <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">

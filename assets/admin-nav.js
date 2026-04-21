@@ -13,7 +13,7 @@ export const ADMIN_PAGES = [
   { href: 'admin-announcements.html', label: 'Announcements' },
   { href: 'admin-student.html',    label: 'Student work' },
   { href: 'admin-faculty.html',    label: 'Faculty', adminOnly: true },
-  { href: 'admin-pods.html',       label: 'Pods',    adminOnly: true },
+  { href: 'admin-pods.html',       label: 'Pods' },
 ];
 
 export function renderAdminNav(active, opts = {}) {

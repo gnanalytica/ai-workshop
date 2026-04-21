@@ -38,6 +38,7 @@ export async function renderMyPod({ state, container }) {
   const profById = new Map((profs || []).map(p => [p.id, p]));
 
   const findBar = `<div class="add-card" style="padding:10px 14px;margin-bottom:14px">
+    <p class="muted" style="font-size:12.5px;margin:0 0 8px">Assign or move students in <a href="admin-pods.html" style="color:var(--accent)">Pods</a> (same cohort).</p>
     <label class="sr-only" for="myPodStudentFind">Filter students</label>
     <input type="search" id="myPodStudentFind" placeholder="Filter students across your pods (name, college, id)…" autocomplete="off"
       style="width:100%;max-width:480px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13px;outline:none" />
