@@ -9,11 +9,46 @@ tools_hands_on: [{"name": "Otter.ai", "url": "https://otter.ai"}]
 tools_demo: [{"name": "Claude", "url": "https://claude.ai"}]
 tools_reference: [{"name": "The Mom Test (book) — Rob Fitzpatrick", "url": "https://www.momtestbook.com"}, {"name": "Teresa Torres — Continuous Discovery Habits", "url": "https://www.producttalk.org"}]
 resources: [{"name": "The Mom Test — Rob Fitzpatrick (book)", "url": "https://www.momtestbook.com"}, {"name": "Jobs to be Done — Clayton Christensen intro", "url": "https://hbr.org/2016/09/know-your-customers-jobs-to-be-done"}, {"name": "Continuous Discovery Habits — Teresa Torres (book)", "url": "https://www.producttalk.org/2021/05/continuous-discovery-habits-now-available/"}]
+objective:
+  topic: "User interviews done properly — The Mom Test, JTBD, and listening for what isn't said"
+  tools: ["Otter.ai", "Claude"]
+  end_goal: "Run a paired classmate interview in class + plan two real candidate-user interviews before Day 15. Submit Otter transcript, 3 JTBD hypotheses, and 3 contradictions to Day 11 beliefs."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Most founders' user interviews are a slow way to hear themselves think. They ask leading questions, get polite lies, and walk away more confident and less informed. Today you learn the opposite: how to ask so badly about your idea that the user cannot help telling the truth. You will also plan and execute real interviews before Day 15.
+**Topic.** Ask so badly about your idea that the user cannot help telling the truth — Mom Test rules, JTBD framing, and the discipline of listening for what isn't said.
+
+**Tools you'll use.** Otter.ai (record + transcribe), Claude (transcript synthesis via today's Prompt of the Day).
+
+**End goal.** By the end of today you will have:
+1. A paired 8-minute classmate drill with the leading-question count verified.
+2. One full 20-minute interview recorded, transcribed, and synthesised into 3 JTBD hypotheses.
+3. 2 real candidate users booked for 20-minute slots before Day 15.
+
+> *Why this matters:* Day 15 locks your spec. Spec without Mom-Test-grade evidence is just your Day 11 assumptions in a new font.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 12) you drew a 5-column FigJam board — Empathize, Define, Ideate, Prototype, Test — and wrote a POV statement in the format *[user] needs [verb-based need] because [surprising insight]*. If your "surprising insight" slot read "I have not yet earned this insight," today is when you earn it. The 3 unverified Empathize assumptions you brought to Day 12? Those are your hidden interview agenda — you're testing them via past-tense questions, never pitching them. The POV statement guides your questions but **never gets pitched** during an interview.
+
+### Setup (required)
+
+- [ ] Create a free [Otter.ai](https://otter.ai) account — you will record and transcribe a live interview today.
+- [ ] Test your microphone and headphones before class starts.
+
+### Primer (~5 min)
+
+- **Read**: The intro page of [The Mom Test](https://www.momtestbook.com) — the three rules fit on one card; memorise them before you walk in.
+- **Watch** (optional): The 10-min Rob Fitzpatrick talk linked in the Watch section — preview it tonight if you want a head start on the before/after examples.
+
+### Bring to class
+
+- [ ] **Identify 2 people willing to be interviewed this week** — a friend, a family member, an acquaintance who plausibly hits your capstone's problem. Get a "yes" by text before class; book 20-minute slots before Day 15.
+- [ ] A phone number, WhatsApp handle, or email for each of those 2 real candidate users — you will message them during the live session.
+- [ ] Your Day 12 POV statement (you will use it to draft questions, not to pitch).
 
 > 🧠 **Quick glossary**
 > - **The Mom Test** = a technique for asking about users' *lives* (facts, past behaviour) rather than your *idea* (opinions, futures), so even your mom can't lie to you.
@@ -22,7 +57,11 @@ Most founders' user interviews are a slow way to hear themselves think. They ask
 > - **Affinity mapping** = clustering raw interview quotes by theme on a board until patterns surface.
 > - **Synthesis** = turning 10 interviews into 3 insights a team can actually act on.
 
-### Today's 1-hour live session
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
@@ -30,9 +69,6 @@ Most founders' user interviews are a slow way to hear themselves think. They ask
 | Mini-lecture | 20 min | Mom Test rules, JTBD framing, and how to listen for what isn't said |
 | Live lab     | 20 min | Paired interview drill — one classmate, 8 minutes, no pitching |
 | Q&A + discussion | 15 min | Debrief quotes, catch leading questions, extract the real job |
-
-**Before class** (~10 min): draft 5 interview questions for your capstone user — NO questions about your idea.
-**After class** (~30 min tonight): run one real interview before Day 15, write up quotes + one JTBD insight, submit notes via dashboard.
 
 ### In-class moments (minute-by-minute)
 
@@ -42,22 +78,7 @@ Most founders' user interviews are a slow way to hear themselves think. They ask
 - **00:45 — Paired drill**: 8-minute interview, no pitching, no idea mention; observer counts every leading question and reports back.
 - **00:55 — Commitment test**: each interviewer names the real next step they earned (referral, meeting, access); if the answer is "they said it was cool," the class calls it polite enthusiasm, not signal.
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] Create a free [Otter.ai](https://otter.ai) account — you will record and transcribe a live interview today.
-- [ ] Test your microphone and headphones before class starts.
-
-### Primer (~5 min)
-- **Read**: The intro page of [The Mom Test](https://www.momtestbook.com) — the three rules fit on one card; memorise them before you walk in.
-- **Watch** (optional): The 10-min Rob Fitzpatrick talk linked in the Watch section — preview it tonight if you want a head start on the before/after examples.
-
-### Bring to class
-- [ ] **Identify 2 people willing to be interviewed this week** — a friend, a family member, an acquaintance who plausibly hits your capstone's problem. Get a "yes" by text before class; book 20-minute slots before Day 15.
-- [ ] A phone number, WhatsApp handle, or email for each of those 2 real candidate users — you will message them during the live session.
-- [ ] Your Day 12 POV statement (you will use it to draft questions, not to pitch).
-
-## Read: The Mom Test, JTBD, and listening for what is not said
+### Read: The Mom Test, JTBD, and listening for what is not said
 
 Rob Fitzpatrick's *The Mom Test* starts from a simple premise: even your mom will lie to you about your business idea, not out of malice but out of love. So stop asking people if they like your idea. Instead, ask about their life. His three rules:
 
@@ -89,7 +110,7 @@ Do not demo. Do not pitch. Do not save the bad idea. Your job is to leave more c
 
 Recording matters. Human memory is a liar. Otter.ai (otter.ai) records and auto-transcribes in real time; you can then paste the transcript into Claude and hunt for patterns across multiple interviews — themes, contradictions, emotional spikes. Get consent first. Always.
 
-## Watch: The Mom Test in 10 minutes
+### Watch: The Mom Test in 10 minutes
 
 Watch Rob Fitzpatrick summarise the three rules and demonstrate a before/after interview. Notice how the "after" version asks nothing about the idea yet produces far stronger signal.
 
@@ -99,7 +120,7 @@ https://www.youtube.com/embed/FG1Fa-t4AEQ
 - Ask "when was the last time?" — it converts opinions into stories.
 - Compliments are warning signs, not encouragement.
 
-## Lab: Interview a classmate about your capstone's user (50 min)
+### Lab: Interview a classmate about your capstone's user (50 min)
 
 You will pair with another cohort member. You interview them about *their* capstone's user (from their perspective or their best proxy), and they interview you. No demoing your idea.
 
@@ -117,32 +138,7 @@ You will pair with another cohort member. You interview them about *their* capst
 > - *Otter's transcript has speaker labels swapped or missing* → re-label in Otter's editor before pasting into Claude; otherwise the JTBD hypotheses will attribute your words to the user, which is worse than no transcript.
 > - *You run out of questions at minute 8 and panic-pitch your idea* → keep one rescue question on a sticky note: "What did you try before that didn't work?" It resets the interview to past-behaviour mode.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment — 2-day deliverable, due by end of Day 15)
-1. Run at least one real candidate-user interview tonight or tomorrow (the second happens before Day 15). Get recorded consent.
-2. Transcribe each interview via Otter and clean the speaker labels.
-3. Run today's Prompt of the Day on each transcript; save the 3 surprising behaviours and 3 JTBD hypotheses per interview.
-4. Write a short synthesis across all three interviews (classmate + 2 real users) naming the 3 insights that contradicted something you believed on Day 11.
-5. Post the Otter transcript(s), your JTBD hypotheses, and the 3 contradictions to the cohort channel before Day 15.
-
-### Reflect (~5 min)
-Answer privately: *When in the interview did I feel the urge to pitch — and what was I afraid the user would say if I did not?* A strong reflection names the moment, the fear (usually "they will not like it"), and one specific past-tense question you will keep on a sticky for the next interview.
-
-### Stretch (optional)
-- **Extra video**: A Teresa Torres talk on continuous discovery — watch how PMs turn interview cadence into weekly habit.
-- **Extra read**: [Clayton Christensen's JTBD primer in HBR](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) — the milkshake study, unabridged.
-- **Try**: Interview someone about a problem you do NOT plan to solve. Removing the pitch temptation makes the Mom Test muscle obvious.
-
-## Quiz
-
-Three rapid calls. Which of these is Mom-Test-compliant: (a) "Would you pay for a tool that does X?" (b) "What did you do the last time X happened?" (c) "Do you think other people have this problem?" Only (b) survives. Why? Because it asks for past behaviour from the person in front of you, not future opinions about strangers. Write that sentence on a sticky note.
-
-## Assignment (2-day)
-
-By end of Day 15, submit: (1) your Otter transcript from the classmate interview, (2) transcripts (or detailed notes, with consent) from at least 2 real candidate-user interviews, (3) a short write-up with the 3 most surprising insights across all three interviews — surprising meaning they contradicted something you believed on Day 11. Post in the cohort channel. These insights feed directly into Day 14's systems map and Day 15's locked spec.
-
-## Discuss: What did the user *not* say?
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -152,17 +148,68 @@ By end of Day 15, submit: (1) your Otter transcript from the classmate interview
 | Did you get a real commitment — or a polite one? How can you tell the difference? | Names what the user actually gave up (time, a referral, credentials, money) vs. what they said ("sounds great"); the strong answer admits it was polite if it was. |
 | What belief from your Day 11 problem statement did this interview just break? | Quotes the old belief, names the evidence that broke it, and proposes one concrete edit to the v3 sticky note. "Nothing broke" is a warning sign — re-read the transcript. |
 
-## References
+---
 
-### Pre-class primers
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: run one real interview tonight (~60 min, 2-day deliverable due Day 15)
+
+1. Run at least one real candidate-user interview tonight or tomorrow (the second happens before Day 15). Get recorded consent.
+2. Transcribe each interview via Otter and clean the speaker labels.
+3. Run today's Prompt of the Day on each transcript; save the 3 surprising behaviours and 3 JTBD hypotheses per interview.
+4. Draft a short synthesis across all three interviews (classmate + 2 real users) naming the 3 insights that contradicted something you believed on Day 11.
+
+### 2. Reflect (~10 min)
+
+*When in the interview did I feel the urge to pitch — and what was I afraid the user would say if I did not?* A strong reflection names the moment, the fear (usually "they will not like it"), and one specific past-tense question you will keep on a sticky for the next interview.
+
+### 3. Quiz (~15 min)
+
+Three rapid calls. Which of these is Mom-Test-compliant: (a) "Would you pay for a tool that does X?" (b) "What did you do the last time X happened?" (c) "Do you think other people have this problem?" Only (b) survives. Why? Because it asks for past behaviour from the person in front of you, not future opinions about strangers. Write that sentence on a sticky note.
+
+### 4. Submit (~5 min, 2-day assignment — rolls into Day 15 milestone)
+
+By end of Day 15, submit to the cohort channel: (1) your Otter transcript from the classmate interview, (2) transcripts (or detailed notes, with consent) from at least 2 real candidate-user interviews, (3) a short write-up with the 3 most surprising insights across all three interviews — surprising meaning they contradicted something you believed on Day 11. These insights feed directly into Day 14's systems map and Day 15's locked spec.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: A Teresa Torres talk on continuous discovery — watch how PMs turn interview cadence into weekly habit.
+- **Extra read**: [Clayton Christensen's JTBD primer in HBR](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) — the milkshake study, unabridged.
+- **Try**: Interview someone about a problem you do NOT plan to solve. Removing the pitch temptation makes the Mom Test muscle obvious.
+
+### 6. Prep for Day 14 (~30-40 min — important)
+
+**Tomorrow is systems + story.** Day 14 is causal-loop diagrams, Meadows' leverage points, and the SCQA + Pixar pitch — compressing your problem into a 60-second pitch sharp enough for a stranger. Your interview transcripts feed the pitch's **Complication**; the surprising quote from today is the line that makes a listener lean in.
+
+- [ ] **Skim ahead**: Donella Meadows' [Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — focus on the top-to-bottom ranking. Internalise the gradient (parameters weakest, paradigms strongest); you don't need to memorise twelve.
+- [ ] **Think**: pull out the **single interview quote** that most contradicted your Day 11 belief. That becomes tomorrow's SCQA Complication. Also jot **5 variables** surrounding your capstone problem (people, incentives, delays, emotions, metrics) on paper — they're the nodes of tomorrow's causal-loop diagram.
+- [ ] **Set up**: open [Excalidraw](https://excalidraw.com) in a tab (no account needed) and skim your Day 13 transcripts, highlighting 3 direct quotes that surprised you.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [The Mom Test in 10 minutes](https://www.youtube.com/embed/FG1Fa-t4AEQ) — Rob Fitzpatrick's before/after demo.
+- A Teresa Torres talk on continuous discovery — PMs turning interview cadence into a weekly habit.
+
+### Reading
+
 - [The Mom Test — momtestbook.com](https://www.momtestbook.com) — the three rules, one page.
-- [Otter.ai](https://otter.ai) — record and transcribe your interviews.
-
-### Covered during class
-- [Claude](https://claude.ai) — transcript synthesis via the Prompt of the Day.
 - [Clayton Christensen — Know Your Customers' Jobs to Be Done (HBR)](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) — the canonical JTBD article.
+- [Teresa Torres — Product Talk](https://www.producttalk.org) — ongoing writing on discovery cadence and opportunity trees.
 
-### Deep dives (post-class)
+### Play
+
+- [Otter.ai](https://otter.ai) — record and transcribe your interviews.
+- [Claude](https://claude.ai) — transcript synthesis via the Prompt of the Day.
+
+### If you're hungry for a rabbit hole
+
 - The Mom Test — Rob Fitzpatrick (book).
 - Continuous Discovery Habits — Teresa Torres (book).
-- [Teresa Torres — Product Talk](https://www.producttalk.org) — ongoing writing on discovery cadence and opportunity trees.

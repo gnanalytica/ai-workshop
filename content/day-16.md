@@ -9,42 +9,30 @@ tools_hands_on: [{"name": "GitHub", "url": "https://github.com"}, {"name": "Hopp
 tools_demo: [{"name": "Browser DevTools (Network tab)", "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools"}, {"name": "GitHub good-first-issue search", "url": "https://github.com/search?q=label%3Agood-first-issue&type=issues"}]
 tools_reference: [{"name": "Git official docs", "url": "https://git-scm.com"}, {"name": "MDN Web Docs", "url": "https://developer.mozilla.org"}, {"name": "Open Source Guides", "url": "https://opensource.guide"}, {"name": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com"}, {"name": "HTTPBin", "url": "https://httpbin.org"}]
 resources: [{"name": "GitHub Skills (free interactive)", "url": "https://skills.github.com"}, {"name": "OpenLibrary API", "url": "https://openlibrary.org/developers/api"}, {"name": "Open-Meteo free weather API", "url": "https://open-meteo.com"}]
+objective:
+  topic: "The four rails — Git, GitHub, localhost, APIs — read and clicked, no code written"
+  tools: ["GitHub", "Hoppscotch"]
+  end_goal: "Fork an AI repo, read one merged PR's diff in plain English, hit 3 public APIs (and trigger a 429 + 500 on purpose) in Hoppscotch, and open one draft issue on a repo you care about."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Welcome to Week 4. Until now you've been a power user of AI. This week you become a builder — but still without writing code yourself. Today we learn the four rails every software project runs on: **Git, GitHub, localhost, and APIs**. You will click, fork, read, and poke. No typing code. By the end you will be able to read a repo like you read a book, and talk to any API on the internet.
+**Topic.** Welcome to Week 4. Until now you've been a power user of AI. This week you become a builder — but still without writing code yourself. Today we learn the four rails every software project runs on: **Git, GitHub, localhost, and APIs**.
 
-> 🧠 **Quick glossary for today**
-> - **Git** = a time machine for files; tracks every change as a commit.
-> - **Branch** = a parallel universe of your code where you experiment safely.
-> - **PR / Pull Request** = "please merge my branch" — a proposal with a diff attached.
-> - **Localhost** = your own laptop acting as a server (`127.0.0.1`).
-> - **Port** = a numbered door on localhost (3000, 8080, 11434…).
-> - **REST API** = a URL contract; send JSON, get JSON, using verbs like GET/POST.
-> - **JSON** = key-value data in curly braces; how 99% of APIs speak.
+**Tools you'll use.** GitHub (fork, read issues + PRs), Hoppscotch (API calls in the browser — no install).
 
-### Today's 1-hour live session
+**End goal.** By the end of today you will have:
+1. Forked an AI repo you actually use and read one merged PR's diff in plain English.
+2. Made 3 real HTTP calls in Hoppscotch (OpenLibrary, GitHub, Open-Meteo) + triggered a 429 and 500 on httpbin.org on purpose.
+3. Opened one draft issue on a repo you care about — a question, a typo fix, or a feature idea.
 
-| Block | Time | What |
-|---|---|---|
-| Recap + hook | 5 min | Why every AI builder needs Git, GitHub, localhost, APIs |
-| Mini-lecture | 20 min | The four rails — commits, forks, ports, status codes |
-| Live lab | 20 min | Fork Ollama + hit 3 public APIs in Hoppscotch together |
-| Q&A + discussion | 15 min | Which rail felt most foreign? Share weird status codes |
+> *Why this matters:* By Friday you'll be running local LLMs and chaining APIs. Today's vocabulary is the one that stops tutorials from feeling like hieroglyphics.
 
-**Before class** (~10 min): create a GitHub account with your college email and skim a README of any repo you're curious about.
-**After class** (~30 min tonight): finish the Hoppscotch API calls, open one draft issue on a repo you care about, and paste your 3 links in the cohort channel.
+---
 
-### In-class moments (minute-by-minute)
+## ⏪ Pre-class · ~20 min
 
-- **00:05 — Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
-- **00:15 — Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
-- **00:25 — Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
-- **00:40 — Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
-- **00:55 — Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
-
-## Before class · ~20 min pre-work
+**Revision / context.** Friday (Day 15) you locked Capstone Milestone 2 — a 1-page spec with a NOT-list, 3–6 grey-box wireframes, a measurable 14-day success metric, and a public "Witness me" post with 2 cohort acknowledgements. That spec is no longer a draft; it's the contract. Week 4 builds only against it. Today's four rails are the infrastructure your build will sit on — every API your spec's "what it does" implies, every repo you'll fork for scaffolding, every `localhost:port` you'll run during dev. Open your locked spec PDF in one tab today; when you hit Hoppscotch, ask yourself: which of these APIs could power a line from my spec?
 
 Come in with an account, a curiosity, and a browser tab already open — don't lose the first 15 minutes to signup flows.
 
@@ -61,7 +49,37 @@ Come in with an account, a curiosity, and a browser tab already open — don't l
 - [ ] One GitHub repo URL you're curious about (an AI tool you've used — Ollama, LangChain, n8n, anything). Paste it in the cohort channel before class starts.
 - [ ] One question about Git, GitHub, or APIs you've always been afraid to ask.
 
-## Read: The four rails — Git, GitHub, localhost, APIs
+> 🧠 **Quick glossary for today**
+> - **Git** = a time machine for files; tracks every change as a commit.
+> - **Branch** = a parallel universe of your code where you experiment safely.
+> - **PR / Pull Request** = "please merge my branch" — a proposal with a diff attached.
+> - **Localhost** = your own laptop acting as a server (`127.0.0.1`).
+> - **Port** = a numbered door on localhost (3000, 8080, 11434…).
+> - **REST API** = a URL contract; send JSON, get JSON, using verbs like GET/POST.
+> - **JSON** = key-value data in curly braces; how 99% of APIs speak.
+
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
+
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min | Why every AI builder needs Git, GitHub, localhost, APIs |
+| Mini-lecture | 20 min | The four rails — commits, forks, ports, status codes |
+| Live lab | 20 min | Fork Ollama + hit 3 public APIs in Hoppscotch together |
+| Q&A + discussion | 15 min | Which rail felt most foreign? Share weird status codes |
+
+### In-class moments (minute-by-minute)
+
+- **00:05 — Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
+- **00:15 — Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
+- **00:25 — Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
+- **00:40 — Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
+- **00:55 — Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
+
+### Read: The four rails — Git, GitHub, localhost, APIs
 
 Every AI project you will ever touch sits on top of four ideas. If you understand these four, the rest of the stack becomes readable. If you don't, every tutorial feels like hieroglyphics.
 
@@ -108,7 +126,7 @@ Payloads are almost always **JSON** — key-value pairs in curly braces. `{"name
 
 **Why this matters for you.** When Claude tells you "call the OpenAI API with these headers", you will now know what that sentence means. When Ollama fails and says "connection refused on port 11434", you know it means the Ollama server isn't running. When you fork a repo to add a feature, you know the ritual. You've stopped being a tourist.
 
-## Watch: Reading a repo without coding
+### Watch: Reading a repo without coding
 
 Video walkthrough on how to scan a GitHub repo in 10 minutes — README first, then the `examples/` folder, then open issues, then recent PRs — so you can understand an AI project without reading its source code.
 
@@ -119,7 +137,7 @@ https://www.youtube.com/embed/hwP7WQkmECE
 - Sort issues by "good first issue" to find entry points.
 - The `examples/` or `cookbook/` folder is gold.
 
-## Lab: Fork one repo + hit three APIs in Hoppscotch
+### Lab: Fork one repo + hit three APIs in Hoppscotch
 
 Spend 30–45 minutes. No code — clicks and reads only.
 
@@ -137,31 +155,7 @@ Spend 30–45 minutes. No code — clicks and reads only.
 > - *GitHub Fork button is greyed out* → you're probably on your own repo or not signed in; confirm the avatar top-right and pick a different upstream repo.
 > - *`api.github.com` returns a 403 with "rate limit exceeded"* → unauthenticated GitHub API allows only 60 requests/hour per IP; slow down or add a personal access token as a Bearer header.
 
-## After class · ~30-45 min post-work
-
-Turn today's clicks into a repo presence the cohort can actually see.
-
-### Finish the lab (15 min)
-- [ ] Complete all 3 Hoppscotch API calls from the lab (OpenLibrary, GitHub, Open-Meteo) and screenshot one 200 response.
-- [ ] Trigger a 429 and a 500 on https://httpbin.org intentionally so your brain remembers what they feel like.
-
-### Stretch (15-20 min)
-- [ ] Fork one AI repo you actually use; star two others. Paste the fork URL in the cohort channel.
-- [ ] Open the `good-first-issue` filter at https://github.com/search?q=label%3Agood-first-issue&type=issues and bookmark 2 issues you could realistically tackle this month.
-- [ ] Try GitHub Skills at https://skills.github.com — the "Introduction to GitHub" course takes ~10 minutes and teaches PRs by doing.
-
-### Reflect (5 min)
-- [ ] In one line: which rail (Git / GitHub / localhost / APIs) felt most foreign, and why? Post it — honesty helps the cohort.
-
-## Quiz
-
-Four questions to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
-
-## Assignment
-
-Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your pick). Star three OSS AI projects you want to understand better. Open one **draft** issue on a repo you care about — a question, a typo fix, or a feature idea. Don't stress about polish; drafts are meant to be rough. Paste your three links into the cohort channel.
-
-## Discuss: Becoming native to the dev world
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -171,24 +165,71 @@ Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your 
 | Does `fork → branch → PR` feel like a social ritual or an engineering one? Maybe both? | Takes a side, gives one piece of evidence for each aspect (the code review is engineering; the maintainer politeness is social). |
 | What's one API from today's lab you could imagine chaining into your capstone? | Picks one API, describes the input/output JSON shape, and names the downstream node (LLM, Slack, sheet) that would consume it. |
 
-## References
+---
 
-### Official docs
-- Git official docs — https://git-scm.com
-- MDN Web Docs (HTTP, status codes) — https://developer.mozilla.org
-- Browser DevTools explainer — https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools
+## 📝 Post-class · ~2 hour focused block
 
-### Tools used today
-- GitHub — https://github.com
-- Hoppscotch — https://hoppscotch.io
-- Open Source Guides — https://opensource.guide
+Turn today's clicks into a repo presence the cohort can actually see.
 
-### Free public APIs to explore
-- JSONPlaceholder — https://jsonplaceholder.typicode.com
-- HTTPBin — https://httpbin.org
-- OpenLibrary API — https://openlibrary.org/developers/api
-- Open-Meteo — https://open-meteo.com
+### 1. Immediate action: finish the lab + repo presence (~35 min)
 
-### Keep learning
-- GitHub Skills (free interactive) — https://skills.github.com
-- GitHub good-first-issue search — https://github.com/search?q=label%3Agood-first-issue&type=issues
+- [ ] Complete all 3 Hoppscotch API calls from the lab (OpenLibrary, GitHub, Open-Meteo) and screenshot one 200 response.
+- [ ] Trigger a 429 and a 500 on https://httpbin.org intentionally so your brain remembers what they feel like.
+- [ ] Fork one AI repo you actually use; star two others. Paste the fork URL in the cohort channel.
+- [ ] Open the `good-first-issue` filter at https://github.com/search?q=label%3Agood-first-issue&type=issues and bookmark 2 issues you could realistically tackle this month.
+- [ ] Try GitHub Skills at https://skills.github.com — the "Introduction to GitHub" course takes ~10 minutes and teaches PRs by doing.
+
+### 2. Reflect (~10 min)
+
+*Which rail (Git / GitHub / localhost / APIs) felt most foreign, and why?* In one line, post it — honesty helps the cohort. A strong reflection connects the foreign feeling to a specific tutorial or error message from your past that suddenly makes sense.
+
+### 3. Quiz (~15 min)
+
+Four questions on the dashboard to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
+
+### 4. Submit the assignment (~5 min)
+
+Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your pick). Star three OSS AI projects you want to understand better. Open one **draft** issue on a repo you care about — a question, a typo fix, or a feature idea. Don't stress about polish; drafts are meant to be rough. Paste your three links into the cohort channel.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra watch**: Any short "reading a diff" walkthrough on YouTube — the diff-reading muscle pays compound interest in Weeks 4–5.
+- **Extra read**: [Open Source Guides](https://opensource.guide) — the "How to Contribute" section, cover to cover.
+- **Try**: Open your locked Day-15 spec alongside the Hoppscotch tab — sketch the 2 external APIs your "what it does" list implies (LLM provider, data source, notification channel) and test one of them with a GET call.
+
+### 6. Prep for Day 17 (~30-40 min — important)
+
+**Tomorrow you drive on these rails.** Day 17 is local + cloud LLMs — Ollama on `localhost:11434` (instructor demo), Groq + HuggingFace Chat in your browser for speed, and **Langfuse** for tracing. You'll write three prompt variants (zero-shot, CoT + self-critique, few-shot) for a real capstone task, run them against a 10-row eval set, and post three win-rate numbers. This is where vibes-driven prompting becomes data-driven.
+
+- [ ] **Skim ahead**: the Groq homepage (notice the "1000+ tokens/sec" claim) and try one prompt on any listed model at https://huggingface.co/chat/. Feel how fast cloud inference is.
+- [ ] **Think**: pick **one task from your capstone** you suspect a small model could handle (summarise, classify, extract) and jot **2 example inputs**. That task becomes tomorrow's 10-row eval set.
+- [ ] **Set up**: sign up for Groq free tier (https://console.groq.com), Google AI Studio (https://aistudio.google.com), HuggingFace (https://huggingface.co), and Langfuse free tier (https://langfuse.com). Create + copy your Groq API key. Optional: if your laptop has ≥8 GB RAM and you're curious, install Ollama (https://ollama.com/download) and `ollama pull qwen2.5:1.5b`.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [Reading a repo without coding](https://www.youtube.com/embed/hwP7WQkmECE) — rewatch at 1.5x once you've forked something.
+- Fireship — "Git in 100 Seconds" on YouTube.
+
+### Reading
+
+- [Git official docs](https://git-scm.com)
+- [MDN Web Docs (HTTP, status codes)](https://developer.mozilla.org)
+- [Browser DevTools explainer](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools)
+- [Open Source Guides](https://opensource.guide)
+
+### Play
+
+- [GitHub](https://github.com) — the social network for code.
+- [Hoppscotch](https://hoppscotch.io) — API calls in the browser.
+- [JSONPlaceholder](https://jsonplaceholder.typicode.com), [HTTPBin](https://httpbin.org), [OpenLibrary API](https://openlibrary.org/developers/api), [Open-Meteo](https://open-meteo.com) — free public APIs to explore.
+
+### If you're hungry for a rabbit hole
+
+- [GitHub Skills (free interactive)](https://skills.github.com) — learn PRs by doing.
+- [GitHub good-first-issue search](https://github.com/search?q=label%3Agood-first-issue&type=issues) — your first PR is here.

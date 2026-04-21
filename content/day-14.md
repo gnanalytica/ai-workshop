@@ -9,11 +9,46 @@ tools_hands_on: [{"name": "Excalidraw", "url": "https://excalidraw.com"}]
 tools_demo: [{"name": "Napkin AI", "url": "https://www.napkin.ai"}, {"name": "Y Combinator Library", "url": "https://www.ycombinator.com/library"}]
 tools_reference: [{"name": "Thinking in Systems — Donella Meadows (book)", "url": "https://donellameadows.org/systems-thinking-resources/"}, {"name": "Randy Olson — ABT narrative", "url": "https://www.randyolsonproductions.com/abt-framework"}]
 resources: [{"name": "Donella Meadows — Leverage Points essay", "url": "https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/"}, {"name": "SCQA framework — Barbara Minto (Pyramid Principle)", "url": "https://www.barbaraminto.com"}, {"name": "Pixar's 22 story rules", "url": "https://www.pixar.com"}]
+objective:
+  topic: "Systems thinking + storytelling — causal-loop diagrams, Meadows' leverage points, and the SCQA pitch"
+  tools: ["Excalidraw", "Claude"]
+  end_goal: "Ship a causal-loop diagram with a red-circled leverage point, a 60-second SCQA pitch under 150 words, and a 2-minute voice memo of you delivering the pitch out loud."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Every capstone problem lives inside a system — a tangle of feedback loops, incentives, and delays. If you intervene at the wrong point, the system absorbs your fix and snaps back. Today you diagram the system around your problem, find a leverage point, and compress the whole thing into a 60-second pitch sharp enough that a stranger at a conference can repeat it.
+**Topic.** Diagram the system behind your capstone problem, find the leverage point, then compress the whole thing into a 60-second pitch sharp enough for a stranger.
+
+**Tools you'll use.** Excalidraw (the canvas), Claude (the three-variant pitch critic via today's Prompt of the Day).
+
+**End goal.** By the end of today you will have:
+1. A causal-loop diagram with at least one closed loop, polarity on every arrow, and a leverage point circled in red.
+2. A 60-second SCQA pitch under 150 words, naming one specific user.
+3. A 2-minute voice memo of you delivering the pitch out loud — no reading.
+
+> *Why this matters:* Tomorrow locks your 1-page spec. The spec's "why" section only works if the loop, leverage point, and pitch are already sharp today.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 13) you ran a paired Mom-Test drill and booked two real candidate-user interviews before Day 15 — all aimed at past behaviour (the workaround, the emotion spike, what they refuse to pay for), never at future opinions. The JTBD hypotheses you wrote in the format *When [situation], I want to [motivation], so I can [outcome]* are today's diagram nodes. The surprising quote that contradicted your Day 11 belief — the one Claude flagged from the transcript — is today's SCQA **Complication**. If Day 13 interviews produced no contradictions, the pitch will feel flat; re-read the transcript for an emotion spike before drawing a single arrow.
+
+### Setup (required)
+
+- [ ] Open [Excalidraw](https://excalidraw.com) in a browser tab — no account needed.
+- [ ] Skim your Day 13 interview transcripts and highlight 3 direct quotes that surprised you.
+
+### Primer (~5 min)
+
+- **Read**: Donella Meadows' [Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — focus on the top-to-bottom ranking. You do not need to memorise twelve; internalise the gradient.
+- **Watch** (optional): The Meadows clip linked in the Watch section — preview it tonight to calibrate your ear for systems language.
+
+### Bring to class
+
+- [ ] **Pick ONE capstone problem you will map today** — no switching mid-class. If two candidates are still alive, pick the one with the sharpest Day 13 interview insight.
+- [ ] 5 variables surrounding that problem jotted on paper (people, incentives, delays, emotions, metrics).
+- [ ] The single interview quote from Day 13 that most contradicted your Day 11 belief — it will become your SCQA Complication.
 
 > 🧠 **Quick glossary**
 > - **Causal loop** = a diagram of variables connected by arrows showing how changes feed back on themselves (reinforcing or balancing).
@@ -22,7 +57,11 @@ Every capstone problem lives inside a system — a tangle of feedback loops, inc
 > - **Pixar pitch** = "Once upon a time… every day… one day… because of that… until finally…" — story arc in six beats.
 > - **Narrative arc** = the shape of tension and release that makes a pitch land instead of flatline.
 
-### Today's 1-hour live session
+---
+
+## 🎥 During class · 60 min live session
+
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
@@ -30,9 +69,6 @@ Every capstone problem lives inside a system — a tangle of feedback loops, inc
 | Mini-lecture | 20 min | Causal loops, Meadows' leverage points, SCQA and the Pixar pitch |
 | Live lab     | 20 min | Draw one causal-loop diagram on a volunteer's capstone, find the leverage point |
 | Q&A + discussion | 15 min | Where's the real leverage? Where are you just treating symptoms? |
-
-**Before class** (~10 min): jot 5 variables (people, incentives, delays) that surround your capstone problem.
-**After class** (~30 min tonight): finalise your causal-loop diagram + a 60-second SCQA pitch and submit both via the dashboard.
 
 ### In-class moments (minute-by-minute)
 
@@ -42,22 +78,7 @@ Every capstone problem lives inside a system — a tangle of feedback loops, inc
 - **00:45 — Leverage debate**: two volunteers argue for different leverage points on the same loop (parameter vs. paradigm); class votes which would move the system more in 30 days.
 - **00:55 — Pitch-relay**: pair up, deliver your SCQA pitch in 60 seconds; partner has to repeat the Complication back from memory — if they cannot, the Complication is not sharp enough.
 
-## Before class · ~20 min pre-work
-
-### Setup (if needed)
-- [ ] Open [Excalidraw](https://excalidraw.com) in a browser tab — no account needed.
-- [ ] Skim your Day 13 interview transcripts and highlight 3 direct quotes that surprised you.
-
-### Primer (~5 min)
-- **Read**: Donella Meadows' [Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — focus on the top-to-bottom ranking. You do not need to memorise twelve; internalise the gradient.
-- **Watch** (optional): The Meadows clip linked in the Watch section — preview it tonight to calibrate your ear for systems language.
-
-### Bring to class
-- [ ] **Pick ONE capstone problem you will map today** — no switching mid-class. If two candidates are still alive, pick the one with the sharpest Day 13 interview insight.
-- [ ] 5 variables surrounding that problem jotted on paper (people, incentives, delays, emotions, metrics).
-- [ ] The single interview quote from Day 13 that most contradicted your Day 11 belief — it will become your SCQA Complication.
-
-## Read: Loops, leverage points, and stories that stick
+### Read: Loops, leverage points, and stories that stick
 
 **Why systems thinking, now?** By Day 13 you have heard users describe their pain. Pain is a *symptom*. Systems thinking asks what *pattern of relationships* produces the pain — and which point in that pattern is worth intervening in. Most capstones fail not because the solution is bad but because it intervenes at a weak leverage point. A stronger diagram saves you weeks.
 
@@ -73,7 +94,9 @@ You do not need to memorise all twelve. Remember the punchline: **parameters are
 
 For your capstone, after drawing the loop, ask: *at which node would a small change cause a disproportionate shift in the whole loop's behaviour?* That is your leverage point. Circle it in red.
 
-**From systems to story.** Once you know the loop and the leverage point, you can tell the problem's story with unusual clarity. Humans remember stories, not bullet points. Two frameworks you will use for the rest of the workshop:
+### Read: From systems to story
+
+Once you know the loop and the leverage point, you can tell the problem's story with unusual clarity. Humans remember stories, not bullet points. Two frameworks you will use for the rest of the workshop:
 
 **SCQA (Situation, Complication, Question, Answer).** From Barbara Minto's *Pyramid Principle*. Start with a stable Situation the audience agrees with. Introduce the Complication that disrupts it. Surface the Question it raises. Deliver the Answer. Example, 60 seconds: *"Solo accountants spend 40% of their week inside email. (Situation.) But most of those checks are anxiety-driven, not information-driven — they check 47 times a day and find something actionable 3 times. (Complication.) So how do you quiet the inbox without missing the 3 that matter? (Question.) We triage incoming email by urgency using a model trained on the user's own past responses, surfacing only what needs action today. (Answer.)"* Notice how the Complication is a surprising fact — usually the insight from your interviews.
 
@@ -85,7 +108,7 @@ For your capstone, after drawing the loop, ask: *at which node would a small cha
 
 **Great pitch examples.** YC Demo Day pitches (ycombinator.com/library) are master classes in compression. Watch how the best ones establish the Situation in under 10 seconds, hit the Complication with a number that makes the audience gasp, and deliver the Answer with a metric. Also study Napkin AI (napkin.ai) for how it auto-diagrams narrative text — a useful sanity check that your pitch has a real structure.
 
-## Watch: Donella Meadows on leverage points
+### Watch: Donella Meadows on leverage points
 
 A short video on systems thinking and why small interventions at the right point cause cascading change, while large interventions at the wrong point accomplish nothing.
 
@@ -95,7 +118,7 @@ https://www.youtube.com/embed/_EMnnq3teEs
 - Most interventions target parameters; most impact comes from mindsets.
 - Loops have delays — interventions often look like they failed before they work.
 
-## Lab: Causal-loop diagram + SCQA pitch (60 min)
+### Lab: Causal-loop diagram + SCQA pitch (60 min)
 
 1. **Open Excalidraw (excalidraw.com)** and create a new canvas titled "[Your capstone] — CLD v1."
 2. **List 6-10 variables (5 min).** From your Day 13 interview insights, write down the nouns that change over time — anxiety, emails, hours, output, trust, churn, revenue, etc.
@@ -111,32 +134,7 @@ https://www.youtube.com/embed/_EMnnq3teEs
 > - *You cannot pick between two leverage points* → apply Meadows' ladder: parameters are weakest, paradigms strongest. If both candidates are parameters, neither will cascade — look one level up for a structure or a goal.
 > - *Your SCQA Complication is not actually surprising (it just restates the Situation)* → pull the Complication directly from a Day 13 interview quote that contradicted your own prior belief; if nothing did, your interviews were polite — not your pitch's fault.
 
-## After class · ~30-45 min post-work
-
-### Do (the assignment)
-1. Finalise your causal-loop diagram in Excalidraw: at least one closed loop, polarity marks on every arrow, leverage point circled in red.
-2. Lock your 60-second SCQA pitch to under 150 words, naming one specific user.
-3. Record a 2-minute voice memo of you delivering the pitch out loud — no reading.
-4. Post the CLD screenshot, the pitch text, and the voice memo to the cohort channel tonight.
-5. Tag one cohort member to give you a single-note reaction before Day 15.
-
-### Reflect (~5 min)
-Answer privately: *Is my leverage point a parameter, a structure, or a paradigm — and which level was I tempted to default to?* A strong reflection names the Meadows level, admits the pull toward the easier fix, and explains why the chosen point actually moves the loop rather than treating a symptom.
-
-### Stretch (optional)
-- **Extra video**: A YC Demo Day pitch from the [YC Library](https://www.ycombinator.com/library) — notice the 10-second Situation and the number that lands the Complication.
-- **Extra read**: [Randy Olson on the ABT narrative](https://www.randyolsonproductions.com/abt-framework) — the 3-word compression of story structure.
-- **Try**: Paste your CLD into [Napkin AI](https://www.napkin.ai) and see whether the auto-diagram matches the story you think you are telling.
-
-## Quiz
-
-Three sanity checks. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
-
-## Assignment
-
-Submit three artifacts to the cohort channel: (1) a screenshot of your Excalidraw causal-loop diagram with the leverage point circled, (2) your 60-second SCQA pitch as plain text (under 150 words), (3) a 2-minute voice memo of you delivering the pitch out loud. Yes, out loud — we can hear the difference between a pitch that has been spoken and one that has only been typed.
-
-## Discuss: Where is the real leverage?
+### Live discussion prompts
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -146,18 +144,68 @@ Submit three artifacts to the cohort channel: (1) a screenshot of your Excalidra
 | Which version of your pitch — analytical, emotional, contrarian — felt most like you? Which would travel furthest through a stranger? | Distinguishes authenticity from reach; acknowledges they may differ. The strong answer picks the travelling version even if it's uncomfortable. |
 | What fact in your pitch would make a sceptic stop scrolling? | A concrete number, a counterintuitive behaviour, or a quote from a user — sourced, specific, and surprising. "AI is growing fast" does not qualify. |
 
-## References
+---
 
-### Pre-class primers
-- [Donella Meadows — Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — the ranking you will apply to your CLD.
-- [Excalidraw](https://excalidraw.com) — the canvas for today's diagram.
+## 📝 Post-class · ~2 hour focused block
 
-### Covered during class
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action: lock CLD + pitch + voice memo (~50 min)
+
+1. Finalise your causal-loop diagram in Excalidraw: at least one closed loop, polarity marks on every arrow, leverage point circled in red.
+2. Lock your 60-second SCQA pitch to under 150 words, naming one specific user.
+3. Record a 2-minute voice memo of you delivering the pitch out loud — no reading.
+4. Tag one cohort member to give you a single-note reaction before Day 15.
+
+### 2. Reflect (~10 min)
+
+*Is my leverage point a parameter, a structure, or a paradigm — and which level was I tempted to default to?* A strong reflection names the Meadows level, admits the pull toward the easier fix, and explains why the chosen point actually moves the loop rather than treating a symptom.
+
+### 3. Quiz (~15 min)
+
+Three sanity checks on the dashboard. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
+
+### 4. Submit (~5 min)
+
+Post three artifacts to the cohort channel: (1) a screenshot of your Excalidraw causal-loop diagram with the leverage point circled, (2) your 60-second SCQA pitch as plain text (under 150 words), (3) a 2-minute voice memo of you delivering the pitch out loud. Yes, out loud — we can hear the difference between a pitch that has been spoken and one that has only been typed.
+
+### 5. Deepen (optional, ~30 min)
+
+- **Extra video**: A YC Demo Day pitch from the [YC Library](https://www.ycombinator.com/library) — notice the 10-second Situation and the number that lands the Complication.
+- **Extra read**: [Randy Olson on the ABT narrative](https://www.randyolsonproductions.com/abt-framework) — the 3-word compression of story structure.
+- **Try**: Paste your CLD into [Napkin AI](https://www.napkin.ai) and see whether the auto-diagram matches the story you think you are telling.
+
+### 6. Prep for Day 15 (~30-40 min — important, CAPSTONE MILESTONE 2)
+
+**Tomorrow is Capstone Milestone 2 — the 1-day design sprint + locked 1-page spec.** You compress Jake Knapp's 5-day sprint into one: 3-question foundation → Crazy 8s → storyboard → Figma wireframes → 1-page spec → public commitment to the cohort. Whatever you lock tomorrow is what you build next week. Today's CLD, leverage point, and pitch become the "why" of that spec.
+
+- [ ] **Skim ahead**: the "Sprint in a Day" short from the [GV Sprint methodology site](https://www.gv.com/sprint/) — skim the timebox logic. Bookmark [Figma wireframing basics](https://www.figma.com/resources/learn-design/).
+- [ ] **Think**: draft a **"will NOT build" list** of at least 5 items tonight — the anti-scope list is the most important part of tomorrow's spec. Candidates: authentication (hardcoded user), payments (stub), mobile (desktop only), multi-language, admin dashboards, onboarding.
+- [ ] **Set up**: confirm your [Figma](https://www.figma.com) account works; optional [v0.dev](https://v0.dev) account for Crazy 8s sketching. Gather all Day 11–14 artifacts into one doc: v3 sticky, POV statement, interview insights, CLD, SCQA pitch. Print (or grab) a 1-page template so your spec cannot bleed onto page 2 without you noticing.
+
+---
+
+## 📚 Extra / additional references
+
+Optional deep-dives. Pick what interests you; skip what doesn't.
+
+### Short watches
+
+- [Donella Meadows on leverage points](https://www.youtube.com/embed/_EMnnq3teEs) — the class clip, rewatch at 1.5x.
+- A YC Demo Day pitch from the [YC Library](https://www.ycombinator.com/library) — compression at 60-second scale.
+
+### Reading
+
+- [Donella Meadows — Leverage Points essay](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — the ranking you applied to your CLD.
 - [SCQA — Barbara Minto (Pyramid Principle)](https://www.barbaraminto.com) — the skeleton for the 60-second pitch.
 - [Randy Olson — ABT narrative](https://www.randyolsonproductions.com/abt-framework) — And, But, Therefore.
-- [Napkin AI](https://www.napkin.ai) — narrative-to-diagram sanity check.
-- [Y Combinator Library](https://www.ycombinator.com/library) — study compressed pitches.
-
-### Deep dives (post-class)
-- Thinking in Systems — Donella Meadows (book).
 - [Donella Meadows Institute — systems thinking resources](https://donellameadows.org/systems-thinking-resources/) — archives and exercises.
+
+### Play
+
+- [Excalidraw](https://excalidraw.com) — the canvas for today's diagram.
+- [Napkin AI](https://www.napkin.ai) — narrative-to-diagram sanity check.
+
+### If you're hungry for a rabbit hole
+
+- Thinking in Systems — Donella Meadows (book).
