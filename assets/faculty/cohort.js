@@ -1,6 +1,7 @@
 // "Whole cohort" tab — all confirmed students in the cohort with signals.
 
 import { supabase } from '../supabase.js';
+import { loadEnrolledStudents } from '../pods.js';
 import { loadStudentSignals } from './signals.js';
 import { renderStudentRow } from './student-row.js';
 import { openDrawer } from '../student-drawer.js';
@@ -9,13 +10,8 @@ export async function renderCohort({ state, container }) {
   if (!state.cohortId) { container.innerHTML = '<div class="empty-state">Pick a cohort.</div>'; return; }
   container.innerHTML = '<div class="empty-state">Loading…</div>';
 
-  // Enrolled students (confirmed only).
-  const { data: regs } = await supabase.from('registrations')
-    .select('user_id, profiles:profiles!inner(id,full_name,college)')
-    .eq('cohort_id', state.cohortId)
-    .eq('status', 'confirmed');
-  const profs = (regs || []).map(r => r.profiles).filter(Boolean);
-  const ids = profs.map(p => p.id);
+  const profs = await loadEnrolledStudents(state.cohortId);
+  const ids = profs.map((p) => p.id);
 
   // Which of these are in the viewing faculty's pods?
   const { data: myPods } = await supabase.from('pod_faculty')

@@ -37,15 +37,24 @@ export async function loadPodsForCohort(cohortId) {
   }));
 }
 
-// Enrolled (confirmed) students for a cohort. Joins registrations → profiles.
+// Enrolled (confirmed) students for a cohort (registrations then profiles).
+// Two queries: PostgREST only embeds when an FK is registered between tables;
+// without registrations.user_id → profiles.id, nested select throws schema-cache errors.
 export async function loadEnrolledStudents(cohortId) {
-  const { data, error } = await supabase
+  const { data: regs, error } = await supabase
     .from('registrations')
-    .select('user_id, profiles:profiles!inner(id,full_name,college)')
+    .select('user_id')
     .eq('cohort_id', cohortId)
     .eq('status', 'confirmed');
   if (error) throw error;
-  return (data || []).map(r => r.profiles).filter(Boolean);
+  const ids = [...new Set((regs || []).map((r) => r.user_id).filter(Boolean))];
+  if (!ids.length) return [];
+  const { data: profs, error: pErr } = await supabase
+    .from('profiles')
+    .select('id,full_name,college')
+    .in('id', ids);
+  if (pErr) throw pErr;
+  return profs || [];
 }
 
 export async function loadCohortFaculty(cohortId) {
