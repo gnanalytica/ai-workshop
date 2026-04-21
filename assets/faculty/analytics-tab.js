@@ -1,6 +1,7 @@
-// Analytics tab: Pods vs Faculty toggle, simple bar tables.
+// Analytics tab: Pods vs Faculty toggle, charts + tables.
 
 import { loadPodAnalytics, loadFacultyAnalytics } from './analytics.js';
+import { facultyHBarChart, facultyVBarChart } from './chart-kit.js';
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
 
@@ -31,33 +32,107 @@ export async function renderAnalytics({ state, container }) {
 
   async function showPods() {
     const rows = await loadPodAnalytics(state.cohortId);
-    document.getElementById('analyticsBody').innerHTML = barTable(
-      ['Pod', 'Students', 'Avg % complete', 'Avg attendance', 'At-risk', 'Graded', 'Pending'],
-      rows.map(r => [
-        esc(r.pod.name),
-        r.students,
-        pctBar(r.avgPct),
-        (r.attendanceAvg || 0).toFixed(1),
-        r.atRisk,
-        r.subsGraded,
-        r.subsPending,
-      ])
-    );
+    const body = document.getElementById('analyticsBody');
+    const chartsBlock =
+      rows.length > 0
+        ? `<div class="add-card" style="padding:14px 16px;margin-bottom:14px">
+        <h3 style="margin:0 0 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Visual overview</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Avg % complete by pod</div>
+            <div style="height:220px;position:relative"><canvas id="facChartPodAvg" aria-label="Average completion by pod"></canvas></div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">At-risk count by pod</div>
+            <div style="height:220px;position:relative"><canvas id="facChartPodRisk" aria-label="At-risk students by pod"></canvas></div>
+          </div>
+        </div>
+      </div>`
+        : '';
+    body.innerHTML =
+      chartsBlock +
+      barTable(
+        ['Pod', 'Students', 'Avg % complete', 'Avg attendance', 'At-risk', 'Graded', 'Pending'],
+        rows.map((r) => [
+          esc(r.pod.name),
+          r.students,
+          pctBar(r.avgPct),
+          (r.attendanceAvg || 0).toFixed(1),
+          r.atRisk,
+          r.subsGraded,
+          r.subsPending,
+        ]),
+      );
+    if (rows.length) {
+      try {
+        await facultyHBarChart(body.querySelector('#facChartPodAvg'), {
+          labels: rows.map((r) => r.pod.name),
+          values: rows.map((r) => Math.round(r.avgPct * 10) / 10),
+          label: 'Avg % complete',
+        });
+        await facultyVBarChart(body.querySelector('#facChartPodRisk'), {
+          labels: rows.map((r) => r.pod.name),
+          values: rows.map((r) => r.atRisk),
+          label: 'At-risk',
+        });
+      } catch (e) {
+        console.warn('Faculty pod charts', e);
+      }
+    }
   }
 
   async function showFaculty() {
     const rows = await loadFacultyAnalytics(state.cohortId);
-    document.getElementById('analyticsBody').innerHTML = barTable(
-      ['Faculty', 'Mentored', 'Avg % complete', 'Graded', 'Median turnaround (h)', 'Handoffs in/out'],
-      rows.map(r => [
-        esc(r.faculty.full_name || r.faculty.id),
-        r.studentsMentored,
-        pctBar(r.avgPct),
-        r.gradedCount,
-        r.gradingMedianHrs != null ? r.gradingMedianHrs.toFixed(1) : '—',
-        `${r.handoffsIn} / ${r.handoffsOut}`,
-      ])
-    );
+    const body = document.getElementById('analyticsBody');
+    const chartsBlock =
+      rows.length > 0
+        ? `<div class="add-card" style="padding:14px 16px;margin-bottom:14px">
+        <h3 style="margin:0 0 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Visual overview</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Students mentored (by faculty)</div>
+            <div style="height:240px;position:relative"><canvas id="facChartFacMentor" aria-label="Students mentored"></canvas></div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Graded submissions (mentee pool)</div>
+            <div style="height:240px;position:relative"><canvas id="facChartFacGraded" aria-label="Graded count"></canvas></div>
+          </div>
+        </div>
+      </div>`
+        : '';
+    body.innerHTML =
+      chartsBlock +
+      barTable(
+        ['Faculty', 'Mentored', 'Avg % complete', 'Graded', 'Median turnaround (h)', 'Handoffs in/out'],
+        rows.map((r) => [
+          esc(r.faculty.full_name || r.faculty.id),
+          r.studentsMentored,
+          pctBar(r.avgPct),
+          r.gradedCount,
+          r.gradingMedianHrs != null ? r.gradingMedianHrs.toFixed(1) : '—',
+          `${r.handoffsIn} / ${r.handoffsOut}`,
+        ]),
+      );
+    if (rows.length) {
+      try {
+        const names = rows.map((r) => {
+          const n = r.faculty.full_name || r.faculty.id;
+          return n.length > 22 ? `${n.slice(0, 20)}…` : n;
+        });
+        await facultyHBarChart(body.querySelector('#facChartFacMentor'), {
+          labels: names,
+          values: rows.map((r) => r.studentsMentored),
+          label: 'Mentored',
+        });
+        await facultyVBarChart(body.querySelector('#facChartFacGraded'), {
+          labels: names,
+          values: rows.map((r) => r.gradedCount),
+          label: 'Graded',
+        });
+      } catch (e) {
+        console.warn('Faculty charts', e);
+      }
+    }
   }
 
   container.querySelectorAll('button[data-view]').forEach(b => {

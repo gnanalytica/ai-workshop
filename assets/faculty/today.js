@@ -8,6 +8,7 @@
 // - stuck_queue status 'pending' | 'helping' | 'resolved' (open = not resolved).
 
 import { supabase } from '../supabase.js';
+import { facultyDoughnutChart, facultyVBarChart, facultyChartColors } from './chart-kit.js';
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
 
@@ -88,9 +89,51 @@ export async function renderToday(ctx) {
   container.innerHTML = '<div class="empty-state">Loading…</div>';
   const data = await loadToday(state.cohortId, state.user.id);
   container.innerHTML = tpl(data);
+  const showCharts =
+    (data.attendance && data.attendance.total > 0) || data.subs.length > 0 || data.stuck.length > 0;
+  if (!showCharts) return;
+  try {
+    const attCanvas = container.querySelector('#facChartTodayAtt');
+    if (attCanvas && data.attendance && data.attendance.total > 0) {
+      const c = facultyChartColors();
+      await facultyDoughnutChart(attCanvas, {
+        labels: ['Checked in', 'Not yet'],
+        values: [data.attendance.present, data.attendance.unmarked],
+        colors: [`${c.accent}cc`, `${c.line}cc`],
+      });
+    }
+    const actCanvas = container.querySelector('#facChartTodayAct');
+    if (actCanvas) {
+      await facultyVBarChart(actCanvas, {
+        labels: ["Today's submissions", 'Open stuck'],
+        values: [data.subs.length, data.stuck.length],
+        label: 'Count',
+      });
+    }
+  } catch (e) {
+    console.warn('Today charts', e);
+  }
 }
 
 function tpl({ daySched, subs, stuck, attendance, hasPod }) {
+  const showCharts =
+    (attendance && attendance.total > 0) || subs.length > 0 || stuck.length > 0;
+  const glance = showCharts
+    ? `<section class="add-card" style="padding:14px 16px;margin-bottom:14px">
+      <h3 style="margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Today at a glance</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:stretch">
+        <div style="min-height:190px;position:relative">
+          ${
+            attendance && attendance.total > 0
+              ? '<canvas id="facChartTodayAtt" aria-label="Attendance split"></canvas>'
+              : '<div class="muted" style="padding:28px 10px;font-size:12.5px;line-height:1.45">No attendance snapshot today (no scheduled day or empty pod roster).</div>'
+          }
+        </div>
+        <div style="height:190px;position:relative"><canvas id="facChartTodayAct" aria-label="Submissions and stuck"></canvas></div>
+      </div>
+    </section>`
+    : '';
+
   const day = daySched
     ? `<div><b>Day ${esc(String(daySched.day_number))}</b>${daySched.title ? ' · ' + esc(daySched.title) : ''} · ${daySched.live_session_at ? esc(new Date(daySched.live_session_at).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })) : 'time TBD'} · ${daySched.meet_link ? `<a href="${esc(daySched.meet_link)}" target="_blank" rel="noopener">Meet link →</a>` : '<span class="muted">no Meet link</span>'}</div>`
     : `<div class="muted">No day scheduled for today.</div>`;
@@ -102,6 +145,7 @@ function tpl({ daySched, subs, stuck, attendance, hasPod }) {
   const noPodNote = hasPod ? '' : `<div class="muted" style="margin-top:8px;font-size:12.5px">You're not assigned as faculty on any pod in this cohort yet.</div>`;
 
   return `
+    ${glance}
     <section class="add-card">${day}${att}${noPodNote}</section>
 
     <section class="add-card">
