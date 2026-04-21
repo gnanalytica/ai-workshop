@@ -95,6 +95,12 @@
   .tldr-card{background:linear-gradient(135deg,rgba(195,255,54,.1),rgba(195,255,54,.03));border:1px solid rgba(195,255,54,.3);border-radius:14px;padding:18px 22px;margin:0 0 28px;display:flex;gap:16px;align-items:flex-start}
   .tldr-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.18em;font-weight:700;padding-top:3px;flex-shrink:0}
   .tldr-body{font-size:16px;line-height:1.55;color:var(--ink);letter-spacing:-.01em}
+  .obj-card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:16px 20px;margin:0 0 28px;display:grid;gap:8px}
+  .obj-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.18em;font-weight:700;text-transform:uppercase;margin-bottom:2px}
+  .obj-row{display:flex;gap:12px;align-items:baseline;font-size:14px;line-height:1.5}
+  .obj-k{flex-shrink:0;min-width:70px;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .obj-v{color:var(--ink)}
+  .obj-tool{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;background:rgba(195,255,54,.12);color:var(--accent);border:1px solid rgba(195,255,54,.25);margin-right:4px}
   .lm-read{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em}
   .lm-tags{display:inline-flex;gap:6px;flex-wrap:wrap}
 
@@ -457,6 +463,7 @@
     <div id="checkpointBanner"></div>
     <div id="weekOutcome"></div>
     <div id="tldrBlock"></div>
+    <div id="objectiveBlock"></div>
     <div id="toolSections"></div>
     <div id="introBlock" class="mod-body" style="margin-bottom:28px"></div>
     <div id="pollsWidget"></div>
@@ -541,6 +548,7 @@
     renderMetaStrip,
     renderResourcesBlock,
     renderToolSections,
+    renderObjective,
     escapeHtml,
   } from './assets/content-renderer.js';
   import { mountPollsWidget } from './assets/polls-widget.js';
@@ -785,6 +793,7 @@
           <div class="tldr-body">${escapeHtml(meta.tldr)}</div>
         </div>`;
     }
+    $('objectiveBlock').innerHTML = renderObjective(meta);
     if (introHtml) $('introBlock').innerHTML = introHtml;
     $('resourcesBlock').innerHTML = renderResourcesBlock(meta);
 

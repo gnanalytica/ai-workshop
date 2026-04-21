@@ -8,22 +8,45 @@ marked.setOptions({ gfm: true, breaks: false, mangle: false, headerIds: true });
  * Supports simple `key: value` pairs.
  * Array / object values may be written as inline JSON.
  */
+function coerceValue(val) {
+  if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+    return val.slice(1, -1);
+  }
+  if (val.startsWith('[') || val.startsWith('{')) {
+    try { return JSON.parse(val); } catch (_) { /* leave raw */ }
+  }
+  return val;
+}
+
 function parseFrontmatter(text) {
   const meta = {};
   const lines = text.split(/\r?\n/);
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line) continue;
-    const idx = line.indexOf(':');
-    if (idx === -1) continue;
-    const key = line.slice(0, idx).trim();
-    let val = line.slice(idx + 1).trim();
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1);
-    } else if (val.startsWith('[') || val.startsWith('{')) {
-      try { val = JSON.parse(val); } catch (_) { /* leave as raw string */ }
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    if (!raw.trim()) continue;
+    // Top-level key (no leading whitespace)
+    if (/^\S/.test(raw)) {
+      const idx = raw.indexOf(':');
+      if (idx === -1) continue;
+      const key = raw.slice(0, idx).trim();
+      const rest = raw.slice(idx + 1).trim();
+      if (rest === '') {
+        // Nested block — absorb indented children
+        const child = {};
+        while (i + 1 < lines.length && /^\s+\S/.test(lines[i + 1])) {
+          i++;
+          const cline = lines[i].trim();
+          const cidx = cline.indexOf(':');
+          if (cidx === -1) continue;
+          const ckey = cline.slice(0, cidx).trim();
+          const cval = cline.slice(cidx + 1).trim();
+          child[ckey] = coerceValue(cval);
+        }
+        meta[key] = child;
+      } else {
+        meta[key] = coerceValue(rest);
+      }
     }
-    meta[key] = val;
   }
   return meta;
 }
@@ -71,6 +94,11 @@ function slugify(s = '') {
 }
 
 const KIND_MATCHERS = [
+  { kind: 'objective',  re: /^🎯|^today'?s?\s+objective\b/i },
+  { kind: 'preclass',   re: /^⏪|^pre-?\s*class\b/i },
+  { kind: 'inclass',    re: /^🎥|^during\s+class\b/i },
+  { kind: 'postclass',  re: /^📝|^post-?\s*class\b/i },
+  { kind: 'extra',      re: /^📚|^extra\b|^additional\s+references\b/i },
   { kind: 'intro',      re: /^intro\b/i },
   { kind: 'read',       re: /^read\s*:/i },
   { kind: 'watch',      re: /^watch\s*:/i },
@@ -310,6 +338,26 @@ export function renderResourcesBlock(meta = {}) {
     <div class="lm-resources">
       <div class="lm-sec-h">Resources</div>
       <ul>${items}</ul>
+    </div>`;
+}
+
+/**
+ * renderObjective(meta) — objective card using meta.objective = { topic, tools, end_goal }.
+ * Returns '' when the block is absent.
+ */
+export function renderObjective(meta = {}) {
+  const obj = meta.objective;
+  if (!obj || typeof obj !== 'object') return '';
+  const topic = obj.topic ? `<div class="obj-row"><span class="obj-k">Topic</span><span class="obj-v">${escapeHtml(obj.topic)}</span></div>` : '';
+  const tools = Array.isArray(obj.tools) && obj.tools.length
+    ? `<div class="obj-row"><span class="obj-k">Tools</span><span class="obj-v">${obj.tools.map(t => `<span class="obj-tool">${escapeHtml(t)}</span>`).join(' ')}</span></div>`
+    : '';
+  const goal = obj.end_goal ? `<div class="obj-row"><span class="obj-k">End goal</span><span class="obj-v">${escapeHtml(obj.end_goal)}</span></div>` : '';
+  if (!topic && !tools && !goal) return '';
+  return `
+    <div class="obj-card">
+      <div class="obj-kicker">🎯 Today's objective</div>
+      ${topic}${tools}${goal}
     </div>`;
 }
 
