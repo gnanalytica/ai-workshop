@@ -9,11 +9,31 @@ tools_hands_on: [{"name": "Vercel", "url": "https://vercel.com"}, {"name": "Supa
 tools_demo: [{"name": "Neon", "url": "https://neon.tech"}, {"name": "Cloudflare Workers", "url": "https://workers.cloudflare.com"}, {"name": "Schema.org validator", "url": "https://validator.schema.org"}]
 tools_reference: [{"name": "Fly.io", "url": "https://fly.io"}, {"name": "Render", "url": "https://render.com"}, {"name": "Cloudflare Pages", "url": "https://pages.cloudflare.com"}, {"name": "GitHub Pages", "url": "https://pages.github.com"}, {"name": "Netlify", "url": "https://netlify.com"}, {"name": "Deno Deploy", "url": "https://deno.com/deploy"}, {"name": "Turso", "url": "https://turso.tech"}, {"name": "Modal", "url": "https://modal.com"}, {"name": "Replicate", "url": "https://replicate.com"}, {"name": "AWS Bedrock", "url": "https://aws.amazon.com/bedrock"}, {"name": "GCP Vertex AI", "url": "https://cloud.google.com/vertex-ai"}, {"name": "Azure AI Foundry", "url": "https://azure.microsoft.com/products/ai-foundry"}, {"name": "Ola Krutrim Cloud", "url": "https://olakrutrim.com"}]
 resources: [{"name": "llms.txt standard", "url": "https://llmstxt.org"}, {"name": "Schema.org", "url": "https://schema.org"}]
+objective:
+  topic: "Ship v0 live — deploy, cost-per-user math, trust UX, and GEO via llms.txt"
+  tools: ["Vercel", "Supabase", "Figma"]
+  end_goal: "Submit a live capstone URL, a token-cost worksheet at 10/100/1000 users, a six-element trust-stack audit, and a verified llms.txt at your domain root."
 ---
 
-## Intro
+## 🎯 Today's objective
 
-Yesterday you built a v0 on your laptop. Today it goes on the internet. A capstone that only runs on localhost is a demo of your patience, not your product. By the end of today you will have a live URL, a token-cost worksheet that tells you how much 10, 100, and 1000 users will cost you per month, a trust-audited UI, and an llms.txt file so the AI search engines of 2026 can cite you correctly.
+**Topic.** From localhost to the public internet — deploy your v0, know what it costs, design it so users trust it, and publish metadata AI search engines can cite.
+
+**Tools you'll use.** Vercel (deploy), Supabase (pooled Postgres + auth), Figma (trust-UX audit sketch).
+
+**End goal.** By the end of today you will have:
+1. A live capstone URL on Vercel, DB-connected via Supabase's pooled endpoint.
+2. A token-cost worksheet at 10 / 100 / 1000 users.
+3. A six-element trust-stack audit (present / partial / missing + one change each).
+4. A verified `yoursite.com/llms.txt` and Schema.org JSON-LD on the landing page.
+
+> *Why this matters:* A capstone that only runs on localhost is a demo of your patience, not your product. Today it goes live, you know the unit economics, and the AI search engines of 2026 can cite you correctly.
+
+---
+
+## ⏪ Pre-class · ~20 min
+
+**Revision / context.** Yesterday (Day 21) was Capstone Milestone 3 — you vibe-coded a v0 that runs locally, with a director's commentary and a 90-second recording. Today we take that exact v0 and put it on the public internet. Your Day 21 repo and CLAUDE.md are the inputs to today's deploy.
 
 ### Quick glossary
 
@@ -23,28 +43,6 @@ Yesterday you built a v0 on your laptop. Today it goes on the internet. A capsto
 - **llms.txt** — a single markdown file at your domain root that tells LLMs what your site is about.
 - **Schema.org** — JSON-LD structured markup that LLMs read preferentially because it's trustworthy.
 - **Trust UX** — the six-part stack: streaming, uncertainty, citations, stop, undo, error recovery.
-
-### Today's 1-hour live session
-
-| Block | Time | What |
-|---|---|---|
-| Recap + hook | 5 min  | Localhost is not a product — today it goes live |
-| Mini-lecture | 20 min | Cold starts, vendor lock-in, cost-per-user math, trust stack, GEO |
-| Live lab     | 20 min | Deploy to Vercel, compute cost-per-user, audit trust stack, publish llms.txt |
-| Q&A + discussion | 15 min | The cost number that shocked you |
-
-**Before class** (~10 min): have your capstone repo pushed to GitHub, Vercel and Supabase accounts ready, and the model pricing pages open in tabs.
-**After class** (~30 min tonight): submit the live URL, finish the token-cost worksheet at 10/100/1000 users, publish and verify `yoursite.com/llms.txt`, and add Schema.org JSON-LD to your landing page.
-
-### In-class moments (minute-by-minute)
-
-- **00:05 — Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
-- **00:15 — Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
-- **00:30 — Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
-- **00:45 — Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
-- **00:55 — GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
-
-## Before class
 
 ### Setup
 - [ ] Sign up for [Vercel](https://vercel.com) free tier and link your GitHub.
@@ -61,26 +59,30 @@ Yesterday you built a v0 on your laptop. Today it goes on the internet. A capsto
 - [ ] A blank spreadsheet (Google Sheets / Numbers) for the token-cost worksheet.
 - [ ] A rough guess at how many interactions per user per month your product expects.
 
-## After class
+---
 
-### Do (the assignment)
-1. Connect your repo to [Vercel](https://vercel.com), ship to production, capture the live URL.
-2. Wire [Supabase](https://supabase.com) (pooled pgbouncer endpoint) via env vars and redeploy.
-3. Build the token-cost worksheet at 10 / 100 / 1000 users using `interactions × (in_tokens × in_price + out_tokens × out_price)`.
-4. Publish `public/llms.txt` per [llmstxt.org](https://llmstxt.org) and verify at `yoursite.com/llms.txt`.
-5. Run the trust-stack audit (six elements) and file present / partial / missing with one-change notes.
+## 🎥 During class · 60 min live session
 
-### Reflect (~5 min)
-Which of the six trust-stack elements is cheapest to add this week, and which will most change how users feel about your product?
+### Agenda
 
-### Stretch (optional)
-- **Extra video**: a Schema.org JSON-LD walkthrough for your framework.
-- **Extra read**: [Schema.org](https://schema.org) Product + FAQ types.
-- **Try**: validate your JSON-LD in the [Schema.org validator](https://validator.schema.org) and paste the result in your submission.
+| Block | Time | What |
+|---|---|---|
+| Recap + hook | 5 min  | Localhost is not a product — today it goes live |
+| Mini-lecture | 20 min | Cold starts, vendor lock-in, cost-per-user math, trust stack, GEO |
+| Live lab     | 20 min | Deploy to Vercel, compute cost-per-user, audit trust stack, publish llms.txt |
+| Q&A + discussion | 15 min | The cost number that shocked you |
 
-## Read: Shipping, cost math, trust UX, and getting cited by AI
+### In-class moments (minute-by-minute)
 
-### Free-tier survival and cold starts
+- **00:05 — Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
+- **00:15 — Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
+- **00:30 — Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
+- **00:45 — Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
+- **00:55 — GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
+
+### Read: Shipping, cost math, trust UX, and getting cited by AI
+
+#### Free-tier survival and cold starts
 
 Every hosting platform has a free tier. None of them is free the way you think. They are free as long as your usage stays in the sweet spot: low traffic, short-lived requests, small bundles. Cross a line — cold starts on a big Python image, a long-running LLM stream, a DB connection that never releases — and the platform either charges you or kills your request with a 502.
 
@@ -93,13 +95,13 @@ Rules of survival:
 
 Cold starts matter because of the perception gap: if your first request takes 4 seconds and every later request takes 200ms, users judge you on the 4. Warm the function on deploy, or pay for the "always-on" tier on the routes that matter most.
 
-### Vendor lock-in — the real cost you do not see
+#### Vendor lock-in — the real cost you do not see
 
 The cheapest way to ship a v0 is to grab the most magical platform: Vercel + its AI SDK, Supabase + its auth, Cloudflare + Workers AI, or bolt.new's stack. That magic has a price you pay later. Vendor lock-in shows up when you try to move and discover your auth assumes Supabase JWT shape, your queue is a Vercel Cron, your file storage is an R2 bucket, and your model calls use a proprietary router.
 
 You cannot fully avoid lock-in — and you shouldn't, at v0. But you can **quarantine it**. Wrap the vendor SDKs in your own thin interfaces: `db.query()`, `auth.currentUser()`, `llm.complete()`. When the day comes to swap a vendor, you change one file, not fifty.
 
-### Token-cost math per user
+#### Token-cost math per user
 
 This is the number most junior AI builders never compute, and it eats startups alive. The math is simple; do it today.
 
@@ -116,7 +118,7 @@ A chat app with a 2000-token system prompt, 500 tokens of user message, 600 toke
 
 Do the math for 10, 100, and 1000 users. The first number tells you if a demo week is free. The second tells you when your free provider credits run out. The third tells you what your pricing page has to say.
 
-### UX for AI — the trust stack
+#### UX for AI — the trust stack
 
 AI products have a distinct UX surface area because the model is non-deterministic. Users tolerate weirdness only if the UI tells them what is happening. The **trust stack**:
 
@@ -129,7 +131,7 @@ AI products have a distinct UX surface area because the model is non-determinist
 
 Audit your capstone against those six today. Missing two of them is normal for a v0; missing five is a reason users will churn on day one.
 
-### GEO — Generative Engine Optimization
+#### GEO — Generative Engine Optimization
 
 Google shaped the last 20 years of web UX through SEO. The next decade is shaped by AI search — ChatGPT, Perplexity, Claude, Gemini, every LLM that answers questions with citations. GEO is the craft of getting cited.
 
@@ -141,11 +143,11 @@ Three moves that work today:
 
 GEO is not SEO with new hats. It rewards clarity and structure over keyword density. Put a table of contents on every long page. Answer the obvious question in the first paragraph. Link to primary sources, not your own blog.
 
-## Watch: From localhost to live URL in under 20 minutes
+### Watch: From localhost to live URL in under 20 minutes
 
 <!-- TODO: replace video -->
 
-## Lab: Ship it, cost it, trust it, publish llms.txt
+### Lab: Ship it, cost it, trust it, publish llms.txt
 
 1. Connect your capstone repo to Vercel. Push. Take the production URL.
 2. If you have a DB, provision a Supabase project and point the app at the pooled connection string. Set env vars in Vercel.
@@ -158,19 +160,7 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 > - *Serverless function times out on the first LLM call* → switch the route to a streaming response and raise `maxDuration` in the route config; non-streamed LLM calls routinely exceed the 10s default.
 > - *Supabase connection errors under light load ("too many connections")* → you're using the direct connection string. Swap to the pooled (pgbouncer) endpoint from the Supabase dashboard and redeploy.
 
-## Quiz
-
-1. Why do cold starts hurt perceived performance more than steady-state latency?
-2. What does "quarantining vendor lock-in" look like in code?
-3. Write the formula for cost per user per month.
-4. Name four of the six elements of the AI trust stack.
-5. What does an `llms.txt` file do?
-
-## Assignment
-
-**Daily:** Submit (a) your live capstone URL, (b) your token-cost worksheet at 10/100/1000 users, and (c) the URL of your published `llms.txt`. Bonus: add Schema.org JSON-LD to your landing page and paste the Schema.org validator result.
-
-## Discuss: The cost surprise
+### Live discussion prompts — The cost surprise
 
 | Prompt | What a strong answer sounds like |
 |---|---|
@@ -178,7 +168,51 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 | Was it the system prompt, output length, model choice, or interaction count? | Diagnoses the dominant cost term with arithmetic, not vibes. Shows at least one multiplication ("2k in × 20 calls × $3/M = $0.12"). |
 | What change drops cost-per-user by 40% without hurting quality, and how would you verify the quality didn't drop? | Proposes a concrete lever (prompt caching, smaller model for cheap turns, retrieval instead of stuffing) and names an eval — even a 10-example side-by-side — to prove quality held. |
 
-## References
+---
+
+## 📝 Post-class · ~2 hour focused block
+
+Block the evening. Phone on DND. Do these in order.
+
+### 1. Immediate action (~70 min)
+1. Connect your repo to [Vercel](https://vercel.com), ship to production, capture the live URL.
+2. Wire [Supabase](https://supabase.com) (pooled pgbouncer endpoint) via env vars and redeploy.
+3. Build the token-cost worksheet at 10 / 100 / 1000 users using `interactions × (in_tokens × in_price + out_tokens × out_price)`.
+4. Publish `public/llms.txt` per [llmstxt.org](https://llmstxt.org) and verify at `yoursite.com/llms.txt`.
+5. Run the trust-stack audit (six elements) and file present / partial / missing with one-change notes.
+
+### 2. Reflect (~5 min)
+Which of the six trust-stack elements is cheapest to add this week, and which will most change how users feel about your product?
+
+### 3. Quiz (~15 min)
+1. Why do cold starts hurt perceived performance more than steady-state latency?
+2. What does "quarantining vendor lock-in" look like in code?
+3. Write the formula for cost per user per month.
+4. Name four of the six elements of the AI trust stack.
+5. What does an `llms.txt` file do?
+
+### 4. Submit the assignment (~5 min)
+**Daily:** Submit (a) your live capstone URL, (b) your token-cost worksheet at 10/100/1000 users, and (c) the URL of your published `llms.txt`. Bonus: add Schema.org JSON-LD to your landing page and paste the Schema.org validator result.
+
+### 5. Deepen (optional ~30 min)
+- **Extra video**: a Schema.org JSON-LD walkthrough for your framework.
+- **Extra read**: [Schema.org](https://schema.org) Product + FAQ types.
+- **Try**: validate your JSON-LD in the [Schema.org validator](https://validator.schema.org) and paste the result in your submission.
+
+### 6. Prep for Day 23 (~30 min — important)
+
+**Tomorrow you stop one-shot prompting and start building agents.** Day 23: a 3-tool LangGraph agent in a ReAct loop, plus your first MCP server wired into Cursor or Claude Desktop.
+
+- [ ] **Confirm Python 3.11+** is available (`python --version`). If not, prep a Google Colab or Replit notebook and note the URL.
+- [ ] **Install LangGraph** in a fresh venv: `pip install langgraph langchain-anthropic`.
+- [ ] **Have a Claude or OpenAI API key** ready in an env var.
+- [ ] **Install [Claude Desktop](https://claude.ai) or [Cursor](https://cursor.com)** for the MCP half of the lab.
+- [ ] **Read** the one-page [MCP intro](https://modelcontextprotocol.io).
+- [ ] **Write down** three candidate tools you'd want your capstone agent to use.
+
+---
+
+## 📚 Extra / additional references
 
 ### Pre-class primers
 - [llmstxt.org](https://llmstxt.org) — the spec in one page.
