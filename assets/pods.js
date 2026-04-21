@@ -74,7 +74,10 @@ export async function callPodFacultyEvent(podId, kind, fromUserId, toUserId, not
     p_to_user_id: toUserId,
     p_note: note,
   });
-  if (error) throw error;
+  if (error) {
+    const msg = [error.message, error.details, error.hint].filter(Boolean).join(' — ') || 'RPC failed';
+    throw new Error(msg);
+  }
 }
 
 export function parsePodCsv(text) {

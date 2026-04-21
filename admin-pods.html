@@ -351,7 +351,8 @@
         </li>`;
       }).join('');
 
-      const availableFac = STATE.faculty.filter(f => !pod.faculty.some(pf => pf.faculty_user_id === f.user_id));
+      const availableFac = STATE.faculty.filter(f =>
+        !pod.faculty.some(pf => String(pf.faculty_user_id) === String(f.user_id)));
 
       return `
         <article class="add-card" data-pod="${esc(pod.id)}">
@@ -404,9 +405,23 @@
       });
 
       card.querySelector('select[data-add-fac]')?.addEventListener('change', async (e) => {
-        const facId = e.target.value; if (!facId) return;
-        try { await callPodFacultyEvent(podId, 'added', null, facId, null); toast('Faculty added'); }
-        catch (err) { toast(err.message, 'err'); }
+        const sel = e.currentTarget;
+        const facId = sel.value;
+        if (!facId) return;
+        const podIdForRpc = sel.getAttribute('data-add-fac') || podId;
+        const podRow = STATE.pods.find(p => String(p.id) === String(podIdForRpc));
+        if (podRow?.faculty?.some(pf => String(pf.faculty_user_id) === String(facId))) {
+          toast('That faculty member is already on this pod.', 'err');
+          sel.value = '';
+          return;
+        }
+        try {
+          await callPodFacultyEvent(podIdForRpc, 'added', null, facId, null);
+          toast('Faculty added');
+        } catch (err) {
+          toast(err?.message || String(err), 'err');
+        }
+        sel.value = '';
         await refresh();
       });
 
