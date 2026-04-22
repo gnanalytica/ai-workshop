@@ -50,6 +50,8 @@
 
   /* ------ Main header ------ */
   .lesson-head{margin-bottom:26px}
+  .class-banner{border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:14px;background:linear-gradient(145deg,rgba(255,255,255,.03),var(--card))}
+  .class-banner .live-row{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
   .head-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .head-row .wtag{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.18em;padding:4px 10px;border:1px solid var(--line);border-radius:999px}
   .head-row .daytag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);padding:4px 10px;border:1px solid rgba(195,255,54,.3);border-radius:999px;background:rgba(195,255,54,.06)}
@@ -397,9 +399,15 @@
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Lesson</div>
-    <div style="display:flex;gap:12px;align-items:center">
-      <a href="find.html" class="muted" style="font-size:13px;display:inline-flex;align-items:center;gap:5px" title="Find lessons, people, shortcuts (includes full-text search)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Find</a>
-      <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
+    <div style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:flex-end">
+      <a href="index.html" class="muted" style="font-size:13px">Home</a>
+      <a href="dashboard.html#lessons" class="muted" style="font-size:13px">Lessons</a>
+      <a href="people.html" class="muted" style="font-size:13px">People</a>
+      <a href="dashboard.html#capstone" class="muted" style="font-size:13px">Capstone</a>
+      <button type="button" class="signout" id="dayNavSearchBtn" title="Search (⌘K)" aria-label="Open search" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <a href="dashboard.html" class="muted" style="font-size:13px">Dashboard</a>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
     </div>
   </div>
@@ -454,13 +462,14 @@
       </div>
       <h1 class="lesson-title" id="lessonTitle">—</h1>
       <p class="lesson-tag" id="weekTitle">—</p>
-      <div class="live-row" id="liveRow"></div>
+      <div id="classBanner" class="class-banner">
+        <div id="classBannerMeta"></div>
+        <div class="live-row" id="liveRow"></div>
+      </div>
       <div id="pairCard" style="margin-top:16px"></div>
       <div id="stuckWidget" style="margin-top:12px"></div>
     </header>
 
-    <div id="metaHeader"></div>
-    <div id="checkpointBanner"></div>
     <div id="weekOutcome"></div>
     <div id="tldrBlock"></div>
     <div id="objectiveBlock"></div>
@@ -495,7 +504,7 @@
     <!-- Discussion -->
     <section id="discussionBlock" style="margin-top:48px">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-        <h3 style="margin:0;font-size:22px;letter-spacing:-.02em">Discussion</h3>
+        <h3 style="margin:0;font-size:22px;letter-spacing:-.02em">Mentor &amp; class thread</h3>
         <div class="muted" style="font-size:12px" id="discCount"></div>
       </div>
       <div id="discussionHost"></div>
@@ -764,17 +773,14 @@
       }
     } catch (e) { /* fall through to empty */ }
 
-    $('metaHeader').innerHTML = renderMetaStrip(meta);
-
-    // Checkpoint badge
     const cp = CHECKPOINTS[n];
-    if (cp) {
-      $('checkpointBanner').innerHTML = `
-        <div class="cp-badge" style="--cp-c:${escapeHtml(cp.color)}">
+    const cpHtml = cp
+      ? `<div class="cp-badge" style="--cp-c:${escapeHtml(cp.color)}">
           <span class="cp-dot"></span>
           <span class="cp-label">Checkpoint · ${escapeHtml(cp.label)}</span>
-        </div>`;
-    }
+        </div>`
+      : '';
+    $('classBannerMeta').innerHTML = cpHtml + renderMetaStrip(meta);
     // Week outcome banner
     const weekOutcome = WEEK_OUTCOMES[dayMeta.w];
     if (weekOutcome) {
@@ -836,12 +842,15 @@
 
     // Check admin/faculty
     let canModerate = false;
+    let facultyIds = new Set();
     try {
-      const [{ data: prof }, { data: fac }] = await Promise.all([
+      const [{ data: prof }, { data: fac }, { data: facAll }] = await Promise.all([
         supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle(),
         supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id).eq('cohort_id', cohort.id),
+        supabase.from('cohort_faculty').select('user_id').eq('cohort_id', cohort.id),
       ]);
       canModerate = !!prof?.is_admin || (fac && fac.length > 0);
+      (facAll || []).forEach((r) => facultyIds.add(r.user_id));
     } catch {}
 
     const state = {
@@ -867,7 +876,11 @@
       const { data } = await supabase.from('day_comments')
         .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
         .order('created_at', { ascending: true });
-      state.comments = data || [];
+      let rows = data || [];
+      if (!canModerate) {
+        rows = rows.filter((c) => c.user_id === user.id || facultyIds.has(c.user_id));
+      }
+      state.comments = rows;
       // Fetch missing profiles
       const ids = Array.from(new Set(state.comments.map(c => c.user_id)));
       const missing = ids.filter(id => !state.profiles.has(id));
@@ -899,7 +912,7 @@
 
       const composeBox = `
         <div class="disc-compose">
-          <textarea id="discRootInput" placeholder="Share a question, insight, or reaction…"></textarea>
+          <textarea id="discRootInput" placeholder="${canModerate ? 'Share a question, insight, or reaction…' : 'Message your mentor (private to you and faculty)…'}"></textarea>
           <div class="disc-actions">
             <button class="disc-post-btn" id="discRootPost">Post</button>
           </div>
@@ -1837,8 +1850,9 @@
   }
 </script>
 <script type="module">
-  import { prependNavFind } from './assets/nav-search.js';
+  import { prependNavFind, openCommandPalette } from './assets/nav-search.js';
   prependNavFind();
+  document.getElementById('dayNavSearchBtn')?.addEventListener('click', () => openCommandPalette(''));
 </script>
 </body>
 </html>

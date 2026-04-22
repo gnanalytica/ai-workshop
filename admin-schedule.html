@@ -156,7 +156,7 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
@@ -202,6 +202,7 @@
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-schedule.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadCohorts();
   }
@@ -268,7 +269,7 @@
   }
 
   function dayCardHtml(d) {
-    const row = DAY_ROWS.get(d.n) || { day_number: d.n, is_unlocked: false, live_session_at: null, meet_link: '', notes: '' };
+    const row = DAY_ROWS.get(d.n) || { day_number: d.n, is_unlocked: false, live_session_at: null, meet_link: '', notes: '', capstone_kind: null };
     const dtVal = row.live_session_at ? toLocalInput(row.live_session_at) : '';
     return `
       <div class="day-card ${row.is_unlocked ? 'unlocked' : ''}" data-day="${d.n}" data-week="${d.w}">
@@ -299,6 +300,15 @@
           <label>Notes</label>
           <textarea data-field="notes" rows="2" placeholder="Optional notes…">${esc(row.notes || '')}</textarea>
         </div>
+        <div>
+          <label>Capstone session type</label>
+          <select data-field="capstone_kind">
+            <option value="" ${!row.capstone_kind ? 'selected' : ''}>None</option>
+            <option value="spec_review" ${row.capstone_kind === 'spec_review' ? 'selected' : ''}>Spec review</option>
+            <option value="mid_review" ${row.capstone_kind === 'mid_review' ? 'selected' : ''}>Mid review</option>
+            <option value="demo_day" ${row.capstone_kind === 'demo_day' ? 'selected' : ''}>Demo day</option>
+          </select>
+        </div>
         <div class="row-foot">
           <span class="saved-flash" data-flash>✓ saved</span>
           <button class="save-btn" data-save>Save</button>
@@ -317,9 +327,12 @@
       const dtEl = card.querySelector('[data-field=live_session_at]');
       const meetEl = card.querySelector('[data-field=meet_link]');
       const notesEl = card.querySelector('[data-field=notes]');
+      const capEl = card.querySelector('[data-field=capstone_kind]');
       const prev = DAY_ROWS.get(n) || {};
       const was = !!prev.is_unlocked;
       const now_on = toggle.checked;
+      const capRaw = capEl?.value || '';
+      const capstone_kind = capRaw === '' ? null : capRaw;
       const payload = {
         cohort_id: CURRENT_COHORT.id,
         day_number: n,
@@ -327,6 +340,7 @@
         live_session_at: dtEl.value ? new Date(dtEl.value).toISOString() : null,
         meet_link: meetEl.value.trim() || null,
         notes: notesEl.value.trim() || null,
+        capstone_kind,
       };
       if (now_on && !was) payload.unlocked_at = new Date().toISOString();
       if (!now_on && was) payload.unlocked_at = null;

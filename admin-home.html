@@ -45,6 +45,86 @@
   .pending-grp b{font-size:13px}
   .pending-grp .meta{font-size:11.5px;color:var(--muted);margin-top:2px}
   .denied{padding:40px;text-align:center;color:var(--muted)}
+  .home-subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .home-subtabs a{padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;text-decoration:none;color:var(--muted);font-weight:500}
+  .home-subtabs a:hover{border-color:var(--accent);color:var(--accent)}
+  .home-subtabs a.on{background:var(--accent);border-color:var(--accent);color:#0b0b10;font-weight:600}
+  .home-tab-panel{margin-bottom:24px}
+  .ann-form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0}
+  .ann-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ann-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+  .ann-card{padding:14px 16px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px}
+  .ann-card.s-info{border-left-color:#38bdf8}
+  .ann-card.s-success{border-left-color:#c3ff36}
+  .ann-card.s-warning{border-left-color:#ffc87a}
+  .ann-card.s-urgent{border-left-color:#ff6b6b}
+  .ann-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+  .ann-title{font-weight:600;font-size:15px;margin:0}
+  .ann-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+  .ann-body{font-size:13.5px;color:#c9c9d3;white-space:pre-wrap;line-height:1.55}
+  .ann-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .ann-acts button{padding:6px 12px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;font-family:inherit}
+  .ann-acts button:hover{border-color:var(--accent)}
+  .ann-acts button.danger:hover{border-color:#ff6b6b;color:#ffa0a0}
+  .pin-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;background:rgba(195,255,54,.12);color:#c9f76a;border:1px solid rgba(195,255,54,.3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-left:6px}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .stat-card .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:6px}
+  .stat-card .val{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .tabs-inline{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+  .tabs-inline button{background:transparent;border:none;padding:10px 16px;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;cursor:pointer;font-family:inherit}
+  .tabs-inline button.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .kind-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;background:rgba(139,92,246,.15);color:#c9b8ff;border:1px solid rgba(139,92,246,.3)}
+  .kind-badge.k-single{background:rgba(56,189,248,.12);color:#7dd5ff;border-color:rgba(56,189,248,.3)}
+  .kind-badge.k-multi{background:rgba(195,255,54,.1);color:#c9f76a;border-color:rgba(195,255,54,.3)}
+  .kind-badge.k-text{background:rgba(255,184,64,.12);color:#ffc87a;border-color:rgba(255,184,64,.3)}
+  .kind-badge.k-questions{background:rgba(255,107,107,.1);color:#ffa0a0;border-color:rgba(255,107,107,.3)}
+  .kind-badge.k-emoji{background:rgba(195,255,54,.1);color:#c9f76a;border-color:rgba(195,255,54,.3)}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .row-actions button{padding:6px 10px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12px;cursor:pointer;font-family:inherit}
+  .row-actions button:hover{border-color:var(--accent)}
+  .row-actions button.primary{background:var(--accent);color:var(--cta-ink);border-color:var(--accent);font-weight:600}
+  .row-actions button.danger:hover{border-color:#ff6b6b;color:#ffa0a0}
+  .dot-open{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);margin-right:6px;vertical-align:middle}
+  .dot-closed{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:6px;vertical-align:middle}
+  .create-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}
+  .create-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+  .create-body{margin-top:18px;display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
+  .create-body .full{grid-column:1/-1}
+  .opt-list{display:flex;flex-direction:column;gap:8px}
+  .opt-row{display:flex;gap:6px}
+  .opt-row input{flex:1;background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--ink);font-family:inherit;font-size:13.5px}
+  .opt-row button{padding:0 10px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;font-family:inherit}
+  .add-opt{align-self:flex-start;padding:7px 12px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink);font-size:12.5px;cursor:pointer;font-family:inherit}
+  .drawer-back{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;display:none}
+  .drawer-back.show{display:block}
+  .drawer{position:fixed;right:0;top:0;height:100vh;width:min(640px,92vw);background:var(--bg);border-left:1px solid var(--line);z-index:101;display:none;flex-direction:column;overflow:hidden}
+  .drawer.show{display:flex}
+  .drawer-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px}
+  .drawer-body{padding:22px 24px;overflow-y:auto;flex:1}
+  .drawer-close{background:transparent;border:1px solid var(--line);color:var(--muted);width:34px;height:34px;border-radius:8px;cursor:pointer;font-family:inherit}
+  .drawer-count{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+  .bar-row{margin-bottom:12px}
+  .bar-head{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .bar-label{color:var(--ink)}
+  .bar-stats{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px}
+  .bar-track{height:22px;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .bar-fill{height:100%;background:var(--accent-2);border-radius:7px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .bar-row.leader .bar-fill{background:var(--accent)}
+  .emoji-row{display:flex;align-items:center;gap:16px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+  .emoji-big{font-size:2.2rem;line-height:1}
+  .emoji-count{flex:1;font-family:"JetBrains Mono",monospace;color:var(--muted);font-size:13px}
+  .emoji-bar{height:6px;background:var(--bg-soft);border-radius:4px;flex:2;overflow:hidden}
+  .emoji-bar-fill{height:100%;background:var(--accent);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .q-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  .q-text{font-size:14px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .q-time{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.1em}
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:none;place-items:center;padding:20px}
+  .modal-back.show{display:grid}
+  .modal{background:var(--bg);border:1px solid var(--line);border-radius:16px;max-width:560px;width:100%;padding:24px;max-height:90vh;overflow-y:auto}
+  @media(max-width:760px){.create-body{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.ann-form .row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -90,6 +170,13 @@
     </div>
   </div>
 
+  <nav class="home-subtabs" aria-label="Home sections">
+    <a href="#overview" class="home-subtab" data-tab="overview">Overview</a>
+    <a href="#announcements" class="home-subtab" data-tab="announcements">Announcements</a>
+    <a href="#polls" class="home-subtab" data-tab="polls">Polls</a>
+  </nav>
+
+  <section id="homeSectionOverview" class="home-tab-panel">
   <div class="grid2">
     <div class="col">
       <!-- TODAY PANEL -->
@@ -144,7 +231,7 @@
           <div class="kpi"><div class="n" id="k24Sub">—</div><div class="l">Submissions</div></div>
           <div class="kpi"><div class="n" id="k24Kudos">—</div><div class="l">Kudos</div></div>
         </div>
-        <a class="more" href="admin-activity.html" style="display:inline-block;margin-top:6px">Open full activity feed →</a>
+        <a class="more" href="admin-analytics.html#activity" style="display:inline-block;margin-top:6px">Open full activity feed →</a>
       </div>
 
       <!-- QUICK ACTIONS -->
@@ -152,8 +239,8 @@
         <h3>Quick actions</h3>
         <div class="quick-row" style="margin-top:6px">
           <a href="admin-schedule.html">Schedule</a>
-          <a href="admin-announcements.html">Announcements</a>
-          <a href="admin-polls.html">Polls</a>
+          <a href="#announcements">Announcements</a>
+          <a href="#polls">Polls</a>
           <a href="admin-stuck.html">Stuck queue</a>
           <a href="admin-teams.html">Peer review</a>
           <a href="admin-content.html">Content &amp; grading</a>
@@ -171,19 +258,176 @@
       </div>
     </div>
   </div>
+  </section>
+
+  <section id="homeSectionAnnouncements" class="home-tab-panel" style="display:none">
+    <div class="kicker">Broadcast</div>
+    <h2 style="margin:8px 0 4px;font-size:22px">Announcements</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 16px">Post to your cohort. Pinned messages stay at the top of students' dashboards.</p>
+    <form class="ann-form" id="homeAnnForm">
+      <div class="field"><label>Title</label><input type="text" name="title" required maxlength="200" /></div>
+      <div class="field"><label>Body <span class="muted" style="text-transform:none;letter-spacing:0">(markdown OK)</span></label><textarea name="body" rows="4" required></textarea></div>
+      <div class="row">
+        <div class="field"><label>Severity</label>
+          <select name="severity">
+            <option value="info">info</option>
+            <option value="success">success</option>
+            <option value="warning">warning</option>
+            <option value="urgent">urgent</option>
+          </select>
+        </div>
+        <div class="field"><label>Pinned until <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input type="datetime-local" name="pinned_until" /></div>
+      </div>
+      <button type="submit" class="submit-btn" id="homeAnnPostBtn">Post announcement →</button>
+      <div class="msg" id="homeAnnPostMsg"></div>
+    </form>
+    <div class="ann-list" id="homeAnnList"></div>
+  </section>
+
+  <section id="homeSectionPolls" class="home-tab-panel" style="display:none">
+    <div class="kicker">Live session</div>
+    <h2 style="margin:8px 0 4px;font-size:22px">Polls</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 16px">Uses the cohort selected above.</p>
+    <div class="stats-row" id="p2_statsRow"></div>
+    <div class="create-panel">
+      <div class="create-head" id="p2_createHead">
+        <div>
+          <div class="kicker" style="margin-bottom:4px">New poll</div>
+          <div style="font-size:15px;font-weight:600">Create a poll</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="cta ghost" id="p2_teamVoteBtn" style="padding:8px 14px;font-size:13px">⭐ Create team-vote poll</button>
+          <button type="button" class="cta ghost" id="p2_createToggle" style="padding:8px 14px;font-size:13px">Expand</button>
+        </div>
+      </div>
+      <div class="create-body" id="p2_createBody" style="display:none">
+        <div class="field"><label>Title</label><input type="text" id="p2_f_title" placeholder="e.g. Warmup check" /></div>
+        <div class="field"><label>Kind</label>
+          <select id="p2_f_kind">
+            <option value="single">Single choice</option>
+            <option value="multi">Multiple choice</option>
+            <option value="text">Text response</option>
+            <option value="questions">Questions wall</option>
+            <option value="emoji">Emoji reactions</option>
+          </select>
+        </div>
+        <div class="field full"><label>Question</label><input type="text" id="p2_f_question" placeholder="What do you want to ask the class?" /></div>
+        <div class="field"><label>Day</label><select id="p2_f_day"><option value="">Standalone (not tied to a day)</option></select></div>
+        <div class="field" id="p2_f_opts_wrap">
+          <label>Options</label>
+          <div class="opt-list" id="p2_f_opts"></div>
+          <button type="button" class="add-opt" id="p2_f_add_opt">+ Add option</button>
+        </div>
+        <div class="full" style="display:flex;gap:10px;justify-content:flex-end">
+          <button type="button" class="cta ghost" id="p2_createCancel" style="padding:10px 18px">Cancel</button>
+          <button type="button" class="cta" id="p2_createBtn" style="padding:10px 18px">Create poll</button>
+        </div>
+        <div class="full"><div class="msg" id="p2_createMsg"></div></div>
+      </div>
+    </div>
+    <div class="tabs-inline" id="p2_tabs">
+      <button type="button" data-tab="open" class="active">Open now</button>
+      <button type="button" data-tab="today">Today</button>
+      <button type="button" data-tab="past">Past</button>
+      <button type="button" data-tab="all">All</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Kind</th>
+            <th scope="col">Day</th>
+            <th scope="col">State</th>
+            <th scope="col">Responses</th>
+            <th scope="col">Created</th>
+            <th scope="col" style="text-align:right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="p2_pollsBody">
+          <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="drawer-back" id="p2_drawerBack"></div>
+  <aside class="drawer" id="p2_drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="kicker" id="p2_drawerKicker" style="margin-bottom:2px">Live</div>
+        <div id="p2_drawerTitle" style="font-size:17px;font-weight:600">—</div>
+        <div class="drawer-count" id="p2_drawerCount">0 responses so far</div>
+      </div>
+      <button type="button" class="drawer-close" id="p2_drawerClose" aria-label="Close">×</button>
+    </div>
+    <div class="drawer-body" id="p2_drawerBody"></div>
+  </aside>
+
+  <div class="modal-back" id="p2_teamVoteBack">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Create team-vote poll">
+      <div class="kicker">Demo day</div>
+      <h2 style="font-size:20px;margin:0 0 4px">Create team-vote poll</h2>
+      <p class="muted" style="font-size:13px;margin:0 0 16px">Auto-populated from the teams in this cohort. Launches immediately so students can vote during the live demo.</p>
+      <div class="field"><label>Title</label><input type="text" id="p2_tv_title" value="Demo day — vote for best team" /></div>
+      <div class="field"><label>Question</label><input type="text" id="p2_tv_question" value="Which team had the best demo?" /></div>
+      <div class="field"><label>Day</label>
+        <select id="p2_tv_day">
+          <option value="25">Day 25 · Mini-demo</option>
+          <option value="30" selected>Day 30 · Final demo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Options (teams)</label>
+        <div class="opt-list" id="p2_tv_opts"></div>
+        <div class="muted" style="font-size:12px;margin-top:6px">One option per team in this cohort. Edit or remove as needed.</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button type="button" class="cta ghost" id="p2_tvCancel" style="padding:10px 18px">Cancel</button>
+        <button type="button" class="cta" id="p2_tvCreate" style="padding:10px 18px">Create + launch</button>
+      </div>
+      <div class="msg" id="p2_tvMsg"></div>
+    </div>
+  </div>
+
+  <div class="modal-back" id="p2_editBack">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Edit poll">
+      <div class="kicker">Edit poll</div>
+      <h2 id="p2_editTitle" style="font-size:20px">Edit</h2>
+      <div class="field"><label>Title</label><input type="text" id="p2_e_title" /></div>
+      <div class="field"><label>Question</label><input type="text" id="p2_e_question" /></div>
+      <div class="field"><label>Day</label><select id="p2_e_day"><option value="">Standalone</option></select></div>
+      <div class="field" id="p2_e_opts_wrap">
+        <label>Options</label>
+        <div class="opt-list" id="p2_e_opts"></div>
+        <button type="button" class="add-opt" id="p2_e_add_opt">+ Add option</button>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button type="button" class="cta ghost" id="p2_editCancel" style="padding:10px 18px">Cancel</button>
+        <button type="button" class="cta" id="p2_editSave" style="padding:10px 18px">Save</button>
+      </div>
+      <div class="msg" id="p2_editMsg"></div>
+    </div>
+  </div>
 </main>
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { DAYS } from './assets/days.js';
+  import { toast, confirmDialog, promptField } from './assets/dialog.js';
+  import { mountAdminPollsTab } from './assets/admin-polls-tab.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
   let COHORTS = [], COHORT = null;
+  let currentUser = null;
+  let HOME_ANN_SUB = null;
+  const cohortChangeListeners = [];
+  let pollsApi = null;
 
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
   function rel(ts) { if (!ts) return ''; const d = (Date.now() - new Date(ts).getTime())/1000; if (d<60) return 'just now'; if (d<3600) return Math.floor(d/60)+'m ago'; if (d<86400) return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
@@ -208,12 +452,130 @@
   $('signoutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
   supabase.auth.onAuthStateChange((e, s) => { if (e === 'SIGNED_IN' && s) onAuth(s.user); if (e === 'SIGNED_OUT') show('gate'); });
 
+  function routeHomeTab() {
+    let h = (location.hash || '#overview').replace(/^#/, '') || 'overview';
+    if (!['overview', 'announcements', 'polls'].includes(h)) h = 'overview';
+    const map = { overview: 'homeSectionOverview', announcements: 'homeSectionAnnouncements', polls: 'homeSectionPolls' };
+    Object.entries(map).forEach(([tab, id]) => {
+      const el = $(id);
+      if (el) el.style.display = tab === h ? '' : 'none';
+    });
+    document.querySelectorAll('.home-subtab').forEach((a) => {
+      const t = (a.getAttribute('href') || '').replace(/^#/, '');
+      a.classList.toggle('on', t === h);
+    });
+  }
+
+  async function homeAnnLoad() {
+    if (!COHORT) return;
+    const list = $('homeAnnList');
+    if (!list) return;
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*')
+      .eq('cohort_id', COHORT.id)
+      .order('created_at', { ascending: false });
+    if (error) {
+      list.innerHTML = `<div class="muted">${esc(error.message)}</div>`;
+      return;
+    }
+    homeAnnRender(data || []);
+  }
+
+  function homeAnnRender(rows) {
+    const list = $('homeAnnList');
+    if (!rows.length) {
+      list.innerHTML = `<div class="muted" style="padding:30px;text-align:center">No announcements yet.</div>`;
+      return;
+    }
+    const now = Date.now();
+    list.innerHTML = rows
+      .map((a) => {
+        const pinned = a.pinned_until && new Date(a.pinned_until).getTime() > now;
+        return `<div class="ann-card s-${esc(a.severity || 'info')}" data-id="${esc(a.id)}">
+        <div class="ann-head">
+          <h3 class="ann-title">${esc(a.title)}${pinned ? `<span class="pin-tag">Pinned</span>` : ''}</h3>
+          <span class="ann-meta">${esc(a.severity || 'info')} · ${esc(new Date(a.created_at).toLocaleString())}</span>
+        </div>
+        <div class="ann-body">${esc(a.body)}</div>
+        <div class="ann-acts">
+          <button type="button" data-act="pin">Pin 24h</button>
+          <button type="button" data-act="unpin">Unpin</button>
+          <button type="button" data-act="edit">Edit</button>
+          <button type="button" data-act="delete" class="danger">Delete</button>
+        </div>
+      </div>`;
+      })
+      .join('');
+    list.querySelectorAll('.ann-card').forEach((card) => {
+      const id = card.dataset.id;
+      card.querySelectorAll('button[data-act]').forEach((btn) =>
+        btn.addEventListener('click', () => homeAnnAct(id, btn.dataset.act, rows.find((r) => r.id === id))),
+      );
+    });
+  }
+
+  async function homeAnnAct(id, a, row) {
+    if (a === 'delete') {
+      const ok = await confirmDialog('Delete this announcement?', { title: 'Delete', confirmText: 'Delete', danger: true });
+      if (!ok) return;
+      const { error } = await supabase.from('announcements').delete().eq('id', id);
+      if (error) toast(error.message, { error: true });
+      else homeAnnLoad();
+    } else if (a === 'pin') {
+      const until = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+      const { error } = await supabase.from('announcements').update({ pinned_until: until }).eq('id', id);
+      if (error) toast(error.message, { error: true });
+      else homeAnnLoad();
+    } else if (a === 'unpin') {
+      const { error } = await supabase.from('announcements').update({ pinned_until: null }).eq('id', id);
+      if (error) toast(error.message, { error: true });
+      else homeAnnLoad();
+    } else if (a === 'edit') {
+      const title = await promptField({ title: 'Edit announcement', label: 'Title', defaultValue: row.title });
+      if (title === null) return;
+      const body = await promptField({ title: 'Edit announcement', label: 'Body', defaultValue: row.body, multiline: true });
+      if (body === null) return;
+      const { error } = await supabase.from('announcements').update({ title, body }).eq('id', id);
+      if (error) toast(error.message, { error: true });
+      else homeAnnLoad();
+    }
+  }
+
+  function homeAnnResubscribe() {
+    if (HOME_ANN_SUB) {
+      try {
+        supabase.removeChannel(HOME_ANN_SUB);
+      } catch (_) {}
+      HOME_ANN_SUB = null;
+    }
+    if (!COHORT) return;
+    HOME_ANN_SUB = supabase
+      .channel(`ann-admin-home-${COHORT.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements', filter: `cohort_id=eq.${COHORT.id}` }, () => homeAnnLoad())
+      .subscribe();
+  }
+
+  async function ensurePollsMounted() {
+    if (pollsApi || !COHORT) return;
+    pollsApi = await mountAdminPollsTab({
+      getCohort: () => COHORT,
+      toast,
+      confirmDialog,
+      onCohortChange: (fn) => {
+        cohortChangeListeners.push(fn);
+      },
+    });
+  }
+
   async function onAuth(user) {
+    currentUser = user;
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('admin-home.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadCohorts();
   }
@@ -231,9 +593,26 @@
     sel.innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
     const def = COHORTS.find(c => c.slug === COHORT_SLUG) || COHORTS[0];
     sel.value = def.id;
-    sel.addEventListener('change', () => { COHORT = COHORTS.find(c => c.id === sel.value); loadAll(); });
+    if (!sel.dataset.wired) {
+      sel.dataset.wired = '1';
+      sel.addEventListener('change', async () => {
+        COHORT = COHORTS.find((c) => c.id === sel.value);
+        await loadAll();
+        await homeAnnLoad();
+        homeAnnResubscribe();
+        cohortChangeListeners.forEach((fn) => {
+          try {
+            fn();
+          } catch (_) {}
+        });
+      });
+    }
     COHORT = def;
     await loadAll();
+    await homeAnnLoad();
+    homeAnnResubscribe();
+    await ensurePollsMounted();
+    routeHomeTab();
   }
 
   function cohortDayInfo() {
@@ -302,6 +681,48 @@
     renderHeatmap(progress, confirmedIds, scheduleMap);
     renderSnapshot(confirmedIds, progress, submissions);
   }
+
+  $('homeAnnForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!COHORT || !currentUser) return;
+    const btn = $('homeAnnPostBtn');
+    const msg = $('homeAnnPostMsg');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Posting…';
+    }
+    if (msg) msg.className = 'msg';
+    const fd = new FormData(e.target);
+    const pinnedVal = fd.get('pinned_until');
+    const payload = {
+      cohort_id: COHORT.id,
+      title: String(fd.get('title') || '').trim(),
+      body: String(fd.get('body') || '').trim(),
+      severity: String(fd.get('severity') || 'info'),
+      pinned_until: pinnedVal ? new Date(pinnedVal).toISOString() : null,
+      posted_by: currentUser.id,
+    };
+    const { error } = await supabase.from('announcements').insert(payload);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Post announcement →';
+    }
+    if (error) {
+      if (msg) {
+        msg.className = 'msg show err';
+        msg.textContent = error.message;
+      }
+      return;
+    }
+    if (msg) {
+      msg.className = 'msg show ok';
+      msg.textContent = 'Posted.';
+    }
+    e.target.reset();
+    homeAnnLoad();
+  });
+
+  window.addEventListener('hashchange', () => routeHomeTab());
 
   function renderToday(info, scheduleMap, attendance, confirmedIds) {
     const body = $('todayBody');

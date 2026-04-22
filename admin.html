@@ -131,7 +131,7 @@
   import { wireThemeToggle } from './assets/theme.js';
   import { toast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   const $ = (id) => document.getElementById(id);
   let ALL_ROWS = [];
@@ -247,6 +247,7 @@
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadData();
   }

@@ -147,7 +147,7 @@
 
 <script type="module">
   import { supabase } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
@@ -247,6 +247,7 @@
     if (!profile?.is_admin) return show('denied');
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('admin-faculty.html', { role: 'admin' });
+    wrapAdminMainLayout();
     await loadCohorts();
     await loadRows();
     wireAdd();

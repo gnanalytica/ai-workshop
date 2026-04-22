@@ -81,7 +81,7 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
@@ -91,6 +91,10 @@
   let COHORT, LIMIT = 100, autoTimer;
 
   async function init() {
+    if (window.self === window.top) {
+      location.replace('admin-analytics.html#activity');
+      return;
+    }
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return show('gate');
     await checkAdmin(session.user);
@@ -116,6 +120,7 @@
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-activity.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     let cq = supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG);
     if (!IS_ADMIN) cq = cq.in('id', FACULTY_COHORT_IDS);

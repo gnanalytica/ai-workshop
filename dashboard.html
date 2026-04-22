@@ -57,6 +57,21 @@
   .day-body{flex:1;min-width:0}
   .day-n{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.12em}
   .day-t{font-size:14px;font-weight:500;margin-top:2px;letter-spacing:-.01em}
+  .day-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .day-pill{font-size:10px;padding:2px 7px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);color:var(--muted);font-weight:600}
+  .day-pill.sub.warn{color:#ffc87a;border-color:rgba(255,200,122,.4)}
+  .day-pill.q.ok{color:#7dd5ff;border-color:rgba(125,213,255,.35)}
+  .dash-overview-grid{display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
+  @media (min-width:960px){
+    .dash-overview-grid{grid-template-columns:1fr 300px;gap:28px}
+    .dash-overview-side{position:sticky;top:88px}
+  }
+  .nav-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;justify-content:flex-end}
+  .nav-dd{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,.35);z-index:200}
+  .nav-dd a,.nav-dd button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:none}
+  .nav-dd a:hover,.nav-dd button:hover{background:var(--bg-soft)}
+  .nav-profile-wrap{position:relative}
+  .lessons-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:#f59e0b;color:#0b0b10;font-size:10px;font-weight:700;vertical-align:middle}
   .signout{padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit}
   .signout:hover{color:var(--ink)}
   .anno{position:relative;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:14px 44px 14px 16px}
@@ -76,8 +91,6 @@
     .day-item{padding:12px 14px;gap:10px}
     .week-head h3{font-size:17px}
     .week-block{margin-bottom:20px}
-    nav .nav-in > div:last-child > a{display:none!important}
-    nav .nav-in > div:last-child > a[href="index.html"]{display:inline!important}
   }
 </style>
 </head>
@@ -87,17 +100,26 @@
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
-    <div style="display:flex;gap:14px;align-items:center">
-      <a href="find.html" style="font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:5px" title="Find lessons, people, shortcuts (includes full-text search)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Find</a>
-      <a href="classmates.html" style="font-size:13px;color:var(--muted)">Classmates</a>
-      <a href="hall-of-fame.html" style="font-size:13px;color:var(--muted)">Hall of Fame</a>
-      <a href="timeline.html" style="font-size:13px;color:var(--muted)">Timeline</a>
-      <a href="peer-reviews.html" style="font-size:13px;color:var(--muted)">Peer reviews</a>
-      <a href="certificate.html" id="navCert" style="font-size:13px;color:var(--muted);display:none">Certificate</a>
-      <a href="#" id="navShowcase" style="font-size:13px;color:var(--muted);display:none">Showcase</a>
-      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+    <div class="nav-links">
+      <a href="index.html" class="muted" style="font-size:13px">Home</a>
+      <a href="#lessons" id="navTabLessons" style="font-size:13px;color:var(--muted)">Lessons<span class="lessons-badge" id="navLessonsBadge" style="display:none" title="Pending this week">0</span></a>
+      <a href="people.html" style="font-size:13px;color:var(--muted)">People</a>
+      <a href="#capstone" style="font-size:13px;color:var(--muted)">Capstone</a>
+      <button type="button" class="signout" id="navSearchBtn" title="Search (⌘K)" aria-label="Open search" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-profile-wrap">
+        <button type="button" class="signout" id="navProfileBtn" style="display:none" aria-expanded="false" aria-haspopup="true">Menu</button>
+        <div id="navProfileDd" class="nav-dd" style="display:none" role="menu">
+          <a href="timeline.html" role="menuitem">Timeline</a>
+          <a href="peer-reviews.html" role="menuitem">Peer reviews</a>
+          <a href="certificate.html" id="navCert" role="menuitem" style="display:none">Certificate</a>
+          <a href="#" id="navShowcase" role="menuitem" style="display:none">Showcase</a>
+          <a href="#profile" role="menuitem">Profile</a>
+          <button type="button" id="navMenuSignout" role="menuitem">Sign out</button>
+        </div>
+      </div>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-      <button class="signout" id="signoutBtn" style="display:none">Sign out</button>
     </div>
   </div>
 </nav>
@@ -131,13 +153,14 @@
     <a href="#overview" class="active" data-tab="overview">Overview</a>
     <a href="#lessons" data-tab="lessons">Lessons</a>
     <a href="#capstone" data-tab="capstone">Capstone</a>
-    <a href="#activity" data-tab="activity">My activity</a>
     <a href="#profile" data-tab="profile">Profile</a>
   </div>
 
   <!-- OVERVIEW TAB -->
   <section id="tab-overview" class="tab-panel">
   <div id="announcementsBanner" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
+  <div class="dash-overview-grid">
+    <div class="dash-overview-main">
   <div class="progress-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline">
       <h2 style="margin:0">Your journey</h2>
@@ -145,26 +168,7 @@
     </div>
     <div class="pbar"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
     <div class="pstats"><span><b id="doneCount" style="color:var(--ink)">0</b> of 30 days done</span><span id="streak">—</span></div>
-
-    <div class="sub-bars" id="subBars">
-      <div>
-        <div class="sub-bar-head"><span><b>Lessons</b><span id="sbLessonsCount">0/30</span></span><span id="sbLessonsPct">0%</span></div>
-        <div class="sub-bar-track"><div class="sub-bar-fill b-lessons" id="sbLessonsFill" style="width:0%"></div></div>
-      </div>
-      <div>
-        <div class="sub-bar-head"><span><b>Submissions</b><span id="sbSubsCount">0/7</span></span><span id="sbSubsPct">0%</span></div>
-        <div class="sub-bar-track"><div class="sub-bar-fill b-subs" id="sbSubsFill" style="width:0%"></div></div>
-      </div>
-      <div>
-        <div class="sub-bar-head"><span><b>Quizzes</b><span id="sbQuizCount">0 passed / 0</span></span><span id="sbQuizPct">0%</span></div>
-        <div class="sub-bar-track"><div class="sub-bar-fill b-quiz" id="sbQuizFill" style="width:0%"></div></div>
-      </div>
-      <div>
-        <div class="sub-bar-head"><span><b>Attendance</b><span id="sbAttCount">0/0</span></span><span id="sbAttPct">0%</span></div>
-        <div class="sub-bar-track"><div class="sub-bar-fill b-att" id="sbAttFill" style="width:0%"></div></div>
-      </div>
-    </div>
-    <p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Submitted assignments and quiz scores are listed on the <a href="#activity" style="color:var(--accent)">My activity</a> tab. Open any day from <strong>Lessons</strong> to review or edit what you turned in.</p>
+    <p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Assignment and quiz status appears on each day in <a href="#lessons" style="color:var(--accent)">Lessons</a>. Open <a href="#profile" style="color:var(--accent)">Profile</a> for detailed stats and notes.</p>
   </div>
 
   <!-- TODAY'S FOCUS -->
@@ -186,12 +190,6 @@
 
   <!-- UPCOMING -->
   <div id="upcomingCard" class="progress-wrap" style="display:none"></div>
-
-  <!-- MENTOR CARD (populated from my_pod RPC; hidden if no pod) -->
-  <section id="mentorCard" class="add-card" style="display:none;margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
-    <div class="kicker">Your mentor</div>
-    <div id="mentorBody" style="margin-top:6px"></div>
-  </section>
 
   <!-- ENROLL CARD: shown only when signed in but not registered for cohort -->
   <div id="enrollCard" style="display:none">
@@ -226,11 +224,6 @@
     </div>
   </div>
 
-  <div id="teamCard" class="progress-wrap" style="display:none"></div>
-
-  <!-- This week's buddy -->
-  <div id="buddyCard" class="progress-wrap" style="display:none"></div>
-
   <!-- Full syllabus quick view -->
   <div class="progress-wrap">
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
@@ -241,6 +234,16 @@
       <a href="#lessons" style="font-size:13px;color:var(--accent)">Open full lessons tab →</a>
     </div>
     <div id="syllabusList" style="margin-top:16px;display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+    </div>
+    <aside class="dash-overview-side">
+  <section id="mentorCard" class="add-card" style="display:none;margin:0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+    <div class="kicker">Your mentor</div>
+    <div id="mentorBody" style="margin-top:6px"></div>
+  </section>
+  <div id="buddyCard" class="progress-wrap" style="display:none;margin-bottom:16px"></div>
+  <div id="teamCard" class="progress-wrap" style="display:none"></div>
+    </aside>
   </div>
   </section>
 
@@ -269,25 +272,6 @@
     </div>
   </section>
 
-  <!-- ACTIVITY TAB -->
-  <section id="tab-activity" class="tab-panel" style="display:none">
-    <div class="progress-wrap">
-      <div class="kicker">Quiz attempts</div>
-      <h2 style="margin:0 0 14px">Your quiz scores</h2>
-      <div id="quizTableWrap" class="muted" style="font-size:14px">Loading…</div>
-    </div>
-    <div class="progress-wrap">
-      <div class="kicker">Assignments</div>
-      <h2 style="margin:0 0 14px">Submissions</h2>
-      <div id="subTableWrap" class="muted" style="font-size:14px">Loading…</div>
-    </div>
-    <div class="progress-wrap">
-      <div class="kicker">Reading notes</div>
-      <h2 style="margin:0 0 14px">Your notes across all days</h2>
-      <div id="notesList" class="muted" style="font-size:14px">Loading…</div>
-    </div>
-  </section>
-
   <!-- PROFILE TAB -->
   <section id="tab-profile" class="tab-panel" style="display:none">
     <div class="progress-wrap">
@@ -295,6 +279,43 @@
       <h2 style="margin:0 0 14px">Your info</h2>
       <div id="profileFields"></div>
     </div>
+    <details class="progress-wrap" id="detailedStatsDetails">
+      <summary style="cursor:pointer;font-weight:600;font-size:15px;padding:4px 0">Detailed stats</summary>
+      <p class="muted" style="font-size:13px;margin:8px 0 14px">Submissions, quizzes, attendance, and lesson completion bars.</p>
+    <div class="sub-bars" id="subBars">
+      <div>
+        <div class="sub-bar-head"><span><b>Lessons</b><span id="sbLessonsCount">0/30</span></span><span id="sbLessonsPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-lessons" id="sbLessonsFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Submissions</b><span id="sbSubsCount">0/7</span></span><span id="sbSubsPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-subs" id="sbSubsFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Quizzes</b><span id="sbQuizCount">0 passed / 0</span></span><span id="sbQuizPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-quiz" id="sbQuizFill" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="sub-bar-head"><span><b>Attendance</b><span id="sbAttCount">0/0</span></span><span id="sbAttPct">0%</span></div>
+        <div class="sub-bar-track"><div class="sub-bar-fill b-att" id="sbAttFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div class="kicker">Quiz attempts</div>
+      <h3 style="margin:8px 0 10px;font-size:16px">Your quiz scores</h3>
+      <div id="quizTableWrap" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    <div style="margin-top:20px">
+      <div class="kicker">Assignments</div>
+      <h3 style="margin:8px 0 10px;font-size:16px">Submissions</h3>
+      <div id="subTableWrap" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    <div style="margin-top:20px">
+      <div class="kicker">Reading notes</div>
+      <h3 style="margin:8px 0 10px;font-size:16px">Your notes across all days</h3>
+      <div id="notesList" class="muted" style="font-size:14px">Loading…</div>
+    </div>
+    </details>
     <div class="progress-wrap">
       <div class="kicker">Public showcase</div>
       <h2 style="margin:0 0 8px">Showcase opt-in</h2>
@@ -334,7 +355,8 @@
 
   // Tab switching via URL hash
   function activateTab(name) {
-    const valid = ['overview','lessons','capstone','activity','profile'];
+    if (name === 'activity') name = 'profile';
+    const valid = ['overview','lessons','capstone','profile'];
     if (!valid.includes(name)) name = 'overview';
     document.querySelectorAll('#dashTabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
     document.querySelectorAll('.tab-panel').forEach(p => p.style.display = p.id === 'tab-' + name ? 'block' : 'none');
@@ -346,8 +368,85 @@
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { DAYS, WEEK_TITLES, WEEK_OUTCOMES, CHECKPOINTS } from './assets/days.js';
   import { routeAfterSignIn } from './assets/admin-auth.js';
+  import { openCommandPalette } from './assets/nav-search.js';
 
   const $ = (id) => document.getElementById(id);
+
+  let DASH_WORK = { subByDay: new Map(), quizBest: new Map() };
+
+  async function fetchLessonWorkMaps(user, cohort) {
+    const [subsRes, attemptsRes] = await Promise.all([
+      supabase.from('submissions').select('status,score,assignments!inner(day_number,cohort_id)').eq('user_id', user.id).eq('assignments.cohort_id', cohort.id),
+      supabase.from('quiz_attempts').select('quiz_id,score,passed,quizzes!inner(day_number,cohort_id)').eq('user_id', user.id).eq('quizzes.cohort_id', cohort.id),
+    ]);
+    const subByDay = new Map();
+    (subsRes.data || []).forEach((s) => {
+      const dn = s.assignments?.day_number;
+      if (dn != null) subByDay.set(dn, s);
+    });
+    const quizBest = new Map();
+    (attemptsRes.data || []).forEach((a) => {
+      const dn = a.quizzes?.day_number;
+      if (dn == null) return;
+      const prev = quizBest.get(dn);
+      if (!prev || (a.score ?? 0) > (prev.score ?? 0)) quizBest.set(dn, a);
+    });
+    DASH_WORK = { subByDay, quizBest };
+  }
+
+  function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  function dayWorkPillsHTML(n) {
+    const { subByDay, quizBest } = DASH_WORK;
+    const parts = [];
+    const sub = subByDay.get(n);
+    const quiz = quizBest.get(n);
+    if (sub) {
+      const st = sub.status || 'submitted';
+      if (st === 'graded' && sub.score != null) parts.push(`<span class="day-pill sub">Graded ${escapeHtml(String(sub.score))}</span>`);
+      else if (st === 'graded') parts.push(`<span class="day-pill sub">Graded</span>`);
+      else parts.push(`<span class="day-pill sub warn">${escapeHtml(st)}</span>`);
+    }
+    if (quiz) {
+      parts.push(quiz.passed ? `<span class="day-pill q ok">Quiz ok</span>` : `<span class="day-pill q">Quiz ${escapeHtml(String(quiz.score ?? '—'))}</span>`);
+    }
+    if (!parts.length) return '';
+    return `<div class="day-pills">${parts.join('')}</div>`;
+  }
+
+  function lessonDayApprox(cohort) {
+    if (!cohort?.starts_on) return 1;
+    const start = new Date(cohort.starts_on);
+    if (isNaN(start.getTime())) return 1;
+    const diff = Math.floor((Date.now() - start.getTime()) / 86400000);
+    return Math.max(1, Math.min(30, diff + 1));
+  }
+
+  function updateLessonsNavBadge(user, cohort, doneSet, scheduleMap) {
+    const badge = $('navLessonsBadge');
+    if (!badge) return;
+    const approx = lessonDayApprox(cohort);
+    const focusDays = [];
+    for (let i = 0; i < 7; i++) {
+      const d = approx + i;
+      if (d >= 1 && d <= 30) focusDays.push(d);
+    }
+    let n = 0;
+    for (const d of focusDays) {
+      const sched = scheduleMap.get(d);
+      if (!sched?.is_unlocked || doneSet.has(d)) continue;
+      const sub = DASH_WORK.subByDay.get(d);
+      const quiz = DASH_WORK.quizBest.get(d);
+      if (sub && sub.status !== 'graded') n++;
+      if (quiz && !quiz.passed) n++;
+    }
+    if (n > 0) {
+      badge.textContent = String(n);
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -360,13 +459,15 @@
   function showGate() {
     $('gate').style.display = 'grid';
     $('dash').style.display = 'none';
-    $('signoutBtn').style.display = 'none';
+    const nb = $('navProfileBtn');
+    if (nb) nb.style.display = 'none';
   }
 
   function showDash(user) {
     $('gate').style.display = 'none';
     $('dash').style.display = 'block';
-    $('signoutBtn').style.display = 'inline-block';
+    const nb = $('navProfileBtn');
+    if (nb) nb.style.display = 'inline-block';
     const cert = $('navCert');
     const show = $('navShowcase');
     if (cert) cert.style.display = 'inline';
@@ -400,10 +501,31 @@
     }
   });
 
-  $('signoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    location.reload();
-  });
+  const navMenuSignout = $('navMenuSignout');
+  if (navMenuSignout) {
+    navMenuSignout.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      location.reload();
+    });
+  }
+  const navSearchBtn = $('navSearchBtn');
+  if (navSearchBtn) navSearchBtn.addEventListener('click', () => openCommandPalette(''));
+
+  const navProfileBtn = $('navProfileBtn');
+  const navProfileDd = $('navProfileDd');
+  if (navProfileBtn && navProfileDd) {
+    navProfileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = navProfileDd.style.display !== 'block';
+      navProfileDd.style.display = open ? 'block' : 'none';
+      navProfileBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', () => {
+      navProfileDd.style.display = 'none';
+      navProfileBtn.setAttribute('aria-expanded', 'false');
+    });
+    navProfileDd.addEventListener('click', (e) => e.stopPropagation());
+  }
 
   supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
@@ -477,15 +599,17 @@
     const doneSet = new Set(progress.map(p => p.day_number));
     const scheduleMap = new Map((scheduleRes.data || []).map(d => [d.day_number, d]));
 
+    await fetchLessonWorkMaps(user, cohort);
     renderProgress(doneSet);
     renderRhythm(doneSet, scheduleMap);
-    renderStackedBars(user, cohort, doneSet, scheduleMap);
+    await renderStackedBars(user, cohort, doneSet, scheduleMap);
     renderWeeks(user, cohort, doneSet, scheduleMap);
+    updateLessonsNavBadge(user, cohort, doneSet, scheduleMap);
     renderTeamCard(user, cohort);
     renderBuddyCard(user, cohort);
     renderTodayCard(user, cohort, doneSet, scheduleMap);
     renderUpcomingCard(user, cohort, scheduleMap);
-    renderMilestones(doneSet, reg);
+    renderMilestones(doneSet, reg, scheduleMap);
     renderSyllabus(doneSet, scheduleMap);
     renderProfile(user, profile, reg);
     renderCapSpec(progress);
@@ -778,7 +902,13 @@
     }).join('');
   }
 
-  function renderMilestones(doneSet, reg) {
+  const CAPSTONE_KIND_LABELS = {
+    spec_review: 'Spec review',
+    mid_review: 'Mid review',
+    demo_day: 'Demo day',
+  };
+
+  function renderMilestones(doneSet, reg, scheduleMap) {
     const list = document.getElementById('milestoneList');
     if (!list) return;
     const mile = [
@@ -791,13 +921,33 @@
     list.innerHTML = mile.map(m => {
       const done = doneSet.has(m.n);
       const icon = done ? '✓' : '•';
-      return `<li style="display:flex;gap:14px;align-items:center;padding:12px 14px;background:${done?'rgba(195,255,54,.06)':'var(--bg-soft)'};border:1px solid ${done?'rgba(195,255,54,.3)':'var(--line)'};border-radius:12px">
-        <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:${done?'var(--accent)':'transparent'};border:1px solid ${done?'var(--accent)':'var(--line)'};color:${done?'var(--cta-ink)':'var(--muted)'};font-weight:700">${icon}</div>
-        <div style="flex:1">
+      const sched = scheduleMap?.get(m.n);
+      const kind = sched?.capstone_kind;
+      const kindLabel = kind && CAPSTONE_KIND_LABELS[kind] ? CAPSTONE_KIND_LABELS[kind] : null;
+      let sessionBlock = '';
+      if (sched?.live_session_at) {
+        const when = new Date(sched.live_session_at);
+        const whenStr = when.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        const within = Math.abs(when.getTime() - Date.now()) < 12 * 3600 * 1000;
+        const join = sched.meet_link && within
+          ? `<a href="${escapeHtml(sched.meet_link)}" target="_blank" rel="noopener" class="cta" style="display:inline-block;margin-top:8px;font-size:12px;padding:6px 12px">Join session →</a>`
+          : '';
+        sessionBlock = `<div style="margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:12.5px">
+          <div style="font-weight:600;margin-bottom:4px">Session${kindLabel ? ` · ${escapeHtml(kindLabel)}` : ''}</div>
+          <div class="muted" style="font-size:12px">Live · ${escapeHtml(whenStr)}</div>
+          ${join}
+        </div>`;
+      } else if (kindLabel) {
+        sessionBlock = `<div style="margin-top:10px;padding:10px 12px;border-radius:10px;border:1px dashed var(--line);font-size:12px;color:var(--muted)">${escapeHtml(kindLabel)} · session time TBD (set in schedule)</div>`;
+      }
+      return `<li style="display:flex;gap:14px;align-items:flex-start;padding:12px 14px;background:${done?'rgba(195,255,54,.06)':'var(--bg-soft)'};border:1px solid ${done?'rgba(195,255,54,.3)':'var(--line)'};border-radius:12px">
+        <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:${done?'var(--accent)':'transparent'};border:1px solid ${done?'var(--accent)':'var(--line)'};color:${done?'var(--cta-ink)':'var(--muted)'};font-weight:700;flex-shrink:0">${icon}</div>
+        <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:14px">Day ${m.n} · ${m.label}</div>
           <div style="font-size:12.5px;color:var(--muted)">${m.desc}</div>
+          ${sessionBlock}
         </div>
-        <a href="day.html?n=${m.n}" class="cta ghost" style="font-size:12.5px;padding:6px 12px">Open →</a>
+        <a href="day.html?n=${m.n}" class="cta ghost" style="font-size:12.5px;padding:6px 12px;flex-shrink:0;align-self:center">Open →</a>
       </li>`;
     }).join('');
 
@@ -969,8 +1119,6 @@
       location.reload();
     });
   }
-
-  function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
   async function renderBuddyCard(user, cohort) {
     const card = document.getElementById('buddyCard');
@@ -1336,6 +1484,7 @@
                   ${isToday ? '<span class="live-pill">Today</span>' : ''}
                 </div>
                 <div class="day-t">${d.title}</div>
+                ${dayWorkPillsHTML(d.n)}
               </div>
             </a>`;
           }).join('')}
@@ -1372,6 +1521,9 @@
     }
     renderProgress(doneSet);
     if (scheduleMap) renderRhythm(doneSet, scheduleMap);
+    await fetchLessonWorkMaps(user, cohort);
+    renderWeeks(user, cohort, doneSet, scheduleMap);
+    updateLessonsNavBadge(user, cohort, doneSet, scheduleMap);
   }
 
   init();

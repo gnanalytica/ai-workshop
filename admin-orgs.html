@@ -218,13 +218,14 @@
 
 <script type="module">
   import { supabase } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { toast as appToast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
   document.getElementById('adminNav').innerHTML = renderAdminNav('admin-orgs.html');
+    wrapAdminMainLayout();
 
   let ORGS = [];
   let COHORTS = [];

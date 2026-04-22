@@ -160,7 +160,7 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
@@ -187,6 +187,7 @@
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     const params = new URLSearchParams(location.search);
     const u = params.get('u');

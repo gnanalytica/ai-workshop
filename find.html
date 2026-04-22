@@ -3,122 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Find · AI Workshop</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<title>Find</title>
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
-<style>
-  .find-wrap{max-width:900px;margin:0 auto;padding:28px 24px 80px}
-  .find-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:22px 0}
-  .find-card{display:block;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);text-decoration:none;color:inherit;transition:border-color .15s}
-  .find-card:hover{border-color:var(--accent)}
-  .find-card b{font-size:13.5px;display:block;margin-bottom:4px}
-  .find-card span{font-size:12px;color:var(--muted);line-height:1.45}
-  .res-block{margin-top:28px}
-  .res-block h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-  .lesson-row{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;text-decoration:none;color:inherit;background:var(--bg-soft)}
-  .lesson-row:hover{border-color:var(--accent)}
-  .lesson-row .dn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
-  .lesson-row .tt{font-weight:600;font-size:14px;margin-top:4px}
-  .empty{padding:28px;text-align:center;color:var(--muted);font-size:13.5px}
-</style>
 </head>
 <body>
-<a href="#main" class="skip-link">Skip to main content</a>
-<nav>
-  <div class="wrap nav-in">
-    <div class="brand"><span class="dot"></span> Gnanalytica · Find</div>
-    <div style="display:flex;gap:12px;align-items:center">
-      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
-      <a href="dashboard.html" class="muted" style="font-size:13px">Dashboard</a>
-      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-    </div>
-  </div>
-</nav>
-
-<main class="find-wrap" id="main" tabindex="-1">
-  <div class="kicker">Search &amp; shortcuts</div>
-  <h1 style="margin:6px 0 8px">Find</h1>
-  <p class="muted" style="font-size:14px;margin:0 0 18px">Match lesson titles instantly. For full lesson text search, open <a href="search.html" style="color:var(--accent)">Search lessons</a>. Use the links below for people and admin tools (sign-in may be required).</p>
-
-  <form class="site-search site-search--hero" method="get" action="find.html" role="search">
-    <span class="site-search__icon" aria-hidden="true">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </span>
-    <label class="sr-only" for="q">Search lessons and days</label>
-    <input class="site-search__input" type="search" id="q" name="q" placeholder="Lessons, topics, day numbers…" aria-label="Search" autofocus enterkeyhint="search" />
-    <button type="submit" class="site-search__submit">Search</button>
-  </form>
-
-  <div class="find-grid" id="shortcuts">
-    <a class="find-card" href="search.html"><b>Lesson full-text</b><span>All 30 markdown files in your browser</span></a>
-    <a class="find-card" href="classmates.html"><b>Classmates</b><span>Filter students in your cohort directory</span></a>
-    <a class="find-card" href="dashboard.html"><b>Dashboard</b><span>Your days, submissions, progress</span></a>
-    <a class="find-card" href="admin.html"><b>Registrations</b><span>Admin / faculty: search students by name</span></a>
-    <a class="find-card" href="admin-faculty.html"><b>Faculty roster</b><span>Admins: who teaches which cohort</span></a>
-    <a class="find-card" href="admin-content.html"><b>Content &amp; assignments</b><span>Filter days in the picker</span></a>
-    <a class="find-card" href="faculty.html"><b>Faculty home</b><span>Today, pods, cohort, analytics</span></a>
-    <a class="find-card" href="admin-student.html"><b>Student lookup</b><span>Open a learner by email (admin)</span></a>
-  </div>
-
-  <div class="res-block" id="lessonBlock" style="display:none">
-    <h2>Lesson titles</h2>
-    <div id="lessonHits"></div>
-  </div>
-  <div id="emptyHint" class="empty" style="display:none">No lesson titles match. Try <a href="search.html" style="color:var(--accent)">full-text search</a> or another keyword.</div>
-</main>
-
 <script type="module">
-  import { DAYS, WEEK_TITLES } from './assets/days.js';
-  import { wireThemeToggle } from './assets/theme.js';
-  wireThemeToggle();
-
-  const $ = (id) => document.getElementById(id);
-  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-
-  function run(qRaw) {
-    const q = (qRaw || '').trim().toLowerCase();
-    $('q').value = qRaw || '';
-    if (!q) {
-      $('lessonBlock').style.display = 'none';
-      $('emptyHint').style.display = 'none';
-      return;
-    }
-    const hits = DAYS.filter((d) => {
-      const blob = `${d.n} ${d.title} ${WEEK_TITLES[d.w] || ''} week ${d.w}`.toLowerCase();
-      return blob.includes(q);
-    });
-    if (!hits.length) {
-      $('lessonBlock').style.display = 'none';
-      $('emptyHint').style.display = 'block';
-      return;
-    }
-    $('emptyHint').style.display = 'none';
-    $('lessonBlock').style.display = 'block';
-    $('lessonHits').innerHTML = hits.map((d) => `
-      <a class="lesson-row" href="day.html?n=${d.n}">
-        <div class="dn">DAY ${String(d.n).padStart(2, '0')} · WEEK ${d.w} · ${esc(WEEK_TITLES[d.w] || '')}</div>
-        <div class="tt">${esc(d.title)}</div>
-      </a>`).join('');
-  }
-
-  $('q').addEventListener('input', () => run($('q').value));
-  document.querySelector('form.site-search--hero').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const v = $('q').value.trim();
-    const u = new URL(location.href);
-    u.searchParams.set('q', v);
-    history.replaceState(null, '', u);
-    run(v);
-  });
-
-  const start = new URLSearchParams(location.search).get('q') || '';
-  if (start) run(start);
-</script>
-<script type="module">
-  import { prependNavFind } from './assets/nav-search.js';
-  prependNavFind();
+  import { openCommandPalette } from './assets/nav-search.js';
+  const q = new URLSearchParams(location.search).get('q') || '';
+  openCommandPalette(q);
 </script>
 </body>
 </html>

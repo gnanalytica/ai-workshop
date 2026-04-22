@@ -137,7 +137,7 @@
 
 <script type="module">
   import { supabase } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { loadPodsForCohort, loadEnrolledStudents, loadCohortFaculty, callPodFacultyEvent, parsePodCsv } from './assets/pods.js';
@@ -186,6 +186,7 @@
     STATE.me = user.id;
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     const hint = $('podsRoleHint');
     if (hint) {

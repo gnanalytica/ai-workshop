@@ -35,6 +35,18 @@ export function renderViewSwitcher(isAdmin, isFaculty, currentView) {
   return `<a href="${target}" class="view-switch" style="padding:6px 12px;border-radius:999px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(120,170,255,.12);color:#7aa7ff;border:1px solid rgba(120,170,255,.3);text-decoration:none;font-weight:600">${label}</a>`;
 }
 
+/** Dropdown body: admin↔faculty switch (if both) + sign out. Used on faculty.html nav account menu. */
+export function renderAccountMenuHtml(isAdmin, isFaculty, currentView) {
+  const switcher = renderViewSwitcher(isAdmin, isFaculty, currentView);
+  const sw = switcher
+    ? `<div style="padding:4px 0;border-bottom:1px solid var(--line);margin-bottom:4px">${switcher.replace(
+        'class="view-switch"',
+        'class="view-switch" style="display:block;text-align:center;padding:8px 10px"',
+      )}</div>`
+    : '';
+  return `${sw}<button type="button" id="facAcctSignout" style="width:100%;text-align:left;padding:10px 12px;border:none;background:transparent;font:inherit;cursor:pointer;color:var(--ink);border-radius:10px">Sign out</button>`;
+}
+
 // Post-sign-in router: send faculty-only users to faculty.html.
 // Admins and students are left alone so existing flows (admin index, dashboard)
 // keep their current behavior. Returns true if a redirect was initiated.

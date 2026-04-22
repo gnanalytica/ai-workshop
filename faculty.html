@@ -28,6 +28,11 @@
   .toast.show{opacity:1}
   .toast.err{border-color:#ff6b6b;color:#ffa0a0}
   select{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+  .nav-profile-wrap{position:relative}
+  .nav-dd{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,.35);z-index:200}
+  .nav-dd a{display:block;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:13.5px}
+  .nav-dd a:hover{background:var(--bg-soft)}
+  .nav-dd button:hover{background:var(--bg-soft)}
 </style>
 </head>
 <body>
@@ -37,8 +42,11 @@
     <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
     <div style="display:flex;gap:12px;align-items:center">
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <div class="nav-profile-wrap">
+        <button type="button" class="signout" id="facAcctBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit" aria-expanded="false" aria-haspopup="true">Account</button>
+        <div id="facAcctDd" class="nav-dd" style="display:none" role="menu"></div>
+      </div>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
     </div>
   </div>
 </nav>
@@ -74,18 +82,14 @@
       <h1 id="fHello">Good to see you.</h1>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <a href="admin-pods.html" class="muted" style="font-size:13px;text-decoration:none;border:1px solid var(--line);padding:6px 12px;border-radius:999px">Pods →</a>
-      <a href="admin-student.html" class="muted" style="font-size:13px;text-decoration:none;border:1px solid var(--line);padding:6px 12px;border-radius:999px">Student work →</a>
-      <div id="viewSwitcher"></div>
       <select id="fCohortSel"></select>
     </div>
   </header>
 
-  <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px">
-    <a href="#today" data-tab="today" class="f-tab">Today</a>
-    <a href="#my-pod" data-tab="my-pod" class="f-tab">My pod</a>
-    <a href="#cohort" data-tab="cohort" class="f-tab">Whole cohort</a>
-    <a href="#analytics" data-tab="analytics" class="f-tab">Analytics</a>
+  <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px;flex-wrap:wrap">
+    <a href="#stream" data-tab="stream" class="f-tab">Stream</a>
+    <a href="#people" data-tab="people" class="f-tab">People</a>
+    <a href="#grades" data-tab="grades" class="f-tab">Grades</a>
     <a href="#handbook" data-tab="handbook" class="f-tab">Handbook</a>
   </nav>
 
@@ -97,7 +101,7 @@
 <script type="module">
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG, renderViewSwitcher } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountFacultyTab } from './assets/faculty-tabs.js';
   wireThemeToggle();
@@ -106,7 +110,13 @@
   const STATE = { user: null, cohortId: null, cohorts: [], isAdmin: false, isFaculty: false };
   window.__FACULTY_STATE__ = STATE;
 
-  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function show(id) {
+    ['gate', 'denied', 'panel'].forEach((x) => {
+      $(x).style.display = x === id ? (id === 'panel' ? 'block' : 'grid') : 'none';
+    });
+    const ab = $('facAcctBtn');
+    if (ab) ab.style.display = id === 'gate' ? 'none' : 'inline-block';
+  }
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
   async function init() {
@@ -124,7 +134,10 @@
     if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
     else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
   });
-  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  $('signOutAlt').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    location.reload();
+  });
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) gate(session.user);
     if (event === 'SIGNED_OUT') show('gate');
@@ -135,7 +148,29 @@
     STATE.user = user; STATE.isAdmin = isAdmin; STATE.isFaculty = isFaculty;
     if (!isFaculty && !isAdmin) return show('denied');
     applyFacultyBrandLabel(isAdmin, isFaculty);
-    document.getElementById('viewSwitcher').innerHTML = renderViewSwitcher(isAdmin, isFaculty, 'faculty');
+    const dd = $('facAcctDd');
+    const facAcctBtn = $('facAcctBtn');
+    if (dd) {
+      dd.innerHTML = renderAccountMenuHtml(isAdmin, isFaculty, 'faculty');
+      $('facAcctSignout')?.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        location.reload();
+      });
+    }
+    if (facAcctBtn && dd && !facAcctBtn.dataset.navBound) {
+      facAcctBtn.dataset.navBound = '1';
+      facAcctBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = dd.style.display !== 'block';
+        dd.style.display = open ? 'block' : 'none';
+        facAcctBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', () => {
+        dd.style.display = 'none';
+        facAcctBtn.setAttribute('aria-expanded', 'false');
+      });
+      dd.addEventListener('click', (e) => e.stopPropagation());
+    }
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: isAdmin ? 'admin' : 'faculty' });
 
@@ -159,20 +194,37 @@
     STATE.cohorts = data || [];
     $('fCohortSel').innerHTML = STATE.cohorts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
     STATE.cohortId = STATE.cohorts[0]?.id || null;
-    $('fCohortSel').addEventListener('change', async () => {
-      STATE.cohortId = $('fCohortSel').value;
-      await mountActiveTab();
-    });
+    const sel = $('fCohortSel');
+    if (!sel.dataset.wired) {
+      sel.dataset.wired = '1';
+      sel.addEventListener('change', async () => {
+        STATE.cohortId = sel.value;
+        await mountActiveTab();
+      });
+    }
   }
 
   function wireTabs() {
     window.addEventListener('hashchange', mountActiveTab);
   }
 
+  function normalizeFacultyTab(raw) {
+    const t = String(raw || '').replace(/^#/, '');
+    if (t === 'today') return 'stream';
+    if (t === 'my-pod' || t === 'cohort') return 'people';
+    if (t === 'analytics') return 'grades';
+    if (['stream', 'people', 'grades', 'handbook'].includes(t)) return t;
+    return 'stream';
+  }
+
   async function mountActiveTab() {
     if (!STATE.cohortId) return;
-    const tab = (location.hash || '#today').replace('#', '');
-    document.querySelectorAll('.f-tab').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+    let tab = (location.hash || '#stream').replace('#', '');
+    tab = normalizeFacultyTab(tab);
+    if (`#${tab}` !== (location.hash || '')) {
+      history.replaceState(null, '', `#${tab}`);
+    }
+    document.querySelectorAll('.f-tab').forEach((a) => a.classList.toggle('active', a.dataset.tab === tab));
     await mountFacultyTab(tab, { state: STATE, container: $('fPanel') });
   }
 

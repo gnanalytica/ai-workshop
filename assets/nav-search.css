@@ -182,3 +182,102 @@ nav .nav-in:has(> .site-search--nav) > .site-search--nav ~ * .nav-links a{
 .site-search__submit:active{
   transform:translateY(0);
 }
+
+/* Command palette (⌘K) */
+.gn-cmd-palette{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s ease;
+}
+.gn-cmd-palette--open{
+  pointer-events:auto;
+  opacity:1;
+}
+.gn-cmd-palette__backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(4px);
+}
+.gn-cmd-palette__panel{
+  position:relative;
+  max-width:560px;
+  margin:12vh auto 0;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 24px 80px rgba(0,0,0,.45);
+  overflow:hidden;
+}
+.gn-cmd-palette__head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  color:var(--muted);
+}
+.gn-cmd-palette__input{
+  flex:1;
+  min-width:0;
+  border:none;
+  background:transparent;
+  color:var(--ink);
+  font:inherit;
+  font-size:16px;
+  outline:none;
+}
+.gn-cmd-palette__esc{
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  color:var(--muted);
+  cursor:pointer;
+  background:var(--input-bg);
+}
+.gn-cmd-palette__body{
+  max-height:min(60vh,420px);
+  overflow-y:auto;
+  padding:8px 0 12px;
+}
+.gn-cmd-sec__t{
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:10px 16px 6px;
+}
+.gn-cmd-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:8px 12px;
+  padding:10px 16px;
+  text-decoration:none;
+  color:var(--ink);
+  border-top:1px solid var(--line);
+}
+.gn-cmd-row:first-of-type{border-top:none}
+.gn-cmd-row:hover{background:var(--bg-soft)}
+.gn-cmd-row__tag{
+  font-family:"JetBrains Mono",monospace;
+  font-size:10px;
+  color:var(--accent);
+  letter-spacing:.08em;
+}
+.gn-cmd-row__t{font-weight:600;font-size:14px;flex:1;min-width:120px}
+.gn-cmd-row__h{font-size:12px;color:var(--muted)}
+.gn-cmd-row--ft{flex-direction:column;align-items:flex-start}
+.gn-cmd-row__snip{
+  font-size:12.5px;
+  color:#c9c9d3;
+  line-height:1.45;
+  width:100%;
+}
+.gn-cmd-row__snip mark{background:rgba(195,255,54,.22);color:var(--ink);border-radius:3px;padding:0 2px}
+.gn-cmd-empty{padding:28px 20px;text-align:center;color:var(--muted);font-size:14px}

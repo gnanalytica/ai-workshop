@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>People · AI Workshop</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .pe-chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 24px}
+  .pe-chip{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit}
+  .pe-chip:hover{color:var(--ink);border-color:var(--accent)}
+  .pe-chip.on{background:var(--accent);color:var(--cta-ink);border-color:var(--accent);font-weight:600}
+  .pe-section{display:none}
+  .pe-section.on{display:block}
+  .cm-filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+  .cm-filters input, .cm-filters select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none}
+  .cm-filters input{flex:1;min-width:220px}
+  .cm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .cm-card{display:flex;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;align-items:center}
+  .cm-av{width:44px;height:44px;border-radius:50%;background:var(--input-bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0}
+  .cm-body{flex:1;min-width:0}
+  .cm-name{font-weight:600;font-size:14px;margin:0;letter-spacing:-.01em}
+  .cm-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .cm-links{display:flex;gap:10px;margin-top:6px;font-size:12px}
+  .cm-links a{color:var(--accent-4,#38bdf8)}
+  .cm-anon{opacity:.75}
+  .team-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  .team-name{font-weight:600;font-size:15px;margin:0 0 8px}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);color:var(--ink)}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin:28px 0 8px}
+  .sec-head h2{margin:0;font-size:20px;letter-spacing:-.02em}
+  .sec-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .hof-grid{columns:3 320px;column-gap:18px}
+  @media(max-width:720px){.hof-grid{columns:1}}
+  .hof-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin:0 0 18px;display:flex;flex-direction:column;gap:10px;position:relative;transition:transform .15s,border-color .15s}
+  .hof-card:hover{transform:translateY(-2px);border-color:#3a3a4e}
+  .hof-card.featured{border-color:rgba(195,255,54,.4);background:linear-gradient(145deg,rgba(195,255,54,.05),var(--card))}
+  .hof-badge{position:absolute;top:14px;right:16px;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(195,255,54,.12);color:#c9f76a;border:1px solid rgba(195,255,54,.35);font-weight:600}
+  .hof-team{font-family:"Instrument Serif",serif;font-style:italic;font-size:30px;line-height:1.1;letter-spacing:-.01em;margin:0;padding-right:90px}
+  .hof-cohort{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .hof-cap-title{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.3}
+  .hof-problem{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .hof-demo{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;background:var(--accent);color:#0b0b10;font-weight:600;font-size:14px;text-decoration:none;transition:transform .12s;align-self:flex-start}
+  .hof-demo:hover{transform:translateY(-1px)}
+  .hof-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .hof-chip{font-size:11.5px;padding:4px 10px;border-radius:999px;background:var(--input-bg);border:1px solid var(--line);color:var(--muted);text-decoration:none}
+  .hof-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:4px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .hof-kudos{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:600}
+  .hof-empty{padding:40px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}
+  .mentor-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .mentor-card .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · People</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="dashboard.html" class="muted" style="font-size:13px">← Dashboard</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Sign in required</div>
+    <h2>Please sign in</h2>
+    <a class="submit-btn" href="dashboard.html" style="display:inline-block;text-align:center;text-decoration:none">Go to Dashboard →</a>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div style="margin:24px 0 0">
+    <div class="kicker">Cohort &amp; showcase</div>
+    <h1 id="peTitle">People</h1>
+  </div>
+
+  <div class="pe-chips" id="peChips" role="tablist" aria-label="View">
+    <button type="button" class="pe-chip on" data-view="all" role="tab" aria-selected="true">All</button>
+    <button type="button" class="pe-chip" data-view="cohort" role="tab" aria-selected="false">Cohort</button>
+    <button type="button" class="pe-chip" data-view="teams" role="tab" aria-selected="false">Teams</button>
+    <button type="button" class="pe-chip" data-view="mentors" role="tab" aria-selected="false">Mentors</button>
+    <button type="button" class="pe-chip" data-view="hof" role="tab" aria-selected="false">Hall of Fame</button>
+  </div>
+
+  <div id="sec-all" class="pe-section on">
+    <div id="allMentorHost"></div>
+    <div class="cm-filters">
+      <input type="search" id="cmSearch" placeholder="Search by name or college…" aria-label="Search classmates" />
+      <select id="cmCollege"><option value="">All colleges</option></select>
+      <select id="cmYear"><option value="">All years</option></select>
+    </div>
+    <div class="sec-head"><h2 id="teamsHead">Teams</h2><span class="sec-count" id="teamsCount">—</span></div>
+    <div id="teamsList"></div>
+    <div class="sec-head"><h2>Members</h2><span class="sec-count" id="peopleCount">—</span></div>
+    <div class="cm-grid" id="cmGrid"></div>
+    <div class="sec-head" style="margin-top:36px"><h2>Hall of Fame</h2></div>
+    <div id="hofInline"></div>
+  </div>
+
+  <div id="sec-cohort" class="pe-section">
+    <div class="cm-filters">
+      <input type="search" id="cmSearch2" placeholder="Search by name or college…" aria-label="Search classmates" />
+      <select id="cmCollege2"><option value="">All colleges</option></select>
+      <select id="cmYear2"><option value="">All years</option></select>
+    </div>
+    <div class="sec-head"><h2>Members</h2><span class="sec-count" id="peopleCount2">—</span></div>
+    <div class="cm-grid" id="cmGrid2"></div>
+  </div>
+
+  <div id="sec-teams" class="pe-section">
+    <div class="sec-head"><h2>Teams</h2><span class="sec-count" id="teamsCount3">—</span></div>
+    <div id="teamsList3"></div>
+  </div>
+
+  <div id="sec-mentors" class="pe-section">
+    <div id="mentorOnlyHost"></div>
+  </div>
+
+  <div id="sec-hof" class="pe-section">
+    <div id="hofFull"></div>
+  </div>
+</main>
+
+<script type="module">
+  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  wireThemeToggle();
+
+  const $ = (id) => document.getElementById(id);
+  let PEOPLE = [];
+  let COHORT = null;
+
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  function initials(name){ return (name || '').split(/\s+/).map(s => s[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || '?'; }
+
+  function setView(v) {
+    document.querySelectorAll('.pe-chip').forEach((b) => {
+      const on = b.dataset.view === v;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('.pe-section').forEach((s) => {
+      s.classList.toggle('on', s.id === 'sec-' + v);
+    });
+    try { localStorage.setItem('people_view', v); } catch {}
+    if (v === 'hof' && !$('hofFull').dataset.loaded) loadHofFull();
+  }
+
+  $('peChips').addEventListener('click', (e) => {
+    const b = e.target.closest('.pe-chip');
+    if (!b) return;
+    setView(b.dataset.view);
+  });
+
+  function renderPeople(gridId, countId, searchId, colId, yrId) {
+    const q = ($(searchId).value || '').toLowerCase();
+    const col = $(colId).value;
+    const yr = $(yrId).value;
+    const filtered = PEOPLE.filter(p => {
+      const searchName = p.showcase_public ? p.full_name.toLowerCase() : '';
+      const hay = (searchName + ' ' + (p.college || '').toLowerCase());
+      if (q && !hay.includes(q)) return false;
+      if (col && p.college !== col) return false;
+      if (yr && String(p.year) !== String(yr)) return false;
+      return true;
+    });
+    $(countId).textContent = `${filtered.length} member${filtered.length === 1 ? '' : 's'}`;
+    const grid = $(gridId);
+    if (!filtered.length) { grid.innerHTML = `<div class="muted" style="padding:30px;text-align:center;grid-column:1/-1">No matches.</div>`; return; }
+    grid.innerHTML = filtered.map(p => {
+      const isPublic = p.showcase_public;
+      const display = isPublic ? (p.full_name || '—') : `Anonymous student`;
+      const metaBits = [];
+      if (p.college) metaBits.push(esc(p.college));
+      if (p.year) metaBits.push(esc(p.year));
+      const links = [];
+      if (isPublic && p.github_username) links.push(`<a href="https://github.com/${esc(p.github_username)}" target="_blank" rel="noopener">@${esc(p.github_username)}</a>`);
+      if (isPublic) links.push(`<a href="showcase.html?u=${encodeURIComponent(p.id)}">Showcase →</a>`);
+      return `<div class="cm-card ${isPublic ? '' : 'cm-anon'}">
+        <div class="cm-av">${esc(initials(isPublic ? p.full_name : '?'))}</div>
+        <div class="cm-body">
+          <p class="cm-name">${esc(display)}</p>
+          <div class="cm-meta">${metaBits.join(' · ') || '—'}</div>
+          ${links.length ? `<div class="cm-links">${links.join('<span style="color:var(--muted)">·</span>')}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadTeamsInto(listEl, countEl) {
+    const { data: teams } = await supabase
+      .from('teams')
+      .select('id, name, description, max_members, locked_at')
+      .eq('cohort_id', COHORT.id)
+      .order('name');
+    const teamList = teams || [];
+    $(countEl).textContent = `${teamList.length} team${teamList.length === 1 ? '' : 's'}`;
+    if (!teamList.length) { $(listEl).innerHTML = `<div class="muted" style="padding:20px;text-align:center">No teams formed yet.</div>`; return; }
+    const teamIds = teamList.map(t => t.id);
+    const { data: members } = await supabase
+      .from('team_members')
+      .select('team_id, user_id, role, profiles(full_name)')
+      .in('team_id', teamIds);
+    const publicById = new Map(PEOPLE.map(p => [p.id, p.showcase_public]));
+    const byTeam = new Map();
+    (members || []).forEach(m => {
+      if (!byTeam.has(m.team_id)) byTeam.set(m.team_id, []);
+      byTeam.get(m.team_id).push(m);
+    });
+    $(listEl).innerHTML = teamList.map(t => {
+      const mems = byTeam.get(t.id) || [];
+      const chips = mems.map(m => {
+        const pub = publicById.get(m.user_id);
+        const name = pub ? (m.profiles?.full_name || '—') : 'Anonymous';
+        const badge = m.role === 'captain' ? ' ★' : '';
+        return `<span class="chip">${esc(name)}${badge}</span>`;
+      }).join('');
+      return `<div class="team-card">
+        <h3 class="team-name">${esc(t.name)}${t.locked_at ? ' · locked' : ''}</h3>
+        ${t.description ? `<div class="muted" style="font-size:12.5px;margin-bottom:8px">${esc(t.description)}</div>` : ''}
+        <div class="chip-row">${chips || '<span class="muted" style="font-size:12px">No members yet</span>'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  async function renderMentor(hostEl) {
+    const el = $(hostEl);
+    if (!el || !COHORT) return;
+    try {
+      const { data, error } = await supabase.rpc('my_pod', { p_cohort: COHORT.id });
+      if (error || !data) { el.innerHTML = ''; return; }
+      const rows = Array.isArray(data) ? data : [data];
+      if (!rows.length) { el.innerHTML = '<p class="muted" style="font-size:14px">No pod assigned yet.</p>'; return; }
+      const pod = rows[0];
+      const faculty = Array.isArray(pod.faculty) ? pod.faculty : [];
+      const primary = faculty.find(f => f.is_primary) || faculty[0];
+      if (!primary) { el.innerHTML = ''; return; }
+      const others = faculty.filter(f => f !== primary);
+      el.innerHTML = `
+        <div class="mentor-card">
+          <div class="kicker">Your mentors</div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div>
+              <b style="font-size:15px">${esc(primary.full_name || 'Mentor')}</b>
+              <div class="muted" style="font-size:12px">${esc(primary.college || '')}</div>
+            </div>
+          </div>
+          ${pod.mentor_note ? `<p style="margin:10px 0 0;font-size:13.5px">${esc(pod.mentor_note)}</p>` : ''}
+          ${primary.contact_note ? `<p class="muted" style="margin:8px 0 0;font-size:12.5px">${esc(primary.contact_note)}</p>` : ''}
+          ${others.length ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${others.map(f => `<span class="chip">${esc(f.full_name || 'Co-faculty')}</span>`).join('')}</div>` : ''}
+        </div>`;
+    } catch {
+      el.innerHTML = '';
+    }
+  }
+
+  function truncate(s, n) {
+    s = String(s ?? '').trim();
+    if (s.length <= n) return s;
+    return s.slice(0, n - 1).trimEnd() + '…';
+  }
+
+  function renderHofCard(c, kudos) {
+    const team = c.teams || {};
+    const cohortName = team.cohorts?.name || '';
+    const chips = [];
+    if (c.pitch_deck_url) chips.push(`<a class="hof-chip" href="${esc(c.pitch_deck_url)}" target="_blank" rel="noopener">Pitch deck</a>`);
+    if (c.video_url) chips.push(`<a class="hof-chip" href="${esc(c.video_url)}" target="_blank" rel="noopener">Video</a>`);
+    if (c.github_url) chips.push(`<a class="hof-chip" href="${esc(c.github_url)}" target="_blank" rel="noopener">GitHub</a>`);
+    return `
+      <article class="hof-card ${c.is_featured ? 'featured' : ''}">
+        ${c.is_featured ? `<span class="hof-badge">Featured</span>` : ''}
+        ${cohortName ? `<div class="hof-cohort">${esc(cohortName)}</div>` : ''}
+        <h2 class="hof-team">${esc(team.name || 'Team')}</h2>
+        <h3 class="hof-cap-title">${esc(c.title || 'Untitled capstone')}</h3>
+        ${c.problem_statement ? `<p class="hof-problem">${esc(truncate(c.problem_statement, 280))}</p>` : ''}
+        ${c.demo_url ? `<a class="hof-demo" href="${esc(c.demo_url)}" target="_blank" rel="noopener">Open demo →</a>` : ''}
+        ${chips.length ? `<div class="hof-chips">${chips.join('')}</div>` : ''}
+        <div class="hof-foot">
+          <span>${cohortName ? esc(cohortName) : 'Gnanalytica'}</span>
+          <span class="hof-kudos">${kudos} kudos</span>
+        </div>
+      </article>`;
+  }
+
+  async function loadHofInto(hostId, compact) {
+    const host = $(hostId);
+    const { data: caps, error } = await supabase
+      .from('capstones')
+      .select('*, teams!inner(id, name, description, cohort_id, cohorts(id, name, slug))')
+      .or('is_featured.eq.true,status.eq.showcased')
+      .order('is_featured', { ascending: false })
+      .order('updated_at', { ascending: false });
+    if (error) {
+      host.innerHTML = `<div class="hof-empty">Couldn't load: ${esc(error.message)}</div>`;
+      return;
+    }
+    const list = caps || [];
+    if (!list.length) {
+      host.innerHTML = `<div class="hof-empty">No showcased capstones yet.</div>`;
+      return;
+    }
+    list.sort((a, b) => {
+      if ((b.is_featured ? 1 : 0) !== (a.is_featured ? 1 : 0)) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+    });
+    const teamIds = list.map(c => c.team_id);
+    const kudosByTeam = new Map();
+    try {
+      const { data: mem } = await supabase.from('team_members').select('team_id, user_id').in('team_id', teamIds);
+      const usersByTeam = new Map();
+      (mem || []).forEach(m => {
+        const arr = usersByTeam.get(m.team_id) || [];
+        arr.push(m.user_id);
+        usersByTeam.set(m.team_id, arr);
+      });
+      const allUids = Array.from(new Set((mem || []).map(m => m.user_id)));
+      let subsByUser = new Map();
+      if (allUids.length) {
+        const { data: subs } = await supabase.from('submissions').select('id, user_id').in('user_id', allUids);
+        (subs || []).forEach(s => {
+          const arr = subsByUser.get(s.user_id) || [];
+          arr.push(s.id);
+          subsByUser.set(s.user_id, arr);
+        });
+        const allSubIds = (subs || []).map(s => s.id);
+        if (allSubIds.length) {
+          const { data: counts } = await supabase.from('kudos_counts').select('submission_id, count').in('submission_id', allSubIds);
+          const countBySub = new Map((counts || []).map(k => [k.submission_id, k.count || 0]));
+          usersByTeam.forEach((uids, tid) => {
+            let total = 0;
+            uids.forEach(uid => {
+              (subsByUser.get(uid) || []).forEach(sid => { total += (countBySub.get(sid) || 0); });
+            });
+            kudosByTeam.set(tid, total);
+          });
+        }
+      }
+    } catch {}
+    const slice = compact ? list.slice(0, 3) : list;
+    host.innerHTML = `<div class="hof-grid">${slice.map(c => renderHofCard(c, kudosByTeam.get(c.team_id) || 0)).join('')}</div>`;
+  }
+
+  async function loadHofFull() {
+    const h = $('hofFull');
+    h.dataset.loaded = '1';
+    h.innerHTML = '<p class="muted">Loading…</p>';
+    await loadHofInto('hofFull', false);
+  }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { $('gate').style.display = 'grid'; return; }
+    $('panel').style.display = 'block';
+
+    const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).maybeSingle();
+    if (!cohort) return;
+    COHORT = cohort;
+    $('peTitle').textContent = `People · ${cohort.name}`;
+
+    const { data: regs } = await supabase
+      .from('registrations')
+      .select('user_id, showcase_public, status')
+      .eq('cohort_id', cohort.id)
+      .eq('status', 'confirmed');
+    const userIds = (regs || []).map(r => r.user_id);
+    const { data: profiles } = userIds.length
+      ? await supabase.from('profiles').select('id, full_name, college, year, github_username').in('id', userIds)
+      : { data: [] };
+    const profMap = new Map((profiles || []).map(p => [p.id, p]));
+    PEOPLE = (regs || []).map(r => {
+      const p = profMap.get(r.user_id) || {};
+      return {
+        id: r.user_id,
+        showcase_public: !!r.showcase_public,
+        full_name: p.full_name || '',
+        college: p.college || '',
+        year: p.year || '',
+        github_username: p.github_username || '',
+      };
+    });
+    const colleges = [...new Set(PEOPLE.map(p => p.college).filter(Boolean))].sort();
+    const years = [...new Set(PEOPLE.map(p => p.year).filter(Boolean))].sort();
+    const colOpts = `<option value="">All colleges</option>` + colleges.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    const yrOpts = `<option value="">All years</option>` + years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('');
+    $('cmCollege').innerHTML = colOpts;
+    $('cmYear').innerHTML = yrOpts;
+    $('cmCollege2').innerHTML = colOpts;
+    $('cmYear2').innerHTML = yrOpts;
+
+    const rer1 = () => renderPeople('cmGrid', 'peopleCount', 'cmSearch', 'cmCollege', 'cmYear');
+    const rer2 = () => renderPeople('cmGrid2', 'peopleCount2', 'cmSearch2', 'cmCollege2', 'cmYear2');
+    ['cmSearch','cmCollege','cmYear'].forEach(id => $(id).addEventListener('input', rer1));
+    ['cmSearch2','cmCollege2','cmYear2'].forEach(id => $(id).addEventListener('input', rer2));
+
+    rer1();
+    rer2();
+    await loadTeamsInto('teamsList', 'teamsCount');
+    await loadTeamsInto('teamsList3', 'teamsCount3');
+    await renderMentor('allMentorHost');
+    await renderMentor('mentorOnlyHost');
+    await loadHofInto('hofInline', true);
+
+    const hash = (location.hash || '').replace('#', '');
+    if (['all', 'cohort', 'teams', 'mentors', 'hof'].includes(hash)) setView(hash);
+    else {
+      try {
+        const saved = localStorage.getItem('people_view');
+        if (saved && ['all', 'cohort', 'teams', 'mentors', 'hof'].includes(saved)) setView(saved);
+      } catch {}
+    }
+  }
+
+  init();
+</script>
+<script type="module">
+  import { prependNavFind } from './assets/nav-search.js';
+  prependNavFind();
+</script>
+</body>
+</html>

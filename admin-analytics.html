@@ -46,6 +46,10 @@
   .lb-row .days{font-family:"JetBrains Mono",monospace;text-align:right;font-size:12.5px}
   .loading{color:var(--muted);font-size:13px;padding:10px 0}
   .spinner{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;vertical-align:-2px;margin-right:8px}
+  .ana-tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
+  .ana-tabs a{padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;text-decoration:none;color:var(--muted)}
+  .ana-tabs a:hover{border-color:var(--accent);color:var(--accent)}
+  .ana-tabs a.on{background:var(--accent);border-color:var(--accent);color:#0b0b10;font-weight:600}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media(max-width:900px){
     .kpi-row{grid-template-columns:repeat(2,1fr)}
@@ -112,6 +116,13 @@
     <h1>Cohort pulse</h1>
   </div>
 
+  <div class="ana-tabs" id="analyticsTabs">
+    <a href="#" id="tabOverview">Overview</a>
+    <a href="#activity" id="tabActivity">Activity</a>
+  </div>
+
+  <div id="analyticsOverview">
+
   <div class="top-bar">
     <select id="cohortSel"></select>
     <div class="date-range" id="dateRange">—</div>
@@ -167,11 +178,17 @@
   </div>
 
   <div style="height:40px"></div>
+  </div>
+
+  <div id="analyticsActivity" style="display:none">
+    <p class="muted" style="font-size:13px;margin:0 0 12px">Live feed (embedded). Opens the same activity tool in-frame.</p>
+    <iframe title="Activity feed" id="activityFrame" src="about:blank" style="width:100%;min-height:75vh;border:1px solid var(--line);border-radius:12px;background:var(--card)"></iframe>
+  </div>
 </main>
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav } from './assets/admin-nav.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
@@ -179,6 +196,28 @@
 
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
+
+  function routeAnalyticsSubtab() {
+    const act = (location.hash || '') === '#activity';
+    const ov = $('analyticsOverview');
+    const ac = $('analyticsActivity');
+    const fr = $('activityFrame');
+    if (!ov || !ac) return;
+    ov.style.display = act ? 'none' : 'block';
+    ac.style.display = act ? 'block' : 'none';
+    $('tabOverview')?.classList.toggle('on', !act);
+    $('tabActivity')?.classList.toggle('on', act);
+    if (act && fr && (!fr.getAttribute('src') || fr.getAttribute('src') === 'about:blank')) {
+      fr.src = 'admin-activity.html';
+    }
+  }
+
+  $('tabOverview')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    routeAnalyticsSubtab();
+  });
+  window.addEventListener('hashchange', routeAnalyticsSubtab);
 
   let COHORTS = [];
   let SELECTED = null;
@@ -214,7 +253,9 @@
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-analytics.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
+    routeAnalyticsSubtab();
     await loadCohorts();
   }
 
