@@ -67,6 +67,13 @@
     .dash-overview-side{position:sticky;top:88px}
   }
   .nav-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;justify-content:flex-end}
+  .nav-mobile-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);align-items:center;justify-content:center;cursor:pointer}
+  .nav-mobile-btn:hover{color:var(--ink);border-color:var(--accent)}
+  .nav-mobile{display:none;position:absolute;left:12px;right:12px;top:calc(100% + 8px);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;z-index:220;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+  .nav-mobile a,.nav-mobile button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;text-decoration:none;cursor:pointer}
+  .nav-mobile a:hover,.nav-mobile button:hover{background:var(--bg-soft)}
+  .nav-mobile .sep{height:1px;background:var(--line);margin:8px 0}
+  .nav-mobile .k{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;padding:6px 12px 4px}
   .nav-dd{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,.35);z-index:200}
   .nav-dd a,.nav-dd button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:none}
   .nav-dd a:hover,.nav-dd button:hover{background:var(--bg-soft)}
@@ -92,6 +99,11 @@
     .week-head h3{font-size:17px}
     .week-block{margin-bottom:20px}
   }
+  @media (max-width:900px){
+    nav .nav-in{position:relative}
+    .nav-links{display:none}
+    .nav-mobile-btn{display:inline-flex}
+  }
 </style>
 </head>
 <body>
@@ -100,6 +112,9 @@
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Dashboard</div>
+    <button type="button" class="nav-mobile-btn" id="navMobileBtn" aria-expanded="false" aria-controls="navMobileMenu" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
     <div class="nav-links">
       <a href="index.html" class="muted" style="font-size:13px">Home</a>
       <a href="#lessons" id="navTabLessons" style="font-size:13px;color:var(--muted)">Lessons<span class="lessons-badge" id="navLessonsBadge" style="display:none" title="Pending this week">0</span></a>
@@ -120,6 +135,19 @@
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+    <div id="navMobileMenu" class="nav-mobile" style="display:none">
+      <a href="index.html">Home</a>
+      <a href="#lessons">Lessons</a>
+      <a href="people.html">People</a>
+      <a href="#capstone">Capstone</a>
+      <button type="button" id="navMobileSearchBtn">Search (⌘K)</button>
+      <div class="sep"></div>
+      <div class="k">Account</div>
+      <a href="timeline.html">Timeline</a>
+      <a href="peer-reviews.html">Peer reviews</a>
+      <a href="#profile">Profile</a>
+      <button type="button" id="navMobileSignoutBtn">Sign out</button>
     </div>
   </div>
 </nav>
@@ -510,6 +538,30 @@
   }
   const navSearchBtn = $('navSearchBtn');
   if (navSearchBtn) navSearchBtn.addEventListener('click', () => openCommandPalette(''));
+  const navMobileBtn = $('navMobileBtn');
+  const navMobileMenu = $('navMobileMenu');
+  if (navMobileBtn && navMobileMenu) {
+    navMobileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = navMobileMenu.style.display !== 'block';
+      navMobileMenu.style.display = open ? 'block' : 'none';
+      navMobileBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', () => {
+      navMobileMenu.style.display = 'none';
+      navMobileBtn.setAttribute('aria-expanded', 'false');
+    });
+    navMobileMenu.addEventListener('click', (e) => e.stopPropagation());
+    $('navMobileSearchBtn')?.addEventListener('click', () => {
+      navMobileMenu.style.display = 'none';
+      navMobileBtn.setAttribute('aria-expanded', 'false');
+      openCommandPalette('');
+    });
+    $('navMobileSignoutBtn')?.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      location.reload();
+    });
+  }
 
   const navProfileBtn = $('navProfileBtn');
   const navProfileDd = $('navProfileDd');

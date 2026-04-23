@@ -391,6 +391,17 @@
   .poll-q-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;animation:poll-in .3s ease-out}
   .poll-q-text{font-size:13.5px;color:var(--ink);line-height:1.5;white-space:pre-wrap;word-break:break-word}
   .poll-q-time{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);margin-top:4px;letter-spacing:.1em}
+  .day-nav-links{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:flex-end}
+  .nav-mobile-btn{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);align-items:center;justify-content:center;cursor:pointer}
+  .nav-mobile-btn:hover{color:var(--ink);border-color:var(--accent)}
+  .day-nav-mobile{display:none;position:absolute;left:12px;right:12px;top:calc(100% + 8px);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;z-index:220;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+  .day-nav-mobile a,.day-nav-mobile button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;text-decoration:none;cursor:pointer}
+  .day-nav-mobile a:hover,.day-nav-mobile button:hover{background:var(--bg-soft)}
+  @media (max-width:900px){
+    nav .nav-in{position:relative}
+    .day-nav-links{display:none}
+    .nav-mobile-btn{display:inline-flex}
+  }
 </style>
 </head>
 <body>
@@ -399,7 +410,10 @@
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span> Gnanalytica · Lesson</div>
-    <div style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:flex-end">
+    <button type="button" class="nav-mobile-btn" id="dayNavMobileBtn" aria-expanded="false" aria-controls="dayNavMobileMenu" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="day-nav-links">
       <a href="index.html" class="muted" style="font-size:13px">Home</a>
       <a href="dashboard.html#lessons" class="muted" style="font-size:13px">Lessons</a>
       <a href="people.html" class="muted" style="font-size:13px">People</a>
@@ -409,6 +423,14 @@
       </button>
       <a href="dashboard.html" class="muted" style="font-size:13px">Dashboard</a>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+    <div id="dayNavMobileMenu" class="day-nav-mobile" style="display:none">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html#lessons">Lessons</a>
+      <a href="people.html">People</a>
+      <a href="dashboard.html#capstone">Capstone</a>
+      <button type="button" id="dayNavMobileSearchBtn">Search (⌘K)</button>
+      <a href="dashboard.html">Dashboard</a>
     </div>
   </div>
 </nav>
@@ -1853,6 +1875,26 @@
   import { prependNavFind, openCommandPalette } from './assets/nav-search.js';
   prependNavFind();
   document.getElementById('dayNavSearchBtn')?.addEventListener('click', () => openCommandPalette(''));
+  const dayNavMobileBtn = document.getElementById('dayNavMobileBtn');
+  const dayNavMobileMenu = document.getElementById('dayNavMobileMenu');
+  if (dayNavMobileBtn && dayNavMobileMenu) {
+    dayNavMobileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = dayNavMobileMenu.style.display !== 'block';
+      dayNavMobileMenu.style.display = open ? 'block' : 'none';
+      dayNavMobileBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', () => {
+      dayNavMobileMenu.style.display = 'none';
+      dayNavMobileBtn.setAttribute('aria-expanded', 'false');
+    });
+    dayNavMobileMenu.addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('dayNavMobileSearchBtn')?.addEventListener('click', () => {
+      dayNavMobileMenu.style.display = 'none';
+      dayNavMobileBtn.setAttribute('aria-expanded', 'false');
+      openCommandPalette('');
+    });
+  }
 </script>
 </body>
 </html>
