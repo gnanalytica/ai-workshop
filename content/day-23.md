@@ -53,8 +53,8 @@ objective:
 
 ### Setup
 - [ ] Confirm Python 3.11+ is available (`python --version`). If not, use a cloud notebook — Google Colab or Replit — and note it in your submission.
-- [ ] Install [LangGraph](https://langchain-ai.github.io/langgraph/) in a fresh virtual environment (`pip install langgraph langchain-anthropic`).
-- [ ] Have a Claude or OpenAI API key ready in an env var.
+- [ ] Install [LangGraph](https://langchain-ai.github.io/langgraph/) in a fresh virtual environment (`pip install langgraph langchain-google-genai`).
+- [ ] Have a **Gemini API key** from [Google AI Studio](https://aistudio.google.com) ready in an env var. If you already have Claude or OpenAI credits, those are optional alternates.
 - [ ] Install [Claude Desktop](https://claude.ai) or [Cursor](https://cursor.com) for the MCP half of the lab.
 
 ### Primer (~5 min)
@@ -177,6 +177,7 @@ https://www.youtube.com/embed/2B7_Y-6KBSQ
 Part A — the agent:
 
 1. Install LangGraph. Create a project with three tools: `web_search`, `calculator`, `write_file`.
+   Use **Gemini 2.5 Flash via Google AI Studio** as the default free-path model. If you already have Claude or OpenAI API access, you can swap providers — the loop design stays the same.
 2. Define the graph: an LLM node, a tool node, a conditional edge that routes back to the LLM until the LLM emits a final answer.
 3. Set a goal: "Find the current population of India and Pakistan, compute the ratio, and write the result to `out.txt`."
 4. Run it. Export the full trace (thoughts, actions, observations).
@@ -190,6 +191,7 @@ Part B — MCP:
 
 > ⚠️ **If you get stuck**
 > - *LangGraph agent loops forever on the same tool call* → your conditional edge isn't checking for a final-answer signal; add a step counter and a max-steps fallback that routes to END, and pass the previous error back in the next turn.
+> - *Gemini throws quota / auth errors* → confirm the API key came from Google AI Studio, check the env var name and restart the notebook/terminal, or switch to a lighter Gemini model / lower request rate. If you already have Claude or OpenAI credits, you can use those as fallback providers.
 > - *MCP server doesn't appear in Claude Desktop or Cursor* → check the client config file path (`claude_desktop_config.json` for Claude, settings JSON for Cursor), confirm the command works standalone in a terminal, and fully restart the client — hot reload is unreliable.
 > - *Model keeps inventing a tool name that doesn't exist* → your tool descriptions are too vague or overlap. Rename for specificity (`read_file` not `fs`) and reject unknown tool calls loudly instead of silently failing.
 
@@ -241,10 +243,10 @@ Includes transfer scenarios + spaced recall from earlier days (~8+ items total).
 
 ### 6. Prep for Day 24 (~30 min — important)
 
-**Tomorrow one agent becomes two.** Day 24 is multi-agent orchestration: supervisor / swarm / hierarchical patterns, Claude Skills and Plugins, and a 2-agent delegating workflow built in either the Claude Agent SDK or OpenAI Swarm.
+**Tomorrow one agent becomes two.** Day 24 is multi-agent orchestration: supervisor / swarm / hierarchical patterns, Claude Skills and Plugins, and a 2-agent delegating workflow with a **Gemini-backed LangGraph default path**, plus Claude Agent SDK / OpenAI Swarm as optional alternate tracks.
 
 - [ ] **Confirm** your Day 23 LangGraph agent runs end-to-end — you need a working single-agent baseline before splitting it.
-- [ ] **Install** either [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) (`pip install claude-agent-sdk`) **or** [OpenAI Swarm](https://github.com/openai/swarm) (`pip install git+https://github.com/openai/swarm.git`).
+- [ ] **Keep** your Day 23 LangGraph + Gemini setup ready for the default path. If you want an alternate track, optionally install [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) (`pip install claude-agent-sdk`) **or** [OpenAI Swarm](https://github.com/openai/swarm) (`pip install git+https://github.com/openai/swarm.git`).
 - [ ] **Pick** one capstone task that naturally splits in two roles — researcher+writer, planner+coder, intake+responder.
 - [ ] **Stub** two system prompts, one per role, before class.
 - [ ] **Skim** [Anthropic — multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) (the architecture diagram is enough).

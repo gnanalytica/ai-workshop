@@ -221,8 +221,8 @@ Includes transfer scenarios + spaced recall from earlier days (~8+ items total).
 **Tomorrow you stop one-shot prompting and start building agents.** Day 23: a 3-tool LangGraph agent in a ReAct loop, plus your first MCP server wired into Cursor or Claude Desktop.
 
 - [ ] **Confirm Python 3.11+** is available (`python --version`). If not, prep a Google Colab or Replit notebook and note the URL.
-- [ ] **Install LangGraph** in a fresh venv: `pip install langgraph langchain-anthropic`.
-- [ ] **Have a Claude or OpenAI API key** ready in an env var.
+- [ ] **Install LangGraph** in a fresh venv: `pip install langgraph langchain-google-genai`.
+- [ ] **Have a Gemini API key** from [Google AI Studio](https://aistudio.google.com) ready in an env var. If you already have Claude or OpenAI credits, those are optional alternates.
 - [ ] **Install [Claude Desktop](https://claude.ai) or [Cursor](https://cursor.com)** for the MCP half of the lab.
 - [ ] **Read** the one-page [MCP intro](https://modelcontextprotocol.io).
 - [ ] **Write down** three candidate tools you'd want your capstone agent to use.

@@ -226,7 +226,7 @@ Record a 60-second Loom walking through both the n8n flow and the browser-use au
 - [ ] **Re-read your Day 15 capstone spec** — highlight the **single smallest end-to-end slice** (input → AI call → output). That's what you'll ship tomorrow.
 - [ ] **Write a one-paragraph v0 scope** for that slice.
 - [ ] **Prime read**: [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices), sections 1-3.
-- [ ] **Have an API key** (Claude or OpenAI) in your environment.
+- [ ] **Have a Gemini API key** from [Google AI Studio](https://aistudio.google.com) ready if your tool asks for BYOK. If you already have a Claude or OpenAI key, that's also fine.
 
 ---
 

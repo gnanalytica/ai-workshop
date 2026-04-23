@@ -54,7 +54,7 @@ objective:
 ### Bring to class
 - [ ] Your capstone repo open in Cursor / bolt.new / [Antigravity](https://antigravity.google.com).
 - [ ] A one-paragraph v0 scope written down — the slice you want to ship today.
-- [ ] An API key (Claude or OpenAI) in your environment.
+- [ ] If your tool asks for BYOK, bring a **Gemini API key** from [Google AI Studio](https://aistudio.google.com). Claude or OpenAI keys are optional alternatives if you already have them.
 
 > 🧠 **Quick glossary**
 > - **Vibe-coding** — directing an AI to write code from intent, not typing it yourself.

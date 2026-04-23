@@ -1,17 +1,17 @@
 ---
 reading_time: 18 min
-tldr: "Two agents that delegate beat one agent that tries everything — today you wire up a swarm, a skill, and a plugin."
+tldr: "Two agents that delegate beat one agent that tries everything — today you build a free-path multi-agent workflow, then compare it to the vendor SDKs."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/wgmCjrMFoyc
-lab: {"title": "Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm", "url": "https://docs.claude.com/en/api/agent-sdk"}
+lab: {"title": "Build a 2-agent delegating workflow with LangGraph + Gemini (Claude/OpenAI optional)", "url": "https://langchain-ai.github.io/langgraph/"}
 prompt_of_the_day: "You are the supervisor. You have two worker agents: {{agent_a}} and {{agent_b}}. For the user request '{{request}}', decide which worker to call first, what to pass them, and what to do with their output. Hand off explicitly and never do the worker's job yourself."
-tools_hands_on: [{"name": "Claude Agent SDK", "url": "https://docs.claude.com/en/api/agent-sdk"}, {"name": "OpenAI Swarm", "url": "https://github.com/openai/swarm"}, {"name": "OpenClaw", "url": "https://github.com/openclaw/openclaw"}]
-tools_demo: [{"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "Claude Skills", "url": "https://docs.claude.com/en/docs/build-with-claude/skills"}, {"name": "Claude Plugins", "url": "https://claude.com/plugins"}]
+tools_hands_on: [{"name": "LangGraph", "url": "https://langchain-ai.github.io/langgraph/"}, {"name": "Google AI Studio / Gemini API", "url": "https://aistudio.google.com"}, {"name": "OpenClaw", "url": "https://github.com/openclaw/openclaw"}]
+tools_demo: [{"name": "Claude Agent SDK", "url": "https://docs.claude.com/en/api/agent-sdk"}, {"name": "OpenAI Swarm", "url": "https://github.com/openai/swarm"}, {"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "Claude Skills", "url": "https://docs.claude.com/en/docs/build-with-claude/skills"}, {"name": "Claude Plugins", "url": "https://claude.com/plugins"}]
 tools_reference: [{"name": "LangGraph multi-agent", "url": "https://langchain-ai.github.io/langgraph/concepts/multi_agent/"}, {"name": "CrewAI flows", "url": "https://docs.crewai.com/concepts/flows"}, {"name": "OpenAI Agents SDK", "url": "https://openai.github.io/openai-agents-python/"}, {"name": "DeepLearning.ai agent courses", "url": "https://deeplearning.ai"}, {"name": "Magentic-One", "url": "https://www.microsoft.com/en-us/research/publication/magentic-one"}, {"name": "Meta CICERO", "url": "https://ai.meta.com/research/cicero/"}]
 resources: [{"name": "Anthropic: multi-agent research system", "url": "https://www.anthropic.com/engineering/multi-agent-research-system"}, {"name": "OpenAI Swarm on GitHub", "url": "https://github.com/openai/swarm"}]
 objective:
   topic: "Multi-agent orchestration — supervisor, swarm, hierarchical + Claude Skills and Plugins"
-  tools: ["Claude Agent SDK", "OpenAI Swarm", "Claude Skills", "Claude Plugins", "OpenClaw"]
+  tools: ["LangGraph", "Gemini API", "Claude Agent SDK", "OpenAI Swarm", "OpenClaw"]
   end_goal: "Ship a working 2-agent delegating workflow with typed handoffs, three traces, a handoff diagram, and a one-paragraph rationale."
 ---
 
@@ -19,7 +19,7 @@ objective:
 
 **Topic.** Multi-agent orchestration. Why two narrow agents beat one bloated agent, the three patterns (supervisor / swarm / hierarchical), and how Claude Skills and Plugins package reusable agent behavior.
 
-**Tools you'll use.** Claude Agent SDK or OpenAI Swarm for the core lab; Claude Skills and Plugins as the packaging story; OpenClaw as an open-source reference.
+**Tools you'll use.** LangGraph + Gemini API is the default free path for the core lab. Claude Agent SDK and OpenAI Swarm stay in the story as optional alternate tracks; Claude Skills and Plugins are the packaging story; OpenClaw is the open-source reference.
 
 **End goal.** By the end of today you will have:
 1. A working 2-agent workflow (supervisor or swarm) with a typed handoff payload.
@@ -54,7 +54,8 @@ objective:
 
 ### Setup
 - [ ] Confirm your Day 23 LangGraph agent runs end-to-end — you need a working single-agent baseline before splitting it.
-- [ ] Install either [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) (`pip install claude-agent-sdk`) OR [OpenAI Swarm](https://github.com/openai/swarm) (`pip install git+https://github.com/openai/swarm.git`).
+- [ ] Keep your Day 23 LangGraph environment ready (`langgraph` + `langchain-google-genai`) and your **Gemini API key** available in an env var.
+- [ ] Optional alternate track: install [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) (`pip install claude-agent-sdk`) OR [OpenAI Swarm](https://github.com/openai/swarm) (`pip install git+https://github.com/openai/swarm.git`) if you already have access and want to compare frameworks.
 - [ ] Pick one capstone task that naturally splits in two roles — researcher+writer, planner+coder, intake+responder.
 - [ ] Stub two system prompts, one per role, before class.
 
@@ -65,7 +66,7 @@ objective:
 ### Bring to class
 - [ ] The two stub system prompts.
 - [ ] A clear handoff payload sketch (what Agent A passes to Agent B).
-- [ ] A tracing dashboard ready (Claude traces or OpenAI dashboard).
+- [ ] A simple tracing plan ready — notebook logs, Langfuse, or framework traces if your stack supports them.
 
 ---
 
@@ -77,7 +78,7 @@ objective:
 |---|---|---|
 | Recap + hook | 5 min  | One bloated agent vs two narrow ones |
 | Mini-lecture | 20 min | Supervisor, swarm, hierarchical; Swarm's two primitives; Skills and Plugins |
-| Live lab     | 20 min | Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm |
+| Live lab     | 20 min | Build a 2-agent delegating workflow in LangGraph (Gemini free path), then compare Claude Agent SDK / OpenAI Swarm |
 | Q&A + discussion | 15 min | When did one agent become two in your capstone |
 
 ### In-class checkpoints
@@ -159,7 +160,7 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 ### Lab: Build a 2-agent workflow that delegates
 
 1. Pick a real task from your capstone that naturally splits in two. Examples: `researcher + writer`, `planner + coder`, `intake + responder`.
-2. Using either Claude Agent SDK **or** OpenAI Swarm, define two agents with distinct system prompts and tools.
+2. **Default free path:** using LangGraph + your Gemini API key, define two agents (or two graph nodes with distinct roles) with separate system prompts and tool access. If you already have access, you may use Claude Agent SDK or OpenAI Swarm as an alternate track instead.
 3. Implement the handoff. Agent A does its job and hands a structured output to Agent B. Agent B produces the final response.
 4. Instrument tracing so you can see every message between agents.
 5. Run three test cases. Export the traces.
@@ -169,6 +170,7 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 > ⚠️ **If you get stuck**
 > - *Swarm agents hand off back and forth forever (A → B → A → B)* → add a handoff counter to shared state and refuse a handoff when the counter exceeds 3; or promote one agent to supervisor so handoffs go through a single decider.
 > - *Agent B receives a blob of text from Agent A instead of structured data* → define a Pydantic / Zod schema for the handoff payload and have Agent A emit JSON matching it; reject unstructured handoffs at the boundary.
+> - *Gemini rate-limits or auth fails mid-lab* → lower concurrency, restart from a clean shell/notebook with the env var set, or switch to the optional Claude/OpenAI track if you already have access.
 > - *Tracing shows both agents calling the same tool on the same input* → their system prompts overlap. Tighten each agent's "you do NOT handle X" clause, and remove the duplicate tool from whichever agent shouldn't own it.
 
 ### Live discussion prompts — When did one agent become two?
@@ -186,7 +188,7 @@ https://www.youtube.com/embed/wgmCjrMFoyc
 Block the evening. Phone on DND. Do these in order.
 
 ### 1. Immediate action (~40 min)
-1. Finish the 2-agent workflow in either [Claude Agent SDK](https://docs.claude.com/en/api/agent-sdk) or [OpenAI Swarm](https://github.com/openai/swarm) with a typed handoff payload.
+1. Finish the 2-agent workflow in **LangGraph + Gemini** with a typed handoff payload. If you took the alternate track, Claude Agent SDK or OpenAI Swarm is also acceptable.
 2. Run three test cases with tracing enabled, export the traces.
 3. Draw a handoff diagram — boxes for agents, arrows labelled with payload contents — and paste into the repo README.
 4. Diagram your capstone as a 2-agent system: supervisor or swarm? Which tools move where? Include this diagram in your submission.
