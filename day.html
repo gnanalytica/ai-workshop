@@ -586,22 +586,30 @@
     escapeHtml,
   } from './assets/content-renderer.js';
   import { mountPollsWidget } from './assets/polls-widget.js';
-  import { mountDayRail } from './assets/day-rail.js';
+  import { mountDayRail, teardownCourseNavUI } from './assets/day-rail.js';
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, '0');
 
+  function hideDayCourseNav() {
+    teardownCourseNavUI();
+    const rail = $('gnDayRailHost');
+    if (rail) {
+      rail.style.display = 'none';
+      rail.innerHTML = '';
+      rail.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   function showError(title, msg) {
-    const r = $('gnDayRailHost');
-    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
+    hideDayCourseNav();
     $('errorGate').style.display = 'grid';
     if (title) $('errorTitle').textContent = title;
     if (msg) $('errorMsg').textContent = msg;
   }
   function showGate() {
+    hideDayCourseNav();
     $('gate').style.display = 'grid';
-    const r = $('gnDayRailHost');
-    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
   }
 
   const params = new URLSearchParams(location.search);
@@ -656,11 +664,13 @@
     ]);
     const scheduleMapRail = new Map((allDaysRail || []).map((d) => [d.day_number, d]));
     const doneSetRail = new Set((allProgressRail || []).map((p) => p.day_number));
+    const railOpts = { activeDay: n, scheduleMap: scheduleMapRail, doneSet: doneSetRail, variant: 'sidebar' };
+
     const railEl = $('gnDayRailHost');
     if (railEl) {
       railEl.style.display = 'block';
       railEl.removeAttribute('aria-hidden');
-      mountDayRail(railEl, { activeDay: n, scheduleMap: scheduleMapRail, doneSet: doneSetRail });
+      mountDayRail(railEl, railOpts);
     }
 
     if (!cday || cday.is_unlocked === false) {

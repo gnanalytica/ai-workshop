@@ -410,7 +410,7 @@
   import { DAYS, WEEK_TITLES, WEEK_OUTCOMES, CHECKPOINTS } from './assets/days.js';
   import { routeAfterSignIn } from './assets/admin-auth.js';
   import { openCommandPalette } from './assets/nav-search.js';
-  import { mountDayRail } from './assets/day-rail.js';
+  import { mountDayRail, teardownCourseNavUI } from './assets/day-rail.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -499,6 +499,7 @@
   }
 
   function showGate() {
+    teardownCourseNavUI();
     $('gate').style.display = 'grid';
     $('dash').style.display = 'none';
     const rail = $('gnDayRailHost');
@@ -667,6 +668,7 @@
       cohort = cr.data;
     }
     if (!cohort?.id) {
+      teardownCourseNavUI();
       $('hiName').textContent = profile?.full_name || user.email || '—';
       $('cohortInfo').textContent = 'Could not load cohort data.';
       console.error('Dashboard: no cohort (registration + slug fallback failed)', profileRes.error);

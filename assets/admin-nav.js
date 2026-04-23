@@ -1,19 +1,42 @@
 // Grouped sidebar nav for admin/faculty pages. Call wrapAdminMainLayout() after setting #adminNav innerHTML.
 
+const NAV_ICONS = {
+  home: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></svg>',
+  calendar:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  file: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>',
+  users:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  users2:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  grid: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  briefcase:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2M12 12v4"/></svg>',
+  building:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 21h18M6 21V7l6-4 6 4v14M9 21v-4h6v4"/></svg>',
+  clipboard:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>',
+  alert: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+  chart: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>',
+  book: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016 17H20M6 17V4a2 2 0 012-2h10v15M6 17H4a2 2 0 00-2 2 0 0 002 2h2v-2z"/></svg>',
+};
+
 export const ADMIN_PAGES = [
-  { href: 'admin-home.html', label: 'Home', group: 'cohort' },
-  { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort' },
-  { href: 'admin-content.html', label: 'Content', group: 'classwork' },
-  { href: 'admin.html', label: 'Registrations', group: 'people' },
-  { href: 'admin-teams.html', label: 'Teams', group: 'people' },
-  { href: 'admin-pods.html', label: 'Pods', group: 'people' },
-  { href: 'admin-faculty.html', label: 'Faculty', group: 'people', adminOnly: true },
-  { href: 'admin-orgs.html', label: 'Orgs & codes', group: 'people', adminOnly: true },
-  { href: 'admin-student.html', label: 'Student work', group: 'work' },
-  { href: 'admin-attendance.html', label: 'Attendance', group: 'work' },
-  { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work' },
-  { href: 'admin-analytics.html', label: 'Analytics', group: 'insights' },
-  { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', adminOnly: true },
+  { href: 'admin-home.html', label: 'Home', group: 'cohort', icon: 'home' },
+  { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
+  { href: 'faculty.html', label: 'Faculty', group: 'cohort', icon: 'users2' },
+  { href: 'admin-content.html', label: 'Content', group: 'classwork', icon: 'file' },
+  { href: 'admin.html', label: 'Registrations', group: 'people', icon: 'users' },
+  { href: 'admin-teams.html', label: 'Teams', group: 'people', icon: 'users2' },
+  { href: 'admin-pods.html', label: 'Pods', group: 'people', icon: 'grid' },
+  { href: 'admin-faculty.html', label: 'Faculty', group: 'people', icon: 'briefcase', adminOnly: true },
+  { href: 'admin-orgs.html', label: 'Orgs & codes', group: 'people', icon: 'building', adminOnly: true },
+  { href: 'admin-student.html', label: 'Student work', group: 'work', icon: 'clipboard' },
+  { href: 'admin-attendance.html', label: 'Attendance', group: 'work', icon: 'check' },
+  { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
+  { href: 'admin-analytics.html', label: 'Analytics', group: 'insights', icon: 'chart' },
+  { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', icon: 'book', adminOnly: true },
 ];
 
 const GROUP_LABEL = {
@@ -24,12 +47,100 @@ const GROUP_LABEL = {
   insights: 'Insights',
 };
 
+function iconHtml(key) {
+  return NAV_ICONS[key] || NAV_ICONS.file;
+}
+
+/** Sync <details> open state: desktop = all open; mobile = only section with active link. */
+export function syncAdminNavGroups() {
+  const wide = window.matchMedia('(min-width: 961px)').matches;
+  document.querySelectorAll('.admin-nav-group').forEach((det) => {
+    if (wide) {
+      det.setAttribute('open', '');
+    } else if (det.querySelector('.admin-nav-link--active')) {
+      det.setAttribute('open', '');
+    } else {
+      det.removeAttribute('open');
+    }
+  });
+}
+
+export function initAdminNavChrome() {
+  const panel = document.getElementById('panel');
+  if (!panel || !panel.classList.contains('admin-shell') || panel.dataset.adminNavChrome === '1') return;
+  panel.dataset.adminNavChrome = '1';
+  document.body.classList.add('has-admin-shell');
+
+  const navIn = document.querySelector('body > nav .nav-in');
+  if (navIn && !navIn.querySelector('.admin-nav-burger')) {
+    const burger = document.createElement('button');
+    burger.type = 'button';
+    burger.className = 'admin-nav-burger';
+    burger.setAttribute('aria-label', 'Open admin navigation');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-controls', 'adminShellAside');
+    burger.innerHTML =
+      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
+    const brand = navIn.querySelector('.brand');
+    if (brand) brand.insertAdjacentElement('beforebegin', burger);
+    else navIn.prepend(burger);
+
+    let backdrop = document.getElementById('adminNavBackdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'adminNavBackdrop';
+      backdrop.className = 'admin-nav-backdrop';
+      backdrop.tabIndex = -1;
+      backdrop.setAttribute('aria-hidden', 'true');
+      panel.insertAdjacentElement('beforebegin', backdrop);
+    }
+
+    const closeDrawer = () => {
+      panel.classList.remove('admin-shell--drawer-open');
+      burger.setAttribute('aria-expanded', 'false');
+      backdrop.classList.remove('is-visible');
+      document.body.style.overflow = '';
+    };
+    const openDrawer = () => {
+      if (window.matchMedia('(min-width: 961px)').matches) return;
+      panel.classList.add('admin-shell--drawer-open');
+      burger.setAttribute('aria-expanded', 'true');
+      backdrop.classList.add('is-visible');
+      document.body.style.overflow = 'hidden';
+    };
+
+    burger.addEventListener('click', () => {
+      if (panel.classList.contains('admin-shell--drawer-open')) closeDrawer();
+      else openDrawer();
+    });
+    backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+    panel.addEventListener('click', (e) => {
+      const a = e.target.closest?.('#adminNav a.admin-nav-link');
+      if (a && window.matchMedia('(max-width: 960px)').matches) closeDrawer();
+    });
+
+    const drawerClose = document.querySelector('.admin-nav-drawer-close');
+    drawerClose?.addEventListener('click', closeDrawer);
+
+    window.addEventListener('resize', () => {
+      if (window.matchMedia('(min-width: 961px)').matches) closeDrawer();
+      syncAdminNavGroups();
+    });
+  }
+
+  syncAdminNavGroups();
+}
+
 /** Move all siblings after #adminNav into .admin-main and mark #panel as admin-shell. */
 export function wrapAdminMainLayout() {
   const panel = document.getElementById('panel');
   if (!panel || panel.dataset.adminShell === '1') return;
   const nav = document.getElementById('adminNav');
   if (!nav || nav.parentElement !== panel) return;
+  nav.classList.add('admin-nav-slot');
   const wrap = document.createElement('div');
   wrap.className = 'admin-main';
   while (nav.nextSibling) {
@@ -38,6 +149,7 @@ export function wrapAdminMainLayout() {
   panel.appendChild(wrap);
   panel.classList.add('admin-shell');
   panel.dataset.adminShell = '1';
+  initAdminNavChrome();
 }
 
 export function renderAdminNav(active, opts = {}) {
@@ -59,30 +171,36 @@ export function renderAdminNav(active, opts = {}) {
   const navBlocks = groupOrder
     .filter((g) => byGroup[g]?.length)
     .map((g) => {
+      const hasActive = byGroup[g].some((p) => p.href === active);
       const links = byGroup[g]
         .map((p) => {
           const isActive = p.href === active;
-          return `<a href="${p.href}" class="admin-nav-link${isActive ? ' admin-nav-link--active' : ''}">${p.label}</a>`;
+          const ic = iconHtml(p.icon || 'file');
+          return `<a href="${p.href}" class="admin-nav-link${isActive ? ' admin-nav-link--active' : ''}"><span class="admin-nav-link__ic">${ic}</span><span class="admin-nav-link__txt">${p.label}</span></a>`;
         })
         .join('');
-      return `<div class="admin-nav-group">
-        <div class="admin-nav-group__label">${GROUP_LABEL[g] || g}</div>
-        ${links}
-      </div>`;
+      const openAttr = hasActive ? ' open' : '';
+      return `<details class="admin-nav-group"${openAttr}>
+        <summary class="admin-nav-group__label"><span>${GROUP_LABEL[g] || g}</span></summary>
+        <div class="admin-nav-group__links">${links}</div>
+      </details>`;
     })
     .join('');
 
-  const badge =
-    role === 'faculty'
-      ? `<span class="admin-nav-badge">Faculty</span>`
-      : '';
+  const badge = role === 'faculty' ? `<span class="admin-nav-badge">Faculty</span>` : '';
   const switcher =
     role === 'admin' && alsoFaculty
       ? `<a href="faculty.html" class="admin-nav-switch">Faculty view →</a>`
       : '';
 
-  return `<aside class="admin-nav-aside" aria-label="Admin navigation">
-    ${navBlocks}
-    <div class="admin-nav-footer">${badge}${switcher}</div>
+  return `<aside class="admin-nav-aside" id="adminShellAside" aria-label="Admin navigation">
+    <div class="admin-nav-aside__head">
+      <span class="admin-nav-aside__title">Menu</span>
+      <button type="button" class="admin-nav-drawer-close" aria-label="Close navigation">×</button>
+    </div>
+    <div class="admin-nav-aside__scroll">
+      ${navBlocks}
+      <div class="admin-nav-footer">${badge}${switcher}</div>
+    </div>
   </aside>`;
 }

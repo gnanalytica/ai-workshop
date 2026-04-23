@@ -90,7 +90,7 @@
 import { supabase } from './assets/supabase.js';
 import { wireThemeToggle } from './assets/theme.js';
 import { checkAdminOrFaculty } from './assets/admin-auth.js';
-import { renderAdminNav } from './assets/admin-nav.js';
+import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
 wireThemeToggle();
 const $ = (id) => document.getElementById(id);
 
@@ -346,7 +346,8 @@ async function gate(user) {
   const auth = await checkAdminOrFaculty(user);
   if (!auth.isFaculty && !auth.isAdmin) { $('denied').style.display = 'grid'; return; }
   $('panel').style.display = 'block';
-  $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: auth.isAdmin ? 'admin' : 'faculty' });
+  $('adminNav').innerHTML = renderAdminNav('admin-faculty-lms.html', { role: auth.isAdmin ? 'admin' : 'faculty' });
+  wrapAdminMainLayout();
   STATE.user = user;
   let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
   if (!auth.isAdmin) q = q.in('id', auth.facultyCohortIds || []);
