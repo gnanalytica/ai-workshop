@@ -210,6 +210,9 @@ export function mountDayRail(
   }
 }
 
+/** Same as named export; also on mountDayRail for pages that only import mountDayRail (avoids stale-cache named export issues). */
+mountDayRail.teardownCourseNavUI = teardownCourseNavUI;
+
 /** Resolve cohort (registration-first) + schedule + completion; mirrors dashboard cohort logic. */
 export async function loadDayRailState(supabase, userId) {
   let cohort = null;

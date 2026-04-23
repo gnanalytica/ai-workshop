@@ -586,18 +586,27 @@
     escapeHtml,
   } from './assets/content-renderer.js';
   import { mountPollsWidget } from './assets/polls-widget.js';
-  import { mountDayRail, teardownCourseNavUI } from './assets/day-rail.js';
+  import { mountDayRail } from './assets/day-rail.js';
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, '0');
 
   function hideDayCourseNav() {
-    teardownCourseNavUI();
+    const t = mountDayRail.teardownCourseNavUI;
+    if (typeof t === 'function') t();
+    else {
+      document.body.classList.remove('gn-has-course-nav', 'gn-course-nav-drawer-open');
+      document.body.style.overflow = '';
+      document.getElementById('gnCourseNavTrigger')?.remove();
+      document.getElementById('gnCourseNavBackdrop')?.remove();
+      document.getElementById('gnDayRailHost')?.removeAttribute('data-gn-drawer-init');
+    }
     const rail = $('gnDayRailHost');
     if (rail) {
       rail.style.display = 'none';
       rail.innerHTML = '';
       rail.setAttribute('aria-hidden', 'true');
+      delete rail.dataset.gnDrawerInit;
     }
   }
 
