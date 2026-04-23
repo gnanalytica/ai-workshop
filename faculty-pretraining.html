@@ -67,16 +67,6 @@
     <select id="cohortSel"></select>
   </header>
 
-  <div class="tabs" id="lmsTabs">
-    <a href="#overview" data-tab="overview" class="active">Overview</a>
-    <a href="#week-plan" data-tab="week-plan">Week plan</a>
-    <a href="#setup" data-tab="setup">Setup</a>
-    <a href="#quiz" data-tab="quiz">Quiz</a>
-    <a href="#practical" data-tab="practical">Practical</a>
-    <a href="#evaluation" data-tab="evaluation">Evaluation</a>
-    <a href="#certificate" data-tab="certificate">Certificate</a>
-  </div>
-
   <section id="tab-overview"></section>
   <section id="tab-week-plan" class="hidden"></section>
   <section id="tab-setup" class="hidden"></section>
@@ -90,7 +80,7 @@
 import { supabase } from './assets/supabase.js';
 import { wireThemeToggle } from './assets/theme.js';
 import { checkAdminOrFaculty } from './assets/admin-auth.js';
-import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+import { renderAdminNav, setAdminNavSubActive, wrapAdminMainLayout } from './assets/admin-nav.js';
 wireThemeToggle();
 const $ = (id) => document.getElementById(id);
 
@@ -187,7 +177,7 @@ function passGate() {
 }
 
 function setTab(tab) {
-  document.querySelectorAll('#lmsTabs a').forEach((a) => a.classList.toggle('active', a.dataset.tab === tab));
+  setAdminNavSubActive(tab);
   ['overview','week-plan','setup','quiz','practical','evaluation','certificate'].forEach((t) => {
     $(`tab-${t}`).classList.toggle('hidden', t !== tab);
   });
@@ -346,7 +336,22 @@ async function gate(user) {
   const auth = await checkAdminOrFaculty(user);
   if (!auth.isFaculty && !auth.isAdmin) { $('denied').style.display = 'grid'; return; }
   $('panel').style.display = 'block';
-  $('adminNav').innerHTML = renderAdminNav('admin-faculty-lms.html', { role: auth.isAdmin ? 'admin' : 'faculty' });
+  $('adminNav').innerHTML = renderAdminNav('admin-faculty-lms.html', {
+    role: auth.isAdmin ? 'admin' : 'faculty',
+    subnav: {
+      label: 'On this page',
+      ariaLabel: 'Faculty LMS sections',
+      links: [
+        { key: 'overview', href: '#overview', label: 'Overview' },
+        { key: 'week-plan', href: '#week-plan', label: 'Week plan' },
+        { key: 'setup', href: '#setup', label: 'Setup' },
+        { key: 'quiz', href: '#quiz', label: 'Quiz' },
+        { key: 'practical', href: '#practical', label: 'Practical' },
+        { key: 'evaluation', href: '#evaluation', label: 'Evaluation' },
+        { key: 'certificate', href: '#certificate', label: 'Certificate' },
+      ],
+    },
+  });
   wrapAdminMainLayout();
   STATE.user = user;
   let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
@@ -382,10 +387,6 @@ $('cohortSel')?.addEventListener('change', async () => {
 window.addEventListener('hashchange', () => {
   const t = (location.hash || '#overview').replace('#', '');
   setTab(['overview','week-plan','setup','quiz','practical','evaluation','certificate'].includes(t) ? t : 'overview');
-});
-$('lmsTabs').addEventListener('click', (e) => {
-  const a = e.target.closest('a[data-tab]'); if (!a) return; e.preventDefault();
-  history.replaceState(null, '', `#${a.dataset.tab}`); setTab(a.dataset.tab);
 });
 
 supabase.auth.onAuthStateChange((event, session) => {

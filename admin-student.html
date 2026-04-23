@@ -13,9 +13,6 @@
   .pg-hdr h1{margin:0;font-size:34px;letter-spacing:-.02em}
   .kv{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:var(--muted);margin-top:6px}
   .kv b{color:var(--ink);font-weight:500}
-  .tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:20px 0 18px;flex-wrap:wrap}
-  .tabs a{padding:10px 14px;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;text-decoration:none}
-  .tabs a.active{color:var(--ink);border-bottom-color:var(--accent)}
   .sec{scroll-margin-top:90px;margin-bottom:36px}
   .sec h2{font-size:20px;letter-spacing:-.01em;margin:0 0 12px}
   .day-grid-30{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:10px}
@@ -70,9 +67,6 @@
   .toast.err{border-color:#ef4444}
   @media(max-width:640px){
     .pg-hdr h1{font-size:24px}
-    .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-    .tabs::-webkit-scrollbar{display:none}
-    .tabs a{white-space:nowrap;flex:0 0 auto}
     .day-grid-30{grid-template-columns:repeat(7,1fr)}
     .modal{padding:12px}
     .modal-card{padding:16px;border-radius:12px}
@@ -142,13 +136,6 @@
         <div id="sStatus" style="margin-top:8px"></div>
       </div>
     </div>
-    <div class="tabs">
-      <a href="#progress" class="active">Progress</a>
-      <a href="#subs">Submissions</a>
-      <a href="#quizzes">Quiz attempts</a>
-      <a href="#notes">Reading notes</a>
-      <a href="#timeline">Activity timeline</a>
-    </div>
     <section id="progress" class="sec"><h2>Progress grid</h2><div class="day-grid-30" id="dGrid"></div></section>
     <section id="subs" class="sec"><h2>Submissions</h2><div class="table-wrap"><table><thead><tr><th scope="col">Day</th><th scope="col">Title</th><th scope="col">Status</th><th scope="col">Score</th><th scope="col">Kudos</th><th scope="col">Content</th><th scope="col">Submitted</th><th scope="col"></th></tr></thead><tbody id="subsRows"></tbody></table></div></section>
     <section id="quizzes" class="sec"><h2>Quiz attempts</h2><div class="table-wrap"><table><thead><tr><th scope="col">Day</th><th scope="col">Title</th><th scope="col">Score</th><th scope="col">Passed</th><th scope="col">Completed</th></tr></thead><tbody id="qRows"></tbody></table></div></section>
@@ -169,13 +156,54 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+  import { renderAdminNav, setAdminNavSubActive, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { DAYS } from './assets/days.js';
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
+  const STUDENT_SECTION_KEYS = ['progress', 'subs', 'quizzes', 'notes', 'timeline'];
+
+  function studentSubnav() {
+    return {
+      label: 'On this page',
+      ariaLabel: 'Student drill-down sections',
+      links: [
+        { key: 'progress', href: '#progress', label: 'Progress' },
+        { key: 'subs', href: '#subs', label: 'Submissions' },
+        { key: 'quizzes', href: '#quizzes', label: 'Quiz attempts' },
+        { key: 'notes', href: '#notes', label: 'Reading notes' },
+        { key: 'timeline', href: '#timeline', label: 'Activity timeline' },
+      ],
+    };
+  }
+
+  function renderStudentNav(showSubnav) {
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html', {
+      role: 'admin',
+      subnav: showSubnav ? studentSubnav() : null,
+    });
+  }
+
+  function normalizeStudentSection(raw) {
+    const key = String(raw || '').replace(/^#/, '');
+    return STUDENT_SECTION_KEYS.includes(key) ? key : 'progress';
+  }
+
+  function routeStudentSection() {
+    if ($('studentDetail').style.display === 'none') {
+      setAdminNavSubActive('');
+      return;
+    }
+    const section = normalizeStudentSection(location.hash || '#progress');
+    if (`#${section}` !== (location.hash || '')) {
+      const url = new URL(window.location.href);
+      url.hash = section;
+      history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+    }
+    setAdminNavSubActive(section);
+  }
 
   async function resolveCohort() {
     let cq = supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG);
@@ -196,11 +224,11 @@
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     if (isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) return show('trainerOnly');
     show('panel');
-    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-student.html', { role: 'admin' });
-    wrapAdminMainLayout();
-    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     const params = new URLSearchParams(location.search);
     const u = params.get('u');
+    renderStudentNav(Boolean(u));
+    wrapAdminMainLayout();
+    applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     if (u) loadStudent(u); else loadPicker();
   }
   function show(id) {
@@ -229,6 +257,8 @@
   async function loadPicker() {
     $('studentPicker').style.display = 'block';
     $('studentDetail').style.display = 'none';
+    renderStudentNav(false);
+    setAdminNavSubActive('');
     const cohort = await resolveCohort();
     if (!cohort) { $('pickerList').innerHTML = `<p class="muted">You're not assigned to any cohort yet — ask an admin.</p>`; return; }
     const { data: regs } = await supabase.from('registrations').select('user_id,status').eq('cohort_id', cohort.id);
@@ -244,8 +274,14 @@
   async function loadStudent(userId) {
     $('studentPicker').style.display = 'none';
     $('studentDetail').style.display = 'block';
+    renderStudentNav(true);
+    routeStudentSection();
     const cohort = await resolveCohort();
-    if (!cohort) { $('studentDetail').innerHTML = `<p class="muted" style="padding:40px;text-align:center">You're not assigned to any cohort yet — ask an admin.</p>`; return; }
+    if (!cohort) {
+      renderStudentNav(false);
+      $('studentDetail').innerHTML = `<p class="muted" style="padding:40px;text-align:center">You're not assigned to any cohort yet — ask an admin.</p>`;
+      return;
+    }
     const [profile, reg, progress, subs, assignments, attempts, quizzes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
       supabase.from('registrations').select('*').eq('user_id', userId).eq('cohort_id', cohort.id).maybeSingle(),
@@ -345,11 +381,7 @@
       : `<p class="muted">No activity yet.</p>`;
   }
 
-  // Tab active state
-  document.querySelectorAll('.tabs a').forEach(a => a.addEventListener('click', () => {
-    document.querySelectorAll('.tabs a').forEach(x => x.classList.remove('active'));
-    a.classList.add('active');
-  }));
+  window.addEventListener('hashchange', routeStudentSection);
 
   // ---------- ATTACHMENT PREVIEW + GRADING ----------
   let CURRENT_STUDENT_SUBS = new Map();

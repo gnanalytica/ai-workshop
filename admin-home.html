@@ -170,12 +170,6 @@
     </div>
   </div>
 
-  <nav class="home-subtabs" aria-label="Home sections">
-    <a href="#overview" class="home-subtab" data-tab="overview">Overview</a>
-    <a href="#announcements" class="home-subtab" data-tab="announcements">Announcements</a>
-    <a href="#polls" class="home-subtab" data-tab="polls">Polls</a>
-  </nav>
-
   <section id="homeSectionOverview" class="home-tab-panel">
   <div class="grid2">
     <div class="col">
@@ -421,7 +415,7 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+  import { renderAdminNav, setAdminNavSubActive, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { DAYS } from './assets/days.js';
@@ -468,10 +462,7 @@
       const el = $(id);
       if (el) el.style.display = tab === h ? '' : 'none';
     });
-    document.querySelectorAll('.home-subtab').forEach((a) => {
-      const t = (a.getAttribute('href') || '').replace(/^#/, '');
-      a.classList.toggle('on', t === h);
-    });
+    setAdminNavSubActive(h);
   }
 
   async function homeAnnLoad() {
@@ -599,7 +590,20 @@
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
     trimHomeForSupportFacultyUI();
-    $('adminNav').innerHTML = renderAdminNav('admin-home.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    $('adminNav').innerHTML = renderAdminNav('admin-home.html', {
+      role: IS_ADMIN ? 'admin' : 'faculty',
+      subnav: {
+        label: 'On this page',
+        ariaLabel: 'Home sections',
+        links: isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)
+          ? [{ key: 'overview', href: '#overview', label: 'Overview' }]
+          : [
+              { key: 'overview', href: '#overview', label: 'Overview' },
+              { key: 'announcements', href: '#announcements', label: 'Announcements' },
+              { key: 'polls', href: '#polls', label: 'Polls' },
+            ],
+      },
+    });
     wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     await loadCohorts();

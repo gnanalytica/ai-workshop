@@ -126,7 +126,7 @@ export function initAdminNavChrome() {
       if (e.key === 'Escape') closeDrawer();
     });
     panel.addEventListener('click', (e) => {
-      const a = e.target.closest?.('#adminNav a.admin-nav-link');
+      const a = e.target.closest?.('#adminNav a.admin-nav-link, #adminNav a.admin-nav-sub-link');
       if (a && window.matchMedia('(max-width: 960px)').matches) closeDrawer();
     });
 
@@ -160,8 +160,14 @@ export function wrapAdminMainLayout() {
   initAdminNavChrome();
 }
 
+export function setAdminNavSubActive(key) {
+  document.querySelectorAll('.admin-nav-sub-link').forEach((link) => {
+    link.classList.toggle('admin-nav-sub-link--active', link.dataset.adminSub === key);
+  });
+}
+
 export function renderAdminNav(active, opts = {}) {
-  const { role = 'admin' } = opts;
+  const { role = 'admin', subnav = null } = opts;
   const alsoFaculty =
     typeof opts.alsoFaculty === 'boolean'
       ? opts.alsoFaculty
@@ -198,22 +204,17 @@ export function renderAdminNav(active, opts = {}) {
     })
     .join('');
 
-  const FACULTY_HUB_TABS = [
-    ['stream', 'Stream'],
-    ['agenda', 'Agenda'],
-    ['people', 'People'],
-    ['grades', 'Insights'],
-    ['guide', 'Guide'],
-  ];
-  const facultyHubSub =
-    active === 'faculty.html'
-      ? `<div class="admin-nav-faculty-sub" role="navigation" aria-label="Faculty hub sections">
-          <div class="admin-nav-faculty-sub__label">In this hub</div>
-          <div class="admin-nav-faculty-sub__links">
-            ${FACULTY_HUB_TABS.map(
-              ([hash, label]) =>
-                `<a href="faculty.html#${hash}" class="admin-nav-faculty-link" data-fac-tab="${hash}">${label}</a>`,
-            ).join('')}
+  const subnavHtml =
+    subnav && Array.isArray(subnav.links) && subnav.links.length
+      ? `<div class="admin-nav-sub" role="navigation" aria-label="${subnav.ariaLabel || 'Page sections'}">
+          <div class="admin-nav-sub__label">${subnav.label || 'On this page'}</div>
+          <div class="admin-nav-sub__links">
+            ${subnav.links
+              .map(
+                ({ href, label, key }) =>
+                  `<a href="${href}" class="admin-nav-sub-link" data-admin-sub="${key || ''}">${label}</a>`,
+              )
+              .join('')}
           </div>
         </div>`
       : '';
@@ -231,7 +232,7 @@ export function renderAdminNav(active, opts = {}) {
     </div>
     <div class="admin-nav-aside__scroll">
       ${navBlocks}
-      ${facultyHubSub}
+      ${subnavHtml}
       <div class="admin-nav-footer">${badge}${switcher}</div>
     </div>
   </aside>`;

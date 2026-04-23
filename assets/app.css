@@ -517,12 +517,14 @@ a.admin-nav-link--active .admin-nav-link__ic{
   color:var(--accent);
 }
 
+.admin-nav-sub,
 .admin-nav-faculty-sub{
   margin:14px 0 4px;
   padding:12px 10px 14px;
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
 }
+.admin-nav-sub__label,
 .admin-nav-faculty-sub__label{
   font-size:10px;
   text-transform:uppercase;
@@ -531,11 +533,13 @@ a.admin-nav-link--active .admin-nav-link__ic{
   margin:0 0 8px 4px;
   font-weight:600;
 }
+.admin-nav-sub__links,
 .admin-nav-faculty-sub__links{
   display:flex;
   flex-direction:column;
   gap:2px;
 }
+a.admin-nav-sub-link,
 a.admin-nav-faculty-link{
   display:block;
   padding:8px 10px;
@@ -545,15 +549,18 @@ a.admin-nav-faculty-link{
   text-decoration:none;
   line-height:1.3;
 }
+a.admin-nav-sub-link:hover,
 a.admin-nav-faculty-link:hover{
   background:var(--bg-soft);
   color:var(--ink);
 }
+a.admin-nav-sub-link--active,
 a.admin-nav-faculty-link--active{
   background:rgba(195,255,54,.1);
   color:var(--accent);
   font-weight:600;
 }
+[data-theme="light"] a.admin-nav-sub-link--active,
 [data-theme="light"] a.admin-nav-faculty-link--active{
   background:rgba(111,165,0,.12);
   color:var(--accent);

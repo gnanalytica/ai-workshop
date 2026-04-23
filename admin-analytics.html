@@ -125,11 +125,6 @@
     <h1>Cohort pulse</h1>
   </div>
 
-  <div class="ana-tabs" id="analyticsTabs">
-    <a href="#" id="tabOverview">Overview</a>
-    <a href="#activity" id="tabActivity">Activity</a>
-  </div>
-
   <div id="analyticsOverview">
 
   <div class="top-bar">
@@ -197,7 +192,7 @@
 
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
-  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+  import { renderAdminNav, setAdminNavSubActive, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
@@ -214,18 +209,11 @@
     if (!ov || !ac) return;
     ov.style.display = act ? 'none' : 'block';
     ac.style.display = act ? 'block' : 'none';
-    $('tabOverview')?.classList.toggle('on', !act);
-    $('tabActivity')?.classList.toggle('on', act);
+    setAdminNavSubActive(act ? 'activity' : 'overview');
     if (act && fr && (!fr.getAttribute('src') || fr.getAttribute('src') === 'about:blank')) {
       fr.src = 'admin-activity.html';
     }
   }
-
-  $('tabOverview')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-    routeAnalyticsSubtab();
-  });
   window.addEventListener('hashchange', routeAnalyticsSubtab);
 
   let COHORTS = [];
@@ -287,7 +275,17 @@
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
     if (isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) return showTrainerOnly();
     showPanel();
-    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-analytics.html', { role: 'admin' });
+    document.getElementById('adminNav').innerHTML = renderAdminNav('admin-analytics.html', {
+      role: 'admin',
+      subnav: {
+        label: 'On this page',
+        ariaLabel: 'Analytics sections',
+        links: [
+          { key: 'overview', href: '#overview', label: 'Overview' },
+          { key: 'activity', href: '#activity', label: 'Activity' },
+        ],
+      },
+    });
     wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     routeAnalyticsSubtab();

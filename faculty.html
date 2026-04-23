@@ -83,7 +83,7 @@
     </div>
   </header>
 
-  <p class="muted" style="font-size:12.5px;margin:12px 0 18px;line-height:1.5">Switch sections from <strong>Menu → In this hub</strong> (left), or use the links there.</p>
+  <p class="muted" style="font-size:12.5px;margin:12px 0 18px;line-height:1.5">Switch sections from the left sidebar under <strong>In this hub</strong>.</p>
 
   <section id="fPanel"></section>
 </main>
@@ -92,7 +92,7 @@
 
 <script type="module">
   import { supabase } from './assets/supabase.js';
-  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+  import { renderAdminNav, setAdminNavSubActive, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountFacultyTab } from './assets/faculty-tabs.js';
@@ -163,7 +163,20 @@
       dd.addEventListener('click', (e) => e.stopPropagation());
     }
     show('panel');
-    $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: isAdmin ? 'admin' : 'faculty' });
+    $('adminNav').innerHTML = renderAdminNav('faculty.html', {
+      role: isAdmin ? 'admin' : 'faculty',
+      subnav: {
+        label: 'In this hub',
+        ariaLabel: 'Faculty hub sections',
+        links: [
+          { key: 'stream', href: '#stream', label: 'Stream' },
+          { key: 'agenda', href: '#agenda', label: 'Agenda' },
+          { key: 'people', href: '#people', label: 'People' },
+          { key: 'grades', href: '#grades', label: 'Insights' },
+          { key: 'guide', href: '#guide', label: 'Guide' },
+        ],
+      },
+    });
     wrapAdminMainLayout();
 
     // Greeting
@@ -217,9 +230,7 @@
     if (`#${tab}` !== (location.hash || '')) {
       history.replaceState(null, '', `#${tab}`);
     }
-    document.querySelectorAll('.admin-nav-faculty-link').forEach((a) => {
-      a.classList.toggle('admin-nav-faculty-link--active', a.getAttribute('data-fac-tab') === tab);
-    });
+    setAdminNavSubActive(tab);
     await mountFacultyTab(tab, { state: STATE, container: $('fPanel') });
   }
 
