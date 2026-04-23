@@ -142,6 +142,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <!-- GATE -->
 <div class="gate" id="gate" style="display:none">
   <div class="gate-card">
@@ -208,6 +210,7 @@ import { supabase, COHORT_SLUG } from './assets/supabase.js';
 import { wireThemeToggle } from './assets/theme.js';
 wireThemeToggle();
 import { DAYS, WEEK_TITLES, CHECKPOINTS } from './assets/days.js';
+import { mountDayRail } from './assets/day-rail.js';
 
 const $ = (id) => document.getElementById(id);
 const DAY_MS = 86400000;
@@ -233,6 +236,8 @@ async function init() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     $('gate').style.display = 'grid';
+    const r = $('gnDayRailHost');
+    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
     return;
   }
   $('main').style.display = 'block';
@@ -249,7 +254,11 @@ async function load(user) {
 
   const cohortRes = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single();
   const cohort = cohortRes.data;
-  if (!cohort) return;
+  if (!cohort) {
+    const r = $('gnDayRailHost');
+    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
+    return;
+  }
 
   $('cohortName').textContent = cohort.name;
   $('cohortRange').textContent = `${fmtDate(cohort.starts_on)} → ${fmtDate(cohort.ends_on)}`;
@@ -265,6 +274,12 @@ async function load(user) {
 
   const schedMap = new Map((daysRes.data || []).map(d => [d.day_number, d]));
   const doneSet = new Set((progressRes.data || []).map(p => p.day_number));
+  const railH = $('gnDayRailHost');
+  if (railH) {
+    railH.style.display = 'block';
+    railH.removeAttribute('aria-hidden');
+    mountDayRail(railH, { activeDay: null, scheduleMap: schedMap, doneSet });
+  }
   const asgnByDay = new Map();
   (asgnRes.data || []).forEach(a => asgnByDay.set(a.day_number, a));
   const subByAsgn = new Map((subsRes.data || []).map(s => [s.assignment_id, s]));

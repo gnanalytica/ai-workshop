@@ -162,6 +162,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <!-- GATE (sign in) -->
 <div class="gate" id="gate" style="display:none">
   <div class="gate-card">
@@ -408,6 +410,7 @@
   import { DAYS, WEEK_TITLES, WEEK_OUTCOMES, CHECKPOINTS } from './assets/days.js';
   import { routeAfterSignIn } from './assets/admin-auth.js';
   import { openCommandPalette } from './assets/nav-search.js';
+  import { mountDayRail } from './assets/day-rail.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -498,6 +501,12 @@
   function showGate() {
     $('gate').style.display = 'grid';
     $('dash').style.display = 'none';
+    const rail = $('gnDayRailHost');
+    if (rail) {
+      rail.style.display = 'none';
+      rail.innerHTML = '';
+      rail.setAttribute('aria-hidden', 'true');
+    }
     const nb = $('navProfileBtn');
     if (nb) nb.style.display = 'none';
   }
@@ -661,6 +670,8 @@
       $('hiName').textContent = profile?.full_name || user.email || '—';
       $('cohortInfo').textContent = 'Could not load cohort data.';
       console.error('Dashboard: no cohort (registration + slug fallback failed)', profileRes.error);
+      const rh = $('gnDayRailHost');
+      if (rh) { rh.style.display = 'none'; rh.innerHTML = ''; rh.setAttribute('aria-hidden', 'true'); }
       return;
     }
 
@@ -713,6 +724,13 @@
     renderCapstoneEditor(user, cohort);
     renderAnnouncements(cohort);
     renderMentor(cohort);
+
+    const railHost = $('gnDayRailHost');
+    if (railHost) {
+      railHost.style.display = 'block';
+      railHost.removeAttribute('aria-hidden');
+      mountDayRail(railHost, { activeDay: null, scheduleMap, doneSet });
+    }
   }
 
   async function renderMentor(cohort) {

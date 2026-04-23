@@ -67,6 +67,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <div class="gate" id="gate" style="display:none">
   <div class="gate-card">
     <div class="kicker">Sign in required</div>
@@ -131,6 +133,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import { mountStudentDayRail } from './assets/day-rail.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -357,7 +360,12 @@
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { $('gate').style.display = 'grid'; return; }
+    if (!session) {
+      $('gate').style.display = 'grid';
+      const rail = $('gnDayRailHost');
+      if (rail) { rail.style.display = 'none'; rail.innerHTML = ''; rail.setAttribute('aria-hidden', 'true'); }
+      return;
+    }
     $('panel').style.display = 'block';
 
     const { data: cohort } = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).maybeSingle();
@@ -416,6 +424,8 @@
         if (saved && ['all', 'cohort', 'teams', 'mentors', 'hof'].includes(saved)) setView(saved);
       } catch {}
     }
+
+    await mountStudentDayRail(supabase, session.user.id, $('gnDayRailHost'), null);
   }
 
   init();

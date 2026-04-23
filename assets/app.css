@@ -1,4 +1,5 @@
 @import './nav-search.css';
+@import './day-rail.css';
 
 /* Flash-of-unauthenticated-content guard: body hidden until theme.js marks .ready */
 html:not(.ready) body{visibility:hidden}

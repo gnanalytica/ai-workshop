@@ -66,6 +66,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <!-- GATE -->
 <div class="gate" id="gate" style="display:none">
   <div class="gate-card">
@@ -128,6 +130,7 @@
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { toast as appToast, confirmDialog, infoDialog } from './assets/dialog.js';
+  import { mountStudentDayRail } from './assets/day-rail.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
@@ -143,7 +146,11 @@
     USER = session.user;
     await loadAll();
   }
-  function showGate() { $('gate').style.display='grid'; $('panel').style.display='none'; $('signoutBtn').style.display='none'; }
+  function showGate() {
+    $('gate').style.display='grid'; $('panel').style.display='none'; $('signoutBtn').style.display='none';
+    const r = $('gnDayRailHost');
+    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
+  }
   function showPanel() { $('gate').style.display='none'; $('panel').style.display='block'; $('signoutBtn').style.display='inline-block'; }
 
   $('loginForm').addEventListener('submit', async (e) => {
@@ -187,6 +194,8 @@
       $('detailState').style.display = 'block';
       renderDetail();
     }
+
+    await mountStudentDayRail(supabase, USER.id, $('gnDayRailHost'), null);
   }
 
   async function loadMembers() {

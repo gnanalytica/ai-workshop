@@ -435,6 +435,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <!-- Gate shown if not signed in -->
 <div class="gate" id="gate" style="display:none">
   <div class="gate-card">
@@ -584,16 +586,23 @@
     escapeHtml,
   } from './assets/content-renderer.js';
   import { mountPollsWidget } from './assets/polls-widget.js';
+  import { mountDayRail } from './assets/day-rail.js';
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, '0');
 
   function showError(title, msg) {
+    const r = $('gnDayRailHost');
+    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
     $('errorGate').style.display = 'grid';
     if (title) $('errorTitle').textContent = title;
     if (msg) $('errorMsg').textContent = msg;
   }
-  function showGate() { $('gate').style.display = 'grid'; }
+  function showGate() {
+    $('gate').style.display = 'grid';
+    const r = $('gnDayRailHost');
+    if (r) { r.style.display = 'none'; r.innerHTML = ''; r.setAttribute('aria-hidden', 'true'); }
+  }
 
   const params = new URLSearchParams(location.search);
   const nRaw = params.get('n');
@@ -640,9 +649,19 @@
       return showError('Cohort not found', cohortErr?.message || 'Could not load cohort.');
     }
 
-    const { data: cday } = await supabase
-      .from('cohort_days').select('*')
-      .eq('cohort_id', cohort.id).eq('day_number', n).maybeSingle();
+    const [{ data: allDaysRail }, { data: allProgressRail }, { data: cday }] = await Promise.all([
+      supabase.from('cohort_days').select('day_number,is_unlocked').eq('cohort_id', cohort.id),
+      supabase.from('lab_progress').select('day_number').eq('user_id', user.id).eq('cohort_id', cohort.id),
+      supabase.from('cohort_days').select('*').eq('cohort_id', cohort.id).eq('day_number', n).maybeSingle(),
+    ]);
+    const scheduleMapRail = new Map((allDaysRail || []).map((d) => [d.day_number, d]));
+    const doneSetRail = new Set((allProgressRail || []).map((p) => p.day_number));
+    const railEl = $('gnDayRailHost');
+    if (railEl) {
+      railEl.style.display = 'block';
+      railEl.removeAttribute('aria-hidden');
+      mountDayRail(railEl, { activeDay: n, scheduleMap: scheduleMapRail, doneSet: doneSetRail });
+    }
 
     if (!cday || cday.is_unlocked === false) {
       $('lWeekTag').textContent = `WEEK ${pad(dayMeta.w)}`;

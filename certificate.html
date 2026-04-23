@@ -99,6 +99,8 @@
   </div>
 </nav>
 
+<div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
+
 <main class="wrap page" id="root">
   <div class="loading" id="loader">Loading your certificate…</div>
 </main>
@@ -107,11 +109,14 @@
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { toast } from './assets/dialog.js';
+  import { mountStudentDayRail } from './assets/day-rail.js';
   wireThemeToggle();
 
   const root = document.getElementById('root');
 
   function gate() {
+    const rail = document.getElementById('gnDayRailHost');
+    if (rail) { rail.style.display = 'none'; rail.innerHTML = ''; rail.setAttribute('aria-hidden', 'true'); }
     root.innerHTML = `
       <div class="progress-card">
         <div class="kicker">Sign in required</div>
@@ -132,10 +137,16 @@
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return gate();
     const user = session.user;
+    await mountStudentDayRail(supabase, user.id, document.getElementById('gnDayRailHost'), null);
 
     const { data: cohort } = await supabase.from('cohorts')
       .select('*').eq('slug', COHORT_SLUG).single();
-    if (!cohort) { root.innerHTML = '<div class="loading">Cohort not found.</div>'; return; }
+    if (!cohort) {
+      const rail = document.getElementById('gnDayRailHost');
+      if (rail) { rail.style.display = 'none'; rail.innerHTML = ''; rail.setAttribute('aria-hidden', 'true'); }
+      root.innerHTML = '<div class="loading">Cohort not found.</div>';
+      return;
+    }
 
     let orgName = 'Gnanalytica';
     if (cohort.organization_id) {
