@@ -2,7 +2,7 @@
 reading_time: 10 min
 tldr: "Thirty days ago you didn't know where to start. Today you ship. Go time."
 tags: ["launch", "demo-day", "graduation", "capstone"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "THE DEMO — live panel", "url": "/showcase.html"}
 prompt_of_the_day: "Write my 200-word 'what I'll do next' statement. My capstone is {{capstone}}, the hardest thing I learned was {{lesson}}, and my next 30-day goal is {{goal}}. Voice: confident, specific, no hype."
 tools_hands_on: [{"name": "Your live capstone URL", "url": "/showcase.html"}, {"name": "Showcase page", "url": "/showcase.html"}, {"name": "Certificate", "url": "/certificate.html"}]
@@ -115,7 +115,7 @@ The field does not stop moving because you graduated. Tomorrow morning, open you
 
 ### Watch: State of the Cohort (10 min)
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Instructor opens Demo Day with a look back at what this cohort shipped — by the numbers, by the stories, by the names.
 

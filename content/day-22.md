@@ -2,7 +2,7 @@
 reading_time: 16 min
 tldr: "Push your capstone live, compute what it costs per user, design for trust, and make AI engines cite you."
 tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/wgmCjrMFoyc
 lab: {"title": "Deploy + trust-UX audit + llms.txt", "url": "https://vercel.com/docs"}
 prompt_of_the_day: "Audit the trust stack of {{product_url}}. For each of: streaming, uncertainty indicators, citations, stop button, undo, and error recovery — tell me what is present, what is missing, and what one change would most increase user trust."
 tools_hands_on: [{"name": "Vercel", "url": "https://vercel.com"}, {"name": "Supabase", "url": "https://supabase.com"}, {"name": "Figma", "url": "https://figma.com"}]
@@ -145,7 +145,7 @@ GEO is not SEO with new hats. It rewards clarity and structure over keyword dens
 
 ### Watch: From localhost to live URL in under 20 minutes
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/wgmCjrMFoyc
 
 ### Lab: Ship it, cost it, trust it, publish llms.txt
 

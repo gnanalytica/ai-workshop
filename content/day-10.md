@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "Checkpoint day. You brainstorm, shape, pitch, vote, and leave with a locked capstone one-pager."
 tags: ["exposure", "tools", "capstone", "checkpoint"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Ideathon: brainstorm → shape → pitch → vote", "url": "https://claude.ai"}
 prompt_of_the_day: "Help me pick a capstone. Run me through the Heilmeier Catechism for each of these 3 ideas: {{idea_1}}, {{idea_2}}, {{idea_3}}. For each, answer the 9 Heilmeier questions in 2 lines each. Then apply my 3-filter test: (a) is there one real user I can name? (b) can I build a usable slice in 4 weeks? (c) do I care enough to push through week 3 despair? End with a single recommendation and one risk."
 tools_hands_on: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Perplexity", "url": "https://www.perplexity.ai"}, {"name": "Gamma", "url": "https://gamma.app"}]
@@ -134,7 +134,7 @@ Poorly-scoped versions of the same ideas: "a full mess management platform", "an
 
 The instructor picks the three most-voted ideas from the morning and steelmans each for four minutes — strongest version of the argument, then the one risk that will kill it. Watch how an idea sharpens when you defend it generously before critiquing it.
 
-https://www.youtube.com/embed/VIDEO_ID <!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 - Notice how "I would use this" beats "the market is $X billion" every time.
 - Listen for the moment an idea gets smaller and better in the same sentence.

@@ -2,7 +2,7 @@
 reading_time: 14 min
 tldr: "You don't need to know every AI tool. You need to know which class of tool fits the job in front of you. Today you map it."
 tags: ["foundations", "tools"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Tool audit: 5 tasks from your life, matched to tool classes", "url": "https://chat.openai.com/"}
 prompt_of_the_day: "I have {{task}} to do. Given these constraints: {{constraints}}. Recommend the 3 best AI tools for this specific job (one chat, one specialist, one free/open-source), with one-line reasoning each."
 tools_hands_on: [{"name": "Perplexity", "url": "https://www.perplexity.ai/"}, {"name": "NotebookLM", "url": "https://notebooklm.google.com/"}, {"name": "Sarvam.ai", "url": "https://www.sarvam.ai/"}]
@@ -173,8 +173,7 @@ Memorise those three and you'll save yourself 10 hours of tool-switching.
 
 A 10-minute screencast walking through HuggingFace's model hub and the Sarvam playground. Goal: find any open model in under 30 seconds after this.
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Watch for:
 - How to read a model card (license, size, language support).

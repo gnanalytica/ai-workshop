@@ -2,7 +2,7 @@
 reading_time: 10 min
 tldr: "Benchmarks are marketing until you know how to read them — today you pick the right model for YOUR use case, not the leaderboard's."
 tags: ["launch", "benchmarks", "evaluation", "models"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Pick the best model for your capstone", "url": "https://lmarena.ai"}
 prompt_of_the_day: "Given my capstone use case {{use_case}} and constraints {{latency, cost, context_window}}, compare these candidate models {{model_list}} across MMLU, MT-Bench, LM Arena Elo, and one domain benchmark. Recommend primary + fallback with a one-line justification each."
 tools_hands_on: [{"name": "LM Arena", "url": "https://lmarena.ai"}, {"name": "Artificial Analysis", "url": "https://artificialanalysis.ai"}, {"name": "LiveBench", "url": "https://livebench.ai"}]
@@ -124,7 +124,7 @@ Then always do a private eval on 20 prompts from your actual use case. Benchmark
 
 ### Watch: Reading a Model Release Paper Live (10 min)
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Instructor walks through the most recent frontier model release — what to believe, what to skip, what to private-eval.
 

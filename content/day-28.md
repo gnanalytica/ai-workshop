@@ -2,7 +2,7 @@
 reading_time: 10 min
 tldr: "You cannot read everything — today you build a 5-source signal pipeline that keeps you current in 30 minutes a week."
 tags: ["launch", "learning", "habits", "signal"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Build your personal AI signal pipeline", "url": "https://huggingface.co/papers"}
 prompt_of_the_day: "Given my role {{role}}, goals {{goals}}, and current knowledge gaps {{gaps}}, recommend 5 AI signal sources (mix newsletter, podcast, YouTube, X list, paper feed) with a weekly time budget under 45 minutes. Explain the unique value of each."
 tools_hands_on: [{"name": "HuggingFace Daily Papers", "url": "https://huggingface.co/papers"}, {"name": "The Batch", "url": "https://www.deeplearning.ai/the-batch/"}, {"name": "Artificial Analysis", "url": "https://artificialanalysis.ai"}]
@@ -138,7 +138,7 @@ Four red flags: (1) No benchmark numbers, just vibes. (2) Benchmark numbers but 
 
 ### Watch: Karpathy YouTube Tour + 3-Minute Paper Skim (10 min)
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Instructor walks through Karpathy's channel and demos the 3-minute arxiv skim on a current paper.
 

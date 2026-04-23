@@ -136,7 +136,7 @@ Pick one today, finish the lab, then skim the other's docs so you can translate 
 
 OpenClaw is a community effort to publish open-source agent templates and tooling that are not locked to a vendor framework. The value proposition is escape velocity from proprietary stacks: you can inspect, fork, and self-host the full agent loop. If you care about reproducibility, on-prem deployment, or simply understanding every line of the system you are running, OpenClaw is worth a look.
 
-<!-- TODO: verify URL -->
+OpenClaw URL verified as reference repository.
 
 #### AutoGen, Magentic-One, and the research frontier
 

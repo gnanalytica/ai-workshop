@@ -218,7 +218,7 @@ Submit your 10-template Prompt Library (PDF or Notion link) via the dashboard be
 
 ### 5. Deepen (optional, ~25 min)
 
-- **Extra video**: TBD — instructor will pick based on which CREATE letters the class struggled with most.
+- **Extra video**: Instructor-curated CREATE deep-dive (posted in the cohort channel based on the class's weakest CREATE letters).
 - **Extra read**: DAIR.AI's Prompt Engineering Guide (https://www.promptingguide.ai/) — the most comprehensive free resource online; bookmark, don't binge.
 - **Try**: Take your best V5 from the lab and run it on three models (Claude, ChatGPT, Gemini). Same prompt, same CREATE structure — see which model rewards structure most. That's your "writing model."
 

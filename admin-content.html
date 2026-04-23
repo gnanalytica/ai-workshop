@@ -118,6 +118,12 @@
   .rubric-warn{font-size:11.5px;color:#f59e0b;margin-top:6px}
 
   .asgn-preview-pdf{width:100%;max-height:700px;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+  .tpl-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto}
+  .tpl-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--input-bg)}
+  .tpl-item .meta{font-size:11px;color:var(--muted)}
+  .tpl-item .name{font-size:12.5px;font-weight:600}
+  .tpl-mini-btn{padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit}
+  .tpl-mini-btn:hover{border-color:var(--accent);color:var(--accent)}
   @media(max-width:640px){
     .cohort-picker select{min-width:0;width:100%}
     .days-grid{grid-template-columns:repeat(2,1fr)}
@@ -222,6 +228,7 @@
       <div class="small" id="legend">
         <span class="dot-mini on">Q</span> quiz exists &nbsp;·&nbsp; <span class="dot-mini on">A</span> assignment exists
       </div>
+      <div class="card" id="rubricTemplatesCard"></div>
     </div>
 
     <div class="panel-col">
@@ -283,11 +290,13 @@
 
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
+  let CURRENT_USER_ID = null;
 
   let COHORTS = [];
   let CURRENT_COHORT = null;
   let QUIZZES = new Map();      // day_number -> quiz row
   let ASSIGNMENTS = new Map();  // day_number -> assignment row
+  let RUBRIC_TEMPLATES = [];
   let SELECTED_DAY = null;
 
   // edit state per day
@@ -322,6 +331,7 @@
   });
 
   async function checkAdmin(user) {
+    CURRENT_USER_ID = user?.id || null;
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
@@ -357,16 +367,115 @@
     $('cohortKicker').textContent = CURRENT_COHORT ? `${CURRENT_COHORT.name} · starts ${CURRENT_COHORT.starts_on || '—'}` : 'Content';
     $('exportGradesBtn').style.display = CURRENT_COHORT ? 'inline-block' : 'none';
 
-    const [qres, ares] = await Promise.all([
+    const [qres, ares, tres] = await Promise.all([
       supabase.from('quizzes').select('*').eq('cohort_id', cohortId),
       supabase.from('assignments').select('*').eq('cohort_id', cohortId),
+      supabase.from('rubric_templates').select('*').eq('cohort_id', cohortId).order('updated_at', { ascending: false }),
     ]);
     if (qres.error) { toast(qres.error.message, 'err'); return; }
     if (ares.error) { toast(ares.error.message, 'err'); return; }
+    if (tres.error) { toast(tres.error.message, 'err'); }
     QUIZZES = new Map((qres.data || []).map(r => [r.day_number, r]));
     ASSIGNMENTS = new Map((ares.data || []).map(r => [r.day_number, r]));
+    RUBRIC_TEMPLATES = tres.data || [];
     renderDaysPicker();
+    renderRubricTemplatesCard();
     if (SELECTED_DAY) selectDay(SELECTED_DAY);
+  }
+
+  function cleanRubricItems(items) {
+    return (Array.isArray(items) ? items : [])
+      .map((it) => ({ criterion: String(it?.criterion || '').trim(), points: Number(it?.points) || 0 }))
+      .filter((it) => it.criterion);
+  }
+
+  function renderRubricTemplatesCard() {
+    const card = $('rubricTemplatesCard');
+    if (!card) return;
+    const rows = RUBRIC_TEMPLATES.map((t) => `
+      <div class="tpl-item" data-tid="${esc(t.id)}">
+        <div>
+          <div class="name">${esc(t.name || 'Template')}</div>
+          <div class="meta">${(Array.isArray(t.rubric_items) ? t.rubric_items.length : 0)} criteria · ${Number(t.points || 0)} pts</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="tpl-mini-btn" data-act="tpl-use">Use</button>
+          <button class="tpl-mini-btn" data-act="tpl-del">Delete</button>
+        </div>
+      </div>
+    `).join('');
+    card.innerHTML = `
+      <h3>Rubric templates <span class="inline-actions"><button class="btn" id="tplRefreshBtn">Refresh</button></span></h3>
+      <div class="sub">Reusable rubric libraries for this cohort</div>
+      <div class="form" style="margin-bottom:8px">
+        <div class="row">
+          <div class="field"><label>Name</label><input id="tplName" type="text" placeholder="e.g. Prototype milestone rubric" /></div>
+          <div class="field"><label>Points</label><input id="tplPoints" type="number" min="0" value="10" /></div>
+        </div>
+        <button class="btn primary" id="tplCreateFromCurrent">Save current day rubric as template</button>
+        <div class="small" style="margin-top:6px">Uses rubric items from the selected day assignment.</div>
+      </div>
+      <div class="tpl-list">${rows || `<div class="empty">No templates yet.</div>`}</div>
+    `;
+    $('tplRefreshBtn')?.addEventListener('click', async () => loadContent(CURRENT_COHORT.id));
+    $('tplCreateFromCurrent')?.addEventListener('click', saveCurrentAssignmentAsTemplate);
+    card.querySelectorAll('[data-tid]').forEach((el) => {
+      const tid = el.dataset.tid;
+      el.querySelector('[data-act=tpl-use]')?.addEventListener('click', () => applyTemplateToCurrentAssignment(tid));
+      el.querySelector('[data-act=tpl-del]')?.addEventListener('click', () => deleteTemplate(tid));
+    });
+  }
+
+  async function saveCurrentAssignmentAsTemplate() {
+    if (!SELECTED_DAY) return;
+    const current = ASSIGNMENTS.get(SELECTED_DAY);
+    if (!current) { toast('Create assignment first, then save as template.', 'err'); return; }
+    const name = ($('tplName')?.value || '').trim() || `Day ${SELECTED_DAY} rubric`;
+    const points = Number($('tplPoints')?.value || current.points || 0);
+    const items = cleanRubricItems(current.rubric_items);
+    if (!items.length) { toast('Current assignment has no rubric items.', 'err'); return; }
+    const { data, error } = await supabase.from('rubric_templates').insert({
+      cohort_id: CURRENT_COHORT.id,
+      name,
+      narrative: current.rubric || null,
+      rubric_items: items,
+      points,
+      created_by: CURRENT_USER_ID,
+    }).select().single();
+    if (error) { toast(error.message, 'err'); return; }
+    RUBRIC_TEMPLATES = [data, ...RUBRIC_TEMPLATES];
+    toast('Template saved ✓');
+    renderRubricTemplatesCard();
+  }
+
+  async function deleteTemplate(templateId) {
+    const ok = await confirmDialog('Delete this rubric template?', { title: 'Delete template', confirmText: 'Delete', danger: true });
+    if (!ok) return;
+    const { error } = await supabase.from('rubric_templates').delete().eq('id', templateId);
+    if (error) { toast(error.message, 'err'); return; }
+    RUBRIC_TEMPLATES = RUBRIC_TEMPLATES.filter((t) => t.id !== templateId);
+    toast('Template deleted ✓');
+    renderRubricTemplatesCard();
+  }
+
+  function applyTemplateToCurrentAssignment(templateId) {
+    if (!SELECTED_DAY) return;
+    const tpl = RUBRIC_TEMPLATES.find((x) => x.id === templateId);
+    if (!tpl) return;
+    const base = ASSIGNMENTS.get(SELECTED_DAY);
+    const dayMeta = DAYS.find((d) => d.n === SELECTED_DAY);
+    assignDraft = {
+      title: base?.title || (dayMeta ? `Day ${SELECTED_DAY} · ${dayMeta.title}` : `Day ${SELECTED_DAY} assignment`),
+      description: base?.description || '',
+      rubric: tpl.narrative || '',
+      rubric_items: cleanRubricItems(tpl.rubric_items),
+      submission_type: base?.submission_type || 'link',
+      points: Number(tpl.points || base?.points || 10),
+      due_at: base?.due_at || null,
+    };
+    editingAssign = true;
+    toast(`Applied template: ${tpl.name}`);
+    renderAssignCard();
   }
 
   // ---------- DAY PICKER ----------
@@ -732,6 +841,14 @@
           <div class="field"><label>Rubric (narrative)</label><textarea id="aRub" rows="3">${esc(d.rubric || '')}</textarea></div>
           <div class="field">
             <label>Rubric items</label>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+              <select id="aTplSel" style="max-width:260px">
+                <option value="">Apply rubric template…</option>
+                ${RUBRIC_TEMPLATES.map((t) => `<option value="${esc(t.id)}">${esc(t.name)} (${Number(t.points || 0)} pts)</option>`).join('')}
+              </select>
+              <button class="btn" type="button" data-act="tpl-apply">Apply</button>
+              <button class="btn" type="button" data-act="tpl-save">Save as template</button>
+            </div>
             <div class="rubric-list" id="aRubItems">${rubricRows}</div>
             <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:10px">
               <button class="btn" type="button" data-act="ri-add">+ Add criterion</button>
@@ -756,6 +873,38 @@
       card.querySelector('[data-act=cancelA]').addEventListener('click', () => { editingAssign = false; assignDraft = null; renderAssignCard(); });
       card.querySelector('[data-act=saveA]').addEventListener('click', saveAssignment);
       card.querySelector('[data-act=ri-add]').addEventListener('click', () => { pullAssignDraft(); assignDraft.rubric_items.push({ criterion:'', points:0 }); renderAssignCard(); });
+      card.querySelector('[data-act=tpl-apply]')?.addEventListener('click', () => {
+        const tid = card.querySelector('#aTplSel')?.value;
+        if (!tid) { toast('Pick a template first.', 'err'); return; }
+        pullAssignDraft();
+        const tpl = RUBRIC_TEMPLATES.find((x) => x.id === tid);
+        if (!tpl) { toast('Template not found.', 'err'); return; }
+        assignDraft.rubric = tpl.narrative || '';
+        assignDraft.rubric_items = cleanRubricItems(tpl.rubric_items);
+        assignDraft.points = Number(tpl.points || assignDraft.points || 10);
+        renderAssignCard();
+      });
+      card.querySelector('[data-act=tpl-save]')?.addEventListener('click', async () => {
+        pullAssignDraft();
+        const items = cleanRubricItems(assignDraft?.rubric_items);
+        if (!items.length) { toast('Add rubric items before saving template.', 'err'); return; }
+        const defaultName = `Day ${SELECTED_DAY} rubric`;
+        const name = window.prompt('Template name', defaultName);
+        if (!name || !name.trim()) return;
+        const { data, error } = await supabase.from('rubric_templates').insert({
+          cohort_id: CURRENT_COHORT.id,
+          name: name.trim(),
+          narrative: assignDraft.rubric || null,
+          rubric_items: items,
+          points: Number(assignDraft.points || 0),
+          created_by: CURRENT_USER_ID,
+        }).select().single();
+        if (error) { toast(error.message, 'err'); return; }
+        RUBRIC_TEMPLATES = [data, ...RUBRIC_TEMPLATES];
+        toast('Template saved ✓');
+        renderRubricTemplatesCard();
+        renderAssignCard();
+      });
       card.querySelectorAll('[data-ri]').forEach(row => {
         const i = Number(row.dataset.ri);
         row.querySelector('[data-act=ri-del]').addEventListener('click', () => { pullAssignDraft(); assignDraft.rubric_items.splice(i, 1); renderAssignCard(); });

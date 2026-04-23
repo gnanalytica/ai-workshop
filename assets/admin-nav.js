@@ -13,6 +13,7 @@ export const ADMIN_PAGES = [
   { href: 'admin-attendance.html', label: 'Attendance', group: 'work' },
   { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work' },
   { href: 'admin-analytics.html', label: 'Analytics', group: 'insights' },
+  { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', adminOnly: true },
 ];
 
 const GROUP_LABEL = {

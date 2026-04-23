@@ -2,7 +2,7 @@
 reading_time: 12 min
 tldr: "A week of theory means nothing without a personal stack. Today you build yours — and steal your classmates' best tricks."
 tags: ["foundations", "kickoff"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/T9aRN5JkmL8
 lab: {"title": "Show-and-tell: 2-minute AI win", "url": "https://claude.ai/"}
 prompt_of_the_day: "Act as my blunt AI coach. Here are three prompts I wrote this week: {{prompt1}} / {{prompt2}} / {{prompt3}}. For each, give me one sharper rewrite and one reason mine was weak."
 tools_hands_on: [{"name": "Claude", "url": "https://claude.ai/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}]
@@ -134,8 +134,7 @@ You'll revise this stack every Sunday for the next four weeks. By Day 30 you'll 
 
 A short compilation of 5-7 prompts your instructor uses daily that you won't see in any guide. Edge cases, weird tricks, format hacks.
 
-https://www.youtube.com/embed/VIDEO_ID
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/T9aRN5JkmL8
 
 Watch for:
 - The "critic mode" prompt that makes AI roast your own work
@@ -200,7 +199,7 @@ Submit your Personal AI Stack v1 (PDF, 1–2 pages) via the dashboard by Sunday 
 
 ### 5. Deepen (optional, ~30 min)
 
-- **Extra video**: TBD — instructor will pick a Week 2 primer based on which bucket (study / career / code / life / creative) the cohort leaned into.
+- **Extra video**: Instructor-curated Week 2 primer (posted in the cohort channel based on this cohort's strongest interest bucket).
 - **Extra read**: One entry from the Anthropic Cookbook (https://github.com/anthropics/anthropic-cookbook) or OpenAI Cookbook (https://cookbook.openai.com/) that matches your "next bet."
 - **Try**: Take your Personal AI Stack v1 and feed it to Claude with the prompt *"Roast this like a senior PM interviewer. Where am I fooling myself?"* Screenshot the best sentence and tape it above your desk.
 

@@ -11,6 +11,13 @@
 <style>
   .hero-row{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin:40px 0 32px}
   .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;margin-bottom:32px}
+  .prio-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+  .prio-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .prio-card .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .prio-card .v{font-size:24px;font-weight:700;margin-top:4px}
+  .prio-card .s{font-size:12px;color:var(--muted);margin-top:3px}
+  .prio-card .a{display:inline-block;margin-top:8px;font-size:12.5px;color:var(--accent)}
+  .day-unlock-note{font-size:11px;color:var(--muted);margin-top:5px}
   .pbar{height:8px;background:var(--input-bg);border-radius:999px;overflow:hidden;margin-top:14px}
   .pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7affb4);transition:width .3s}
   .pstats{display:flex;justify-content:space-between;font-size:13px;margin-top:10px;color:var(--muted)}
@@ -98,6 +105,9 @@
     .day-item{padding:12px 14px;gap:10px}
     .week-head h3{font-size:17px}
     .week-block{margin-bottom:20px}
+  }
+  @media (max-width:780px){
+    .prio-grid{grid-template-columns:1fr}
   }
   @media (max-width:900px){
     nav .nav-in{position:relative}
@@ -187,6 +197,7 @@
   <!-- OVERVIEW TAB -->
   <section id="tab-overview" class="tab-panel">
   <div id="announcementsBanner" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
+  <div id="priorityInbox" class="prio-grid" style="display:none"></div>
   <div class="dash-overview-grid">
     <div class="dash-overview-main">
   <div class="progress-wrap">
@@ -661,6 +672,7 @@
     renderBuddyCard(user, cohort);
     renderTodayCard(user, cohort, doneSet, scheduleMap);
     renderUpcomingCard(user, cohort, scheduleMap);
+    await renderPriorityInbox(user, cohort, scheduleMap);
     renderMilestones(doneSet, reg, scheduleMap);
     renderSyllabus(doneSet, scheduleMap);
     renderProfile(user, profile, reg);
@@ -915,6 +927,70 @@
       <a href="day.html?n=${nextDay.n}" class="cta" style="display:inline-block">Continue →</a>
       ${cohortMeetBtn}${teamMeetBtn}`;
     card.style.display = 'block';
+  }
+
+  async function renderPriorityInbox(user, cohort, scheduleMap) {
+    const host = document.getElementById('priorityInbox');
+    if (!host || !cohort) return;
+    const now = Date.now();
+    const dayStart = new Date();
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart.getTime() + 86400000);
+    const unlockedSet = new Set(
+      [...scheduleMap.entries()].filter(([, s]) => s?.is_unlocked).map(([day]) => Number(day)),
+    );
+    const [{ data: asg }, { data: subs }, { count: annCount, error: annErr }] = await Promise.all([
+      supabase
+        .from('assignments')
+        .select('id,day_number,title,due_at')
+        .eq('cohort_id', cohort.id),
+      supabase
+        .from('submissions')
+        .select('assignment_id,status')
+        .eq('user_id', user.id),
+      supabase
+        .from('announcements')
+        .select('id', { count: 'exact', head: true })
+        .eq('cohort_id', cohort.id)
+        .gte('created_at', new Date(now - 48 * 3600 * 1000).toISOString()),
+    ]);
+    const subByAsg = new Map((subs || []).map((s) => [s.assignment_id, s.status || 'submitted']));
+    const assignments = (asg || []).filter((a) => unlockedSet.has(Number(a.day_number)));
+    const dueToday = assignments.filter((a) => {
+      if (!a.due_at) return false;
+      const due = new Date(a.due_at).getTime();
+      if (due < dayStart.getTime() || due >= dayEnd.getTime()) return false;
+      const st = subByAsg.get(a.id);
+      return st !== 'graded';
+    });
+    const overdue = assignments.filter((a) => {
+      if (!a.due_at) return false;
+      const due = new Date(a.due_at).getTime();
+      if (due >= now) return false;
+      const st = subByAsg.get(a.id);
+      return st !== 'graded';
+    });
+    const ann = annErr ? 0 : (annCount || 0);
+    host.innerHTML = `
+      <article class="prio-card">
+        <div class="k">Due today</div>
+        <div class="v">${dueToday.length}</div>
+        <div class="s">${dueToday.length ? `${escapeHtml(dueToday[0].title || 'Task')} first` : 'You are clear today'}</div>
+        <a class="a" href="#lessons">Open lessons →</a>
+      </article>
+      <article class="prio-card">
+        <div class="k">Overdue</div>
+        <div class="v">${overdue.length}</div>
+        <div class="s">${overdue.length ? 'Tackle these first' : 'No overdue work'}</div>
+        <a class="a" href="#lessons">Catch up →</a>
+      </article>
+      <article class="prio-card">
+        <div class="k">Announcements (48h)</div>
+        <div class="v">${ann}</div>
+        <div class="s">${ann ? 'New updates from faculty/admin' : 'No new announcements'}</div>
+        <a class="a" href="#overview">Review updates →</a>
+      </article>`;
+    host.style.display = 'grid';
   }
 
   function renderSyllabus(doneSet, scheduleMap) {
@@ -1537,6 +1613,7 @@
                 </div>
                 <div class="day-t">${d.title}</div>
                 ${dayWorkPillsHTML(d.n)}
+                ${!unlocked ? `<div class="day-unlock-note">Unlocks after Day ${String(Math.max(1, d.n - 1)).padStart(2, '0')} completion</div>` : ''}
               </div>
             </a>`;
           }).join('')}

@@ -2,20 +2,24 @@
 // that takes { state, container }.
 
 import { renderStream } from './faculty/stream.js';
-import { renderHandbook } from './faculty/handbook.js';
 import { renderFacultyPeople } from './faculty/people-tab.js';
 import { renderAnalytics } from './faculty/analytics-tab.js';
+import { renderGuide } from './faculty/guide.js';
+import { renderAgenda } from './faculty/agenda-tab.js';
 
 const TABS = {
   stream: renderStream,
+  agenda: renderAgenda,
   people: renderFacultyPeople,
   grades: renderAnalytics,
-  handbook: renderHandbook,
+  guide: renderGuide,
+  handbook: renderGuide,
   // Legacy hashes (faculty.html normalizes these, but deep links may still hit the router)
   today: renderStream,
   'my-pod': renderFacultyPeople,
   cohort: renderFacultyPeople,
   analytics: renderAnalytics,
+  guide: renderGuide,
 };
 
 export async function mountFacultyTab(tab, ctx) {

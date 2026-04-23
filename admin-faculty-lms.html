@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Faculty LMS · Admin · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:12px 0 18px}
+  .toolbar .field{min-width:180px}
+  .toolbar label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .toolbar input,.toolbar select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font:inherit}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px;margin:6px 0 14px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .stat .n{font-size:20px;font-weight:700}
+  .stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .pill{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid transparent}
+  .pill.ok{color:#b8ff67;background:rgba(195,255,84,.12);border-color:rgba(195,255,84,.25)}
+  .pill.warn{color:#ffd37a;background:rgba(255,186,74,.12);border-color:rgba(255,186,74,.25)}
+  .pill.bad{color:#ff9f9f;background:rgba(255,92,92,.12);border-color:rgba(255,92,92,.25)}
+  .actions{display:flex;gap:8px;justify-content:flex-end}
+  @media(max-width:920px){.stat-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}}
+  @media(max-width:620px){.stat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" class="muted" style="font-size:13px">← Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+      <button class="signout" id="signoutBtn" style="display:none;padding:8px 14px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Admin login</div>
+    <h2>Sign in</h2>
+    <p class="muted" style="font-size:14px;margin:0 0 22px">Magic link sign-in. Only admins can view LMS readiness analytics.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div style="padding:28px 0;text-align:center">
+      <h2 style="margin:0 0 6px">Admin only</h2>
+      <p class="muted">You do not have access to LMS analytics.</p>
+      <a href="admin-home.html" class="submit-btn" style="display:inline-block;text-decoration:none;margin-top:8px">Back to admin home</a>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+
+  <div style="margin:24px 0 8px">
+    <div class="kicker">Insights</div>
+    <h1>Faculty LMS readiness</h1>
+    <p class="muted" style="font-size:14px;margin:6px 0 0">Track 1-week pre-training completion, certification status, and at-risk faculty across cohorts.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="field">
+      <label>Cohort</label>
+      <select id="cohortFilter"><option value="">All cohorts</option></select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="statusFilter">
+        <option value="">All</option>
+        <option value="certified">Certified</option>
+        <option value="in_progress">In progress</option>
+        <option value="at_risk">At risk</option>
+        <option value="not_started">Not started</option>
+      </select>
+    </div>
+    <div class="field" style="min-width:240px;flex:1">
+      <label>Search faculty</label>
+      <input id="searchFilter" type="search" placeholder="Name, email, cohort..." />
+    </div>
+    <button class="cta" id="exportCsvBtn">Export CSV</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n" id="sTotal">0</div><div class="l">Total faculty</div></div>
+    <div class="stat"><div class="n" id="sCertified">0</div><div class="l">Certified</div></div>
+    <div class="stat"><div class="n" id="sProgress">0</div><div class="l">In progress</div></div>
+    <div class="stat"><div class="n" id="sRisk">0</div><div class="l">At risk</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Faculty</th>
+          <th>Cohort</th>
+          <th>Status</th>
+          <th>Completion</th>
+          <th>Quiz</th>
+          <th>Updated</th>
+          <th style="text-align:right">Action</th>
+        </tr>
+      </thead>
+      <tbody id="rows"><tr><td colspan="7" class="muted" style="padding:18px">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<script type="module">
+  import { supabase } from './assets/supabase.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
+  import { wireThemeToggle } from './assets/theme.js';
+  import { bootAdminGate, renderAccountMenuHtml } from './assets/admin-auth.js';
+
+  wireThemeToggle();
+  const $ = (id) => document.getElementById(id);
+  let role = 'faculty';
+  let cohorts = [];
+  let allRows = [];
+
+  function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function getStatus(payload) {
+    const pct = Number(payload?.completion_percent ?? 0);
+    const cert = !!payload?.certificate_issued;
+    if (cert) return { key: 'certified', label: 'Certified', cls: 'ok' };
+    if (pct >= 60) return { key: 'in_progress', label: 'In progress', cls: 'warn' };
+    if (pct > 0) return { key: 'at_risk', label: 'At risk', cls: 'bad' };
+    return { key: 'not_started', label: 'Not started', cls: 'bad' };
+  }
+
+  function updateStats(rows) {
+    const total = rows.length;
+    const certified = rows.filter(r => r.status.key === 'certified').length;
+    const progress = rows.filter(r => r.status.key === 'in_progress').length;
+    const risk = rows.filter(r => r.status.key === 'at_risk' || r.status.key === 'not_started').length;
+    $('sTotal').textContent = total;
+    $('sCertified').textContent = certified;
+    $('sProgress').textContent = progress;
+    $('sRisk').textContent = risk;
+  }
+
+  function filteredRows() {
+    const cohortId = $('cohortFilter').value;
+    const status = $('statusFilter').value;
+    const q = $('searchFilter').value.trim().toLowerCase();
+    return allRows.filter((r) => {
+      if (cohortId && String(r.cohort_id) !== cohortId) return false;
+      if (status && r.status.key !== status) return false;
+      if (!q) return true;
+      const hay = `${r.name} ${r.email} ${r.cohort_name}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function renderRows() {
+    const rows = filteredRows();
+    updateStats(rows);
+    if (!rows.length) {
+      $('rows').innerHTML = `<tr><td colspan="7" class="muted" style="padding:18px">No faculty match this filter.</td></tr>`;
+      return;
+    }
+    $('rows').innerHTML = rows.map((r) => `
+      <tr>
+        <td><strong>${esc(r.name)}</strong><div class="sub">${esc(r.email)}</div></td>
+        <td>${esc(r.cohort_name)}</td>
+        <td><span class="pill ${r.status.cls}">${r.status.label}</span></td>
+        <td>${r.completion}%</td>
+        <td>${r.quiz ?? '—'}</td>
+        <td>${r.updated}</td>
+        <td>
+          <div class="actions">
+            <a class="btn-sm" href="faculty-pretraining.html?user=${encodeURIComponent(r.user_id)}&cohort=${encodeURIComponent(r.cohort_id)}">Open LMS</a>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function downloadCsv() {
+    const rows = filteredRows();
+    const head = ['name','email','cohort','status','completion_percent','quiz_score','updated_at'];
+    const body = rows.map((r) => [r.name, r.email, r.cohort_name, r.status.label, r.completion, r.quiz ?? '', r.updated]);
+    const csv = [head, ...body]
+      .map((line) => line.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `faculty-lms-readiness-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  async function loadData() {
+    const [{ data: cohortRows }, { data: progressRows, error: progressErr }, { data: profileRows }] = await Promise.all([
+      supabase.from('cohorts').select('id,name').order('name'),
+      supabase.from('faculty_pretraining_progress').select('id,user_id,cohort_id,progress_data,updated_at').order('updated_at', { ascending: false }),
+      supabase.from('profiles').select('id,name,email')
+    ]);
+    if (progressErr) {
+      $('rows').innerHTML = `<tr><td colspan="7" class="muted" style="padding:18px">Failed to load LMS data: ${esc(progressErr.message)}</td></tr>`;
+      return;
+    }
+    cohorts = cohortRows || [];
+    const byProfile = new Map((profileRows || []).map((p) => [p.id, p]));
+    const byCohort = new Map(cohorts.map((c) => [c.id, c.name]));
+    allRows = (progressRows || []).map((r) => {
+      const p = byProfile.get(r.user_id) || {};
+      const payload = r.progress_data || {};
+      const completion = Math.max(0, Math.min(100, Number(payload.completion_percent || 0)));
+      const status = getStatus(payload);
+      const qScore = Number(payload.quiz_score);
+      return {
+        user_id: r.user_id,
+        cohort_id: r.cohort_id,
+        name: p.name || 'Faculty',
+        email: p.email || 'No email',
+        cohort_name: byCohort.get(r.cohort_id) || 'Unknown cohort',
+        completion,
+        quiz: Number.isFinite(qScore) ? `${qScore}%` : null,
+        status,
+        updated: r.updated_at ? new Date(r.updated_at).toLocaleString() : '—',
+      };
+    });
+
+    $('cohortFilter').innerHTML =
+      `<option value="">All cohorts</option>` +
+      cohorts.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+    renderRows();
+  }
+
+  async function boot() {
+    $('signoutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
+    const auth = await bootAdminGate({
+      supabase,
+      onGate: () => {
+        $('gate').style.display = 'grid';
+        $('panel').style.display = 'none';
+        $('denied').style.display = 'none';
+        $('signoutBtn').style.display = 'none';
+      },
+      onDenied: () => {
+        $('gate').style.display = 'none';
+        $('panel').style.display = 'none';
+        $('denied').style.display = 'grid';
+        $('signoutBtn').style.display = 'inline-block';
+      },
+      onAllowed: ({ role: nextRole, alsoFaculty }) => {
+        role = nextRole;
+        $('gate').style.display = 'none';
+        $('denied').style.display = 'none';
+        $('panel').style.display = 'block';
+        $('signoutBtn').style.display = 'inline-block';
+        $('adminNav').innerHTML = renderAdminNav('admin-faculty-lms.html', { role, alsoFaculty });
+        wrapAdminMainLayout();
+        document.querySelector('.nav-in')?.insertAdjacentHTML('beforeend', renderAccountMenuHtml({ role, alsoFaculty }));
+      }
+    });
+    if (!auth.allowed) return;
+    await loadData();
+  }
+
+  ['cohortFilter','statusFilter','searchFilter'].forEach((id) => {
+    document.addEventListener('input', (e) => { if (e.target?.id === id) renderRows(); });
+    document.addEventListener('change', (e) => { if (e.target?.id === id) renderRows(); });
+  });
+  $('exportCsvBtn').addEventListener('click', downloadCsv);
+  boot();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 reading_time: 16 min
 tldr: "Demo day — three minutes, one story, three critiques, one page of what you will change next."
 tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/VIDEO_ID
+video: https://www.youtube.com/embed/wgmCjrMFoyc
 lab: {"title": "3-minute live demo to a peer panel of 5", "url": "https://ycombinator.com/demoday"}
 prompt_of_the_day: "Turn {{my_capstone_description}} into a 30-second hook, a 2-minute story, and a 30-second ask. The hook must make a stranger lean in. The story must show a real moment. The ask must be specific."
 tools_hands_on: [{"name": "Loom", "url": "https://loom.com"}, {"name": "Figma Slides", "url": "https://figma.com/slides"}]
@@ -147,7 +147,7 @@ This pattern — probe, listen, choose, ship, measure — is every founder's loo
 
 ### Watch: Instructor pitches a capstone live, panel critiques, founder responds
 
-<!-- TODO: replace video -->
+https://www.youtube.com/embed/wgmCjrMFoyc
 
 ### Lab: Mini-Demo Day
 

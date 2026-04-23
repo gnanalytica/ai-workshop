@@ -88,9 +88,10 @@
 
   <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px;flex-wrap:wrap">
     <a href="#stream" data-tab="stream" class="f-tab">Stream</a>
+    <a href="#agenda" data-tab="agenda" class="f-tab">Agenda</a>
     <a href="#people" data-tab="people" class="f-tab">People</a>
     <a href="#grades" data-tab="grades" class="f-tab">Grades</a>
-    <a href="#handbook" data-tab="handbook" class="f-tab">Handbook</a>
+    <a href="#guide" data-tab="guide" class="f-tab">Guide</a>
   </nav>
 
   <section id="fPanel"></section>
@@ -185,7 +186,7 @@
   }
 
   async function loadCohorts(facultyIds, isAdmin) {
-    let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+    let q = supabase.from('cohorts').select('id,name,slug,starts_on,ends_on').order('starts_on', { ascending: false });
     if (!isAdmin) {
       if (!facultyIds.length) { $('fPanel').innerHTML = NO_COHORT_MSG; STATE.cohortId = null; return; }
       q = q.in('id', facultyIds);
@@ -213,7 +214,8 @@
     if (t === 'today') return 'stream';
     if (t === 'my-pod' || t === 'cohort') return 'people';
     if (t === 'analytics') return 'grades';
-    if (['stream', 'people', 'grades', 'handbook'].includes(t)) return t;
+    if (t === 'handbook') return 'guide';
+    if (['stream', 'agenda', 'people', 'grades', 'guide'].includes(t)) return t;
     return 'stream';
   }
 

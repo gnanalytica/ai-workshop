@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Support Faculty Pre-Training LMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+  .ok{border-color:rgba(195,255,54,.35);color:var(--accent)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+  .tabs a{padding:8px 12px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--muted);font-size:13px}
+  .tabs a.active{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
+  .row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+  .muted-sm{font-size:12px;color:var(--muted)}
+  .prog{height:7px;background:var(--input-bg);border-radius:999px;overflow:hidden}
+  .prog>span{display:block;height:100%;background:var(--accent)}
+  .kpi{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .q{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--input-bg);margin:8px 0}
+  .q label{display:block;margin:6px 0;font-size:13px}
+  textarea,input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit}
+  .btn{padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-family:inherit}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#0b0b10;font-weight:600}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span> Gnanalytica · Faculty LMS</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="faculty.html#guide" class="muted" style="font-size:13px">← Faculty guide</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Faculty login</div>
+    <h2>Sign in</h2>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card"><h2 style="text-align:center">Not authorized</h2></div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
+  <header style="margin:24px 0 6px" class="row">
+    <div>
+      <div class="kicker">Support faculty enablement</div>
+      <h1 style="margin:6px 0 0">1-week pre-training LMS</h1>
+    </div>
+    <select id="cohortSel"></select>
+  </header>
+
+  <div class="tabs" id="lmsTabs">
+    <a href="#overview" data-tab="overview" class="active">Overview</a>
+    <a href="#week-plan" data-tab="week-plan">Week plan</a>
+    <a href="#setup" data-tab="setup">Setup</a>
+    <a href="#quiz" data-tab="quiz">Quiz</a>
+    <a href="#practical" data-tab="practical">Practical</a>
+    <a href="#evaluation" data-tab="evaluation">Evaluation</a>
+    <a href="#certificate" data-tab="certificate">Certificate</a>
+  </div>
+
+  <section id="tab-overview"></section>
+  <section id="tab-week-plan" class="hidden"></section>
+  <section id="tab-setup" class="hidden"></section>
+  <section id="tab-quiz" class="hidden"></section>
+  <section id="tab-practical" class="hidden"></section>
+  <section id="tab-evaluation" class="hidden"></section>
+  <section id="tab-certificate" class="hidden"></section>
+</main>
+
+<script type="module">
+import { supabase } from './assets/supabase.js';
+import { wireThemeToggle } from './assets/theme.js';
+import { checkAdminOrFaculty } from './assets/admin-auth.js';
+import { renderAdminNav } from './assets/admin-nav.js';
+wireThemeToggle();
+const $ = (id) => document.getElementById(id);
+
+const WEEK_PLAN = [
+  { day: 1, title: 'Program model + cohort operations', objectives: ['Understand 30-day arc and checkpoints','Understand faculty roles, escalation and support channels'], prep: 'Read faculty guide + watch one sample stream replay.', output: 'Explain cohort flow in 3 minutes.' },
+  { day: 2, title: 'Platform mastery + student tracking', objectives: ['Navigate Stream/People/Grades','Use admin-student and analytics pages'], prep: 'Open all key pages and complete dry run.', output: 'Complete operations checklist without support.' },
+  { day: 3, title: 'Facilitation craft + intervention', objectives: ['Run opening, transitions, pair work','Handle stuck queue interventions'], prep: 'Practice with day lesson script.', output: 'Run a 20-min mock session.' },
+  { day: 4, title: 'Assessment, grading, and feedback', objectives: ['Apply rubric consistently','Give actionable feedback'], prep: 'Review rubric and sample submissions.', output: 'Grade 5 samples within variance threshold.' },
+  { day: 5, title: 'Safety, policy, and escalation', objectives: ['Identify misuse/risk patterns','Escalate incidents correctly'], prep: 'Review policy scenarios.', output: 'Resolve 5 incident simulations.' },
+  { day: 6, title: 'Demo coaching + support workflow', objectives: ['Coach story, clarity, timing','Prioritize rehearsal blockers'], prep: 'Observe one rehearsal recording.', output: 'Provide rubric-linked demo feedback.' },
+  { day: 7, title: 'Certification drill + go-live readiness', objectives: ['Pass quiz and practical checkpoints','Complete setup and pre-flight checks'], prep: 'Complete all pending modules.', output: 'Certification unlocked + go-live signoff.' },
+];
+
+const SETUP_ITEMS = [
+  'Chrome latest', 'VS Code or Cursor', 'Node.js LTS', 'Git', 'Python 3.11+', 'Ollama on instructor system', 'Projector + audio check', 'Lab credentials pre-validated'
+];
+
+const QUIZ = [
+  { q: 'A student is stuck for 20+ minutes and visibly blocked. First action?', c: ['Escalate to admin immediately','Ask student to retry later','Intervene quickly and unblock with minimal takeover','Ignore until end of class'], a: 2 },
+  { q: 'Best grading practice?', c: ['Grade by intuition','Use rubric criteria and leave actionable comments','Only assign numeric score','Grade only top students'], a: 1 },
+  { q: 'During class, what is highest leverage?', c: ['Long faculty monologue','One demo + immediate student practice loops','Skip check-ins','Wait for questions'], a: 1 },
+  { q: 'If API/tool fails in live session, do:', c: ['Cancel class','Switch to fallback plan and keep objective','Ask students to self-study','Ignore issue'], a: 1 },
+  { q: 'Progress tracking page for cohort trends:', c: ['index.html','admin-analytics.html','showcase.html','search.html'], a: 1 },
+];
+
+const PRACTICALS = [
+  'Run a mock session (20 min) with opening + guided practice + wrap-up.',
+  'Triage 3 simulated stuck cases and log follow-up actions.',
+  'Grade 5 sample submissions with rubric and comments.',
+  'Use analytics to identify at-risk learners and propose intervention.',
+  'Publish one post-class recap + next-day prep note.',
+];
+
+let STATE = { user: null, cohorts: [], cohortId: null, data: null };
+let SAVE_TIMER = null;
+
+function defaultData() {
+  return {
+    setup: Object.fromEntries(SETUP_ITEMS.map((_, i) => [i, false])),
+    quiz: { answers: {}, score: 0, passed: false },
+    practical: Object.fromEntries(PRACTICALS.map((_, i) => [i, { done: false, evidence: '' }])),
+    evaluation: { ops: 0, facilitation: 0, grading: 0, incidents: 0, support: 0, notes: '' },
+    signoff: false,
+  };
+}
+
+async function loadDataFromDb() {
+  const { data, error } = await supabase
+    .from('faculty_pretraining_progress')
+    .select('progress, signoff')
+    .eq('user_id', STATE.user.id)
+    .eq('cohort_id', STATE.cohortId)
+    .maybeSingle();
+  if (error || !data) return defaultData();
+  return { ...defaultData(), ...(data.progress || {}), signoff: !!data.signoff };
+}
+
+async function saveDataToDb() {
+  if (!STATE.user?.id || !STATE.cohortId || !STATE.data) return;
+  const payload = { ...STATE.data };
+  const signoff = !!payload.signoff;
+  delete payload.signoff;
+  await supabase.from('faculty_pretraining_progress').upsert({
+    user_id: STATE.user.id,
+    cohort_id: STATE.cohortId,
+    progress: payload,
+    signoff,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,cohort_id' });
+}
+
+function queueSaveData() {
+  if (SAVE_TIMER) clearTimeout(SAVE_TIMER);
+  SAVE_TIMER = setTimeout(() => { saveDataToDb(); }, 250);
+  renderActive();
+}
+
+function completionPct() {
+  const setupDone = Object.values(STATE.data.setup).filter(Boolean).length / SETUP_ITEMS.length;
+  const practicalDone = Object.values(STATE.data.practical).filter((x) => x.done).length / PRACTICALS.length;
+  const quiz = STATE.data.quiz.passed ? 1 : 0;
+  const evalAvg = (STATE.data.evaluation.ops + STATE.data.evaluation.facilitation + STATE.data.evaluation.grading + STATE.data.evaluation.incidents + STATE.data.evaluation.support) / 5 / 5;
+  const signoff = STATE.data.signoff ? 1 : 0;
+  const pct = Math.round(((setupDone * 0.25) + (practicalDone * 0.25) + (quiz * 0.2) + (evalAvg * 0.2) + (signoff * 0.1)) * 100);
+  return Math.max(0, Math.min(100, pct));
+}
+
+function passGate() {
+  const e = STATE.data.evaluation;
+  const evalOk = [e.ops, e.facilitation, e.grading, e.incidents, e.support].every((x) => Number(x) >= 4);
+  const setupOk = Object.values(STATE.data.setup).every(Boolean);
+  const practicalOk = Object.values(STATE.data.practical).every((x) => x.done && x.evidence.trim().length > 10);
+  return setupOk && practicalOk && STATE.data.quiz.passed && evalOk;
+}
+
+function setTab(tab) {
+  document.querySelectorAll('#lmsTabs a').forEach((a) => a.classList.toggle('active', a.dataset.tab === tab));
+  ['overview','week-plan','setup','quiz','practical','evaluation','certificate'].forEach((t) => {
+    $(`tab-${t}`).classList.toggle('hidden', t !== tab);
+  });
+}
+
+function renderOverview() {
+  const pct = completionPct();
+  const setupDone = Object.values(STATE.data.setup).filter(Boolean).length;
+  const pracDone = Object.values(STATE.data.practical).filter((x) => x.done).length;
+  $('tab-overview').innerHTML = `
+    <div class="grid">
+      <div class="card"><div class="muted-sm">Completion</div><div class="kpi">${pct}%</div><div class="prog"><span style="width:${pct}%"></span></div></div>
+      <div class="card"><div class="muted-sm">Setup readiness</div><div class="kpi">${setupDone}/${SETUP_ITEMS.length}</div></div>
+      <div class="card"><div class="muted-sm">Practical tasks</div><div class="kpi">${pracDone}/${PRACTICALS.length}</div></div>
+      <div class="card"><div class="muted-sm">Quiz</div><div class="kpi">${STATE.data.quiz.passed ? 'Passed' : 'Pending'}</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="row"><h3 style="margin:0">Go-live status</h3><span class="pill ${passGate() ? 'ok' : ''}">${passGate() ? 'Eligible for certification' : 'Incomplete requirements'}</span></div>
+      <p class="muted-sm" style="margin-top:8px">Pass all setup, quiz, practicals, and evaluation thresholds (>=4/5 each) to certify.</p>
+    </div>`;
+}
+
+function renderWeekPlan() {
+  $('tab-week-plan').innerHTML = WEEK_PLAN.map((d) => `
+    <div class="card" style="margin-bottom:10px">
+      <div class="row"><b>Day ${d.day}: ${d.title}</b><span class="pill">${d.output}</span></div>
+      <div class="muted-sm" style="margin-top:6px"><b>Objectives:</b> ${d.objectives.join(' · ')}</div>
+      <div class="muted-sm" style="margin-top:4px"><b>Pre-work:</b> ${d.prep}</div>
+    </div>`).join('');
+}
+
+function renderSetup() {
+  $('tab-setup').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 10px">Lab setup checklist (must complete)</h3>
+      ${SETUP_ITEMS.map((x, i) => `
+        <label style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)">
+          <input type="checkbox" data-setup="${i}" ${STATE.data.setup[i] ? 'checked' : ''} />
+          <span style="font-size:13px">${x}</span>
+        </label>`).join('')}
+    </div>`;
+  $('tab-setup').querySelectorAll('[data-setup]').forEach((el) => el.addEventListener('change', () => {
+    STATE.data.setup[el.dataset.setup] = el.checked;
+    queueSaveData();
+  }));
+}
+
+function renderQuiz() {
+  $('tab-quiz').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 8px">Certification quiz</h3>
+      ${QUIZ.map((q, i) => `
+        <div class="q">
+          <b style="font-size:13px">${i + 1}. ${q.q}</b>
+          ${q.c.map((c, idx) => `<label><input type="radio" name="q${i}" value="${idx}" ${String(STATE.data.quiz.answers[i]) === String(idx) ? 'checked' : ''}/> ${c}</label>`).join('')}
+        </div>`).join('')}
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="quizSubmit">Submit quiz</button>
+        <span class="pill ${STATE.data.quiz.passed ? 'ok':''}">Score: ${STATE.data.quiz.score}% ${STATE.data.quiz.passed ? '· Passed' : ''}</span>
+      </div>
+    </div>`;
+  QUIZ.forEach((_, i) => {
+    document.querySelectorAll(`input[name="q${i}"]`).forEach((r) => r.addEventListener('change', () => {
+      STATE.data.quiz.answers[i] = Number(r.value);
+      queueSaveData();
+    }));
+  });
+  $('quizSubmit').addEventListener('click', () => {
+    let correct = 0;
+    QUIZ.forEach((q, i) => { if (Number(STATE.data.quiz.answers[i]) === q.a) correct += 1; });
+    STATE.data.quiz.score = Math.round((correct / QUIZ.length) * 100);
+    STATE.data.quiz.passed = STATE.data.quiz.score >= 80;
+    queueSaveData();
+  });
+}
+
+function renderPractical() {
+  $('tab-practical').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 8px">Practical skill checks</h3>
+      ${PRACTICALS.map((p, i) => `
+        <div class="q">
+          <label style="font-size:13px;font-weight:600"><input type="checkbox" data-prac="${i}" ${STATE.data.practical[i].done ? 'checked':''}/> ${p}</label>
+          <textarea data-ev="${i}" rows="2" placeholder="Evidence link/notes (required)">${STATE.data.practical[i].evidence || ''}</textarea>
+        </div>`).join('')}
+    </div>`;
+  $('tab-practical').querySelectorAll('[data-prac]').forEach((el) => el.addEventListener('change', () => {
+    STATE.data.practical[el.dataset.prac].done = el.checked;
+    queueSaveData();
+  }));
+  $('tab-practical').querySelectorAll('[data-ev]').forEach((el) => el.addEventListener('input', () => {
+    STATE.data.practical[el.dataset.ev].evidence = el.value;
+    queueSaveData();
+  }));
+}
+
+function renderEvaluation() {
+  const e = STATE.data.evaluation;
+  const mk = (id, label, val) => `<div class="q"><div class="row"><b style="font-size:13px">${label}</b><select data-evs="${id}">${[0,1,2,3,4,5].map((n)=>`<option value="${n}" ${Number(val)===n?'selected':''}>${n}</option>`).join('')}</select></div></div>`;
+  $('tab-evaluation').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 8px">Trainer evaluation rubric (pass: all >= 4)</h3>
+      ${mk('ops','Platform operations',e.ops)}
+      ${mk('facilitation','Facilitation quality',e.facilitation)}
+      ${mk('grading','Grading consistency',e.grading)}
+      ${mk('incidents','Incident handling',e.incidents)}
+      ${mk('support','Student support quality',e.support)}
+      <div class="q"><b style="font-size:13px">Evaluator notes</b><textarea id="evNotes" rows="3">${e.notes || ''}</textarea></div>
+    </div>`;
+  $('tab-evaluation').querySelectorAll('[data-evs]').forEach((el) => el.addEventListener('change', () => {
+    STATE.data.evaluation[el.dataset.evs] = Number(el.value); queueSaveData();
+  }));
+  $('evNotes').addEventListener('input', () => { STATE.data.evaluation.notes = $('evNotes').value; queueSaveData(); });
+}
+
+function renderCertificate() {
+  const eligible = passGate();
+  $('tab-certificate').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 8px">Certification</h3>
+      <p class="muted-sm">Status: <span class="pill ${eligible ? 'ok':''}">${eligible ? 'Eligible' : 'Not yet eligible'}</span></p>
+      <div class="row">
+        <button class="btn primary" id="genCert" ${eligible ? '' : 'disabled'}>Generate certificate</button>
+        <button class="btn" id="exportLms">Export LMS report</button>
+      </div>
+      <div id="certArea" style="margin-top:12px"></div>
+    </div>`;
+  $('genCert').addEventListener('click', () => {
+    STATE.data.signoff = true;
+    const date = new Date().toLocaleDateString();
+    $('certArea').innerHTML = `<div class="card" style="border-color:rgba(195,255,54,.35)"><div class="kicker">Certified</div><h2 style="margin:4px 0">Support Faculty Readiness Certificate</h2><p class="muted-sm">Awarded to <b>${STATE.user.email}</b> for cohort training readiness on ${date}.</p><button class="btn" id="printCert">Print certificate</button></div>`;
+    queueSaveData();
+    $('printCert')?.addEventListener('click', () => window.print());
+  });
+  $('exportLms').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(STATE.data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `faculty-lms-${STATE.cohortId}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+function renderActive() {
+  renderOverview();
+  renderWeekPlan();
+  renderSetup();
+  renderQuiz();
+  renderPractical();
+  renderEvaluation();
+  renderCertificate();
+}
+
+async function gate(user) {
+  const auth = await checkAdminOrFaculty(user);
+  if (!auth.isFaculty && !auth.isAdmin) { $('denied').style.display = 'grid'; return; }
+  $('panel').style.display = 'block';
+  $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: auth.isAdmin ? 'admin' : 'faculty' });
+  STATE.user = user;
+  let q = supabase.from('cohorts').select('id,name,slug').order('starts_on', { ascending: false });
+  if (!auth.isAdmin) q = q.in('id', auth.facultyCohortIds || []);
+  const { data } = await q;
+  STATE.cohorts = data || [];
+  if (!STATE.cohorts.length) { $('tab-overview').innerHTML = '<div class="card">No cohort assigned.</div>'; return; }
+  $('cohortSel').innerHTML = STATE.cohorts.map((c) => `<option value="${c.id}">${c.name} · ${c.slug}</option>`).join('');
+  STATE.cohortId = STATE.cohorts[0].id;
+  STATE.data = await loadDataFromDb();
+  renderActive();
+}
+
+function show(id){ ['gate','denied','panel'].forEach((x)=>$(x).style.display = x===id ? (id==='panel'?'block':'grid') : 'none'); }
+
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('loginBtn'); btn.disabled = true; btn.textContent = 'Sending…';
+  const email = new FormData(e.target).get('email');
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+  $('loginMsg').className = 'msg show ' + (error ? 'err' : 'ok');
+  $('loginMsg').textContent = error ? error.message : 'Check your email.';
+  if (error) { btn.disabled = false; btn.textContent = 'Send magic link →'; } else btn.textContent = 'Sent ✓';
+});
+
+$('cohortSel')?.addEventListener('change', async () => {
+  if (SAVE_TIMER) { clearTimeout(SAVE_TIMER); SAVE_TIMER = null; }
+  STATE.cohortId = $('cohortSel').value;
+  STATE.data = await loadDataFromDb();
+  renderActive();
+});
+
+window.addEventListener('hashchange', () => {
+  const t = (location.hash || '#overview').replace('#', '');
+  setTab(['overview','week-plan','setup','quiz','practical','evaluation','certificate'].includes(t) ? t : 'overview');
+});
+$('lmsTabs').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-tab]'); if (!a) return; e.preventDefault();
+  history.replaceState(null, '', `#${a.dataset.tab}`); setTab(a.dataset.tab);
+});
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) gate(session.user);
+  if (event === 'SIGNED_OUT') show('gate');
+});
+
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) show('gate'); else await gate(session.user);
+setTab((location.hash || '#overview').replace('#', ''));
+</script>
+<script type="module">
+  import { prependNavFind } from './assets/nav-search.js';
+  prependNavFind();
+</script>
+</body>
+</html>
