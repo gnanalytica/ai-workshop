@@ -10,14 +10,14 @@ tools_demo: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Canva", "
 tools_reference: [{"name": "YC Demo Day archives", "url": "https://ycombinator.com/demoday"}, {"name": "Pitchfork Economics", "url": "https://pitchforkeconomics.com"}, {"name": "AngelList pitch deck templates", "url": "https://angellist.com"}]
 resources: [{"name": "YC: How to present to investors", "url": "https://ycombinator.com/library"}, {"name": "First Round: The Art of the Demo", "url": "https://review.firstround.com"}]
 objective:
-  topic: "Mini-Demo Day (Ideathon 2) — 3-minute live demo + critique + one-page action plan"
+  topic: "Mini-Demo Day, critique, one-page action plan"
   tools: ["Loom", "Figma Slides", "Claude", "Canva"]
   end_goal: "Deliver your 3-minute live demo to a peer panel, receive critique, and ship a one-page action doc that feeds next week's build."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Demo craft — the 30-second hook, the 2-minute story, the 30-second ask — and turning peer critique into a scoped one-page plan. This is **Ideathon 2 and Mini-Demo Day**, the Week 5 checkpoint.
+**Topic.** Mini-Demo Day, critique, one-page action plan
 
 **Tools you'll use.** Your deployed capstone URL, Loom for backup recording and portfolio, Figma Slides or Canva for hook/ask slides, Claude for rewriting variants.
 

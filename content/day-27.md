@@ -10,14 +10,14 @@ tools_demo: [{"name": "LM Arena side-by-side", "url": "https://lmarena.ai"}, {"n
 tools_reference: [{"name": "SEAL Leaderboards", "url": "https://scale.com/leaderboard"}, {"name": "ARC Prize", "url": "https://arcprize.org"}, {"name": "Papers With Code", "url": "https://paperswithcode.com"}, {"name": "LiveBench", "url": "https://livebench.ai"}]
 resources: [{"name": "Artificial Analysis", "url": "https://artificialanalysis.ai"}, {"name": "HuggingFace Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}]
 objective:
-  topic: "Benchmark literacy — reading leaderboards without getting fooled, and picking your capstone's model"
+  topic: "Benchmark literacy and model selection"
   tools: ["LM Arena", "Artificial Analysis", "LiveBench", "HuggingFace Open LLM Leaderboard"]
   end_goal: "Ship a 1-page model card for your capstone: primary + fallback + why + cost per 1k tokens + monthly spend, with the fallback wired into code."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Benchmark literacy. Which benchmarks are saturated, which are contamination-resistant, and how to read a model-release post without getting sold. Then: pick *your* capstone's model with receipts.
+**Topic.** Benchmark literacy and model selection
 
 **Tools you'll use.** LM Arena for blind side-by-side, Artificial Analysis for the quality/price/latency dashboard, LiveBench for contamination-resistant numbers.
 

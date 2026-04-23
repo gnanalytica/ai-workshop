@@ -10,14 +10,14 @@ tools_demo: [{"name": "Grok", "url": "https://grok.com"}, {"name": "Microsoft Co
 tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}, {"name": "Mistral Le Chat", "url": "https://chat.mistral.ai"}, {"name": "DeepSeek (reasoning)", "url": "https://www.deepseek.com"}, {"name": "OpenAI — reasoning models", "url": "https://platform.openai.com/docs/guides/reasoning"}]
 resources: [{"name": "Claude Projects guide", "url": "https://claude.ai"}, {"name": "ChatGPT Custom Instructions", "url": "https://chatgpt.com"}]
 objective:
-  topic: "Five frontier chat models, reasoning vs fast-chat routing, Memory + Projects"
+  topic: "Frontier chat models, reasoning vs fast-chat, memory and projects"
   tools: ["Claude", "ChatGPT", "Gemini"]
   end_goal: "Ship a living Claude Project (your Jarvis) loaded with your resume, transcript, and 5 capstone ideas — plus a 3-model comparison screenshot proving why context beats a blank chat."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Stop using one chatbot as a search engine. Start using five of them as thinking partners — route *fast* models for drafts and *reasoning* models for fragile logic — with Memory and Projects doing the remembering for you.
+**Topic.** Frontier chat models, reasoning vs fast-chat, memory and projects
 
 **Tools you'll use.** ChatGPT, Claude, Gemini (hands-on today); Grok, Copilot, Kimi (demoed for contrast).
 

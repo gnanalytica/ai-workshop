@@ -10,14 +10,14 @@ tools_demo: [{"name": "Neo4j AuraDB", "url": "https://neo4j.com/cloud/aura/"}, {
 tools_reference: [{"name": "Chroma", "url": "https://trychroma.com"}, {"name": "Qdrant", "url": "https://qdrant.tech"}, {"name": "Pinecone", "url": "https://pinecone.io"}, {"name": "Sentence-Transformers", "url": "https://sbert.net"}, {"name": "HF MTEB embeddings leaderboard", "url": "https://huggingface.co/spaces/mteb/leaderboard"}, {"name": "Hugging Face — fine-tuning hub", "url": "https://huggingface.co/docs/transformers/training"}, {"name": "OpenAI — vision (multimodal)", "url": "https://platform.openai.com/docs/guides/images-vision"}]
 resources: [{"name": "LlamaIndex + Ollama tutorial", "url": "https://docs.llamaindex.ai/en/stable/examples/llm/ollama/"}, {"name": "pgvector docs", "url": "https://github.com/pgvector/pgvector"}]
 objective:
-  topic: "Embeddings, RAG, GraphRAG, prompt-vs-RAG-vs-fine-tune, multimodal docs"
+  topic: "Embeddings, RAG, GraphRAG, prompt vs retrieve vs fine-tune"
   tools: ["NotebookLM", "LlamaIndex", "Neon pgvector"]
   end_goal: "Ship a working RAG bot that answers 5 real questions from your own PDFs, plus a before/after from tuning one knob (chunk size, top-K, or embedder)."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Embeddings (coordinates for meaning), RAG (retrieve → augment → generate), when GraphRAG beats chunks — plus **when to prompt vs retrieve vs fine-tune**, and **vision** for scans and screenshots.
+**Topic.** Embeddings, RAG, GraphRAG, prompt vs retrieve vs fine-tune
 
 **Tools you'll use.** NotebookLM (zero-code), LlamaIndex (swap-in-swap-out framework), pgvector on Neon (production-shaped).
 

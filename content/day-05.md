@@ -10,14 +10,14 @@ tools_demo: [{"name": "Anthropic Cookbook", "url": "https://github.com/anthropic
 tools_reference: [{"name": "DAIR.AI Prompt Engineering Guide", "url": "https://www.promptingguide.ai/"}, {"name": "OpenAI Cookbook", "url": "https://cookbook.openai.com/"}, {"name": "Anthropic Cookbook", "url": "https://github.com/anthropics/anthropic-cookbook"}]
 resources: [{"title": "Build a Personal AI Stack (essay)", "url": "https://www.oneusefulthing.org/"}, {"title": "Ethan Mollick's practical AI tips", "url": "https://www.oneusefulthing.org/"}]
 objective:
-  topic: "Week 1 show-and-tell — your Personal AI Stack v1"
+  topic: "Week 1 synthesis: your Personal AI Stack v1"
   tools: ["Claude", "ChatGPT"]
   end_goal: "Walk away with a 1–2 page Personal AI Stack v1 PDF, three stolen cohort tricks tagged with credit, and a one-sentence 'next bet' for Day 30."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Week 1 — done. Today we turn five days of input into one page of output: your AI Stack v1. Plus — we steal the best tricks from the room.
+**Topic.** Week 1 synthesis: your Personal AI Stack v1
 
 **Tools you'll use.** Claude, ChatGPT (today is a show-and-tell; bring what you already have).
 

@@ -10,14 +10,14 @@ tools_demo: [{"name": "NotebookLM Audio Overview", "url": "https://notebooklm.go
 tools_reference: [{"name": "Elicit", "url": "https://elicit.com"}, {"name": "Consensus", "url": "https://consensus.app"}, {"name": "SciSpace", "url": "https://scispace.com"}, {"name": "Research Rabbit", "url": "https://researchrabbit.ai"}, {"name": "Connected Papers", "url": "https://www.connectedpapers.com"}, {"name": "Scholarcy", "url": "https://www.scholarcy.com"}]
 resources: [{"name": "Perplexity Pro Search docs", "url": "https://www.perplexity.ai"}, {"name": "NotebookLM help", "url": "https://notebooklm.google.com"}]
 objective:
-  topic: "AI research tools — Perplexity, NotebookLM, Deep Research, and the 4-step hallucination check"
+  topic: "Grounded research with Perplexity, NotebookLM, Deep Research, citation checks"
   tools: ["Perplexity", "NotebookLM", "Gemini Deep Research"]
   end_goal: "Ship a 1-page `brief-<topic>.md` on your capstone domain with 5+ inline citations, a NotebookLM Audio Overview, and one 'I almost quoted this…' moment where a citation didn't hold up."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Grounded research — keyword search vs AI search, citations you actually click, and the three tools (Perplexity, NotebookLM, Deep Research) that collapse two afternoons into twenty minutes.
+**Topic.** Grounded research with Perplexity, NotebookLM, Deep Research, citation checks
 
 **Tools you'll use.** Perplexity (quick-draw), NotebookLM (private index over your own sources), Gemini Deep Research (long agent run).
 

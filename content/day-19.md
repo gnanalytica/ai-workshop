@@ -10,14 +10,14 @@ tools_demo: [{"name": "Battle-tested CLAUDE.md examples", "url": "https://github
 tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}, {"name": "Google Code Assist", "url": "https://codeassist.google/"}, {"name": "aider", "url": "https://aider.chat"}]
 resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/search?q=filename%3ACLAUDE.md&type=code"}, {"name": "Claude Code hooks guide", "url": "https://docs.claude.com/claude-code"}]
 objective:
-  topic: "Context engineering — from one-off prompts to reusable instruction files the AI reads every session"
+  topic: "Context engineering with reusable project instructions"
   tools: ["Claude Code", "Cursor", "Google Antigravity"]
   end_goal: "Ship a CLAUDE.md + AGENTS.md + 3 custom slash commands committed to your capstone repo, with one concrete task where CLAUDE.md made the AI noticeably smarter on the first try."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Context engineering — designing what the AI *already knows* before you type a prompt.
+**Topic.** Context engineering with reusable project instructions
 
 **Tools you'll use.** Pick one harness: Claude Code, Cursor, Antigravity, AI Studio, Code Assist, or aider.
 

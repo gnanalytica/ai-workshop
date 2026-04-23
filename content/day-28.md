@@ -10,14 +10,14 @@ tools_demo: [{"name": "Karpathy's YouTube", "url": "https://www.youtube.com/@And
 tools_reference: [{"name": "Anthropic Skilljar", "url": "https://anthropic.skilljar.com"}, {"name": "DeepLearning.ai Courses", "url": "https://www.deeplearning.ai/courses/"}, {"name": "Stanford AI Index", "url": "https://aiindex.stanford.edu"}, {"name": "State of AI Report", "url": "https://www.stateof.ai"}]
 resources: [{"name": "Latent Space", "url": "https://www.latent.space"}, {"name": "Interconnects", "url": "https://www.interconnects.ai"}, {"name": "Papers With Code", "url": "https://paperswithcode.com"}]
 objective:
-  topic: "Building a personal AI signal pipeline — 5 sources, 30-45 min/week, calendar-locked"
+  topic: "Personal AI signal pipeline and staying current"
   tools: ["HuggingFace Daily Papers", "The Batch", "Karpathy YouTube", "arxiv cs.LG"]
   end_goal: "Ship an AI Signal Pipeline doc — 5 sources (newsletter + podcast + YouTube + X list + paper feed) with a recurring Friday calendar slot created live."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** How to stay current after graduation without drowning. Channels, the 3-minute paper skim, hype-vs-substance red flags, and a calendar-locked weekly habit.
+**Topic.** Personal AI signal pipeline and staying current
 
 **Tools you'll use.** HuggingFace Daily Papers, The Batch, Karpathy's YouTube, arxiv cs.LG — plus whatever RSS/bookmark tool you already use.
 

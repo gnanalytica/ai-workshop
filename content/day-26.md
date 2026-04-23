@@ -10,14 +10,14 @@ tools_demo: [{"name": "Garak live scan", "url": "https://github.com/NVIDIA/garak
 tools_reference: [{"name": "NIST AI RMF", "url": "https://www.nist.gov/itl/ai-risk-management-framework"}, {"name": "Anthropic Responsible Scaling Policy", "url": "https://www.anthropic.com/rsp"}, {"name": "OpenAI System Cards", "url": "https://openai.com/safety"}, {"name": "EU AI Act", "url": "https://artificialintelligenceact.eu"}]
 resources: [{"name": "AI Incident Database", "url": "https://incidentdatabase.ai"}, {"name": "Mata v. Avianca case summary", "url": "https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc."}, {"name": "India DPDP Act", "url": "https://www.meity.gov.in/data-protection-framework"}]
 objective:
-  topic: "Ethics as engineering — red-teaming, the five safety patterns, and regulation in one slide"
+  topic: "Red-teaming, safety patterns, regulation as engineering"
   tools: ["Garak", "LLM-Guard", "AI Incident Database"]
   end_goal: "Ship a safety audit of your capstone: 3 failure modes, 3 concrete fixes with deploy ETAs before Day 30, and a 'known unsupported use case' line in your README."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Ethics as engineering, not philosophy. Red-teaming your own capstone, the five safety patterns that cover 80% of real incidents, and the regulation (EU AI Act, DPDP, NIST AI RMF) you need to know in one paragraph each.
+**Topic.** Red-teaming, safety patterns, regulation as engineering
 
 **Tools you'll use.** Garak for prompt-injection and jailbreak scans, LLM-Guard as an I/O filter, the AI Incident Database as a reality check.
 

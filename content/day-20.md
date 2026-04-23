@@ -10,14 +10,14 @@ tools_demo: [{"name": "Firecrawl", "url": "https://firecrawl.dev"}, {"name": "Ji
 tools_reference: [{"name": "Zapier AI Actions", "url": "https://zapier.com/ai"}, {"name": "Make.com", "url": "https://make.com"}, {"name": "Playwright MCP", "url": "https://github.com/microsoft/playwright-mcp"}, {"name": "Claude computer-use", "url": "https://docs.claude.com/claude-code"}]
 resources: [{"name": "n8n templates gallery", "url": "https://n8n.io/workflows/"}, {"name": "browser-use quickstart", "url": "https://docs.browser-use.com"}]
 objective:
-  topic: "Workflow automation — trigger → API → AI step → action — plus browser agents for what APIs can't reach"
+  topic: "Workflow automation: trigger, API, AI step, action"
   tools: ["n8n", "browser-use", "Jina Reader / Firecrawl"]
   end_goal: "Ship one working n8n flow relevant to your capstone plus one browser-use automation of a task you hate, with a 60-second Loom and a weekly-hours-saved number."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** The real AI ROI isn't chatbots — it's automation: trigger → data fetch → AI reasoning → action.
+**Topic.** Workflow automation: trigger, API, AI step, action
 
 **Tools you'll use.** n8n (visual workflow builder), browser-use (AI-driven browser agent), Jina Reader / Firecrawl (scrapers for RAG).
 

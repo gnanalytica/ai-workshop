@@ -10,14 +10,14 @@ tools_demo: [{"name": "Neon", "url": "https://neon.tech"}, {"name": "Cloudflare 
 tools_reference: [{"name": "Fly.io", "url": "https://fly.io"}, {"name": "Render", "url": "https://render.com"}, {"name": "Cloudflare Pages", "url": "https://pages.cloudflare.com"}, {"name": "GitHub Pages", "url": "https://pages.github.com"}, {"name": "Netlify", "url": "https://netlify.com"}, {"name": "Deno Deploy", "url": "https://deno.com/deploy"}, {"name": "Turso", "url": "https://turso.tech"}, {"name": "Modal", "url": "https://modal.com"}, {"name": "Replicate", "url": "https://replicate.com"}, {"name": "AWS Bedrock", "url": "https://aws.amazon.com/bedrock"}, {"name": "GCP Vertex AI", "url": "https://cloud.google.com/vertex-ai"}, {"name": "Azure AI Foundry", "url": "https://azure.microsoft.com/products/ai-foundry"}, {"name": "Ola Krutrim Cloud", "url": "https://olakrutrim.com"}]
 resources: [{"name": "llms.txt standard", "url": "https://llmstxt.org"}, {"name": "Schema.org", "url": "https://schema.org"}]
 objective:
-  topic: "Ship v0 live — deploy, cost-per-user math, trust UX, and GEO via llms.txt"
+  topic: "Deploy, cost-per-user math, trust UX, llms.txt"
   tools: ["Vercel", "Supabase", "Figma"]
   end_goal: "Submit a live capstone URL, a token-cost worksheet at 10/100/1000 users, a six-element trust-stack audit, and a verified llms.txt at your domain root."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** From localhost to the public internet — deploy your v0, know what it costs, design it so users trust it, and publish metadata AI search engines can cite.
+**Topic.** Deploy, cost-per-user math, trust UX, llms.txt
 
 **Tools you'll use.** Vercel (deploy), Supabase (pooled Postgres + auth), Figma (trust-UX audit sketch).
 

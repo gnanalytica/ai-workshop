@@ -10,14 +10,14 @@ tools_demo: [{"name": "CrewAI", "url": "https://crewai.com"}, {"name": "LangChai
 tools_reference: [{"name": "HuggingFace smolagents", "url": "https://huggingface.co/docs/smolagents"}, {"name": "AutoGen", "url": "https://microsoft.github.io/autogen/"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}, {"name": "Playwright-MCP", "url": "https://github.com/microsoft/playwright-mcp"}, {"name": "OpenRouter", "url": "https://openrouter.ai"}]
 resources: [{"name": "Anthropic: Building effective agents", "url": "https://www.anthropic.com/engineering/building-effective-agents"}, {"name": "MCP specification", "url": "https://modelcontextprotocol.io/specification"}]
 objective:
-  topic: "ReAct agents with tool-use — a 3-tool LangGraph loop plus your first MCP server"
+  topic: "ReAct agents, tool use, LangGraph, MCP"
   tools: ["LangGraph", "Model Context Protocol"]
   end_goal: "Ship a 3-tool LangGraph agent, export a successful + failed trace, apply one loop-fix, and wire one MCP server into Cursor or Claude Desktop."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** The jump from one-shot prompts to loops that act. ReAct, tool contracts, agent break-modes, and MCP as the USB-C standard for AI tools.
+**Topic.** ReAct agents, tool use, LangGraph, MCP
 
 **Tools you'll use.** LangGraph for the agent loop. Model Context Protocol for the tool-plug-in half — via Cursor or Claude Desktop.
 

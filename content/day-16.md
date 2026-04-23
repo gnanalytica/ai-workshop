@@ -10,14 +10,14 @@ tools_demo: [{"name": "Browser DevTools (Network tab)", "url": "https://develope
 tools_reference: [{"name": "Git official docs", "url": "https://git-scm.com"}, {"name": "MDN Web Docs", "url": "https://developer.mozilla.org"}, {"name": "Open Source Guides", "url": "https://opensource.guide"}, {"name": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com"}, {"name": "HTTPBin", "url": "https://httpbin.org"}]
 resources: [{"name": "GitHub Skills (free interactive)", "url": "https://skills.github.com"}, {"name": "OpenLibrary API", "url": "https://openlibrary.org/developers/api"}, {"name": "Open-Meteo free weather API", "url": "https://open-meteo.com"}]
 objective:
-  topic: "The four rails — Git, GitHub, localhost, APIs — read and clicked, no code written"
+  topic: "Git, GitHub, localhost, APIs"
   tools: ["GitHub", "Hoppscotch"]
   end_goal: "Fork an AI repo, read one merged PR's diff in plain English, hit 3 public APIs (and trigger a 429 + 500 on purpose) in Hoppscotch, and open one draft issue on a repo you care about."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Welcome to Week 4. Until now you've been a power user of AI. This week you become a builder — but still without writing code yourself. Today we learn the four rails every software project runs on: **Git, GitHub, localhost, and APIs**.
+**Topic.** Git, GitHub, localhost, APIs
 
 **Tools you'll use.** GitHub (fork, read issues + PRs), Hoppscotch (API calls in the browser — no install).
 

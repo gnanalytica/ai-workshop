@@ -10,14 +10,14 @@ tools_demo: [{"name": "3Blue1Brown Neural Networks", "url": "https://www.3blue1b
 tools_reference: [{"name": "Karpathy — Intro to LLMs (1h)", "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g"}, {"name": "Jay Alammar — Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/"}]
 resources: [{"title": "Attention is All You Need (the paper)", "url": "https://arxiv.org/abs/1706.03762"}]
 objective:
-  topic: "Inside an LLM — tokens, weights, attention"
+  topic: "Inside an LLM: tokens, weights, attention"
   tools: ["Tiktokenizer", "ChatGPT", "Claude"]
   end_goal: "Walk away able to explain tokens, weights, and attention in your own words, with a tokenizer notebook of 5–10 strings that made you rethink how the model actually reads."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** What's actually inside an LLM. No math, no jargon parade — just the three words (tokens, weights, attention) that unlock every AI conversation you'll have for the next 28 days.
+**Topic.** Inside an LLM: tokens, weights, attention
 
 **Tools you'll use.** Tiktokenizer (web, no install) as the playground. ChatGPT and Claude as the reference chatbots to compare behaviour against.
 

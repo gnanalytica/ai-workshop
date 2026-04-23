@@ -10,14 +10,14 @@ tools_demo: [{"name": "LM Arena", "url": "https://lmarena.ai/"}, {"name": "Huggi
 tools_reference: [{"name": "Qwen", "url": "https://qwenlm.github.io/"}, {"name": "DeepSeek", "url": "https://www.deepseek.com/"}, {"name": "Kimi", "url": "https://kimi.moonshot.cn/"}, {"name": "BharatGPT (CoRover)", "url": "https://corover.ai/bharatgpt/"}, {"name": "Krutrim", "url": "https://www.krutrim.ai/"}, {"name": "Meta AI", "url": "https://meta.ai"}]
 resources: [{"title": "HuggingFace Open LLM Leaderboard", "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"}, {"title": "Meesho x Sarvam case study", "url": "https://www.sarvam.ai/"}]
 objective:
-  topic: "The AI tool landscape — 7 classes, closed-vs-open, Indian AI stack"
+  topic: "Tool classes, closed vs open, Indian AI stack"
   tools: ["Perplexity", "NotebookLM", "Sarvam.ai", "Mistral Le Chat"]
   end_goal: "Walk away with a 5-task Tool Audit PDF mapping real jobs from your life to tool classes — and a named personal stack (chat / research / Indian / creative / code) you'll actually use."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Stop chasing "1,200 AI tools." Learn the 7 classes, the closed-vs-open divide, and the Indian AI stack — then match tool class to job.
+**Topic.** Tool classes, closed vs open, Indian AI stack
 
 **Tools you'll use.** Perplexity (research), NotebookLM (grounded docs), Sarvam (Indian language), Mistral Le Chat (European/open-ish), plus ChatGPT/Claude from Day 1.
 

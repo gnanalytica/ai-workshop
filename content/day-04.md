@@ -10,14 +10,14 @@ tools_demo: [{"name": "Anthropic Prompt Library", "url": "https://docs.anthropic
 tools_reference: [{"name": "Anthropic Prompt Engineering Guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}, {"name": "DAIR.AI Prompt Engineering Guide", "url": "https://www.promptingguide.ai/"}, {"name": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}]
 resources: [{"title": "Chain-of-Thought paper", "url": "https://arxiv.org/abs/2201.11903"}, {"title": "Anthropic 'Context is King' post", "url": "https://www.anthropic.com/"}]
 objective:
-  topic: "Prompting craft — the CREATE framework, few-shot, CoT, structured output"
+  topic: "Prompting craft: CREATE, few-shot, chain-of-thought, structured output"
   tools: ["Claude", "ChatGPT"]
   end_goal: "Walk away with 5 versions of one prompt (V1 lazy → V5 structured), your first entry in a personal Prompt Library, and the habit of auditing any weak prompt against CREATE."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** How to *actually talk* to whichever tool you picked yesterday. The only prompt framework you need — CREATE — plus few-shot, chain-of-thought, and structured output.
+**Topic.** Prompting craft: CREATE, few-shot, chain-of-thought, structured output
 
 **Tools you'll use.** Claude (primary lab tool today), ChatGPT (comparison).
 

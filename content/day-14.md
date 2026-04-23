@@ -10,14 +10,14 @@ tools_demo: [{"name": "Napkin AI", "url": "https://www.napkin.ai"}, {"name": "Y 
 tools_reference: [{"name": "Thinking in Systems — Donella Meadows (book)", "url": "https://donellameadows.org/systems-thinking-resources/"}, {"name": "Randy Olson — ABT narrative", "url": "https://www.randyolsonproductions.com/abt-framework"}]
 resources: [{"name": "Donella Meadows — Leverage Points essay", "url": "https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/"}, {"name": "SCQA framework — Barbara Minto (Pyramid Principle)", "url": "https://www.barbaraminto.com"}, {"name": "Pixar's 22 story rules", "url": "https://www.pixar.com"}]
 objective:
-  topic: "Systems thinking + storytelling — causal-loop diagrams, Meadows' leverage points, and the SCQA pitch"
+  topic: "Systems thinking, leverage points, causal loops, SCQA pitch"
   tools: ["Excalidraw", "Claude"]
   end_goal: "Ship a causal-loop diagram with a red-circled leverage point, a 60-second SCQA pitch under 150 words, and a 2-minute voice memo of you delivering the pitch out loud."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Diagram the system behind your capstone problem, find the leverage point, then compress the whole thing into a 60-second pitch sharp enough for a stranger.
+**Topic.** Systems thinking, leverage points, causal loops, SCQA pitch
 
 **Tools you'll use.** Excalidraw (the canvas), Claude (the three-variant pitch critic via today's Prompt of the Day).
 

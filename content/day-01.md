@@ -10,14 +10,14 @@ tools_demo: []
 tools_reference: [{"name": "IBM — What are LLMs?", "url": "https://www.youtube.com/watch?v=iR2O2GPbB0E"}, {"name": "DeepMind AlphaFold", "url": "https://deepmind.google/technologies/alphafold/"}]
 resources: [{"title": "Ethan Mollick — One Useful Thing", "url": "https://www.oneusefulthing.org/"}]
 objective:
-  topic: "What AI is (and isn't), and the AI already running your life"
+  topic: "What AI is and is not, plus the AI already in everyday life"
   tools: ["ChatGPT", "Claude", "Gemini"]
   end_goal: "Walk away with an honest Day-0 baseline: a 150-word reflection on what surprised you + side-by-side feel for how three chatbots differ."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** What AI is (and what it isn't), and the AI that's already been quietly running your life for a decade.
+**Topic.** What AI is and is not, plus the AI already in everyday life
 
 **Tools you'll use.** ChatGPT, Claude, Gemini — the three big consumer chat tools. Free tiers are enough.
 

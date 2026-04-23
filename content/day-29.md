@@ -10,14 +10,14 @@ tools_demo: [{"name": "Instructor dress rehearsal", "url": "/showcase.html"}, {"
 tools_reference: [{"name": "YC Library", "url": "https://www.ycombinator.com/library"}, {"name": "Nancy Duarte on presenting", "url": "https://www.duarte.com"}]
 resources: [{"name": "YC Demo Day tips", "url": "https://www.ycombinator.com/library"}]
 objective:
-  topic: "Dress rehearsal — two full dry-runs, line-level critique, showcase polish. No new features."
+  topic: "Dress rehearsal, stage-craft, line-level demo polish"
   tools: ["Loom", "Descript", "Showcase page", "YC Demo Day archives"]
   end_goal: "Ship a re-recorded final rehearsal video, a live showcase entry with opt-in ON, and pre-recorded fallback clips for any slow API call."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Stage-craft for 4-minute demos. Hook / story / ask structure, the bridge-to-key-message technique, and the rehearsal discipline that wins demo day.
+**Topic.** Dress rehearsal, stage-craft, line-level demo polish
 
 **Tools you'll use.** Loom or Descript for recording, the Showcase page for public entries, YC Demo Day archives as reference.
 

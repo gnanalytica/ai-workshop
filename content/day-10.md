@@ -10,14 +10,14 @@ tools_demo: [{"name": "ChatGPT", "url": "https://chatgpt.com"}]
 tools_reference: [{"name": "Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil"}, {"name": "YC Library", "url": "https://www.ycombinator.com/library"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org"}]
 resources: [{"name": "Heilmeier Catechism", "url": "https://www.darpa.mil"}, {"name": "Paul Graham essays", "url": "https://www.ycombinator.com/library"}]
 objective:
-  topic: "Capstone ideathon — brainstorm, shape, pitch, vote, lock a one-pager"
+  topic: "Capstone ideathon: brainstorm, shape, pitch, vote, lock a one-pager"
   tools: ["Claude", "Perplexity", "Gamma"]
   end_goal: "By tonight: a locked capstone one-pager (problem, scope, non-goals, team, risks, metric) submitted as Milestone 1 — the foundation for Weeks 3 and 4."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** The workshop changes gears from exposure to commitment. You run a live ideathon, pick a capstone, form a team, and lock a one-pager.
+**Topic.** Capstone ideathon: brainstorm, shape, pitch, vote, lock a one-pager
 
 **Tools you'll use.** Claude (Heilmeier + 3-filter), Perplexity (does-this-exist check), Gamma (future pitch rebuild).
 

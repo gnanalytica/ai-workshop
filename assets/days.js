@@ -1,45 +1,45 @@
 export const DAYS = [
   // Week 1 — Foundations
-  { n: 1,  w: 1, title: "What AI is + where it's used in real life" },
-  { n: 2,  w: 1, title: "Inside an LLM: tokens, weights, attention" },
-  { n: 3,  w: 1, title: "AI tool landscape + selection playbook" },
-  { n: 4,  w: 1, title: "Prompting fundamentals + context basics" },
-  { n: 5,  w: 1, title: "Show-and-tell: Personal AI Stack v1" },
+  { n: 1,  w: 1, title: "Notice AI Around You" },
+  { n: 2,  w: 1, title: "See How Models Read" },
+  { n: 3,  w: 1, title: "Pick the Right AI Tool" },
+  { n: 4,  w: 1, title: "Write Prompts That Work" },
+  { n: 5,  w: 1, title: "Build Your AI Stack" },
 
   // Week 2 — Applied tools + opportunity discovery
-  { n: 6,  w: 2, title: "Frontier chat: fast vs reasoning + memory/projects" },
-  { n: 7,  w: 2, title: "Research: Perplexity + NotebookLM + Deep Research" },
-  { n: 8,  w: 2, title: "Creativity: images + video" },
-  { n: 9,  w: 2, title: "Meetings + voice: batch pipeline & realtime agents" },
-  { n: 10, w: 2, title: "Ideathon 1 + Capstone kickoff", checkpoint: "Capstone kickoff" },
+  { n: 6,  w: 2, title: "Pick the Right Brain" },
+  { n: 7,  w: 2, title: "Research Without Getting Fooled" },
+  { n: 8,  w: 2, title: "Make Your First AI Poster" },
+  { n: 9,  w: 2, title: "Make AI Speak for You" },
+  { n: 10, w: 2, title: "Choose Your Capstone", checkpoint: "Capstone kickoff" },
 
   // Week 3 — Problem framing + user validation
-  { n: 11, w: 3, title: "Vague → crisp problem statement" },
-  { n: 12, w: 3, title: "Design thinking — the real version" },
-  { n: 13, w: 3, title: "User empathy + interviews" },
-  { n: 14, w: 3, title: "System map + pitch narrative" },
-  { n: 15, w: 3, title: "Design sprint + locked 1-page spec", checkpoint: "Locked spec" },
+  { n: 11, w: 3, title: "Sharpen the Problem" },
+  { n: 12, w: 3, title: "Think Like a Designer" },
+  { n: 13, w: 3, title: "Ask Better Questions" },
+  { n: 14, w: 3, title: "Map the System, Tell the Story" },
+  { n: 15, w: 3, title: "Sprint to a Spec", checkpoint: "Locked spec" },
 
   // Week 4 — Build foundations (data, retrieval, eval, automation)
-  { n: 16, w: 4, title: "Build setup: GitHub + localhost + APIs" },
-  { n: 17, w: 4, title: "Local/cloud LLMs + eval loops (Langfuse)" },
-  { n: 18, w: 4, title: "RAG foundations + prompt vs fine-tune + multimodal" },
-  { n: 19, w: 4, title: "Context engineering: CLAUDE.md + AGENTS.md + slash commands" },
-  { n: 20, w: 4, title: "Workflow automation: n8n + browser agents" },
+  { n: 16, w: 4, title: "Understand the Plumbing" },
+  { n: 17, w: 4, title: "Compare Models Like a Builder" },
+  { n: 18, w: 4, title: "Teach AI Your Documents" },
+  { n: 19, w: 4, title: "Make AI Remember Your Project" },
+  { n: 20, w: 4, title: "Automate One Boring Task" },
 
   // Week 5 — Prototype, deploy, orchestrate
-  { n: 21, w: 5, title: "Vibe-code your capstone v0", checkpoint: "v0 prototype" },
-  { n: 22, w: 5, title: "Ship: deploy, cost, UX, discoverability" },
-  { n: 23, w: 5, title: "Agent loop: LangGraph + MCP" },
-  { n: 24, w: 5, title: "Agent foundations + MCP + multi-agent delegation lab" },
-  { n: 25, w: 5, title: "Ideathon 2 + Mini-Demo Day", checkpoint: "Mini-demo" },
+  { n: 21, w: 5, title: "Build Your First Prototype", checkpoint: "v0 prototype" },
+  { n: 22, w: 5, title: "Publish It and Price It" },
+  { n: 23, w: 5, title: "Give AI Tools and a Goal" },
+  { n: 24, w: 5, title: "Split One Agent into Two" },
+  { n: 25, w: 5, title: "Demo, Get Feedback, Improve", checkpoint: "Mini-demo" },
 
   // Week 6 — Launch, demo, and career continuation
-  { n: 26, w: 6, title: "Safety red-team + ethics workshop" },
-  { n: 27, w: 6, title: "Benchmark literacy + model selection" },
-  { n: 28, w: 6, title: "Personal AI learning system" },
-  { n: 29, w: 6, title: "Demo rehearsal + story polish" },
-  { n: 30, w: 6, title: "Demo Day — live panel", checkpoint: "Final demo" },
+  { n: 26, w: 6, title: "Safety-Check Your Capstone" },
+  { n: 27, w: 6, title: "Choose Models With Receipts" },
+  { n: 28, w: 6, title: "Build Your Learning Habit" },
+  { n: 29, w: 6, title: "Rehearse Until It's Easy" },
+  { n: 30, w: 6, title: "Launch Your Capstone", checkpoint: "Final demo" },
 ];
 
 export const WEEK_TITLES = {

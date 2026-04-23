@@ -10,14 +10,14 @@ tools_demo: [{"name": "Claude Code", "url": "https://claude.com/claude-code"}, {
 tools_reference: [{"name": "Continue", "url": "https://continue.dev"}, {"name": "Lovable", "url": "https://lovable.dev"}, {"name": "v0", "url": "https://v0.dev"}, {"name": "Emergent", "url": "https://emergent.sh"}, {"name": "Replit Agent", "url": "https://replit.com"}, {"name": "Windsurf", "url": "https://codeium.com/windsurf"}, {"name": "Google Code Assist", "url": "https://codeassist.google/"}, {"name": "aider", "url": "https://aider.chat"}]
 resources: [{"name": "Anthropic: Claude Code best practices", "url": "https://www.anthropic.com/engineering/claude-code-best-practices"}, {"name": "Cursor: the AI Code Editor", "url": "https://cursor.com"}]
 objective:
-  topic: "Director-not-typist — vibe-coding your capstone v0 from a 4-part spec to a working live prototype"
+  topic: "Director-not-typist: vibe-coding a capstone v0"
   tools: ["Cursor", "bolt.new", "Google Antigravity"]
   end_goal: "Submit Capstone Milestone 3 — a working v0 prototype (live URL or local recording + repo link) plus a 200-word director's commentary."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Director-not-typist — compressing intent into English instead of compiling English into code.
+**Topic.** Director-not-typist: vibe-coding a capstone v0
 
 **Tools you'll use.** Pick one as primary: Cursor, bolt.new, or Google Antigravity. Your Day 19 CLAUDE.md comes along for the ride.
 

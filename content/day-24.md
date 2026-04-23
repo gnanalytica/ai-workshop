@@ -10,14 +10,14 @@ tools_demo: [{"name": "Claude Agent SDK", "url": "https://docs.claude.com/en/api
 tools_reference: [{"name": "LangGraph multi-agent", "url": "https://langchain-ai.github.io/langgraph/concepts/multi_agent/"}, {"name": "CrewAI flows", "url": "https://docs.crewai.com/concepts/flows"}, {"name": "OpenAI Agents SDK", "url": "https://openai.github.io/openai-agents-python/"}, {"name": "DeepLearning.ai agent courses", "url": "https://deeplearning.ai"}, {"name": "Magentic-One", "url": "https://www.microsoft.com/en-us/research/publication/magentic-one"}, {"name": "Meta CICERO", "url": "https://ai.meta.com/research/cicero/"}]
 resources: [{"name": "Anthropic: multi-agent research system", "url": "https://www.anthropic.com/engineering/multi-agent-research-system"}, {"name": "OpenAI Swarm on GitHub", "url": "https://github.com/openai/swarm"}]
 objective:
-  topic: "Multi-agent orchestration — supervisor, swarm, hierarchical + Claude Skills and Plugins"
+  topic: "Multi-agent orchestration: supervisor, swarm, handoffs, skills"
   tools: ["LangGraph", "Gemini API", "Claude Agent SDK", "OpenAI Swarm", "OpenClaw"]
   end_goal: "Ship a working 2-agent delegating workflow with typed handoffs, three traces, a handoff diagram, and a one-paragraph rationale."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Multi-agent orchestration. Why two narrow agents beat one bloated agent, the three patterns (supervisor / swarm / hierarchical), and how Claude Skills and Plugins package reusable agent behavior.
+**Topic.** Multi-agent orchestration: supervisor, swarm, handoffs, skills
 
 **Tools you'll use.** LangGraph + Gemini API is the default free path for the core lab. Claude Agent SDK and OpenAI Swarm stay in the story as optional alternate tracks; Claude Skills and Plugins are the packaging story; OpenClaw is the open-source reference.
 

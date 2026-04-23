@@ -10,14 +10,14 @@ tools_demo: [{"name": "Instructor state-of-the-cohort", "url": "/showcase.html"}
 tools_reference: [{"name": "Certificate (auto-issued at 30/30)", "url": "/certificate.html"}, {"name": "Cohort showcase", "url": "/showcase.html"}]
 resources: [{"name": "Your capstone repo", "url": "/showcase.html"}, {"name": "Your showcase entry", "url": "/showcase.html"}]
 objective:
-  topic: "Demo Day — ship the live capstone, graduate, enter the alumni network"
+  topic: "Demo Day, graduation, alumni handoff"
   tools: ["Your live capstone URL", "Showcase page", "Certificate"]
   end_goal: "Deliver the 5-minute panel demo, post the final submission (live URL + repo + deck + teaser + 200-word next statement), and download your certificate."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Demo Day. You pitch the capstone you shipped to a live panel, graduate, and step into the alumni network.
+**Topic.** Demo Day, graduation, alumni handoff
 
 **Tools you'll use.** Your live capstone URL, the cohort [showcase](/showcase.html), the auto-issued [certificate](/certificate.html).
 

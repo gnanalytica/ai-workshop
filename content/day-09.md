@@ -10,14 +10,14 @@ tools_demo: [{"name": "HeyGen", "url": "https://heygen.com"}, {"name": "Whisper 
 tools_reference: [{"name": "Tome", "url": "https://tome.app"}, {"name": "Canva Magic Design", "url": "https://canva.com"}, {"name": "OpenAI Realtime API", "url": "https://platform.openai.com/docs/guides/realtime"}, {"name": "Gemini Live (overview)", "url": "https://gemini.google.com"}]
 resources: [{"name": "Gamma templates", "url": "https://gamma.app"}, {"name": "ElevenLabs voice library", "url": "https://elevenlabs.io"}]
 objective:
-  topic: "Speech stack + realtime voice agents vs batch TTS; decks + avatars"
+  topic: "Transcription, voice synthesis, decks, avatars, realtime voice concepts"
   tools: ["Otter", "Gamma", "ElevenLabs", "HeyGen"]
   end_goal: "Ship a 5-slide deck PDF + a 30-second avatar/voiced intro MP4 for your capstone pitch — warm-up for tomorrow's ideathon."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** AI listens, AI speaks, AI decks — the four production categories (transcription, deck-gen, voice synthesis, avatars) that used to take a week, now one hour — plus how **realtime voice** (speech-in ↔ speech-out loops) differs from the batch pipeline you ship in lab today.
+**Topic.** Transcription, voice synthesis, decks, avatars, realtime voice concepts
 
 **Tools you'll use.** Otter (or Whisper), Gamma, ElevenLabs, HeyGen. Free tiers cover everything today.
 

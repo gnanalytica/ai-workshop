@@ -10,14 +10,14 @@ tools_demo: [{"name": "tldraw", "url": "https://www.tldraw.com"}, {"name": "Stan
 tools_reference: [{"name": "IDEO Design Kit", "url": "https://www.designkit.org"}, {"name": "Stanford d.school toolkit", "url": "https://dschool.stanford.edu/resources"}]
 resources: [{"name": "IDEO Design Kit — Methods", "url": "https://www.designkit.org/methods.html"}, {"name": "d.school Design Thinking Bootleg", "url": "https://dschool.stanford.edu/resources/design-thinking-bootleg"}]
 objective:
-  topic: "Design thinking as discipline — the five-stage loop on your own capstone"
+  topic: "Design thinking as a disciplined five-stage loop"
   tools: ["Figma / FigJam", "Claude"]
   end_goal: "A full 5-column FigJam board (Empathize, Define, Ideate, Prototype, Test) + a POV statement + one Claude critique captured — submitted to the cohort channel tonight."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Design thinking done properly — diverge then converge, five stages, on your own capstone. No sticky-note theatre.
+**Topic.** Design thinking as a disciplined five-stage loop
 
 **Tools you'll use.** Figma / FigJam (the canvas), Claude (the d.school coach).
 

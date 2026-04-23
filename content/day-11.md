@@ -10,14 +10,14 @@ tools_demo: [{"name": "DARPA Heilmeier Catechism", "url": "https://www.darpa.mil
 tools_reference: [{"name": "Lenny's Newsletter", "url": "https://www.lennysnewsletter.com"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org/opportunity-solution-tree/"}]
 resources: [{"name": "The Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil/work-with-us/heilmeier-catechism"}, {"name": "5 Whys — Lean Enterprise Institute", "url": "https://www.lean.org/lexicon-terms/5-whys/"}, {"name": "How Might We — IDEO", "url": "https://www.designkit.org/methods/how-might-we.html"}]
 objective:
-  topic: "Sharpening the capstone problem statement — Heilmeier, 5 Whys, How Might We"
+  topic: "Problem statements with Heilmeier, 5 Whys, How Might We"
   tools: ["Paper + pen", "Claude"]
   end_goal: "Three drafts of your problem statement (v1 long-form, v2 150-word, v3 sticky note) + 5-Whys root cause + HMW reframe — all submitted tonight."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** A crisp problem statement is half the work. Today you stress-test how you describe your capstone — three rewrites, one root cause, one HMW reframe.
+**Topic.** Problem statements with Heilmeier, 5 Whys, How Might We
 
 **Tools you'll use.** Paper + pen (for v1 and v3) and Claude (for the attack pass on v1).
 

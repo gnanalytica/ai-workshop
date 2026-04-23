@@ -10,14 +10,14 @@ tools_demo: [{"name": "Ideogram", "url": "https://ideogram.ai"}, {"name": "Runwa
 tools_reference: [{"name": "Pika", "url": "https://pika.art"}, {"name": "Canva Magic Studio", "url": "https://canva.com"}]
 resources: [{"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Firefly user guide", "url": "https://firefly.adobe.com"}]
 objective:
-  topic: "Image + video generation — diffusion, the six-slot prompt, and the 2026 tool landscape"
+  topic: "Image and video generation, diffusion, six-slot prompting"
   tools: ["Nano Banana (Imagen)", "Adobe Firefly", "Kling AI"]
   end_goal: "Ship a print-ready 2:3 poster PNG and a 10-second MP4 for your capstone, plus a one-line tagline that makes a stranger understand what you're building."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Diffusion models, the six-slot image prompt, and the 2026 image + video tool stack — Nano Banana for photoreal, Firefly for commercial-safe, Kling for short video.
+**Topic.** Image and video generation, diffusion, six-slot prompting
 
 **Tools you'll use.** Nano Banana (Imagen via Google AI Studio), Adobe Firefly, Kling AI. Ideogram, Runway, Midjourney demoed for contrast.
 

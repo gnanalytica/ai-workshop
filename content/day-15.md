@@ -10,14 +10,14 @@ tools_demo: [{"name": "v0.dev", "url": "https://v0.dev"}]
 tools_reference: [{"name": "Sprint — Jake Knapp (book)", "url": "https://www.thesprintbook.com"}, {"name": "Google Ventures design sprint kit", "url": "https://www.gv.com/sprint/"}]
 resources: [{"name": "Sprint — Jake Knapp (book)", "url": "https://www.thesprintbook.com"}, {"name": "GV Sprint methodology", "url": "https://www.gv.com/sprint/"}, {"name": "Figma wireframing basics", "url": "https://www.figma.com/resources/learn-design/"}]
 objective:
-  topic: "Capstone Milestone 2 — 1-day design sprint, wireframes, and the locked 1-page spec"
+  topic: "Capstone Milestone 2: design sprint, wireframes, locked 1-page spec"
   tools: ["Figma", "Claude", "v0.dev"]
   end_goal: "Ship Capstone Milestone 2: a locked 1-page spec PDF + wireframe screens (PNG or Figma link) + a public commitment post in the cohort channel with 2 cohort reactions by midnight."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Compress Jake Knapp's 5-day sprint into one — 3-question foundation → Crazy 8s → storyboard → Figma wireframes → 1-page spec → public commitment. This is **Capstone Milestone 2**.
+**Topic.** Capstone Milestone 2: design sprint, wireframes, locked 1-page spec
 
 **Tools you'll use.** Figma (wireframing), Claude (ruthless-PM spec critique via today's Prompt of the Day), v0.dev (optional sketching partner during Crazy 8s).
 

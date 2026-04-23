@@ -10,14 +10,14 @@ tools_demo: [{"name": "Claude", "url": "https://claude.ai"}]
 tools_reference: [{"name": "The Mom Test (book) — Rob Fitzpatrick", "url": "https://www.momtestbook.com"}, {"name": "Teresa Torres — Continuous Discovery Habits", "url": "https://www.producttalk.org"}]
 resources: [{"name": "The Mom Test — Rob Fitzpatrick (book)", "url": "https://www.momtestbook.com"}, {"name": "Jobs to be Done — Clayton Christensen intro", "url": "https://hbr.org/2016/09/know-your-customers-jobs-to-be-done"}, {"name": "Continuous Discovery Habits — Teresa Torres (book)", "url": "https://www.producttalk.org/2021/05/continuous-discovery-habits-now-available/"}]
 objective:
-  topic: "User interviews done properly — The Mom Test, JTBD, and listening for what isn't said"
+  topic: "User interviews, The Mom Test, JTBD, listening for signal"
   tools: ["Otter.ai", "Claude"]
   end_goal: "Run a paired classmate interview in class + plan two real candidate-user interviews before Day 15. Submit Otter transcript, 3 JTBD hypotheses, and 3 contradictions to Day 11 beliefs."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Ask so badly about your idea that the user cannot help telling the truth — Mom Test rules, JTBD framing, and the discipline of listening for what isn't said.
+**Topic.** User interviews, The Mom Test, JTBD, listening for signal
 
 **Tools you'll use.** Otter.ai (record + transcribe), Claude (transcript synthesis via today's Prompt of the Day).
 

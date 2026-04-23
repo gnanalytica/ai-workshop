@@ -10,14 +10,14 @@ tools_demo: [{"name": "Groq (free Llama 3.3 70B @ 750 tok/s)", "url": "https://g
 tools_reference: [{"name": "LM Studio", "url": "https://lmstudio.ai"}, {"name": "WebLLM (in-browser)", "url": "https://webllm.mlc.ai"}, {"name": "Together AI", "url": "https://together.ai"}, {"name": "Fireworks AI", "url": "https://fireworks.ai"}, {"name": "LangSmith", "url": "https://smith.langchain.com"}]
 resources: [{"name": "Qwen 2.5 1.5B", "url": "https://ollama.com/library/qwen2.5"}, {"name": "Gemma 2 2B", "url": "https://ollama.com/library/gemma2"}, {"name": "Phi-3 mini 3.8B", "url": "https://ollama.com/library/phi3"}]
 objective:
-  topic: "Local LLMs, prompting patterns that move numbers, and the eval habit that separates builders from tinkerers"
+  topic: "Local LLMs, prompt patterns, eval habits, tracing"
   tools: ["Ollama", "Groq", "Langfuse"]
   end_goal: "Ship a 10-row eval on your capstone task comparing three prompt variants (zero-shot / CoT+critique / few-shot) with win rates per variant."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Local LLMs, prompting patterns that move numbers, and the eval habit that separates builders from tinkerers.
+**Topic.** Local LLMs, prompt patterns, eval habits, tracing
 
 **Tools you'll use.** Ollama (instructor demo), Groq + HuggingFace Chat (your fast cloud brains), Langfuse (tracing + evals).
 
