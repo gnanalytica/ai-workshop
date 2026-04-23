@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Studio work on capstone | 30 min | Pick your 5 sources + calendar the Friday slot; then back to capstone |
 | Share + Q&A | 10 min | 1-liner per team: your 5 picks and the one source you'll never miss |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold open**: one-line write-in — "the last AI thing you read that actually changed how you build." No lurking; everyone posts.
-- **00:15 — Teaching beat**: 10 minutes demoing the 3-minute paper skim live on a paper from HuggingFace Daily Papers that dropped this week.
-- **00:25 — Back to your team's build**: pick your 5 sources (1 newsletter, 1 podcast, 1 YouTube, 1 X list, 1 paper feed). Instructor does rounds, raise hand for unblocking.
-- **00:40 — Back to your team's build**: calendar the recurring Friday slot and subscribe/follow live. Instructor rotates and checks that "calendar event created" is actually true.
-- **00:55 — Back to your team's build**: paste your 5-source doc in the cohort channel. One-liner per team on the one source you'll never miss.
+- **Cold open**: one-line write-in — "the last AI thing you read that actually changed how you build." No lurking; everyone posts.
+- **Teaching beat**: 10 minutes demoing the 3-minute paper skim live on a paper from HuggingFace Daily Papers that dropped this week.
+- **Back to your team's build**: pick your 5 sources (1 newsletter, 1 podcast, 1 YouTube, 1 X list, 1 paper feed). Instructor does rounds, raise hand for unblocking.
+- **Back to your team's build**: calendar the recurring Friday slot and subscribe/follow live. Instructor rotates and checks that "calendar event created" is actually true.
+- **Back to your team's build**: paste your 5-source doc in the cohort channel. One-liner per team on the one source you'll never miss.
 
 ### Read: The Signal Pipeline (650 words)
 

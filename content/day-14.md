@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -70,13 +70,13 @@ objective:
 | Live lab     | 20 min | Draw one causal-loop diagram on a volunteer's capstone, find the leverage point |
 | Q&A + discussion | 15 min | Where's the real leverage? Where are you just treating symptoms? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: name one variable that secretly drives your capstone problem but nobody talks about — shout it out, one word.
-- **00:15 — Think-pair-share**: 90 seconds — draw your partner's simplest loop (3 nodes, 3 arrows) from their verbal description; compare to their mental model.
-- **00:30 — Polarity poll**: instructor names pairs of variables ("anxiety" and "inbox-checking"); class signals + or − with hands; defend any disagreement in one sentence.
-- **00:45 — Leverage debate**: two volunteers argue for different leverage points on the same loop (parameter vs. paradigm); class votes which would move the system more in 30 days.
-- **00:55 — Pitch-relay**: pair up, deliver your SCQA pitch in 60 seconds; partner has to repeat the Complication back from memory — if they cannot, the Complication is not sharp enough.
+- **Cold-open**: name one variable that secretly drives your capstone problem but nobody talks about — shout it out, one word.
+- **Think-pair-share**: 90 seconds — draw your partner's simplest loop (3 nodes, 3 arrows) from their verbal description; compare to their mental model.
+- **Polarity poll**: instructor names pairs of variables ("anxiety" and "inbox-checking"); class signals + or − with hands; defend any disagreement in one sentence.
+- **Leverage debate**: two volunteers argue for different leverage points on the same loop (parameter vs. paradigm); class votes which would move the system more in 30 days.
+- **Pitch-relay**: pair up, deliver your SCQA pitch in 60 seconds; partner has to repeat the Complication back from memory — if they cannot, the Complication is not sharp enough.
 
 ### Read: Loops, leverage points, and stories that stick
 

@@ -29,30 +29,30 @@ The day-by-day manual for running a cohort on this platform.
 
 ---
 
-## Each teaching day (60-min live session)
+## Each teaching day (live session ~60 min)
 
 ### Before class (~30 min)
 
 - [ ] Open `/admin-home.html` — check the **At-risk students** list. Decide who to check in with today.
 - [ ] `/admin-schedule.html` — verify today's day is unlocked + session time set + Meet link present.
-- [ ] `/admin-polls.html` — queue the day's polls from the day's "In-class moments" block:
+- [ ] `/admin-polls.html` — queue the day's polls from the day's "In-class checkpoints" block:
   - Opening cold-open poll (30s answer)
   - Mid-lecture concept check (1 min)
   - End-of-class reflection poll
 - [ ] Skim the day's content page to remember the specific lab + discussion prompts.
 - [ ] `/admin-announcements.html` — post any last-minute announcement (Meet link change, schedule shift, etc.).
 
-### During class (60 min)
+### During class (~60 min)
 
-Follow the day's **"Today's 1-hour live session"** agenda table and **"In-class moments"** block.
+Use the lesson **Agenda** table and **In-class checkpoints** as the source of truth; the list below is the default facilitation rhythm (adjust to fit how the day actually runs).
 
 Key moves during class:
 
-- [ ] **00:05** — launch the cold-open poll from `/admin-polls.html`. Wait 30s. Share screen + read results live.
-- [ ] **00:15** — think-pair-share; give breakout rooms if in Meet, or let students pair in chat.
-- [ ] **00:30** — mid-lecture poll or activity. Monitor `/admin-stuck.html` for raised hands.
-- [ ] **00:45** — debate/breakout activity. Faculty TAs handle stuck queue.
-- [ ] **00:55** — one-line reflection in chat.
+- [ ] **Opening** — launch the cold-open poll from `/admin-polls.html`. Give ~30s to answer. Share screen and read results live.
+- [ ] **Early** — think-pair-share; use Meet breakout rooms or let students pair in chat.
+- [ ] **Mid** — run the mid-lecture poll or checkpoint activity. Watch `/admin-stuck.html` for raised hands.
+- [ ] **Late** — debate or breakout; TAs focus on the stuck queue.
+- [ ] **Closing** — one-line reflection in chat (or the day’s listed close).
 
 ### After class (~20 min)
 
@@ -83,7 +83,7 @@ Key moves during class:
 
 ### D10 — Capstone kickoff
 
-- [ ] Run the ideathon format in class (see Day 10 agenda — 5/10/15/20/10 structure).
+- [ ] Run the ideathon format in class (see Day 10 **Agenda** for block order and timings).
 - [ ] End-of-day: review submitted one-pagers; approve or push back.
 - [ ] Assign peer reviewers after submissions come in.
 

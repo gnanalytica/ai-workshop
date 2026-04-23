@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,12 +69,12 @@ objective:
 | Live lab     | 20 min | Build a 5-slide deck + record a 30-second AI-avatar intro |
 | Q&A + discussion | 15 min | Voice, face, trust — should pitches be labeled as AI? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — 60-second cold-open pitch**: unmute and pitch your capstone to the person on your left in one breath. No slides, no tools. We are baselining your talking voice before the machines enter.
-- **00:15 — Think-pair-share**: in 90 seconds, trade one-paragraph capstone descriptions with a partner and each identify the one sentence that is the real "insight" — the thing a slide-gen tool should anchor on. Most paragraphs have exactly one.
-- **00:30 — Live Gamma demo + vote**: I paste one volunteer's paragraph into Gamma on screen. Before it finishes, cohort votes in chat on how many of the 5 slides will violate the "one idea per slide" rule. We count afterward.
-- **00:45 — Uncanny-valley debate**: two volunteers play their HeyGen avatars. Cohort votes: "ship it to LinkedIn" or "dial it back." Debate for 3 minutes on where the line lives for student pitches.
+- **60-second cold-open pitch**: unmute and pitch your capstone to the person on your left in one breath. No slides, no tools. We are baselining your talking voice before the machines enter.
+- **Think-pair-share**: in 90 seconds, trade one-paragraph capstone descriptions with a partner and each identify the one sentence that is the real "insight" — the thing a slide-gen tool should anchor on. Most paragraphs have exactly one.
+- **Live Gamma demo + vote**: I paste one volunteer's paragraph into Gamma on screen. Before it finishes, cohort votes in chat on how many of the 5 slides will violate the "one idea per slide" rule. We count afterward.
+- **Uncanny-valley debate**: two volunteers play their HeyGen avatars. Cohort votes: "ship it to LinkedIn" or "dial it back." Debate for 3 minutes on where the line lives for student pitches.
 
 ### Read: Talk, listen, present — all automated
 

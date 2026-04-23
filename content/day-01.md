@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Live lab: 3 tools, 1 prompt | 15 min | Task 1 together, you finish the rest |
 | Q&A + discussion | 15 min | Bring questions and observations |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Fist-of-5 on AI confidence**: on camera, hold up 1–5 fingers for "how confident am I I actually understand what's inside ChatGPT." Instructor calls on one 5 and one 1 for a sentence each. Sets the honesty baseline.
-- **00:15 — Spot-the-AI round**: in chat, each student drops *one* place AI showed up in their day yesterday that they didn't label as AI at the time. Instructor reads the three most surprising.
-- **00:30 — Live poll**: "Which felt most human: ChatGPT / Claude / Gemini / 'they all felt the same'?" Watch the bars, call out the shock, ask one voter on each side to defend their pick.
-- **00:45 — Pick-a-corner debate**: "AI is overhyped" — agree / disagree / unsure. Two volunteers per side, 45 seconds each. Instructor keeps time hard.
-- **00:55 — One-line close**: every student drops one sentence in chat: *"The thing I'll remember from today is ___."* No editing, no deleting.
+- **Fist-of-5 on AI confidence**: on camera, hold up 1–5 fingers for "how confident am I I actually understand what's inside ChatGPT." Instructor calls on one 5 and one 1 for a sentence each. Sets the honesty baseline.
+- **Spot-the-AI round**: in chat, each student drops *one* place AI showed up in their day yesterday that they didn't label as AI at the time. Instructor reads the three most surprising.
+- **Live poll**: "Which felt most human: ChatGPT / Claude / Gemini / 'they all felt the same'?" Watch the bars, call out the shock, ask one voter on each side to defend their pick.
+- **Pick-a-corner debate**: "AI is overhyped" — agree / disagree / unsure. Two volunteers per side, 45 seconds each. Instructor keeps time hard.
+- **One-line close**: every student drops one sentence in chat: *"The thing I'll remember from today is ___."* No editing, no deleting.
 
 ### Read (in class, with the lecture)
 

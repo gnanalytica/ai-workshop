@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Live lab: tool audit | 20 min | Map 3 tasks from your life → 3 tool classes → try one prompt on each |
 | Q&A + discussion | 15 min | Where did the "obvious" tool lose? Where did an Indian or open-source option surprise you? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open shout-out**: "Name a job you did this week where AI would have helped but you didn't use it." Call on 3 students. Instructor classifies each job into a tool class live.
-- **00:15 — Think-pair-share**: 90 seconds on *"Which AI tool do you use daily? Which have you never opened even once?"* Spot the asymmetry.
-- **00:30 — Live demo**: instructor does the same research prompt on ChatGPT, Perplexity, and Sarvam. Three outputs, three personalities. Class votes which won.
-- **00:45 — Corner debate**: "Closed models are always better than open." Corner 1 agree, 2 disagree, 3 "depends on the job." 45 seconds each. Switch corners mid-debate with a reason.
-- **00:55 — One-line close**: "The tool I'll try tonight is ___ because I keep doing ___."
+- **Cold-open shout-out**: "Name a job you did this week where AI would have helped but you didn't use it." Call on 3 students. Instructor classifies each job into a tool class live.
+- **Think-pair-share**: 90 seconds on *"Which AI tool do you use daily? Which have you never opened even once?"* Spot the asymmetry.
+- **Live demo**: instructor does the same research prompt on ChatGPT, Perplexity, and Sarvam. Three outputs, three personalities. Class votes which won.
+- **Corner debate**: "Closed models are always better than open." Corner 1 agree, 2 disagree, 3 "depends on the job." 45 seconds each. Switch corners mid-debate with a reason.
+- **One-line close**: "The tool I'll try tonight is ___ because I keep doing ___."
 
 ### Read: The 7 tool classes every AI user should know
 

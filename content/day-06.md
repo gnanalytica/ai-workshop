@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,12 +69,12 @@ objective:
 | Live lab     | 20 min | Build your Jarvis in Claude Projects — upload resume + capstone ideas |
 | Q&A + discussion | 15 min | Which model is your default, and what did Memory unlock |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Fist-of-5 cold open**: on the count of three, show fingers — how many of the five frontier chat models have you used in the last 7 days. Scan the room; we are calibrating the gap.
-- **00:15 — Think-pair-share**: in 90 seconds with the person next to you, each name one task you currently do in ChatGPT that probably belongs in Claude or Gemini instead. Be specific about the task, not the tool.
-- **00:30 — Live poll**: drop in the cohort channel your current "default model". We read the tally live and ask the two outliers to defend their pick for 30 seconds each.
-- **00:45 — Breakout of three**: same prompt ("plan my next 4 Tuesday evenings") goes into three different models per trio. Regroup and vote on whose answer you would actually follow — and why.
+- **Fist-of-5 cold open**: on the count of three, show fingers — how many of the five frontier chat models have you used in the last 7 days. Scan the room; we are calibrating the gap.
+- **Think-pair-share**: in 90 seconds with the person next to you, each name one task you currently do in ChatGPT that probably belongs in Claude or Gemini instead. Be specific about the task, not the tool.
+- **Live poll**: drop in the cohort channel your current "default model". We read the tally live and ask the two outliers to defend their pick for 30 seconds each.
+- **Breakout of three**: same prompt ("plan my next 4 Tuesday evenings") goes into three different models per trio. Regroup and vote on whose answer you would actually follow — and why.
 
 ### Read: Five models, five personalities
 

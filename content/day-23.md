@@ -60,7 +60,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -71,13 +71,13 @@ objective:
 | Live lab     | 20 min | Build a 3-tool LangGraph agent; wire an MCP server into Cursor or Claude |
 | Q&A + discussion | 15 min | The MCP server you would publish next |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: name the last "agent" demo you saw that actually worked end-to-end. One sentence on why.
-- **00:15 — Think-pair-share**: 90 seconds — your partner names three tools their capstone agent would need; you spot which one has the fuzziest description.
-- **00:30 — Live trace-read**: paste the instructor's agent trace in chat. Where would you cut context? Vote A/B/C.
-- **00:45 — MCP breakout**: three groups — filesystem server, fetch server, Playwright-MCP. Each group reports back the single tool they'd most miss.
-- **00:55 — Fail-mode bingo**: shout the break-mode you hit first (infinite retry / goal drift / hallucinated tool / context blow-up / premature success).
+- **Cold-open**: name the last "agent" demo you saw that actually worked end-to-end. One sentence on why.
+- **Think-pair-share**: 90 seconds — your partner names three tools their capstone agent would need; you spot which one has the fuzziest description.
+- **Live trace-read**: paste the instructor's agent trace in chat. Where would you cut context? Vote A/B/C.
+- **MCP breakout**: three groups — filesystem server, fetch server, Playwright-MCP. Each group reports back the single tool they'd most miss.
+- **Fail-mode bingo**: shout the break-mode you hit first (infinite retry / goal drift / hallucinated tool / context blow-up / premature success).
 
 ### Read: ReAct, tool-use, planning loops, and MCP
 

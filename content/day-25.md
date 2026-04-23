@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -70,15 +70,15 @@ objective:
 | Panel feedback + vote | 10 min | Peers score: clarity, demo craft, shape-of-problem |
 | Closing + week wrap | 5 min  | What's ahead next week |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
 Structure of each demo slot in the rotation:
 
-- **00:00 — Team setup**: 30 seconds to share screen, confirm audio, load live URL.
-- **00:07 — Demo starts**: 30-sec hook → 2-min story with live product → 30-sec ask. Timer visible on screen.
-- **00:10 — Panel Q&A opens**: one panelist asks the "shape-of-problem" question first.
-- **00:11 — Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
-- **00:13 — Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
+- **Team setup**: 30 seconds to share screen, confirm audio, load live URL.
+- **Demo starts**: 30-sec hook → 2-min story with live product → 30-sec ask. Timer visible on screen.
+- **Panel Q&A opens**: one panelist asks the "shape-of-problem" question first.
+- **Critique round**: each of the 5 panelists delivers one piece of feedback (signal / taste / confused — the demoer silently labels each).
+- **Demoer summarizes**: one sentence back to each critic ("so what you're saying is…") before the next team loads.
 
 ### Read: Demo craft, critique handling, and turning feedback into action
 

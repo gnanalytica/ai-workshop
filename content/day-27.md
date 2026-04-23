@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Studio work on capstone | 30 min | Pick primary + fallback model on Artificial Analysis, side-by-side on LM Arena; instructor roams |
 | Share + Q&A | 10 min | 1-liner per team: which model you picked and why |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold open**: instructor shows two leaderboard charts side-by-side with the model names blurred; cohort guesses which model is actually better for a coding capstone, then reveal.
-- **00:15 — Teaching beat**: 10 minutes on contamination, saturation, and the three-step release skim — with one live example from a recent launch.
-- **00:25 — Back to your team's build**: open Artificial Analysis, filter by your latency and cost constraints, shortlist 3 candidates. Instructor does rounds, raise hand for unblocking.
-- **00:40 — Back to your team's build**: run your 5 real capstone prompts on LM Arena side-by-side. Instructor rotates to teams flagged "stuck on cost math."
-- **00:55 — Back to your team's build**: write your 2-line "primary + fallback + why." Drop it in chat as you finish — instructor reads the best three aloud.
+- **Cold open**: instructor shows two leaderboard charts side-by-side with the model names blurred; cohort guesses which model is actually better for a coding capstone, then reveal.
+- **Teaching beat**: 10 minutes on contamination, saturation, and the three-step release skim — with one live example from a recent launch.
+- **Back to your team's build**: open Artificial Analysis, filter by your latency and cost constraints, shortlist 3 candidates. Instructor does rounds, raise hand for unblocking.
+- **Back to your team's build**: run your 5 real capstone prompts on LM Arena side-by-side. Instructor rotates to teams flagged "stuck on cost math."
+- **Back to your team's build**: write your 2-line "primary + fallback + why." Drop it in chat as you finish — instructor reads the best three aloud.
 
 ### Read: The Benchmark Literacy Crash Course (600 words)
 

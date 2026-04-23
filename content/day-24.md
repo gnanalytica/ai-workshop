@@ -61,7 +61,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -72,13 +72,13 @@ objective:
 | Live lab     | 20 min | Build a 2-agent delegating workflow with Claude Agent SDK or OpenAI Swarm |
 | Q&A + discussion | 15 min | When did one agent become two in your capstone |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: in 10 words, why did your Day 23 single agent get confused?
-- **00:15 — Think-pair-share**: 90 seconds — name a two-role split in your capstone; partner tries to collapse it back to one agent. Who wins?
-- **00:30 — Live poll**: supervisor, swarm, or hierarchical for your capstone? Post S / W / H with one-line reason.
-- **00:45 — Handoff design breakout**: pairs draft the JSON payload Agent A hands to Agent B — inputs, outputs, what must never leak.
-- **00:55 — Skill-or-prompt debate**: one teammate argues "skill", another "just put it in the system prompt". 60 seconds each.
+- **Cold-open**: in 10 words, why did your Day 23 single agent get confused?
+- **Think-pair-share**: 90 seconds — name a two-role split in your capstone; partner tries to collapse it back to one agent. Who wins?
+- **Live poll**: supervisor, swarm, or hierarchical for your capstone? Post S / W / H with one-line reason.
+- **Handoff design breakout**: pairs draft the JSON payload Agent A hands to Agent B — inputs, outputs, what must never leak.
+- **Skill-or-prompt debate**: one teammate argues "skill", another "just put it in the system prompt". 60 seconds each.
 
 ### Read: Orchestration patterns, Swarm minimalism, Skills, and Plugins
 

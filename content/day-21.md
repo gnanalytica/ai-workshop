@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Live lab     | 20 min | Vibe-code a v0 slice of your capstone — spec, diff, review, iterate |
 | Q&A + discussion | 15 min | Where vibe coding broke today and why |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open confession**: raise a hand if you typed more code than you specced yesterday. Keep it up if you regretted it.
-- **00:15 — Think-pair-share**: in 90 seconds, each partner reads the other's 4-part spec out loud; catch the one missing acceptance criterion.
-- **00:30 — Live poll**: tight leash or long leash for your next change? Post T or L in chat with one-line reason.
-- **00:45 — Breakout debate**: Cursor vs bolt.new vs Antigravity for *your* capstone stack — pick one and defend in 60 seconds.
-- **00:55 — Showcase**: one volunteer screen-shares a rejected diff and the redirect prompt that fixed it.
+- **Cold-open confession**: raise a hand if you typed more code than you specced yesterday. Keep it up if you regretted it.
+- **Think-pair-share**: in 90 seconds, each partner reads the other's 4-part spec out loud; catch the one missing acceptance criterion.
+- **Live poll**: tight leash or long leash for your next change? Post T or L in chat with one-line reason.
+- **Breakout debate**: Cursor vs bolt.new vs Antigravity for *your* capstone stack — pick one and defend in 60 seconds.
+- **Showcase**: one volunteer screen-shares a rejected diff and the redirect prompt that fixed it.
 
 ### Read: Director vs Typist — the mindset shift that unlocks AI-first building
 

@@ -68,7 +68,7 @@ Yesterday (Day 29) was your final dress rehearsal. Today is the performance.
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -79,13 +79,13 @@ Yesterday (Day 29) was your final dress rehearsal. Today is the performance.
 | Panel Q&A + awards | 10 min | Certificate auto-issued on completion |
 | Closing + what's next | 5 min | Alumni channel, showcase links, goodbyes |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:00 — Opening**: instructor's one-minute welcome, panel introductions, demo order drawn live. Cohort applauds every name as it's called.
-- **00:05 — Team demos begin**: 5 minutes per team (4 min demo + 1 min panel Q&A), rotating through all teams. Stay in the room, watch every demo, cheer loudly.
-- **00:45 — Panel Q&A round**: cross-team questions, judges probe the riskiest assumption of each capstone. Answers scored on honesty, not polish.
-- **00:52 — Awards ceremony**: panel reads awards and citations aloud; certificate auto-issues on /certificate.html for everyone at 30/30.
-- **00:58 — Close + group photo**: instructor's send-off, alumni channel link shared, showcase gallery goes public, group photo (non-negotiable).
+- **Opening**: instructor's one-minute welcome, panel introductions, demo order drawn live. Cohort applauds every name as it's called.
+- **Team demos begin**: 5 minutes per team (4 min demo + 1 min panel Q&A), rotating through all teams. Stay in the room, watch every demo, cheer loudly.
+- **Panel Q&A round**: cross-team questions, judges probe the riskiest assumption of each capstone. Answers scored on honesty, not polish.
+- **Awards ceremony**: panel reads awards and citations aloud; certificate auto-issues on /certificate.html for everyone at 30/30.
+- **Close + group photo**: instructor's send-off, alumni channel link shared, showcase gallery goes public, group photo (non-negotiable).
 
 ### Read: Go Time (400 words)
 

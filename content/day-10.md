@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 Today's live session is an **ideathon format**, not the standard agenda: brainstorm → shape → pitch → vote → team-lock. Inside class we run the first half; you finish the one-pager in the post-class block.
 
@@ -72,13 +72,13 @@ Today's live session is an **ideathon format**, not the standard agenda: brainst
 | Pitches (rotating groups, 2 min each) | 20 min | Everyone pitches — partner asks one Heilmeier question per idea |
 | Vote + form teams | 10 min | Commit to a capstone team + problem, start the one-pager |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
-- **00:15 — Silent solo brainstorm with 3 sticky notes**: one idea per sticky, no editing, three minutes each. No phones, no Claude yet — this round is pen and paper so the obvious ideas clear out first.
-- **00:30 — Shape in pairs using Heilmeier template**: partners take turns. Pitcher has 2 minutes; listener must ask questions 1, 4, and 9 from the Heilmeier list (objective, who cares, metrics) before the timer ends. Swap.
-- **00:45 — Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
-- **00:55 — Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
+- **Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
+- **Silent solo brainstorm with 3 sticky notes**: one idea per sticky, no editing, three minutes each. No phones, no Claude yet — this round is pen and paper so the obvious ideas clear out first.
+- **Shape in pairs using Heilmeier template**: partners take turns. Pitcher has 2 minutes; listener must ask questions 1, 4, and 9 from the Heilmeier list (objective, who cares, metrics) before the timer ends. Swap.
+- **Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
+- **Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
 
 ### Read: How to pick a capstone worth four weeks
 

@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Live lab     | 20 min | Rewrite one volunteer's capstone statement three times, live |
 | Q&A + discussion | 15 min | Stress-test statements, call out fuzziness |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: in one breath, say your capstone out loud to the person next to you; they raise a hand the moment they hear a weasel word.
-- **00:15 — Think-pair-share**: 90 seconds each — swap v1 statements and circle every abstract noun ("users," "productivity," "experience") on your partner's draft.
-- **00:30 — Live poll**: instructor reads 4 anonymised statements; class votes "mood" or "statement" with thumbs up/down and defends the call.
-- **00:45 — Heilmeier gauntlet**: one volunteer stands; three classmates each fire one Heilmeier question; volunteer must answer in 15 seconds each, no jargon.
-- **00:55 — Sticky-note test**: everyone writes v3 on a physical or virtual 3x3 box; if it overflows, cut one clause before leaving.
+- **Cold-open**: in one breath, say your capstone out loud to the person next to you; they raise a hand the moment they hear a weasel word.
+- **Think-pair-share**: 90 seconds each — swap v1 statements and circle every abstract noun ("users," "productivity," "experience") on your partner's draft.
+- **Live poll**: instructor reads 4 anonymised statements; class votes "mood" or "statement" with thumbs up/down and defends the call.
+- **Heilmeier gauntlet**: one volunteer stands; three classmates each fire one Heilmeier question; volunteer must answer in 15 seconds each, no jargon.
+- **Sticky-note test**: everyone writes v3 on a physical or virtual 3x3 box; if it overflows, cut one clause before leaving.
 
 ### Read: Why a crisp problem statement is half the work
 

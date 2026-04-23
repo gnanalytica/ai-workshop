@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,12 +69,12 @@ objective:
 | Live lab     | 20 min | Ship 1 poster (Nano Banana / Firefly) + 1 ten-second video (Kling) |
 | Q&A + discussion | 15 min | Taste, slop, and labeling AI-generated media |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — One-line cold open**: type your capstone tagline into the chat in under 10 words. We read three at random and guess what the product is — if we cannot guess, your tagline is the first problem.
-- **00:15 — Think-pair-share**: in 90 seconds, swap prompts with a neighbor. Each person rewrites the other's prompt using the six-slot template (subject, action, setting, style, composition, modifiers). Notice how many adjectives get replaced by nouns.
-- **00:30 — Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
-- **00:45 — Stand-up critique**: three volunteers hold up their draft poster on camera for 30 seconds each. Cohort shouts out one thing that works and one thing to cut. No compliments without a specific noun.
+- **One-line cold open**: type your capstone tagline into the chat in under 10 words. We read three at random and guess what the product is — if we cannot guess, your tagline is the first problem.
+- **Think-pair-share**: in 90 seconds, swap prompts with a neighbor. Each person rewrites the other's prompt using the six-slot template (subject, action, setting, style, composition, modifiers). Notice how many adjectives get replaced by nouns.
+- **Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
+- **Stand-up critique**: three volunteers hold up their draft poster on camera for 30 seconds each. Cohort shouts out one thing that works and one thing to cut. No compliments without a specific noun.
 
 ### Read: Diffusion, prompts, and the state of video in 2026
 

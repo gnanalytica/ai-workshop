@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,13 +69,13 @@ objective:
 | Live lab     | 20 min | Run one diverge → converge cycle on a volunteer's capstone |
 | Q&A + discussion | 15 min | Where does your process cheat? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: raise a hand if you have already decided what to build. Instructor calls on 2 hands and asks "which stage did you skip to get there?"
-- **00:15 — Think-pair-share**: 90 seconds — tell your partner one assumption about your user you have NOT verified, and what evidence would change your mind.
-- **00:30 — Diverge drill**: everyone generates 10 capstone ideas in 3 minutes; no judgement, no editing; count them out loud.
-- **00:45 — Converge debate**: two volunteers defend opposite POV statements for the same problem; class votes which one names a surprising insight vs. restates the premise.
-- **00:55 — Prototype gut-check**: shout out the cheapest prototype you could build tonight; if anyone says "a Figma mockup," the class says "not cheap enough."
+- **Cold-open**: raise a hand if you have already decided what to build. Instructor calls on 2 hands and asks "which stage did you skip to get there?"
+- **Think-pair-share**: 90 seconds — tell your partner one assumption about your user you have NOT verified, and what evidence would change your mind.
+- **Diverge drill**: everyone generates 10 capstone ideas in 3 minutes; no judgement, no editing; count them out loud.
+- **Converge debate**: two volunteers defend opposite POV statements for the same problem; class votes which one names a surprising insight vs. restates the premise.
+- **Prototype gut-check**: shout out the cheapest prototype you could build tonight; if anyone says "a Figma mockup," the class says "not cheap enough."
 
 ### Read: The five stages, and the traps inside each one
 

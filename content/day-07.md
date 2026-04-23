@@ -58,7 +58,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,12 +69,12 @@ objective:
 | Live lab     | 20 min | Ship a 1-page research brief on your capstone domain |
 | Q&A + discussion | 15 min | Trusting the machine — citations, disagreements, dropped claims |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Raise-a-finger vote**: "In the last month, how many times did you click past page 1 of Google?" Zero, one, or more — we map the room's search habits.
-- **00:15 — Think-pair-share**: in 90 seconds, each person names one factual claim they once quoted from ChatGPT without checking. Confess out loud; we set the tone for citation discipline.
-- **00:30 — Live citation audit**: I drop a Perplexity answer on screen with four citations. Cohort clicks each in parallel — we vote thumbs up/down on whether the source actually supports the claim.
-- **00:45 — Breakout of three**: each trio runs the DIY Deep Research pattern (5 sub-questions → 5 searches → synthesis) on one capstone question. One team reports back what the synthesis caught that single-shot search missed.
+- **Raise-a-finger vote**: "In the last month, how many times did you click past page 1 of Google?" Zero, one, or more — we map the room's search habits.
+- **Think-pair-share**: in 90 seconds, each person names one factual claim they once quoted from ChatGPT without checking. Confess out loud; we set the tone for citation discipline.
+- **Live citation audit**: I drop a Perplexity answer on screen with four citations. Cohort clicks each in parallel — we vote thumbs up/down on whether the source actually supports the claim.
+- **Breakout of three**: each trio runs the DIY Deep Research pattern (5 sub-questions → 5 searches → synthesis) on one capstone question. One team reports back what the synthesis caught that single-shot search missed.
 
 ### Read: Search is dead. Long live grounded research.
 

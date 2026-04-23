@@ -1,7 +1,7 @@
 -- Hero in-class poll per day for 30-day AI workshop.
 -- Cohort: 56268633-9e93-4305-af6a-1b622a833d8e
 -- Each row is the single most load-bearing "Live poll" drawn from
--- that day's `In-class moments (minute-by-minute)` list.
+-- that day's `In-class checkpoints` list (formerly minute-by-minute).
 -- Where the day's markdown did not list a named "Live poll", we synthesized
 -- a poll from the day's key decision point (see commit message for details).
 

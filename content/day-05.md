@@ -56,7 +56,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -67,13 +67,13 @@ objective:
 | Vote: Most Useful / Creative / Surprising | 5 min | Light competition, bragging rights |
 | Q&A + Week 2 preview | 15 min | What to expect starting Monday |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Fist-of-5 cold open**: on camera, 1–5 fingers for *"how different does AI feel to me today vs five days ago?"* Instructor calls on one 5 and one 2 for a single sentence each.
-- **00:15 — Think-pair-share**: 90 seconds on *"What belief about AI did you enter Day 1 with that you're leaving Day 5 without?"* Each pair volunteers the sharper of the two beliefs.
-- **00:30 — Live vote during show-and-tell**: as students pitch, everyone ranks in a running chat tally — *Most Useful / Most Creative / Most Surprising*. Instructor reads the top three out loud at the end of the round.
-- **00:45 — Steal-a-trick stand-up**: each student names the one classmate trick they're stealing this weekend and tags them by name in chat. Fast round, one line per person, no passing.
-- **00:55 — One-line close**: *"My next bet by Day 30 is ___."* No editing. This line goes straight into the Personal AI Stack v1 draft.
+- **Fist-of-5 cold open**: on camera, 1–5 fingers for *"how different does AI feel to me today vs five days ago?"* Instructor calls on one 5 and one 2 for a single sentence each.
+- **Think-pair-share**: 90 seconds on *"What belief about AI did you enter Day 1 with that you're leaving Day 5 without?"* Each pair volunteers the sharper of the two beliefs.
+- **Live vote during show-and-tell**: as students pitch, everyone ranks in a running chat tally — *Most Useful / Most Creative / Most Surprising*. Instructor reads the top three out loud at the end of the round.
+- **Steal-a-trick stand-up**: each student names the one classmate trick they're stealing this weekend and tags them by name in chat. Fast round, one line per person, no passing.
+- **One-line close**: *"My next bet by Day 30 is ___."* No editing. This line goes straight into the Personal AI Stack v1 draft.
 
 ### Read: What we learned — the one-page map
 

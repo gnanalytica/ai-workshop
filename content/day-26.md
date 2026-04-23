@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -70,13 +70,13 @@ objective:
 | Live lab     | 20 min | Run Garak's promptinject + dan probes against a capstone |
 | Q&A + discussion | 15 min | Your riskiest assumption, workshopped live |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold open**: instructor drops a headline from the AI Incident Database in chat; everyone writes a one-line "what's the root cause" guess before discussion.
-- **00:15 — Think-pair-share**: 90 seconds — "What is the single most embarrassing thing your capstone could say on stage?" Share with your pair, pick the scarier one.
-- **00:25 — Live poll**: how many of the five safety patterns (stop button, citations, rate-limit, I/O filter, opt-out) does your capstone have today? Reveal the cohort histogram.
-- **00:35 — Paired red-team**: swap capstone URLs with one partner; spend 8 minutes trying to break theirs while they break yours. Log every stumble.
-- **00:50 — Workshop the scariest finding**: volunteers paste their worst failure into chat; instructor proposes a one-line mitigation for each.
+- **Cold open**: instructor drops a headline from the AI Incident Database in chat; everyone writes a one-line "what's the root cause" guess before discussion.
+- **Think-pair-share**: 90 seconds — "What is the single most embarrassing thing your capstone could say on stage?" Share with your pair, pick the scarier one.
+- **Live poll**: how many of the five safety patterns (stop button, citations, rate-limit, I/O filter, opt-out) does your capstone have today? Reveal the cohort histogram.
+- **Paired red-team**: swap capstone URLs with one partner; spend 8 minutes trying to break theirs while they break yours. Log every stumble.
+- **Workshop the scariest finding**: volunteers paste their worst failure into chat; instructor proposes a one-line mitigation for each.
 
 ### Read: When AI Goes Wrong — A Field Guide
 

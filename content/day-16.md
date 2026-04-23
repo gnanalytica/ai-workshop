@@ -60,7 +60,7 @@ Come in with an account, a curiosity, and a browser tab already open — don't l
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -71,13 +71,13 @@ Come in with an account, a curiosity, and a browser tab already open — don't l
 | Live lab | 20 min | Fork Ollama + hit 3 public APIs in Hoppscotch together |
 | Q&A + discussion | 15 min | Which rail felt most foreign? Share weird status codes |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
-- **00:15 — Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
-- **00:25 — Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
-- **00:40 — Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
-- **00:55 — Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
+- **Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
+- **Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
+- **Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
+- **Breakout**: in pairs, open any merged PR on the Ollama repo and describe the diff out loud in plain English for 3 minutes.
+- **Status-code lightning round**: instructor shouts a status code (401, 429, 500), class shouts back who's to blame.
 
 ### Read: The four rails — Git, GitHub, localhost, APIs
 

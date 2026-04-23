@@ -57,7 +57,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -68,13 +68,13 @@ objective:
 | Live lab | 20 min | Tokenize wild strings in Tiktokenizer; watch surprises live |
 | Q&A + discussion | 15 min | What finally clicked? What's still murky? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open guess**: instructor types "I'm cooked" into Tiktokenizer. Class guesses how many tokens before the reveal. (It's 4.)
-- **00:15 — Think-pair-share**: in 90 seconds, try to explain "tokens" to your neighbour without using the word "word". Hardest 90 seconds of the day.
-- **00:30 — Live tokenizer poll**: everyone types their full name, their hostel mess's name, and one Hindi/regional word into Tiktokenizer. Share the most surprising token counts in chat.
-- **00:45 — Temperature demo**: instructor runs the same prompt at temperature 0, 0.5, 1, 1.5 — class predicts which one will go off the rails first.
-- **00:55 — One-line close**: "The thing that finally clicked today was ___."
+- **Cold-open guess**: instructor types "I'm cooked" into Tiktokenizer. Class guesses how many tokens before the reveal. (It's 4.)
+- **Think-pair-share**: in 90 seconds, try to explain "tokens" to your neighbour without using the word "word". Hardest 90 seconds of the day.
+- **Live tokenizer poll**: everyone types their full name, their hostel mess's name, and one Hindi/regional word into Tiktokenizer. Share the most surprising token counts in chat.
+- **Temperature demo**: instructor runs the same prompt at temperature 0, 0.5, 1, 1.5 — class predicts which one will go off the rails first.
+- **One-line close**: "The thing that finally clicked today was ___."
 
 ### Read: The stack — from "AI" to the chatbot on your phone
 

@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -70,13 +70,13 @@ objective:
 | Live lab     | 20 min | Paired interview drill — one classmate, 8 minutes, no pitching |
 | Q&A + discussion | 15 min | Debrief quotes, catch leading questions, extract the real job |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: instructor reads 3 interview questions aloud; class shouts "leading" or "clean" after each — winners get to grill the loser.
-- **00:15 — Think-pair-share**: 90 seconds — tell your partner the last time YOU experienced your capstone's problem; if you never have, say so.
-- **00:30 — Verb-hunt**: pair up, swap your 5 draft questions, circle every future-tense verb ("would," "could," "might") on your partner's list.
-- **00:45 — Paired drill**: 8-minute interview, no pitching, no idea mention; observer counts every leading question and reports back.
-- **00:55 — Commitment test**: each interviewer names the real next step they earned (referral, meeting, access); if the answer is "they said it was cool," the class calls it polite enthusiasm, not signal.
+- **Cold-open**: instructor reads 3 interview questions aloud; class shouts "leading" or "clean" after each — winners get to grill the loser.
+- **Think-pair-share**: 90 seconds — tell your partner the last time YOU experienced your capstone's problem; if you never have, say so.
+- **Verb-hunt**: pair up, swap your 5 draft questions, circle every future-tense verb ("would," "could," "might") on your partner's list.
+- **Paired drill**: 8-minute interview, no pitching, no idea mention; observer counts every leading question and reports back.
+- **Commitment test**: each interviewer names the real next step they earned (referral, meeting, access); if the answer is "they said it was cool," the class calls it polite enthusiasm, not signal.
 
 ### Read: The Mom Test, JTBD, and listening for what is not said
 

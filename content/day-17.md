@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -70,13 +70,13 @@ objective:
 | Live lab | 20 min | Instructor demos Ollama locally; you hit Groq + HF Chat + log traces in Langfuse |
 | Q&A + discussion | 15 min | When did small beat big? Which prompt pattern moved the number most? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open bet**: instructor runs the same prompt on Qwen 1.5B and Groq Llama 3.3 70B side by side; class votes which answer is "better" before the reveal.
-- **00:15 — Think-pair-share**: in 90 seconds, tell your neighbour which task from your capstone would be "shockingly fine" on a 2B local model.
-- **00:30 — Live poll**: RAM check — 4GB / 8GB / 16GB+ — instructor recommends a model per hand raised.
-- **00:40 — Breakout**: in trios, rewrite one zero-shot prompt into a CoT + self-critique variant in 4 minutes; share the sharpest rewrite with the room.
-- **00:55 — Win-rate reveal**: instructor shows a real Langfuse dashboard with three prompt variants; class predicts the winner before the numbers drop.
+- **Cold-open bet**: instructor runs the same prompt on Qwen 1.5B and Groq Llama 3.3 70B side by side; class votes which answer is "better" before the reveal.
+- **Think-pair-share**: in 90 seconds, tell your neighbour which task from your capstone would be "shockingly fine" on a 2B local model.
+- **Live poll**: RAM check — 4GB / 8GB / 16GB+ — instructor recommends a model per hand raised.
+- **Breakout**: in trios, rewrite one zero-shot prompt into a CoT + self-critique variant in 4 minutes; share the sharpest rewrite with the room.
+- **Win-rate reveal**: instructor shows a real Langfuse dashboard with three prompt variants; class predicts the winner before the numbers drop.
 
 ### Read: Local LLMs, prompting patterns, and evals
 

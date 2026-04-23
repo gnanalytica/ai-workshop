@@ -63,7 +63,7 @@ The lab wants a real repo open in a real AI harness — no toy project, no scrat
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -74,13 +74,13 @@ The lab wants a real repo open in a real AI harness — no toy project, no scrat
 | Live lab | 20 min | Scaffold a starter CLAUDE.md for your capstone in Claude Code, together |
 | Q&A + discussion | 15 min | Which single rule will save you the most hours? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: instructor opens two fresh Claude Code sessions on the same repo — one with a strong CLAUDE.md, one without — asks the same question; class times the difference.
-- **00:15 — Think-pair-share**: in 90 seconds, list the 3 things you re-explain to AI every single chat on your capstone.
-- **00:30 — Live draft**: instructor writes a "Common Pitfalls" section on-screen from a real bug they hit; class nominates the next rule to add.
-- **00:45 — Breakout**: in pairs, critique each other's CLAUDE.md draft — flag anything that's vague, stale, or untestable.
-- **00:55 — Rule-of-the-day vote**: each student shouts their single highest-leverage rule; class votes on the sharpest.
+- **Cold-open**: instructor opens two fresh Claude Code sessions on the same repo — one with a strong CLAUDE.md, one without — asks the same question; class times the difference.
+- **Think-pair-share**: in 90 seconds, list the 3 things you re-explain to AI every single chat on your capstone.
+- **Live draft**: instructor writes a "Common Pitfalls" section on-screen from a real bug they hit; class nominates the next rule to add.
+- **Breakout**: in pairs, critique each other's CLAUDE.md draft — flag anything that's vague, stale, or untestable.
+- **Rule-of-the-day vote**: each student shouts their single highest-leverage rule; class votes on the sharpest.
 
 ### Read: From prompting to context engineering
 

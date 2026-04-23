@@ -57,7 +57,7 @@ Week 4 capstone day — come in with accounts, tokens, and a task you genuinely 
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -68,13 +68,13 @@ Week 4 capstone day — come in with accounts, tokens, and a task you genuinely 
 | Live lab | 20 min | Build one n8n flow (trigger + API + AI + output) together |
 | Q&A + discussion | 15 min | What manual task is first on the chopping block? |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open math**: instructor writes "4 min per ticket × 40 tickets × 5 days = ?" on the board; class shouts the hours saved per week.
-- **00:15 — Think-pair-share**: in 90 seconds, tell your neighbour the single most boring task in your week and what triggers it.
-- **00:30 — Live build**: instructor drags the Google Form trigger, AI Agent, and Slack nodes on-screen; class calls out what prompt goes into the AI node.
-- **00:45 — Debate**: API-first purist vs browser-agent pragmatist — two volunteers, 2 minutes each, on a task only reachable behind a login.
-- **00:55 — Dry-run check**: each student declares which node in their flow they'd wrap in human-in-the-loop approval first.
+- **Cold-open math**: instructor writes "4 min per ticket × 40 tickets × 5 days = ?" on the board; class shouts the hours saved per week.
+- **Think-pair-share**: in 90 seconds, tell your neighbour the single most boring task in your week and what triggers it.
+- **Live build**: instructor drags the Google Form trigger, AI Agent, and Slack nodes on-screen; class calls out what prompt goes into the AI node.
+- **Debate**: API-first purist vs browser-agent pragmatist — two volunteers, 2 minutes each, on a task only reachable behind a login.
+- **Dry-run check**: each student declares which node in their flow they'd wrap in human-in-the-loop approval first.
 
 ### Read: APIs, n8n, and browser agents
 

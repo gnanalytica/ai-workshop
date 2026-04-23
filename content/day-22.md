@@ -61,7 +61,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -72,13 +72,13 @@ objective:
 | Live lab     | 20 min | Deploy to Vercel, compute cost-per-user, audit trust stack, publish llms.txt |
 | Q&A + discussion | 15 min | The cost number that shocked you |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
-- **00:15 — Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
-- **00:30 — Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
-- **00:45 — Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
-- **00:55 — GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
+- **Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
+- **Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
+- **Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
+- **Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
+- **GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
 
 ### Read: Shipping, cost math, trust UX, and getting cited by AI
 

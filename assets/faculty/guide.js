@@ -42,7 +42,7 @@ function inferCohortDay(cohort) {
 function playbookByDay(day) {
   if (day <= 10) {
     return {
-      before: ['Read objective + in-class moments once.', 'Open Stream and identify stuck students from prior day.', 'Prepare 1 real-world example for the topic.'],
+      before: ['Read objective + in-class checkpoints once.', 'Open Stream and identify stuck students from prior day.', 'Prepare 1 real-world example for the topic.'],
       during: ['Anchor students on outcome, not tool novelty.', 'Do one live demo, then quickly move to student practice.', 'Circulate: unblock setup issues first, concept issues second.'],
       after: ['Check grades queue for submissions from today.', 'Follow up unresolved stuck cases in admin queue.', 'Post one recap + one prep instruction for tomorrow.'],
     };
@@ -136,7 +136,9 @@ async function buildInstructorScript(dayNumber) {
     if (!res.ok) throw new Error('lesson not found');
     const md = await res.text();
     const agenda = parseAgendaRows(getSectionBlock(md, 'Agenda'));
-    const moments = parseBullets(getSectionBlock(md, 'In-class moments (minute-by-minute)'), 6);
+    let checkpointsBlock = getSectionBlock(md, 'In-class checkpoints');
+    if (!checkpointsBlock) checkpointsBlock = getSectionBlock(md, 'In-class moments (minute-by-minute)');
+    const moments = parseBullets(checkpointsBlock, 6);
     const post = parseNumberedActions(getSectionBlock(md, '1. Immediate action (~40 min)'), 4);
     const fallbackPost = post.length ? post : parseNumberedActions(getSectionBlock(md, 'Post-class · ~2 hour focused block'), 5);
     return { agenda, moments, post: fallbackPost };
@@ -198,10 +200,10 @@ function teacherSheetHtml({ current, script, pb }) {
     ? `<ul>${script.agenda.map((r) => `<li><b>${esc(r.time)}</b> · ${esc(r.block)} — ${esc(r.what)}</li>`).join('')}</ul>`
     : '<div class="muted">No agenda parsed. Use lesson page.</div>'}
 
-  <h2>In-class moments</h2>
+  <h2>In-class checkpoints</h2>
   ${script.moments.length
     ? `<ul>${script.moments.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`
-    : '<div class="muted">No minute-by-minute section parsed.</div>'}
+    : '<div class="muted">No in-class checkpoints parsed.</div>'}
 
   <h2>Facilitation Checklist</h2>
   <div class="grid">
@@ -269,7 +271,7 @@ export async function renderGuide({ state, container }) {
     <section class="add-card" style="padding:16px">
       <div class="kicker">Instructor script (auto from lesson content)</div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h3 style="margin:6px 0 10px">Minute-by-minute cues for Day ${esc(String(current.n).padStart(2, '0'))}</h3>
+        <h3 style="margin:6px 0 10px">In-class checkpoints · Day ${esc(String(current.n).padStart(2, '0'))}</h3>
         <button type="button" id="facPrintTeacherSheet" class="btn-sm" style="margin-bottom:8px">Print teacher sheet</button>
       </div>
       <div style="display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px">
@@ -280,10 +282,10 @@ export async function renderGuide({ state, container }) {
             : '<div class="muted" style="margin-top:8px;font-size:12px">No structured agenda detected. Use the lesson "Agenda" section manually.</div>'}
         </div>
         <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--input-bg)">
-          <b style="font-size:13px">In-class guidance moments</b>
+          <b style="font-size:13px">In-class checkpoints</b>
           ${script.moments.length
             ? `<ul style="margin:10px 0 0;padding-left:18px;font-size:12.5px">${script.moments.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`
-            : '<div class="muted" style="margin-top:8px;font-size:12px">No minute-by-minute bullets detected in lesson content.</div>'}
+            : '<div class="muted" style="margin-top:8px;font-size:12px">No checkpoint bullets detected in lesson content.</div>'}
         </div>
         <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--input-bg)">
           <b style="font-size:13px">Post-class follow-up script</b>

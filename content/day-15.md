@@ -59,7 +59,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -69,14 +69,14 @@ objective:
 | Studio work (heads-down build) | 45 min | Instructor roams, unblocks, reviews specs and wireframes 1:1 |
 | Quick share + blockers logged | 10 min | 1-line-per-team share, what's stuck, what's locked |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:05 — Check-in shout**: one sentence each — "what I am locking today" — no hedges, no "probably."
-- **00:10 — Ruthless cut**: each pair picks 1 item on their "will build" list that secretly belongs on the NOT list; write it on a sticky and hand it to their partner.
-- **00:25 — Studio checkpoint**: instructor roams; every team shows their Crazy 8s and gets one 30-second note before returning to heads-down wireframing.
-- **00:35 — Walk-and-feedback**: walk to another pair, give 1 sentence of feedback on their wireframes ("your primary action is buried on screen 2"), then walk back.
-- **00:50 — Spec-on-a-page gate**: hold your spec up at arm's length — if it spills past page 1, you cannot share it yet; cut for 5 minutes.
-- **00:55 — Witness line**: each person says out loud "I am shipping X to Y by Z" and two cohort members acknowledge; that is the lock.
+- **Check-in shout**: one sentence each — "what I am locking today" — no hedges, no "probably."
+- **Ruthless cut**: each pair picks 1 item on their "will build" list that secretly belongs on the NOT list; write it on a sticky and hand it to their partner.
+- **Studio checkpoint**: instructor roams; every team shows their Crazy 8s and gets one 30-second note before returning to heads-down wireframing.
+- **Walk-and-feedback**: walk to another pair, give 1 sentence of feedback on their wireframes ("your primary action is buried on screen 2"), then walk back.
+- **Spec-on-a-page gate**: hold your spec up at arm's length — if it spills past page 1, you cannot share it yet; cut for 5 minutes.
+- **Witness line**: each person says out loud "I am shipping X to Y by Z" and two cohort members acknowledge; that is the lock.
 
 ### Read: The 1-day sprint, what "shipped" means, and the discipline of the spec
 

@@ -60,7 +60,7 @@ objective:
 
 ---
 
-## 🎥 During class · 60 min live session
+## 🎥 During class · live session
 
 ### Agenda
 
@@ -71,13 +71,13 @@ objective:
 | Peer + instructor feedback | 15 min | What to fix in next 24h |
 | Showcase polish Q&A | 10 min | Showcase page, assets, final checks |
 
-### In-class moments (minute-by-minute)
+### In-class checkpoints
 
-- **00:00 — Setup**: projector/screen share confirmed, rehearsal order drawn live, timer on screen visible to all.
-- **00:05 — Team 1 dry-run (4 min)** → **00:09 — 2 min feedback**: one "keep," one "cut," one "sharpen" from peers; instructor adds a line-level rewrite.
-- **00:11 — Team 2 dry-run (4 min)** → **00:15 — 2 min feedback**: same structure; timer is strict — when it buzzes, the hook has to have landed.
-- **00:17 — Team 3 dry-run → 2 min feedback**; **00:23 — Team 4 dry-run → 2 min feedback**; **00:29 — Team 5 dry-run → 2 min feedback**. Rotate through remaining teams in the same 6-minute slots.
-- **00:50 — Showcase polish Q&A**: page live, opt-in ON, URL/screenshot/tagline confirmed. Final go/no-go per team before tomorrow.
+- **Setup**: projector/screen share confirmed, rehearsal order drawn live, timer on screen visible to all.
+- **Team 1 dry-run (4 min)** → **00:09 — 2 min feedback**: one "keep," one "cut," one "sharpen" from peers; instructor adds a line-level rewrite.
+- **Team 2 dry-run (4 min)** → **00:15 — 2 min feedback**: same structure; timer is strict — when it buzzes, the hook has to have landed.
+- **Team 3 dry-run → 2 min feedback**; **00:23 — Team 4 dry-run → 2 min feedback**; **00:29 — Team 5 dry-run → 2 min feedback**. Rotate through remaining teams in the same 6-minute slots.
+- **Showcase polish Q&A**: page live, opt-in ON, URL/screenshot/tagline confirmed. Final go/no-go per team before tomorrow.
 
 ### Read: Stage-craft for Four-Minute Demos (550 words)
 
