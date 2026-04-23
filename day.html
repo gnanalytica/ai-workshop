@@ -10,9 +10,9 @@
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   /* ------ Layout shell (single column — course nav is the only sidebar) ------ */
-  .lesson-shell{max-width:min(1080px,100%);margin:0 auto;padding:28px 22px 120px;display:block;box-sizing:border-box}
+  .lesson-shell{max-width:none;width:100%;margin:0;padding:28px clamp(14px,2.5vw,40px) 120px;display:block;box-sizing:border-box}
   @media (max-width: 960px){
-    .lesson-shell{padding:18px 14px 88px}
+    .lesson-shell{padding:18px 12px 88px}
   }
   .main{min-width:0;max-width:none;width:100%}
   /* Top toolbar: progress + prev/next + horizontal section chips */
@@ -564,7 +564,7 @@
 </div>
 
 <!-- Locked view -->
-<main class="lesson-shell" id="lockedView" style="display:none;max-width:720px">
+<main class="lesson-shell" id="lockedView" style="display:none">
   <div>
     <div class="crumbs"><a href="dashboard.html">← Dashboard</a></div>
     <header class="lesson-head">
