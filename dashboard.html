@@ -630,12 +630,45 @@
     // Finalize registration if user arrived via magic-link with pending_registration in user_metadata
     await finalizePendingRegistration(user);
     showDash(user);
-    const [profileRes, cohortRes] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', user.id).single(),
-      supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).single(),
-    ]);
+    const profileRes = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
     const profile = profileRes.data;
-    const cohort = cohortRes.data;
+
+    // Prefer cohort from confirmed registration (avoids hard-coded slug drift / multi-cohort).
+    let cohort = null;
+    let reg = null;
+    const { data: regRows } = await supabase
+      .from('registrations')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'confirmed');
+    if (regRows?.length) {
+      const cohortIds = [...new Set(regRows.map((r) => r.cohort_id).filter(Boolean))];
+      const { data: cohortList } = await supabase.from('cohorts').select('*').in('id', cohortIds);
+      const byId = new Map((cohortList || []).map((c) => [c.id, c]));
+      const pick =
+        regRows.find((r) => byId.get(r.cohort_id)?.slug === COHORT_SLUG) || regRows[0];
+      const c = pick ? byId.get(pick.cohort_id) : null;
+      if (c?.id) {
+        cohort = c;
+        reg = pick;
+      }
+    }
+    if (!cohort) {
+      const cr = await supabase.from('cohorts').select('*').eq('slug', COHORT_SLUG).maybeSingle();
+      cohort = cr.data;
+    }
+    if (!cohort?.id) {
+      $('hiName').textContent = profile?.full_name || user.email || '—';
+      $('cohortInfo').textContent = 'Could not load cohort data.';
+      console.error('Dashboard: no cohort (registration + slug fallback failed)', profileRes.error);
+      return;
+    }
+
+    if (!reg) {
+      const r2 = await supabase.from('registrations')
+        .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).maybeSingle();
+      reg = r2.data;
+    }
 
     // Load team membership (for meet links + capstone editor)
     const { data: membership } = await supabase
@@ -649,8 +682,6 @@
     $('hiName').textContent = profile?.full_name || user.email;
     $('cohortInfo').textContent = `${cohort.name} · ${cohort.starts_on} → ${cohort.ends_on}`;
 
-    const { data: reg } = await supabase.from('registrations')
-      .select('*').eq('user_id', user.id).eq('cohort_id', cohort.id).maybeSingle();
     renderRegStatus(reg);
     toggleEnrollCard(user, cohort, profile, reg);
 
@@ -827,6 +858,11 @@
   }
 
   async function renderActivity(user, cohort, progress) {
+    const qWrap = document.getElementById('quizTableWrap');
+    const sWrap = document.getElementById('subTableWrap');
+    const nWrap = document.getElementById('notesList');
+    if (!qWrap || !sWrap || !nWrap) return;
+
     const [attemptsRes, subsRes] = await Promise.all([
       supabase.from('quiz_attempts').select('*, quizzes!inner(day_number,title,cohort_id)').eq('user_id', user.id).eq('quizzes.cohort_id', cohort.id),
       supabase.from('submissions').select('*, assignments!inner(id,day_number,title,points,cohort_id)').eq('user_id', user.id).eq('assignments.cohort_id', cohort.id),
@@ -834,7 +870,6 @@
     const attempts = attemptsRes.data || [];
     const subs = subsRes.data || [];
 
-    const qWrap = document.getElementById('quizTableWrap');
     if (!attempts.length) {
       qWrap.innerHTML = `<p style="margin:0">No quiz attempts yet.</p>`;
     } else {
@@ -855,7 +890,6 @@
       }</tbody></table>`;
     }
 
-    const sWrap = document.getElementById('subTableWrap');
     if (!subs.length) {
       sWrap.innerHTML = `<p style="margin:0">No submissions yet.</p>`;
     } else {
@@ -880,7 +914,6 @@
       }</tbody></table>`;
     }
 
-    const nWrap = document.getElementById('notesList');
     const notes = (progress || []).filter(lp => lp.notes).sort((a,b) => a.day_number - b.day_number);
     if (!notes.length) {
       nWrap.innerHTML = `<p style="margin:0">No notes yet. Notes live inside each day's lesson page.</p>`;
@@ -1344,7 +1377,9 @@
       ${checkinsHtml}
     `;
 
-    document.getElementById('buddyCheckinBtn').onclick = async () => {
+    const checkBtn = document.getElementById('buddyCheckinBtn');
+    if (!checkBtn) return;
+    checkBtn.onclick = async () => {
       const ta = document.getElementById('buddyCheckinInput');
       const msg = document.getElementById('buddyCheckinMsg');
       const body = (ta?.value || '').trim();
@@ -1363,6 +1398,7 @@
 
   async function renderTeamCard(user, cohort) {
     const card = $('teamCard');
+    if (!card) return;
     if (!cohort) { card.style.display = 'none'; return; }
     const { data: membership } = await supabase
       .from('team_members')
@@ -1412,10 +1448,12 @@
 
   function toggleEnrollCard(user, cohort, profile, reg) {
     const card = $('enrollCard');
+    if (!card || !cohort?.id) return;
     if (reg) { card.style.display = 'none'; return; }
     card.style.display = 'block';
     // Prefill known fields
     const form = $('enrollForm');
+    if (!form) return;
     if (profile?.full_name) form.full_name.value = profile.full_name;
     if (profile?.phone) form.phone.value = profile.phone;
     if (profile?.college) form.college.value = profile.college;
@@ -1484,6 +1522,7 @@
 
   function renderRegStatus(reg) {
     const el = $('regStatus');
+    if (!el) return;
     if (!reg) { el.innerHTML = '<span class="tag tag-cancel">not registered</span>'; return; }
     const map = {
       pending: '<span class="tag tag-pend">pending review</span>',
@@ -1551,9 +1590,12 @@
     const subDone = submittedDays.size;
     const subTotal = milestoneDays.length;
     const subPct = Math.round((subDone / subTotal) * 100);
-    document.getElementById('sbSubsFill').style.width = subPct + '%';
-    document.getElementById('sbSubsCount').textContent = ` ${subDone}/${subTotal}`;
-    document.getElementById('sbSubsPct').textContent = subPct + '%';
+    const sbSubsFill = document.getElementById('sbSubsFill');
+    const sbSubsCount = document.getElementById('sbSubsCount');
+    const sbSubsPct = document.getElementById('sbSubsPct');
+    if (sbSubsFill) sbSubsFill.style.width = subPct + '%';
+    if (sbSubsCount) sbSubsCount.textContent = ` ${subDone}/${subTotal}`;
+    if (sbSubsPct) sbSubsPct.textContent = subPct + '%';
 
     const bestPerQuiz = new Map();
     attempts.forEach(a => {
@@ -1563,9 +1605,12 @@
     const attempted = bestPerQuiz.size;
     const passed = [...bestPerQuiz.values()].filter(a => a.passed).length;
     const qPct = attempted ? Math.round((passed / attempted) * 100) : 0;
-    document.getElementById('sbQuizFill').style.width = qPct + '%';
-    document.getElementById('sbQuizCount').textContent = ` ${passed} passed / ${attempted}`;
-    document.getElementById('sbQuizPct').textContent = attempted ? (qPct + '%') : '—';
+    const sbQuizFill = document.getElementById('sbQuizFill');
+    const sbQuizCount = document.getElementById('sbQuizCount');
+    const sbQuizPct = document.getElementById('sbQuizPct');
+    if (sbQuizFill) sbQuizFill.style.width = qPct + '%';
+    if (sbQuizCount) sbQuizCount.textContent = ` ${passed} passed / ${attempted}`;
+    if (sbQuizPct) sbQuizPct.textContent = attempted ? (qPct + '%') : '—';
 
     const now = Date.now();
     const sessionDays = [...scheduleMap.values()].filter(d => d.live_session_at && new Date(d.live_session_at).getTime() <= now);
@@ -1573,13 +1618,17 @@
     const attendedSet = new Set(attendance.map(a => a.day_number));
     const attended = sessionDays.filter(d => attendedSet.has(d.day_number)).length;
     const aPct = totalSessions ? Math.round((attended / totalSessions) * 100) : 0;
-    document.getElementById('sbAttFill').style.width = aPct + '%';
-    document.getElementById('sbAttCount').textContent = ` ${attended}/${totalSessions}`;
-    document.getElementById('sbAttPct').textContent = totalSessions ? (aPct + '%') : '—';
+    const sbAttFill = document.getElementById('sbAttFill');
+    const sbAttCount = document.getElementById('sbAttCount');
+    const sbAttPct = document.getElementById('sbAttPct');
+    if (sbAttFill) sbAttFill.style.width = aPct + '%';
+    if (sbAttCount) sbAttCount.textContent = ` ${attended}/${totalSessions}`;
+    if (sbAttPct) sbAttPct.textContent = totalSessions ? (aPct + '%') : '—';
   }
 
   function renderWeeks(user, cohort, doneSet, scheduleMap) {
     const container = $('weeksContainer');
+    if (!container) return;
     container.innerHTML = '';
     const now = Date.now();
     const maxWeek = Math.max(...DAYS.map(d => d.w));
