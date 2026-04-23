@@ -223,9 +223,6 @@ export function renderFrontmatterHeader(meta = {}) {
   const parts = [];
 
   const metaBits = [];
-  if (meta.reading_time) {
-    metaBits.push(`<span class="lm-read">⏱ ${escapeHtml(meta.reading_time)}</span>`);
-  }
   if (Array.isArray(meta.tags) && meta.tags.length) {
     metaBits.push(
       `<span class="lm-tags">${meta.tags.map(t => `<span class="tag tag-pend">${escapeHtml(t)}</span>`).join(' ')}</span>`
@@ -277,9 +274,6 @@ export function renderFrontmatterHeader(meta = {}) {
  */
 export function renderMetaStrip(meta = {}) {
   const bits = [];
-  if (meta.reading_time) {
-    bits.push(`<span class="lm-read">⏱ ${escapeHtml(meta.reading_time)}</span>`);
-  }
   if (Array.isArray(meta.tags) && meta.tags.length) {
     bits.push(
       `<span class="lm-tags">${meta.tags.map(t => `<span class="tag tag-pend">${escapeHtml(t)}</span>`).join(' ')}</span>`
