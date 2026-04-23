@@ -1,0 +1,10 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: One agent both researches and writes final client email — quality drops. Day 24 prescription?","type":"single","options":[{"text":"Split roles with a typed handoff (researcher vs writer / planner vs executor).","correct":true},{"text":"Merge more tools into the same agent.","correct":false},{"text":"Delete traces.","correct":false},{"text":"Add a third unrelated agent.","correct":false}],"explanation":"Two narrow agents with clean payloads beat one bloated agent."},
+  {"q":"Look back (Day 23): MCP in one line:","type":"single","options":[{"text":"Standard plug-in layer connecting models to tools and data.","correct":true},{"text":"A quantization format.","correct":false},{"text":"A Slack emoji.","correct":false},{"text":"Only for image models.","correct":false}],"explanation":"Tooling standard before critique + demo checkpoint."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 24
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s24$Scenario: One agent both researches and writes final client email — quality drops. Day 24 prescription?$s24$
+  );

@@ -96,9 +96,9 @@ const $ = (id) => document.getElementById(id);
 
 const WEEK_PLAN = [
   { day: 1, title: 'Program model + cohort operations', objectives: ['Understand 30-day arc and checkpoints','Understand faculty roles, escalation and support channels'], prep: 'Read faculty guide + watch one sample stream replay.', output: 'Explain cohort flow in 3 minutes.' },
-  { day: 2, title: 'Platform mastery + student tracking', objectives: ['Navigate Stream/People/Grades','Use admin-student and analytics pages'], prep: 'Open all key pages and complete dry run.', output: 'Complete operations checklist without support.' },
+  { day: 2, title: 'Platform mastery + student tracking', objectives: ['Navigate Stream, People, Insights, Stuck, Home, Schedule (view)','Know which screens are trainer-only'], prep: 'Walk Home → Faculty hub → Schedule with a trainer account side-by-side.', output: 'Complete support-faculty checklist without admin pages.' },
   { day: 3, title: 'Facilitation craft + intervention', objectives: ['Run opening, transitions, pair work','Handle stuck queue interventions'], prep: 'Practice with day lesson script.', output: 'Run a 20-min mock session.' },
-  { day: 4, title: 'Assessment, grading, and feedback', objectives: ['Apply rubric consistently','Give actionable feedback'], prep: 'Review rubric and sample submissions.', output: 'Grade 5 samples within variance threshold.' },
+  { day: 4, title: 'Coaching for quality (grading awareness)', objectives: ['Read the rubric your trainer uses','Coach students toward rubric criteria without scoring'], prep: 'Review sample submissions with a trainer.', output: 'Give two coached revisions; trainer owns final scores.' },
   { day: 5, title: 'Safety, policy, and escalation', objectives: ['Identify misuse/risk patterns','Escalate incidents correctly'], prep: 'Review policy scenarios.', output: 'Resolve 5 incident simulations.' },
   { day: 6, title: 'Demo coaching + support workflow', objectives: ['Coach story, clarity, timing','Prioritize rehearsal blockers'], prep: 'Observe one rehearsal recording.', output: 'Provide rubric-linked demo feedback.' },
   { day: 7, title: 'Certification drill + go-live readiness', objectives: ['Pass quiz and practical checkpoints','Complete setup and pre-flight checks'], prep: 'Complete all pending modules.', output: 'Certification unlocked + go-live signoff.' },
@@ -113,13 +113,13 @@ const QUIZ = [
   { q: 'Best grading practice?', c: ['Grade by intuition','Use rubric criteria and leave actionable comments','Only assign numeric score','Grade only top students'], a: 1 },
   { q: 'During class, what is highest leverage?', c: ['Long faculty monologue','One demo + immediate student practice loops','Skip check-ins','Wait for questions'], a: 1 },
   { q: 'If API/tool fails in live session, do:', c: ['Cancel class','Switch to fallback plan and keep objective','Ask students to self-study','Ignore issue'], a: 1 },
-  { q: 'Progress tracking page for cohort trends:', c: ['index.html','admin-analytics.html','showcase.html','search.html'], a: 1 },
+  { q: 'Support faculty: where to see pod/cohort learning trends?', c: ['admin-analytics.html (trainer only)','Faculty hub → Insights','index.html','admin-pods.html'], a: 1 },
 ];
 
 const PRACTICALS = [
   'Run a mock session (20 min) with opening + guided practice + wrap-up.',
   'Triage 3 simulated stuck cases and log follow-up actions.',
-  'Grade 5 sample submissions with rubric and comments.',
+  'Shadow a trainer grading pass or coach two students using the rubric (trainer scores).',
   'Use analytics to identify at-risk learners and propose intervention.',
   'Publish one post-class recap + next-day prep note.',
 ];

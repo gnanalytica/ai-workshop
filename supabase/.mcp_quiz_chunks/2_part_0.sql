@@ -1,0 +1,10 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Flow posts to Slack automatically after the LLM step. Where is human-in-the-loop most urgent?","type":"single","options":[{"text":"Before send/publish or irreversible data writes — align with Day 20 dry-run choice.","correct":true},{"text":"Only before the trigger fires.","correct":false},{"text":"Never — speed beats safety.","correct":false},{"text":"After users complain.","correct":false}],"explanation":"Approval gates belong on high-impact side effects."},
+  {"q":"Look back (Day 19): AGENTS.md vs CLAUDE.md:","type":"single","options":[{"text":"AGENTS.md is vendor-neutral harness context; CLAUDE.md is Claude-Code-native.","correct":true},{"text":"AGENTS.md is always longer.","correct":false},{"text":"Only Claude reads markdown.","correct":false},{"text":"They cannot coexist.","correct":false}],"explanation":"Context files echo into vibe-coding week."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 20
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s20$Scenario: Flow posts to Slack automatically after the LLM step. Where is human-in-the-loop most urgent?$s20$
+  );

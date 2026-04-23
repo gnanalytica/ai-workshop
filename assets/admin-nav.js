@@ -25,7 +25,7 @@ const NAV_ICONS = {
 export const ADMIN_PAGES = [
   { href: 'admin-home.html', label: 'Home', group: 'cohort', icon: 'home' },
   { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
-  { href: 'faculty.html', label: 'Faculty', group: 'cohort', icon: 'users2' },
+  { href: 'faculty.html', label: 'Faculty hub', group: 'cohort', icon: 'users2' },
   { href: 'admin-content.html', label: 'Content', group: 'classwork', icon: 'file' },
   { href: 'admin.html', label: 'Registrations', group: 'people', icon: 'users' },
   { href: 'admin-teams.html', label: 'Teams', group: 'people', icon: 'users2' },
@@ -37,6 +37,14 @@ export const ADMIN_PAGES = [
   { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
   { href: 'admin-analytics.html', label: 'Analytics', group: 'insights', icon: 'chart' },
   { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', icon: 'book', adminOnly: true },
+];
+
+/** Support faculty: day-of triage + read-only schedule + home pulse — no curriculum, grading, or roster tools. */
+export const SUPPORT_FACULTY_PAGES = [
+  { href: 'admin-home.html', label: 'Home', group: 'cohort', icon: 'home' },
+  { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
+  { href: 'faculty.html', label: 'Faculty hub', group: 'cohort', icon: 'users2' },
+  { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
 ];
 
 const GROUP_LABEL = {
@@ -158,7 +166,10 @@ export function renderAdminNav(active, opts = {}) {
     typeof opts.alsoFaculty === 'boolean'
       ? opts.alsoFaculty
       : Array.isArray(window.facultyCohortIds) && window.facultyCohortIds.length > 0;
-  const pages = ADMIN_PAGES.filter((p) => !p.adminOnly || role === 'admin');
+  const pages =
+    role === 'faculty'
+      ? SUPPORT_FACULTY_PAGES
+      : ADMIN_PAGES.filter((p) => !p.adminOnly || role === 'admin');
 
   const byGroup = {};
   pages.forEach((p) => {
@@ -187,6 +198,26 @@ export function renderAdminNav(active, opts = {}) {
     })
     .join('');
 
+  const FACULTY_HUB_TABS = [
+    ['stream', 'Stream'],
+    ['agenda', 'Agenda'],
+    ['people', 'People'],
+    ['grades', 'Insights'],
+    ['guide', 'Guide'],
+  ];
+  const facultyHubSub =
+    active === 'faculty.html'
+      ? `<div class="admin-nav-faculty-sub" role="navigation" aria-label="Faculty hub sections">
+          <div class="admin-nav-faculty-sub__label">In this hub</div>
+          <div class="admin-nav-faculty-sub__links">
+            ${FACULTY_HUB_TABS.map(
+              ([hash, label]) =>
+                `<a href="faculty.html#${hash}" class="admin-nav-faculty-link" data-fac-tab="${hash}">${label}</a>`,
+            ).join('')}
+          </div>
+        </div>`
+      : '';
+
   const badge = role === 'faculty' ? `<span class="admin-nav-badge">Faculty</span>` : '';
   const switcher =
     role === 'admin' && alsoFaculty
@@ -200,6 +231,7 @@ export function renderAdminNav(active, opts = {}) {
     </div>
     <div class="admin-nav-aside__scroll">
       ${navBlocks}
+      ${facultyHubSub}
       <div class="admin-nav-footer">${badge}${switcher}</div>
     </div>
   </aside>`;

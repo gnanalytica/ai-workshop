@@ -1,0 +1,9 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You need grounded answers on your own syllabus PDFs only — no open web. Best primary tool class from Day 3?","type":"single","options":[{"text":"Private index / notebook over YOUR sources (e.g. NotebookLM-style).","correct":true},{"text":"Default generic chat with browsing only.","correct":false},{"text":"Image generation.","correct":false},{"text":"Browser automation only.","correct":false}],"explanation":"Match tool class to constraint: your corpus, closed world."},
+  {"q":"Look back (Day 2): Memory in ChatGPT projects vs frozen model weights — which is true?","type":"single","options":[{"text":"App memory injects prior facts into the prompt; weights do not change per chat.","correct":true},{"text":"Each message retrains the weights live.","correct":false},{"text":"Memory and weights are identical concepts.","correct":false},{"text":"Open models cannot use memory.","correct":false}],"explanation":"Re-grounds the Day-2 stack before tool routing deepens."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 3
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s3$Scenario: You need grounded answers on your own syllabus PDFs only — no open web. Best primary tool class from Day 3?$s3$;

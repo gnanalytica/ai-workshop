@@ -1,5 +1,5 @@
 ---
-reading_time: 16 min
+reading_time: 18 min
 tldr: "Stop typing code and start directing it — ship your capstone v0 by the end of today."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/LCEmiRjPEtQ
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** On a film set, the **director** decides the shot, pace, and emotional beat; the **camera operator** executes hands and focus. If the director grabs the tripod every take, the movie never finishes.
+
+**Why it matches today.** Vibe-coding is **director-not-typist**: you keep intent, constraints, and approvals; the tool handles keystrokes.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 20) you built an n8n flow that automates action. The day before (Day 19) you wrote a CLAUDE.md that gives AI context. Today those two combine: the CLAUDE.md is your director's brief, and the vibe-coding tool is the worker — you specify, it types. If your Day 19 CLAUDE.md is stale, **update it before class starts** — every bad guess the model makes today traces back to missing or wrong context in that file.
 
@@ -71,6 +79,8 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open confession**: raise a hand if you typed more code than you specced yesterday. Keep it up if you regretted it.
 - **Think-pair-share**: in 90 seconds, each partner reads the other's 4-part spec out loud; catch the one missing acceptance criterion.
 - **Live poll**: tight leash or long leash for your next change? Post T or L in chat with one-line reason.
@@ -178,9 +188,11 @@ Run 5–8 spec → code → review → iterate turns on your v0 until the smalle
 
 **Prompt:** *"Where in today's loop did I stop being a director and start being a typist? Name the exact turn and what triggered it."* A strong reflection names the spec that was too thin, the review step that got skipped, or the moment the conversation drifted past turn 7.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
 
-Five on the dashboard:
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
+
+Themes below mirror the dashboard (exact count varies; includes transfer + spaced-recall items):
 1. What are the four parts of a good spec?
 2. When should you use a long-leash agent vs a tight-leash chat?
 3. What is the "read the stack trace to the model" reflex for?
@@ -190,6 +202,11 @@ Five on the dashboard:
 ### 4. Submit (~5 min)
 
 Post the Milestone 3 submission on the cohort dashboard: (a) repo link, (b) 90-second recording link, (c) 200-word director's commentary. Drop the recording link in the cohort channel so teammates can react.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 - **Extra video**: another pass through the [LCEmiRjPEtQ walkthrough](https://www.youtube.com/embed/LCEmiRjPEtQ) at 1.5x, this time with your own repo open.

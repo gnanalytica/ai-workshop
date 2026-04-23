@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Pixels are free now. Today you generate a poster and a ten-second video for your capstone pitch."
 tags: ["exposure", "tools"]
 video: https://www.youtube.com/embed/5deYUaqwreo
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Ordering a custom cake: flavor, size, who it is for, style (minimal vs extra), and "no nuts" — vague "make it nice" gets a generic cake. The shop needs **slots**, not vibes.
+
+**Why it matches today.** Image and video models are the same: the **six-slot prompt** is your order form; diffusion is the kitchen that bakes from it.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 7) you built your first grounded research brief — Perplexity Pro Search for breadth, NotebookLM's private index + Audio Overview for depth, Gemini Deep Research for the long crawl — and you learned the 4-step hallucination check (click the citation; confirm source; confirm claim; check the date). That discipline transfers directly: today's "click every citation" becomes "specify every slot". A generic poster is a hallucinated poster — the model filled in gaps you didn't. The six-slot template is tonight's grounding.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **One-line cold open**: type your capstone tagline into the chat in under 10 words. We read three at random and guess what the product is — if we cannot guess, your tagline is the first problem.
 - **Think-pair-share**: in 90 seconds, swap prompts with a neighbor. Each person rewrites the other's prompt using the six-slot template (subject, action, setting, style, composition, modifiers). Notice how many adjectives get replaced by nouns.
 - **Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
@@ -173,7 +182,9 @@ Block the evening. Phone on DND. Do these in order.
 
 *Which of the six prompt slots did you under-specify, and how did that show up in the image?* A good reflection picks one slot (setting, composition, modifiers…) and names the specific noun you should have used instead of an adjective — "brass tiffin on wooden bench" vs "beautiful Indian object". Shows you can debug a prompt, not just generate one.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Three checks on the dashboard. In one sentence, what is a diffusion model doing? Which tool would you trust for a commercially safe LinkedIn banner, and why not Midjourney? What is the single prompt change that most reliably improves a mediocre video — a fancier adjective, an explicit camera motion, or a longer clip?
 
@@ -186,6 +197,10 @@ Post to the cohort showcase with `#day08-showcase` before 11 pm:
 3. A one-line tagline for your capstone. No essay — let the visual sell it.
 
 This is your daily artifact. It is also a preview of your Friday ideathon pitch.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
 
 ### 5. Deepen (optional, ~30 min)
 

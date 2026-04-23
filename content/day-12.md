@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Design thinking is not sticky-note theatre — it is a disciplined loop of divergence and convergence, and today you run all five stages on your capstone."
 tags: ["design", "design-thinking", "capstone", "process"]
 video: https://www.youtube.com/embed/ldYzbV0NDp8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A test kitchen: brainstorm many dishes (diverge), taste and kill half (converge), plate one prototype, watch people eat it (test). Sticky notes without tasting is theatre; tasting without variety is a single stubborn recipe.
+
+**Why it matches today.** The five design-thinking stages are that kitchen loop applied to your capstone — **Empathize → Define → Ideate → Prototype → Test**.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 11) you rewrote your capstone problem three times — v1 Heilmeier long-form, v2 150 words, v3 on a sticky note — plus a 5-Whys root cause and a How Might We reframe. That v3 sticky note is *today's Define column anchor*. The three weasel words you cut from v1? Those are your clue to the assumptions hiding in Empathize. The HMW line is the bridge between Define and Ideate. Bring all of it into FigJam — today is not fresh thinking, it is the thinking of Day 11 in structured form.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open**: raise a hand if you have already decided what to build. Instructor calls on 2 hands and asks "which stage did you skip to get there?"
 - **Think-pair-share**: 90 seconds — tell your partner one assumption about your user you have NOT verified, and what evidence would change your mind.
 - **Diverge drill**: everyone generates 10 capstone ideas in 3 minutes; no judgement, no editing; count them out loud.
@@ -157,13 +166,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *Where did I converge too early today?* A strong reflection names the exact stage (usually Ideate), the idea you clung to before you had earned it, and the specific evidence you still need before locking it in.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
 
 ### 4. Submit (~5 min)
 
 Submit a screenshot of your full 5-column FigJam board to the cohort channel. Include your POV statement in the post body as plain text. Also share the one gap Claude surfaced that stung the most — and how you plan to close it before Day 14.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

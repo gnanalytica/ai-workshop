@@ -134,6 +134,52 @@ export async function facultyVBarChart(canvas, { labels, values, label }) {
   return chart;
 }
 
+/** Multi-series line chart (e.g. activity by cohort week). */
+export async function facultyLineChart(canvas, { labels, datasets }) {
+  const Chart = await loadChart();
+  destroyFacultyChart(canvas);
+  const c = facultyChartColors();
+  const palette = [c.accent, c.accent4, c.accent2, c.accent3];
+  const chart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: (datasets || []).map((ds, i) => {
+        const col = ds.borderColor || palette[i % palette.length];
+        return {
+          label: ds.label || `Series ${i + 1}`,
+          data: ds.data || [],
+          borderColor: col,
+          backgroundColor: ds.backgroundColor || `${col}22`,
+          fill: !!ds.fill,
+          tension: ds.tension ?? 0.25,
+          pointRadius: ds.pointRadius ?? 3,
+          borderWidth: 2,
+        };
+      }),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: basePlugins(c),
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: c.muted, precision: 0 },
+          grid: { color: `${c.line}55` },
+        },
+        x: {
+          ticks: { color: c.muted, font: { size: 10 } },
+          grid: { color: `${c.line}33` },
+        },
+      },
+    },
+  });
+  canvas._facultyChart = chart;
+  return chart;
+}
+
 /** Doughnut with explicit segment colors. */
 export async function facultyDoughnutChart(canvas, { labels, values, colors }) {
   const Chart = await loadChart();

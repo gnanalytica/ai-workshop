@@ -422,7 +422,7 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { DAYS } from './assets/days.js';
   import { toast, confirmDialog, promptField } from './assets/dialog.js';
@@ -576,12 +576,29 @@
     });
   }
 
+  function trimHomeForSupportFacultyUI() {
+    if (!isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) return;
+    document.querySelectorAll('.home-subtab[data-tab="announcements"], .home-subtab[data-tab="polls"]').forEach((el) => el.remove());
+    $('homeSectionAnnouncements')?.remove();
+    $('homeSectionPolls')?.remove();
+    $('pendingGrading')?.closest('.card')?.remove();
+    const ar = document.querySelector('#atRiskList')?.closest('.card')?.querySelector('a.more');
+    if (ar) {
+      ar.setAttribute('href', 'faculty.html#people');
+      ar.textContent = 'Open People →';
+    }
+    if (location.hash === '#announcements' || location.hash === '#polls') {
+      history.replaceState(null, '', '#overview');
+    }
+  }
+
   async function onAuth(user) {
     currentUser = user;
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
     show('panel');
+    trimHomeForSupportFacultyUI();
     $('adminNav').innerHTML = renderAdminNav('admin-home.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
     wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
@@ -617,9 +634,11 @@
     }
     COHORT = def;
     await loadAll();
-    await homeAnnLoad();
-    homeAnnResubscribe();
-    await ensurePollsMounted();
+    if (!isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) {
+      await homeAnnLoad();
+      homeAnnResubscribe();
+      await ensurePollsMounted();
+    }
     routeHomeTab();
   }
 
@@ -818,10 +837,12 @@
     if (!top.length) { host.innerHTML = `<div class="empty">Nobody at risk — nice.</div>`; return; }
     host.innerHTML = top.map(r => {
       const p = profMap.get(r.uid);
+      const drillHref = IS_ADMIN ? `admin-student.html?u=${esc(r.uid)}` : 'faculty.html#people';
+      const drillLabel = IS_ADMIN ? 'View' : 'People';
       return `<div class="row">
         <div class="who"><b>${esc(p?.full_name || '—')}</b><span>${esc(p?.college || '')} · ${r.last ? 'last '+esc(rel(r.last)) : 'no activity'}</span></div>
         <div class="reason">${esc(r.reason)}</div>
-        <a class="btn-sm" href="admin-student.html?u=${esc(r.uid)}">View</a>
+        <a class="btn-sm" href="${drillHref}">${drillLabel}</a>
       </div>`;
     }).join('');
   }

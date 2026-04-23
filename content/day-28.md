@@ -1,5 +1,5 @@
 ---
-reading_time: 10 min
+reading_time: 12 min
 tldr: "You cannot read everything — today you build a 5-source signal pipeline that keeps you current in 30 minutes a week."
 tags: ["launch", "learning", "habits", "signal"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Instead of doom-scrolling every headline, you pick **five** trusted channels — one paper, one podcast, one group chat — and skim them Friday morning with coffee. Quality beats quantity; random feeds eat your life.
+
+**Why it matches today.** Your AI signal pipeline is that curated **news diet**: fixed sources, fixed time, hype filtered on purpose.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 27 you picked your capstone's primary + fallback model based on benchmarks and a private eval. That discipline — *private eval beats leaderboard headline* — is exactly the lens today's pipeline is filtering for. You're building the feed that stays honest about hype.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold open**: one-line write-in — "the last AI thing you read that actually changed how you build." No lurking; everyone posts.
 - **Teaching beat**: 10 minutes demoing the 3-minute paper skim live on a paper from HuggingFace Daily Papers that dropped this week.
 - **Back to your team's build**: pick your 5 sources (1 newsletter, 1 podcast, 1 YouTube, 1 X list, 1 paper feed). Instructor does rounds, raise hand for unblocking.
@@ -181,7 +190,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 If you could keep only 1 of your 5 sources for a year, which one and why? Star it in the doc.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. Why is "read everything" a failed strategy?
 2. Name one newsletter, one podcast, one YouTube channel worth following.
 3. What three parts do you skim first in a paper?
@@ -191,6 +202,11 @@ If you could keep only 1 of your 5 sources for a year, which one and why? Star i
 ### 4. Submit the assignment (~5 min)
 
 **Weekly deliverable**: your AI Signal Pipeline doc. 5 sources + channel + frequency + why you picked each. Post in cohort channel. Continued capstone build — you are two days from demo.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: one [Dwarkesh Patel](https://www.youtube.com/@DwarkeshPatel) long-form at 1.5x on your next commute.

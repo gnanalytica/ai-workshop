@@ -105,6 +105,7 @@
     <div>
       <div class="kicker" id="cohortKicker">Schedule</div>
       <h1 style="margin:6px 0 0">Day-by-day schedule</h1>
+      <p class="muted" id="scheduleRoNote" style="display:none;font-size:13px;margin:8px 0 0;line-height:1.45">View only — unlocking days, times, and Meet links are managed by program trainers.</p>
     </div>
     <div class="cohort-picker">
       <label class="muted" style="font-size:12px">Cohort</label>
@@ -118,7 +119,7 @@
     <div class="sum-card"><div class="sum-n" id="sNextAt">—</div><div class="sum-l">Next live session</div></div>
   </div>
 
-  <div class="bulk-row" style="flex-wrap:wrap;gap:10px;align-items:center">
+  <div class="bulk-row" id="scheduleBulkRow" style="flex-wrap:wrap;gap:10px;align-items:center">
     <button class="bulk-btn" id="bulkBtn" title="Unlock all days whose session time has arrived (or days elapsed since start)">Unlock through today</button>
     <div style="width:1px;height:22px;background:var(--line);margin:0 4px"></div>
     <span class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.12em">Bulk</span>
@@ -139,14 +140,20 @@
     <div class="msg" id="topMsg" style="margin:0;flex:1 0 100%"></div>
   </div>
 
-  <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px">
+  <div id="cohortMeetCard" style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px">
     <div class="kicker" style="margin-bottom:6px">Cohort Meet link</div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input type="text" id="cohortMeetInput" placeholder="https://meet.google.com/…" style="flex:1;min-width:260px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
-      <button class="save-btn" id="cohortMeetSave">Save cohort Meet</button>
-      <span class="saved-flash" id="cohortMeetFlash">✓ saved</span>
+    <div id="cohortMeetTrainer">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="cohortMeetInput" placeholder="https://meet.google.com/…" style="flex:1;min-width:260px;background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none" />
+        <button class="save-btn" id="cohortMeetSave">Save cohort Meet</button>
+        <span class="saved-flash" id="cohortMeetFlash">✓ saved</span>
+      </div>
+      <div class="muted" style="font-size:12px;margin-top:8px">Shown to students as "Join cohort Meet" when a live session is within ±12h.</div>
     </div>
-    <div class="muted" style="font-size:12px;margin-top:8px">Shown to students as "Join cohort Meet" when a live session is within ±12h.</div>
+    <div id="cohortMeetSupport" style="display:none">
+      <div id="cohortMeetRoVal" style="font-size:13.5px;word-break:break-word;line-height:1.45"></div>
+      <div class="muted" style="font-size:12px;margin-top:8px;line-height:1.45">Default meeting students see when a live session is within ±12h.</div>
+    </div>
   </div>
 
   <div id="weeks"></div>
@@ -157,13 +164,16 @@
 <script type="module">
   import { supabase, COHORT_SLUG } from './assets/supabase.js';
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
   import { DAYS, WEEK_TITLES } from './assets/days.js';
 
   const $ = (id) => document.getElementById(id);
   let IS_ADMIN = false, IS_FACULTY = false, FACULTY_COHORT_IDS = [];
+  let SCHEDULE_READ_ONLY = false;
+
+  const CAPSTONE_KIND_LABELS = { spec_review: 'Spec review', mid_review: 'Mid review', demo_day: 'Demo day' };
 
   let COHORTS = [];
   let CURRENT_COHORT = null;
@@ -200,6 +210,7 @@
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
+    SCHEDULE_READ_ONLY = isSupportFacultyOnly(IS_ADMIN, IS_FACULTY);
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin-schedule.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
     wrapAdminMainLayout();
@@ -226,6 +237,7 @@
     CURRENT_COHORT = COHORTS.find(c => c.id === cohortId);
     $('cohortKicker').textContent = CURRENT_COHORT ? `${CURRENT_COHORT.name} · starts ${CURRENT_COHORT.starts_on || '—'}` : 'Schedule';
     $('cohortMeetInput').value = CURRENT_COHORT?.meet_link || '';
+    refreshCohortMeetReadOnly();
 
     const { data, error } = await supabase.from('cohort_days').select('*').eq('cohort_id', cohortId).order('day_number', { ascending: true });
     if (error) { topMsg(error.message, 'err'); return; }
@@ -266,9 +278,81 @@
     }).join('');
     container.innerHTML = html;
     container.querySelectorAll('[data-day]').forEach(wireCard);
+    applyScheduleReadOnlyUI();
+  }
+
+  function refreshCohortMeetReadOnly() {
+    const valEl = $('cohortMeetRoVal');
+    if (!valEl) return;
+    const link = (CURRENT_COHORT && CURRENT_COHORT.meet_link) || ($('cohortMeetInput') && $('cohortMeetInput').value.trim()) || '';
+    if (link) {
+      valEl.innerHTML = `<a href="${esc(link)}" target="_blank" rel="noopener">${esc(link)}</a>`;
+    } else {
+      valEl.innerHTML = '<span class="muted">Not set</span>';
+    }
+  }
+
+  function applyScheduleReadOnlyUI() {
+    const ro = SCHEDULE_READ_ONLY;
+    const note = $('scheduleRoNote');
+    if (note) note.style.display = ro ? 'block' : 'none';
+    const bulk = $('scheduleBulkRow');
+    if (bulk) bulk.style.display = ro ? 'none' : '';
+    document.querySelectorAll('.bulk-row .bulk-btn, .bulk-row #selectWeek').forEach((el) => {
+      el.disabled = ro;
+      if (el.classList?.contains('bulk-btn')) el.style.opacity = ro ? '0.55' : '';
+    });
+    document.querySelectorAll('.day-card:not(.day-card--readonly)').forEach((card) => {
+      card.querySelectorAll('input, textarea, select').forEach((el) => {
+        el.disabled = ro;
+      });
+      const save = card.querySelector('[data-save]');
+      if (save) save.style.display = ro ? 'none' : '';
+    });
+    const meetTrainer = $('cohortMeetTrainer');
+    const meetSupport = $('cohortMeetSupport');
+    if (meetTrainer && meetSupport) {
+      meetTrainer.style.display = ro ? 'none' : '';
+      meetSupport.style.display = ro ? 'block' : 'none';
+      if (ro) refreshCohortMeetReadOnly();
+    }
+  }
+
+  function dayCardReadOnlyHtml(d) {
+    const row = DAY_ROWS.get(d.n) || { day_number: d.n, is_unlocked: false, live_session_at: null, meet_link: '', notes: '', capstone_kind: null };
+    const live = row.live_session_at ? fmtDate(row.live_session_at) : '—';
+    const meet = row.meet_link
+      ? `<a href="${esc(row.meet_link)}" target="_blank" rel="noopener">${esc(row.meet_link)}</a>`
+      : '<span class="muted">—</span>';
+    const cap =
+      row.capstone_kind && CAPSTONE_KIND_LABELS[row.capstone_kind]
+        ? esc(CAPSTONE_KIND_LABELS[row.capstone_kind])
+        : row.capstone_kind
+          ? esc(row.capstone_kind)
+          : '<span class="muted">—</span>';
+    const notesBlock = row.notes
+      ? `<div style="grid-column:1/-1;margin-top:4px"><span class="day-ro-k">Notes</span><div style="line-height:1.45">${esc(row.notes)}</div></div>`
+      : '';
+    return `
+      <div class="day-card day-card--readonly ${row.is_unlocked ? 'unlocked' : ''}" data-day="${d.n}" data-week="${d.w}">
+        <div class="day-head">
+          <div>
+            <div class="day-n">DAY ${String(d.n).padStart(2,'0')}</div>
+            <div class="day-title">${esc(d.title)}</div>
+          </div>
+          ${row.is_unlocked ? '<span class="tag tag-ok">Unlocked</span>' : '<span class="tag tag-pend">Locked</span>'}
+        </div>
+        <div class="day-ro-grid">
+          <div><span class="day-ro-k">Live session</span><div>${esc(live)}</div></div>
+          <div><span class="day-ro-k">Meet link</span><div>${meet}</div></div>
+          <div><span class="day-ro-k">Capstone type</span><div>${cap}</div></div>
+          ${notesBlock}
+        </div>
+      </div>`;
   }
 
   function dayCardHtml(d) {
+    if (SCHEDULE_READ_ONLY) return dayCardReadOnlyHtml(d);
     const row = DAY_ROWS.get(d.n) || { day_number: d.n, is_unlocked: false, live_session_at: null, meet_link: '', notes: '', capstone_kind: null };
     const dtVal = row.live_session_at ? toLocalInput(row.live_session_at) : '';
     return `
@@ -318,8 +402,9 @@
   }
 
   function wireCard(card) {
-    const n = Number(card.dataset.day);
     const btn = card.querySelector('[data-save]');
+    if (!btn) return;
+    const n = Number(card.dataset.day);
     const flash = card.querySelector('[data-flash]');
     btn.addEventListener('click', async () => {
       btn.disabled = true; btn.textContent = 'Saving…';
@@ -362,7 +447,7 @@
   }
 
   $('cohortMeetSave').addEventListener('click', async () => {
-    if (!CURRENT_COHORT) return;
+    if (SCHEDULE_READ_ONLY || !CURRENT_COHORT) return;
     const btn = $('cohortMeetSave'); const flash = $('cohortMeetFlash');
     const val = $('cohortMeetInput').value.trim() || null;
     btn.disabled = true; btn.textContent = 'Saving…';

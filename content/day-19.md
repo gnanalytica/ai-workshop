@@ -1,5 +1,5 @@
 ---
-reading_time: 15 min
+reading_time: 17 min
 tldr: "Stop re-prompting. Write CLAUDE.md + AGENTS.md once so your AI remembers your project every time — the real unlock of 2026."
 tags: ["build", "technical"]
 video: https://www.youtube.com/embed/ASAaKhK1B5w
@@ -28,7 +28,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A new hire gets a **employee handbook** on day one: dress code, how expenses work, who to ping for keys. They do not re-negotiate those rules every morning — they reread the same binder.
+
+**Why it matches today.** CLAUDE.md / AGENTS.md are that handbook for the AI: **stable rules** the session opens with, instead of you re-explaining the repo each chat.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 18) you built a RAG bot and learned that giving the LLM *your data* beats a bigger model every time. Today extends that principle one level up: giving the LLM *your project's rules* beats better prompting every time. CLAUDE.md is to your repo what RAG is to your PDFs — persistent context the model reads automatically instead of you re-typing it each chat.
 
@@ -76,6 +84,8 @@ The lab wants a real repo open in a real AI harness — no toy project, no scrat
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open**: instructor opens two fresh Claude Code sessions on the same repo — one with a strong CLAUDE.md, one without — asks the same question; class times the difference.
 - **Think-pair-share**: in 90 seconds, list the 3 things you re-explain to AI every single chat on your capstone.
 - **Live draft**: instructor writes a "Common Pitfalls" section on-screen from a real bug they hit; class nominates the next rule to add.
@@ -211,13 +221,20 @@ Commit a CLAUDE.md + AGENTS.md + 3 slash commands tonight — future-you will th
 
 **Prompt:** *"Which rule will save me the most hours — and how would I know if the AI violated it?"* A strong reflection quotes the exact rule verbatim, names the past pain it prevents, and defines a testable failure signal (code review catches it, a hook blocks it, a lint rule fires).
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four to ponder on the dashboard: What's the difference between CLAUDE.md, AGENTS.md, and `.cursorrules`? Why is 2000 lines of CLAUDE.md worse than 200? What's a slash command actually — magic or just a saved prompt? What's a hook, and when would you choose a hook over a rule in CLAUDE.md?
 
 ### 4. Submit the assignment (~5 min)
 
 Post to the cohort channel: a screenshot of your repo's root showing CLAUDE.md + AGENTS.md + `.claude/commands/`, and one example task where CLAUDE.md made the AI noticeably smarter on the first try.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 - [ ] Add one hook in `.claude/settings.json` (e.g. auto-format after edits) — see the Claude Code hooks guide at https://docs.claude.com/claude-code.

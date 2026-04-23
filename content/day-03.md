@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "You don't need to know every AI tool. You need to know which class of tool fits the job in front of you. Today you map it."
 tags: ["foundations", "tools"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A kitchen has knives, ladles, and a pressure cooker — using a knife to stir soup is not "bravery," it is the wrong category. You do not need 200 gadgets; you need the right *class* of tool for the dish.
+
+**Why it matches today.** "Seven classes" of AI tools is the same discipline: match **job shape** (chat vs research vs creative vs code) before you obsess over brand names.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday you opened the box — tokens, weights, attention. You tokenized your name, a Hindi word, an emoji, and watched why "Bengaluru" costs 3 tokens while "hello" costs 1. Crucially: weights are the model's "brain," and different models have different weights. Today that idea gets operational. If weights are the brain, then **open weights** = brain you can download and inspect; **closed weights** = brain behind an API. That distinction routes half your tool decisions.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open shout-out**: "Name a job you did this week where AI would have helped but you didn't use it." Call on 3 students. Instructor classifies each job into a tool class live.
 - **Think-pair-share**: 90 seconds on *"Which AI tool do you use daily? Which have you never opened even once?"* Spot the asymmetry.
 - **Live demo**: instructor does the same research prompt on ChatGPT, Perplexity, and Sarvam. Three outputs, three personalities. Class votes which won.
@@ -116,6 +125,11 @@ India is building AI, not importing it. Three names to remember:
 #### 4. Research / knowledge work
 
 Not general chat — tools optimised for citations, sources, deep research.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 - **Perplexity** — AI search with sources. Replaces 80% of Google for many users.
 - **NotebookLM** (Google) — upload your own docs, ask grounded questions. Audio overviews.
@@ -230,7 +244,9 @@ Block the evening. Phone on DND. Do these in order.
 
 **Prompt**: *"If you had ₹10,000 to bet on one Indian AI company for the next 3 years, which one and why?"* A good reflection names a specific company, ties your bet to a concrete moat (language coverage, existing revenue, founder track record), and doesn't just repeat hype. Jot a few lines for your own record.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four quick ones on tool classes, open vs closed weights, the Indian AI stack, and the "which tool for which job" heuristics. Available on the dashboard. Don't memorise brands — memorise *why* each class exists.
 

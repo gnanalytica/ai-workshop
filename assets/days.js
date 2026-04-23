@@ -1,16 +1,16 @@
 export const DAYS = [
   // Week 1 — Foundations
   { n: 1,  w: 1, title: "What AI is + where it's used in real life" },
-  { n: 2,  w: 1, title: "Inside an LLM: tokens + attention" },
-  { n: 3,  w: 1, title: "Tool selection playbook — which AI tool for which job" },
+  { n: 2,  w: 1, title: "Inside an LLM: tokens, weights, attention" },
+  { n: 3,  w: 1, title: "AI tool landscape + selection playbook" },
   { n: 4,  w: 1, title: "Prompting fundamentals + context basics" },
-  { n: 5,  w: 1, title: "Workshop: AI wins show-and-tell" },
+  { n: 5,  w: 1, title: "Show-and-tell: Personal AI Stack v1" },
 
   // Week 2 — Applied tools + opportunity discovery
-  { n: 6,  w: 2, title: "Chat as thinking partner" },
+  { n: 6,  w: 2, title: "Frontier chat: fast vs reasoning + memory/projects" },
   { n: 7,  w: 2, title: "Research: Perplexity + NotebookLM + Deep Research" },
   { n: 8,  w: 2, title: "Creativity: images + video" },
-  { n: 9,  w: 2, title: "Meetings, presentations + voice" },
+  { n: 9,  w: 2, title: "Meetings + voice: batch pipeline & realtime agents" },
   { n: 10, w: 2, title: "Ideathon 1 + Capstone kickoff", checkpoint: "Capstone kickoff" },
 
   // Week 3 — Problem framing + user validation
@@ -22,15 +22,15 @@ export const DAYS = [
 
   // Week 4 — Build foundations (data, retrieval, eval, automation)
   { n: 16, w: 4, title: "Build setup: GitHub + localhost + APIs" },
-  { n: 17, w: 4, title: "Prompt iteration + evaluation loops" },
-  { n: 18, w: 4, title: "Embeddings + RAG foundations" },
-  { n: 19, w: 4, title: "Context engineering: CLAUDE.md + AGENTS.md + evals" },
-  { n: 20, w: 4, title: "RAG tuning + GraphRAG decisioning" },
+  { n: 17, w: 4, title: "Local/cloud LLMs + eval loops (Langfuse)" },
+  { n: 18, w: 4, title: "RAG foundations + prompt vs fine-tune + multimodal" },
+  { n: 19, w: 4, title: "Context engineering: CLAUDE.md + AGENTS.md + slash commands" },
+  { n: 20, w: 4, title: "Workflow automation: n8n + browser agents" },
 
   // Week 5 — Prototype, deploy, orchestrate
   { n: 21, w: 5, title: "Vibe-code your capstone v0", checkpoint: "v0 prototype" },
   { n: 22, w: 5, title: "Ship: deploy, cost, UX, discoverability" },
-  { n: 23, w: 5, title: "API/data automation + browser agents" },
+  { n: 23, w: 5, title: "Agent loop: LangGraph + MCP" },
   { n: 24, w: 5, title: "Agent foundations + MCP + multi-agent delegation lab" },
   { n: 25, w: 5, title: "Ideathon 2 + Mini-Demo Day", checkpoint: "Mini-demo" },
 

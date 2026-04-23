@@ -1,5 +1,5 @@
 ---
-reading_time: 10 min
+reading_time: 12 min
 tldr: "Benchmarks are marketing until you know how to read them — today you pick the right model for YOUR use case, not the leaderboard's."
 tags: ["launch", "benchmarks", "evaluation", "models"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Car ads quote **mileage** on a flat highway at steady speed; your actual commute has traffic, hills, and AC on full blast. The brochure number is not a lie — it is the wrong **test** for *your* road.
+
+**Why it matches today.** Leaderboards are brochure mileage; **your prompts** on LM Arena + cost/latency for *your* usage are the real commute.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 26 you red-teamed your capstone and filed three concrete fixes before Day 30. One of those fixes probably implicates the model itself — output filter quality, refusal rates, hallucination shape. Today you upgrade the model choice deliberately: not "whatever I started with," but the best tradeoff on *your* axes.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold open**: instructor shows two leaderboard charts side-by-side with the model names blurred; cohort guesses which model is actually better for a coding capstone, then reveal.
 - **Teaching beat**: 10 minutes on contamination, saturation, and the three-step release skim — with one live example from a recent launch.
 - **Back to your team's build**: open Artificial Analysis, filter by your latency and cost constraints, shortlist 3 candidates. Instructor does rounds, raise hand for unblocking.
@@ -168,7 +177,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 If your primary model's API went down at 9am on Day 30, how many minutes until your fallback is serving real users? Write the number honestly.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. Why is MMLU less useful in 2026 than in 2023?
 2. What makes LiveBench contamination-resistant?
 3. What does LM Arena actually measure?
@@ -182,6 +193,11 @@ Ship a 1-page model card for your capstone:
 - Why (benchmark + private eval results)
 - Fallback model and switching criteria
 - Cost per 1k tokens and expected monthly spend
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 Continue capstone build. Demo day is three days away.
 

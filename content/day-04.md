@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "A good prompt is not a magic spell. It's a well-briefed junior — context, role, examples, constraints, tone, evaluation."
 tags: ["foundations", "theory"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A good brief to a new intern: who they are, what "good" looks like (examples), hard limits (budget, deadline), tone, and how you'll check the work. A lazy brief gets lazy output — same as human teams.
+
+**Why it matches today.** CREATE is that briefing checklist translated into prompts: **C**ontext, **R**ole, **E**xamples, **A**ctive constraints, **T**one, **E**valuation.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday you mapped 7 tool classes (chat, research, Indian AI, creative, code, open-source, automation) and matched 3 tasks from your life to Perplexity, NotebookLM, Sarvam, and friends. You walked away with a named personal stack. Today we zoom in on one skill that transfers *across every tool in that stack*: how you phrase the request. The "right tool" matters; the right prompt matters more.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open prompt read-aloud**: instructor pastes a terrible 8-word prompt on screen. Students shout in chat which CREATE letter is missing most. First correct answer gets credit for the day.
 - **Think-pair-share**: 90 seconds on *"Which CREATE letter do you skip most often — and what's it costing you?"* Each pair names their shared skip and one concrete cost.
 - **Live poll**: *"Is asking for JSON output cheating or just how adults use LLMs?"* Bars appear. Instructor calls on a "cheating" voter and a "adult" voter to steelman the other side in 20 seconds each.
@@ -208,13 +217,20 @@ Block the evening. Phone on DND. Do these in order.
 
 **Prompt:** *"Which of the 10 templates will I actually use this week — and which did I include just to hit the count?"* A good reflection is honest: most people have 2–3 genuinely load-bearing templates and 7 aspirational ones. Naming the gap is the whole point; it tells you where to invest next.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four questions on CREATE, zero-shot vs few-shot, CoT, and structured output. Available on the dashboard. You don't have to name the framework — you have to recognize the parts.
 
 ### 4. Submit the assignment (~5 min)
 
 Submit your 10-template Prompt Library (PDF or Notion link) via the dashboard before next class. This is an artifact you'll *actually* use for the next two years — don't skip the export.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~25 min)
 

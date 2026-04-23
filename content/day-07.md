@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Google gives you links. AI research tools give you a grounded answer with citations you can actually trust."
 tags: ["exposure", "tools"]
 video: https://www.youtube.com/embed/EOmgC3-hznM
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A librarian hands you photocopied pages with call numbers in the margin. A storyteller at a party gives you a gripping version with no footnotes. Both are "answers" — only one holds up when your professor asks "where did you get that?"
+
+**Why it matches today.** Perplexity / NotebookLM / Deep Research sit on the **librarian** side: claims you can trace back to a source.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 6) you built your Claude Project Jarvis — resume, transcript, 5 capstone ideas, the custom Jarvis prompt baked in — and ran the 3-model (Claude/ChatGPT/Gemini) comparison that proved context beats a blank chat. Today you give Jarvis a library card: grounded sources you can actually trust. Keep Jarvis open in one tab — after you produce the brief, you'll feed it back into the project so every future capstone chat has those citations in context.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Raise-a-finger vote**: "In the last month, how many times did you click past page 1 of Google?" Zero, one, or more — we map the room's search habits.
 - **Think-pair-share**: in 90 seconds, each person names one factual claim they once quoted from ChatGPT without checking. Confess out loud; we set the tone for citation discipline.
 - **Live citation audit**: I drop a Perplexity answer on screen with four citations. Cohort clicks each in parallel — we vote thumbs up/down on whether the source actually supports the claim.
@@ -160,7 +169,9 @@ Block the evening. Phone on DND. Do these in order.
 
 *Where did a citation not actually support the claim above it, and what did you do?* A good reflection quotes the model's sentence verbatim, quotes the source's actual words, and describes the exact decision — rewrite, drop, or find a second source. If you never hit that moment, you probably did not click enough links; go back and click five more.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four questions on the dashboard. What is the difference between Perplexity Pro Search and Deep Research? Why does NotebookLM refuse to answer from the open web, and when is that a feature rather than a bug? What are the four steps of the hallucination check? And which of today's tools would you use to map the 30 most-cited papers around a niche research question?
 
@@ -171,6 +182,10 @@ Post to the cohort channel before 11 pm:
 1. Your 1-page `brief-<topic>.md` with at least 5 inline citations.
 2. The NotebookLM audio overview link (or a 30-second voice note reacting to it).
 3. One sentence: "I almost quoted this, then clicked the citation and found…" — show us one claim you had to drop or rewrite.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
 
 ### 5. Deepen (optional, ~30 min)
 

@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Checkpoint day. You brainstorm, shape, pitch, vote, and leave with a locked capstone one-pager."
 tags: ["exposure", "tools", "capstone", "checkpoint"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A writers' room pitches ten show ideas; a few get stress-tested with "who watches this, why now, what's the twist?"; one pilot gets greenlit. The room commits — it is not "we might film something someday."
+
+**Why it matches today.** Ideathon + Heilmeier + one-pager is that greenlight moment: **pick the show** (capstone) you will actually make.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 9) you shipped a 5-slide Gamma deck + a 30-second voiced/avatar intro for your capstone — the dress rehearsal. The Otter transcript from that exercise revealed how you actually talk about your idea (the filler words, the hedges, the one sentence of real insight). Today the vehicle for that talk gets scope-checked. The deck gets rebuilt next week against whatever one-pager you lock tonight; today's work makes sure it's the right one to rebuild.
 
@@ -74,6 +82,7 @@ Today's live session is an **ideathon format**, not the standard agenda: brainst
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
 - **Silent solo brainstorm with 3 sticky notes**: one idea per sticky, no editing, three minutes each. No phones, no Claude yet — this round is pen and paper so the obvious ideas clear out first.
 - **Shape in pairs using Heilmeier template**: partners take turns. Pitcher has 2 minutes; listener must ask questions 1, 4, and 9 from the Heilmeier list (objective, who cares, metrics) before the timer ends. Swap.
@@ -191,13 +200,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *Which of the 3 filters (real user / small scope / you care) is weakest for your locked idea, and what is your tripwire for killing or reshaping it by Week 3?* A good reflection names the weakest filter honestly, describes the specific signal that would tell you the idea is dying (user unreachable, scope ballooning past 15 hours, motivation gone after a bad day), and pre-commits to an action — reshape, pivot, or kill — with a date.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
 
 ### 4. Submit (~5 min)
 
 Submit `capstone-one-pager.md` via the cohort dashboard with the tag `#milestone-1` before midnight. This is Capstone Milestone 1 — the biggest deliverable of the workshop so far and the foundation for Weeks 3–4. Once submitted, your scope is locked — changes after today require instructor approval.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

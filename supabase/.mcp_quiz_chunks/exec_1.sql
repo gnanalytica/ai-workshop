@@ -1,0 +1,109 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Two capstone ideas score equal on flash — which filter from the 3-filter test breaks the tie?","type":"single","options":[{"text":"The one with a named user you can message this week.","correct":true},{"text":"The one with the longest feature list.","correct":false},{"text":"The one that uses the most APIs.","correct":false},{"text":"The one your parents like more.","correct":false}],"explanation":"Named user = falsifiable feedback loop; flash without contact is theatre."},
+  {"q":"Look back (Day 9): Best tool for sensitive interview audio that must not leave your laptop?","type":"single","options":[{"text":"Local Whisper (or equivalent on-device transcription).","correct":true},{"text":"Any cloud default without checking data policy.","correct":false},{"text":"HeyGen for transcription.","correct":false},{"text":"Skip consent if the room is quiet.","correct":false}],"explanation":"Privacy path before ideathon locks scope."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 10
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s10$Scenario: Two capstone ideas score equal on flash — which filter from the 3-filter test breaks the tie?$s10$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Your sticky-note problem still smuggles a solution ('build an app that…'). Fastest fix?","type":"single","options":[{"text":"Rewrite as user + friction + outcome; move tech to the HMW later.","correct":true},{"text":"Add more buzzwords so it sounds official.","correct":false},{"text":"Expand to two pages.","correct":false},{"text":"Delete the user name to stay generic.","correct":false}],"explanation":"Solution smuggling is one of Day 11's three diseases."},
+  {"q":"Look back (Day 10): Heilmeier question about impact is closest to:","type":"single","options":[{"text":"Who cares? If you succeed, what difference does it make?","correct":true},{"text":"What is your marketing budget?","correct":false},{"text":"What font will the deck use?","correct":false},{"text":"How viral will the TikTok be?","correct":false}],"explanation":"Scope discipline echoes from Milestone 1."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 11
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s11$Scenario: Your sticky-note problem still smuggles a solution ('build an app that…'). Fastest fix?$s11$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Your POV insight slot says 'users want faster service' — what did you miss?","type":"single","options":[{"text":"A surprising insight — you restated the premise.","correct":true},{"text":"More sticky notes.","correct":false},{"text":"A longer FigJam board.","correct":false},{"text":"A prettier font.","correct":false}],"explanation":"POV needs verb-based need + non-obvious because-clause."},
+  {"q":"Look back (Day 11): The three diseases of vague problem statements include:","type":"single","options":[{"text":"Solution smuggling, audience blur, success amnesia.","correct":true},{"text":"Too many sticky notes.","correct":false},{"text":"Using FigJam.","correct":false},{"text":"Interviewing users.","correct":false}],"explanation":"Design thinking loop builds on sharp problem framing."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 12
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s12$Scenario: Your POV insight slot says 'users want faster service' — what did you miss?$s12$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: In a user interview you feel the urge to demo the wireframe at minute four. What should you do?","type":"single","options":[{"text":"Ask another past-behaviour question — no pitch in the first half.","correct":true},{"text":"Show the demo — visuals build trust.","correct":false},{"text":"Switch to selling pricing.","correct":false},{"text":"End early if they sound bored.","correct":false}],"explanation":"Mom Test: talk about their life, not your idea."},
+  {"q":"Look back (Day 12): Diverge then converge means:","type":"single","options":[{"text":"Generate many options without judging first; judge only after the funnel closes.","correct":true},{"text":"Judge every idea as it appears.","correct":false},{"text":"Skip ideation entirely.","correct":false},{"text":"Only use AI for converge.","correct":false}],"explanation":"Interview evidence should feed Define, not premature solution love."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 13
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s13$Scenario: In a user interview you feel the urge to demo the wireframe at minute four. What should you do?$s13$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Your CLD has arrows all pointing from cause → symptom but no arrow back — what is wrong?","type":"single","options":[{"text":"You drew a tree, not a feedback loop — add how the symptom reinforces the cause.","correct":true},{"text":"You need more colours.","correct":false},{"text":"CLDs cannot include delays.","correct":false},{"text":"Polarity signs are optional decoration.","correct":false}],"explanation":"Systems thinking needs at least one closed loop for stuck problems."},
+  {"q":"Look back (Day 13): Mom-Test compliant question:","type":"single","options":[{"text":"What did you do the last time this problem happened?","correct":true},{"text":"Would you pay ₹500 for my app?","correct":false},{"text":"Do you think this is a billion-dollar idea?","correct":false},{"text":"Would strangers love this?","correct":false}],"explanation":"Past behaviour beats hypothetical futures."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 14
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s14$Scenario: Your CLD has arrows all pointing from cause → symptom but no arrow back — what is wrong?$s14$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Your 'will build' list is longer than your NOT-list the night you lock spec. Instructor reaction?","type":"single","options":[{"text":"NOT-list too thin — cut scope until NOT is at least as concrete as WILL.","correct":true},{"text":"Ship everything — you can sleep in April.","correct":false},{"text":"Delete metrics — they slow you down.","correct":false},{"text":"Add mobile + auth + payments tonight.","correct":false}],"explanation":"Milestone 2 discipline: anti-scope is the gift to Week-3 you."},
+  {"q":"Look back (Day 14): '+' on a causal link means:","type":"single","options":[{"text":"A and B move in the same direction (more A → more B).","correct":true},{"text":"The relationship is morally good.","correct":false},{"text":"Add two variables.","correct":false},{"text":"Positive feedback only in virtuous loops.","correct":false}],"explanation":"Polarity recall before build week."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 15
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s15$Scenario: Your 'will build' list is longer than your NOT-list the night you lock spec. Instructor reaction?$s15$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Hoppscotch returns HTTP 429 from an API you hammered in a loop. What happened?","type":"single","options":[{"text":"You hit a rate limit — slow down, backoff, or batch.","correct":true},{"text":"The API does not exist.","correct":false},{"text":"Your JSON is always invalid on 429.","correct":false},{"text":"DNS is broken only for you.","correct":false}],"explanation":"429 is the client-throttled signal; different from 401/500."},
+  {"q":"Look back (Day 4): Context engineering vs one-off prompt engineering:","type":"single","options":[{"text":"Context engineering shapes the persistent information environment (files, rules); prompts are single messages.","correct":true},{"text":"They are identical buzzwords.","correct":false},{"text":"Context engineering is illegal.","correct":false},{"text":"Prompts persist; context does not.","correct":false}],"explanation":"Bridge from CREATE week to builder rails."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 16
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s16$Scenario: Hoppscotch returns HTTP 429 from an API you hammered in a loop. What happened?$s16$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Variant A wins 7/10 on your eval; Variant B wins 3/10 but feels nicer to read. Which ships first?","type":"single","options":[{"text":"Variant A — let metrics break the tie unless stakes are purely subjective.","correct":true},{"text":"Variant B — vibes beat scores.","correct":false},{"text":"Average the prompts.","correct":false},{"text":"Delete the eval sheet.","correct":false}],"explanation":"Evals exist to stop aesthetic self-deception on functional tasks."},
+  {"q":"Look back (Day 16): Fork vs branch in one line:","type":"single","options":[{"text":"Fork copies someone else's repo to your account; branch is a parallel line of work inside one repo.","correct":true},{"text":"Branch is only for databases.","correct":false},{"text":"Fork is always private.","correct":false},{"text":"They are synonyms.","correct":false}],"explanation":"Git vocabulary before RAG + agents."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 17
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s17$Scenario: Variant A wins 7/10 on your eval; Variant B wins 3/10 but feels nicer to read. Which ships first?$s17$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Answers are fluent but cite wrong chunks — first knob to turn?","type":"single","options":[{"text":"Chunk size / overlap / top-K / embedding model — retrieval before blaming generation.","correct":true},{"text":"Switch to a 400B model immediately.","correct":false},{"text":"Delete the vector DB.","correct":false},{"text":"Raise temperature to 2.0.","correct":false}],"explanation":"Bad RAG is usually retrieval geometry, not IQ."},
+  {"q":"Look back (Day 17): Quantization mainly:","type":"single","options":[{"text":"Compresses weights so models fit consumer hardware.","correct":true},{"text":"Counts tokens in Hindi.","correct":false},{"text":"Replaces eval sheets.","correct":false},{"text":"Fixes prompt injection.","correct":false}],"explanation":"Local + cloud model literacy loop."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 18
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s18$Scenario: Answers are fluent but cite wrong chunks — first knob to turn?$s18$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: CLAUDE.md says 'never add dependencies' but the model keeps adding packages. Best next fix?","type":"single","options":[{"text":"Make the rule testable: 'If adding a dep, stop and ask' + point to existing stack list.","correct":true},{"text":"Delete CLAUDE.md — it clearly fails.","correct":false},{"text":"Yell 'please follow rules' each message.","correct":false},{"text":"Switch models without editing the file.","correct":false}],"explanation":"Vague rules train nothing; testable rules + architecture map win."},
+  {"q":"Look back (Day 18): RAG in one line:","type":"single","options":[{"text":"Retrieve relevant chunks from your data, then generate with them in context.","correct":true},{"text":"Random access GPU memory.","correct":false},{"text":"Fine-tune on every query.","correct":false},{"text":"Replace Postgres with CSV.","correct":false}],"explanation":"Lock retrieval story before automation week."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 19
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s19$Scenario: CLAUDE.md says 'never add dependencies' but the model keeps adding packages. Best next fix?$s19$
+  );

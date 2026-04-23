@@ -4,6 +4,8 @@
 -- that day's `In-class checkpoints` list (formerly minute-by-minute).
 -- Where the day's markdown did not list a named "Live poll", we synthesized
 -- a poll from the day's key decision point (see commit message for details).
+-- Day markdown (`content/day-XX.md`) includes **Live poll (LMS)** — faculty should
+-- open this dashboard poll so tallies match in-class discussion (do not rely on chat-only counts).
 
 begin;
 

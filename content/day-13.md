@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "The Mom Test is the rule: ask about past behaviour, never about future opinions. Today you run one real interview and plan two more."
 tags: ["design", "user-research", "interviews", "capstone"]
 video: https://www.youtube.com/embed/FG1Fa-t4AEQ
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A good detective asks what someone *did* last Tuesday, what they paid, what they tried before. A bad pollster asks "would you buy this?" and hears polite fiction.
+
+**Why it matches today.** Mom Test + JTBD are detective questions — **past behaviour**, budgets, workarounds — not compliments about your idea.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 12) you drew a 5-column FigJam board — Empathize, Define, Ideate, Prototype, Test — and wrote a POV statement in the format *[user] needs [verb-based need] because [surprising insight]*. If your "surprising insight" slot read "I have not yet earned this insight," today is when you earn it. The 3 unverified Empathize assumptions you brought to Day 12? Those are your hidden interview agenda — you're testing them via past-tense questions, never pitching them. The POV statement guides your questions but **never gets pitched** during an interview.
 
@@ -72,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open**: instructor reads 3 interview questions aloud; class shouts "leading" or "clean" after each — winners get to grill the loser.
 - **Think-pair-share**: 90 seconds — tell your partner the last time YOU experienced your capstone's problem; if you never have, say so.
 - **Verb-hunt**: pair up, swap your 5 draft questions, circle every future-tense verb ("would," "could," "might") on your partner's list.
@@ -165,13 +174,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *When in the interview did I feel the urge to pitch — and what was I afraid the user would say if I did not?* A strong reflection names the moment, the fear (usually "they will not like it"), and one specific past-tense question you will keep on a sticky for the next interview.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Three rapid calls. Which of these is Mom-Test-compliant: (a) "Would you pay for a tool that does X?" (b) "What did you do the last time X happened?" (c) "Do you think other people have this problem?" Only (b) survives. Why? Because it asks for past behaviour from the person in front of you, not future opinions about strangers. Write that sentence on a sticky note.
 
 ### 4. Submit (~5 min, 2-day assignment — rolls into Day 15 milestone)
 
 By end of Day 15, submit to the cohort channel: (1) your Otter transcript from the classmate interview, (2) transcripts (or detailed notes, with consent) from at least 2 real candidate-user interviews, (3) a short write-up with the 3 most surprising insights across all three interviews — surprising meaning they contradicted something you believed on Day 11. These insights feed directly into Day 14's systems map and Day 15's locked spec.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

@@ -1,5 +1,6 @@
 -- Per-day quiz bank expansion for cohort 56268633-9e93-4305-af6a-1b622a833d8e
 -- Generated: 2026-04-21. Replaces prior 3-question banks with 5-7 grounded questions per day.
+-- After applying this seed, run quizzes_enhancements_20260423.sql to append transfer + spaced-recall items (2 per day). That file is idempotent (safe to re-run).
 
 begin;
 

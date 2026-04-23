@@ -10,7 +10,7 @@ A 30-day AI workshop delivery platform: static HTML pages + a Supabase backend (
 
 - `index.html` — public landing + magic-link sign-in.
 - `dashboard.html` — student home after sign-in.
-- `day.html` + `content/day-XX.md` — per-day curriculum pages.
+- `day.html` + `content/day-XX.md` — per-day curriculum pages (post-class quiz copy assumes `quizzes_v2.sql` then `quizzes_enhancements_20260423.sql` are applied for that cohort; enhancement seed is idempotent).
 - `admin-*.html` — admin surfaces (one page per concern: home, content, schedule, teams, attendance, stuck, polls, faculty, pods, analytics, …).
 - `faculty.html` — faculty landing (Today / My pod / Whole cohort / Analytics / Handbook).
 - `supabase/migrations/` — timestamped SQL migrations, applied in filename order via Supabase dashboard or CLI.
@@ -21,7 +21,7 @@ A 30-day AI workshop delivery platform: static HTML pages + a Supabase backend (
 - **No direct `cohort_id` on `submissions`** — filter via `assignments!inner(cohort_id)`.
 - **Enrolled students** = `registrations` rows with `status='confirmed'` (not an `enrollments` table).
 - **Per-day progress** lives in `lab_progress`; day metadata in `cohort_days`.
-- **Faculty auth** goes through `assets/admin-auth.js::checkAdminOrFaculty`. Admin-only pages have `adminOnly: true` in `assets/admin-nav.js`.
+- **Faculty auth** goes through `assets/admin-auth.js::checkAdminOrFaculty`. **Support faculty** (`cohort_faculty` without `is_admin`) get a reduced sidebar (`SUPPORT_FACULTY_PAGES` in `assets/admin-nav.js`) and read-only schedule; grading, content, pods/teams, attendance exports, and cohort analytics are **trainer-only** (UI gate + RLS in `20260423_support_faculty_scope.sql`). **Trainers** use `profiles.is_admin` for full admin surfaces.
 - **Mentor pods**: `cohort_pods` → `pod_faculty` (many, one `is_primary`) → `pod_members`. Atomic mutations go through the `rpc_pod_faculty_event` SECURITY DEFINER RPC; `pod_faculty_events` is the audit log. Students read their pod via the `my_pod(cohort uuid)` RPC.
 - **RLS**: faculty permissions widen via `faculty_cohort_ids()` helper; grants read+write across all cohort students, not just pod members.
 

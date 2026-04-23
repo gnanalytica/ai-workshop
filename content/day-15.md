@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Run a compressed 1-day design sprint, wireframe your capstone, and lock a 1-page spec in public — this is Capstone Milestone 2."
 tags: ["design", "sprint", "spec", "wireframes", "capstone", "milestone"]
 video: https://www.youtube.com/embed/K2vSQPh6MCE
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A pop-up stall: one-day menu, chalk sketch of the counter flow, prices on a board, and a clear "we do **not** do deliveries" line so nobody queues for the wrong thing.
+
+**Why it matches today.** Sprint + wireframes + 1-page spec + NOT-list is that stall: **what we serve, what we refuse, how you order**.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 14) you drew the causal-loop diagram for your capstone, circled a leverage point in red (parameter / structure / paradigm — hopefully not just a parameter), and delivered the 60-second SCQA pitch as a voice memo. The Complication from that pitch — the surprising interview insight — is today's "biggest risk" candidate. The leverage point is what the **success metric** measures change at. The three variant pitches (analytical / emotional / contrarian) help stress-test whether your spec's "what it does" line still sounds like you under pressure. Bring everything from Days 11–14 into one doc; the spec is a compression of all of it, not fresh thinking.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Check-in shout**: one sentence each — "what I am locking today" — no hedges, no "probably."
 - **Ruthless cut**: each pair picks 1 item on their "will build" list that secretly belongs on the NOT list; write it on a sticky and hand it to their partner.
 - **Studio checkpoint**: instructor roams; every team shows their Crazy 8s and gets one 30-second note before returning to heads-down wireframing.
@@ -170,13 +179,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *Which feature hurt the most to move to the NOT-list, and what does that attachment tell me?* A strong reflection names the feature, the emotional pull (cool demo, pet peeve, investor-friendly), and accepts the cut without hedging. Bonus if you admit it was the feature you most wanted to keep.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Three final checks before the weekend on the dashboard. Can you name three things on your NOT-list and explain *why* each one is excluded? Can you state your 14-day success metric as a number? Can you describe the user flow through your wireframes in under 45 seconds without referencing the Figma file? If any answer wobbles, iterate tonight — not Monday.
 
 ### 4. Submit (~5 min — Capstone Milestone 2)
 
 Submit to the cohort channel, by tonight: (1) your locked 1-page spec as a PDF, (2) your wireframe screens as a single PNG or Figma share link, (3) a one-paragraph public commitment naming the user you will test with in Week 4 and the date of your first test. Two cohort members must react to your post before midnight — if they do not, you nudge them. Locking in public is the point.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 This is Milestone 2. Week 4 begins on Monday and you will build — but only against this spec. Anything not in the spec is out of scope. Anything on the NOT-list stays on the NOT-list unless a user interview forces a change, in writing.
 

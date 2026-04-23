@@ -15,9 +15,6 @@
   .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit}
   .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
   .btn-sm.active{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
-  .f-tab{padding:10px 14px;border-radius:10px 10px 0 0;font-size:13.5px;color:var(--muted);text-decoration:none;border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
-  .f-tab.active{color:var(--ink);background:var(--card);border-color:var(--line)}
-  .f-tab:hover{color:var(--ink)}
   .kicker-tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(195,255,54,.12);color:var(--accent);border:1px solid rgba(195,255,54,.25)}
   .kicker-tag.warn{background:rgba(255,170,90,.14);color:#ffb977;border-color:rgba(255,170,90,.3)}
   details summary{cursor:pointer;padding:8px 0;font-size:14px}
@@ -39,7 +36,7 @@
 <a href="#panel" class="skip-link">Skip to main content</a>
 <nav>
   <div class="wrap nav-in">
-    <div class="brand"><span class="dot"></span> Gnanalytica · Admin</div>
+    <div class="brand"><span class="dot"></span><span> Gnanalytica · Faculty hub</span></div>
     <div style="display:flex;gap:12px;align-items:center">
       <a href="index.html" class="muted" style="font-size:13px">← Home</a>
       <div class="nav-profile-wrap">
@@ -86,13 +83,7 @@
     </div>
   </header>
 
-  <nav id="fTabs" role="tablist" style="display:flex;gap:6px;border-bottom:1px solid var(--line);margin:16px 0 20px;flex-wrap:wrap">
-    <a href="#stream" data-tab="stream" class="f-tab">Stream</a>
-    <a href="#agenda" data-tab="agenda" class="f-tab">Agenda</a>
-    <a href="#people" data-tab="people" class="f-tab">People</a>
-    <a href="#grades" data-tab="grades" class="f-tab">Grades</a>
-    <a href="#guide" data-tab="guide" class="f-tab">Guide</a>
-  </nav>
+  <p class="muted" style="font-size:12.5px;margin:12px 0 18px;line-height:1.5">Switch sections from <strong>Menu → In this hub</strong> (left), or use the links there.</p>
 
   <section id="fPanel"></section>
 </main>
@@ -102,7 +93,7 @@
 <script type="module">
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountFacultyTab } from './assets/faculty-tabs.js';
   wireThemeToggle();
@@ -148,7 +139,6 @@
     const { isAdmin, isFaculty, facultyCohortIds } = await checkAdminOrFaculty(user);
     STATE.user = user; STATE.isAdmin = isAdmin; STATE.isFaculty = isFaculty;
     if (!isFaculty && !isAdmin) return show('denied');
-    applyFacultyBrandLabel(isAdmin, isFaculty);
     const dd = $('facAcctDd');
     const facAcctBtn = $('facAcctBtn');
     if (dd) {
@@ -227,7 +217,9 @@
     if (`#${tab}` !== (location.hash || '')) {
       history.replaceState(null, '', `#${tab}`);
     }
-    document.querySelectorAll('.f-tab').forEach((a) => a.classList.toggle('active', a.dataset.tab === tab));
+    document.querySelectorAll('.admin-nav-faculty-link').forEach((a) => {
+      a.classList.toggle('admin-nav-faculty-link--active', a.getAttribute('data-fac-tab') === tab);
+    });
     await mountFacultyTab(tab, { state: STATE, container: $('fPanel') });
   }
 

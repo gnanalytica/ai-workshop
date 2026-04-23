@@ -1,5 +1,5 @@
 ---
-reading_time: 16 min
+reading_time: 18 min
 tldr: "Push your capstone live, compute what it costs per user, design for trust, and make AI engines cite you."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/wgmCjrMFoyc
@@ -31,7 +31,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Opening a weekend stall: you rent the spot (**deploy**), put price tags and ingredient labels (**trust**), count what each customer costs you (**unit economics**), and pin a flyer on the community board so people can find you (**discoverability / llms.txt**).
+
+**Why it matches today.** Shipping v0 is that stall going public — not perfect, but **findable, honest, and priced**.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 21) was Capstone Milestone 3 — you vibe-coded a v0 that runs locally, with a director's commentary and a 90-second recording. Today we take that exact v0 and put it on the public internet. Your Day 21 repo and CLAUDE.md are the inputs to today's deploy.
 
@@ -74,6 +82,8 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
 - **Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
 - **Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
@@ -184,7 +194,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 Which of the six trust-stack elements is cheapest to add this week, and which will most change how users feel about your product?
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. Why do cold starts hurt perceived performance more than steady-state latency?
 2. What does "quarantining vendor lock-in" look like in code?
 3. Write the formula for cost per user per month.
@@ -193,6 +205,11 @@ Which of the six trust-stack elements is cheapest to add this week, and which wi
 
 ### 4. Submit the assignment (~5 min)
 **Daily:** Submit (a) your live capstone URL, (b) your token-cost worksheet at 10/100/1000 users, and (c) the URL of your published `llms.txt`. Bonus: add Schema.org JSON-LD to your landing page and paste the Schema.org validator result.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: a Schema.org JSON-LD walkthrough for your framework.

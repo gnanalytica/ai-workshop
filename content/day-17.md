@@ -1,5 +1,5 @@
 ---
-reading_time: 15 min
+reading_time: 17 min
 tldr: "Run an LLM on your own laptop, compare three prompt styles on a 10-row eval set, and trace everything in Langfuse."
 tags: ["build", "technical"]
 video: https://www.youtube.com/embed/rIRkxZSn-A8
@@ -28,7 +28,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Three cooks try the same spice rub on identical chicken; the house votes blind. Numbers beat opinions — "everyone liked mine" is not a test, **counts** are.
+
+**Why it matches today.** Langfuse + a tiny eval set is that taste test for **prompts and models**: same tasks, different recipes, score what actually wins.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 16) you learned the four rails — Git, GitHub, localhost, APIs. Today you drive on those rails. Ollama runs on `localhost:11434` (remember port numbers from Day 16?), cloud inference is just an HTTP POST to an API, and Langfuse is another app on a port. If any of yesterday's status codes or JSON-shape vocabulary still feels fuzzy, skim your Hoppscotch lab screenshots before class.
 
@@ -72,6 +80,8 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open bet**: instructor runs the same prompt on Qwen 1.5B and Groq Llama 3.3 70B side by side; class votes which answer is "better" before the reveal.
 - **Think-pair-share**: in 90 seconds, tell your neighbour which task from your capstone would be "shockingly fine" on a 2B local model.
 - **Live poll**: RAM check — 4GB / 8GB / 16GB+ — instructor recommends a model per hand raised.
@@ -182,13 +192,20 @@ Ship the 10-row eval tonight while the lab is still fresh — this is the habit 
 
 **Prompt:** *"Which prompt pattern moved the number most on my task — and does that tell me something about the task's actual difficulty?"* A strong reflection names the pattern (CoT vs few-shot vs zero-shot), cites the win-rate delta, and guesses whether the task is bottlenecked by reasoning, format, or domain knowledge.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four quick ones on the dashboard: Why is `Q4_K_M` the most common quantization? What does chain-of-thought actually add to a prompt — tokens, structure, or both? If Groq is faster and free, why bother with local Ollama? What's the minimum number of rows that makes an eval meaningful for you, honestly?
 
 ### 4. Submit the assignment (~5 min)
 
 Post to the cohort channel: the task, the three win-rate numbers, one surprise, and a screenshot of the winning prompt + output. Save the winning prompt in Langfuse's prompt library with a version tag.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 - [ ] Try the **same winning prompt** on a different Groq model (Mixtral, Llama 3.1 8B) — does model matter as much as prompt did? Often no — surprising takeaway.

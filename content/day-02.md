@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "An LLM is extremely well-read autocomplete. Tokens, weights, attention — the three words that save you hours of confusion."
 tags: ["foundations", "theory"]
 video: https://www.youtube.com/embed/zjkBMFhNj_g
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Phone autocomplete guesses the *next* word from what you already typed; you only notice when it is wrong. Reading a long WhatsApp fight, you mentally "look back" at the sentence that started the drama — some words get more weight than others.
+
+**Why it matches today.** **Tokens** are the pieces the model reads; **attention** is which earlier pieces it leans on for the next guess; **weights** are the habits it learned from training — like autocomplete, but trained on the whole internet.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday you met AI in your daily life — Netflix recs, Maps ETAs, UPI fraud, WhatsApp auto-translation — and ran the same placement-mentor prompt through ChatGPT, Claude, and Gemini to feel three distinct personalities. You also separated *chatbot* (the app) from *LLM* (the brain). Today we open the box and explain *why* those three chatbots gave different answers to the same prompt. Keep your Day 1 "three brains" Google Doc handy — we reference it in class.
 
@@ -70,6 +78,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open guess**: instructor types "I'm cooked" into Tiktokenizer. Class guesses how many tokens before the reveal. (It's 4.)
 - **Think-pair-share**: in 90 seconds, try to explain "tokens" to your neighbour without using the word "word". Hardest 90 seconds of the day.
 - **Live tokenizer poll**: everyone types their full name, their hostel mess's name, and one Hindi/regional word into Tiktokenizer. Share the most surprising token counts in chat.
@@ -211,13 +220,20 @@ Block the evening. Phone on DND. Do these in order.
 
 **Prompt:** *"Explain tokens to your parents in under 60 seconds. What analogy would you use?"* A good reflection drops the jargon completely, picks one familiar analogy (paying per SMS character, sliced bread, etc.), and doesn't sneak the word "LLM" back in. Jot a few lines for your own record.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four quick ones on tokens, weights, attention, and the AI → ML → DL → LLM → Agents hierarchy. Available on the dashboard. Aim for 70%+ to feel solid going into tomorrow's tool landscape.
 
 ### 4. Submit the assignment (~5 min)
 
 Submit your 150-word reflection + tokenizer notebook (PDF) via the dashboard **before next class**.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

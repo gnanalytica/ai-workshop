@@ -1,5 +1,5 @@
 ---
-reading_time: 15 min
+reading_time: 17 min
 tldr: "Chain AI with APIs and triggers in n8n, automate a browser task you hate, and ship your first real workflow to prod."
 tags: ["build", "technical"]
 video: https://www.youtube.com/embed/4cQWJViybAQ
@@ -28,7 +28,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** **n8n-style:** when the clock hits 9:00, the coffee maker starts and the spreadsheet row turns green — fixed steps, predictable handoffs. **Browser agent:** asking a roommate to queue at a shop that has **no** delivery app — they improvise clicks because the "API" is a human in front of a screen.
+
+**Why it matches today.** Automation chains are the coffee timer; browser agents are the "there is no official button for this" errand runner.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 19) you locked in your project's context with CLAUDE.md + slash commands. Today we extend that leverage outside the editor: if CLAUDE.md automates what the AI *knows*, n8n automates what the AI *does*. Same principle — set it up once, reap compounding returns. Keep your Groq API key from Day 17 handy; you'll wire it into n8n's AI Agent node.
 
@@ -70,6 +78,8 @@ Week 4 capstone day — come in with accounts, tokens, and a task you genuinely 
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open math**: instructor writes "4 min per ticket × 40 tickets × 5 days = ?" on the board; class shouts the hours saved per week.
 - **Think-pair-share**: in 90 seconds, tell your neighbour the single most boring task in your week and what triggers it.
 - **Live build**: instructor drags the Google Form trigger, AI Agent, and Slack nodes on-screen; class calls out what prompt goes into the AI node.
@@ -188,13 +198,20 @@ This is the **Week 4 capstone checkpoint** — ship both automations tonight, no
 
 **Prompt:** *"Which node in my flow is most likely to silently fail at 3 AM — and what would the user see if it did?"* A strong reflection picks a specific failure mode (API rate limit, auth token expired, malformed JSON from the AI step) and sketches a one-line monitoring signal or fallback.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four on the dashboard: What's the difference between a trigger and a webhook? When would you reach for browser-use instead of an HTTP Request? Why is "dry-run mode" the first thing you should configure? Why would you pick Groq over GPT-5 for a flow running 10k/day?
 
 ### 4. Submit the assignment (~5 min — **Week 4 deliverable**)
 
 Record a 60-second Loom walking through both the n8n flow and the browser-use automation. Post the Loom link plus a one-paragraph write-up ("what it saves me per week") plus the ROI number from your pre-work estimate to the cohort channel.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 - [ ] Install browser-use per https://docs.browser-use.com quickstart (if you haven't already) and point it at the one boring task you picked in pre-work. Run it once; note what it nailed and where it needed help (captchas, 2FA, weird popups).

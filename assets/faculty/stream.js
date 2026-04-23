@@ -18,7 +18,31 @@ function todayEndIso() {
   return d.toISOString();
 }
 
-async function loadStream(cohortId, userId) {
+async function attachStreamDisplayNames(payload) {
+  const ids = new Set();
+  for (const s of payload.stuckCohort || []) if (s.user_id) ids.add(s.user_id);
+  for (const s of payload.stuck || []) if (s.user_id) ids.add(s.user_id);
+  for (const s of payload.ungraded || []) if (s.user_id) ids.add(s.user_id);
+  for (const s of payload.subs || []) if (s.user_id) ids.add(s.user_id);
+  const list = [...ids];
+  const nameByUser = new Map();
+  if (!list.length) return { ...payload, nameByUser };
+  const { data } = await supabase.from('profiles').select('id,full_name').in('id', list);
+  (data || []).forEach((p) => {
+    const n = (p.full_name || '').trim();
+    nameByUser.set(p.id, n || null);
+  });
+  return { ...payload, nameByUser };
+}
+
+function streamPersonLabel(nameByUser, uid) {
+  if (!uid) return '—';
+  const n = nameByUser.get(uid);
+  if (n) return n;
+  return uid.length > 10 ? `${uid.slice(0, 8)}…` : uid;
+}
+
+async function loadStream(cohortId, userId, isTrainer = false) {
   const startIso = todayStartIso();
   const endIso = todayEndIso();
 
@@ -54,7 +78,7 @@ async function loadStream(cohortId, userId) {
       .neq('status', 'resolved')
       .order('created_at', { ascending: false })
       .limit(5),
-    daySched
+    daySched && isTrainer
       ? supabase
           .from('submissions')
           .select('id,user_id,status,assignments!inner(day_number,cohort_id,title)')
@@ -66,7 +90,7 @@ async function loadStream(cohortId, userId) {
   ]);
 
   if (!myStudentIds.length) {
-    return {
+    return attachStreamDisplayNames({
       daySched,
       subs: [],
       stuck: [],
@@ -74,7 +98,7 @@ async function loadStream(cohortId, userId) {
       hasPod: !!podIds.length,
       stuckCohort: stuckCohortRes.data || [],
       ungraded: ungradedRes.data || [],
-    };
+    });
   }
 
   const [subsRes, stuckRes, attRes] = await Promise.all([
@@ -103,7 +127,7 @@ async function loadStream(cohortId, userId) {
 
   const present = (attRes.data || []).filter((a) => a.checked_in_at).length;
   const total = myStudentIds.length;
-  return {
+  return attachStreamDisplayNames({
     daySched,
     subs: subsRes.data || [],
     stuck: stuckRes.data || [],
@@ -111,7 +135,7 @@ async function loadStream(cohortId, userId) {
     hasPod: true,
     stuckCohort: stuckCohortRes.data || [],
     ungraded: ungradedRes.data || [],
-  };
+  });
 }
 
 export async function renderStream(ctx) {
@@ -121,7 +145,7 @@ export async function renderStream(ctx) {
     return;
   }
   container.innerHTML = '<div class="empty-state">Loading…</div>';
-  const data = await loadStream(state.cohortId, state.user.id);
+  const data = await loadStream(state.cohortId, state.user.id, !!state.isAdmin);
   container.innerHTML = tpl(data);
   const showCharts =
     (data.attendance && data.attendance.total > 0) || data.subs.length > 0 || data.stuck.length > 0;
@@ -149,7 +173,9 @@ export async function renderStream(ctx) {
   }
 }
 
-function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded }) {
+function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded, nameByUser }) {
+  const nm = nameByUser || new Map();
+  const who = (uid) => esc(streamPersonLabel(nm, uid));
   const showCharts =
     (attendance && attendance.total > 0) || subs.length > 0 || stuck.length > 0;
   const glance = showCharts
@@ -176,7 +202,7 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded 
         ${stuckCohort
           .map(
             (s) =>
-              `<li style="margin-bottom:8px"><b>${esc(s.user_id?.slice(0, 8) || '')}</b> · day ${esc(String(s.day_number ?? '—'))} · ${esc(s.status)} · ${new Date(s.created_at).toLocaleTimeString()}${s.message ? ` — ${esc(String(s.message).slice(0, 72))}` : ''}</li>`,
+              `<li style="margin-bottom:8px"><b>${who(s.user_id)}</b> · day ${esc(String(s.day_number ?? '—'))} · ${esc(s.status)} · ${new Date(s.created_at).toLocaleTimeString()}${s.message ? ` — ${esc(String(s.message).slice(0, 72))}` : ''}</li>`,
           )
           .join('')}
       </ul>
@@ -192,7 +218,7 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded 
         ${ungraded
           .map(
             (s) =>
-              `<li style="margin-bottom:8px"><a href="admin-student.html?u=${esc(s.user_id)}" style="color:var(--accent)">${esc(s.user_id?.slice(0, 8) || '')}</a> · ${esc(s.status || '—')} · ${esc(s.assignments?.title || '')}</li>`,
+              `<li style="margin-bottom:8px"><a href="admin-student.html?u=${esc(s.user_id)}" style="color:var(--accent)">${who(s.user_id)}</a> · ${esc(s.status || '—')} · ${esc(s.assignments?.title || '')}</li>`,
           )
           .join('')}
       </ul>
@@ -222,18 +248,18 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded 
 
     <section class="add-card">
       <h3 style="margin:0 0 8px">Before class</h3>
-      <ul style="margin:0 0 12px"><li>Skim today's lesson content.</li><li>Review at-risk students in your pod.</li><li>Queue today's polls from the agenda.</li></ul>
+      <ul style="margin:0 0 12px"><li>Skim today's lesson content (student-facing day page).</li><li>Preview the <a href="faculty.html#agenda" style="color:var(--accent)">Agenda</a> and Stream for stuck signals.</li><li>Confirm lab machines/projector/audio with venue staff.</li></ul>
       <h3 style="margin:0 0 8px">During class</h3>
-      <ul style="margin:0 0 12px"><li>Monitor the stuck queue (${stuck.length} open from your pod).</li><li>Launch polls at the marked moments.</li><li>Run breakouts / pairs.</li></ul>
+      <ul style="margin:0 0 12px"><li>Keep students aligned with the remote trainer's objective.</li><li>Monitor the stuck queue (${stuck.length} open from your pod) and <a href="admin-stuck.html" style="color:var(--accent)">triage</a>.</li><li>Unblock setup and access issues first; escalate concept gaps to the trainer.</li></ul>
       <h3 style="margin:0 0 8px">After class</h3>
-      <ul style="margin:0"><li>Reply to open stuck items.</li><li>Grade pending submissions.</li><li>Post a recap for your pod (optional).</li></ul>
+      <ul style="margin:0"><li>Close the loop on stuck items you own.</li><li>Flag grading or rubric questions to the program trainer.</li><li>Optional: nudge your pod on prep for the next session.</li></ul>
     </section>
 
     <section class="add-card">
       <h3 style="margin:0 0 8px">Today's submissions from your pod (${subs.length})</h3>
-      ${subs.length ? `<ul style="margin:0">${subs.map((s) => `<li>${esc(s.user_id.slice(0, 8))} · day ${s.assignments?.day_number ?? '—'} · ${esc(s.status || 'submitted')} · ${new Date(s.submitted_at).toLocaleTimeString()}</li>`).join('')}</ul>` : '<div class="muted">None yet.</div>'}
+      ${subs.length ? `<ul style="margin:0">${subs.map((s) => `<li>${who(s.user_id)} · day ${s.assignments?.day_number ?? '—'} · ${esc(s.status || 'submitted')} · ${new Date(s.submitted_at).toLocaleTimeString()}</li>`).join('')}</ul>` : '<div class="muted">None yet.</div>'}
 
       <h3 style="margin:14px 0 8px">Open stuck items — your pod (${stuck.length})</h3>
-      ${stuck.length ? `<ul style="margin:0">${stuck.map((s) => `<li>${esc(s.user_id.slice(0, 8))} · day ${s.day_number ?? '—'} · ${new Date(s.created_at).toLocaleTimeString()} · ${esc(s.status)}${s.message ? ' — ' + esc(String(s.message).slice(0, 80)) : ''}</li>`).join('')}</ul>` : '<div class="muted">Clear.</div>'}
+      ${stuck.length ? `<ul style="margin:0">${stuck.map((s) => `<li>${who(s.user_id)} · day ${s.day_number ?? '—'} · ${new Date(s.created_at).toLocaleTimeString()} · ${esc(s.status)}${s.message ? ' — ' + esc(String(s.message).slice(0, 80)) : ''}</li>`).join('')}</ul>` : '<div class="muted">Clear.</div>'}
     </section>`;
 }

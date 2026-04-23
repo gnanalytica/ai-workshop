@@ -42,22 +42,22 @@ function inferCohortDay(cohort) {
 function playbookByDay(day) {
   if (day <= 10) {
     return {
-      before: ['Read objective + in-class checkpoints once.', 'Open Stream and identify stuck students from prior day.', 'Prepare 1 real-world example for the topic.'],
-      during: ['Anchor students on outcome, not tool novelty.', 'Do one live demo, then quickly move to student practice.', 'Circulate: unblock setup issues first, concept issues second.'],
-      after: ['Check grades queue for submissions from today.', 'Follow up unresolved stuck cases in admin queue.', 'Post one recap + one prep instruction for tomorrow.'],
+      before: ['Read objective + in-class checkpoints once.', 'Open Stream and clear yesterday’s stuck items if any.', 'Confirm lab login, Meet/audio, and one fallback example if the trainer’s demo fails.'],
+      during: ['Reinforce the trainer’s outcome; don’t fork the lesson plan.', 'After each trainer demo, get students hands-on before moving on.', 'Circulate: fix passwords, installs, and links before debugging “why won’t my prompt work”.'],
+      after: ['Sweep the stuck queue; escalate grading or policy questions to the trainer.', 'Note repeat blockers for the trainer’s next session plan.', 'Optional: one-line pod nudge on tomorrow’s prep.'],
     };
   }
   if (day <= 20) {
     return {
-      before: ['Review lesson lab steps and expected artifacts.', 'Open Grades and note who is already behind.', 'Prepare fallback plan if a tool/API fails.'],
-      during: ['Coach students to explain decisions, not just outputs.', 'Ask for intermediate checkpoints every 15-20 minutes.', 'Use pair-support before direct faculty takeover.'],
-      after: ['Grade at least the first wave of submissions same day.', 'Tag repeated failure patterns for next class mini-remedy.', 'Check cohort-level attendance and missing work trends.'],
+      before: ['Skim lab steps and expected artifacts.', 'Open Insights / Stream and note who is behind.', 'Have a fallback exercise if an API or tool is down.'],
+      during: ['Ask students to explain choices, not paste outputs.', 'Checkpoint every 15–20 minutes with a concrete artifact.', 'Pair students before you step in; avoid doing the task for them.'],
+      after: ['Close stuck items you started; hand off grading to the trainer.', 'Tag repeated failure patterns for the trainer.', 'Skim attendance / activity only to nudge, not to change records.'],
     };
   }
   return {
-    before: ['Review rubric + demo criteria before class starts.', 'Prepare high-signal feedback prompts for rehearsal.', 'Confirm all showcase/deploy links are reachable.'],
-    during: ['Bias toward coaching delivery and clarity.', 'Prioritize blockers that affect demo readiness.', 'Capture wins + risks for each team in notes.'],
-    after: ['Finalize grading / feedback turnarounds.', 'Follow up on safety, model, and deployment checklists.', 'Set next-day rehearsal/fix targets per team.'],
+    before: ['Review demo/rubric expectations with the trainer if needed.', 'Prepare coaching prompts for rehearsal (clarity, pacing, ask).', 'Spot-check deploy/showcase links from a fresh browser.'],
+    during: ['Coach delivery and nerves; defer scoring to the trainer.', 'Prioritize blockers that block demo day.', 'Capture one win and one risk per team for the trainer.'],
+    after: ['Send grading and rubric questions to the trainer.', 'Follow up on safety, model, and deployment checklists with students.', 'Help teams set one fix target for the next rehearsal.'],
   };
 }
 

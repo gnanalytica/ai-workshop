@@ -1,0 +1,9 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: A peer ships a 10-prompt library where every prompt starts with 'Write me…' and omits role. Fastest fix?","type":"single","options":[{"text":"Add Role + Context lines before the task; keep their task as the core ask.","correct":true},{"text":"Delete half the prompts.","correct":false},{"text":"Merge into one mega-prompt only.","correct":false},{"text":"Switch to a smaller model.","correct":false}],"explanation":"CREATE is incremental; R+C are the usual first upgrade from lazy prompts."},
+  {"q":"Look back (Day 4): Both E letters in CREATE stand for:","type":"single","options":[{"text":"Examples and Evaluation.","correct":true},{"text":"Ethics and Embedding.","correct":false},{"text":"Edit and Execute.","correct":false},{"text":"Error and Escape.","correct":false}],"explanation":"Lock the framework before the Week-2 tool tour ends."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 5
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s5$Scenario: A peer ships a 10-prompt library where every prompt starts with 'Write me…' and omits role. Fastest fix?$s5$;

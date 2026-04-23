@@ -1,5 +1,5 @@
 ---
-reading_time: 16 min
+reading_time: 18 min
 tldr: "Two agents that delegate beat one agent that tries everything — today you wire up a swarm, a skill, and a plugin."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/wgmCjrMFoyc
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A busy restaurant: front desk takes the order, kitchen cooks, runner plates. One person trying to greet, chop, and bill at once burns the food and forgets the change.
+
+**Why it matches today.** Multi-agent splits **roles** so each "person" has a small job, clear handoff, and fewer collisions — same idea as supervisor / swarm patterns.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 23 gave you one agent in a loop with tools via LangGraph, plus your first MCP server. You met the five predictable break-modes (infinite retry, goal drift, hallucinated tools, context blow-up, premature success). Today, the fix for several of those failures is *structural*: stop stuffing one agent, split the work.
 
@@ -74,6 +82,8 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open**: in 10 words, why did your Day 23 single agent get confused?
 - **Think-pair-share**: 90 seconds — name a two-role split in your capstone; partner tries to collapse it back to one agent. Who wins?
 - **Live poll**: supervisor, swarm, or hierarchical for your capstone? Post S / W / H with one-line reason.
@@ -185,7 +195,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~10 min)
 Where did the handoff leak information Agent B shouldn't see, or starve Agent B of context it needed? Name one schema change you'll make tomorrow.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. Name the three orchestration patterns and one situation where each is the right choice.
 2. What are the only two primitives in OpenAI Swarm?
 3. What makes a Claude Skill more context-efficient than a giant system prompt?
@@ -194,6 +206,11 @@ Where did the handoff leak information Agent B shouldn't see, or starve Agent B 
 
 ### 4. Submit the assignment (~5 min)
 **Daily:** Submit (a) your 2-agent workflow repo with tracing enabled, (b) three sample traces showing handoffs, and (c) a diagram (hand-drawn is fine) that explains the workflow at a glance. Include one paragraph on why you split the roles the way you did.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: [Magentic-One](https://www.microsoft.com/en-us/research/publication/magentic-one) demo reel.

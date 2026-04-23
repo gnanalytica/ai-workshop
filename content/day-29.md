@@ -1,5 +1,5 @@
 ---
-reading_time: 10 min
+reading_time: 12 min
 tldr: "The demo is won or lost in the first 30 seconds — today you rehearse until it is boring, then polish your showcase."
 tags: ["launch", "demo", "rehearsal", "showcase"]
 video: https://www.youtube.com/embed/Unzc731iCUY
@@ -31,7 +31,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Theater **dress rehearsal**: same script, same cues, same shoes — you are not rewriting the play; you are burning muscle memory so opening night feels boring in a good way.
+
+**Why it matches today.** Day 29 is rehearsal discipline: **timing, backup clips, hook** — polish and nerves, not new plot twists.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 28 you built a signal pipeline for *after* demo day. Today zooms back in on the demo itself. Your Day 25 mini-demo surfaced the critiques; your Week 6 build addressed the scoped changes; the model card from Day 27 and the safety fixes from Day 26 are in. All of that work exists so that today, rehearsal can be about *delivery*, not fixing the product.
 
@@ -73,6 +81,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Setup**: projector/screen share confirmed, rehearsal order drawn live, timer on screen visible to all.
 - **Team 1 dry-run (4 min)** → **00:09 — 2 min feedback**: one "keep," one "cut," one "sharpen" from peers; instructor adds a line-level rewrite.
 - **Team 2 dry-run (4 min)** → **00:15 — 2 min feedback**: same structure; timer is strict — when it buzzes, the hook has to have landed.
@@ -164,7 +173,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 Close your laptop, say your 30-second hook out loud three times. Does it still sound like you, or like a robot? Rewrite if it's the second one.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. What are the three beats of a 4-minute demo?
 2. Name two formulas for a strong hook.
 3. What is the bridge-to-key-message technique for?
@@ -176,6 +187,11 @@ Close your laptop, say your 30-second hook out loud three times. Does it still s
 - Showcase page live with opt-in toggle ON
 - 3-minute rehearsal video recorded and posted to cohort
 - Hook, story, ask written as three separate paragraphs in your submission doc
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: one more YC Demo Day archive demo — note the specific line where they name a human.

@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "A crisp, Heilmeier-style problem statement is half the work — today you rewrite yours three times until it stops being vague."
 tags: ["design", "framing", "problem-statement", "capstone"]
 video: https://www.youtube.com/embed/XGNBFRcQMng
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A mechanic does not start by replacing the engine. They ask: *what noise, when, only uphill, after rain?* until the real fault shows up. Vague "it feels weird" wastes everyone's afternoon.
+
+**Why it matches today.** Heilmeier, 5 Whys, and HMW are that diagnostic discipline for your **problem sentence** — crisp enough to test, not mushy enough to hide in.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 10) you locked Capstone Milestone 1 — a team, a problem, a non-goals list, a success metric. The one-pager told the world *what* you're building. Today we stress-test *how you describe it* — because the same problem described vaguely and described sharply are two different projects. Your Milestone 1 one-pager is today's raw material; by tonight, the "Problem" sentence inside it is v3, and the v3 sticky note is a much sharper version than what you submitted last night.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open**: in one breath, say your capstone out loud to the person next to you; they raise a hand the moment they hear a weasel word.
 - **Think-pair-share**: 90 seconds each — swap v1 statements and circle every abstract noun ("users," "productivity," "experience") on your partner's draft.
 - **Live poll**: instructor reads 4 anonymised statements; class votes "mood" or "statement" with thumbs up/down and defends the call.
@@ -166,13 +175,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *Which weasel word did I fight hardest to keep, and what was it protecting me from?* A good reflection names the word, names the fear (scope, ego, uncertainty), and commits to one concrete thing you will verify on Day 13 instead of assuming.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Three quick checks, no Googling. Can you name all nine Heilmeier questions from memory? Can you explain the difference between a symptom and a root cause using an example from your own capstone? Can you spot the solution-smuggling in this statement: "We will build an AI assistant that helps busy professionals be more productive"? If you hesitated on any, re-read the Read section.
 
 ### 4. Submit (~5 min)
 
 Submit your v3 sticky-note problem statement plus the HMW reframe to the cohort channel. One sticky-note photo, one line of HMW, no commentary. Also post your root cause from the 5 Whys. Due tonight. Tomorrow we map the full design-thinking cycle on top of this statement — so if yours is still vague, Day 12 will be painful.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

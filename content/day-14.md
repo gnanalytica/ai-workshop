@@ -1,5 +1,5 @@
 ---
-reading_time: 14 min
+reading_time: 16 min
 tldr: "Your problem lives inside a system of loops — diagram it, find the leverage point, then pitch the whole thing in 60 seconds using SCQA."
 tags: ["design", "systems-thinking", "storytelling", "pitch", "capstone"]
 video: https://www.youtube.com/embed/_EMnnq3teEs
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** City traffic: one-way streets, flyovers, and bottlenecks loop back on each other. Fixing a symptom (more horns) is not the same as finding the **leverage point** (signal timing, parking rules). Your **pitch** is how you explain that map to someone in one minute.
+
+**Why it matches today.** Causal loops + leverage points + SCQA are "traffic map + elevator story" for your capstone system.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 13) you ran a paired Mom-Test drill and booked two real candidate-user interviews before Day 15 — all aimed at past behaviour (the workaround, the emotion spike, what they refuse to pay for), never at future opinions. The JTBD hypotheses you wrote in the format *When [situation], I want to [motivation], so I can [outcome]* are today's diagram nodes. The surprising quote that contradicted your Day 11 belief — the one Claude flagged from the transcript — is today's SCQA **Complication**. If Day 13 interviews produced no contradictions, the pitch will feel flat; re-read the transcript for an emotion spike before drawing a single arrow.
 
@@ -72,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold-open**: name one variable that secretly drives your capstone problem but nobody talks about — shout it out, one word.
 - **Think-pair-share**: 90 seconds — draw your partner's simplest loop (3 nodes, 3 arrows) from their verbal description; compare to their mental model.
 - **Polarity poll**: instructor names pairs of variables ("anxiety" and "inbox-checking"); class signals + or − with hands; defend any disagreement in one sentence.
@@ -161,13 +170,20 @@ Block the evening. Phone on DND. Do these in order.
 
 *Is my leverage point a parameter, a structure, or a paradigm — and which level was I tempted to default to?* A strong reflection names the Meadows level, admits the pull toward the easier fix, and explains why the chosen point actually moves the loop rather than treating a symptom.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Three sanity checks on the dashboard. Can you name the polarity rule for a reinforcing loop versus a balancing loop? Can you identify your capstone's leverage point in one sentence without jargon? Can you deliver your SCQA pitch without reading, in under 70 seconds, to a stranger who does not know what a "capstone" is? If not, iterate once more tonight.
 
 ### 4. Submit (~5 min)
 
 Post three artifacts to the cohort channel: (1) a screenshot of your Excalidraw causal-loop diagram with the leverage point circled, (2) your 60-second SCQA pitch as plain text (under 150 words), (3) a 2-minute voice memo of you delivering the pitch out loud. Yes, out loud — we can hear the difference between a pitch that has been spoken and one that has only been typed.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

@@ -1,5 +1,5 @@
 ---
-reading_time: 16 min
+reading_time: 18 min
 tldr: "An agent is a model in a loop with tools — today you build one with LangGraph and plug in your first MCP server."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/2B7_Y-6KBSQ
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A desk worker with a **loop**: read request → pick tool (phone, calculator, filing cabinet) → read result → decide next step. **MCP** is like agreeing everyone uses the **same plug shape** for chargers — swap tools without rewiring the whole office.
+
+**Why it matches today.** Agents are that desk loop; MCP is the **standard socket** for plugging tools into different AI apps.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 22) you deployed your v0 to Vercel, computed cost-per-user at 10/100/1000 users, audited the trust-UX stack, and published `llms.txt`. Your capstone now has a live URL. Today we give the model inside that URL *hands* — tools it can call, a loop it can run — and the industry-standard cable (MCP) for plugging those tools in.
 
@@ -73,6 +81,8 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open**: name the last "agent" demo you saw that actually worked end-to-end. One sentence on why.
 - **Think-pair-share**: 90 seconds — your partner names three tools their capstone agent would need; you spot which one has the fuzziest description.
 - **Live trace-read**: paste the instructor's agent trace in chat. Where would you cut context? Vote A/B/C.
@@ -207,7 +217,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 Which of the five predictable break-modes (infinite retry, goal drift, hallucinated tools, context blow-up, premature success) hit you first today, and why your tool design invited it?
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. What does ReAct stand for and what are the two kinds of model output each turn?
 2. What three things define a tool from the model's perspective?
 3. Name three predictable ways agents break and one fix for each.
@@ -216,6 +228,11 @@ Which of the five predictable break-modes (infinite retry, goal drift, hallucina
 
 ### 4. Submit the assignment (~5 min)
 **Daily:** Submit (a) your working LangGraph agent repo, (b) a full trace of one successful run and one failed run, and (c) a one-paragraph writeup of the single loop-fix you had to make to keep the agent from breaking.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: an [AutoGen](https://microsoft.github.io/autogen/) multi-agent demo to preview Day 24.

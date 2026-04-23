@@ -1,0 +1,10 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Your POV insight slot says 'users want faster service' — what did you miss?","type":"single","options":[{"text":"A surprising insight — you restated the premise.","correct":true},{"text":"More sticky notes.","correct":false},{"text":"A longer FigJam board.","correct":false},{"text":"A prettier font.","correct":false}],"explanation":"POV needs verb-based need + non-obvious because-clause."},
+  {"q":"Look back (Day 11): The three diseases of vague problem statements include:","type":"single","options":[{"text":"Solution smuggling, audience blur, success amnesia.","correct":true},{"text":"Too many sticky notes.","correct":false},{"text":"Using FigJam.","correct":false},{"text":"Interviewing users.","correct":false}],"explanation":"Design thinking loop builds on sharp problem framing."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 12
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s12$Scenario: Your POV insight slot says 'users want faster service' — what did you miss?$s12$
+  );

@@ -71,9 +71,18 @@
   <div class="gate-card">
     <div class="denied">
       <h2 style="text-align:center">Not authorized</h2>
-      <p>You're signed in but not an admin. Ask an existing admin to flip <code>profiles.is_admin = true</code> for your account.</p>
+      <p>You're signed in but not a trainer or support faculty on this cohort.</p>
       <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
     </div>
+  </div>
+</div>
+
+<div class="gate" id="trainerOnly" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Support faculty</div>
+    <h2>Trainer only</h2>
+    <p class="muted" style="line-height:1.55">Registrations and enrollments are managed by program trainers. Use <a href="faculty.html">Faculty hub</a>, <a href="admin-home.html">Home</a>, <a href="admin-schedule.html">Schedule</a>, or <a href="admin-stuck.html">Stuck queue</a>.</p>
+    <button class="submit-btn" style="margin-top:12px" id="signOutTrainer">Sign out</button>
   </div>
 </div>
 
@@ -132,7 +141,7 @@
   import { toast, confirmDialog } from './assets/dialog.js';
   wireThemeToggle();
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   const $ = (id) => document.getElementById(id);
   let ALL_ROWS = [];
   let COHORT = null;
@@ -220,9 +229,34 @@
     await checkAdmin(session.user);
   }
 
-  function showGate() { $('gate').style.display = 'grid'; $('denied').style.display = 'none'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'none'; }
-  function showDenied() { $('gate').style.display = 'none'; $('denied').style.display = 'grid'; $('panel').style.display = 'none'; $('signoutBtn').style.display = 'inline-block'; }
-  function showPanel() { $('gate').style.display = 'none'; $('denied').style.display = 'none'; $('panel').style.display = 'block'; $('signoutBtn').style.display = 'inline-block'; }
+  function showGate() {
+    $('gate').style.display = 'grid';
+    $('denied').style.display = 'none';
+    $('trainerOnly').style.display = 'none';
+    $('panel').style.display = 'none';
+    $('signoutBtn').style.display = 'none';
+  }
+  function showDenied() {
+    $('gate').style.display = 'none';
+    $('denied').style.display = 'grid';
+    $('trainerOnly').style.display = 'none';
+    $('panel').style.display = 'none';
+    $('signoutBtn').style.display = 'inline-block';
+  }
+  function showTrainerOnly() {
+    $('gate').style.display = 'none';
+    $('denied').style.display = 'none';
+    $('trainerOnly').style.display = 'grid';
+    $('panel').style.display = 'none';
+    $('signoutBtn').style.display = 'inline-block';
+  }
+  function showPanel() {
+    $('gate').style.display = 'none';
+    $('denied').style.display = 'none';
+    $('trainerOnly').style.display = 'none';
+    $('panel').style.display = 'block';
+    $('signoutBtn').style.display = 'inline-block';
+  }
 
   $('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -234,7 +268,7 @@
     else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
   });
 
-  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  [$('signoutBtn'), $('signOutAlt'), $('signOutTrainer')].filter(Boolean).forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
 
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
@@ -245,6 +279,7 @@
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return showDenied();
+    if (isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) return showTrainerOnly();
     showPanel();
     document.getElementById('adminNav').innerHTML = renderAdminNav('admin.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
     wrapAdminMainLayout();

@@ -517,6 +517,69 @@ a.admin-nav-link--active .admin-nav-link__ic{
   color:var(--accent);
 }
 
+.admin-nav-faculty-sub{
+  margin:14px 0 4px;
+  padding:12px 10px 14px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.admin-nav-faculty-sub__label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--muted);
+  margin:0 0 8px 4px;
+  font-weight:600;
+}
+.admin-nav-faculty-sub__links{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+a.admin-nav-faculty-link{
+  display:block;
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:13px;
+  color:var(--muted);
+  text-decoration:none;
+  line-height:1.3;
+}
+a.admin-nav-faculty-link:hover{
+  background:var(--bg-soft);
+  color:var(--ink);
+}
+a.admin-nav-faculty-link--active{
+  background:rgba(195,255,54,.1);
+  color:var(--accent);
+  font-weight:600;
+}
+[data-theme="light"] a.admin-nav-faculty-link--active{
+  background:rgba(111,165,0,.12);
+  color:var(--accent);
+}
+
+/* Schedule: support-faculty read-only day cards */
+.day-card--readonly .day-head{align-items:flex-start}
+.day-card--readonly .day-ro-grid{
+  display:grid;
+  gap:12px;
+  margin-top:10px;
+  font-size:13px;
+}
+@media(min-width:520px){
+  .day-card--readonly .day-ro-grid{grid-template-columns:1fr 1fr}
+}
+.day-ro-k{
+  display:block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--muted);
+  margin-bottom:4px;
+  font-weight:500;
+}
+
 .admin-nav-footer{
   margin-top:10px;
   padding-top:14px;

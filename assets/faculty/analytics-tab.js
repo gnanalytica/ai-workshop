@@ -1,7 +1,19 @@
 // Analytics tab: Pods vs Faculty toggle, charts + tables.
 
-import { loadPodAnalytics, loadFacultyAnalytics } from './analytics.js';
-import { facultyHBarChart, facultyVBarChart } from './chart-kit.js';
+import {
+  loadPodAnalytics,
+  loadFacultyAnalytics,
+  loadCohortExecSummary,
+  loadCohortWeekTimeSeries,
+  loadQuizMilestoneSummary,
+} from './analytics.js';
+import {
+  facultyHBarChart,
+  facultyVBarChart,
+  facultyDoughnutChart,
+  facultyLineChart,
+  facultyChartColors,
+} from './chart-kit.js';
 import { supabase } from '../supabase.js';
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
@@ -24,17 +36,162 @@ function barTable(headers, rows) {
 
 export async function renderAnalytics({ state, container }) {
   if (!state.cohortId) { container.innerHTML = '<div class="empty-state">Pick a cohort.</div>'; return; }
+  const canGrade = !!state.isAdmin;
   container.innerHTML = `
-    <div style="display:flex;gap:6px;margin-bottom:14px">
+    <div id="execPulseHost" class="add-card" style="margin-bottom:14px;padding:16px 18px">
+      <div class="empty-state" style="padding:16px 10px">Loading cohort pulse…</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <span class="muted" style="font-size:12px;margin-right:8px">Drill-down</span>
       <button class="btn-sm active" data-view="pods">Pods</button>
-      <button class="btn-sm" data-view="faculty">Faculty</button>
+      <button class="btn-sm" data-view="faculty">Mentor load</button>
     </div>
     <div id="analyticsBody"><div class="empty-state">Loading…</div></div>
-    <section class="add-card" id="speedGradeCard" style="margin-top:14px">
+    ${
+      canGrade
+        ? `<section class="add-card" id="speedGradeCard" style="margin-top:14px">
       <h3 style="margin:0 0 8px">Speed grading queue</h3>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">Quickly move through pending submissions and score inline.</div>
       <div id="speedGradeBody" class="empty-state" style="padding:20px 10px">Loading queue…</div>
-    </section>`;
+    </section>`
+        : `<p class="muted" style="font-size:13px;margin-top:14px;line-height:1.5">Submission scoring is handled by program trainers. Use the pulse above plus drill-down tables; triage blocked students from <a href="admin-stuck.html" style="color:var(--accent)">Stuck queue</a>.</p>`
+    }`;
+
+  async function renderExecPulse() {
+    const host = container.querySelector('#execPulseHost');
+    if (!host) return;
+    try {
+      const ex = await loadCohortExecSummary(state.cohortId);
+      if (!ex.enrolled) {
+        host.innerHTML = `
+          <div class="muted" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Cohort executive pulse</div>
+          <div class="empty-state" style="padding:12px 10px">No confirmed students in this cohort yet.</div>`;
+        return;
+      }
+      const onTrack = Math.max(0, ex.enrolled - ex.atRiskCount);
+      const chk =
+        ex.checkInRate != null
+          ? `${Math.round(ex.checkInRate * 100)}% of recorded session check-ins`
+          : '— (no attendance rows yet)';
+
+      const [ts, ms] = await Promise.all([
+        loadCohortWeekTimeSeries(state.cohortId),
+        loadQuizMilestoneSummary(state.cohortId, ex.studentIds),
+      ]);
+
+      const tsBlock = ts.cohortStart
+        ? `<div style="height:240px;position:relative"><canvas id="execTimeSeriesLine" aria-label="Activity by week"></canvas></div>
+            <p class="muted" style="font-size:11px;margin:8px 0 0;line-height:1.45">Weeks are 7-day buckets from cohort start. Stuck = items opened that week.</p>`
+        : `<div class="muted" style="font-size:12px;padding:10px 0;line-height:1.5">Set a cohort start date (<code style="font-size:11px">starts_on</code>) to see activity by week.</div>`;
+
+      let milestoneBlock;
+      if (!ms.rows.length) {
+        milestoneBlock = `<div class="muted" style="font-size:12px;padding:8px 0;line-height:1.5">No quizzes on milestone days (5, 10, 15, 20, 25, 30) for this cohort.</div>`;
+      } else {
+        const mh = ['Day', 'Quiz', '% enrolled pass', 'Attempt pass', 'Avg score', 'Attempts'];
+        const mr = ms.rows.map((r) => [
+          String(r.day_number),
+          esc(r.title),
+          pctBar(r.enrolledPassedPct),
+          r.attemptPassPct != null ? `${r.attemptPassPct.toFixed(0)}%` : '—',
+          r.avgScore != null ? String(r.avgScore) : '—',
+          String(r.attempts),
+        ]);
+        milestoneBlock = `<div style="overflow-x:auto;margin-top:6px">
+          <table>
+            <thead><tr>${mh.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+            <tbody>${mr.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+        <p class="muted" style="font-size:11px;margin:10px 0 0;line-height:1.45">% enrolled pass = share of confirmed students with at least one passing attempt on that quiz (${ms.enrolledCount} enrolled).</p>`;
+      }
+
+      host.innerHTML = `
+        <div class="muted" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px">Cohort executive pulse</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px">
+          <div style="background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">${ex.enrolled}</div>
+            <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Enrolled</div>
+          </div>
+          <div style="background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">${ex.meanLabPct.toFixed(0)}%</div>
+            <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Mean lab progress</div>
+          </div>
+          <div style="background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;color:#ffb090">${ex.atRiskCount}</div>
+            <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">At-risk (heuristic)</div>
+          </div>
+          <div style="background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">${ex.stuckCohortOpen}</div>
+            <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Open stuck</div>
+          </div>
+          <div style="background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div style="font-size:14px;font-weight:600;line-height:1.35;padding-top:4px">${esc(chk)}</div>
+            <div class="muted" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Check-ins</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;align-items:stretch">
+          <div style="min-height:200px">
+            <div class="muted" style="font-size:12px;margin-bottom:8px">On-track vs at-risk</div>
+            <div style="height:200px;position:relative"><canvas id="execDonutRisk" aria-label="At-risk split"></canvas></div>
+          </div>
+          <div style="min-height:220px">
+            <div class="muted" style="font-size:12px;margin-bottom:8px">Avg lab completion by pod</div>
+            <div style="height:220px;position:relative"><canvas id="execPodsBar" aria-label="Pods completion"></canvas></div>
+          </div>
+        </div>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+          <div class="muted" style="font-size:12px;margin-bottom:8px">Activity by cohort week</div>
+          ${tsBlock}
+        </div>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+          <div class="muted" style="font-size:12px;margin-bottom:8px">Milestone quiz pass rates</div>
+          ${milestoneBlock}
+        </div>
+        <p class="muted" style="font-size:12px;margin:16px 0 0;line-height:1.5">Same at-risk heuristic as <strong>People</strong>. Pod chart includes empty pods (0 students). 
+          <a href="faculty.html#people" style="color:var(--accent)">People →</a>
+          · <a href="admin-stuck.html" style="color:var(--accent)">Stuck →</a>
+          · <a href="admin-home.html" style="color:var(--accent)">Home →</a></p>`;
+
+      const colors = facultyChartColors();
+      await facultyDoughnutChart(host.querySelector('#execDonutRisk'), {
+        labels: ['On track', 'At-risk'],
+        values: [onTrack, ex.atRiskCount],
+        colors: [`${colors.accent}cc`, `${colors.accent3}99`],
+      });
+      const pods = [...ex.podRows].filter((p) => p.students > 0).sort((a, b) => b.avgPct - a.avgPct);
+      const pLabels = pods.length
+        ? pods.map((p) => {
+            const n = String(p.pod.name || 'Pod');
+            return n.length > 20 ? `${n.slice(0, 18)}…` : n;
+          })
+        : ['—'];
+      const pVals = pods.length ? pods.map((p) => Math.round(p.avgPct * 10) / 10) : [0];
+      await facultyHBarChart(host.querySelector('#execPodsBar'), {
+        labels: pLabels,
+        values: pVals,
+        label: 'Avg % labs',
+      });
+      if (ts.cohortStart) {
+        const lineCanvas = host.querySelector('#execTimeSeriesLine');
+        if (lineCanvas) {
+          await facultyLineChart(lineCanvas, {
+            labels: ts.labels,
+            datasets: [
+              { label: 'Lab completions', data: ts.labs },
+              { label: 'Quiz attempts', data: ts.quizzes },
+              { label: 'Submissions', data: ts.subs },
+              { label: 'Stuck opened', data: ts.stuck },
+            ],
+          });
+        }
+      }
+    } catch (e) {
+      host.innerHTML = `<div class="empty-state" style="color:#ffa0a0;padding:16px">${esc(e.message || e)}</div>`;
+    }
+  }
+
+  await renderExecPulse();
 
   const qState = { rows: [], idx: 0 };
 
@@ -235,5 +392,5 @@ export async function renderAnalytics({ state, container }) {
     });
   });
   showPods();
-  loadQueue();
+  if (canGrade) loadQueue();
 }

@@ -1,0 +1,10 @@
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You are tired and let the agent edit production DB migrations unsupervised. Which leash from Day 21?","type":"single","options":[{"text":"Tight leash — freeze prod migrations; specify acceptance + rollback.","correct":true},{"text":"Long leash — surprise is good.","correct":false},{"text":"No leash on Fridays.","correct":false},{"text":"Let the model pick ORM and region.","correct":false}],"explanation":"Irreversible / domain-critical → tight; scaffolding → long."},
+  {"q":"Look back (Day 20): Firecrawl / Jina Reader class of tool:","type":"single","options":[{"text":"URL → clean markdown for LLM/RAG ingestion.","correct":true},{"text":"Local tokenizer visualizer.","correct":false},{"text":"GPU driver updater.","correct":false},{"text":"Only for email.","correct":false}],"explanation":"Automation primitives before ship week."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 21
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s21$Scenario: You are tired and let the agent edit production DB migrations unsupervised. Which leash from Day 21?$s21$
+  );

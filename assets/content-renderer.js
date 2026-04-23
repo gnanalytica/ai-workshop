@@ -217,20 +217,10 @@ export function parseModules(markdownText) {
 }
 
 /**
- * renderFrontmatterHeader(meta) — full header strip (reading time + tags + video + lab + resources)
+ * renderFrontmatterHeader(meta) — video + lab + resources (no duration/tags strip)
  */
 export function renderFrontmatterHeader(meta = {}) {
   const parts = [];
-
-  const metaBits = [];
-  if (Array.isArray(meta.tags) && meta.tags.length) {
-    metaBits.push(
-      `<span class="lm-tags">${meta.tags.map(t => `<span class="tag tag-pend">${escapeHtml(t)}</span>`).join(' ')}</span>`
-    );
-  }
-  if (metaBits.length) {
-    parts.push(`<div class="lm-row">${metaBits.join('')}</div>`);
-  }
 
   if (meta.video) {
     parts.push(`
@@ -267,52 +257,6 @@ export function renderFrontmatterHeader(meta = {}) {
   }
 
   return parts.join('\n');
-}
-
-/**
- * renderMetaStrip(meta) — compact version with only reading-time + tags.
- */
-export function renderMetaStrip(meta = {}) {
-  const bits = [];
-  if (Array.isArray(meta.tags) && meta.tags.length) {
-    bits.push(
-      `<span class="lm-tags">${meta.tags.map(t => `<span class="tag tag-pend">${escapeHtml(t)}</span>`).join(' ')}</span>`
-    );
-  }
-  if (!bits.length) return '';
-  return `<div class="lm-row">${bits.join('')}</div>`;
-}
-
-/**
- * renderToolSections(meta) — 3 columns of Hands-on / Demo / Reference tools.
- * Looks for meta.tools_hands_on, meta.tools_demo, meta.tools_reference
- * each an array of {name, url}.
- */
-export function renderToolSections(meta = {}) {
-  const cols = [
-    { key: 'tools_hands_on', label: 'Hands-on', tint: 'lime',  desc: 'You do it, 20–30 min artifact.' },
-    { key: 'tools_demo',     label: 'Demo',      tint: 'violet',desc: 'Instructor walks through; you watch.' },
-    { key: 'tools_reference',label: 'Reference', tint: 'sky',   desc: 'Self-explore after class.' },
-  ];
-  const hasAny = cols.some(c => Array.isArray(meta[c.key]) && meta[c.key].length);
-  if (!hasAny) return '';
-  const colHtml = cols.map(c => {
-    const items = meta[c.key];
-    const list = Array.isArray(items) && items.length
-      ? `<ul>${items.map(t => {
-          const url = t?.url || '#';
-          const name = t?.name || url;
-          return `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a><span class="lm-host muted">${escapeHtml(domainOf(url))}</span></li>`;
-        }).join('')}</ul>`
-      : `<p class="muted" style="font-size:13px;margin:6px 0 0">None this day.</p>`;
-    return `
-      <div class="tool-col tool-${c.tint}">
-        <div class="tool-h">${escapeHtml(c.label)}</div>
-        <div class="tool-d">${escapeHtml(c.desc)}</div>
-        ${list}
-      </div>`;
-  }).join('');
-  return `<div class="tool-grid">${colHtml}</div>`;
 }
 
 /**

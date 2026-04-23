@@ -1,23 +1,23 @@
 ---
-reading_time: 14 min
-tldr: "Every chat model has a personality and a superpower. Pick the right one and train it to remember you."
+reading_time: 17 min
+tldr: "Every chat model has a personality and a superpower — plus a separate class of reasoning models for slow, careful work. Pick the right brain for the job and train it to remember you."
 tags: ["exposure", "tools"]
 video: https://www.youtube.com/embed/YgvL0dA_2Pg
 lab: {"title": "Build your personal Jarvis in Claude Projects", "url": "https://claude.ai"}
 prompt_of_the_day: "You are my personal Jarvis for {{context: e.g. 3rd-year CSE at NITK}}. My goals this month are {{goals}}. My constraints are {{time, budget, tools}}. My thinking style is {{style}}. For every answer: (1) ask one clarifying question first if the task is ambiguous, (2) give the shortest honest answer, (3) end with one next step I can do in 10 minutes."
 tools_hands_on: [{"name": "ChatGPT", "url": "https://chatgpt.com"}, {"name": "Claude", "url": "https://claude.ai"}, {"name": "Gemini", "url": "https://gemini.google.com"}]
 tools_demo: [{"name": "Grok", "url": "https://grok.com"}, {"name": "Microsoft Copilot", "url": "https://copilot.microsoft.com"}, {"name": "Kimi", "url": "https://kimi.moonshot.cn"}]
-tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}, {"name": "Mistral Le Chat", "url": "https://chat.mistral.ai"}]
+tools_reference: [{"name": "Poe", "url": "https://poe.com"}, {"name": "HuggingChat", "url": "https://huggingface.co/chat"}, {"name": "Meta AI", "url": "https://meta.ai"}, {"name": "Mistral Le Chat", "url": "https://chat.mistral.ai"}, {"name": "DeepSeek (reasoning)", "url": "https://www.deepseek.com"}, {"name": "OpenAI — reasoning models", "url": "https://platform.openai.com/docs/guides/reasoning"}]
 resources: [{"name": "Claude Projects guide", "url": "https://claude.ai"}, {"name": "ChatGPT Custom Instructions", "url": "https://chatgpt.com"}]
 objective:
-  topic: "Five frontier chat models, their personalities, and the Memory + Projects features that break amnesia"
+  topic: "Five frontier chat models, reasoning vs fast-chat routing, Memory + Projects"
   tools: ["Claude", "ChatGPT", "Gemini"]
   end_goal: "Ship a living Claude Project (your Jarvis) loaded with your resume, transcript, and 5 capstone ideas — plus a 3-model comparison screenshot proving why context beats a blank chat."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Stop using one chatbot as a search engine. Start using five of them as thinking partners — with Memory and Projects doing the remembering for you.
+**Topic.** Stop using one chatbot as a search engine. Start using five of them as thinking partners — route *fast* models for drafts and *reasoning* models for fragile logic — with Memory and Projects doing the remembering for you.
 
 **Tools you'll use.** ChatGPT, Claude, Gemini (hands-on today); Grok, Copilot, Kimi (demoed for contrast).
 
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** You text the friend who answers in seconds for movie picks, and you call the cousin who thinks slowly before helping you read a lease. Same you, different *kind* of help — plus a barista who remembers your usual without asking.
+
+**Why it matches today.** **Fast vs reasoning** models are those two friends; **Memory / Projects** are the barista who does not make you repeat your order every visit.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Friday (Day 5) you delivered your 2-minute show-and-tell pitch, stole three cohort tricks, and locked in your **Personal AI Stack v1** — tools, top 10 prompts, top 3 use cases, and your "next bet" for Day 30. Today extends the "tools" row of that stack: the single-chatbot habit is why half your Week-1 prompts felt mid. Pull up your Stack v1 PDF before class; today you'll upgrade "My AI Tools" from a flat list into a routed stack with a Jarvis attached.
 
@@ -55,6 +63,7 @@ objective:
 > - **Projects** = a pinned workspace with reference files + system prompt (Claude Projects, ChatGPT GPTs, Gemini Gems).
 > - **Context window** = how much text the model can "see" in one chat.
 > - **Jarvis** = your personal Claude Project loaded with your resume, goals, and constraints.
+> - **Reasoning model** = a chat model trained or run in a mode that spends extra compute *thinking* before answering (chain-of-thought-style). Slower and often pricier — but steadier on multi-step logic, hard bugs, and exam-style proofs.
 
 ---
 
@@ -71,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Fist-of-5 cold open**: on the count of three, show fingers — how many of the five frontier chat models have you used in the last 7 days. Scan the room; we are calibrating the gap.
 - **Think-pair-share**: in 90 seconds with the person next to you, each name one task you currently do in ChatGPT that probably belongs in Claude or Gemini instead. Be specific about the task, not the tool.
 - **Live poll**: drop in the cohort channel your current "default model". We read the tally live and ask the two outliers to defend their pick for 30 seconds each.
@@ -91,6 +101,18 @@ Here is the honest field guide we use in this cohort.
 | Kimi | Chinese-language context, long docs | English nuance | Reading Chinese research, cross-cultural work |
 
 A useful mental model: Claude is the thoughtful senior, ChatGPT is the eager intern, Gemini is the Google employee, Grok is the news junkie cousin, Kimi is the exchange student from Tsinghua. You would not ask all five the same question the same way in real life, so stop doing it online.
+
+### Read: Reasoning models — when to pay for "think longer"
+
+**Not every task wants the same kind of model.** Most chat defaults are tuned for *low latency* and fluent answers. **Reasoning models** (sometimes exposed as a separate mode or API) trade time and tokens for reliability on fragile work: multi-step algebra, competitive programming edge cases, gnarly debugging, "prove this invariant," or planning under tight constraints.
+
+**When reasoning wins.** Use a reasoning-style model when a wrong answer is expensive — security review logic, grading rubrics, tricky data wrangling, or when you've already failed twice with the fast default.
+
+**When fast chat wins.** First drafts, brainstorming, summarizing a long doc, rewriting tone, boilerplate code with tests — you want throughput, not a 30-second think.
+
+**How to spot them in the wild.** Vendors label unevenly: "reasoning," "thinking," "Pro/Max with extended thinking," or separate SKUs (e.g. OpenAI reasoning family, DeepSeek-R1-style models on Hugging Face or via API). The *behavioral* test: same prompt, does the system show intermediate steps or take visibly longer before the final line?
+
+**Cohort rule.** Add one line to your Personal Stack: *"Fast model for drafts; reasoning model for proofs, money, and merges."* You will reuse this on capstone debugging week.
 
 ### Read: Memory and Projects — the two features that change everything
 
@@ -166,9 +188,11 @@ Block the evening. Phone on DND. Do these in order.
 
 *Which model felt most like a thinking partner tonight, and what specific behavior earned that feeling?* A good reflection names the exact turn where a model pushed back, asked a clarifying question, or refused to flatter you — and ties that moment to which kind of tasks you will route to it for the next 24 days. Vague "Claude felt smarter" does not count; quote a sentence.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
 
-Four quick questions on the dashboard. What is the difference between Memory and Projects? Which model would you ask to summarize a 90-page Google Doc your professor shared on Drive? Which model would you ask for the current status of a breaking AI news story? And why did the Claude Jarvis answer beat the blank ChatGPT answer in step 7 of the lab?
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
+
+Sample themes: Memory vs Projects; which model for a 90-page Drive doc vs breaking news; why Jarvis-with-context beat blank ChatGPT. The dashboard also adds a transfer scenario + spaced item from earlier weeks.
 
 ### 4. Submit (~5 min)
 
@@ -178,6 +202,10 @@ Post to the cohort Slack channel before 11 pm:
 2. Three screenshots of your best three chatbot conversations from today (any model), each with a one-sentence caption on why the answer was good.
 
 This is your daily artifact. It is the ticket to Day 7.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
 
 ### 5. Deepen (optional, ~30 min)
 

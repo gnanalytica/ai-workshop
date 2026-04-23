@@ -1,0 +1,99 @@
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: A relative says ten citations from ChatGPT mean the answer must be true. Best response?","type":"single","options":[{"text":"Still verify each claim against the source — citations can misstate or drift.","correct":true},{"text":"Ten links guarantee accuracy.","correct":false},{"text":"Only trust answers without links.","correct":false},{"text":"AI never cites sources.","correct":false}],"explanation":"Grounding reduces risk; it does not remove the Day-1 lesson that models can be confidently wrong."},
+  {"q":"Forward link: Why is the Day-1 reflection written with zero AI assistance?","type":"single","options":[{"text":"To preserve an honest Day-0 baseline for the Day-30 arc.","correct":true},{"text":"Because models cannot write.","correct":false},{"text":"It is optional for busy students.","correct":false},{"text":"To comply with tokenizer limits.","correct":false}],"explanation":"You are measuring growth; a synthetic Day-1 essay breaks the story."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 1
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s1$Scenario: A relative says ten citations from ChatGPT mean the answer must be true. Best response?$s1$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You need a verbatim date from an Act for an assignment. Same prompt at temperature 0 vs 1.2 — which is the safer default before human proofreading?","type":"single","options":[{"text":"Lower temperature for factual, extraction-style answers.","correct":true},{"text":"Higher temperature for all legal text.","correct":false},{"text":"Temperature never changes factual risk.","correct":false},{"text":"Use the highest temperature always.","correct":false}],"explanation":"Lower temperature reduces sampling variance; you still verify statutes manually."},
+  {"q":"Look back (Day 1): What is hallucination in one line?","type":"single","options":[{"text":"The model states false or ungrounded claims with high confidence.","correct":true},{"text":"The model runs out of VRAM.","correct":false},{"text":"The tokenizer splits Hindi wrong.","correct":false},{"text":"The chat UI is slow.","correct":false}],"explanation":"Spaced recall from Day 1 before Week 2 research stack."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 2
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s2$Scenario: You need a verbatim date from an Act for an assignment. Same prompt at temperature 0 vs 1.2 — which is the safer default before human proofreading?$s2$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You need grounded answers on your own syllabus PDFs only — no open web. Best primary tool class from Day 3?","type":"single","options":[{"text":"Private index / notebook over YOUR sources (e.g. NotebookLM-style).","correct":true},{"text":"Default generic chat with browsing only.","correct":false},{"text":"Image generation.","correct":false},{"text":"Browser automation only.","correct":false}],"explanation":"Match tool class to constraint: your corpus, closed world."},
+  {"q":"Look back (Day 2): Memory in ChatGPT projects vs frozen model weights — which is true?","type":"single","options":[{"text":"App memory injects prior facts into the prompt; weights do not change per chat.","correct":true},{"text":"Each message retrains the weights live.","correct":false},{"text":"Memory and weights are identical concepts.","correct":false},{"text":"Open models cannot use memory.","correct":false}],"explanation":"Re-grounds the Day-2 stack before tool routing deepens."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 3
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s3$Scenario: You need grounded answers on your own syllabus PDFs only — no open web. Best primary tool class from Day 3?$s3$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: Outputs vary wildly in tone between runs. Which CREATE knob do you tighten first?","type":"single","options":[{"text":"Tone + active constraints (and examples if needed).","correct":true},{"text":"Delete all context to save tokens.","correct":false},{"text":"Ask for JSON only, no tone.","correct":false},{"text":"Switch models blindly until one works.","correct":false}],"explanation":"T and A (tone, constraints) stabilize voice; E gives format anchors."},
+  {"q":"Look back (Day 3): Open-weight vs closed-weight means:","type":"single","options":[{"text":"Open = downloadable model weights; closed = API-only behind a vendor.","correct":true},{"text":"Open = free; closed = paid only.","correct":false},{"text":"Open = runs only on phone.","correct":false},{"text":"There is no real difference.","correct":false}],"explanation":"Recall from tool landscape before context engineering week."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 4
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s4$Scenario: Outputs vary wildly in tone between runs. Which CREATE knob do you tighten first?$s4$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: A peer ships a 10-prompt library where every prompt starts with 'Write me…' and omits role. Fastest fix?","type":"single","options":[{"text":"Add Role + Context lines before the task; keep their task as the core ask.","correct":true},{"text":"Delete half the prompts.","correct":false},{"text":"Merge into one mega-prompt only.","correct":false},{"text":"Switch to a smaller model.","correct":false}],"explanation":"CREATE is incremental; R+C are the usual first upgrade from lazy prompts."},
+  {"q":"Look back (Day 4): Both E letters in CREATE stand for:","type":"single","options":[{"text":"Examples and Evaluation.","correct":true},{"text":"Ethics and Embedding.","correct":false},{"text":"Edit and Execute.","correct":false},{"text":"Error and Escape.","correct":false}],"explanation":"Lock the framework before the Week-2 tool tour ends."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 5
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s5$Scenario: A peer ships a 10-prompt library where every prompt starts with 'Write me…' and omits role. Fastest fix?$s5$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You paste a 40-page PDF class policy into a blank chat vs into a Project with that file pinned. Which is more likely to give grounded, on-policy answers?","type":"single","options":[{"text":"Project with the file in workspace / system context.","correct":true},{"text":"Blank chat with the same paste every time.","correct":false},{"text":"Neither — models cannot read PDFs.","correct":false},{"text":"Only the model brand matters.","correct":false}],"explanation":"Context beats a one-off paste; Projects bundle files + instructions."},
+  {"q":"Look back (Day 5): Personal AI Stack v1 includes which section pairing?","type":"single","options":[{"text":"My AI Tools + My Next Bet among the four blocks.","correct":true},{"text":"Capstone repo + CI only.","correct":false},{"text":"GPU specs + cloud bill only.","correct":false},{"text":"Only LinkedIn prompts.","correct":false}],"explanation":"Spaced recall from milestone day before research stack."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 6
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s6$Scenario: You paste a 40-page PDF class policy into a blank chat vs into a Project with that file pinned. Which is more likely to give grounded, on-policy answers?$s6$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: A claim in Perplexity looks perfect but the abstract does not support the sentence. What do you do first?","type":"single","options":[{"text":"Rewrite or drop the claim after opening the source.","correct":true},{"text":"Keep it if the answer sounds fluent.","correct":false},{"text":"Ask the model 'are you sure' three times.","correct":false},{"text":"Add more adjectives and resubmit.","correct":false}],"explanation":"Day 7 four-step check: click → source exists → claim matches → date."},
+  {"q":"Look back (Day 6): Memory vs Projects — best distinction?","type":"single","options":[{"text":"Memory stores durable facts about you across chats; Projects pin files + instructions for a workspace.","correct":true},{"text":"They are the same feature.","correct":false},{"text":"Memory only works offline.","correct":false},{"text":"Projects cannot hold files.","correct":false}],"explanation":"Recall before research outputs hit the capstone brief."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 7
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s7$Scenario: A claim in Perplexity looks perfect but the abstract does not support the sentence. What do you do first?$s7$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You need a LinkedIn-safe hero image for a real employer brand. Which path matches Day 8 licensing advice?","type":"single","options":[{"text":"Prefer a commercially trained image tool (e.g. Firefly-class) or own compositing.","correct":true},{"text":"Any random SD checkpoint from Reddit.","correct":false},{"text":"Skip disclosure because C2PA does not exist.","correct":false},{"text":"Use only screenshots of Google Images.","correct":false}],"explanation":"Training-data rights matter for anything you publish."},
+  {"q":"Look back (Day 7): NotebookLM refuses the open web on purpose because:","type":"single","options":[{"text":"Answers must ground in YOUR uploaded sources only.","correct":true},{"text":"Google banned search.","correct":false},{"text":"It only supports audio.","correct":false},{"text":"It cannot read PDFs.","correct":false}],"explanation":"Contrast research tools before creative deliverables stack."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 8
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s8$Scenario: You need a LinkedIn-safe hero image for a real employer brand. Which path matches Day 8 licensing advice?$s8$
+  );
+
+update public.quizzes set questions = coalesce(questions, '[]'::jsonb) || $json$[
+  {"q":"Scenario: You want to clone a classmate's voice for a prank reel. What does Day 9 require?","type":"single","options":[{"text":"Do not — voice cloning needs consent; use your own voice or documented permission.","correct":true},{"text":"Okay if it is funny.","correct":false},{"text":"Okay on free tier only.","correct":false},{"text":"Okay if you credit them in the description.","correct":false}],"explanation":"Ethics block is non-negotiable; consent or your own voice."},
+  {"q":"Look back (Day 8): Garbled text in generated posters — Day 8's practical fix?","type":"single","options":[{"text":"Composite real typography in Canva / Ideogram-class tools instead of forcing the image model to render long text.","correct":true},{"text":"Use more adjectives in the image prompt.","correct":false},{"text":"Switch to audio models.","correct":false},{"text":"Lower temperature on the video model.","correct":false}],"explanation":"Creative pipeline recall before pitch assets."}
+]$json$::jsonb
+where cohort_id = '56268633-9e93-4305-af6a-1b622a833d8e' and day_number = 9
+  and not exists (
+    select 1
+    from jsonb_array_elements(coalesce(questions, '[]'::jsonb)) as elem
+    where elem->>'q' = $s9$Scenario: You want to clone a classmate's voice for a prank reel. What does Day 9 require?$s9$
+  );

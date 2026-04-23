@@ -1,5 +1,5 @@
 ---
-reading_time: 10 min
+reading_time: 12 min
 tldr: "Ethics is not a lecture, it is a checklist — today you red-team your own capstone before the world does."
 tags: ["launch", "ethics", "safety", "red-team"]
 video: https://www.youtube.com/embed/EBK-a94IFHY
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A **fire drill**: you try to break into your own house before a thief does — jammed windows, weak locks, spare key under the mat. The point is embarrassment *now*, not a headline later.
+
+**Why it matches today.** Red-teaming is that drill for your app: **hostile prompts**, bad outputs, and fixes **before** the panel and the public internet stress-test you.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 25 you demoed v0 and took the critique on the chin, producing a one-page plan for Week 6. Welcome to Launch Week. Before you polish for Day 30, today flips the lens: instead of showing off what your capstone does, you actively try to break it. The safety audit is the other half of "ready to ship."
 
@@ -72,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Cold open**: instructor drops a headline from the AI Incident Database in chat; everyone writes a one-line "what's the root cause" guess before discussion.
 - **Think-pair-share**: 90 seconds — "What is the single most embarrassing thing your capstone could say on stage?" Share with your pair, pick the scarier one.
 - **Live poll**: how many of the five safety patterns (stop button, citations, rate-limit, I/O filter, opt-out) does your capstone have today? Reveal the cohort histogram.
@@ -149,7 +158,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~5 min)
 Which of your 3 fixes would you be most embarrassed to demo without? Ship that one first.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. What case made lawyers personally liable for AI hallucinations?
 2. Which risk tier in the EU AI Act bans social scoring?
 3. Name three of the five simple safety patterns.
@@ -162,6 +173,11 @@ Ship a safety audit of your capstone:
 - 3 failure modes you found
 - 3 concrete fixes with a deploy ETA before Day 30
 - 1 "known unsupported use case" line in your README
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 Then return to your capstone build. You have the afternoon.
 

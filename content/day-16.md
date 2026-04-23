@@ -1,5 +1,5 @@
 ---
-reading_time: 15 min
+reading_time: 17 min
 tldr: "Git, GitHub, localhost, and APIs — the four rails every AI builder rides on, explored without writing a single line of code."
 tags: ["build", "technical"]
 video: https://www.youtube.com/embed/hwP7WQkmECE
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** **GitHub** is a shared filing cabinet with suggested edits and history. **localhost** is "try it on my own table before the customer sees it." **APIs** are standardized order slips: same menu shape (URL + JSON), different kitchens (servers) behind the counter.
+
+**Why it matches today.** Those four rails are how real software teams coordinate — you are learning the *labels on the doors* before you walk through them.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Friday (Day 15) you locked Capstone Milestone 2 — a 1-page spec with a NOT-list, 3–6 grey-box wireframes, a measurable 14-day success metric, and a public "Witness me" post with 2 cohort acknowledgements. That spec is no longer a draft; it's the contract. Week 4 builds only against it. Today's four rails are the infrastructure your build will sit on — every API your spec's "what it does" implies, every repo you'll fork for scaffolding, every `localhost:port` you'll run during dev. Open your locked spec PDF in one tab today; when you hit Hoppscotch, ask yourself: which of these APIs could power a line from my spec?
 
@@ -73,6 +81,8 @@ Come in with an account, a curiosity, and a browser tab already open — don't l
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open demo**: instructor types `curl https://api.github.com/users/torvalds` in a terminal, asks the room "what just happened, and who did the work?"
 - **Think-pair-share**: in 90 seconds with your neighbour, define *branch* vs *fork* in your own words — no Googling.
 - **Live poll**: raise a hand if you've ever seen `localhost:3000` before today; instructor reads the room and adjusts depth.
@@ -183,13 +193,20 @@ Turn today's clicks into a repo presence the cohort can actually see.
 
 *Which rail (Git / GitHub / localhost / APIs) felt most foreign, and why?* In one line, post it — honesty helps the cohort. A strong reflection connects the foreign feeling to a specific tutorial or error message from your past that suddenly makes sense.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four questions on the dashboard to cement today: What's the difference between a branch and a fork? What does status code 401 tell you versus 404? Why does Ollama use port 11434 specifically on localhost? What's the smallest unit of change in Git — and why do humans obsess over it?
 
 ### 4. Submit the assignment (~5 min)
 
 Fork any AI repo you genuinely use (Ollama, LangChain, n8n, LlamaIndex — your pick). Star three OSS AI projects you want to understand better. Open one **draft** issue on a repo you care about — a question, a typo fix, or a feature idea. Don't stress about polish; drafts are meant to be rough. Paste your three links into the cohort channel.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

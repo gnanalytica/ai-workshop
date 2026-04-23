@@ -1,23 +1,23 @@
 ---
-reading_time: 14 min
-tldr: "AI listens, AI speaks, AI decks. You will ship a 5-slide pitch and a 30-second avatar intro for your capstone today."
+reading_time: 17 min
+tldr: "AI listens, AI speaks, AI decks — plus how *realtime voice agents* differ from today's record→transcribe→TTS pipeline. You ship a 5-slide pitch and a 30-second avatar intro."
 tags: ["exposure", "tools"]
 video: https://www.youtube.com/embed/KgRGp_MSqNs
 lab: {"title": "5-slide deck + 30-second AI-avatar intro for your capstone", "url": "https://gamma.app"}
 prompt_of_the_day: "Generate a 5-slide pitch deck for a student capstone: {{project_name}}. Slides: (1) problem — one real user in one sentence, (2) insight — why it has not been solved, (3) solution — how it works in 15 words, (4) demo moment — screenshot placeholder, (5) what I'll build in 4 weeks. Tone: confident, specific, no buzzwords. Audience: AI-curious college peers."
 tools_hands_on: [{"name": "Otter", "url": "https://otter.ai"}, {"name": "Gamma", "url": "https://gamma.app"}, {"name": "ElevenLabs", "url": "https://elevenlabs.io"}]
 tools_demo: [{"name": "HeyGen", "url": "https://heygen.com"}, {"name": "Whisper (OpenAI)", "url": "https://openai.com/research/whisper"}, {"name": "Napkin AI", "url": "https://napkin.ai"}]
-tools_reference: [{"name": "Tome", "url": "https://tome.app"}, {"name": "Canva Magic Design", "url": "https://canva.com"}]
+tools_reference: [{"name": "Tome", "url": "https://tome.app"}, {"name": "Canva Magic Design", "url": "https://canva.com"}, {"name": "OpenAI Realtime API", "url": "https://platform.openai.com/docs/guides/realtime"}, {"name": "Gemini Live (overview)", "url": "https://gemini.google.com"}]
 resources: [{"name": "Gamma templates", "url": "https://gamma.app"}, {"name": "ElevenLabs voice library", "url": "https://elevenlabs.io"}]
 objective:
-  topic: "AI that listens, speaks, and presents — transcription, deck-gen, voice, avatars"
+  topic: "Speech stack + realtime voice agents vs batch TTS; decks + avatars"
   tools: ["Otter", "Gamma", "ElevenLabs", "HeyGen"]
   end_goal: "Ship a 5-slide deck PDF + a 30-second avatar/voiced intro MP4 for your capstone pitch — warm-up for tomorrow's ideathon."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** AI listens, AI speaks, AI decks — the four production categories (transcription, deck-gen, voice synthesis, avatars) that used to take a week, now one hour.
+**Topic.** AI listens, AI speaks, AI decks — the four production categories (transcription, deck-gen, voice synthesis, avatars) that used to take a week, now one hour — plus how **realtime voice** (speech-in ↔ speech-out loops) differs from the batch pipeline you ship in lab today.
 
 **Tools you'll use.** Otter (or Whisper), Gamma, ElevenLabs, HeyGen. Free tiers cover everything today.
 
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** **Batch:** record a voice note, clean it up, send it — like filming a take until it is perfect. **Realtime:** a phone call where you interrupt, clarify, and steer — latency and back-and-forth *are* the product.
+
+**Why it matches today.** Otter → Gamma → ElevenLabs → HeyGen is the **batch** pipeline (great for pitches). **Voice agents** are the **call** shape you will meet in product land later this month.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 8) you made pixels free — a poster in Nano Banana/Firefly and a 10-second video in Kling for your capstone. Today you give that visual a voice and a structure. The six-slot prompt template from Day 8 (subject, action, setting, style, composition, modifiers) reappears tonight in a slightly different form: outline → slide, paragraph → narration. Same discipline, different medium.
 
@@ -55,6 +63,7 @@ objective:
 > - **Voice cloning** = generating unlimited speech in a voice from ~30 seconds of reference audio (ElevenLabs).
 > - **AI avatar** = a photorealistic talking head synced to generated speech (HeyGen).
 > - **Speaker notes** = the off-slide text you say aloud — where detail lives, not on the slide.
+> - **Realtime / voice agent** = the model hears audio (or streamed speech), decides when to call tools, and speaks back in one low-latency loop — not "record file → Whisper → LLM → MP3."
 
 ---
 
@@ -71,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **60-second cold-open pitch**: unmute and pitch your capstone to the person on your left in one breath. No slides, no tools. We are baselining your talking voice before the machines enter.
 - **Think-pair-share**: in 90 seconds, trade one-paragraph capstone descriptions with a partner and each identify the one sentence that is the real "insight" — the thing a slide-gen tool should anchor on. Most paragraphs have exactly one.
 - **Live Gamma demo + vote**: I paste one volunteer's paragraph into Gamma on screen. Before it finishes, cohort votes in chat on how many of the 5 slides will violate the "one idea per slide" rule. We count afterward.
@@ -106,6 +116,20 @@ Otter is the default for class notes and team meetings. It records, transcribes 
 **The honest meeting stack.** If you do one project meeting per week and transcribe it, by Week 4 you will have a searchable archive of every decision your team made. Combine that with a weekly 10-minute Claude Project summary of "what did we decide this week?" and your team's memory compounds. Teams that do not do this lose 30% of their prior decisions by Week 4. We have seen it every cohort.
 
 **Privacy once more.** Never transcribe a conversation without telling the other people. This is both ethics and, in many jurisdictions, the law. Say it at the top of the call: "I am recording and transcribing this for my notes; let me know if you'd rather I didn't."
+
+### Read: Realtime voice agents — not the same as ElevenLabs + HeyGen
+
+Today's lab is a **batch pipeline**: you talk → Otter writes text → Gamma makes slides → ElevenLabs renders static audio → HeyGen syncs a face. That is how most content and pitch prep still ship.
+
+**Voice agents** are a different product shape: the user **speaks live**, the model **interrupts, asks clarifiers, and calls tools** (calendar, ticket DB, RAG over your handbook) **while the call is ongoing**. Think language-coach, bank phone tree that doesn't hate you, or "order status but I can ramble."
+
+**What makes it "realtime".** The stack keeps a **single session** open — audio chunks in, model partials + tool results, audio chunks out — instead of waiting for a whole file to finish. APIs such as **OpenAI's Realtime API** and consumer **Advanced Voice / Live** experiences are the public face of this pattern; exact SKUs change every quarter, but the *architecture* (streaming ASR + LLM + streaming TTS + optional tools) is what you should remember.
+
+**When you still choose batch.** Podcasts, rehearsed pitches, anything you want to **edit before publish** — today's pipeline wins.
+
+**When you choose realtime.** Turn-by-turn tutoring, interactive intake, hands-busy scenarios (driving, lab bench), or any UX where **latency under ~1s** matters more than pixel-perfect editing.
+
+**Cohort tie-in.** Next week your capstone might add a "talk to my RAG" button — that is closer to realtime than to uploading an MP3.
 
 ### Watch: From blank page to pitch deck in 8 minutes
 
@@ -161,7 +185,9 @@ Block the evening. Phone on DND. Do these in order.
 
 *What did the Otter transcript reveal about how you actually talk about your idea?* A good reflection quotes one verbatim phrase — a filler, a hedge, or a surprisingly confident claim — and names the sentence you will cut before tomorrow's ideathon. The transcript is the cheapest feedback you will get all week; do not waste it.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four checks. Which tool would you pick for transcribing a private interview with a professor about a sensitive research topic? What is the single most common mistake in AI-generated decks (hint: a layout rule)? When is it okay to clone a voice in ElevenLabs? What should you always say at the start of a meeting you are recording?
 
@@ -174,6 +200,10 @@ Post to the cohort Slack with the tag `#day09-pitch` before 11 pm:
 3. A one-line self-review: "the weakest slide is slide X because…".
 
 This is your final warm-up before tomorrow. Your deck is not locked yet — after the ideathon you will likely rebuild slide 5. That is fine.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
 
 ### 5. Deepen (optional, ~30 min)
 

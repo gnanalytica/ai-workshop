@@ -67,9 +67,18 @@
   <div class="gate-card">
     <div class="denied">
       <h2 style="text-align:center">Not available</h2>
-      <p>You need cohort faculty access or a super-admin account to manage pods. <a href="faculty.html">Faculty home</a> · <a href="admin-home.html">Admin home</a>.</p>
+      <p>You need cohort faculty access or a trainer account. <a href="faculty.html">Faculty hub</a> · <a href="admin-home.html">Home</a>.</p>
       <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
     </div>
+  </div>
+</div>
+
+<div class="gate" id="trainerOnly" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Support faculty</div>
+    <h2>Trainer only</h2>
+    <p class="muted" style="line-height:1.55">Pods and mentor assignment are managed by program trainers. Use <a href="faculty.html#people">Faculty hub → People</a> to see your students.</p>
+    <button class="submit-btn" style="margin-top:12px" id="signOutTrainer">Sign out</button>
   </div>
 </div>
 
@@ -138,7 +147,7 @@
 <script type="module">
   import { supabase } from './assets/supabase.js';
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, applyFacultyBrandLabel } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, applyFacultyBrandLabel, isSupportFacultyOnly } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { loadPodsForCohort, loadEnrolledStudents, loadCohortFaculty, callPodFacultyEvent, parsePodCsv } from './assets/pods.js';
   import { confirmDialog } from './assets/dialog.js';
@@ -154,7 +163,12 @@
     selectedByPod: new Map(),
   };
 
-  function show(id) { ['gate','denied','panel'].forEach(x => $(x).style.display = x===id?(id==='panel'?'block':'grid'):'none'); $('signoutBtn').style.display = id==='gate'?'none':'inline-block'; }
+  function show(id) {
+    ['gate', 'denied', 'trainerOnly', 'panel'].forEach((x) => {
+      $(x).style.display = x === id ? (id === 'panel' ? 'block' : 'grid') : 'none';
+    });
+    $('signoutBtn').style.display = id === 'gate' ? 'none' : 'inline-block';
+  }
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
   function toast(msg, kind='ok') { const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (kind==='err'?' err':''); setTimeout(()=>{ t.className='toast'; }, 2800); }
 
@@ -173,7 +187,7 @@
     if (error) { msg.className = 'msg show err'; msg.textContent = error.message; btn.disabled = false; btn.textContent = 'Send magic link →'; }
     else { msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓'; }
   });
-  [$('signoutBtn'), $('signOutAlt')].forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
+  [$('signoutBtn'), $('signOutAlt'), $('signOutTrainer')].filter(Boolean).forEach(b => b.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); }));
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) checkAdmin(session.user);
     if (event === 'SIGNED_OUT') show('gate');
@@ -183,20 +197,21 @@
     const r = await checkAdminOrFaculty(user);
     IS_ADMIN = r.isAdmin; IS_FACULTY = r.isFaculty; FACULTY_COHORT_IDS = r.facultyCohortIds;
     if (!IS_ADMIN && !IS_FACULTY) return show('denied');
+    if (isSupportFacultyOnly(IS_ADMIN, IS_FACULTY)) return show('trainerOnly');
     STATE.me = user.id;
     show('panel');
-    $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: IS_ADMIN ? 'admin' : 'faculty' });
+    $('adminNav').innerHTML = renderAdminNav('admin-pods.html', { role: 'admin' });
     wrapAdminMainLayout();
     applyFacultyBrandLabel(IS_ADMIN, IS_FACULTY);
     const hint = $('podsRoleHint');
     if (hint) {
-      hint.textContent = IS_ADMIN
-        ? 'Super-admins can create pods, import CSV, and delete pods. Cohort faculty can assign students and edit pod names.'
-        : 'As cohort faculty you can assign students to pods, move them, and update pod names. Ask an admin to create new pods or run bulk CSV import.';
+      hint.textContent =
+        'Trainers create pods, import CSV, assign students, and attach mentor faculty. Support faculty use Faculty hub for day-of help.';
     }
-    const csvBtn = $('csvBtn'); const newBtn = $('newPodBtn');
-    if (csvBtn) csvBtn.style.display = IS_ADMIN ? '' : 'none';
-    if (newBtn) newBtn.style.display = IS_ADMIN ? '' : 'none';
+    const csvBtn = $('csvBtn');
+    const newBtn = $('newPodBtn');
+    if (csvBtn) csvBtn.style.display = '';
+    if (newBtn) newBtn.style.display = '';
     await loadCohorts();
     wireHeader();
     wireDialogs();

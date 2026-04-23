@@ -1,23 +1,23 @@
 ---
-reading_time: 15 min
-tldr: "Turn your PDFs into a RAG bot, store embeddings in pgvector, and meet GraphRAG — when graphs beat chunks."
+reading_time: 18 min
+tldr: "Turn your PDFs into a RAG bot, store embeddings in pgvector, meet GraphRAG — and learn when to prompt vs retrieve vs fine-tune, plus vision in the loop for scans and screenshots."
 tags: ["build", "technical"]
 video: https://www.youtube.com/embed/T-D1OfcDW1M
 lab: {"title": "Build a working RAG bot on your capstone PDFs (NotebookLM + LlamaIndex + pgvector)", "url": "https://notebooklm.google"}
 prompt_of_the_day: "Act as a RAG architect. My corpus is {{corpus_description}} (size, formats, domain). Recommend: (1) chunk size + overlap, (2) embedding model, (3) vector store, (4) when I should switch to GraphRAG instead of chunk-based RAG. Justify each choice in one line."
 tools_hands_on: [{"name": "NotebookLM", "url": "https://notebooklm.google"}, {"name": "LlamaIndex", "url": "https://docs.llamaindex.ai"}, {"name": "Neon pgvector", "url": "https://neon.com"}]
 tools_demo: [{"name": "Neo4j AuraDB", "url": "https://neo4j.com/cloud/aura/"}, {"name": "Microsoft GraphRAG", "url": "https://github.com/microsoft/graphrag"}, {"name": "Graphify", "url": "https://github.com/graphify"}]
-tools_reference: [{"name": "Chroma", "url": "https://trychroma.com"}, {"name": "Qdrant", "url": "https://qdrant.tech"}, {"name": "Pinecone", "url": "https://pinecone.io"}, {"name": "Sentence-Transformers", "url": "https://sbert.net"}, {"name": "HF MTEB embeddings leaderboard", "url": "https://huggingface.co/spaces/mteb/leaderboard"}]
+tools_reference: [{"name": "Chroma", "url": "https://trychroma.com"}, {"name": "Qdrant", "url": "https://qdrant.tech"}, {"name": "Pinecone", "url": "https://pinecone.io"}, {"name": "Sentence-Transformers", "url": "https://sbert.net"}, {"name": "HF MTEB embeddings leaderboard", "url": "https://huggingface.co/spaces/mteb/leaderboard"}, {"name": "Hugging Face — fine-tuning hub", "url": "https://huggingface.co/docs/transformers/training"}, {"name": "OpenAI — vision (multimodal)", "url": "https://platform.openai.com/docs/guides/images-vision"}]
 resources: [{"name": "LlamaIndex + Ollama tutorial", "url": "https://docs.llamaindex.ai/en/stable/examples/llm/ollama/"}, {"name": "pgvector docs", "url": "https://github.com/pgvector/pgvector"}]
 objective:
-  topic: "Embeddings, RAG, and when knowledge graphs beat chunk-based retrieval"
+  topic: "Embeddings, RAG, GraphRAG, prompt-vs-RAG-vs-fine-tune, multimodal docs"
   tools: ["NotebookLM", "LlamaIndex", "Neon pgvector"]
   end_goal: "Ship a working RAG bot that answers 5 real questions from your own PDFs, plus a before/after from tuning one knob (chunk size, top-K, or embedder)."
 ---
 
 ## 🎯 Today's objective
 
-**Topic.** Embeddings (coordinates for meaning), RAG (retrieve → augment → generate), and when GraphRAG beats chunks.
+**Topic.** Embeddings (coordinates for meaning), RAG (retrieve → augment → generate), when GraphRAG beats chunks — plus **when to prompt vs retrieve vs fine-tune**, and **vision** for scans and screenshots.
 
 **Tools you'll use.** NotebookLM (zero-code), LlamaIndex (swap-in-swap-out framework), pgvector on Neon (production-shaped).
 
@@ -25,10 +25,19 @@ objective:
 1. A RAG bot that answers 5 questions from *your own PDFs*.
 2. A before/after from tuning one knob — chunk size, top-K, or embedder.
 3. A clear mental line between when chunking is enough and when a knowledge graph would help.
+4. A decision rule for **prompt vs RAG vs fine-tuning**, and when **vision** beats text-only pipelines.
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** **Prompt** = instructions you say once. **RAG** = open-book exam with your own photocopied chapters stapled in. **Fine-tuning** = sending someone to trade school so their *defaults* change — slow, costly, and wrong fix if the handbook updates weekly. **Vision** = the invigilator lets you bring a **photo** of the board, not just typed notes.
+
+**Why it matches today.** That quartet is exactly how builders specialize an LLM without fooling themselves about which lever does what.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 17) you ran three prompt variants against a 10-row eval set and measured win rates in Langfuse. Today the eval skill transfers directly: your 5 PDF questions from pre-class are the new eval set, and we're comparing retrieval strategies instead of prompt variants. Keep your Langfuse account open — we'll trace RAG calls the same way.
 
@@ -54,6 +63,7 @@ Show up with PDFs in hand and a Neon project waiting — the lab only works if y
 > - **RAG** = Retrieval-Augmented Generation: ingest → retrieve → generate from *your* docs.
 > - **Knowledge graph** = a database of entities (nodes) and relationships (edges) for multi-hop questions.
 > - **Chunk** = a 300–800 token slice of a document with some overlap to its neighbour.
+> - **Fine-tuning / adapter (e.g. LoRA)** = adjusting model weights (or a small adapter layer) on *your* labeled pairs or tasks so the model "defaults" to your style or schema — different from stuffing context at query time.
 
 ---
 
@@ -70,6 +80,8 @@ Show up with PDFs in hand and a Neon project waiting — the lab only works if y
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
+- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
 - **Cold-open**: instructor asks plain ChatGPT a question from their own college handbook; watches it hallucinate; asks "what does the model NOT know?"
 - **Think-pair-share**: in 90 seconds, name one document you wish AI "knew" and the exact 5 questions you'd ask it.
 - **Live embedding demo**: instructor embeds "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess"; class guesses cosine similarity before the reveal.
@@ -91,6 +103,16 @@ The closeness metric is **cosine similarity**, a number between -1 and 1. Above 
 3. **Generate.** Stuff those chunks into the LLM's context along with the question: "Given this context, answer the question." The LLM now answers from *your* data, not its training data.
 
 That's the entire trick. Everything else is optimization.
+
+**Prompting vs RAG vs fine-tuning — pick the smallest fix that works.** Students waste weeks on the wrong lever. Use this table before you touch a GPU:
+
+| Lever | What you're doing | Reach for it when | Catch |
+|-------|-------------------|-------------------|--------|
+| **Prompting + context files** | Instructions, few-shots, CLAUDE.md-style rules | Output *shape* or *tone* is wrong; facts are generic; you can say the rule in a paragraph | Context window limits; does not magically know this week's 200-page handbook |
+| **RAG (today's core)** | Retrieve chunks at query time, then generate | Facts live in **docs that change**; you need **citations**; corpus is too big to paste | Retrieval bugs (wrong chunk); latency; needs good chunking |
+| **Fine-tuning / adapters** | Train weights on your dataset for a **stable mapping** | Classification with fixed labels; "always our JSON"; brand voice; *repeated* pattern cheap at inference | **Stale** when source docs change unless you retrain; does not replace citations |
+
+**Default order:** try **prompt** → then **RAG** → then **fine-tune** only when the first two plateau *and* you have clean, labeled data. Fine-tuning is not a shortcut for "the model didn't read my PDF" — that's RAG. Day 17's eval habit is how you prove which lever moved the number.
 
 **Chunking strategies — the unglamorous 80%.** The quality of RAG is mostly the quality of chunking.
 
@@ -124,6 +146,16 @@ For a student capstone with 50–5000 docs, **Chroma** or **pgvector on Neon** i
 GraphRAG shines for questions that are multi-hop ("A → B → C"), comparative ("who else is like X?"), or global ("what are the main themes across the corpus?"). It's overkill for simple FAQ lookup.
 
 **Graphify** is a lightweight skill we use in this workshop to auto-extract knowledge graphs from any input — code, docs, papers, even images. You'll see it live today. The output: an HTML viewer + a JSON graph + an audit report. Great for turning messy PDFs into navigable structure.
+
+**Multimodal inputs — when your "document" is pixels.** Text-only RAG assumes you can extract clean text. Real students bring **phone photos of boards**, **scanned forms**, and **screenshots of UIs** where OCR is messy.
+
+Three patterns:
+
+1. **OCR → then RAG** — run a serious OCR pass (or export "text" from the PDF tool) *before* chunking. Still your usual pipeline; quality depends on OCR.
+2. **Caption → embed** — use a **vision model** (Gemini / GPT-4o-class) to describe each page or image, embed the *description* as the chunk. Good when layout matters more than exact words.
+3. **Skip RAG for one-off** — "what does this single screenshot say?" often belongs in **one multimodal chat** with the image attached, not a vector database.
+
+If NotebookLM or your chunker returns garbage on a PDF, check whether the file is **image-only pages** — that failure mode is vision/OCR, not "bad embeddings."
 
 ### Watch: NotebookLM to pgvector — RAG on increasing difficulty
 
@@ -163,6 +195,8 @@ Budget 45–60 minutes. Pick whichever path matches your comfort level — all t
 | Where in your capstone would a knowledge graph add real value over chunks? | Names a multi-hop, comparative, or global question that no single chunk could answer alone. |
 | If embeddings are "coordinates for meaning", what would "coordinates for tone" look like? | Extends the analogy — sentiment axes, formality, persona — and admits where the metaphor breaks. |
 | Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions? | Names the guardrails they'd require: source citations, human sign-off, domain-specific evals, refusal on low confidence. |
+| For your capstone, would prompting, RAG, or fine-tuning be the *wrong* first move — and why? | Picks one lever to *defer*, names a cheaper lever that should come first, cites a stale-data or citation requirement. |
+| Where would vision (screenshots / scans) beat text-only chunking in your project? | Names a concrete user artifact (form photo, UI capture) and picks OCR vs caption-to-embed vs one-shot multimodal chat. |
 
 ---
 
@@ -179,13 +213,20 @@ Get a RAG bot answering 5 real questions from your own PDFs — no toy data, no 
 
 **Prompt:** *"Of my 5 questions, which broke the bot — and was the root cause chunking, retrieval, or generation?"* A strong answer separates the three layers: did the right chunk exist? Did it get retrieved in top-K? Did the model actually use it? Jot a few lines for your own record.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 A few mental check-ins on the dashboard: What's the cosine similarity between two unrelated sentences, roughly? Why does chunk overlap matter? When would GraphRAG beat plain RAG — give one concrete capstone example? Why must ingest and query use the same embedder?
 
 ### 4. Submit the assignment (~5 min)
 
 Post the NotebookLM link (or repo URL) plus your 5 Q&A pairs plus the one-knob before/after delta to the cohort channel.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 - [ ] Try Graphify (`/graphify` in Claude Code) or Microsoft GraphRAG at https://github.com/microsoft/graphrag on the same PDFs. Ask one multi-hop question that chunk RAG fumbled.
@@ -212,6 +253,7 @@ Post the NotebookLM link (or repo URL) plus your 5 Q&A pairs plus the one-knob b
 ### Reading
 
 - **Zero-code RAG**: [NotebookLM](https://notebooklm.google).
+- **When to fine-tune vs RAG** (deeper): [Hugging Face — fine-tuning](https://huggingface.co/docs/transformers/training) — pair with today's table; most capstones stop at RAG + good prompts.
 - **Frameworks**: [LlamaIndex](https://docs.llamaindex.ai), [LlamaIndex + Ollama tutorial](https://docs.llamaindex.ai/en/stable/examples/llm/ollama/).
 - **Vector stores**: [Neon (pgvector)](https://neon.com), [pgvector docs](https://github.com/pgvector/pgvector), [Chroma](https://trychroma.com), [Qdrant](https://qdrant.tech), [Pinecone](https://pinecone.io).
 - **Embedding models + leaderboard**: [Sentence-Transformers](https://sbert.net), [MTEB embeddings leaderboard](https://huggingface.co/spaces/mteb/leaderboard).

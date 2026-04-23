@@ -1,5 +1,5 @@
 ---
-reading_time: 10 min
+reading_time: 12 min
 tldr: "Thirty days ago you didn't know where to start. Today you ship. Go time."
 tags: ["launch", "demo-day", "graduation", "capstone"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A **thesis defense** or final project viva: you show the real artifact, answer sharp questions, and walk out with the credential — not because it is flawless, but because you can **stand behind** what you built.
+
+**Why it matches today.** Demo Day is that room: live URL, panel Q&A, public proof — the capstone stops being private homework and becomes **shared reality**.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context — the 30-day arc in six beats.**
 
@@ -81,6 +89,7 @@ Yesterday (Day 29) was your final dress rehearsal. Today is the performance.
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Opening**: instructor's one-minute welcome, panel introductions, demo order drawn live. Cohort applauds every name as it's called.
 - **Team demos begin**: 5 minutes per team (4 min demo + 1 min panel Q&A), rotating through all teams. Stay in the room, watch every demo, cheer loudly.
 - **Panel Q&A round**: cross-team questions, judges probe the riskiest assumption of each capstone. Answers scored on honesty, not polish.
@@ -169,7 +178,9 @@ Then:
 ### 2. Reflect (~5 min)
 Write one sentence you'd tell Day-1 You. Pin it somewhere you'll see it in six months.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 1. What are the three beats of your demo? (Say them out loud before you go on.)
 2. What do you do if the live API fails on stage?
@@ -179,6 +190,11 @@ Write one sentence you'd tell Day-1 You. Pin it somewhere you'll see it in six m
 
 ### 4. Submit (~5 min)
 Confirm the cohort channel post landed with all five artifacts (URL, repo, deck, teaser, 200-word next statement). Confirm the showcase entry renders. Confirm the certificate downloaded.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: rewatch your own demo in one week with fresh eyes — note what you'd change for v2.

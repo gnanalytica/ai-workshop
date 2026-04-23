@@ -1,5 +1,5 @@
 ---
-reading_time: 12 min
+reading_time: 14 min
 tldr: "AI is already running your life — Netflix picks, Maps routes, UPI fraud flags, WhatsApp translations. Today you notice it. Tomorrow we open the box."
 tags: ["foundations", "kickoff"]
 video: https://www.youtube.com/embed/iR2O2GPbB0E
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** Maps picks a route from traffic patterns; your bank flags a weird charge; photo search finds "beach" without you tagging photos. You did not call any of that "AI" — but it is the same family of idea: software that updates from examples.
+
+**Why it matches today.** We are naming what you already live inside, then meeting the chat-shaped version of it (ChatGPT, Claude, Gemini) so the rest of the month has a floor.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** This is Day 1 — there is no prior session to revise. Instead: take 2 minutes to notice the AI already in your pocket (photo search, voice typing, spam filter, Spotify mix). That noticing *is* the revision.
 
@@ -71,6 +79,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Fist-of-5 on AI confidence**: on camera, hold up 1–5 fingers for "how confident am I I actually understand what's inside ChatGPT." Instructor calls on one 5 and one 1 for a sentence each. Sets the honesty baseline.
 - **Spot-the-AI round**: in chat, each student drops *one* place AI showed up in their day yesterday that they didn't label as AI at the time. Instructor reads the three most surprising.
 - **Live poll**: "Which felt most human: ChatGPT / Claude / Gemini / 'they all felt the same'?" Watch the bars, call out the shock, ask one voter on each side to defend their pick.
@@ -177,13 +186,20 @@ Block the evening. Phone on DND. Do these in order.
 
 **Prompt:** *"Which of the three models felt most like 'talking to a person' — and what did that tell me about my own biases?"* A good reflection names the specific behaviour that triggered the feeling (hedging, emoji use, follow-up questions) and admits what it reveals about what you expect from a "smart" tool even when you know it's autocomplete. Jot a few lines; keep them for your own record.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
 
-Four quick questions on what's AI / what's not, real-world examples you just met, and the difference between a "chatbot" and the "model" behind it. Available on the dashboard. Don't overthink — it's there to catch wobbles, not rank you.
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
+
+On the dashboard: day material plus a short scenario and a look-back item from earlier in the arc. Don't overthink — it catches wobbles, not rankings.
 
 ### 4. Submit the assignment (~5 min)
 
 Submit your 150-word reflection via the cohort dashboard **before the next class**. One paragraph. No AI-assisted writing. The goal isn't a great essay — it's capturing your honest baseline so Day 30 feels like a transformation, not a memory.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

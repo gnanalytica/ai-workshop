@@ -4,6 +4,11 @@
 
 import { supabase } from './supabase.js';
 
+/** Cohort staff without is_admin: in-room support only (not curriculum, grading, or roster ops). */
+export function isSupportFacultyOnly(isAdmin, isFaculty) {
+  return Boolean(isFaculty && !isAdmin);
+}
+
 export async function checkAdminOrFaculty(user) {
   const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
   const { data: facRows } = await supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id);

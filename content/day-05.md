@@ -1,5 +1,5 @@
 ---
-reading_time: 12 min
+reading_time: 14 min
 tldr: "A week of theory means nothing without a personal stack. Today you build yours — and steal your classmates' best tricks."
 tags: ["foundations", "kickoff"]
 video: https://www.youtube.com/embed/T9aRN5JkmL8
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** After a week of random recipes, you write down the *actual* rotation you cook on autopilot — the three sauces, the two groceries, the pan you always reach for. That one page is worth more than a cookbook you never open.
+
+**Why it matches today.** Personal AI Stack v1 is that honest rotation: what you *really* use, not what impressed you once on Twitter.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Yesterday (Day 4) you learned CREATE — Context, Role, Examples, Active constraints, Tone, Evaluation — plus zero-shot, few-shot, chain-of-thought, and structured output. You iterated one prompt V1→V5, watched quality climb, and started your **Prompt Library**. Today that library becomes a section inside your Personal AI Stack v1; the CREATE letter you skip most often becomes the one you deliberately add this week. Bring the V5 you were proudest of — it's the first "top prompt" in your stack.
 
@@ -69,6 +77,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 - **Fist-of-5 cold open**: on camera, 1–5 fingers for *"how different does AI feel to me today vs five days ago?"* Instructor calls on one 5 and one 2 for a single sentence each.
 - **Think-pair-share**: 90 seconds on *"What belief about AI did you enter Day 1 with that you're leaving Day 5 without?"* Each pair volunteers the sharper of the two beliefs.
 - **Live vote during show-and-tell**: as students pitch, everyone ranks in a running chat tally — *Most Useful / Most Creative / Most Surprising*. Instructor reads the top three out loud at the end of the round.
@@ -189,13 +198,20 @@ Block the evening. Phone on DND. Do these in order.
 
 **Prompt:** *"Which classmate's trick am I actually going to steal this weekend — and will I credit them when I use it in Week 2?"* A good reflection names the person, the trick, and the specific moment next week you'll deploy it. Attribution matters here — the cohort only levels up if credit flows.
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 
 Four synthesis questions pulling across all five days — a little tokens, a little Indian models, a little prompting, a little ethics. This is the "did Week 1 stick?" checkpoint. Available on the dashboard.
 
 ### 4. Submit the assignment (~5 min)
 
 Submit your Personal AI Stack v1 (PDF, 1–2 pages) via the dashboard by Sunday night. The instructor will pick 3-5 stacks to feature (anonymously if you prefer) in Week 2 Day 1. You'll update this stack every Sunday for the rest of the workshop.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional, ~30 min)
 

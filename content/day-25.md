@@ -1,5 +1,5 @@
 ---
-reading_time: 16 min
+reading_time: 18 min
 tldr: "Demo day — three minutes, one story, three critiques, one page of what you will change next."
 tags: ["build", "ship", "agentic"]
 video: https://www.youtube.com/embed/wgmCjrMFoyc
@@ -30,7 +30,15 @@ objective:
 
 ---
 
+### 🌍 Real-life anchor
+
+**The picture.** A school talent show **dress rehearsal**: three minutes on stage, real mic, judges with scorecards — not opening night, but close enough to feel the flubs.
+
+**Why it matches today.** Mini-Demo Day is that rehearsal: **short**, **live**, **judged**, and meant to surface fixes before the final show.
+
 ## ⏪ Pre-class · ~20 min
+
+**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
 
 **Revision / context.** Day 24 you split one agent into two and shipped a handoff diagram. That architecture clarity is what makes a 3-minute demo possible — you now have a story with a clean role split and a working capstone v0 deployed from Day 22. Today you put that v0 in front of humans.
 
@@ -72,6 +80,7 @@ objective:
 
 ### In-class checkpoints
 
+- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
 Structure of each demo slot in the rotation:
 
 - **Team setup**: 30 seconds to share screen, confirm audio, load live URL.
@@ -188,7 +197,9 @@ Block the evening. Phone on DND. Do these in order.
 ### 2. Reflect (~10 min)
 Which critique stung the most and, on reflection, was also correct? What ego defense did you notice yourself running?
 
-### 3. Quiz (~15 min)
+### 3. Quiz (~17 min)
+
+Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
 1. What are the three jobs of a 30-second hook?
 2. What are the four beats of the 2-minute story structure?
 3. What makes an ask strong vs weak?
@@ -197,6 +208,11 @@ Which critique stung the most and, on reflection, was also correct? What ego def
 
 ### 4. Submit the weekly deliverable (~5 min)
 **Weekly deliverable (checkpoint):** Submit (a) a recording of your 3-minute mini-demo, (b) three verbatim critiques you received with attribution, and (c) your one-page "what I will change and what I will not, with reasoning" document. This is the artifact that feeds your Week 6 work.
+
+**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+
+**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
+
 
 ### 5. Deepen (optional ~30 min)
 - **Extra video**: two more YC Demo Day clips — watch for hook, story, ask structure.
