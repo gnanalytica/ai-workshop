@@ -19,6 +19,13 @@ function shortTitle(s, max = 48) {
   return `${t.slice(0, max - 1).trim()}…`;
 }
 
+function getDashboardSectionFromHash() {
+  const raw = String(window.location.hash || '').replace(/^#/, '');
+  if (raw === 'activity') return 'profile';
+  if (raw === 'lessons' || raw === 'overview' || raw === 'capstone' || raw === 'profile') return raw;
+  return 'overview';
+}
+
 /** Remove fixed sidebar chrome (burger, backdrop, body padding hook). */
 export function teardownCourseNavUI() {
   document.body.classList.remove('gn-has-course-nav', 'gn-course-nav-drawer-open');
@@ -152,7 +159,9 @@ export function mountDayRail(
     })
     .join('');
 
-  const overviewActive = activeDay == null ? ' gn-course-nav__link--active' : '';
+  const dashboardSection = getDashboardSectionFromHash();
+  const overviewActive = activeDay == null && dashboardSection === 'overview' ? ' gn-course-nav__link--active' : '';
+  const lessonsActive = activeDay == null && dashboardSection === 'lessons' ? ' gn-course-nav__link--active' : '';
 
   el.innerHTML = `
     <div class="gn-course-nav-shell gn-course-nav-shell--${variant}">
@@ -161,8 +170,8 @@ export function mountDayRail(
           <span class="gn-course-nav__kicker">Course</span>
           <button type="button" class="gn-course-nav-drawer-x" aria-label="Close outline">×</button>
         </div>
-        <a href="dashboard.html#overview" class="gn-course-nav__link${overviewActive}">Overview</a>
-        <a href="dashboard.html#lessons" class="gn-course-nav__link">Lessons</a>
+        <a href="dashboard.html#overview" class="gn-course-nav__link${overviewActive}" data-gn-course-link="overview">Overview</a>
+        <a href="dashboard.html#lessons" class="gn-course-nav__link${lessonsActive}" data-gn-course-link="lessons">Lessons</a>
         <a href="timeline.html" class="gn-course-nav__link gn-course-nav__link--sub">Timeline</a>
         <div class="gn-course-nav__divider" role="presentation"></div>
         ${weekBlocks}
@@ -187,7 +196,16 @@ export function mountDayRail(
 
   if (variant === 'sidebar') {
     document.body.classList.add('gn-has-course-nav');
+    const syncDashboardLinks = () => {
+      const sec = getDashboardSectionFromHash();
+      el.querySelectorAll('[data-gn-course-link]').forEach((a) => {
+        const target = a.getAttribute('data-gn-course-link');
+        a.classList.toggle('gn-course-nav__link--active', activeDay == null && sec === target);
+      });
+    };
+    syncDashboardLinks();
     syncCourseWeekOpenState(activeDay);
+    window.addEventListener('hashchange', syncDashboardLinks, { signal: courseNavAbort.signal });
     window.addEventListener(
       'resize',
       () => {
