@@ -33,7 +33,7 @@ This redesign introduces five explicit roles, reassigns responsibilities across 
 | Platform config, user mgmt | ✅ | — | — | — | — |
 | Edit content (`cohort_days`, runbooks) | ✅ | ✅ | — | — | — |
 | Grade assignments | ✅ | ✅ (any pod, override) | — | ✅ (own pod) | — |
-| Grade quizzes | Auto-graded; humans only view ||||
+| View quiz results (quizzes auto-graded, no manual grading) | ✅ | ✅ | — | ✅ (own pod) | ✅ (read, own cohort) |
 | Mark attendance | ✅ | ✅ | — | ✅ (own pod) | — |
 | Post cohort announcements | ✅ | ✅ | — | — | ✅ (own cohort) |
 | Soft-delete own announcement | ✅ | ✅ | — | — | ✅ (own only) |
@@ -192,6 +192,10 @@ Replace `checkAdminOrFaculty(user)` with `resolveRoles(user, cohortId)` returnin
 
 All UI gates read `can.*`, not role names. Role-to-capability mapping lives in one place in `admin-auth.js`.
 
+**`cohortId` may be null** (e.g., platform-wide pages like `board.html` or the admin home before a cohort is selected). When null, `college` is always null and cohort-scoped `can.*` flags (grade, markAttendance, postAnnouncement) are false; Gnanalytica `staff_roles` still determine admin/trainer/tech_support capabilities.
+
+**`can_grade_submission(submission_id)` contract:** returns true if the caller has `'admin'` OR `'trainer'` in `staff_roles` (regardless of pod assignment), OR has `college_role='support'` in the submission's cohort AND is assigned to the pod containing the submission's student. Trainer/admin grading is never pod-gated.
+
 ## UI changes
 
 ### `assets/admin-nav.js`
@@ -213,7 +217,7 @@ User's visible nav = union of allowlists for all their active roles in the selec
 
 - **`faculty-guide.html`** — authenticated, Support Faculty or higher. Sections: role, day-of-session flow, triage flowchart (inline SVG), debugging recipes (collapsibles for Ollama/Python/VS Code/Supabase/git/magic-link), grading walkthrough, escalation contacts (dynamic per cohort), per-cohort live-session artifacts (read-only), 10-item persisted pre-session checklist.
 - **`board.html`** — authenticated, all roles. List view with tag filter, search (`ilike`), "my posts," sort by recent/unanswered. Detail view with replies, accepted-answer mark, upvote.
-- **`setup-guide.html`** — **public, no auth.** Sections: prereqs, system requirements, per-tool install playbook (Chrome/VS Code/Node/Python/Git/Ollama/optional Docker) with Win/macOS/Linux tabs, download→install→verify→common errors→screenshot per tool, verification-script stub (TODO, documented manual checks for v1), escalation, lab-day morning checklist. Top banner: "Last verified for cohort X on YYYY-MM-DD."
+- **`setup-guide.html`** — **public, no auth.** Sections: prereqs, system requirements, per-tool install playbook (Chrome/VS Code/Node/Python/Git/Ollama/optional Docker) with Win/macOS/Linux tabs, download→install→verify→common errors→screenshot per tool, verification-script stub (deferred to v2; v1 uses documented manual checks), escalation, lab-day morning checklist. Top banner: "Last verified for cohort X on YYYY-MM-DD."
 
 ### Retired pages
 
@@ -245,6 +249,15 @@ User's visible nav = union of allowlists for all their active roles in the selec
 8. Follow-up migration one cycle later: drop `profiles.is_admin` and `cohort_faculty.is_admin`.
 
 **Rollback strategy:** keep `profiles.is_admin` populated during the first migration cycle so the old RLS policies could be restored from git if needed. Full rollback is only practical before step 8.
+
+**Note on intermediate state between step 6 (migration applied) and step 7 (manual demotion):** all backfilled users temporarily hold both `'admin'` and `'trainer'` in `staff_roles`. For users who should be trainer-only, this grants a short-lived admin permission window — acceptable because admin capabilities today are a superset of trainer capabilities (no regression for anyone), and the window is closed as soon as the trainer completes step 7.
+
+**Testing surface (smoke-test checklist per role after step 6):**
+- Admin: create cohort, edit content, grade any submission, manage pods, moderate board.
+- Trainer (admin removed): same as admin EXCEPT platform config / user management pages are gated.
+- Tech Support: see stuck queue tech-tagged items, respond to board, cannot see grading UI or content editor.
+- Support Faculty: sees only own pod on attendance + grading + stuck queue; can post/reply on board; cannot moderate.
+- Executive Faculty: read-only cohort analytics + student list; can post+soft-delete own announcements; cannot grade, cannot see other cohorts.
 
 ## Out of scope (YAGNI for v1)
 
