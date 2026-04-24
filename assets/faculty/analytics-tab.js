@@ -86,7 +86,7 @@ export async function renderAnalytics({ state, container }) {
 
       let milestoneBlock;
       if (!ms.rows.length) {
-        milestoneBlock = `<div class="muted" style="font-size:12px;padding:8px 0;line-height:1.5">No quizzes on milestone days (5, 10, 15, 20, 25, 30) for this cohort.</div>`;
+        milestoneBlock = `<div class="muted" style="font-size:12px;padding:8px 0;line-height:1.5">No quizzes on milestone days (6, 11, 16, 21, 26, 29, 30) for this cohort.</div>`;
       } else {
         const mh = ['Day', 'Quiz', '% enrolled pass', 'Attempt pass', 'Avg score', 'Attempts'];
         const mr = ms.rows.map((r) => [

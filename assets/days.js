@@ -1,69 +1,75 @@
+// 30-day arc — titles and milestone days match `AI Workshop Curriculum Planner` (Sheet3.csv).
+// Lesson copy: `content/day-NN.md` frontmatter `topic` should match `title` here per day.
+
 export const DAYS = [
-  // Week 1 — Foundations
-  { n: 1,  w: 1, title: "Notice AI Around You" },
-  { n: 2,  w: 1, title: "See How Models Read" },
-  { n: 3,  w: 1, title: "Pick the Right AI Tool" },
-  { n: 4,  w: 1, title: "Write Prompts That Work" },
-  { n: 5,  w: 1, title: "Build Your AI Stack" },
+  // Week 1
+  { n: 1, w: 1, title: "What AI is and is not, plus the AI already in everyday life" },
+  { n: 2, w: 1, title: "Inside an LLM: tokens, weights, attention, memory" },
+  { n: 3, w: 1, title: "Prompting Guide: CREATE, few-shot, chain-of-thought, structured output" },
+  { n: 4, w: 1, title: "OpenSource Models and Indian Stack" },
+  { n: 5, w: 1, title: "Grounded research with AI, Fast Vs Thinking vs Deep Research" },
+  { n: 6, w: 1, title: "Prompt game & Capstone Milestone 1: ideathon, brainstorm, Research", checkpoint: "Capstone Milestone 1" },
 
-  // Week 2 — Applied tools + opportunity discovery
-  { n: 6,  w: 2, title: "Pick the Right Brain" },
-  { n: 7,  w: 2, title: "Research Without Getting Fooled" },
-  { n: 8,  w: 2, title: "Make Your First AI Poster" },
-  { n: 9,  w: 2, title: "Make AI Speak for You" },
-  { n: 10, w: 2, title: "Choose Your Capstone", checkpoint: "Capstone kickoff" },
+  // Week 2
+  { n: 7, w: 2, title: "Problem statements with Heilmeier, 5 Whys, How Might We" },
+  { n: 8, w: 2, title: "Design thinking as a disciplined five-stage loop" },
+  { n: 9, w: 2, title: "User interviews, The Mom Test, JTBD, listening for signal" },
+  { n: 10, w: 2, title: "Systems thinking, leverage points, causal loops, SCQA pitch, MindMaps" },
+  { n: 11, w: 2, title: "Capstone Milestone 2: Idea Lock, Features and Automations with AI", checkpoint: "Capstone Milestone 2" },
 
-  // Week 3 — Problem framing + user validation
-  { n: 11, w: 3, title: "Sharpen the Problem" },
-  { n: 12, w: 3, title: "Think Like a Designer" },
-  { n: 13, w: 3, title: "Ask Better Questions" },
-  { n: 14, w: 3, title: "Map the System, Tell the Story" },
-  { n: 15, w: 3, title: "Sprint to a Spec", checkpoint: "Locked spec" },
+  // Week 3
+  { n: 12, w: 3, title: "Text2Image" },
+  { n: 13, w: 3, title: "Workflow automation, browser automation" },
+  { n: 14, w: 3, title: "Making Presentation with AI" },
+  { n: 15, w: 3, title: "Vibe Coding (Including Plan mode)" },
+  { n: 16, w: 3, title: "Capstone Milestone 3: Presenation/Pitch/Protoype, Mini Demo", checkpoint: "Capstone Milestone 3" },
 
-  // Week 4 — Build foundations (data, retrieval, eval, automation)
-  { n: 16, w: 4, title: "Understand the Plumbing" },
-  { n: 17, w: 4, title: "Compare Models Like a Builder" },
-  { n: 18, w: 4, title: "Teach AI Your Documents" },
-  { n: 19, w: 4, title: "Make AI Remember Your Project" },
-  { n: 20, w: 4, title: "Automate One Boring Task" },
+  // Week 4
+  { n: 17, w: 4, title: "Git, GitHub, localhost, APIs" },
+  { n: 18, w: 4, title: "Deployment with Vercel and Supabase (OpenCode)" },
+  { n: 19, w: 4, title: "Context Engineering: Embeddings & RAG,  prompt vs retrieve vs fine-tune" },
+  { n: 20, w: 4, title: "Context Engineering: CLAUDE.MD, AGENTS.MD Rules and Skills" },
+  { n: 21, w: 4, title: "Capstone Milestone 4: Workspace Setup and First Deploy", checkpoint: "Capstone Milestone 4" },
 
-  // Week 5 — Prototype, deploy, orchestrate
-  { n: 21, w: 5, title: "Build Your First Prototype", checkpoint: "v0 prototype" },
-  { n: 22, w: 5, title: "Publish It and Price It" },
-  { n: 23, w: 5, title: "Give AI Tools and a Goal" },
-  { n: 24, w: 5, title: "Split One Agent into Two" },
-  { n: 25, w: 5, title: "Demo, Get Feedback, Improve", checkpoint: "Mini-demo" },
+  // Week 5
+  { n: 22, w: 5, title: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi Agentic System" },
+  { n: 23, w: 5, title: "Cost Estimation of AI: API costs, Tokens, Knowledge Graphs, Neo Clouds/GPUs with OpenSource Models" },
+  { n: 24, w: 5, title: "Text2Audio, Text2Video" },
+  { n: 25, w: 5, title: "Local LLMs, prompt patterns, eval habits, tracing" },
+  { n: 26, w: 5, title: "Capstone Milestone 5: Add Agentic Frameworks and a chatbot to your project", checkpoint: "Capstone Milestone 5" },
 
-  // Week 6 — Launch, demo, and career continuation
-  { n: 26, w: 6, title: "Safety-Check Your Capstone" },
-  { n: 27, w: 6, title: "Choose Models With Receipts" },
-  { n: 28, w: 6, title: "Build Your Learning Habit" },
-  { n: 29, w: 6, title: "Rehearse Until It's Easy" },
-  { n: 30, w: 6, title: "Launch Your Capstone", checkpoint: "Final demo" },
+  // Week 6
+  { n: 27, w: 6, title: "AI Ethics, Safety, Guard rails and Red-teaming" },
+  { n: 28, w: 6, title: "GEO (Generative Engine Optimization), Leaderboard, Benchmarking, Keepin up with AI" },
+  { n: 29, w: 6, title: "Demo Day 1", checkpoint: "Demo Day 1" },
+  { n: 30, w: 6, title: "Demo Day 2", checkpoint: "Demo Day 2" },
 ];
 
 export const WEEK_TITLES = {
-  1: "Foundations",
-  2: "Applied tools + opportunity discovery",
-  3: "Problem framing + user validation",
-  4: "Build foundations (data, retrieval, eval, automation)",
-  5: "Prototype, deploy, orchestrate",
-  6: "Launch, demo, and career continuation",
+  1: "Foundations: AI, LLMs, prompts, open stack, research",
+  2: "Problem & design: framing, interviews, systems, Milestone 2",
+  3: "Build & present: image, automation, slides, vibe coding, Milestone 3",
+  4: "Ship: Git, deploy, RAG, agent rules, Milestone 4",
+  5: "Agents & scale: toolchains, cost, media, local models, Milestone 5",
+  6: "Close: ethics, GEO, demo days",
 };
 
 export const WEEK_OUTCOMES = {
-  1: "By end of Week 1 you know what AI is, how it works, and where it breaks.",
-  2: "By end of Week 2 you can pick the right AI workflow quickly and lock your capstone opportunity.",
-  3: "By end of Week 3 you have a validated problem, clear users, and a locked 1-page capstone spec.",
-  4: "By end of Week 4 you can evaluate prompts, build retrieval systems, and automate real workflows.",
-  5: "By end of Week 5 your capstone v0 is live and your first agentic workflow is running.",
-  6: "By end of Week 6 your capstone is safety-checked, benchmarked, polished, and demo-ready.",
+  1: "By end of Week 1 you can explain AI/LLMs, prompt well, use Indian/open stacks, and run grounded research.",
+  2: "By end of Week 2 you can frame problems, run design and user research, system-map, and pass Milestone 2.",
+  3: "By end of Week 3 you can create assets, automate workflows, present, vibe-code, and pass Milestone 3.",
+  4: "By end of Week 4 you can use Git, deploy, build RAG/context workflows, and pass Milestone 4.",
+  5: "By end of Week 5 you can run agentic stacks, estimate cost, work with local models, and pass Milestone 5.",
+  6: "By end of Week 6 you can reason about safety/GEO and ship two demo days.",
 };
 
+/** Timeline markers (dashboard, timeline) — aligned with curriculum milestones. */
 export const CHECKPOINTS = {
-  10: { label: "Capstone kickoff", color: "#c3ff36" },
-  15: { label: "Locked spec",       color: "#c3ff36" },
-  21: { label: "v0 prototype",      color: "#38bdf8" },
-  25: { label: "Mini-demo",         color: "#8b5cf6" },
-  30: { label: "Final demo",        color: "#ff6b6b" },
+  6: { label: "Capstone Milestone 1", color: "#c3ff36" },
+  11: { label: "Capstone Milestone 2", color: "#c3ff36" },
+  16: { label: "Capstone Milestone 3", color: "#38bdf8" },
+  21: { label: "Capstone Milestone 4", color: "#38bdf8" },
+  26: { label: "Capstone Milestone 5", color: "#8b5cf6" },
+  29: { label: "Demo Day 1", color: "#ff6b6b" },
+  30: { label: "Demo Day 2", color: "#ff6b6b" },
 };

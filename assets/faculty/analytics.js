@@ -11,7 +11,8 @@ import { supabase } from '../supabase.js';
 import { loadStudentSignals } from './signals.js';
 
 /** Days with milestone-style quizzes in the 30-day arc (subset of days that typically gate deliverables). */
-export const MILESTONE_QUIZ_DAYS = [5, 10, 15, 20, 25, 30];
+/** Aligned with curriculum planner milestone days (capstone + demo). */
+export const MILESTONE_QUIZ_DAYS = [6, 11, 16, 21, 26, 29, 30];
 
 function cohortStartDate(startsOn) {
   if (!startsOn) return null;
