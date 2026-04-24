@@ -208,6 +208,7 @@
       } else {
         actions.push(`<button class="btn-sm" data-act="pending" data-id="${r.id}">Re-queue</button>`);
       }
+      actions.push(`<button class="btn-sm" data-act="to-board" data-id="${r.id}" title="Convert to a public board post so the answer compounds">→ Board</button>`);
       return `<div class="sq-row st-${r.status}">
         <div>
           <div class="sq-meta">
@@ -236,6 +237,26 @@
     if (!btn) return;
     const id = btn.dataset.id, act = btn.dataset.act;
     btn.disabled = true;
+    if (act === 'to-board') {
+      const row = (await supabase.from('stuck_queue').select('user_id,day_number,message,cohort_id').eq('id', id).maybeSingle()).data;
+      if (!row) { toast('Row not found', { error: true }); btn.disabled = false; return; }
+      const dayTitle = row.day_number ? (DAY_TITLES.get(row.day_number) || `Day ${row.day_number}`) : 'General';
+      const title = prompt('Board post title (3–140 chars):', `${dayTitle} — student got stuck`);
+      if (!title) { btn.disabled = false; return; }
+      const body = prompt('Post body (markdown). Tech Support will answer here and the answer stays public:', row.message || '');
+      if (body == null) { btn.disabled = false; return; }
+      const tagsIn = prompt('Tags (comma-separated, from: tech,concept,setup,platform,lab,general):', 'tech,setup');
+      const tags = (tagsIn || 'general').split(',').map(s => s.trim()).filter(Boolean);
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: newPost, error } = await supabase.from('board_posts').insert({
+        author_id: user.id, cohort_id: row.cohort_id, title, body_md: body, tags,
+      }).select('id').single();
+      if (error) { toast('Board insert failed: ' + error.message, { error: true }); btn.disabled = false; return; }
+      toast('Posted to board');
+      window.open(`board.html?post=${newPost.id}`, '_blank');
+      btn.disabled = false;
+      return;
+    }
     const patch = { status: act };
     if (act === 'resolved') patch.resolved_at = new Date().toISOString();
     else if (act === 'pending') patch.resolved_at = null;

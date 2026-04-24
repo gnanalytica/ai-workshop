@@ -141,6 +141,24 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
+
+  <div class="section-head" style="margin-top:40px">
+    <h2>Support Faculty readiness</h2>
+    <span class="muted" style="font-size:12.5px">10-item pre-session handbook checklist (<a href="faculty-guide.html" style="color:var(--accent)">faculty-guide.html</a>)</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Cohort</th>
+          <th scope="col">Completion</th>
+          <th scope="col" style="text-align:right">Last update</th>
+        </tr>
+      </thead>
+      <tbody id="readinessRows"></tbody>
+    </table>
+  </div>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -250,7 +268,53 @@
     wrapAdminMainLayout();
     await loadCohorts();
     await loadRows();
+    await loadReadiness();
     wireAdd();
+  }
+
+  const CHECKLIST_KEYS = ['read_handbook','attended_live','know_pod','verified_labs','setup_dryrun','know_attendance','know_grading','know_triage','tech_contact_saved','board_read'];
+
+  async function loadReadiness() {
+    const tbody = $('readinessRows');
+    if (!tbody) return;
+    const { data: progressRows, error } = await supabase
+      .from('faculty_pretraining_progress')
+      .select('user_id,cohort_id,progress,updated_at');
+    if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Error: ${esc(error.message)}</td></tr>`; return; }
+    const { data: facultyRows } = await supabase.from('cohort_faculty').select('user_id,cohort_id,college_role').eq('college_role','support');
+    if (!facultyRows || !facultyRows.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No support faculty assigned to any cohort yet.</td></tr>`;
+      return;
+    }
+    const userIds = [...new Set(facultyRows.map(r => r.user_id))];
+    const { data: profs } = await supabase.from('profiles').select('id,full_name,email').in('id', userIds);
+    const profMap = new Map((profs || []).map(p => [p.id, p]));
+    const cohortMap = new Map(COHORTS.map(c => [c.id, c.name]));
+    const progMap = new Map((progressRows || []).map(r => [`${r.user_id}::${r.cohort_id}`, r]));
+    tbody.innerHTML = facultyRows.map(fr => {
+      const p = profMap.get(fr.user_id);
+      const name = p?.full_name || p?.email || fr.user_id.slice(0, 8);
+      const cohortName = cohortMap.get(fr.cohort_id) || fr.cohort_id.slice(0, 8);
+      const prog = progMap.get(`${fr.user_id}::${fr.cohort_id}`);
+      const checklist = prog?.progress?.checklist || {};
+      const done = CHECKLIST_KEYS.filter(k => checklist[k]).length;
+      const pct = Math.round((done / CHECKLIST_KEYS.length) * 100);
+      const barColor = done === CHECKLIST_KEYS.length ? 'var(--accent)' : (done >= 6 ? '#7aa7ff' : '#ffb977');
+      const updated = prog?.updated_at ? new Date(prog.updated_at).toLocaleDateString() : '—';
+      return `<tr>
+        <td><strong>${esc(name)}</strong></td>
+        <td><span class="muted" style="font-size:12.5px">${esc(cohortName)}</span></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:0 0 120px;height:8px;background:var(--input-bg);border-radius:999px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${barColor};transition:width .3s"></div>
+            </div>
+            <span style="font-size:13px">${done}/${CHECKLIST_KEYS.length}</span>
+          </div>
+        </td>
+        <td style="text-align:right"><span class="muted" style="font-size:12.5px">${esc(updated)}</span></td>
+      </tr>`;
+    }).join('');
   }
 
   async function loadCohorts() {
