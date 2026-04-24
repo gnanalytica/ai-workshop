@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lab Setup Guide — Gnanalytica AI Workshop</title>
+<meta name="description" content="Step-by-step install playbook for Support Faculty setting up college lab computers before an AI Workshop cohort." />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<!-- Set theme before paint to avoid flash -->
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<style>
+/* ── Design tokens ──────────────────────────────────────── */
+:root{
+  --bg:#0a0a0f;--bg-soft:#111119;--ink:#ececf2;--muted:#8a8a9a;
+  --line:#22222e;--accent:#c3ff36;--accent-2:#8b5cf6;--accent-3:#ff6b6b;
+  --accent-4:#38bdf8;--card:#14141c;
+  --input-bg:#0a0a12;--nav-bg:rgba(10,10,15,.82);--cta-ink:#0b0b10;
+  --shadow-soft:0 1px 2px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+[data-theme="light"]{
+  --bg:#fafafa;--bg-soft:#ffffff;--ink:#0a0a10;--muted:#52526b;
+  --line:#e4e4ee;--accent:#6fa500;--accent-2:#7c3aed;--accent-3:#dc2626;
+  --accent-4:#0284c7;--card:#ffffff;
+  --input-bg:#ffffff;--nav-bg:rgba(250,250,250,.92);--cta-ink:#ffffff;
+  --shadow-soft:0 1px 3px rgba(10,10,20,.08);
+  color-scheme:light;
+}
+
+/* ── Reset & base ───────────────────────────────────────── */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-4);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.05;letter-spacing:-.03em;margin:0 0 12px;font-weight:800}
+h2{font-size:22px;letter-spacing:-.02em;margin:48px 0 14px;font-weight:700;padding-top:8px;border-top:1px solid var(--line)}
+h2:first-child{border-top:none;margin-top:0}
+h3{font-size:16px;font-weight:700;margin:28px 0 10px;color:var(--ink)}
+h4{font-size:13.5px;font-weight:600;margin:20px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+p{margin:0 0 14px;line-height:1.7;font-size:15px}
+ul,ol{margin:0 0 14px;padding-left:22px;line-height:1.8;font-size:15px}
+li+li{margin-top:4px}
+strong{font-weight:600}
+code{font-family:"JetBrains Mono",monospace;font-size:13px;background:var(--input-bg);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.page-wrap{display:flex;min-height:100vh;flex-direction:column}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px);max-width:1200px;margin:0 auto;width:100%;padding:0 24px;gap:40px}
+
+/* ── Top nav ─────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:50;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1200px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em;font-size:15px;color:var(--ink);text-decoration:none}
+.brand:hover{text-decoration:none}
+.brand-dot{width:10px;height:10px;border-radius:3px;background:var(--accent);box-shadow:0 0 18px var(--accent);flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:12px}
+.theme-toggle{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:50%;cursor:pointer;color:var(--ink);padding:0;transition:border-color .15s,color .15s}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle svg{display:block;pointer-events:none}
+
+/* ── Top kicker banner ───────────────────────────────────── */
+.top-banner{background:var(--card);border-bottom:1px solid var(--line);padding:10px 24px;text-align:center;font-size:13px;color:var(--muted)}
+.top-banner strong{color:var(--ink)}
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero{padding:48px 0 32px}
+.kicker{font-size:11.5px;text-transform:uppercase;letter-spacing:.22em;color:var(--accent);margin-bottom:10px;font-weight:600}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.65;max-width:680px;margin:0}
+
+/* ── Sticky left TOC ─────────────────────────────────────── */
+.toc-col{padding-top:48px}
+.toc{position:sticky;top:74px;padding:20px 0}
+.toc-title{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);font-weight:600;margin-bottom:12px;padding-left:12px}
+.toc ul{list-style:none;padding:0;margin:0}
+.toc li{margin:0}
+.toc a{display:block;padding:6px 12px;font-size:13px;color:var(--muted);border-left:2px solid transparent;border-radius:0 6px 6px 0;transition:color .12s,border-color .12s,background .12s;text-decoration:none;line-height:1.4}
+.toc a:hover{color:var(--ink);background:var(--bg-soft);border-left-color:var(--line)}
+.toc a.sub{padding-left:22px;font-size:12px}
+.toc-divider{height:1px;background:var(--line);margin:10px 12px}
+
+/* ── Main content ────────────────────────────────────────── */
+.content-col{padding-top:48px;padding-bottom:80px;min-width:0}
+
+/* ── Cards / callouts ────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:20px}
+.callout{border-radius:12px;padding:16px 20px;margin:20px 0;font-size:14px;line-height:1.65;border:1px solid}
+.callout-info{background:rgba(56,189,248,.07);border-color:rgba(56,189,248,.2);color:var(--ink)}
+.callout-warn{background:rgba(255,184,64,.07);border-color:rgba(255,184,64,.25);color:var(--ink)}
+.callout-ok{background:rgba(195,255,54,.07);border-color:rgba(195,255,54,.2);color:var(--ink)}
+.callout strong{font-weight:700}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+pre{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;margin:14px 0 20px;font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink)}
+pre code{background:none;border:none;padding:0;font-size:inherit}
+
+/* ── OS Tab system — pure CSS, no JS ────────────────────── */
+/* Each tool section has three hidden radio inputs (win/mac/linux) + three labels */
+.os-tabs-wrap{margin:20px 0}
+/* hide radios */
+.os-tab-radio{position:absolute;opacity:0;pointer-events:none}
+.os-tab-labels{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.os-tab-label{padding:9px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:6px 6px 0 0;transition:color .12s;user-select:none}
+.os-tab-label:hover{color:var(--ink)}
+
+/* tab panels — all hidden by default */
+.os-panel{display:none}
+
+/* When each radio is checked, show the corresponding panel and highlight label */
+/* Windows */
+#os-chrome-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-vscode-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-node-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-python-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-git-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-ollama-win:checked ~ .os-tabs-wrap .lbl-win,
+#os-docker-win:checked ~ .os-tabs-wrap .lbl-win{color:var(--ink);border-bottom-color:var(--accent)}
+#os-chrome-win:checked ~ .os-tabs-wrap .panel-win,
+#os-vscode-win:checked ~ .os-tabs-wrap .panel-win,
+#os-node-win:checked ~ .os-tabs-wrap .panel-win,
+#os-python-win:checked ~ .os-tabs-wrap .panel-win,
+#os-git-win:checked ~ .os-tabs-wrap .panel-win,
+#os-ollama-win:checked ~ .os-tabs-wrap .panel-win,
+#os-docker-win:checked ~ .os-tabs-wrap .panel-win{display:block}
+/* macOS */
+#os-chrome-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-vscode-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-node-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-python-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-git-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-ollama-mac:checked ~ .os-tabs-wrap .lbl-mac,
+#os-docker-mac:checked ~ .os-tabs-wrap .lbl-mac{color:var(--ink);border-bottom-color:var(--accent)}
+#os-chrome-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-vscode-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-node-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-python-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-git-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-ollama-mac:checked ~ .os-tabs-wrap .panel-mac,
+#os-docker-mac:checked ~ .os-tabs-wrap .panel-mac{display:block}
+/* Linux */
+#os-chrome-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-vscode-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-node-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-python-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-git-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-ollama-lin:checked ~ .os-tabs-wrap .lbl-lin,
+#os-docker-lin:checked ~ .os-tabs-wrap .lbl-lin{color:var(--ink);border-bottom-color:var(--accent)}
+#os-chrome-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-vscode-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-node-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-python-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-git-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-ollama-lin:checked ~ .os-tabs-wrap .panel-lin,
+#os-docker-lin:checked ~ .os-tabs-wrap .panel-lin{display:block}
+
+/* ── Section anchors ─────────────────────────────────────── */
+.section{scroll-margin-top:80px}
+
+/* ── Requirements table ──────────────────────────────────── */
+.req-table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 20px}
+.req-table th{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;background:var(--bg-soft)}
+.req-table td{padding:10px 14px;border-bottom:1px solid var(--line);line-height:1.5}
+.req-table tr:last-child td{border-bottom:none}
+
+/* ── Checklist ───────────────────────────────────────────── */
+.checklist{list-style:none;padding:0;margin:16px 0}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.6}
+.checklist li:last-child{border-bottom:none}
+.checklist input[type="checkbox"]{margin-top:3px;accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+
+/* ── Error pairs ─────────────────────────────────────────── */
+.error-item{background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.error-symptom{font-size:13px;font-weight:600;color:var(--accent-3);margin-bottom:6px}
+.error-fix{font-size:13.5px;color:var(--ink);line-height:1.6}
+
+/* ── Screenshot placeholder ──────────────────────────────── */
+.screenshot-placeholder{border:2px dashed var(--line);border-radius:10px;padding:18px 20px;margin:14px 0;background:var(--bg-soft);font-size:13px;color:var(--muted)}
+.screenshot-placeholder strong{color:var(--ink);display:block;margin-bottom:4px}
+
+/* ── Step labels ─────────────────────────────────────────── */
+.step-label{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.2em;font-weight:600;color:var(--accent);margin-bottom:6px}
+
+/* ── Print: checklist ────────────────────────────────────── */
+@media print{
+  nav,.toc-col,.top-banner{display:none!important}
+  .layout{grid-template-columns:1fr!important;padding:0}
+  .content-col{padding:0}
+  .checklist input[type="checkbox"]{-webkit-appearance:auto}
+}
+
+/* ── Responsive: single column on small screens ──────────── */
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .toc-col{display:none}
+}
+@media(max-width:640px){
+  .nav-in{padding:12px 16px}
+  .hero{padding:32px 0 20px}
+  h1{font-size:26px}
+  h2{font-size:19px}
+  .card{padding:16px}
+  pre{font-size:12px;padding:12px 14px}
+}
+
+/* ── Tag badges ──────────────────────────────────────────── */
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.06em;vertical-align:middle;margin-left:8px}
+.badge-optional{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.25)}
+.badge-required{background:rgba(195,255,54,.1);color:#c9f76a;border:1px solid rgba(195,255,54,.2)}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.section-divider{height:1px;background:var(--line);margin:48px 0 0}
+
+/* ── Minimum-version list ────────────────────────────────── */
+.version-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:16px 0 24px}
+.version-card{background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px}
+.version-card .cmd{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);margin-bottom:4px}
+.version-card .expected{font-weight:600;color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BANNER ════════════════ -->
+<div class="top-banner">
+  <strong>Last verified for cohort AI Workshop April 2026</strong>
+  &nbsp;·&nbsp; 2026-04-24 &nbsp;·&nbsp; Gnanalytica Tech Support
+</div>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span>
+      Gnanalytica AI Workshop
+    </a>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme">
+        <!-- icon injected by script below -->
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════ PAGE WRAP ════════════════ -->
+<div class="page-wrap">
+  <div class="layout">
+
+    <!-- ════ LEFT TOC ════ -->
+    <aside class="toc-col" aria-label="Table of contents">
+      <nav class="toc">
+        <div class="toc-title">On this page</div>
+        <ul>
+          <li><a href="#before-you-start">Before you start</a></li>
+          <li><a href="#system-requirements">System requirements</a></li>
+          <li><a href="#install-playbook">Install playbook</a></li>
+          <li><a href="#chrome" class="sub">Chrome</a></li>
+          <li><a href="#vscode" class="sub">VS Code</a></li>
+          <li><a href="#nodejs" class="sub">Node.js LTS</a></li>
+          <li><a href="#python" class="sub">Python 3.11+</a></li>
+          <li><a href="#git" class="sub">Git</a></li>
+          <li><a href="#ollama" class="sub">Ollama</a></li>
+          <li><a href="#docker" class="sub">Docker (optional)</a></li>
+          <div class="toc-divider"></div>
+          <li><a href="#verification">Verification checklist</a></li>
+          <li><a href="#escalation">Escalation</a></li>
+          <li><a href="#lab-morning">Lab-day morning checklist</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- ════ MAIN CONTENT ════ -->
+    <main class="content-col">
+
+      <!-- ── Hero ── -->
+      <div class="hero">
+        <div class="kicker">Support Faculty — Internal</div>
+        <h1>Lab Setup Guide</h1>
+        <p class="hero-sub">
+          Step-by-step install playbook for preparing college lab computers before a cohort starts.
+          Follow this guide once per machine — students do <strong>not</strong> install anything
+          on their own during the workshop.
+        </p>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           1. BEFORE YOU START
+      ════════════════════════════════════════ -->
+      <section class="section" id="before-you-start">
+        <h2>1. Before you start</h2>
+
+        <div class="callout callout-warn">
+          <strong>You need admin / administrator rights on every lab machine.</strong>
+          Without elevated privileges, several installers will silently fail. Confirm
+          with your IT department before booking the setup slot.
+        </div>
+
+        <h3>Prereqs at a glance</h3>
+        <ul>
+          <li><strong>Admin rights</strong> on each lab machine (local admin or domain admin)</li>
+          <li><strong>Internet access</strong> from each lab machine — see the allowlist in
+            <a href="#system-requirements">System requirements</a></li>
+          <li><strong>~30 min per machine</strong> for downloads + installs (faster on campus gigabit)</li>
+          <li>A USB drive or shared network folder with the installers pre-downloaded
+            saves time if campus bandwidth is slow</li>
+        </ul>
+
+        <h3>Lab-wide install vs per-student install</h3>
+        <p>
+          Install all tools under a <strong>system-wide / all-users</strong> context whenever
+          the installer allows it. This means every Windows user profile on the machine sees the
+          same <code>PATH</code> entries and VS Code extensions. Do not install in
+          "current user only" mode on shared lab machines.
+        </p>
+        <p>
+          <strong>Students do not install software on their own machines during the workshop.</strong>
+          All tools should be present and verified on lab machines before Day 1. If a student
+          needs to work from a personal device (laptop), point them to this guide and ask them
+          to complete steps 1–5 at home before the cohort starts.
+        </p>
+
+        <div class="callout callout-info">
+          <strong>Ollama models are large (1–4 GB each).</strong> Pull them overnight on lab
+          Wi-Fi or wired ethernet — not on the morning of Day 1 in front of students.
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════
+           2. SYSTEM REQUIREMENTS
+      ════════════════════════════════════════ -->
+      <section class="section" id="system-requirements">
+        <h2>2. System requirements</h2>
+
+        <table class="req-table">
+          <thead>
+            <tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Operating system</strong></td>
+              <td>Windows 10 (22H2), macOS 12 Monterey, or Ubuntu 22.04 LTS</td>
+              <td>Windows 11, macOS 14 Sonoma, or Ubuntu 24.04 LTS</td>
+            </tr>
+            <tr>
+              <td><strong>Free disk space</strong></td>
+              <td>20 GB</td>
+              <td>40 GB (extra room for Ollama model cache)</td>
+            </tr>
+            <tr>
+              <td><strong>RAM</strong></td>
+              <td>8 GB</td>
+              <td>16 GB — required for smooth Ollama model inference</td>
+            </tr>
+            <tr>
+              <td><strong>CPU</strong></td>
+              <td>64-bit x86 (Intel / AMD)</td>
+              <td>Apple Silicon or AMD Ryzen 5+ for faster local inference</td>
+            </tr>
+            <tr>
+              <td><strong>Internet speed</strong></td>
+              <td>10 Mbps download</td>
+              <td>25 Mbps+ per machine (model pulls need bandwidth)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Network allowlist</h3>
+        <p>
+          Work with your IT / network team to ensure the following domains are
+          reachable from every lab machine. Block-lists and campus firewalls often
+          catch these.
+        </p>
+        <pre><code>*.supabase.co          # workshop platform backend
+api.openai.com         # OpenAI API (Days 4–12)
+api.anthropic.com      # Anthropic / Claude API (Days 13–18)
+huggingface.co         # model cards, tokenizers
+ollama.com             # Ollama website
+registry.ollama.ai     # Ollama model registry (pull models from here)
+github.com             # code repos, pip packages from git
+pypi.org               # Python packages (pip install)
+registry.npmjs.org     # npm packages (node modules)</code></pre>
+      </section>
+
+      <!-- ════════════════════════════════════════
+           3. INSTALL PLAYBOOK
+      ════════════════════════════════════════ -->
+      <section class="section" id="install-playbook">
+        <h2>3. Install playbook — per tool</h2>
+        <p>
+          Work through each tool in order. The tabs below switch between
+          Windows, macOS, and Linux instructions.
+          All radio-button tabs work without JavaScript.
+        </p>
+
+        <!-- ──────────────────────────────────
+             CHROME
+        ────────────────────────────────── -->
+        <div class="section" id="chrome">
+          <h3>Google Chrome <span class="badge badge-required">Required</span></h3>
+          <p>
+            The workshop platform is tested on Chrome (latest). Students use it for
+            the dashboard, quizzes, and all web-based AI tools.
+          </p>
+
+          <!-- Radio inputs must be SIBLINGS (or ancestors) of the .os-tabs-wrap -->
+          <input type="radio" class="os-tab-radio" name="os-chrome" id="os-chrome-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-chrome" id="os-chrome-mac" />
+          <input type="radio" class="os-tab-radio" name="os-chrome" id="os-chrome-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-chrome-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-chrome-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-chrome-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://dl.google.com/chrome/install/ChromeStandaloneSetup64.exe" target="_blank">https://dl.google.com/chrome/install/ChromeStandaloneSetup64.exe</a><br>
+              (enterprise MSI: <a href="https://chromeenterprise.google/browser/download/" target="_blank">chromeenterprise.google/browser/download</a>)</p>
+
+              <div class="step-label">Install</div>
+              <p>Run the installer as Administrator. For silent all-users install with the MSI:</p>
+              <pre><code>msiexec /i GoogleChromeStandaloneEnterprise64.msi /quiet ALLUSERS=1</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>chrome --version
+# Expected: Google Chrome 120.0.xxxx.xx or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Error: "This installation package could not be opened"</div>
+                <div class="error-fix">Download is incomplete. Re-download the installer and verify the file size is &gt;70 MB before running.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Chrome installs but only appears for one user profile</div>
+                <div class="error-fix">Use the Enterprise MSI with <code>ALLUSERS=1</code> flag, not the standard EXE installer, which defaults to per-user.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>chrome</code> not recognised in Command Prompt</div>
+                <div class="error-fix">Add <code>C:\Program Files\Google\Chrome\Application</code> to the system <code>PATH</code> environment variable, then reopen the terminal.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: chrome-win-install-complete.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p><a href="https://dl.google.com/chrome/mac/universal/stable/gcem/GoogleChrome.pkg" target="_blank">https://dl.google.com/chrome/mac/universal/stable/gcem/GoogleChrome.pkg</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>sudo installer -pkg ~/Downloads/GoogleChrome.pkg -target /</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --version
+# Expected: Google Chrome 120.0.xxxx.xx or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Gatekeeper blocks the installer: "cannot be opened because it is from an unidentified developer"</div>
+                <div class="error-fix">Use <code>sudo spctl --master-disable</code> temporarily, run the install, then re-enable: <code>sudo spctl --master-enable</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Chrome opens but stays on a blank tab</div>
+                <div class="error-fix">Check macOS firewall — go to System Settings → Network → Firewall → Options and ensure Chrome is allowed.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Version command returns "No such file or directory"</div>
+                <div class="error-fix">Chrome is installed as a .dmg instead of a .pkg. Drag <code>Google Chrome.app</code> to <code>/Applications</code> manually.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: chrome-mac-install-complete.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Download &amp; Install</div>
+              <pre><code>wget -q -O google-chrome.deb \
+  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome.deb -y</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>google-chrome --version
+# Expected: Google Chrome 120.0.xxxx.xx or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>dpkg: dependency problems</code></div>
+                <div class="error-fix">Run <code>sudo apt --fix-broken install</code> after the failed install, then retry.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Chrome crashes immediately on launch (sandbox error)</div>
+                <div class="error-fix">Older Ubuntu kernels need <code>--no-sandbox</code> flag for root. Prefer running as a non-root lab user instead.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Repository GPG warning on subsequent <code>apt update</code></div>
+                <div class="error-fix">Chrome's apt repo adds its own key file. Accept the key prompt or run <code>sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys GOOGLE_KEY_ID</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: chrome-linux-install-complete.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap chrome -->
+        </div><!-- /chrome -->
+
+        <!-- ──────────────────────────────────
+             VS CODE
+        ────────────────────────────────── -->
+        <div class="section" id="vscode">
+          <h3>Visual Studio Code <span class="badge badge-required">Required</span></h3>
+          <p>
+            The primary IDE for the workshop. Install these extensions after VS Code itself:
+            <strong>Python</strong>, <strong>Pylance</strong>, <strong>Jupyter</strong>,
+            <strong>Continue.dev</strong>, and <strong>Claude for VS Code</strong> (if available for your cohort).
+          </p>
+
+          <input type="radio" class="os-tab-radio" name="os-vscode" id="os-vscode-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-vscode" id="os-vscode-mac" />
+          <input type="radio" class="os-tab-radio" name="os-vscode" id="os-vscode-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-vscode-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-vscode-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-vscode-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64" target="_blank">https://code.visualstudio.com/sha/download?build=stable&amp;os=win32-x64</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code># Silent all-users install
+VSCodeSetup-x64-*.exe /VERYSILENT /MERGETASKS="!runcode,addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath" /ALLUSERS</code></pre>
+
+              <div class="step-label">Install extensions</div>
+              <pre><code>code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension ms-toolsai.jupyter
+code --install-extension Continue.continue</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>code --version
+# Expected: 1.90.x or newer (first line of output)</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>code</code> is not recognized after install</div>
+                <div class="error-fix">The installer's PATH update doesn't affect the current terminal session. Open a new Command Prompt or PowerShell window.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Extensions fail to install: "Cannot connect to Marketplace"</div>
+                <div class="error-fix">Ensure <code>marketplace.visualstudio.com</code> is reachable. Alternatively, download VSIX files from the extension pages and install offline: <code>code --install-extension extension.vsix</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Python extension not activated in a .py file</div>
+                <div class="error-fix">Click the Python version indicator in the status bar and select the Python interpreter you installed (see the Python section).</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: vscode-win-extensions-installed.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p><a href="https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal" target="_blank">https://code.visualstudio.com/sha/download?build=stable&amp;os=darwin-universal</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code># Unzip and move to Applications
+unzip ~/Downloads/VSCode-darwin-universal.zip -d /Applications/
+# Add 'code' CLI to PATH (run from within VS Code: Shell Command: Install 'code' command in PATH)
+# Or manually:
+sudo ln -sf "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" \
+     /usr/local/bin/code</code></pre>
+
+              <div class="step-label">Install extensions</div>
+              <pre><code>code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension ms-toolsai.jupyter
+code --install-extension Continue.continue</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>code --version
+# Expected: 1.90.x or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Gatekeeper warning on first launch</div>
+                <div class="error-fix">Right-click the app → Open → Open. Only needed once. macOS remembers the exception.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>code</code> command not found in Terminal</div>
+                <div class="error-fix">Run the "Shell Command: Install 'code' command in PATH" from the VS Code Command Palette (⌘ Shift P). Restart Terminal.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Continue.dev extension shows blank panel</div>
+                <div class="error-fix">Reload VS Code window (⌘ Shift P → Developer: Reload Window). If blank persists, check that Ollama is running (<code>ollama serve</code>).</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: vscode-mac-extensions-installed.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Download &amp; Install</div>
+              <pre><code>wget -qO vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
+sudo apt install ./vscode.deb -y</code></pre>
+
+              <div class="step-label">Install extensions</div>
+              <pre><code>code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension ms-toolsai.jupyter
+code --install-extension Continue.continue</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>code --version
+# Expected: 1.90.x or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">VS Code window appears but is all grey / blank</div>
+                <div class="error-fix">GPU rendering issue. Launch with <code>code --disable-gpu</code>. Add to the desktop launcher command if needed.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Extensions directory permission denied</div>
+                <div class="error-fix">Extensions install per-user by default. Run VS Code as the lab user (not root) to install extensions to <code>~/.vscode/extensions/</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>EACCES: permission denied</code> when writing to extension cache</div>
+                <div class="error-fix">Do not run VS Code as root. Switch to the standard lab user account.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: vscode-linux-extensions-installed.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap vscode -->
+        </div><!-- /vscode -->
+
+        <!-- ──────────────────────────────────
+             NODE.JS
+        ────────────────────────────────── -->
+        <div class="section" id="nodejs">
+          <h3>Node.js LTS (v22.x) <span class="badge badge-required">Required</span></h3>
+          <p>Used for front-end tooling, LangChain JS exercises, and some CLI tools. Install the v22.x LTS line — not the "Current" release.</p>
+
+          <input type="radio" class="os-tab-radio" name="os-node" id="os-node-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-node" id="os-node-mac" />
+          <input type="radio" class="os-tab-radio" name="os-node" id="os-node-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-node-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-node-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-node-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://nodejs.org/dist/latest-v22.x/node-v22.14.0-x64.msi" target="_blank">https://nodejs.org/dist/latest-v22.x/node-v22.14.0-x64.msi</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>msiexec /i node-v22.14.0-x64.msi /quiet ADDLOCAL=ALL</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>node --version   # Expected: v22.x.x
+npm --version    # Expected: 10.x.x</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>node</code> not found after install</div>
+                <div class="error-fix">Open a fresh PowerShell window. The MSI updates the system PATH but the current session doesn't reload it automatically.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>npm ERR! EACCES: permission denied</code></div>
+                <div class="error-fix">Run PowerShell as Administrator, or set a per-user npm prefix: <code>npm config set prefix "%APPDATA%\npm"</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Wrong Node version (e.g. v18 already installed)</div>
+                <div class="error-fix">Uninstall the old version from Control Panel → Programs first, then install v22.x.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: node-win-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p>Use the official pkg: <a href="https://nodejs.org/dist/latest-v22.x/node-v22.14.0.pkg" target="_blank">https://nodejs.org/dist/latest-v22.x/node-v22.14.0.pkg</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>sudo installer -pkg ~/Downloads/node-v22.14.0.pkg -target /
+# Or via Homebrew (recommended if brew is available):
+brew install node@22
+echo 'export PATH="/opt/homebrew/opt/node@22/bin:$PATH"' >> ~/.zshrc</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>node --version   # Expected: v22.x.x
+npm --version    # Expected: 10.x.x</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>node</code> command not found after pkg install</div>
+                <div class="error-fix">The pkg installs to <code>/usr/local/bin</code>. Ensure that path is in your <code>$PATH</code>: <code>echo $PATH</code>. If not, add it to <code>~/.zshrc</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Homebrew installs node@22 but <code>node</code> still resolves to old version</div>
+                <div class="error-fix">Run <code>brew link node@22 --force --overwrite</code>, then reload your shell.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>npm install</code> hangs indefinitely</div>
+                <div class="error-fix">Check if <code>registry.npmjs.org</code> is reachable: <code>curl -I https://registry.npmjs.org/</code>. Firewall may be blocking it.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: node-mac-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Install via NodeSource</div>
+              <pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install nodejs -y</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>node --version   # Expected: v22.x.x
+npm --version    # Expected: 10.x.x</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Setup script fails with <code>curl: (6) Could not resolve host</code></div>
+                <div class="error-fix">DNS issue. Try <code>curl -fsSL https://deb.nodesource.com/setup_22.x --dns-servers 8.8.8.8 | sudo -E bash -</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Old distro-packaged Node (v12 or v18) takes precedence</div>
+                <div class="error-fix">Remove it first: <code>sudo apt remove nodejs npm -y</code>, then run the NodeSource script.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>EACCES: permission denied, mkdir '/usr/lib/node_modules'</code></div>
+                <div class="error-fix">Use <code>sudo npm install -g &lt;pkg&gt;</code> for global installs, or configure a per-user prefix: <code>mkdir ~/.npm-global &amp;&amp; npm config set prefix '~/.npm-global'</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: node-linux-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap node -->
+        </div><!-- /nodejs -->
+
+        <!-- ──────────────────────────────────
+             PYTHON
+        ────────────────────────────────── -->
+        <div class="section" id="python">
+          <h3>Python 3.11+ <span class="badge badge-required">Required</span></h3>
+          <p>
+            Python 3.11 or 3.12 is required. The <code>venv</code> module must be available
+            (it ships with the standard library on all platforms). Do not use Conda or Anaconda
+            unless your cohort curriculum specifically requires it.
+          </p>
+
+          <input type="radio" class="os-tab-radio" name="os-python" id="os-python-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-python" id="os-python-mac" />
+          <input type="radio" class="os-tab-radio" name="os-python" id="os-python-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-python-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-python-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-python-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" target="_blank">https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code># Silent install for all users, add to PATH
+python-3.11.9-amd64.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>python --version    # Expected: Python 3.11.x
+python -m venv --help | head -1   # Should print usage line</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>python</code> opens the Windows Store instead of Python</div>
+                <div class="error-fix">Go to Settings → Apps → Advanced app settings → App execution aliases and disable the Python Store aliases.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>python3</code> not found, only <code>python</code></div>
+                <div class="error-fix">On Windows, the binary is <code>python.exe</code>. Create an alias: <code>doskey python3=python $*</code> or use <code>python</code> consistently in all workshop scripts.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>pip install</code> fails with SSL error</div>
+                <div class="error-fix">Corporate proxy is intercepting TLS. Ask IT for the proxy CA cert, then: <code>pip install --cert path\to\ca.crt &lt;package&gt;</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: python-win-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p><a href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg" target="_blank">https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>sudo installer -pkg ~/Downloads/python-3.11.9-macos11.pkg -target /
+# Or via Homebrew:
+brew install python@3.11
+echo 'export PATH="/opt/homebrew/opt/python@3.11/bin:$PATH"' >> ~/.zshrc</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>python3 --version   # Expected: Python 3.11.x
+python3 -m venv --help | head -1</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">System Python (2.7 or 3.9) takes precedence</div>
+                <div class="error-fix">Use explicit <code>python3.11</code> in scripts. Or update the <code>PATH</code> so Homebrew's bin comes first: <code>export PATH="/opt/homebrew/bin:$PATH"</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>python3 -m venv</code> fails: "ensurepip not available"</div>
+                <div class="error-fix">Run <code>brew reinstall python@3.11</code>. The ensurepip module sometimes gets stripped by older Homebrew formulas.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">pip installs go to system site-packages</div>
+                <div class="error-fix">Always work inside a virtual environment: <code>python3 -m venv .venv &amp;&amp; source .venv/bin/activate</code>. Never <code>pip install</code> globally.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: python-mac-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Install</div>
+              <pre><code>sudo apt update
+sudo apt install python3.11 python3.11-venv python3-pip -y</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>python3.11 --version   # Expected: Python 3.11.x
+python3.11 -m venv --help | head -1</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Package <code>python3.11</code> not found on Ubuntu 20.04</div>
+                <div class="error-fix">Add the deadsnakes PPA: <code>sudo add-apt-repository ppa:deadsnakes/ppa -y &amp;&amp; sudo apt update</code>, then retry the install.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>python3.11 -m venv</code>: No module named venv</div>
+                <div class="error-fix">Install the separate venv package: <code>sudo apt install python3.11-venv -y</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>pip3</code> installs packages for python3.10, not 3.11</div>
+                <div class="error-fix">Use <code>python3.11 -m pip install &lt;pkg&gt;</code> explicitly, or activate a venv created with <code>python3.11 -m venv .venv</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: python-linux-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap python -->
+        </div><!-- /python -->
+
+        <!-- ──────────────────────────────────
+             GIT
+        ────────────────────────────────── -->
+        <div class="section" id="git">
+          <h3>Git <span class="badge badge-required">Required</span></h3>
+          <p>
+            Required for cloning workshop repos and submitting labs. After installing,
+            remind students (or set system-wide defaults) for <code>user.name</code>
+            and <code>user.email</code>.
+          </p>
+
+          <input type="radio" class="os-tab-radio" name="os-git" id="os-git-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-git" id="os-git-mac" />
+          <input type="radio" class="os-tab-radio" name="os-git" id="os-git-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-git-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-git-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-git-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://github.com/git-for-windows/git/releases/latest" target="_blank">https://github.com/git-for-windows/git/releases/latest</a> — download <code>Git-*-64-bit.exe</code></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>Git-2.45.0-64-bit.exe /VERYSILENT /NORESTART /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh" /PathOption=Cmd</code></pre>
+
+              <div class="step-label">Post-install config reminder</div>
+              <pre><code># Remind each student to run on first use:
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global core.autocrlf true   # Windows: normalise line endings</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>git --version
+# Expected: git version 2.40.x or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>git</code> not recognised in Command Prompt</div>
+                <div class="error-fix">Reopen the terminal after install. The installer updates the system PATH but existing sessions don't reload it.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>SSL certificate problem: unable to get local issuer certificate</code></div>
+                <div class="error-fix">Campus proxy with TLS inspection. Run: <code>git config --global http.sslBackend schannel</code> to use Windows certificate store.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">LF/CRLF warnings on every checkout</div>
+                <div class="error-fix">Set <code>git config --global core.autocrlf true</code> on Windows machines as shown above.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: git-win-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Install</div>
+              <pre><code># Option 1 — Xcode Command Line Tools (simplest):
+xcode-select --install
+# Option 2 — Homebrew (newer version):
+brew install git</code></pre>
+
+              <div class="step-label">Post-install config reminder</div>
+              <pre><code>git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global core.autocrlf input   # macOS: normalise on commit</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>git --version
+# Expected: git version 2.40.x or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Xcode CLT install dialog never appears</div>
+                <div class="error-fix">Run <code>softwareupdate --list</code> to check if the CLT is already installed under a different package name, or install via Homebrew instead.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Old Apple Git (2.39) from Xcode vs newer Homebrew Git conflict</div>
+                <div class="error-fix">Homebrew's git takes precedence when <code>/opt/homebrew/bin</code> is first in PATH. Confirm with <code>which git</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Push fails: "Repository not found" with GitHub</div>
+                <div class="error-fix">macOS Keychain might have stale GitHub credentials. Open Keychain Access, search for "github.com", delete the entry, then re-authenticate via <code>gh auth login</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: git-mac-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Install</div>
+              <pre><code>sudo apt update
+sudo apt install git -y</code></pre>
+
+              <div class="step-label">Post-install config reminder</div>
+              <pre><code>git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global core.autocrlf input</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>git --version
+# Expected: git version 2.40.x or newer</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Ubuntu apt installs an old git (2.34 on 22.04)</div>
+                <div class="error-fix">For a newer version, add the git-core PPA: <code>sudo add-apt-repository ppa:git-core/ppa -y &amp;&amp; sudo apt update &amp;&amp; sudo apt install git -y</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom"><code>git clone</code> hangs on campus network</div>
+                <div class="error-fix">Try HTTPS instead of SSH. If HTTPS also hangs, port 443 may be restricted — ask IT to allow <code>github.com:443</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Credential prompt on every push</div>
+                <div class="error-fix">Enable credential caching: <code>git config --global credential.helper 'cache --timeout=3600'</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: git-linux-verify.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap git -->
+        </div><!-- /git -->
+
+        <!-- ──────────────────────────────────
+             OLLAMA
+        ────────────────────────────────── -->
+        <div class="section" id="ollama">
+          <h3>Ollama <span class="badge badge-required">Required</span></h3>
+          <p>
+            Ollama runs local language models. After installing the runtime, pull these two
+            models — do this <strong>overnight on lab Wi-Fi</strong>, not on the morning of Day 1:
+          </p>
+          <ul>
+            <li><code>llama3.2:3b</code> — ~2.0 GB download — primary workshop model</li>
+            <li><code>nomic-embed-text</code> — ~274 MB download — embedding model for RAG labs</li>
+          </ul>
+
+          <div class="callout callout-warn">
+            <strong>Bandwidth warning.</strong> Each model pull is 0.3–2 GB. Schedule pulls
+            overnight or during lunch on a wired connection. Do not pull on mobile hotspot.
+          </div>
+
+          <input type="radio" class="os-tab-radio" name="os-ollama" id="os-ollama-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-ollama" id="os-ollama-mac" />
+          <input type="radio" class="os-tab-radio" name="os-ollama" id="os-ollama-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-ollama-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-ollama-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-ollama-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://ollama.com/download/OllamaSetup.exe" target="_blank">https://ollama.com/download/OllamaSetup.exe</a></p>
+
+              <div class="step-label">Install</div>
+              <p>Run <code>OllamaSetup.exe</code> as Administrator. Ollama installs as a background service.</p>
+
+              <div class="step-label">Pull models (overnight)</div>
+              <pre><code>ollama pull llama3.2:3b
+ollama pull nomic-embed-text</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>ollama --version
+# Expected: ollama version 0.5.x or newer
+ollama list
+# Should show llama3.2:3b and nomic-embed-text</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>ollama: command not found</code></div>
+                <div class="error-fix">Reopen PowerShell after install. Ollama adds itself to the system PATH but existing sessions don't refresh.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Pull fails: <code>Error: pull model manifest: Get registry.ollama.ai: dial tcp: i/o timeout</code></div>
+                <div class="error-fix">Campus firewall is blocking <code>registry.ollama.ai</code>. Ask IT to allowlist it, or pre-download models on a hotspot and copy the <code>%USERPROFILE%\.ollama\models</code> folder to each lab machine.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Model runs but inference is very slow (&gt;60 s per response)</div>
+                <div class="error-fix">Machine has only 8 GB RAM and the model is larger than available memory. Swap to <code>llama3.2:3b</code> (already the smallest recommended). Close all browser tabs before running.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: ollama-win-list.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p><a href="https://ollama.com/download/Ollama-darwin.zip" target="_blank">https://ollama.com/download/Ollama-darwin.zip</a></p>
+
+              <div class="step-label">Install</div>
+              <pre><code>unzip ~/Downloads/Ollama-darwin.zip -d /Applications/
+open /Applications/Ollama.app   # Accept permissions prompt</code></pre>
+
+              <div class="step-label">Pull models (overnight)</div>
+              <pre><code>ollama pull llama3.2:3b
+ollama pull nomic-embed-text</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>ollama --version
+# Expected: ollama version 0.5.x or newer
+ollama list
+# Should show llama3.2:3b and nomic-embed-text</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">macOS Privacy prompt blocks Ollama from accessing the network</div>
+                <div class="error-fix">Go to System Settings → Privacy &amp; Security → Allow Ollama to accept incoming connections.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Ollama.app quits immediately on Apple Silicon</div>
+                <div class="error-fix">Ensure macOS is 12.0+. On M1/M2 you may need to install Rosetta 2: <code>softwareupdate --install-rosetta</code> (only needed for Intel builds).</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Slow inference despite M-chip</div>
+                <div class="error-fix">Ollama uses Metal GPU acceleration automatically. If it's slow, check Activity Monitor for memory pressure — 16 GB RAM machines will handle 3b models comfortably.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: ollama-mac-list.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Install</div>
+              <pre><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre>
+
+              <div class="step-label">Start the service</div>
+              <pre><code>sudo systemctl enable ollama --now
+systemctl status ollama   # Should show: Active: active (running)</code></pre>
+
+              <div class="step-label">Pull models (overnight)</div>
+              <pre><code>ollama pull llama3.2:3b
+ollama pull nomic-embed-text</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>ollama --version
+# Expected: ollama version 0.5.x or newer
+ollama list
+# Should show llama3.2:3b and nomic-embed-text</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Install script fails: <code>curl: (60) SSL certificate problem</code></div>
+                <div class="error-fix">Proxy CA cert issue. Download the script manually, inspect it, then run: <code>bash install.sh</code> after setting <code>CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Service starts but <code>ollama run</code> hangs</div>
+                <div class="error-fix">Check <code>journalctl -u ollama -n 50</code> for errors. A common cause is the service binding to the wrong interface — set <code>OLLAMA_HOST=0.0.0.0:11434</code> in <code>/etc/systemd/system/ollama.service.d/override.conf</code>.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">No GPU acceleration despite NVIDIA card</div>
+                <div class="error-fix">Install NVIDIA Container Toolkit and CUDA 12.x. Ollama detects CUDA automatically if the drivers are present. Run <code>nvidia-smi</code> to confirm driver status.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: ollama-linux-list.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap ollama -->
+        </div><!-- /ollama -->
+
+        <!-- ──────────────────────────────────
+             DOCKER (OPTIONAL)
+        ────────────────────────────────── -->
+        <div class="section" id="docker">
+          <h3>Docker Desktop <span class="badge badge-optional">Optional</span></h3>
+          <div class="callout callout-info">
+            <strong>Skip unless your cohort curriculum requires containers.</strong>
+            Docker is only needed for advanced deployment labs (Days 25–30 in some cohorts).
+            Check your cohort schedule before spending time on this.
+          </div>
+
+          <input type="radio" class="os-tab-radio" name="os-docker" id="os-docker-win" checked />
+          <input type="radio" class="os-tab-radio" name="os-docker" id="os-docker-mac" />
+          <input type="radio" class="os-tab-radio" name="os-docker" id="os-docker-lin" />
+
+          <div class="os-tabs-wrap">
+            <div class="os-tab-labels">
+              <label class="os-tab-label lbl-win" for="os-docker-win">Windows</label>
+              <label class="os-tab-label lbl-mac" for="os-docker-mac">macOS</label>
+              <label class="os-tab-label lbl-lin" for="os-docker-lin">Linux</label>
+            </div>
+
+            <!-- Windows -->
+            <div class="os-panel panel-win">
+              <div class="step-label">Download</div>
+              <p><a href="https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" target="_blank">https://desktop.docker.com/win/main/amd64/Docker Desktop Installer.exe</a></p>
+
+              <div class="step-label">Prerequisites</div>
+              <p>WSL 2 must be enabled. Run in PowerShell as Administrator:</p>
+              <pre><code>wsl --install
+# Reboot if prompted</code></pre>
+
+              <div class="step-label">Install</div>
+              <pre><code>"Docker Desktop Installer.exe" install --quiet --accept-license --backend=wsl-2</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>docker --version
+# Expected: Docker version 25.x.x or newer
+docker run --rm hello-world   # Should print "Hello from Docker!"</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Docker Desktop fails to start: "WSL kernel version too old"</div>
+                <div class="error-fix">Run <code>wsl --update</code> in an Administrator PowerShell, then restart Docker Desktop.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Non-admin users can't run <code>docker</code></div>
+                <div class="error-fix">Add the lab user to the <code>docker-users</code> group: <code>net localgroup docker-users "LabStudent" /add</code>. User must re-login.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Hyper-V conflicts with VirtualBox</div>
+                <div class="error-fix">Docker Desktop on Windows requires Hyper-V or WSL2. Disable VirtualBox VMs before starting Docker, or use the WSL2 backend exclusively.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: docker-win-hello-world.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="os-panel panel-mac">
+              <div class="step-label">Download</div>
+              <p>
+                Apple Silicon: <a href="https://desktop.docker.com/mac/main/arm64/Docker.dmg" target="_blank">Docker.dmg (arm64)</a><br>
+                Intel: <a href="https://desktop.docker.com/mac/main/amd64/Docker.dmg" target="_blank">Docker.dmg (amd64)</a>
+              </p>
+
+              <div class="step-label">Install</div>
+              <pre><code>sudo hdiutil attach ~/Downloads/Docker.dmg
+sudo /Volumes/Docker/Docker.app/Contents/MacOS/install --accept-license
+sudo hdiutil detach /Volumes/Docker</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>docker --version
+# Expected: Docker version 25.x.x or newer
+docker run --rm hello-world</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom">Docker.app not launching after install</div>
+                <div class="error-fix">Check System Settings → Login Items — Docker may need to be added. Also try: <code>open /Applications/Docker.app</code> from Terminal.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Slow container builds on Apple Silicon</div>
+                <div class="error-fix">Enable Rosetta emulation in Docker Desktop settings for x86 images: Docker Desktop → Settings → Features in development → Use Rosetta for x86/amd64 emulation.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Permission denied on Docker socket</div>
+                <div class="error-fix">Ensure your user is in the <code>docker</code> group or Docker Desktop is running. Try relaunching Docker Desktop.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: docker-mac-hello-world.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="os-panel panel-lin">
+              <div class="step-label">Install Docker Engine (no Desktop required)</div>
+              <pre><code>curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+# Log out and back in for group change to take effect</code></pre>
+
+              <div class="step-label">Verify</div>
+              <pre><code>docker --version
+# Expected: Docker version 25.x.x or newer
+docker run --rm hello-world</code></pre>
+
+              <div class="step-label">Common errors</div>
+              <div class="error-item">
+                <div class="error-symptom"><code>permission denied while trying to connect to the Docker daemon socket</code></div>
+                <div class="error-fix">User is not in the <code>docker</code> group yet. Log out and back in (or run <code>newgrp docker</code> in the current session).</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Install script fails on air-gapped network</div>
+                <div class="error-fix">Use the <a href="https://docs.docker.com/engine/install/ubuntu/#install-from-a-package" target="_blank">offline .deb package method</a> from Docker's documentation.</div>
+              </div>
+              <div class="error-item">
+                <div class="error-symptom">Docker daemon not starting on boot</div>
+                <div class="error-fix">Enable the systemd service: <code>sudo systemctl enable docker --now</code>.</div>
+              </div>
+
+              <div class="screenshot-placeholder">
+                <strong>[screenshot: docker-linux-hello-world.png]</strong>
+                Check your cohort Google Drive folder for this screenshot — images will be added before the first delivery.
+              </div>
+            </div>
+          </div><!-- /os-tabs-wrap docker -->
+        </div><!-- /docker -->
+
+      </section><!-- /install-playbook -->
+
+      <!-- ════════════════════════════════════════
+           4. VERIFICATION
+      ════════════════════════════════════════ -->
+      <section class="section" id="verification">
+        <h2>4. Verification checklist (v1 — manual)</h2>
+
+        <div class="callout callout-info">
+          <strong>v1 verification is manual.</strong> Run each tool's <code>--version</code>
+          command below and compare against the listed minimum. A fully automated
+          cross-platform verification script is deferred to v2.
+          At that point this section will link to a downloadable script.
+        </div>
+
+        <p>Open a fresh terminal window and run each command. If any output doesn't match, return to the relevant install section above.</p>
+
+        <div class="version-grid">
+          <div class="version-card">
+            <div class="cmd">chrome --version</div>
+            <div class="expected">→ Google Chrome 120+</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">code --version</div>
+            <div class="expected">→ 1.90+ (first line)</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">node --version</div>
+            <div class="expected">→ v22.x.x</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">python --version</div>
+            <div class="expected">→ Python 3.11+</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">git --version</div>
+            <div class="expected">→ git version 2.40+</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">ollama --version</div>
+            <div class="expected">→ ollama version 0.5+</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">ollama list</div>
+            <div class="expected">→ shows llama3.2:3b &amp; nomic-embed-text</div>
+          </div>
+          <div class="version-card">
+            <div class="cmd">docker --version</div>
+            <div class="expected">→ Docker version 25+ (optional)</div>
+          </div>
+        </div>
+
+        <h4>One-liner quick check (copy &amp; paste)</h4>
+        <pre><code>chrome --version && code --version | head -1 && node --version && python --version && git --version && ollama --version && ollama list</code></pre>
+
+        <p class="muted" style="font-size:13px">On Windows, use <code>python</code> (not <code>python3</code>). On macOS/Linux, use <code>python3 --version</code> if <code>python</code> is not in PATH.</p>
+      </section>
+
+      <!-- ════════════════════════════════════════
+           5. ESCALATION
+      ════════════════════════════════════════ -->
+      <section class="section" id="escalation">
+        <h2>5. Escalation</h2>
+
+        <p>
+          If verification fails and the <strong>common-errors</strong> section above doesn't
+          resolve the issue, reach Gnanalytica Tech Support with the following information:
+        </p>
+
+        <ul>
+          <li><strong>OS and version</strong> (e.g. "Windows 11 22H2", "Ubuntu 22.04.4 LTS")</li>
+          <li><strong>Which tool failed</strong> (e.g. "Ollama — step 3, pull command")</li>
+          <li><strong>The exact error text</strong> — copy-paste or screenshot from the terminal</li>
+          <li><strong>A screenshot</strong> of the terminal window showing the error</li>
+        </ul>
+
+        <div class="card" style="margin-top:20px">
+          <h4 style="margin-top:0">Primary channel — Community Board</h4>
+          <p>
+            Post to <a href="board.html">board.html</a> with the tag <code>setup</code>.
+            This creates a searchable record and allows the full support team to respond.
+            Other Support Faculty may have solved the same issue.
+          </p>
+
+          <h4>Same-day blockers</h4>
+          <p style="margin-bottom:0">
+            For issues that block a session starting in less than 2 hours, use your cohort
+            <strong>Slack</strong> or <strong>WhatsApp</strong> group directly. Ping the trainer
+            first — they have escalation paths to Gnanalytica infrastructure.
+          </p>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════
+           6. LAB-DAY MORNING CHECKLIST
+      ════════════════════════════════════════ -->
+      <section class="section" id="lab-morning">
+        <h2>6. Lab-day morning checklist</h2>
+
+        <p>
+          Run through this list 30–45 minutes before students arrive.
+          The checkboxes are a print aid — they do not persist between page reloads.
+          Print this page (<strong>Ctrl/Cmd + P</strong>) for a paper copy if needed.
+        </p>
+
+        <div class="card">
+          <ul class="checklist">
+            <li>
+              <input type="checkbox" id="chk1" />
+              <label for="chk1"><strong>Projector works</strong> — resolution set to the room's native resolution; display mirroring or extend mode configured as needed</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk2" />
+              <label for="chk2"><strong>Speakers audible to the back row</strong> — play a short audio clip and walk to the back of the room to confirm volume level</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk3" />
+              <label for="chk3"><strong>Internet speed test passes</strong> — run a speed test from at least one lab machine and confirm &gt;25 Mbps download</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk4" />
+              <label for="chk4"><strong>Browser ready</strong> — fresh Chrome profile (no saved passwords, no cached sessions), logged in as a test student to confirm the workshop dashboard loads</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk5" />
+              <label for="chk5"><strong>Ollama model pre-warmed</strong> — run <code>ollama run llama3.2:3b "say hi"</code> on the projector machine so the first inference is not cold</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk6" />
+              <label for="chk6"><strong>Backup laptop charged</strong> — at least 80% battery, VS Code and Chrome open and ready</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk7" />
+              <label for="chk7"><strong>Attendance mechanism ready</strong> — confirm you know how to mark attendance on the admin panel or your paper sheet; do a test mark if needed</label>
+            </li>
+            <li>
+              <input type="checkbox" id="chk8" />
+              <label for="chk8"><strong>Water and breaks planned</strong> — note the break times on the session plan; confirm water is available in the room or nearby</label>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </main><!-- /content-col -->
+  </div><!-- /layout -->
+</div><!-- /page-wrap -->
+
+<!-- ════════════════ THEME TOGGLE SCRIPT (no module, no supabase) ════════════════ -->
+<script>
+(function(){
+  var MOON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  var SUN  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+
+  function getTheme(){ return document.documentElement.dataset.theme || 'dark'; }
+  function paint(btn){ btn.innerHTML = getTheme() === 'dark' ? SUN : MOON; }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    paint(btn);
+    btn.addEventListener('click', function(){
+      var next = getTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      paint(btn);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
