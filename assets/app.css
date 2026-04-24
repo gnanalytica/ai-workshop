@@ -327,8 +327,10 @@ main.admin-shell .admin-main{
     width:56px;
   }
 }
-#adminNav.admin-nav-slot:hover .admin-nav-aside,
-#adminNav.admin-nav-slot:focus-within .admin-nav-aside{
+/* Hover the aside directly — the slot has zero box so it can't receive
+   hover on its own. */
+.admin-nav-aside:hover,
+.admin-nav-aside:focus-within{
   width:260px;
   max-width:260px;
   box-shadow:10px 0 40px rgba(0,0,0,.45);
@@ -442,34 +444,33 @@ main.admin-shell .admin-main{
     display:none;
   }
 
-  /* Collapsed state (global): icon-only, hide text/labels */
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
+  /* Collapsed state: icon-only, hide text/labels, show every group's icons
+     regardless of its native [open] state. */
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
     padding:10px 6px 14px;
   }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-link__txt,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-sub-link,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__head{
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group__label,
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-link__txt,
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-sub,
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-faculty-sub,
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-aside__head,
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-footer{
     display:none !important;
   }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
+  /* Override <details> native "closed" hiding so every group's icons show. */
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group .admin-nav-group__links{
+    display:flex !important;
+    padding:0;
+  }
+  .admin-nav-aside:not(:hover):not(:focus-within) a.admin-nav-link{
     padding:10px 0;
     justify-content:center;
     gap:0;
     border-radius:10px;
     margin:2px 4px;
   }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group{
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group{
     margin-bottom:2px;
-  }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub{
-    padding:6px 0;
-    border:none;
-    margin:6px 0;
   }
   /* Rail chrome: icons + active state restyled to look good on dark bg */
   #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link{
