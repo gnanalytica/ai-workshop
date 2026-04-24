@@ -577,7 +577,7 @@
     $('pendingGrading')?.closest('.card')?.remove();
     const ar = document.querySelector('#atRiskList')?.closest('.card')?.querySelector('a.more');
     if (ar) {
-      ar.setAttribute('href', 'faculty.html#people');
+      ar.setAttribute('href', 'faculty.html#students');
       ar.textContent = 'Open People →';
     }
     if (location.hash === '#announcements' || location.hash === '#polls') {
@@ -843,7 +843,7 @@
     if (!top.length) { host.innerHTML = `<div class="empty">Nobody at risk — nice.</div>`; return; }
     host.innerHTML = top.map(r => {
       const p = profMap.get(r.uid);
-      const drillHref = IS_ADMIN ? `admin-student.html?u=${esc(r.uid)}` : 'faculty.html#people';
+      const drillHref = IS_ADMIN ? `admin-student.html?u=${esc(r.uid)}` : 'faculty.html#students';
       const drillLabel = IS_ADMIN ? 'View' : 'People';
       return `<div class="row">
         <div class="who"><b>${esc(p?.full_name || '—')}</b><span>${esc(p?.college || '')} · ${r.last ? 'last '+esc(rel(r.last)) : 'no activity'}</span></div>

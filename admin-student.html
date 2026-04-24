@@ -110,7 +110,7 @@
   <div class="gate-card">
     <div class="kicker">Support faculty</div>
     <h2>Trainer only</h2>
-    <p class="muted" style="line-height:1.55">Grading and student drill-down are for program trainers. Use <a href="faculty.html#people">Faculty hub → People</a> and <a href="admin-stuck.html">Stuck queue</a> for in-room support.</p>
+    <p class="muted" style="line-height:1.55">Grading and student drill-down are for program trainers. Use <a href="faculty.html#students">Faculty hub → Students</a> and <a href="admin-stuck.html">Stuck queue</a> for in-room support.</p>
     <button class="submit-btn" style="margin-top:12px" id="signOutTrainer">Sign out</button>
   </div>
 </div>
@@ -348,7 +348,7 @@
         countCell = parts.length ? parts.join(' · ') : '—';
         actionCell = `<button class="btn" data-s-preview="${esc(s.id)}" title="Preview & grade">👁 Preview</button>`;
       }
-      return `<tr><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td>${kCell}</td><td class="muted" style="font-size:12px">${esc(countCell)}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${actionCell}</td></tr>`;
+      return `<tr data-assignment-id="${a.id}"><td>${a.day_number}</td><td>${esc(a.title)}</td><td>${esc(status)}</td><td>${score}</td><td>${kCell}</td><td class="muted" style="font-size:12px">${esc(countCell)}</td><td class="muted" style="font-size:12px">${submitted}</td><td>${actionCell}</td></tr>`;
     }).join('');
     $('subsRows').querySelectorAll('[data-s-preview]').forEach(btn => {
       btn.addEventListener('click', () => openPreviewModal(btn.dataset.sPreview));
@@ -379,6 +379,24 @@
     $('timelineList').innerHTML = events.length
       ? events.map(e => `<div class="note-row"><div class="nhd">${new Date(e.t).toLocaleString()}</div>${esc(e.desc)}</div>`).join('')
       : `<p class="muted">No activity yet.</p>`;
+
+    const focusAid = new URLSearchParams(location.search).get('assignment');
+    if (focusAid) {
+      if ((location.hash || '#progress') !== '#subs') {
+        const url = new URL(window.location.href);
+        url.hash = 'subs';
+        history.replaceState(null, '', `${url.pathname}${url.search}#subs`);
+        setAdminNavSubActive('subs');
+      }
+      requestAnimationFrame(() => {
+        const row = document.querySelector(`#subsRows tr[data-assignment-id="${CSS.escape(focusAid)}"]`);
+        if (row) {
+          row.style.outline = '2px solid var(--accent)';
+          row.style.outlineOffset = '2px';
+          row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      });
+    }
   }
 
   window.addEventListener('hashchange', routeStudentSection);

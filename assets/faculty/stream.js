@@ -248,7 +248,7 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded,
 
     <section class="add-card">
       <h3 style="margin:0 0 8px">Before class</h3>
-      <ul style="margin:0 0 12px"><li>Skim today's lesson content (student-facing day page).</li><li>Preview the <a href="faculty.html#agenda" style="color:var(--accent)">Agenda</a> and Stream for stuck signals.</li><li>Confirm lab machines/projector/audio with venue staff.</li></ul>
+      <ul style="margin:0 0 12px"><li>Skim today's lesson content (student-facing day page).</li><li>Preview the <a href="faculty.html#schedule" style="color:var(--accent)">Schedule</a> and Today for stuck signals.</li><li>Confirm lab machines/projector/audio with venue staff.</li></ul>
       <h3 style="margin:0 0 8px">During class</h3>
       <ul style="margin:0 0 12px"><li>Keep students aligned with the remote trainer's objective.</li><li>Monitor the stuck queue (${stuck.length} open from your pod) and <a href="admin-stuck.html" style="color:var(--accent)">triage</a>.</li><li>Unblock setup and access issues first; escalate concept gaps to the trainer.</li></ul>
       <h3 style="margin:0 0 8px">After class</h3>

@@ -7,7 +7,7 @@ export async function renderHandbook(ctx) {
       <p>Submissions, attendance, stuck-queue items, peer-review activity, and day-by-day lab progress for every student in your cohort. Drill into any student from the <b>My pod</b> or <b>Whole cohort</b> tabs.</p>
     </details>
     <details><summary><b>Before class</b></summary>
-      <ul><li>Skim today's lesson content page.</li><li>Open the <b>Today</b> tab and review at-risk students in your pod.</li><li>Queue the day's polls from the admin polls page (ask an admin if you don't have access).</li></ul>
+      <ul><li>Skim today's lesson content page.</li><li>Open the <b>Today</b> section and review at-risk students in your pod.</li><li>Queue the day's polls from the admin polls page (ask an admin if you don't have access).</li></ul>
     </details>
     <details><summary><b>During class</b></summary>
       <ul><li>Watch the stuck queue badge; respond in real time or hand items to a TA.</li><li>Launch polls at the marked moments.</li><li>Run breakouts if in Meet; otherwise pair students in chat.</li></ul>
@@ -22,9 +22,9 @@ export async function renderHandbook(ctx) {
       <p>For scheduling changes, enrollment issues, or anything a student needs admin action on, post in the faculty Slack channel or email your cohort lead.</p>
     </details>
     <details><summary><b>FAQ</b></summary>
-      <p><b>Can I see students in other pods?</b> Yes — use the <b>Whole cohort</b> tab. You can grade and reply to any student in your cohort.</p>
+      <p><b>Can I see students in other pods?</b> Yes — use the <b>Whole cohort</b> view under Students. Trainers handle grading; you can triage and support in cohort.</p>
       <p><b>Can I transfer my pod to another faculty?</b> Yes — ask an admin to run the Handoff on <code>admin-pods.html</code>. The audit log records every add/remove/handoff.</p>
-      <p><b>Where do I find my pod's Meet link?</b> Today tab, top card.</p>
+      <p><b>Where do I find my pod's Meet link?</b> Today section, top card.</p>
     </details>
   </section>`;
 }

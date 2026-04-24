@@ -305,6 +305,19 @@
 
     renderKpis();
     renderTable();
+    applyDayDeepLink();
+  }
+
+  function applyDayDeepLink() {
+    const dayQ = new URLSearchParams(window.location.search).get('day');
+    if (!dayQ) return;
+    const d = Number(dayQ);
+    if (d < 1 || d > 30) return;
+    STATE.openDays.add(d);
+    renderTable();
+    requestAnimationFrame(() => {
+      document.querySelector(`.day-row[data-day="${d}"]`)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
   }
 
   function cohortDayMap() {

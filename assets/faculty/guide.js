@@ -300,15 +300,15 @@ export async function renderGuide({ state, container }) {
     <section class="add-card" style="padding:16px">
       <h3 style="margin:0 0 10px">Operational shortcuts (tracking, grading, scoring)</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
-        <a href="#stream" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
+        <a href="#today" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
           <b>Live class operations</b>
           <div class="muted" style="font-size:12px;margin-top:4px">Stuck queue, needs grading, session readiness.</div>
         </a>
-        <a href="#people" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
+        <a href="#students" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
           <b>Student support view</b>
           <div class="muted" style="font-size:12px;margin-top:4px">My pod / whole cohort with signals.</div>
         </a>
-        <a href="#grades" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
+        <a href="#review" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
           <b>Progress analytics</b>
           <div class="muted" style="font-size:12px;margin-top:4px">Completion, at-risk, grading throughput.</div>
         </a>

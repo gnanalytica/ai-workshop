@@ -149,7 +149,7 @@ export async function renderAnalytics({ state, container }) {
           ${milestoneBlock}
         </div>
         <p class="muted" style="font-size:12px;margin:16px 0 0;line-height:1.5">Same at-risk heuristic as <strong>People</strong>. Pod chart includes empty pods (0 students). 
-          <a href="faculty.html#people" style="color:var(--accent)">People →</a>
+          <a href="faculty.html#students" style="color:var(--accent)">Students →</a>
           · <a href="admin-stuck.html" style="color:var(--accent)">Stuck →</a>
           · <a href="admin-home.html" style="color:var(--accent)">Home →</a></p>`;
 

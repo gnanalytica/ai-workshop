@@ -15,7 +15,7 @@ const SHORTCUTS = [
   { href: 'teams.html', label: 'Teams', hint: 'Capstone teams' },
   { href: 'index.html', label: 'Home', hint: 'Landing' },
   { href: 'admin-home.html', label: 'Admin home', hint: 'Staff' },
-  { href: 'faculty.html', label: 'Faculty', hint: 'Stream & roster' },
+  { href: 'faculty.html', label: 'Faculty', hint: 'Today, students, triage' },
 ];
 
 function esc(s) {

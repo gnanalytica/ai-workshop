@@ -1,35 +1,57 @@
-// Faculty tab router. Each tab is a module exporting a render function
-// that takes { state, container }.
+// Faculty hub section router. Each section exports a render function(ctx) with { state, container }.
 
+import { normalizeFacultyHash } from './faculty/section-registry.js';
 import { renderStream } from './faculty/stream.js';
 import { renderFacultyPeople } from './faculty/people-tab.js';
 import { renderAnalytics } from './faculty/analytics-tab.js';
-import { renderGuide } from './faculty/guide.js';
 import { renderAgenda } from './faculty/agenda-tab.js';
 import { renderTraining } from './faculty/training-tab.js';
+import { renderHandbookSection } from './faculty/handbook-section.js';
+import { renderStuckAttendance } from './faculty/stuck-attendance.js';
+import { renderAssignmentStrip } from './faculty/assignments-review.js';
 
-const TABS = {
-  stream: renderStream,
-  agenda: renderAgenda,
-  people: renderFacultyPeople,
-  grades: renderAnalytics,
-  training: renderTraining,
-  guide: renderGuide,
-  handbook: renderGuide,
-  // Legacy hashes (faculty.html normalizes these, but deep links may still hit the router)
+async function renderReview(ctx) {
+  const { container } = ctx;
+  container.innerHTML = '';
+  const hostA = document.createElement('div');
+  const hostB = document.createElement('div');
+  hostB.style.marginTop = '14px';
+  container.appendChild(hostA);
+  container.appendChild(hostB);
+  await renderAnalytics({ ...ctx, container: hostA });
+  await renderAssignmentStrip({ ...ctx, container: hostB });
+}
+
+const SECTIONS = {
   today: renderStream,
-  'my-pod': renderFacultyPeople,
-  cohort: renderFacultyPeople,
-  analytics: renderAnalytics,
-  guide: renderGuide,
+  students: renderFacultyPeople,
+  'stuck-attendance': renderStuckAttendance,
+  schedule: renderAgenda,
+  review: renderReview,
+  handbook: renderHandbookSection,
+  training: renderTraining,
 };
 
-export async function mountFacultyTab(tab, ctx) {
-  const fn = TABS[tab] || TABS.stream;
+/**
+ * @param {string} sectionId - canonical id: today | students | stuck-attendance | schedule | review | handbook | training
+ * @param {{ state: object, container: HTMLElement }} ctx
+ */
+export async function mountFacultySection(sectionId, ctx) {
+  const fn = SECTIONS[sectionId] || SECTIONS.today;
   try {
     await fn(ctx);
   } catch (e) {
-    console.error('Faculty tab error', tab, e);
+    console.error('Faculty section error', sectionId, e);
     ctx.container.innerHTML = `<div class="empty-state" style="color:#ffa0a0">Failed to load: ${String(e.message || e)}</div>`;
   }
+}
+
+/**
+ * @deprecated Use mountFacultySection with normalized ids. Kept for legacy / docs.
+ * @param {string} tab - old tab or hash name (e.g. stream, people, grades)
+ * @param {{ state: object, container: HTMLElement }} ctx
+ */
+export async function mountFacultyTab(tab, ctx) {
+  const sectionId = normalizeFacultyHash(`#${String(tab).replace(/^#/, '')}`);
+  return mountFacultySection(sectionId, ctx);
 }

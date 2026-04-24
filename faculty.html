@@ -12,44 +12,36 @@
   .denied{padding:40px;text-align:center;color:var(--muted)}
   .empty-state{padding:24px;text-align:center;color:var(--muted);font-size:13.5px}
   .lesson-panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px;box-sizing:border-box}
-  .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-  .panel-head h3{margin:0;font-size:15px}
-  .panel-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;font-weight:700}
-  .role-pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);background:rgba(195,255,54,.06)}
-  .role-pill.support{border-color:#9ec9ff;color:#9ec9ff;background:rgba(158,201,255,.06)}
-  .today-banner{padding:12px 16px;border-radius:12px;border:1px solid var(--accent);background:rgba(195,255,54,.08);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:13.5px}
-  .today-banner a{color:var(--accent);font-weight:600;text-decoration:none}
-  table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
-  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
-  .stuck-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11.5px;background:rgba(255,170,90,.14);color:#ffb977;border:1px solid rgba(255,170,90,.3);font-family:"JetBrains Mono",monospace;letter-spacing:.06em}
-  .stuck-badge.zero{background:rgba(255,255,255,.03);color:var(--muted);border-color:var(--line)}
-  .progress-cell{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink)}
-  .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
-  .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
-  .btn-pill{padding:7px 14px;border-radius:999px;font-size:13px;border:1px solid var(--accent);color:#0b0b10;background:var(--accent);font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .guide-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  @media (max-width:720px){.guide-row{grid-template-columns:1fr}}
-  .guide-card{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);text-decoration:none;color:var(--ink);transition:border-color .12s;display:block}
-  .guide-card:hover{border-color:var(--accent)}
-  .guide-card .gc-icon{font-size:20px;margin-bottom:6px}
-  .guide-card .gc-title{font-weight:600;font-size:14px;margin-bottom:4px}
-  .guide-card .gc-sub{font-size:12px;color:var(--muted);line-height:1.4}
   .nav-profile-wrap{position:relative}
   .nav-dd{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,.35);z-index:200}
   .nav-dd a{display:block;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:13.5px}
   .nav-dd a:hover{background:var(--bg-soft)}
+  .role-pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);background:rgba(195,255,54,.06)}
+  .role-pill.support{border-color:#9ec9ff;color:#9ec9ff;background:rgba(158,201,255,.06)}
   .micro-line{font-size:12.5px;color:var(--muted);margin-top:6px}
   .micro-line a{color:var(--accent);text-decoration:none}
   select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+  .fac-hub-nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;position:sticky;top:0;z-index:30;padding:10px 0 14px;margin:0 0 6px;border-bottom:1px solid var(--line);background:var(--bg);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+  .fac-hub-nav a.fac-hub-nav__link{
+    padding:7px 12px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;font-weight:500;
+    text-decoration:none;color:var(--muted);
+  }
+  .fac-hub-nav a.fac-hub-nav__link:hover{border-color:var(--accent);color:var(--accent)}
+  .fac-hub-nav a.fac-hub-nav__link--active{
+    background:rgba(195,255,54,.1);border-color:var(--accent);color:var(--ink);
+  }
+  .fac-hub-section{scroll-margin-top:72px;margin-bottom:28px}
+  .fac-sec-h{margin:0 0 2px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+  .fac-sec-title{margin:0 0 12px;font-size:17px;font-weight:600;letter-spacing:-.02em}
+  .today-banner{padding:12px 16px;border-radius:12px;border:1px solid var(--accent);background:rgba(195,255,54,.08);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:13.5px}
+  .today-banner a{color:var(--accent);font-weight:600;text-decoration:none}
   @media (max-width:720px){
     main.wrap{padding-left:14px;padding-right:14px}
-    th,td{padding:7px 8px;font-size:12.5px}
   }
 </style>
 </head>
 <body>
-<a href="#panel" class="skip-link">Skip to main content</a>
+<a href="#fac-sec-today" class="skip-link">Skip to main content</a>
 <nav>
   <div class="wrap nav-in">
     <div class="brand"><span class="dot"></span><span> Gnanalytica · Faculty hub</span></div>
@@ -101,11 +93,53 @@
     <div id="fNextTeaching" class="micro-line"></div>
   </header>
 
-  <section id="fTodayBanner"></section>
-  <section id="fProgress"></section>
-  <section id="fAssignments"></section>
-  <section id="fAttendance"></section>
-  <section id="fGuides" style="margin-bottom:40px"></section>
+  <div id="facActionStrip"></div>
+
+  <nav class="fac-hub-nav" id="facHubNav" aria-label="Section"></nav>
+
+  <section class="fac-hub-section" id="fac-sec-today" data-fac-sec="today" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-today">Run class</h2>
+    <p class="fac-sec-title" id="fac-sec-todayTitle">Today</p>
+    <div id="facTodayBanner"></div>
+    <div id="facMountToday" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-students" data-fac-sec="students" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-students">Support</h2>
+    <p class="fac-sec-title" id="fac-sec-studentsTitle">Students</p>
+    <div id="facMountStudents" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-stuck" data-fac-sec="stuck-attendance" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-stuck">Triage</h2>
+    <p class="fac-sec-title" id="fac-sec-stuckTitle">Stuck & in-room</p>
+    <div id="facMountStuck" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-schedule" data-fac-sec="schedule" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-schedule">Plan</h2>
+    <p class="fac-sec-title" id="fac-sec-scheduleTitle">Schedule</p>
+    <div id="facMountSchedule" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-review" data-fac-sec="review" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-review">Insights</h2>
+    <p class="fac-sec-title" id="fac-sec-reviewTitle">Review</p>
+    <p class="muted" style="font-size:13px;margin:-6px 0 12px;max-width:60ch">Pulse, analytics, and what’s due this week. Trainers use <strong>Student work</strong> for full grading; use this to coach and unblock.</p>
+    <div id="facMountReview" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-handbook" data-fac-sec="handbook" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-handbook">Reference</h2>
+    <p class="fac-sec-title" id="fac-sec-handbookTitle">Handbook</p>
+    <div id="facMountHandbook" class="fac-sec-body" style="margin-bottom:20px"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-training" data-fac-sec="training" tabindex="-1" style="margin-bottom:40px">
+    <h2 class="fac-sec-h" id="fac-label-training">Onboarding</h2>
+    <p class="fac-sec-title" id="fac-sec-trainingTitle">Pre-training & links</p>
+    <div id="facMountTraining" class="fac-sec-body"></div>
+  </section>
 </main>
 
 <script type="module">
@@ -113,16 +147,128 @@
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
   import { checkAdminOrFaculty, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
+  import {
+    normalizeFacultyHash,
+    SECTION_ORDER,
+    setFacultyHash,
+    setActiveFacultyNav,
+    scrollToFacultySection,
+  } from './assets/faculty/section-registry.js';
+  import { mountFacultySection } from './assets/faculty-tabs.js';
+  import { renderFacultyActionStrip } from './assets/faculty/faculty-actions.js';
+  import { prependNavFind } from './assets/nav-search.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
-  const STATE = { user: null, cohortId: null, cohorts: [], role: null, executiveCohortIds: [] };
+  const STATE = { user: null, cohortId: null, cohorts: [], role: null, executiveCohortIds: [], isAdmin: false };
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   const pad = (n) => String(n).padStart(2,'0');
+  const fmtDate = (v) => (v ? new Date(v).toLocaleDateString(undefined,{ weekday:'short', month:'short', day:'numeric' }) : '—');
+
+  const SECTION_LABELS = {
+    today: 'Today',
+    students: 'Students',
+    'stuck-attendance': 'Stuck & in-room',
+    schedule: 'Schedule',
+    review: 'Review',
+    handbook: 'Handbook',
+    training: 'Pre-training',
+  };
 
   function show(id) {
-    ['gate','denied','panel'].forEach((x)=>{ $(x).style.display = x===id ? (id==='panel'?'block':'grid') : 'none'; });
+    ['gate','denied','panel'].forEach((x) => { $(x).style.display = x === id ? (id === 'panel' ? 'block' : 'grid') : 'none'; });
     const ab = $('facAcctBtn'); if (ab) ab.style.display = id === 'gate' ? 'none' : 'inline-block';
+  }
+
+  function buildTaskNav() {
+    const host = $('facHubNav');
+    if (!host) return;
+    host.innerHTML = SECTION_ORDER.map(
+      (id) => `<a class="fac-hub-nav__link" data-fac-section="${id}" href="#${id}" aria-current="false">${esc(SECTION_LABELS[id] || id)}</a>`,
+    ).join('');
+    host.querySelectorAll('a[data-fac-section]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sid = a.getAttribute('data-fac-section');
+        if (!sid) return;
+        setFacultyHash(sid, { replace: true });
+        setActiveFacultyNav(sid);
+        scrollToFacultySection(sid);
+      });
+    });
+  }
+
+  function onHash() {
+    const id = normalizeFacultyHash(window.location.hash);
+    setActiveFacultyNav(id);
+  }
+
+  async function updateTodayMeta() {
+    const cohortId = STATE.cohortId;
+    const uid = STATE.user.id;
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const [cdaysRes, dfTodayRes] = await Promise.all([
+      supabase.from('cohort_days').select('day_number,live_session_at,title').eq('cohort_id', cohortId).order('day_number'),
+      supabase.from('day_faculty').select('day_number,main_user_id,support_user_id').eq('cohort_id', cohortId)
+        .or(`main_user_id.eq.${uid},support_user_id.eq.${uid}`),
+    ]);
+    const cdays = cdaysRes.data || [];
+    const dfMine = dfTodayRes.data || [];
+
+    const todayCday = cdays.find(d => d.live_session_at && new Date(d.live_session_at) >= todayStart && new Date(d.live_session_at) < new Date(todayStart.getTime() + 86400000));
+    const todayDf = todayCday ? dfMine.find(r => r.day_number === todayCday.day_number) : null;
+    if (todayDf) {
+      $('facTodayBanner').innerHTML = `<div class="today-banner">
+        <span><strong>You're supporting today's session</strong> — Day ${pad(todayCday.day_number)}${todayCday.title ? ': ' + esc(todayCday.title) : ''}</span>
+        <a href="day.html?n=${todayCday.day_number}">Open prep notes</a>
+      </div>`;
+    } else {
+      $('facTodayBanner').innerHTML = '';
+    }
+
+    const nextMine = dfMine
+      .map(r => ({ r, cd: cdays.find(d => d.day_number === r.day_number) }))
+      .filter(x => x.cd?.live_session_at && new Date(x.cd.live_session_at) >= todayStart)
+      .sort((a,b) => new Date(a.cd.live_session_at) - new Date(b.cd.live_session_at))[0];
+    $('fNextTeaching').innerHTML = nextMine
+      ? `Next teaching: <a href="day.html?n=${nextMine.r.day_number}">Day ${pad(nextMine.r.day_number)} ${esc(fmtDate(nextMine.cd.live_session_at))}</a>`
+      : '';
+  }
+
+  async function refreshHub() {
+    if (!STATE.cohortId) return;
+    const strip = $('facActionStrip');
+    if (strip) renderFacultyActionStrip({ state: STATE, container: strip });
+
+    await updateTodayMeta();
+
+    const m = {
+      today: 'facMountToday',
+      students: 'facMountStudents',
+      'stuck-attendance': 'facMountStuck',
+      schedule: 'facMountSchedule',
+      review: 'facMountReview',
+      handbook: 'facMountHandbook',
+      training: 'facMountTraining',
+    };
+    for (const sid of SECTION_ORDER) {
+      const el = document.getElementById(m[sid]);
+      if (!el) continue;
+      el.innerHTML = '<div class="empty-state">Loading…</div>';
+    }
+    await Promise.all(
+      SECTION_ORDER.map(async (sid) => {
+        const el = document.getElementById(m[sid]);
+        if (el) await mountFacultySection(sid, { state: STATE, container: el });
+      }),
+    );
+  }
+
+  window.addEventListener('hashchange', onHash);
+  if (!window.location.hash || window.location.hash === '#') {
+    setFacultyHash('today', { replace: true });
   }
 
   $('loginForm').addEventListener('submit', async (e) => {
@@ -149,16 +295,12 @@
   async function gate(user) {
     const auth = await checkAdminOrFaculty(user);
     const { isAdmin, isFaculty, facultyCohortIds, executiveCohortIds = [], staffRoles } = auth;
-    // Trainers/admins use admin-* surfaces — bounce them.
     const isTrainerOrAdmin = isAdmin || (staffRoles && (staffRoles.has?.('trainer') || staffRoles.has?.('admin')));
     if (isTrainerOrAdmin) { location.replace('admin-home.html'); return; }
     if (!isFaculty && !executiveCohortIds.length) return show('denied');
 
-    // Determine simplified role.
     const role = executiveCohortIds.length ? 'executive' : 'support';
     STATE.user = user; STATE.role = role; STATE.executiveCohortIds = executiveCohortIds;
-
-    console.debug("faculty hub v2 simple", role);
 
     const dd = $('facAcctDd'), facAcctBtn = $('facAcctBtn');
     if (dd) {
@@ -173,246 +315,45 @@
         dd.style.display = open ? 'block' : 'none';
         facAcctBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
-      document.addEventListener('click', () => { dd.style.display = 'none'; facAcctBtn.setAttribute('aria-expanded','false'); });
+      document.addEventListener('click', () => { dd.style.display = 'none'; facAcctBtn.setAttribute('aria-expanded', 'false'); });
       dd.addEventListener('click', (e) => e.stopPropagation());
     }
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: 'faculty' });
     wrapAdminMainLayout();
+    buildTaskNav();
 
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
     const name = (user.user_metadata?.full_name || user.email || '').split('@')[0];
     $('fHello').textContent = `${greet}${name ? ', ' + name : ''}.`;
-    $('fRolePill').innerHTML = `<span class="role-pill ${role==='support'?'support':''}">${role==='executive'?'Executive':'Support'}</span>`;
+    $('fRolePill').innerHTML = `<span class="role-pill ${role === 'support' ? 'support' : ''}">${role === 'executive' ? 'Executive' : 'Support'}</span>`;
 
-    // Merge faculty cohorts and executive cohorts.
-    const allCohortIds = [...new Set([...(facultyCohortIds||[]), ...executiveCohortIds])];
+    const allCohortIds = [...new Set([...(facultyCohortIds || []), ...executiveCohortIds])];
     if (!allCohortIds.length) return show('denied');
-    const { data: cohorts } = await supabase.from('cohorts').select('id,name,starts_on').in('id', allCohortIds).order('starts_on',{ascending:false});
+    const { data: cohorts } = await supabase.from('cohorts').select('id,name,starts_on').in('id', allCohortIds).order('starts_on', { ascending: false });
     STATE.cohorts = cohorts || [];
     STATE.cohortId = STATE.cohorts[0]?.id || null;
     if (STATE.cohorts.length > 1) {
       const sel = $('fCohortSel');
       sel.innerHTML = STATE.cohorts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
       sel.style.display = 'inline-block';
-      sel.addEventListener('change', async () => { STATE.cohortId = sel.value; await renderAll(); });
+      if (!sel.dataset.cohortBound) {
+        sel.dataset.cohortBound = '1';
+        sel.addEventListener('change', async () => {
+          STATE.cohortId = sel.value;
+          const c = STATE.cohorts.find(x => x.id === sel.value);
+          $('fCohortName').textContent = c?.name || '';
+          await refreshHub();
+        });
+      }
     }
     $('fCohortName').textContent = STATE.cohorts[0]?.name || '';
-    if (STATE.cohortId) await renderAll();
-  }
-
-  function fmtDate(v){ return v ? new Date(v).toLocaleDateString(undefined,{ weekday:'short', month:'short', day:'numeric' }) : '—'; }
-  function relDue(v){
-    if (!v) return '—';
-    const ms = new Date(v) - new Date();
-    const d = Math.round(ms / 86400000);
-    if (d < 0) return `${Math.abs(d)}d overdue`;
-    if (d === 0) return 'Today';
-    if (d === 1) return 'Tomorrow';
-    return `In ${d}d`;
-  }
-
-  async function renderAll() {
-    const cohortId = STATE.cohortId;
-    const uid = STATE.user.id;
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekEnd = new Date(todayStart.getTime() + 7*86400000);
-
-    // Batch all data.
-    const [podsRes, cdaysRes, dfTodayRes, assignmentsRes] = await Promise.all([
-      supabase.from('pod_faculty').select('pod_id,is_primary,cohort_pods!inner(id,name,cohort_id)').eq('faculty_user_id', uid).eq('cohort_pods.cohort_id', cohortId),
-      supabase.from('cohort_days').select('day_number,live_session_at,title').eq('cohort_id', cohortId).order('day_number'),
-      supabase.from('day_faculty').select('day_number,main_user_id,support_user_id').eq('cohort_id', cohortId).or(`main_user_id.eq.${uid},support_user_id.eq.${uid}`),
-      supabase.from('assignments').select('id,day_number,title,due_at,cohort_id').eq('cohort_id', cohortId).order('due_at',{ascending:true}),
-    ]);
-    const myPods = podsRes.data || [];
-    const cdays = cdaysRes.data || [];
-    const dfMine = dfTodayRes.data || [];
-    const assignments = assignmentsRes.data || [];
-
-    // Today banner & next teaching day.
-    const todayCday = cdays.find(d => d.live_session_at && new Date(d.live_session_at) >= todayStart && new Date(d.live_session_at) < new Date(todayStart.getTime()+86400000));
-    const todayDf = todayCday ? dfMine.find(r => r.day_number === todayCday.day_number) : null;
-    if (todayDf) {
-      $('fTodayBanner').innerHTML = `<div class="today-banner">
-        <span><strong>You're supporting today's session</strong> — Day ${pad(todayCday.day_number)}${todayCday.title?': '+esc(todayCday.title):''}</span>
-        <a href="day.html?n=${todayCday.day_number}">Open prep notes →</a>
-      </div>`;
-    } else {
-      $('fTodayBanner').innerHTML = '';
-    }
-    const nextMine = dfMine
-      .map(r => ({ r, cd: cdays.find(d => d.day_number === r.day_number) }))
-      .filter(x => x.cd?.live_session_at && new Date(x.cd.live_session_at) >= todayStart)
-      .sort((a,b) => new Date(a.cd.live_session_at) - new Date(b.cd.live_session_at))[0];
-    $('fNextTeaching').innerHTML = nextMine
-      ? `Your next teaching day: <a href="day.html?n=${nextMine.r.day_number}">Day ${pad(nextMine.r.day_number)} · ${esc(fmtDate(nextMine.cd.live_session_at))}</a>`
-      : '';
-
-    // Determine students in scope: pod members for support; all enrolled cohort students for executive (or no-pod faculty).
-    const podIds = myPods.map(p => p.pod_id);
-    let memberIds = [];
-    let scopeLabel = '';
-    if (podIds.length) {
-      const { data: members } = await supabase.from('pod_members').select('student_user_id').in('pod_id', podIds);
-      memberIds = [...new Set((members||[]).map(m=>m.student_user_id))];
-      scopeLabel = `${myPods.length} pod${myPods.length===1?'':'s'} · ${memberIds.length} student${memberIds.length===1?'':'s'}`;
-    } else {
-      // No pod — fall back to whole cohort enrolled students.
-      const { data: regs } = await supabase.from('registrations').select('user_id').eq('cohort_id', cohortId).eq('status','confirmed');
-      memberIds = [...new Set((regs||[]).map(r=>r.user_id).filter(Boolean))];
-      scopeLabel = `No assigned pod — viewing whole cohort (${memberIds.length})`;
-    }
-
-    await Promise.all([
-      renderProgress(memberIds, scopeLabel, cohortId),
-      renderAssignments(assignments, memberIds, weekEnd, todayStart),
-      renderAttendance(todayCday, now),
-    ]);
-    renderGuides();
-  }
-
-  async function renderProgress(memberIds, scopeLabel, cohortId) {
-    const host = $('fProgress');
-    if (!memberIds.length) {
-      host.innerHTML = `<div class="lesson-panel">
-        <div class="panel-head"><div><span class="panel-kicker">My students</span><h3>Progress</h3></div><span class="muted" style="font-size:12px">${esc(scopeLabel)}</span></div>
-        <div class="empty-state">No students in scope yet.</div>
-      </div>`;
-      return;
-    }
-    const [{ data: profs }, { data: progress }, { data: subs }, { data: stuck }] = await Promise.all([
-      supabase.from('profiles').select('id,full_name,college').in('id', memberIds),
-      supabase.from('lab_progress').select('user_id,day_number').eq('cohort_id', cohortId).in('user_id', memberIds),
-      supabase.from('submissions').select('user_id,status,submitted_at,assignments!inner(cohort_id)').eq('assignments.cohort_id', cohortId).in('user_id', memberIds).order('submitted_at',{ascending:false}),
-      supabase.from('stuck_queue').select('user_id,status').eq('cohort_id', cohortId).neq('status','resolved').in('user_id', memberIds),
-    ]);
-    const profById = new Map((profs||[]).map(p=>[p.id,p]));
-    const daysByUser = new Map();
-    (progress||[]).forEach(r => {
-      if (!daysByUser.has(r.user_id)) daysByUser.set(r.user_id, new Set());
-      daysByUser.get(r.user_id).add(r.day_number);
-    });
-    const latestSubByUser = new Map();
-    (subs||[]).forEach(s => { if (!latestSubByUser.has(s.user_id)) latestSubByUser.set(s.user_id, s); });
-    const stuckByUser = new Map();
-    (stuck||[]).forEach(s => stuckByUser.set(s.user_id, (stuckByUser.get(s.user_id)||0)+1));
-
-    const rows = memberIds.slice().sort((a,b)=>{
-      const an = profById.get(a)?.full_name || ''; const bn = profById.get(b)?.full_name || '';
-      return an.localeCompare(bn);
-    }).map(id => {
-      const pr = profById.get(id) || {};
-      const days = daysByUser.get(id)?.size || 0;
-      const sub = latestSubByUser.get(id);
-      const sc = stuckByUser.get(id) || 0;
-      return `<tr>
-        <td><strong>${esc(pr.full_name || '—')}</strong></td>
-        <td class="muted" style="font-size:12px">${esc(pr.college || '—')}</td>
-        <td class="progress-cell">${days}/30</td>
-        <td>${sub ? esc(sub.status||'—') : '<span class="muted">—</span>'}</td>
-        <td>${sc ? `<span class="stuck-badge">${sc}</span>` : `<span class="stuck-badge zero">0</span>`}</td>
-      </tr>`;
-    }).join('');
-
-    host.innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">My students</span><h3>Progress</h3></div><span class="muted" style="font-size:12px">${esc(scopeLabel)}</span></div>
-      <div style="overflow-x:auto"><table>
-        <thead><tr><th>Student</th><th>College</th><th>Days</th><th>Latest submission</th><th>Stuck</th></tr></thead>
-        <tbody>${rows || `<tr><td colspan="5" class="muted" style="padding:12px">No students.</td></tr>`}</tbody>
-      </table></div>
-    </div>`;
-  }
-
-  function renderAssignments(assignments, memberIds, weekEnd, todayStart) {
-    const host = $('fAssignments');
-    const upcoming = (assignments||[]).filter(a => {
-      if (!a.due_at) return false;
-      const d = new Date(a.due_at);
-      return d >= todayStart && d <= weekEnd;
-    });
-    if (!upcoming.length) {
-      host.innerHTML = `<div class="lesson-panel">
-        <div class="panel-head"><div><span class="panel-kicker">This week</span><h3>Assignments due</h3></div></div>
-        <div class="empty-state">Nothing due in the next 7 days.</div>
-      </div>`;
-      return;
-    }
-    const ids = upcoming.map(a => a.id);
-    // Submission counts: lightweight follow-up query (not blocking layout).
-    supabase.from('submissions').select('assignment_id,user_id').in('assignment_id', ids).in('user_id', memberIds.length ? memberIds : ['00000000-0000-0000-0000-000000000000']).then(({ data }) => {
-      const subBy = new Map();
-      (data||[]).forEach(s => {
-        if (!subBy.has(s.assignment_id)) subBy.set(s.assignment_id, new Set());
-        subBy.get(s.assignment_id).add(s.user_id);
-      });
-      upcoming.forEach(a => {
-        const cell = host.querySelector(`[data-asgn="${a.id}"]`);
-        if (cell) {
-          const n = subBy.get(a.id)?.size || 0;
-          cell.textContent = `${n}/${memberIds.length}`;
-        }
-      });
-    });
-
-    const rows = upcoming.map(a => `<tr>
-      <td style="font-family:'JetBrains Mono',monospace;font-weight:600">Day ${pad(a.day_number || 0)}</td>
-      <td>${esc(a.title || '—')}</td>
-      <td class="muted">${esc(relDue(a.due_at))}</td>
-      <td class="progress-cell" data-asgn="${a.id}">…</td>
-      <td style="text-align:right"><a class="btn-sm" href="admin-student.html#assignment=${esc(a.id)}">View only →</a></td>
-    </tr>`).join('');
-
-    host.innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">This week</span><h3>Assignments due</h3></div><span class="muted" style="font-size:12px">Read-only</span></div>
-      <div style="overflow-x:auto"><table>
-        <thead><tr><th>Day</th><th>Title</th><th>Due</th><th>Submitted</th><th></th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-    </div>`;
-  }
-
-  function renderAttendance(todayCday, now) {
-    const host = $('fAttendance');
-    if (!todayCday || !todayCday.live_session_at) {
-      host.innerHTML = `<div class="lesson-panel">
-        <div class="panel-head"><div><span class="panel-kicker">Attendance</span><h3>Today's session</h3></div></div>
-        <div class="muted" style="font-size:13px">Today's attendance: not yet — no session scheduled today.</div>
-      </div>`;
-      return;
-    }
-    const sessAt = new Date(todayCday.live_session_at);
-    const diffH = Math.abs(sessAt - now) / 3600000;
-    const within = diffH <= 2;
-    host.innerHTML = `<div class="lesson-panel">
-      <div class="panel-head">
-        <div><span class="panel-kicker">Attendance</span><h3>Day ${pad(todayCday.day_number)} · ${esc(fmtDate(sessAt))}</h3></div>
-        ${within ? `<a class="btn-pill" href="admin-attendance.html?day=${todayCday.day_number}">Mark attendance →</a>` : ''}
-      </div>
-      ${within ? '' : `<div class="muted" style="font-size:13px">Today's attendance opens within 2 hours of the session (${sessAt.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}).</div>`}
-    </div>`;
-  }
-
-  function renderGuides() {
-    const cards = [
-      { href:'faculty-guide.html', icon:'📘', title:'How to support', sub:'Running sessions, helping students, grading assists.' },
-      { href:'setup-guide.html', icon:'🛠', title:'What to set up', sub:'Environment and access checks before class.' },
-      { href:'faculty-guide.html#contacts', icon:'📞', title:'How to reach out', sub:'Escalation contacts and on-call routing.' },
-    ];
-    $('fGuides').innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">Guides</span><h3>Handbook</h3></div></div>
-      <div class="guide-row">
-        ${cards.map(c => `<a class="guide-card" href="${c.href}"><div class="gc-icon">${c.icon}</div><div class="gc-title">${esc(c.title)} →</div><div class="gc-sub">${esc(c.sub)}</div></a>`).join('')}
-      </div>
-    </div>`;
+    onHash();
+    if (STATE.cohortId) await refreshHub();
   }
 
   init();
-</script>
-<script type="module">
-  import { prependNavFind } from './assets/nav-search.js';
   prependNavFind();
 </script>
 </body>

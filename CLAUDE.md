@@ -12,7 +12,7 @@ A 30-day AI workshop delivery platform: static HTML pages + a Supabase backend (
 - `dashboard.html` — student home after sign-in.
 - `day.html` + `content/day-XX.md` — per-day curriculum pages (post-class quiz copy assumes `quizzes_v2.sql` then `quizzes_enhancements_20260423.sql` are applied for that cohort; enhancement seed is idempotent).
 - `admin-*.html` — admin surfaces (one page per concern: home, content, schedule, teams, attendance, stuck, polls, faculty, pods, analytics, …).
-- `faculty.html` — faculty landing (Today / My pod / Whole cohort / Analytics / Handbook).
+- `faculty.html` — faculty landing: task-navigated single page (Today, Students, Stuck & in-room, Schedule, Review, Handbook, Pre-training) + staff shortcuts; legacy hashes (`#stream`, `#people`, `#grades`, etc.) map to the new section ids in `assets/faculty/section-registry.js`.
 - `supabase/migrations/` — timestamped SQL migrations, applied in filename order via Supabase dashboard or CLI.
 - `supabase/functions/` — edge functions (digest email, registration email).
 
