@@ -98,7 +98,7 @@
 </div>
 
 <!-- ── main content (authenticated) ─────────────────────────────────────── -->
-<main class="wrap" id="mainView" style="display:none">
+<main class="wrap" id="panel" style="display:none">
   <div id="adminNav"></div>
 
   <div class="page-hero">
@@ -128,11 +128,11 @@
   const $ = id => document.getElementById(id);
 
   function show(view) {
-    ['gateView', 'mainView'].forEach(id => {
+    ['gateView', 'panel'].forEach(id => {
       const el = $(id);
-      if (el) el.style.display = (id === view) ? (view === 'mainView' ? 'block' : 'grid') : 'none';
+      if (el) el.style.display = (id === view) ? (view === 'panel' ? 'block' : 'grid') : 'none';
     });
-    $('signoutBtn').style.display = (view === 'mainView') ? 'inline-block' : 'none';
+    $('signoutBtn').style.display = (view === 'panel') ? 'inline-block' : 'none';
   }
 
   async function onAuth(user) {
@@ -149,7 +149,7 @@
       meta.innerHTML = `${esc(user.email)}${roleBadge}`;
     }
 
-    show('mainView');
+    show('panel');
 
     // Render the shared admin-style rail (works for any role — board is
     // accessible to all authenticated users; allowlist handles the rest).
