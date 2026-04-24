@@ -253,12 +253,13 @@ select.inline{background:var(--input-bg);border:1px solid var(--line);border-rad
   #studentDrawer .sd-cw-body{padding-left:14px}
 }
 
-/* Admin layout: fixed-rail sidebar + main content. The rail sits flush to the
-   viewport's left edge (via position:fixed on .admin-nav-aside below), so
-   main only needs left padding equal to the collapsed rail width. */
+/* Admin layout: always-open sidebar + main content. The rail sits flush to the
+   viewport's left edge (via position:fixed on .admin-nav-aside below). On
+   desktop the rail is always fully expanded (260px); on mobile it stays as a
+   compact icon rail. */
 main.admin-shell{
   display:block;
-  padding:16px 0 0 72px;
+  padding:16px 0 0 280px;
 }
 @media (max-width:960px){
   main.admin-shell{
@@ -303,13 +304,13 @@ main.admin-shell .admin-main{
 }
 
 .admin-nav-aside{
-  /* Fixed to the viewport left edge — out of document flow so the rail
-     ignores .wrap max-width and extends full-height. */
+  /* Fixed to the viewport left edge — always fully expanded on desktop so
+     every menu item stays visible regardless of which page you're on. */
   position:fixed;
   top:var(--nav-h, 56px);
   left:0;
   bottom:0;
-  width:60px;
+  width:260px;
   height:calc(100vh - var(--nav-h, 56px));
   display:flex;
   flex-direction:column;
@@ -320,20 +321,24 @@ main.admin-shell .admin-main{
   box-shadow:none;
   overflow:hidden;
   z-index:60;
-  transition:width .22s ease, box-shadow .22s ease;
 }
 @media (max-width:960px){
   .admin-nav-aside{
     width:56px;
+    transition:width .22s ease, box-shadow .22s ease;
+  }
+  .admin-nav-aside:hover,
+  .admin-nav-aside:focus-within{
+    width:260px;
+    box-shadow:10px 0 40px rgba(0,0,0,.45);
   }
 }
-/* Hover the aside directly — the slot has zero box so it can't receive
-   hover on its own. */
-.admin-nav-aside:hover,
-.admin-nav-aside:focus-within{
-  width:260px;
-  max-width:260px;
-  box-shadow:10px 0 40px rgba(0,0,0,.45);
+
+/* Hide per-page "On this page" subnav so the sidebar's content is identical
+   across every admin/faculty page for a given role. */
+.admin-nav-sub,
+.admin-nav-faculty-sub{
+  display:none !important;
 }
 
 /* Universal: <details class=admin-nav-group> children must always render,
@@ -451,32 +456,7 @@ main.admin-shell .admin-main{
     display:none;
   }
 
-  /* Collapsed state: icon-only, hide text/labels, show every group's icons
-     regardless of its native [open] state. */
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
-    padding:10px 6px 14px;
-  }
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group__label,
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-link__txt,
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-sub,
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-faculty-sub,
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-aside__head,
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-footer{
-    display:none !important;
-  }
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group .admin-nav-group__links{
-    padding:0;
-  }
-  .admin-nav-aside:not(:hover):not(:focus-within) a.admin-nav-link{
-    padding:10px 0;
-    justify-content:center;
-    gap:0;
-    border-radius:10px;
-    margin:2px 4px;
-  }
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group{
-    margin-bottom:2px;
-  }
+  /* Sidebar is always fully expanded on desktop — no collapsed icon-only state. */
   /* Rail chrome: icons + active state restyled to look good on dark bg */
   #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link{
     color: rgba(255,255,255,.72);
