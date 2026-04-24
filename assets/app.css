@@ -263,7 +263,7 @@ main.admin-shell{
 }
 @media (max-width:960px){
   main.admin-shell{
-    padding:12px 0 0 64px;
+    padding:12px 0 0 280px;
   }
 }
 main.admin-shell .admin-main{
@@ -322,17 +322,7 @@ main.admin-shell .admin-main{
   overflow:hidden;
   z-index:60;
 }
-@media (max-width:960px){
-  .admin-nav-aside{
-    width:56px;
-    transition:width .22s ease, box-shadow .22s ease;
-  }
-  .admin-nav-aside:hover,
-  .admin-nav-aside:focus-within{
-    width:260px;
-    box-shadow:10px 0 40px rgba(0,0,0,.45);
-  }
-}
+/* Sidebar is always expanded at every breakpoint — no hover-shrink anywhere. */
 
 /* Hide per-page "On this page" subnav so the sidebar's content is identical
    across every admin/faculty page for a given role. */
