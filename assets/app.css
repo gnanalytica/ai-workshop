@@ -253,30 +253,30 @@ select.inline{background:var(--input-bg);border:1px solid var(--line);border-rad
   #studentDrawer .sd-cw-body{padding-left:14px}
 }
 
-/* Admin layout: sidebar + main (wrapAdminMainLayout moves siblings into .admin-main) */
+/* Admin layout: fixed-rail sidebar + main content. The rail sits flush to the
+   viewport's left edge (via position:fixed on .admin-nav-aside below), so
+   main only needs left padding equal to the collapsed rail width. */
 main.admin-shell{
-  display:grid;
-  grid-template-columns:minmax(232px, 260px) minmax(0, 1fr);
-  gap:32px 28px;
-  align-items:start;
-  padding-top:8px;
+  display:block;
+  padding:16px 0 0 72px;
 }
-
-/* Mobile: nav slot collapses; menu is a fixed drawer (see .admin-nav-aside below) */
 @media (max-width:960px){
   main.admin-shell{
-    grid-template-columns:1fr;
-    gap:0;
-    padding-top:0;
+    padding:12px 0 0 64px;
   }
-  #adminNav.admin-nav-slot{
-    height:0;
-    min-height:0;
-    overflow:visible;
-    margin:0;
-    padding:0;
-    grid-row:1;
-  }
+}
+main.admin-shell .admin-main{
+  padding-top:0;
+}
+#adminNav.admin-nav-slot{
+  /* The slot is a stub; the aside inside it is fixed-positioned at the
+     viewport edge so DOM-level dimensions don't matter. */
+  width:0;
+  height:0;
+  margin:0;
+  padding:0;
+  overflow:visible;
+  grid-column:auto;
 }
 
 /* Burger trigger retired — the rail is always visible (collapsed on narrow viewports,
@@ -303,18 +303,35 @@ main.admin-shell{
 }
 
 .admin-nav-aside{
-  position:sticky;
-  top:72px;
-  width:100%;
-  max-width:260px;
+  /* Fixed to the viewport left edge — out of document flow so the rail
+     ignores .wrap max-width and extends full-height. */
+  position:fixed;
+  top:var(--nav-h, 56px);
+  left:0;
+  bottom:0;
+  width:60px;
+  height:calc(100vh - var(--nav-h, 56px));
   display:flex;
   flex-direction:column;
-  max-height:calc(100vh - 88px);
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:linear-gradient(165deg, color-mix(in oklab, var(--card) 100%, transparent) 0%, color-mix(in oklab, var(--bg-soft) 55%, var(--card)) 100%);
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
+  border:none;
+  border-right:1px solid rgba(255,255,255,.06);
+  border-radius:0;
+  background:#0f1014;
+  box-shadow:none;
   overflow:hidden;
+  z-index:60;
+  transition:width .22s ease, box-shadow .22s ease;
+}
+@media (max-width:960px){
+  .admin-nav-aside{
+    width:56px;
+  }
+}
+#adminNav.admin-nav-slot:hover .admin-nav-aside,
+#adminNav.admin-nav-slot:focus-within .admin-nav-aside{
+  width:260px;
+  max-width:260px;
+  box-shadow:10px 0 40px rgba(0,0,0,.45);
 }
 .admin-nav-aside__head{
   display:none;
@@ -359,38 +376,8 @@ main.admin-shell{
   min-height:0;
 }
 
-@media (max-width:960px){
-  #adminNav.admin-nav-slot{
-    max-width:none;
-  }
-  .admin-nav-aside__head{
-    display:flex;
-  }
-  #adminNav.admin-nav-slot .admin-nav-aside{
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    width:min(300px, 92vw);
-    max-width:none;
-    max-height:none;
-    z-index:120;
-    border-radius:0;
-    border:none;
-    border-right:1px solid var(--line);
-    transform:translateX(-100%);
-    transition:transform .22s ease, box-shadow .22s ease;
-    box-shadow:none;
-  }
-  main.admin-shell.admin-shell--drawer-open #adminNav.admin-nav-slot .admin-nav-aside{
-    transform:translateX(0);
-    box-shadow:12px 0 48px rgba(0,0,0,.35);
-  }
-  .admin-nav-aside__scroll{
-    padding-top:8px;
-    padding-bottom:max(20px, env(safe-area-inset-bottom, 20px));
-  }
-}
+/* Legacy drawer-mode @media block removed — rail is always visible via
+   position:fixed at every breakpoint. */
 
 /* Collapsible groups */
 .admin-nav-group{
@@ -455,35 +442,7 @@ main.admin-shell{
     display:none;
   }
 
-  /* Desktop: collapsed-by-default admin rail that hover-expands over content. */
-  main.admin-shell:not(.admin-shell--drawer-only){
-    grid-template-columns: 60px minmax(0, 1fr);
-  }
-  #adminNav.admin-nav-slot{
-    width:60px;
-    max-width:60px;
-    overflow:visible;
-  }
-  #adminNav.admin-nav-slot .admin-nav-aside{
-    width:60px;
-    max-width:60px;
-    transition: width .22s ease, box-shadow .22s ease, max-width .22s ease;
-    z-index:60;
-    /* Dark rail (matches reference) */
-    background: #0f1014;
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 0;
-  }
-  [data-theme="light"] #adminNav.admin-nav-slot .admin-nav-aside{
-    background: #111217;
-  }
-  #adminNav.admin-nav-slot:hover .admin-nav-aside,
-  #adminNav.admin-nav-slot:focus-within .admin-nav-aside{
-    width:240px;
-    max-width:240px;
-    box-shadow:10px 0 40px rgba(0,0,0,.45);
-  }
-  /* Collapsed state: icon-only, hide everything text-y */
+  /* Collapsed state (global): icon-only, hide text/labels */
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
     padding:10px 6px 14px;
   }
@@ -492,7 +451,8 @@ main.admin-shell{
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub__label,
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub__label,
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-sub-link,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link{
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__head{
     display:none !important;
   }
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
@@ -564,59 +524,8 @@ main.admin-shell{
   }
 }
 
-/* Mobile: narrower always-visible rail (the drawer no longer applies since
-   the burger is retired). Collapsed shows icons; tap to focus-within expands. */
-@media (max-width: 960px) {
-  main.admin-shell:not(.admin-shell--drawer-only){
-    display:grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 0 12px;
-  }
-  #adminNav.admin-nav-slot{
-    height: auto;
-    min-height: 0;
-    width: 56px;
-    max-width: 56px;
-    overflow: visible;
-    margin: 0;
-    padding: 0;
-    grid-row: auto;
-  }
-  #adminNav.admin-nav-slot .admin-nav-aside{
-    position: sticky;
-    top: 56px;
-    transform: none;
-    width: 56px;
-    max-width: 56px;
-    height: calc(100vh - 64px);
-    border-radius: 0;
-    background: #0f1014;
-    border: 1px solid rgba(255,255,255,.06);
-    box-shadow: none;
-    transition: width .22s ease;
-    z-index: 60;
-  }
-  #adminNav.admin-nav-slot:hover .admin-nav-aside,
-  #adminNav.admin-nav-slot:focus-within .admin-nav-aside{
-    width: 240px;
-    max-width: 240px;
-    box-shadow: 10px 0 40px rgba(0,0,0,.45);
-  }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-link__txt,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub__label,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-sub-link,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link,
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__head{
-    display: none !important;
-  }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
-    padding: 10px 0;
-    justify-content: center;
-    gap: 0;
-  }
-}
+/* Mobile doesn't need extra rules — the global position:fixed rail + the
+   collapsed-state selectors above work identically at every breakpoint. */
 
 a.admin-nav-link{
   display:flex;

@@ -99,6 +99,8 @@
 
 <!-- ── main content (authenticated) ─────────────────────────────────────── -->
 <main class="wrap" id="mainView" style="display:none">
+  <div id="adminNav"></div>
+
   <div class="page-hero">
     <div>
       <div class="kicker">Community</div>
@@ -116,9 +118,10 @@
 
 <script type="module">
   import { supabase } from './assets/supabase.js';
-  import { resolveRoles } from './assets/admin-auth.js';
+  import { resolveRoles, checkAdminOrFaculty } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountBoard } from './assets/board.js';
+  import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
 
   wireThemeToggle();
 
@@ -133,8 +136,8 @@
   }
 
   async function onAuth(user) {
-    // Resolve roles — null cohort = platform-wide
-    const roles = await resolveRoles(user, null);
+    // Resolve roles + populate window.__ROLES__ so admin-nav shows the right items.
+    const [roles] = await Promise.all([resolveRoles(user, null), checkAdminOrFaculty(user)]);
     const canModerate = roles.can.moderateBoard;
 
     // Show user identity in header
@@ -147,6 +150,13 @@
     }
 
     show('mainView');
+
+    // Render the shared admin-style rail (works for any role — board is
+    // accessible to all authenticated users; allowlist handles the rest).
+    $('adminNav').innerHTML = renderAdminNav('board.html', {
+      role: (window.__ROLES__?.staffRoles?.has('admin')) ? 'admin' : 'faculty',
+    });
+    wrapAdminMainLayout();
 
     await mountBoard($('boardContainer'), {
       user,

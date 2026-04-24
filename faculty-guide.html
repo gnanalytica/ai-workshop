@@ -218,6 +218,7 @@
 </div>
 
 <main class="wrap" id="panel" style="display:none">
+  <div id="adminNav"></div>
   <!-- Cohort selector header -->
   <header style="margin:28px 0 0;display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
     <div>
@@ -525,6 +526,7 @@
 <script type="module">
 import { supabase } from './assets/supabase.js';
 import { checkAdminOrFaculty } from './assets/admin-auth.js';
+import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
 import { wireThemeToggle } from './assets/theme.js';
 wireThemeToggle();
 
@@ -619,6 +621,8 @@ async function gate(user) {
   if (!isAdmin && !isFaculty && !allowedByStaffRole) return show('denied');
 
   show('panel');
+  $('adminNav').innerHTML = renderAdminNav('faculty-guide.html', { role: isAdmin ? 'admin' : 'faculty' });
+  wrapAdminMainLayout();
   await loadCohorts(facultyCohortIds, isAdmin);
 }
 
