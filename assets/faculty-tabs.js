@@ -6,12 +6,14 @@ import { renderFacultyPeople } from './faculty/people-tab.js';
 import { renderAnalytics } from './faculty/analytics-tab.js';
 import { renderGuide } from './faculty/guide.js';
 import { renderAgenda } from './faculty/agenda-tab.js';
+import { renderTraining } from './faculty/training-tab.js';
 
 const TABS = {
   stream: renderStream,
   agenda: renderAgenda,
   people: renderFacultyPeople,
   grades: renderAnalytics,
+  training: renderTraining,
   guide: renderGuide,
   handbook: renderGuide,
   // Legacy hashes (faculty.html normalizes these, but deep links may still hit the router)

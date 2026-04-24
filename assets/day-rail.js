@@ -176,6 +176,7 @@ export function mountDayRail(
         </div>
         <a href="dashboard.html#overview" class="gn-course-nav__link${overviewActive}" data-gn-course-link="overview">Overview</a>
         <a href="dashboard.html#lessons" class="gn-course-nav__link${lessonsActive}" data-gn-course-link="lessons">Lessons</a>
+        <a href="board.html" class="gn-course-nav__link">Community board</a>
         <a href="timeline.html" class="gn-course-nav__link gn-course-nav__link--sub">Timeline</a>
         <div class="gn-course-nav__divider" role="presentation"></div>
         ${weekBlocks}

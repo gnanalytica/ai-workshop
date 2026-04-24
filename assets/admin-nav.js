@@ -41,6 +41,7 @@ export const ADMIN_PAGES = [
   { href: 'board.html',              label: 'Community board', group: 'work',     icon: 'alert',     allowedRoles: ['admin','trainer','tech_support','support','executive'] },
   { href: 'admin-analytics.html',    label: 'Analytics',       group: 'insights', icon: 'chart',     allowedRoles: ['admin','trainer','executive'] },
   { href: 'faculty-guide.html',      label: 'Faculty guide',   group: 'insights', icon: 'book',      allowedRoles: ['admin','trainer','tech_support','support'] },
+  { href: 'setup-guide.html',        label: 'Setup guide',     group: 'insights', icon: 'book',      allowedRoles: ['admin','trainer','tech_support','support','executive'] },
 ];
 
 /** Legacy: Support faculty view — still exported for any caller that hasn't migrated to role arrays. */

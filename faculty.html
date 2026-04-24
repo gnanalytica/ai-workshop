@@ -179,8 +179,10 @@
           { key: 'stream', href: '#stream', label: 'Stream' },
           { key: 'agenda', href: '#agenda', label: 'Agenda' },
           { key: 'people', href: '#people', label: 'People' },
-          { key: 'grades', href: '#grades', label: 'Insights' },
+          { key: 'grades', href: '#grades', label: 'Scores / Insights' },
+          { key: 'training', href: '#training', label: 'Training' },
           { key: 'guide', href: 'faculty-guide.html', label: 'Guide' },
+          { key: 'setup', href: 'setup-guide.html', label: 'Setup guide' },
         ],
       },
     });
@@ -226,8 +228,9 @@
     if (t === 'today') return 'stream';
     if (t === 'my-pod' || t === 'cohort') return 'people';
     if (t === 'analytics') return 'grades';
+    if (t === 'pretraining') return 'training';
     if (t === 'handbook') return 'guide';
-    if (['stream', 'agenda', 'people', 'grades', 'guide'].includes(t)) return t;
+    if (['stream', 'agenda', 'people', 'grades', 'training', 'guide'].includes(t)) return t;
     return 'stream';
   }
 
