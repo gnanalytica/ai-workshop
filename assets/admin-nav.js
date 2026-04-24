@@ -28,7 +28,7 @@ const NAV_ICONS = {
 export const ADMIN_PAGES = [
   { href: 'admin-home.html',         label: 'Home',            group: 'cohort',   icon: 'home',      allowedRoles: ['admin','trainer','tech_support','support','executive'] },
   { href: 'admin-schedule.html',     label: 'Schedule',        group: 'cohort',   icon: 'calendar',  allowedRoles: ['admin','trainer','tech_support','support','executive'] },
-  { href: 'faculty.html',            label: 'Faculty hub',     group: 'cohort',   icon: 'users2',    allowedRoles: ['admin','trainer','tech_support','support'] },
+  { href: 'faculty.html',            label: 'Faculty hub',     group: 'cohort',   icon: 'users2',    allowedRoles: ['support','executive'] },
   { href: 'admin-content.html',      label: 'Content',         group: 'classwork',icon: 'file',      allowedRoles: ['admin','trainer'] },
   { href: 'admin.html',              label: 'Registrations',   group: 'people',   icon: 'users',     allowedRoles: ['admin','trainer'] },
   { href: 'admin-teams.html',        label: 'Teams',           group: 'people',   icon: 'users2',    allowedRoles: ['admin','trainer'] },

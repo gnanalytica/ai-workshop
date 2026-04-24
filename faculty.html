@@ -3,96 +3,48 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Faculty · AI Workshop</title>
+<title>Faculty hub · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/app.css" />
 <style>
   .denied{padding:40px;text-align:center;color:var(--muted)}
-  .empty-state{padding:32px;text-align:center;color:var(--muted);font-size:13.5px}
-  .lesson-panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 24px;margin-bottom:20px;box-sizing:border-box}
-  @media (max-width:720px){.lesson-panel{padding:18px 16px;border-radius:18px;margin-bottom:16px}}
-  .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-  .panel-head h3{margin:0;font-size:16px}
+  .empty-state{padding:24px;text-align:center;color:var(--muted);font-size:13.5px}
+  .lesson-panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px;box-sizing:border-box}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .panel-head h3{margin:0;font-size:15px}
   .panel-kicker{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;font-weight:700}
-  .faculty-pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted)}
-  .faculty-pill strong{color:var(--ink);font-weight:700;letter-spacing:.02em;text-transform:none;font-size:12.5px;font-family:inherit}
-  .faculty-pill .role{font-size:10px;color:var(--accent);letter-spacing:.16em}
-  .faculty-pill.support .role{color:#9ec9ff}
-  .kbadge-lab{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;background:rgba(195,255,54,.1);color:#c9f76a;border:1px solid rgba(195,255,54,.3);font-family:"JetBrains Mono",monospace;letter-spacing:.1em}
-  .kbadge-quiz{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;background:rgba(255,184,64,.12);color:#ffc87a;border:1px solid rgba(255,184,64,.3);font-family:"JetBrains Mono",monospace;letter-spacing:.1em}
-  .kbadge-prep{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;background:rgba(180,220,255,.06);color:#bfe1ff;border:1px solid rgba(180,220,255,.22);font-family:"JetBrains Mono",monospace;letter-spacing:.1em}
-  .kbadge-discuss{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line);font-family:"JetBrains Mono",monospace;letter-spacing:.1em}
-  .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px}
-  .day-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);text-decoration:none;font-size:11px;transition:border-color .12s,color .12s}
-  .day-pill:hover{border-color:var(--accent);color:var(--accent)}
-  .day-pill .num{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:14px;color:var(--ink)}
-  .day-pill.past{opacity:.55}
-  .day-pill.today{border-color:var(--accent);background:rgba(195,255,54,.08);color:var(--accent)}
-  .day-pill.today .num{color:var(--accent)}
-  .day-pill.locked{opacity:.35;pointer-events:none}
-  .two-up{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  @media (max-width:720px){.two-up{grid-template-columns:1fr;gap:14px}}
-  .day-card-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-  .day-card-head .daytag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);padding:4px 10px;border:1px solid rgba(195,255,54,.3);border-radius:999px;background:rgba(195,255,54,.06)}
-  .day-card-head .when{font-size:12.5px;color:var(--muted)}
-  .day-card-head .topic{font-size:17px;font-weight:600;margin:0;flex:1 1 100%}
-  .day-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .btn-pill{padding:7px 14px;border-radius:999px;font-size:13px;border:1px solid var(--line);color:var(--ink);background:transparent;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .btn-pill:hover{border-color:var(--accent);color:var(--accent)}
-  .btn-pill.primary{background:var(--accent);color:#0b0b10;border-color:var(--accent);font-weight:600}
-  .btn-pill.primary:hover{color:#0b0b10}
+  .role-pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);background:rgba(195,255,54,.06)}
+  .role-pill.support{border-color:#9ec9ff;color:#9ec9ff;background:rgba(158,201,255,.06)}
+  .today-banner{padding:12px 16px;border-radius:12px;border:1px solid var(--accent);background:rgba(195,255,54,.08);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:13.5px}
+  .today-banner a{color:var(--accent);font-weight:600;text-decoration:none}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+  .stuck-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11.5px;background:rgba(255,170,90,.14);color:#ffb977;border:1px solid rgba(255,170,90,.3);font-family:"JetBrains Mono",monospace;letter-spacing:.06em}
+  .stuck-badge.zero{background:rgba(255,255,255,.03);color:var(--muted);border-color:var(--line)}
+  .progress-cell{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink)}
   .btn-sm{padding:6px 10px;border-radius:8px;font-size:12px;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
   .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
-  .prep-area{width:100%;min-height:88px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--input-bg);color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;box-sizing:border-box;resize:vertical}
-  .prep-area:focus{border-color:var(--accent)}
-  .prep-status{font-size:11px;color:var(--muted);font-family:"JetBrains Mono",monospace;letter-spacing:.1em}
-  .pill-row{display:flex;flex-wrap:wrap;gap:8px}
-  table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
-  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
-  .toast.show{opacity:1}
-  .toast.err{border-color:#ff6b6b;color:#ffa0a0}
-  select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
+  .btn-pill{padding:7px 14px;border-radius:999px;font-size:13px;border:1px solid var(--accent);color:#0b0b10;background:var(--accent);font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .guide-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:720px){.guide-row{grid-template-columns:1fr}}
+  .guide-card{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);text-decoration:none;color:var(--ink);transition:border-color .12s;display:block}
+  .guide-card:hover{border-color:var(--accent)}
+  .guide-card .gc-icon{font-size:20px;margin-bottom:6px}
+  .guide-card .gc-title{font-weight:600;font-size:14px;margin-bottom:4px}
+  .guide-card .gc-sub{font-size:12px;color:var(--muted);line-height:1.4}
   .nav-profile-wrap{position:relative}
   .nav-dd{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,.35);z-index:200}
   .nav-dd a{display:block;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:13.5px}
   .nav-dd a:hover{background:var(--bg-soft)}
-  .nav-dd button:hover{background:var(--bg-soft)}
-  .stuck-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;background:rgba(255,170,90,.14);color:#ffb977;border:1px solid rgba(255,170,90,.3);font-family:"JetBrains Mono",monospace;letter-spacing:.08em}
-  .stuck-badge.zero{background:rgba(255,255,255,.03);color:var(--muted);border-color:var(--line)}
-  .guide-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .guide-card{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);text-decoration:none;color:var(--ink);transition:border-color .12s}
-  .guide-card:hover{border-color:var(--accent)}
-  .guide-card .gc-title{font-weight:600;font-size:14px;margin-bottom:4px}
-  .guide-card .gc-sub{font-size:12px;color:var(--muted);line-height:1.4}
-  .hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .micro-line{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .micro-line a{color:var(--accent);text-decoration:none}
+  select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13px;outline:none}
   @media (max-width:720px){
     main.wrap{padding-left:14px;padding-right:14px}
-    #fHello{font-size:21px !important}
-    header.lesson-panel{padding:18px 18px !important;border-radius:18px}
-    header.lesson-panel > div:first-child{flex-direction:column;align-items:stretch !important;gap:10px}
-    #fCohortSel{width:100%}
-    .hero-pills{gap:6px;margin-top:10px}
-    .faculty-pill{font-size:10.5px;padding:4px 9px;letter-spacing:.1em;max-width:100%}
-    .faculty-pill strong{font-size:11.5px}
-    .day-grid{grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
-    .day-pill{padding:6px 2px;border-radius:10px;font-size:10px}
-    .day-pill .num{font-size:12.5px}
-    .day-card-head{gap:6px}
-    .day-card-head .topic{font-size:15.5px}
-    .day-card-head .when{font-size:11.5px}
-    .day-actions{flex-direction:column;align-items:stretch}
-    .day-actions .btn-pill{justify-content:center;text-align:center;width:100%;box-sizing:border-box}
-    .guide-row{grid-template-columns:1fr;gap:10px}
-    .panel-head{gap:8px}
-    .panel-head h3{font-size:15px}
-    th,td{padding:8px 10px;font-size:12.5px}
-    th{font-size:10px}
-    .pill-row{gap:6px}
-    .stuck-badge{font-size:11px;padding:3px 8px}
+    th,td{padding:7px 8px;font-size:12.5px}
   }
 </style>
 </head>
@@ -137,57 +89,40 @@
 <main class="wrap" id="panel" style="display:none">
   <div id="adminNav"></div>
 
-  <header class="lesson-panel" style="margin:18px 0 18px;padding:22px 26px">
-    <div style="display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
-      <div>
-        <div class="panel-kicker">Faculty hub</div>
-        <h1 id="fHello" style="margin:6px 0 0;font-size:26px">Good to see you.</h1>
+  <header class="lesson-panel" style="margin:18px 0 14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <h1 id="fHello" style="margin:0;font-size:20px">Hello.</h1>
+        <span id="fCohortName" class="muted" style="font-size:13px"></span>
+        <span id="fRolePill"></span>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <select id="fCohortSel" aria-label="Cohort"></select>
-      </div>
+      <select id="fCohortSel" aria-label="Cohort" style="display:none"></select>
     </div>
-    <div class="hero-pills" id="fHeroPills"></div>
+    <div id="fNextTeaching" class="micro-line"></div>
   </header>
 
-  <section id="fNextDays" style="margin-bottom:20px"></section>
-
-  <section id="fMyPod" style="margin-bottom:20px"></section>
-
-  <section id="fMyTeachingDays" style="margin-bottom:20px"></section>
-
-  <section id="fCohortGrid" style="margin-bottom:20px"></section>
-
+  <section id="fTodayBanner"></section>
+  <section id="fProgress"></section>
+  <section id="fAssignments"></section>
+  <section id="fAttendance"></section>
   <section id="fGuides" style="margin-bottom:40px"></section>
 </main>
 
-<div class="toast" id="toast"></div>
-
 <script type="module">
-  import { supabase, COHORT_SLUG } from './assets/supabase.js';
+  import { supabase } from './assets/supabase.js';
   import { renderAdminNav, wrapAdminMainLayout } from './assets/admin-nav.js';
-  import { checkAdminOrFaculty, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
+  import { checkAdminOrFaculty, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   wireThemeToggle();
 
   const $ = (id) => document.getElementById(id);
-  const STATE = { user: null, cohortId: null, cohorts: [], isAdmin: false, isFaculty: false };
-  window.__FACULTY_STATE__ = STATE;
-
-  const TOPIC_CACHE = new Map();
-  function pad(n){return String(n).padStart(2,'0');}
-  function esc(s){return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
+  const STATE = { user: null, cohortId: null, cohorts: [], role: null, executiveCohortIds: [] };
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  const pad = (n) => String(n).padStart(2,'0');
 
   function show(id) {
     ['gate','denied','panel'].forEach((x)=>{ $(x).style.display = x===id ? (id==='panel'?'block':'grid') : 'none'; });
-    const ab = $('facAcctBtn');
-    if (ab) ab.style.display = id === 'gate' ? 'none' : 'inline-block';
-  }
-
-  async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return show('gate');
-    await gate(session.user);
+    const ab = $('facAcctBtn'); if (ab) ab.style.display = id === 'gate' ? 'none' : 'inline-block';
   }
 
   $('loginForm').addEventListener('submit', async (e) => {
@@ -205,14 +140,29 @@
     if (event === 'SIGNED_OUT') show('gate');
   });
 
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return show('gate');
+    await gate(session.user);
+  }
+
   async function gate(user) {
-    const { isAdmin, isFaculty, facultyCohortIds } = await checkAdminOrFaculty(user);
-    STATE.user = user; STATE.isAdmin = isAdmin; STATE.isFaculty = isFaculty;
-    if (!isFaculty && !isAdmin) return show('denied');
+    const auth = await checkAdminOrFaculty(user);
+    const { isAdmin, isFaculty, facultyCohortIds, executiveCohortIds = [], staffRoles } = auth;
+    // Trainers/admins use admin-* surfaces — bounce them.
+    const isTrainerOrAdmin = isAdmin || (staffRoles && (staffRoles.has?.('trainer') || staffRoles.has?.('admin')));
+    if (isTrainerOrAdmin) { location.replace('admin-home.html'); return; }
+    if (!isFaculty && !executiveCohortIds.length) return show('denied');
+
+    // Determine simplified role.
+    const role = executiveCohortIds.length ? 'executive' : 'support';
+    STATE.user = user; STATE.role = role; STATE.executiveCohortIds = executiveCohortIds;
+
+    console.debug("faculty hub v2 simple", role);
 
     const dd = $('facAcctDd'), facAcctBtn = $('facAcctBtn');
     if (dd) {
-      dd.innerHTML = renderAccountMenuHtml(isAdmin, isFaculty, 'faculty');
+      dd.innerHTML = renderAccountMenuHtml(false, true, 'faculty');
       $('facAcctSignout')?.addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
     }
     if (facAcctBtn && dd && !facAcctBtn.dataset.navBound) {
@@ -227,324 +177,234 @@
       dd.addEventListener('click', (e) => e.stopPropagation());
     }
     show('panel');
-
-    $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: isAdmin ? 'admin' : 'faculty' });
+    $('adminNav').innerHTML = renderAdminNav('faculty.html', { role: 'faculty' });
     wrapAdminMainLayout();
 
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
     const name = (user.user_metadata?.full_name || user.email || '').split('@')[0];
     $('fHello').textContent = `${greet}${name ? ', ' + name : ''}.`;
+    $('fRolePill').innerHTML = `<span class="role-pill ${role==='support'?'support':''}">${role==='executive'?'Executive':'Support'}</span>`;
 
-    await loadCohorts(facultyCohortIds, isAdmin);
-    if (!STATE.cohortId) return;
-    await renderAll();
-
-    $('fCohortSel').addEventListener('change', async () => {
-      STATE.cohortId = $('fCohortSel').value;
-      await renderAll();
-    });
-  }
-
-  async function loadCohorts(facultyIds, isAdmin) {
-    let q = supabase.from('cohorts').select('id,name,slug,starts_on,ends_on').order('starts_on',{ascending:false});
-    if (!isAdmin) {
-      if (!facultyIds.length) { $('fNextDays').innerHTML = NO_COHORT_MSG; STATE.cohortId = null; return; }
-      q = q.in('id', facultyIds);
-    }
-    const { data } = await q;
-    STATE.cohorts = data || [];
-    const sel = $('fCohortSel');
-    sel.innerHTML = STATE.cohorts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
-    sel.style.display = STATE.cohorts.length > 1 ? 'inline-block' : 'none';
+    // Merge faculty cohorts and executive cohorts.
+    const allCohortIds = [...new Set([...(facultyCohortIds||[]), ...executiveCohortIds])];
+    if (!allCohortIds.length) return show('denied');
+    const { data: cohorts } = await supabase.from('cohorts').select('id,name,starts_on').in('id', allCohortIds).order('starts_on',{ascending:false});
+    STATE.cohorts = cohorts || [];
     STATE.cohortId = STATE.cohorts[0]?.id || null;
+    if (STATE.cohorts.length > 1) {
+      const sel = $('fCohortSel');
+      sel.innerHTML = STATE.cohorts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+      sel.style.display = 'inline-block';
+      sel.addEventListener('change', async () => { STATE.cohortId = sel.value; await renderAll(); });
+    }
+    $('fCohortName').textContent = STATE.cohorts[0]?.name || '';
+    if (STATE.cohortId) await renderAll();
   }
 
-  async function fetchTopic(n) {
-    if (TOPIC_CACHE.has(n)) return TOPIC_CACHE.get(n);
-    try {
-      const res = await fetch(`content/day-${pad(n)}.md`, { cache: 'no-cache' });
-      if (!res.ok) { TOPIC_CACHE.set(n, null); return null; }
-      const txt = await res.text();
-      const m = txt.match(/^---\s*\n([\s\S]*?)\n---/);
-      if (!m) { TOPIC_CACHE.set(n, null); return null; }
-      const tm = m[1].match(/^topic:\s*"?([^"\n]+?)"?\s*$/m)
-              || m[1].match(/^title:\s*"?([^"\n]+?)"?\s*$/m);
-      const v = tm ? tm[1].trim() : null;
-      TOPIC_CACHE.set(n, v); return v;
-    } catch { TOPIC_CACHE.set(n, null); return null; }
+  function fmtDate(v){ return v ? new Date(v).toLocaleDateString(undefined,{ weekday:'short', month:'short', day:'numeric' }) : '—'; }
+  function relDue(v){
+    if (!v) return '—';
+    const ms = new Date(v) - new Date();
+    const d = Math.round(ms / 86400000);
+    if (d < 0) return `${Math.abs(d)}d overdue`;
+    if (d === 0) return 'Today';
+    if (d === 1) return 'Tomorrow';
+    return `In ${d}d`;
   }
-
-  function fmtTime(v){ return v ? new Date(v).toLocaleString(undefined,{ weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : 'TBD'; }
-  function fmtDateOnly(v){ return v ? new Date(v).toLocaleDateString(undefined,{ weekday:'short', month:'short', day:'numeric' }) : '—'; }
 
   async function renderAll() {
     const cohortId = STATE.cohortId;
-    if (!cohortId) return;
-
-    // Pull all data in parallel.
     const uid = STATE.user.id;
-    const [cdaysRes, dfRes, dfMineRes, podsRes] = await Promise.all([
-      supabase.from('cohort_days').select('day_number,live_session_at,is_unlocked,meet_link,title').eq('cohort_id', cohortId).order('day_number'),
-      supabase.from('day_faculty').select('day_number,main_name,support_name,main_user_id,support_user_id').eq('cohort_id', cohortId),
-      supabase.from('day_faculty').select('cohort_id,day_number,main_user_id,support_user_id,main_notes,support_notes').in('cohort_id', STATE.cohorts.map(c=>c.id)).or(`main_user_id.eq.${uid},support_user_id.eq.${uid}`),
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekEnd = new Date(todayStart.getTime() + 7*86400000);
+
+    // Batch all data.
+    const [podsRes, cdaysRes, dfTodayRes, assignmentsRes] = await Promise.all([
       supabase.from('pod_faculty').select('pod_id,is_primary,cohort_pods!inner(id,name,cohort_id)').eq('faculty_user_id', uid).eq('cohort_pods.cohort_id', cohortId),
+      supabase.from('cohort_days').select('day_number,live_session_at,title').eq('cohort_id', cohortId).order('day_number'),
+      supabase.from('day_faculty').select('day_number,main_user_id,support_user_id').eq('cohort_id', cohortId).or(`main_user_id.eq.${uid},support_user_id.eq.${uid}`),
+      supabase.from('assignments').select('id,day_number,title,due_at,cohort_id').eq('cohort_id', cohortId).order('due_at',{ascending:true}),
     ]);
-    const cdays = cdaysRes.data || [];
-    const dfRows = dfRes.data || [];
-    const dfMine = dfMineRes.data || [];
     const myPods = podsRes.data || [];
+    const cdays = cdaysRes.data || [];
+    const dfMine = dfTodayRes.data || [];
+    const assignments = assignmentsRes.data || [];
 
-    const dfByDay = new Map(dfRows.map(r => [r.day_number, r]));
-    const cdayByDay = new Map(cdays.map(d => [d.day_number, d]));
+    // Today banner & next teaching day.
+    const todayCday = cdays.find(d => d.live_session_at && new Date(d.live_session_at) >= todayStart && new Date(d.live_session_at) < new Date(todayStart.getTime()+86400000));
+    const todayDf = todayCday ? dfMine.find(r => r.day_number === todayCday.day_number) : null;
+    if (todayDf) {
+      $('fTodayBanner').innerHTML = `<div class="today-banner">
+        <span><strong>You're supporting today's session</strong> — Day ${pad(todayCday.day_number)}${todayCday.title?': '+esc(todayCday.title):''}</span>
+        <a href="day.html?n=${todayCday.day_number}">Open prep notes →</a>
+      </div>`;
+    } else {
+      $('fTodayBanner').innerHTML = '';
+    }
+    const nextMine = dfMine
+      .map(r => ({ r, cd: cdays.find(d => d.day_number === r.day_number) }))
+      .filter(x => x.cd?.live_session_at && new Date(x.cd.live_session_at) >= todayStart)
+      .sort((a,b) => new Date(a.cd.live_session_at) - new Date(b.cd.live_session_at))[0];
+    $('fNextTeaching').innerHTML = nextMine
+      ? `Your next teaching day: <a href="day.html?n=${nextMine.r.day_number}">Day ${pad(nextMine.r.day_number)} · ${esc(fmtDate(nextMine.cd.live_session_at))}</a>`
+      : '';
 
-    // Hero pills + Today/Tomorrow
-    await renderHeroAndNext(cdays, dfByDay, uid);
+    // Determine students in scope: pod members for support; all enrolled cohort students for executive (or no-pod faculty).
+    const podIds = myPods.map(p => p.pod_id);
+    let memberIds = [];
+    let scopeLabel = '';
+    if (podIds.length) {
+      const { data: members } = await supabase.from('pod_members').select('student_user_id').in('pod_id', podIds);
+      memberIds = [...new Set((members||[]).map(m=>m.student_user_id))];
+      scopeLabel = `${myPods.length} pod${myPods.length===1?'':'s'} · ${memberIds.length} student${memberIds.length===1?'':'s'}`;
+    } else {
+      // No pod — fall back to whole cohort enrolled students.
+      const { data: regs } = await supabase.from('registrations').select('user_id').eq('cohort_id', cohortId).eq('status','confirmed');
+      memberIds = [...new Set((regs||[]).map(r=>r.user_id).filter(Boolean))];
+      scopeLabel = `No assigned pod — viewing whole cohort (${memberIds.length})`;
+    }
 
-    // My pod
-    await renderMyPod(myPods, cohortId);
-
-    // My teaching days
-    await renderMyTeachingDays(dfMine);
-
-    // Cohort grid
-    renderCohortGrid(cdays);
-
-    // Guides
+    await Promise.all([
+      renderProgress(memberIds, scopeLabel, cohortId),
+      renderAssignments(assignments, memberIds, weekEnd, todayStart),
+      renderAttendance(todayCday, now),
+    ]);
     renderGuides();
   }
 
-  async function renderHeroAndNext(cdays, dfByDay, uid) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const sorted = cdays.slice().filter(d => d.live_session_at).sort((a,b)=>new Date(a.live_session_at)-new Date(b.live_session_at));
-
-    const todayDay = sorted.find(d => {
-      const dt = new Date(d.live_session_at);
-      return dt >= today && dt < new Date(today.getTime() + 24*3600*1000);
-    });
-    const upcoming = sorted.filter(d => new Date(d.live_session_at) >= now).slice(0, todayDay ? 2 : 2);
-    const cards = todayDay
-      ? [todayDay, sorted.find(d => d.day_number !== todayDay.day_number && new Date(d.live_session_at) > new Date(todayDay.live_session_at))].filter(Boolean)
-      : upcoming.slice(0,2);
-
-    // Hero pills (today + tomorrow summary).
-    const pillItems = await Promise.all(cards.map(async (d, idx) => {
-      const df = dfByDay.get(d.day_number) || {};
-      const role = df.main_user_id === uid ? 'Lead' : (df.support_user_id === uid ? 'Support' : 'Observer');
-      const topic = await fetchTopic(d.day_number) || d.title || `Day ${d.day_number}`;
-      const label = idx === 0 && todayDay ? 'Today' : (idx === 0 ? 'Next' : 'Then');
-      return `<span class="faculty-pill ${role==='Support'?'support':''}"><span class="role">${esc(label)}</span> <strong>Day ${pad(d.day_number)}</strong> · ${esc(topic)} · ${esc(role)}</span>`;
-    }));
-    $('fHeroPills').innerHTML = pillItems.join('') || `<span class="faculty-pill"><span class="role">Idle</span> <strong>No upcoming sessions</strong></span>`;
-
-    // Two-up cards.
-    if (!cards.length) {
-      $('fNextDays').innerHTML = `<div class="lesson-panel"><div class="empty-state">No upcoming live sessions scheduled in this cohort.</div></div>`;
-      return;
-    }
-
-    const cardHtmls = await Promise.all(cards.map(async (d, idx) => {
-      const df = dfByDay.get(d.day_number) || {};
-      const role = df.main_user_id === uid ? 'Lead' : (df.support_user_id === uid ? 'Support' : 'Observer');
-      const topic = await fetchTopic(d.day_number) || d.title || `Day ${d.day_number}`;
-      const isMine = role === 'Lead' || role === 'Support';
-      const label = idx === 0 && todayDay ? 'Today' : (idx === 0 ? 'Next session' : 'Then');
-      const noteVal = role === 'Lead' ? (df.main_notes || '') : (df.support_notes || '');
-      const noteCol = role === 'Lead' ? 'main_notes' : 'support_notes';
-
-      return `<div class="lesson-panel" data-day="${d.day_number}">
-        <div class="day-card-head">
-          <span class="daytag">Day ${pad(d.day_number)}</span>
-          <span class="when">${esc(label)} · ${esc(fmtTime(d.live_session_at))}</span>
-          <span class="faculty-pill ${role==='Support'?'support':''}" style="margin-left:auto"><span class="role">${esc(role)}</span></span>
-          <h3 class="topic">${esc(topic)}</h3>
-        </div>
-        <div class="pill-row" style="margin-bottom:10px">
-          ${df.main_name ? `<span class="faculty-pill"><span class="role">Lead</span> <strong>${esc(df.main_name)}</strong></span>`:''}
-          ${df.support_name ? `<span class="faculty-pill support"><span class="role">Support</span> <strong>${esc(df.support_name)}</strong></span>`:''}
-        </div>
-        <div class="day-actions">
-          ${d.meet_link ? `<a class="btn-pill primary" href="${esc(d.meet_link)}" target="_blank" rel="noopener">Join meet →</a>`:''}
-          <a class="btn-pill" href="day.html?n=${d.day_number}">Open day page</a>
-        </div>
-        ${isMine ? `
-          <div style="margin-top:8px">
-            <label class="panel-kicker" style="display:block;margin-bottom:6px">Your prep notes (${role.toLowerCase()})</label>
-            <textarea class="prep-area" data-prep="${noteCol}" data-day="${d.day_number}">${esc(noteVal)}</textarea>
-            <div class="prep-status" data-prep-status="${d.day_number}" style="margin-top:4px">&nbsp;</div>
-          </div>` : ''}
-      </div>`;
-    }));
-
-    $('fNextDays').innerHTML = `<div class="two-up">${cardHtmls.join('')}</div>`;
-    wirePrepAutosave();
-  }
-
-  function wirePrepAutosave() {
-    const cohortId = STATE.cohortId;
-    document.querySelectorAll('textarea[data-prep]').forEach((ta) => {
-      const col = ta.dataset.prep;
-      const day = Number(ta.dataset.day);
-      const status = document.querySelector(`[data-prep-status="${day}"]`);
-      let timer = null;
-      const save = async () => {
-        if (status) status.textContent = 'Saving…';
-        const patch = {}; patch[col] = ta.value || null;
-        const { error } = await supabase.from('day_faculty').update(patch).eq('cohort_id', cohortId).eq('day_number', day);
-        if (status) status.textContent = error ? `Save failed: ${error.message}` : 'Saved.';
-      };
-      ta.addEventListener('blur', () => { clearTimeout(timer); timer = setTimeout(save, 300); });
-    });
-  }
-
-  async function renderMyPod(myPods, cohortId) {
-    const host = $('fMyPod');
-    if (!myPods.length) {
+  async function renderProgress(memberIds, scopeLabel, cohortId) {
+    const host = $('fProgress');
+    if (!memberIds.length) {
       host.innerHTML = `<div class="lesson-panel">
-        <div class="panel-head"><div><span class="panel-kicker">My pod</span><h3>Pod assignments</h3></div></div>
-        <div class="empty-state">You don't have a pod assigned in this cohort yet.</div>
+        <div class="panel-head"><div><span class="panel-kicker">My students</span><h3>Progress</h3></div><span class="muted" style="font-size:12px">${esc(scopeLabel)}</span></div>
+        <div class="empty-state">No students in scope yet.</div>
       </div>`;
       return;
     }
-    const podIds = myPods.map(p => p.pod_id);
-    const { data: members } = await supabase.from('pod_members').select('pod_id,student_user_id').in('pod_id', podIds);
-    const allIds = [...new Set((members||[]).map(m=>m.student_user_id))];
-    console.debug("pod scoping v2", podIds.length, "pods", allIds.length, "members");
-    const [{ data: stuck }, { data: profs }, { data: lastProg }] = await Promise.all([
-      allIds.length ? supabase.from('stuck_queue').select('user_id,status,created_at').eq('cohort_id', cohortId).neq('status','resolved').in('user_id', allIds) : Promise.resolve({ data: [] }),
-      allIds.length ? supabase.from('profiles').select('id,full_name,college').in('id', allIds) : Promise.resolve({ data: [] }),
-      allIds.length ? supabase.from('lab_progress').select('user_id,updated_at').eq('cohort_id', cohortId).in('user_id', allIds).order('updated_at',{ascending:false}) : Promise.resolve({ data: [] }),
+    const [{ data: profs }, { data: progress }, { data: subs }, { data: stuck }] = await Promise.all([
+      supabase.from('profiles').select('id,full_name,college').in('id', memberIds),
+      supabase.from('lab_progress').select('user_id,day_number').eq('cohort_id', cohortId).in('user_id', memberIds),
+      supabase.from('submissions').select('user_id,status,submitted_at,assignments!inner(cohort_id)').eq('assignments.cohort_id', cohortId).in('user_id', memberIds).order('submitted_at',{ascending:false}),
+      supabase.from('stuck_queue').select('user_id,status').eq('cohort_id', cohortId).neq('status','resolved').in('user_id', memberIds),
     ]);
     const profById = new Map((profs||[]).map(p=>[p.id,p]));
+    const daysByUser = new Map();
+    (progress||[]).forEach(r => {
+      if (!daysByUser.has(r.user_id)) daysByUser.set(r.user_id, new Set());
+      daysByUser.get(r.user_id).add(r.day_number);
+    });
+    const latestSubByUser = new Map();
+    (subs||[]).forEach(s => { if (!latestSubByUser.has(s.user_id)) latestSubByUser.set(s.user_id, s); });
     const stuckByUser = new Map();
     (stuck||[]).forEach(s => stuckByUser.set(s.user_id, (stuckByUser.get(s.user_id)||0)+1));
-    const lastById = new Map();
-    (lastProg||[]).forEach(r => { if (!lastById.has(r.user_id)) lastById.set(r.user_id, r.updated_at); });
 
-    const blocks = myPods.map(p => {
-      const uids = (members||[]).filter(m=>m.pod_id===p.pod_id).map(m=>m.student_user_id);
-      const rows = uids.map(uid => {
-        const pr = profById.get(uid) || { id: uid };
-        const sc = stuckByUser.get(uid) || 0;
-        const last = lastById.get(uid);
-        return `<tr>
-          <td><strong>${esc(pr.full_name || '—')}</strong>${pr.college?` <span class="muted" style="font-size:11.5px">· ${esc(pr.college)}</span>`:''}</td>
-          <td>${sc ? `<span class="stuck-badge">${sc} stuck</span>` : `<span class="stuck-badge zero">0</span>`}</td>
-          <td class="muted" style="font-size:12px">${last ? esc(fmtDateOnly(last)) : '—'}</td>
-        </tr>`;
-      }).join('') || `<tr><td colspan="3" class="muted" style="padding:14px">Empty pod.</td></tr>`;
-      const primaryTag = p.is_primary ? `<span class="faculty-pill"><span class="role">Primary</span></span>` : '';
-      return `<div style="margin-bottom:14px">
-        <div class="panel-head"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">${esc(p.cohort_pods.name)}</h3>${primaryTag}<span class="muted" style="font-size:12px">${uids.length} member${uids.length===1?'':'s'}</span></div><a class="btn-sm" href="admin-pods.html">Manage →</a></div>
-        <div style="overflow-x:auto"><table>
-          <thead><tr><th>Student</th><th>Stuck</th><th>Last active</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table></div>
-      </div>`;
-    }).join('');
-
-    host.innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">My pod</span><h3>${myPods.length} pod${myPods.length===1?'':'s'} in this cohort</h3></div></div>
-      ${blocks}
-    </div>`;
-  }
-
-  async function renderMyTeachingDays(rows) {
-    const host = $('fMyTeachingDays');
-    if (!rows || !rows.length) { host.innerHTML = ''; return; }
-    const cohortIds = [...new Set(rows.map(r=>r.cohort_id))];
-    const { data: cdays } = await supabase.from('cohort_days').select('cohort_id,day_number,live_session_at,title,meet_link').in('cohort_id', cohortIds);
-    const cdayMap = new Map();
-    (cdays||[]).forEach(d => cdayMap.set(`${d.cohort_id}:${d.day_number}`, d));
-
-    const uniqueDays = [...new Set(rows.map(r=>r.day_number))];
-    await Promise.all(uniqueDays.map(n => fetchTopic(n)));
-
-    const cohortNameById = new Map(STATE.cohorts.map(c => [c.id, c.name]));
-    const sorted = rows.slice().sort((a,b)=>{
-      const da = cdayMap.get(`${a.cohort_id}:${a.day_number}`)?.live_session_at;
-      const db = cdayMap.get(`${b.cohort_id}:${b.day_number}`)?.live_session_at;
-      if (da && db) return new Date(da)-new Date(db);
-      return a.day_number-b.day_number;
-    });
-    const showCohort = STATE.cohorts.length > 1;
-    const uid = STATE.user.id;
-    const body = sorted.map(r => {
-      const role = r.main_user_id === uid ? 'Lead' : 'Support';
-      const cd = cdayMap.get(`${r.cohort_id}:${r.day_number}`);
-      const topic = TOPIC_CACHE.get(r.day_number) || cd?.title || `Day ${r.day_number}`;
-      const meet = cd?.meet_link ? `<a class="btn-sm" href="${esc(cd.meet_link)}" target="_blank" rel="noopener">Meet →</a>` : '<span class="muted" style="font-size:12px">—</span>';
-      const tag = role === 'Lead'
-        ? `<span class="kbadge-lab">Lead</span>`
-        : `<span class="kbadge-prep">Support</span>`;
+    const rows = memberIds.slice().sort((a,b)=>{
+      const an = profById.get(a)?.full_name || ''; const bn = profById.get(b)?.full_name || '';
+      return an.localeCompare(bn);
+    }).map(id => {
+      const pr = profById.get(id) || {};
+      const days = daysByUser.get(id)?.size || 0;
+      const sub = latestSubByUser.get(id);
+      const sc = stuckByUser.get(id) || 0;
       return `<tr>
-        <td style="font-family:'JetBrains Mono',monospace;font-weight:600">Day ${pad(r.day_number)}</td>
-        <td class="muted">${esc(fmtTime(cd?.live_session_at))}</td>
-        <td>${tag}</td>
-        <td>${esc(topic)}</td>
-        ${showCohort ? `<td class="muted" style="font-size:12px">${esc(cohortNameById.get(r.cohort_id) || '')}</td>` : ''}
-        <td>${meet}</td>
-        <td style="text-align:right"><a class="btn-sm" href="day.html?n=${r.day_number}">Open →</a></td>
+        <td><strong>${esc(pr.full_name || '—')}</strong></td>
+        <td class="muted" style="font-size:12px">${esc(pr.college || '—')}</td>
+        <td class="progress-cell">${days}/30</td>
+        <td>${sub ? esc(sub.status||'—') : '<span class="muted">—</span>'}</td>
+        <td>${sc ? `<span class="stuck-badge">${sc}</span>` : `<span class="stuck-badge zero">0</span>`}</td>
       </tr>`;
     }).join('');
 
-    host.innerHTML = `<div class="lesson-panel" style="padding:0;overflow:hidden">
-      <div class="panel-head" style="padding:18px 22px;margin-bottom:0;border-bottom:1px solid var(--line)">
-        <div><span class="panel-kicker">Teaching schedule</span><h3>My teaching days</h3></div>
-        <span class="muted" style="font-size:12px">${sorted.length} assigned</span>
-      </div>
+    host.innerHTML = `<div class="lesson-panel">
+      <div class="panel-head"><div><span class="panel-kicker">My students</span><h3>Progress</h3></div><span class="muted" style="font-size:12px">${esc(scopeLabel)}</span></div>
       <div style="overflow-x:auto"><table>
-        <thead><tr>
-          <th style="padding-left:22px">Day</th>
-          <th>Date</th>
-          <th>Role</th>
-          <th>Topic</th>
-          ${showCohort ? '<th>Cohort</th>' : ''}
-          <th>Meet</th>
-          <th></th>
-        </tr></thead>
-        <tbody>${body}</tbody>
+        <thead><tr><th>Student</th><th>College</th><th>Days</th><th>Latest submission</th><th>Stuck</th></tr></thead>
+        <tbody>${rows || `<tr><td colspan="5" class="muted" style="padding:12px">No students.</td></tr>`}</tbody>
       </table></div>
     </div>`;
   }
 
-  function renderCohortGrid(cdays) {
-    const host = $('fCohortGrid');
-    const today = new Date();
-    const byDay = new Map(cdays.map(d => [d.day_number, d]));
-    const pills = Array.from({length:30}, (_, i) => {
-      const n = i + 1;
-      const d = byDay.get(n);
-      const sess = d?.live_session_at ? new Date(d.live_session_at) : null;
-      let cls = '';
-      if (d && d.is_unlocked === false) cls = 'locked';
-      else if (sess) {
-        const sameDay = sess.toDateString() === today.toDateString();
-        if (sameDay) cls = 'today';
-        else if (sess < today) cls = 'past';
-      }
-      const dateLabel = sess ? sess.toLocaleDateString(undefined,{month:'short',day:'numeric'}) : '—';
-      return `<a class="day-pill ${cls}" href="day.html?n=${n}" title="Day ${pad(n)} · ${esc(dateLabel)}"><span class="num">${pad(n)}</span><span>${esc(dateLabel)}</span></a>`;
-    }).join('');
+  function renderAssignments(assignments, memberIds, weekEnd, todayStart) {
+    const host = $('fAssignments');
+    const upcoming = (assignments||[]).filter(a => {
+      if (!a.due_at) return false;
+      const d = new Date(a.due_at);
+      return d >= todayStart && d <= weekEnd;
+    });
+    if (!upcoming.length) {
+      host.innerHTML = `<div class="lesson-panel">
+        <div class="panel-head"><div><span class="panel-kicker">This week</span><h3>Assignments due</h3></div></div>
+        <div class="empty-state">Nothing due in the next 7 days.</div>
+      </div>`;
+      return;
+    }
+    const ids = upcoming.map(a => a.id);
+    // Submission counts: lightweight follow-up query (not blocking layout).
+    supabase.from('submissions').select('assignment_id,user_id').in('assignment_id', ids).in('user_id', memberIds.length ? memberIds : ['00000000-0000-0000-0000-000000000000']).then(({ data }) => {
+      const subBy = new Map();
+      (data||[]).forEach(s => {
+        if (!subBy.has(s.assignment_id)) subBy.set(s.assignment_id, new Set());
+        subBy.get(s.assignment_id).add(s.user_id);
+      });
+      upcoming.forEach(a => {
+        const cell = host.querySelector(`[data-asgn="${a.id}"]`);
+        if (cell) {
+          const n = subBy.get(a.id)?.size || 0;
+          cell.textContent = `${n}/${memberIds.length}`;
+        }
+      });
+    });
+
+    const rows = upcoming.map(a => `<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:600">Day ${pad(a.day_number || 0)}</td>
+      <td>${esc(a.title || '—')}</td>
+      <td class="muted">${esc(relDue(a.due_at))}</td>
+      <td class="progress-cell" data-asgn="${a.id}">…</td>
+      <td style="text-align:right"><a class="btn-sm" href="admin-student.html#assignment=${esc(a.id)}">View only →</a></td>
+    </tr>`).join('');
 
     host.innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">Whole cohort</span><h3>30-day map</h3></div><span class="muted" style="font-size:12px">Past · Today · Future</span></div>
-      <div class="day-grid">${pills}</div>
+      <div class="panel-head"><div><span class="panel-kicker">This week</span><h3>Assignments due</h3></div><span class="muted" style="font-size:12px">Read-only</span></div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Day</th><th>Title</th><th>Due</th><th>Submitted</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  }
+
+  function renderAttendance(todayCday, now) {
+    const host = $('fAttendance');
+    if (!todayCday || !todayCday.live_session_at) {
+      host.innerHTML = `<div class="lesson-panel">
+        <div class="panel-head"><div><span class="panel-kicker">Attendance</span><h3>Today's session</h3></div></div>
+        <div class="muted" style="font-size:13px">Today's attendance: not yet — no session scheduled today.</div>
+      </div>`;
+      return;
+    }
+    const sessAt = new Date(todayCday.live_session_at);
+    const diffH = Math.abs(sessAt - now) / 3600000;
+    const within = diffH <= 2;
+    host.innerHTML = `<div class="lesson-panel">
+      <div class="panel-head">
+        <div><span class="panel-kicker">Attendance</span><h3>Day ${pad(todayCday.day_number)} · ${esc(fmtDate(sessAt))}</h3></div>
+        ${within ? `<a class="btn-pill" href="admin-attendance.html?day=${todayCday.day_number}">Mark attendance →</a>` : ''}
+      </div>
+      ${within ? '' : `<div class="muted" style="font-size:13px">Today's attendance opens within 2 hours of the session (${sessAt.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}).</div>`}
     </div>`;
   }
 
   function renderGuides() {
     const cards = [
-      { href:'faculty-guide.html', title:'Faculty guide', sub:'How to run sessions, mark, support, and escalate.' },
-      { href:'setup-guide.html', title:'Lab setup guide', sub:'Environment, tools, access checks for students.' },
-      { href:'admin-stuck.html', title:'Stuck queue', sub:'Open student blockers across the cohort.' },
-      { href:'board.html', title:'Community board', sub:'Latest discussions, questions, and answers.' },
+      { href:'faculty-guide.html', icon:'📘', title:'How to support', sub:'Running sessions, helping students, grading assists.' },
+      { href:'setup-guide.html', icon:'🛠', title:'What to set up', sub:'Environment and access checks before class.' },
+      { href:'faculty-guide.html#contacts', icon:'📞', title:'How to reach out', sub:'Escalation contacts and on-call routing.' },
     ];
     $('fGuides').innerHTML = `<div class="lesson-panel">
-      <div class="panel-head"><div><span class="panel-kicker">Resources</span><h3>Handbook & guides</h3></div></div>
+      <div class="panel-head"><div><span class="panel-kicker">Guides</span><h3>Handbook</h3></div></div>
       <div class="guide-row">
-        ${cards.map(c => `<a class="guide-card" href="${c.href}"><div class="gc-title">${esc(c.title)} →</div><div class="gc-sub">${esc(c.sub)}</div></a>`).join('')}
+        ${cards.map(c => `<a class="guide-card" href="${c.href}"><div class="gc-icon">${c.icon}</div><div class="gc-title">${esc(c.title)} →</div><div class="gc-sub">${esc(c.sub)}</div></a>`).join('')}
       </div>
     </div>`;
   }
