@@ -502,7 +502,6 @@
       Manual items are saved on toggle.
     </p>
 
-    <!-- FIXME: faculty_pretraining_progress RLS needs policies; user will add. -->
     <div class="card" id="checklistItems">
       <p class="muted" style="font-size:13px">Loading checklist…</p>
     </div>
@@ -737,7 +736,6 @@ async function loadChecklist() {
   if (!STATE.user || !STATE.cohortId) return;
 
   // Load persisted progress
-  // FIXME: faculty_pretraining_progress RLS needs policies; user will add.
   const { data, error } = await supabase
     .from('faculty_pretraining_progress')
     .select('progress')

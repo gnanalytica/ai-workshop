@@ -35,7 +35,9 @@ export const ADMIN_PAGES = [
   { href: 'admin-student.html', label: 'Student work', group: 'work', icon: 'clipboard' },
   { href: 'admin-attendance.html', label: 'Attendance', group: 'work', icon: 'check' },
   { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
+  { href: 'board.html', label: 'Community board', group: 'work', icon: 'alert' },
   { href: 'admin-analytics.html', label: 'Analytics', group: 'insights', icon: 'chart' },
+  { href: 'faculty-guide.html', label: 'Faculty guide', group: 'insights', icon: 'book' },
   { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', icon: 'book', adminOnly: true },
 ];
 
@@ -45,6 +47,8 @@ export const SUPPORT_FACULTY_PAGES = [
   { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
   { href: 'faculty.html', label: 'Faculty hub', group: 'cohort', icon: 'users2' },
   { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
+  { href: 'board.html', label: 'Community board', group: 'work', icon: 'alert' },
+  { href: 'faculty-guide.html', label: 'Faculty guide', group: 'insights', icon: 'book' },
 ];
 
 const GROUP_LABEL = {
