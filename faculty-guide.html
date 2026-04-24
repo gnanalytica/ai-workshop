@@ -825,14 +825,25 @@ async function loadContacts() {
   if (!STATE.cohortId) return;
   const panel = $('contactsPanel');
   const [{ data: college, error: cErr }, { data: staffProfs, error: sErr }] = await Promise.all([
-    supabase.from('cohort_faculty')
-      .select('user_id, college_role, cohort_id, profiles(id, full_name, email)')
+    supabase
+      .from('cohort_faculty')
+      .select('user_id, college_role, cohort_id')
       .eq('cohort_id', STATE.cohortId),
     // Trainers + tech support live on profiles.staff_roles (not cohort_faculty).
-    supabase.from('profiles')
+    supabase
+      .from('profiles')
       .select('id, full_name, email, staff_roles')
       .not('staff_roles', 'eq', '{}'),
   ]);
+
+  const ids = [...new Set((college || []).map((r) => r.user_id).filter(Boolean))];
+  const profileById = new Map();
+  if (ids.length) {
+    const { data: profs, error: pErr } = await supabase.from('profiles').select('id, full_name, email').in('id', ids);
+    if (pErr) console.warn('[faculty-guide] profiles for cohort faculty:', pErr.message);
+    (profs || []).forEach((p) => profileById.set(p.id, p));
+  }
+  const withProfiles = (rows) => (rows || []).map((r) => ({ ...r, profiles: profileById.get(r.user_id) || {} }));
 
   if ((cErr && sErr) || ((!college || !college.length) && (!staffProfs || !staffProfs.length))) {
     panel.innerHTML = `<div class="muted" style="font-size:13px">No contacts found — ask your admin to populate faculty contacts in <a href="admin-faculty.html" style="color:var(--accent)">admin-faculty</a>.</div>`;
@@ -845,8 +856,8 @@ async function loadContacts() {
   const techRows = (staffProfs || [])
     .filter((p) => Array.isArray(p.staff_roles) && p.staff_roles.includes('tech_support'))
     .map((p) => ({ profiles: p }));
-  const support = (college || []).filter((r) => r.college_role === 'support');
-  const execs = (college || []).filter((r) => r.college_role === 'executive');
+  const support = withProfiles((college || []).filter((r) => r.college_role === 'support'));
+  const execs = withProfiles((college || []).filter((r) => r.college_role === 'executive'));
   const trainers = trainerRows;
   const techSupport = techRows;
 

@@ -418,7 +418,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
             <li>Use <strong>File → Open folder</strong> (or the equivalent) and open a new empty test folder. Confirm the agent or chat area loads without a hard error—your trainer can name the exact check for the current term.</li>
             <li>If Windows SmartScreen blocks the app, use <strong>More info → Run anyway</strong> only after your team has approved Antigravity for lab machines.</li>
           </ol>
-        </div>
+            </div>
 
         <!-- 3 — Cursor (optional) -->
         <div class="section tool-block" id="cursor">
@@ -430,7 +430,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
             <li>On first open, sign in the way your cohort agreed (Google, GitHub, or Cursor account).</li>
             <li><strong>File → Open folder</strong> to a test folder; confirm the side panel works if you plan to use it in class.</li>
           </ol>
-        </div>
+              </div>
 
         <!-- 4 — Node.js -->
         <div class="section tool-block" id="nodejs">
@@ -446,7 +446,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
             <summary>Optional: IT version check (one line)</summary>
             <p>Open <strong>Command Prompt</strong> and run: <code>node -v</code> and <code>npm -v</code>. A modern LTS will show a line starting with <code>v2</code>0 or higher for <code>node -v</code> (as of 2026, check your lesson doc if a minimum is stricter.)</p>
           </details>
-        </div>
+            </div>
 
         <!-- 5 — n8n (after Node) -->
         <div class="section tool-block" id="n8n">
@@ -472,12 +472,12 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           <p>Then in <strong>Chrome</strong>, open <a href="http://localhost:5678" target="_blank" rel="noopener">http://localhost:5678</a>. You should see the n8n setup or sign-in screen. Use <strong>Ctrl + C</strong> in the Command Prompt window to stop the server when you are done testing.</p>
           <div class="callout callout-warn">
             <strong>Shared lab PCs:</strong> n8n stores data under the user profile by default. If every student has a <strong>different</strong> Windows login, each person may need to run <code>n8n start</code> in their own account the first time, or your IT may deploy a shared instance—your trainer will say which model the cohort uses.
-          </div>
+            </div>
           <details class="it-only">
             <summary>Optional: IT version check</summary>
             <p>After install: <code>n8n --version</code> (or <code>n8n -v</code> depending on CLI). For automation from scripts, the same <code>npm</code> global must be on <code>PATH</code> for the account that will run class demos.</p>
           </details>
-        </div>
+              </div>
 
         <!-- 6 — Python -->
         <div class="section tool-block" id="python">
@@ -497,7 +497,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           </p>
           <div class="callout callout-info">
             <strong>Time and disk:</strong> the first install may pull in <strong>PyTorch</strong> and other dependencies (often <strong>several gigabytes</strong> per machine). Run on good Wi-Fi, not the first 5 minutes of class. Close other heavy apps while it runs.
-          </div>
+            </div>
           <p><strong>Who runs the commands</strong> — a lab admin or IT person is fine; the steps are the same for students on their own laptops.</p>
           <ol class="win-steps">
             <li>Press the <strong>Windows</strong> key, type <code>cmd</code>, and open <strong>Command Prompt</strong> (not required to “Run as administrator” unless your college policy says so).</li>
@@ -518,7 +518,7 @@ py -m pip install transformers huggingface_hub langchain
             <summary>Only if a lesson still says “python not found”</summary>
             <p>In <strong>Command Prompt</strong> try <code>py -3.11 -V</code> or <code>python -V</code> after sign-out and sign-in. If the py launcher is missing, repair the same installer from the Control Panel, or re-run the installer and choose <strong>Modify</strong> → make sure <strong>py launcher</strong> and PATH are on.</p>
           </details>
-        </div>
+            </div>
 
         <!-- 7 — Git -->
         <div class="section tool-block" id="git">
@@ -565,11 +565,11 @@ git clone https://github.com/octocat/Hello-World.git git-smoke-test
 
           <div class="callout callout-info">
             <strong>Shared lab PCs:</strong> <code>git config --global</code> is stored <strong>per Windows user</strong>. If students share one login, talk to the trainer; if each student has their own login, each should run the name/email lines <strong>once</strong> on first use.
-          </div>
+              </div>
 
           <h4>Git in class (IDE + browser)</h4>
           <p>Class does not rely on memorising terminal commands. Students sign in to GitHub in <strong>Chrome</strong>, then use <strong>Antigravity</strong> (or optional Cursor) to clone, branch, and push with the in-app flow; the trainer demos the first time. The steps above are so nothing fails <strong>before</strong> that demo with “Please tell me who you are” or “Could not read from remote repository.”</p>
-        </div>
+            </div>
 
         <!-- 8 — Ollama -->
         <div class="section tool-block" id="ollama">
@@ -584,14 +584,14 @@ git clone https://github.com/octocat/Hello-World.git git-smoke-test
           <details class="it-only">
             <summary>Downloading models (usually needs one short “command” window per model)</summary>
             <p>Ollama’s public docs still expect <code>ollama pull &lt;model&gt;</code> for a reliable download. A lab IT person can: open <strong>Command Prompt</strong> (or PowerShell) <strong>as a normal user</strong>, and run, for example:</p>
-            <pre><code>ollama pull llama3.2:3b
+              <pre><code>ollama pull llama3.2:3b
 ollama pull nomic-embed-text</code></pre>
             <p>Replace the names with what your trainer wrote for this cohort. Wait for each to finish. Then run a test line the trainer provides (often one plain English message) to make sure the model is warm, not 10:00 a.m. on the first use.</p>
           </details>
           <div class="callout callout-warn">
             <strong>Class morning:</strong> do the first model run on a <strong>break</strong> the day before, or right after install—not when students are walking in, unless the trainer has a very small demo model in mind.
-          </div>
-        </div>
+              </div>
+              </div>
 
         <p class="muted" style="font-size:14px">
           <strong>Need Mac/Linux, exact minimum versions, or a scripted one-shot installer?</strong> Gnanalytica and your IT team have a <em>separate</em> pack – this public page is intentionally the Windows, click friendly path.
