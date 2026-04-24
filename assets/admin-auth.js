@@ -20,6 +20,88 @@ export async function checkAdminOrFaculty(user) {
   return { isAdmin, isFaculty, facultyCohortIds };
 }
 
+// -----------------------------------------------------------------
+// New role model (see docs/superpowers/specs/2026-04-24-role-reorg-*).
+// Additive — does not replace checkAdminOrFaculty. Plan 2 migrates
+// call sites one by one and eventually removes the old helper.
+// -----------------------------------------------------------------
+
+/**
+ * resolveRoles — single source of truth for what the current user can do.
+ * @param {Object} user - Supabase auth user (from getSession().data.session.user)
+ * @param {string|null} cohortId - currently selected cohort, or null for platform-wide pages
+ * @returns {Promise<{
+ *   user: Object,
+ *   staffRoles: Set<string>,
+ *   collegeRole: ('support'|'executive'|null),
+ *   facultyCohortIds: string[],
+ *   executiveCohortIds: string[],
+ *   can: Object
+ * }>}
+ */
+export async function resolveRoles(user, cohortId = null) {
+  if (!user) {
+    return { user: null, staffRoles: new Set(), collegeRole: null,
+      facultyCohortIds: [], executiveCohortIds: [], can: computeCaps(new Set(), null) };
+  }
+  const [{ data: profile }, { data: facRows }] = await Promise.all([
+    supabase.from('profiles').select('staff_roles, is_admin').eq('id', user.id).maybeSingle(),
+    supabase.from('cohort_faculty').select('cohort_id, college_role').eq('user_id', user.id),
+  ]);
+  const staffRoles = new Set(Array.isArray(profile?.staff_roles) ? profile.staff_roles : []);
+  // Bridge: if staff_roles wasn't backfilled for this user (shouldn't happen
+  // post-migration, but guard anyway), fall back to is_admin.
+  if (staffRoles.size === 0 && profile?.is_admin) {
+    staffRoles.add('admin'); staffRoles.add('trainer');
+  }
+  const rows = facRows || [];
+  const facultyCohortIds = rows.map(r => r.cohort_id);
+  const executiveCohortIds = rows.filter(r => r.college_role === 'executive').map(r => r.cohort_id);
+  const collegeRole = cohortId
+    ? (rows.find(r => r.cohort_id === cohortId)?.college_role || null)
+    : null;
+  return {
+    user, staffRoles, collegeRole, facultyCohortIds, executiveCohortIds,
+    can: computeCaps(staffRoles, collegeRole),
+  };
+}
+
+/** Role-to-capability map. UI gates MUST read from can.*, not role names. */
+function computeCaps(staffRoles, collegeRole) {
+  const isAdmin = staffRoles.has('admin');
+  const isTrainer = staffRoles.has('trainer');
+  const isTech = staffRoles.has('tech_support');
+  const isSupport = collegeRole === 'support';
+  const isExec = collegeRole === 'executive';
+  return {
+    // Platform
+    managePlatform: isAdmin,
+    manageUsers: isAdmin,
+    // Content
+    editContent: isAdmin || isTrainer,
+    // Grading (cohort-scoped — null cohortId -> false)
+    grade: isAdmin || isTrainer || isSupport,
+    gradeAnyPod: isAdmin || isTrainer,
+    // Attendance
+    markAttendance: isAdmin || isTrainer || isSupport,
+    markAttendanceAnyPod: isAdmin || isTrainer,
+    // Announcements
+    postAnnouncement: isAdmin || isTrainer || isExec,
+    deleteOwnAnnouncement: true,  // anyone who posted can soft-delete their own
+    // Analytics
+    viewCohortAnalytics: isAdmin || isTrainer || isExec,
+    exportCohortData: isAdmin || isTrainer || isExec,
+    // Pods
+    managePods: isAdmin || isTrainer,
+    // Stuck queue
+    respondStuckTech: isAdmin || isTrainer || isTech,
+    respondStuckAny: isAdmin || isTrainer || isSupport,
+    // Board (Plan 3 — shipped here so gates exist when board lands)
+    postOnBoard: true,
+    moderateBoard: isAdmin || isTrainer || isTech,
+  };
+}
+
 export function applyFacultyBrandLabel(isAdmin, isFaculty) {
   if (!isAdmin && isFaculty) {
     const brand = document.querySelector('.brand');
