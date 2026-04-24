@@ -211,12 +211,13 @@
 <!-- TOC bar (sticky below nav) -->
 <div class="toc-bar" id="tocBar" style="display:none">
   <div class="toc-bar-inner">
-    <a href="#role"     data-toc="role">Your role</a>
-    <a href="#day-of"   data-toc="day-of">Day of session</a>
-    <a href="#triage"   data-toc="triage">Triage</a>
-    <a href="#debug"    data-toc="debug">Debugging</a>
-    <a href="#grading"  data-toc="grading">Grading</a>
-    <a href="#contacts" data-toc="contacts">Contacts</a>
+    <a href="#role"      data-toc="role">Your role</a>
+    <a href="#day-of"    data-toc="day-of">Day of session</a>
+    <a href="#open-script" data-toc="open-script">Opening script</a>
+    <a href="#triage"    data-toc="triage">Triage</a>
+    <a href="#debug"     data-toc="debug">Quick fixes</a>
+    <a href="#grading"   data-toc="grading">Grading</a>
+    <a href="#contacts"  data-toc="contacts">Contacts</a>
     <a href="#checklist" data-toc="checklist">Checklist</a>
     <a href="#artifacts" data-toc="artifacts">Artifacts</a>
   </div>
@@ -269,13 +270,63 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 3 — Triage flowchart
+       Opening script — what to actually say in the first 15 minutes
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="open-script">
+    <div class="section-kicker">Section 3</div>
+    <h2 class="section-title">First 15 minutes — opening script</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 20px;max-width:720px">
+      New faculty usually ask "what do I actually say?" Here's a concrete template. Read it once before Day 1, then adapt your own voice over time. Nothing here is sacred — timings and exact words are a starting point.
+    </p>
+    <div class="card" style="padding:22px;font-size:14px;line-height:1.7;max-width:780px">
+      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 0–2 · Before students arrive.</strong></p>
+      <p style="margin:0 0 18px">Open the Faculty hub on your laptop, pin today's cohort, open <a href="admin-attendance.html" style="color:var(--accent)">Attendance</a> in a second tab. Confirm you know who's in your pod. Set your phone on silent and keep the community board open on your second screen.</p>
+
+      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 2–5 · Greet and seat.</strong></p>
+      <p style="margin:0 0 6px">Something like:</p>
+      <blockquote style="margin:0 0 18px 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--input-bg);border-radius:8px;color:var(--ink)">
+        "Hi, I'm <em>&lt;name&gt;</em> — I'm your pod's support faculty. I sit with you during every live session. If you get stuck on anything — the lab, an install, a concept you didn't catch — raise your hand or just tap my shoulder. No stupid questions today or any day."
+      </blockquote>
+
+      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 5–8 · Attendance + quick check.</strong></p>
+      <p style="margin:0 0 6px">As students arrive, mark each present in the Attendance tab. Then ask one round-robin question — something low-stakes so you learn voices and they learn that speaking up is normal:</p>
+      <blockquote style="margin:0 0 18px 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--input-bg);border-radius:8px;color:var(--ink)">
+        "Before we start — quick one-word check-in: how are you feeling about today's topic? One word each."
+      </blockquote>
+
+      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 8–12 · Verify the stack.</strong></p>
+      <p style="margin:0 0 18px">Ask everyone to run the day's verification command (e.g. <code>python --version</code> or <code>ollama list</code>). Catch broken environments <em>now</em>, not 40 minutes into the lab. If more than 2 students are broken, ping Tech Support immediately — don't try to fix them yourself in series.</p>
+
+      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 12–15 · Hand off to Trainer.</strong></p>
+      <p style="margin:0">When the Trainer begins, stop talking and start watching. Note any student who looks confused or idle &gt; 90 seconds — that's your cue to quietly check on them during the first exercise. You are not teaching content; you are noticing and unblocking.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 4 — Triage flowchart (with Red flags card)
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="triage">
-    <div class="section-kicker">Section 3</div>
+    <div class="section-kicker">Section 4</div>
     <h2 class="section-title">Triage flowchart</h2>
+
+    <!-- Red flags — skip triage, escalate now -->
+    <div class="card" style="padding:18px 20px;margin:0 0 28px;max-width:780px;border:1px solid rgba(255,120,120,.35);background:rgba(255,120,120,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin:0 0 10px">
+        <span style="font-size:16px">⚠️</span>
+        <strong style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#ffa0a0">Red flags — skip triage, escalate immediately</strong>
+      </div>
+      <p class="muted" style="font-size:13px;margin:0 0 10px;line-height:1.5">If any of these happen, don't go through the flowchart below. Phone the Trainer AND the Admin at the same time — include the student name and a one-line description.</p>
+      <ul style="margin:0;padding-left:20px;font-size:13.5px;line-height:1.75">
+        <li><strong>Student in distress</strong> — panic, tears, reports of harassment or unsafe behaviour in the room.</li>
+        <li><strong>Academic-integrity concern</strong> — credible suspicion of impersonation, paid completion, or leaked answers.</li>
+        <li><strong>Platform-wide outage</strong> — Supabase down, board/dashboard throwing errors for the whole pod.</li>
+        <li><strong>Misuse or policy breach</strong> — students using the tools to generate unsafe or offensive content, or ignoring the cohort code of conduct after one warning.</li>
+        <li><strong>Anything you genuinely don't feel qualified to handle</strong> — that judgment call is correct. Escalate.</li>
+      </ul>
+    </div>
+
     <p class="muted" style="font-size:13px;margin:0 0 20px">
-      A question arrives — walk it through each diamond in order.
+      For everything else — a question arrives, walk it through each diamond in order.
     </p>
     <div class="triage-wrap">
       <svg
@@ -365,98 +416,69 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 4 — Common debugging recipes
+       Section 5 — Quick fixes + escalation template
+       Deliberately short: support faculty triage, Tech Support fixes.
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="debug">
-    <div class="section-kicker">Section 4</div>
-    <h2 class="section-title">Common debugging recipes</h2>
+    <div class="section-kicker">Section 5</div>
+    <h2 class="section-title">Quick fixes</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 20px;max-width:720px">
+      Try these 30-second fixes first. If the problem isn't on this list or the fix doesn't work in one try, <strong>escalate</strong> — don't spend five minutes debugging while your pod stalls. The full install and troubleshooting playbook lives in <a href="setup-guide.html" style="color:var(--accent)">setup-guide.html</a>; recurring issues end up as <a href="board.html" style="color:var(--accent)">community board</a> posts.
+    </p>
 
-    <details class="debug-item">
-      <summary>Ollama won't start</summary>
-      <div class="debug-body">
-        <p class="symptom-label">Symptom</p>
-        <p>Running <code>ollama serve</code> or <code>ollama run llama3</code> returns a connection refused error or the process exits immediately.</p>
-        <ol>
-          <li>Check Ollama is installed: <code>ollama --version</code>. If missing, reinstall from <code>https://ollama.com/download</code>.</li>
-          <li>Kill any stuck process: <code>pkill -f ollama</code> (macOS/Linux) or end <em>ollama.exe</em> in Task Manager (Windows), then restart.</li>
-          <li>Check available RAM — Ollama needs at least 8 GB free. Close heavy apps (browser, VS Code with many extensions) and retry.</li>
-        </ol>
-        <div class="escalate-box">
-          <strong>If still stuck — escalate to Tech Support with:</strong> OS + version (e.g. macOS 14.4), Ollama version (<code>ollama --version</code>), full error text from terminal, and a screenshot of the terminal output.
-        </div>
-      </div>
-    </details>
+    <div class="card" style="padding:18px 22px;max-width:780px;margin:0 0 20px">
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+        <thead>
+          <tr style="text-align:left;color:var(--muted);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase">
+            <th style="padding:0 0 10px;width:42%">Symptom</th>
+            <th style="padding:0 0 10px">30-second fix</th>
+          </tr>
+        </thead>
+        <tbody style="vertical-align:top">
+          <tr style="border-top:1px solid var(--line)">
+            <td style="padding:12px 12px 12px 0"><strong>Magic-link loop</strong><br><span class="muted" style="font-size:12px">Link returns to sign-in.</span></td>
+            <td style="padding:12px 0">Incognito window or clear cookies for the workshop domain, then request a fresh link.</td>
+          </tr>
+          <tr style="border-top:1px solid var(--line)">
+            <td style="padding:12px 12px 12px 0"><strong>Magic link never arrives</strong></td>
+            <td style="padding:12px 0">Check spam/junk. Wait 60s (rate limit). Verify email matches the registration.</td>
+          </tr>
+          <tr style="border-top:1px solid var(--line)">
+            <td style="padding:12px 12px 12px 0"><strong>Ollama won't start</strong></td>
+            <td style="padding:12px 0">Close heavy apps, then <code>pkill -f ollama</code> (macOS/Linux) or end task (Windows) → relaunch. Needs ≥8&nbsp;GB free RAM.</td>
+          </tr>
+          <tr style="border-top:1px solid var(--line)">
+            <td style="padding:12px 12px 12px 0"><strong>Venv / python mismatch</strong><br><span class="muted" style="font-size:12px">ModuleNotFoundError, wrong version.</span></td>
+            <td style="padding:12px 0">Re-activate: <code>source venv/bin/activate</code> or <code>venv\Scripts\activate</code>. Re-run <code>pip install -r requirements.txt</code>.</td>
+          </tr>
+          <tr style="border-top:1px solid var(--line)">
+            <td style="padding:12px 12px 12px 0"><strong>VS Code Python not detected</strong></td>
+            <td style="padding:12px 0">Cmd/Ctrl+Shift+P → <em>Python: Select Interpreter</em> → pick the venv's python.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <details class="debug-item">
-      <summary>Python venv broken</summary>
-      <div class="debug-body">
-        <p class="symptom-label">Symptom</p>
-        <p><code>import</code> fails with <em>ModuleNotFoundError</em> even after running the install script, or <code>python</code> resolves to the wrong version.</p>
-        <ol>
-          <li>Confirm the venv is activated: terminal prompt should show <code>(venv)</code> or the env name. If not, run <code>source venv/bin/activate</code> (macOS/Linux) or <code>venv\Scripts\activate</code> (Windows).</li>
-          <li>Reinstall dependencies inside the active venv: <code>pip install -r requirements.txt</code>. Check for error lines in the output.</li>
-          <li>If Python version mismatch (<code>python --version</code> is not 3.11+), recreate venv with the correct interpreter: <code>python3.11 -m venv venv</code>.</li>
-        </ol>
-        <div class="escalate-box">
-          <strong>If still stuck — escalate to Tech Support with:</strong> OS, Python version (<code>python --version</code>), error text, and a screenshot of the terminal after activation attempt.
-        </div>
-      </div>
-    </details>
-
-    <details class="debug-item">
-      <summary>VS Code extension missing</summary>
-      <div class="debug-body">
-        <p class="symptom-label">Symptom</p>
-        <p>A required extension (Python, Pylance, Jupyter, etc.) is not found or IntelliSense is not working.</p>
-        <ol>
-          <li>Open the Extensions panel (<code>Ctrl+Shift+X</code> / <code>Cmd+Shift+X</code>), search by name, and click Install.</li>
-          <li>After installing, reload the window: <kbd>Ctrl+Shift+P</kbd> → <em>Developer: Reload Window</em>.</li>
-          <li>If the extension installs but Python still isn't detected, open Command Palette → <em>Python: Select Interpreter</em> and choose the venv Python path.</li>
-        </ol>
-        <div class="escalate-box">
-          <strong>If still stuck — escalate to Tech Support with:</strong> OS, VS Code version (Help → About), extension name and version, and a screenshot of the error or extension panel.
-        </div>
-      </div>
-    </details>
-
-    <details class="debug-item">
-      <summary>Supabase login loop</summary>
-      <div class="debug-body">
-        <p class="symptom-label">Symptom</p>
-        <p>Student clicks "Send magic link", receives the email, clicks the link, but is returned to the sign-in page in a loop.</p>
-        <ol>
-          <li>Clear browser cookies and site data for the workshop domain, then try the magic link again in a fresh tab.</li>
-          <li>Try a different browser or an incognito/private window — some browsers block third-party storage required by Supabase Auth.</li>
-          <li>Confirm the magic link hasn't expired (links expire after 1 hour). Resend a new magic link from the sign-in page.</li>
-        </ol>
-        <div class="escalate-box">
-          <strong>If still stuck — escalate to Tech Support with:</strong> OS, browser name and version, description of the loop (e.g. "redirects back to login after clicking link"), and a screenshot of the URL in the address bar after clicking the link.
-        </div>
-      </div>
-    </details>
-
-    <details class="debug-item">
-      <summary>Magic link not arriving</summary>
-      <div class="debug-body">
-        <p class="symptom-label">Symptom</p>
-        <p>Student submitted their email but receives no magic link email after several minutes.</p>
-        <ol>
-          <li>Check spam/junk folder — email clients frequently filter transactional mail from Supabase.</li>
-          <li>Confirm the email address is correct and matches the registration exactly (case-insensitive, but no typos).</li>
-          <li>If nothing arrives within 5 minutes, ask the student to try again — there is a rate limit of one email per 60 seconds per address.</li>
-        </ol>
-        <div class="escalate-box">
-          <strong>If still stuck — escalate to Tech Support with:</strong> OS, email client, email address (without sharing publicly), time the request was made, and a screenshot of their inbox/spam folder showing no email.
-        </div>
-      </div>
-    </details>
+    <div class="card escalate-box" style="padding:18px 22px;max-width:780px">
+      <strong style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Escalation template</strong>
+      <p class="muted" style="font-size:13px;margin:10px 0 12px;line-height:1.55">
+        When a 30-second fix doesn't land, send this to Tech Support. Copy the template, fill in each line, and drop it in the community board with tag <code>tech</code> (or DM Tech Support if the pod is blocked <em>right now</em>):
+      </p>
+      <pre style="margin:0;padding:14px 16px;background:var(--input-bg);border-radius:10px;font-size:12.5px;font-family:'JetBrains Mono',monospace;line-height:1.7;white-space:pre-wrap;color:var(--ink)">Student: &lt;name&gt; (pod &lt;letter&gt;)
+OS + version: &lt;macOS 14.4 / Win 11 / Ubuntu 22.04&gt;
+Tool + version: &lt;ollama 0.5.1 / Python 3.11.8 / VS Code 1.90&gt;
+What they tried: &lt;one-line summary&gt;
+Exact error text: &lt;paste full terminal / UI error&gt;
+Screenshot: &lt;attached / link&gt;
+How blocking: &lt;blocked now / can park until break&gt;</pre>
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
        Section 5 — Grading your pod
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="grading">
-    <div class="section-kicker">Section 5</div>
+    <div class="section-kicker">Section 6</div>
     <h2 class="section-title">Grading your pod</h2>
     <div class="card" style="font-size:14px;line-height:1.75;max-width:720px">
       <p style="margin:0 0 12px">
@@ -483,7 +505,7 @@
        Section 6 — Escalation contacts
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="contacts">
-    <div class="section-kicker">Section 6</div>
+    <div class="section-kicker">Section 7</div>
     <h2 class="section-title">Escalation contacts</h2>
     <div id="contactsPanel">
       <p class="muted" style="font-size:13px">Loading cohort contacts…</p>
@@ -498,7 +520,7 @@
        Section 7 — Pre-session checklist
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="checklist">
-    <div class="section-kicker">Section 7</div>
+    <div class="section-kicker">Section 8</div>
     <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px">
       <h2 class="section-title" style="margin:0">Pre-session checklist</h2>
       <span id="readyPill" style="display:none" class="ready-pill">Ready ✓</span>
@@ -517,7 +539,7 @@
        Section 8 — Per-cohort live-session artifacts
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="artifacts">
-    <div class="section-kicker">Section 8</div>
+    <div class="section-kicker">Section 9</div>
     <h2 class="section-title">Live-session artifacts</h2>
     <div class="card" id="artifactsPanel">
       <p class="muted" style="font-size:13px">Loading cohort artifacts…</p>
