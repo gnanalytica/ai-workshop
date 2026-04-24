@@ -22,34 +22,30 @@ const NAV_ICONS = {
   book: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016 17H20M6 17V4a2 2 0 012-2h10v15M6 17H4a2 2 0 00-2 2 0 0 002 2h2v-2z"/></svg>',
 };
 
+// Each page declares which roles may see it. `renderAdminNav` filters the list
+// by the caller's role set. Roles: admin, trainer, tech_support, support, executive.
+// Legacy `adminOnly: true` is preserved and interpreted as allowedRoles:['admin'].
 export const ADMIN_PAGES = [
-  { href: 'admin-home.html', label: 'Home', group: 'cohort', icon: 'home' },
-  { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
-  { href: 'faculty.html', label: 'Faculty hub', group: 'cohort', icon: 'users2' },
-  { href: 'admin-content.html', label: 'Content', group: 'classwork', icon: 'file' },
-  { href: 'admin.html', label: 'Registrations', group: 'people', icon: 'users' },
-  { href: 'admin-teams.html', label: 'Teams', group: 'people', icon: 'users2' },
-  { href: 'admin-pods.html', label: 'Pods', group: 'people', icon: 'grid' },
-  { href: 'admin-faculty.html', label: 'Faculty', group: 'people', icon: 'briefcase', adminOnly: true },
-  { href: 'admin-orgs.html', label: 'Orgs & codes', group: 'people', icon: 'building', adminOnly: true },
-  { href: 'admin-student.html', label: 'Student work', group: 'work', icon: 'clipboard' },
-  { href: 'admin-attendance.html', label: 'Attendance', group: 'work', icon: 'check' },
-  { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
-  { href: 'board.html', label: 'Community board', group: 'work', icon: 'alert' },
-  { href: 'admin-analytics.html', label: 'Analytics', group: 'insights', icon: 'chart' },
-  { href: 'faculty-guide.html', label: 'Faculty guide', group: 'insights', icon: 'book' },
-  { href: 'admin-faculty-lms.html', label: 'Faculty LMS', group: 'insights', icon: 'book', adminOnly: true },
+  { href: 'admin-home.html',         label: 'Home',            group: 'cohort',   icon: 'home',      allowedRoles: ['admin','trainer','tech_support','support','executive'] },
+  { href: 'admin-schedule.html',     label: 'Schedule',        group: 'cohort',   icon: 'calendar',  allowedRoles: ['admin','trainer','tech_support','support','executive'] },
+  { href: 'faculty.html',            label: 'Faculty hub',     group: 'cohort',   icon: 'users2',    allowedRoles: ['admin','trainer','tech_support','support'] },
+  { href: 'admin-content.html',      label: 'Content',         group: 'classwork',icon: 'file',      allowedRoles: ['admin','trainer'] },
+  { href: 'admin.html',              label: 'Registrations',   group: 'people',   icon: 'users',     allowedRoles: ['admin','trainer'] },
+  { href: 'admin-teams.html',        label: 'Teams',           group: 'people',   icon: 'users2',    allowedRoles: ['admin','trainer'] },
+  { href: 'admin-pods.html',         label: 'Pods',            group: 'people',   icon: 'grid',      allowedRoles: ['admin','trainer'] },
+  { href: 'admin-faculty.html',      label: 'Faculty',         group: 'people',   icon: 'briefcase', adminOnly: true, allowedRoles: ['admin'] },
+  { href: 'admin-orgs.html',         label: 'Orgs & codes',    group: 'people',   icon: 'building',  adminOnly: true, allowedRoles: ['admin'] },
+  { href: 'admin-student.html',      label: 'Student work',    group: 'work',     icon: 'clipboard', allowedRoles: ['admin','trainer','executive'] },
+  { href: 'admin-attendance.html',   label: 'Attendance',      group: 'work',     icon: 'check',     allowedRoles: ['admin','trainer','support','executive'] },
+  { href: 'admin-stuck.html',        label: 'Stuck queue',     group: 'work',     icon: 'alert',     allowedRoles: ['admin','trainer','tech_support','support'] },
+  { href: 'board.html',              label: 'Community board', group: 'work',     icon: 'alert',     allowedRoles: ['admin','trainer','tech_support','support','executive'] },
+  { href: 'admin-analytics.html',    label: 'Analytics',       group: 'insights', icon: 'chart',     allowedRoles: ['admin','trainer','executive'] },
+  { href: 'faculty-guide.html',      label: 'Faculty guide',   group: 'insights', icon: 'book',      allowedRoles: ['admin','trainer','tech_support','support'] },
+  { href: 'admin-faculty-lms.html',  label: 'Faculty LMS',     group: 'insights', icon: 'book',      adminOnly: true, allowedRoles: ['admin'] },
 ];
 
-/** Support faculty: day-of triage + read-only schedule + home pulse — no curriculum, grading, or roster tools. */
-export const SUPPORT_FACULTY_PAGES = [
-  { href: 'admin-home.html', label: 'Home', group: 'cohort', icon: 'home' },
-  { href: 'admin-schedule.html', label: 'Schedule', group: 'cohort', icon: 'calendar' },
-  { href: 'faculty.html', label: 'Faculty hub', group: 'cohort', icon: 'users2' },
-  { href: 'admin-stuck.html', label: 'Stuck queue', group: 'work', icon: 'alert' },
-  { href: 'board.html', label: 'Community board', group: 'work', icon: 'alert' },
-  { href: 'faculty-guide.html', label: 'Faculty guide', group: 'insights', icon: 'book' },
-];
+/** Legacy: Support faculty view — still exported for any caller that hasn't migrated to role arrays. */
+export const SUPPORT_FACULTY_PAGES = ADMIN_PAGES.filter((p) => p.allowedRoles.includes('support'));
 
 const GROUP_LABEL = {
   cohort: 'Cohort',
@@ -170,16 +166,40 @@ export function setAdminNavSubActive(key) {
   });
 }
 
+/**
+ * Resolve the effective role set for nav filtering. Accepts either:
+ *   - opts.roles: ['admin','trainer','tech_support','support','executive'] (preferred)
+ *   - legacy opts.role: 'admin' | 'faculty' (expands to a reasonable set)
+ * Falls back to window.__ROLES__ if set by checkAdminOrFaculty.
+ */
+function resolveRoleSet(opts) {
+  if (Array.isArray(opts.roles) && opts.roles.length) return new Set(opts.roles);
+  if (opts.role === 'admin') return new Set(['admin','trainer']);
+  if (opts.role === 'faculty') {
+    // Legacy: use whatever resolveRoles stashed on window, else assume support.
+    const fromWindow = window.__ROLES__;
+    if (fromWindow?.staffRoles || fromWindow?.collegeRole) {
+      const set = new Set(Array.from(fromWindow.staffRoles || []));
+      if (fromWindow.collegeRole) set.add(fromWindow.collegeRole);
+      if (!set.size) set.add('support');
+      return set;
+    }
+    return new Set(['support']);
+  }
+  return new Set(['admin','trainer']);
+}
+
 export function renderAdminNav(active, opts = {}) {
-  const { role = 'admin', subnav = null } = opts;
+  const { subnav = null } = opts;
+  const roles = resolveRoleSet(opts);
   const alsoFaculty =
     typeof opts.alsoFaculty === 'boolean'
       ? opts.alsoFaculty
       : Array.isArray(window.facultyCohortIds) && window.facultyCohortIds.length > 0;
-  const pages =
-    role === 'faculty'
-      ? SUPPORT_FACULTY_PAGES
-      : ADMIN_PAGES.filter((p) => !p.adminOnly || role === 'admin');
+  const pages = ADMIN_PAGES.filter((p) => {
+    const allowed = p.allowedRoles || (p.adminOnly ? ['admin'] : ['admin','trainer']);
+    return allowed.some((r) => roles.has(r));
+  });
 
   const byGroup = {};
   pages.forEach((p) => {

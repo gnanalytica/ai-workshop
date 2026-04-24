@@ -826,7 +826,7 @@ async function loadArtifacts() {
   if (!STATE.cohortId) return;
   const { data, error } = await supabase
     .from('cohorts')
-    .select('id,name,starts_on')
+    .select('id,name,starts_on,pretraining_slides_url,pretraining_recording_url,pretraining_session_at,pretraining_notes')
     .eq('id', STATE.cohortId)
     .maybeSingle();
 
@@ -845,12 +845,19 @@ async function loadArtifacts() {
 
   const startsOn = data.starts_on ? new Date(data.starts_on).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : null;
 
+  const tbd = '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>';
+  const linkOrTbd = (url) => url ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(url)}</a>` : tbd;
+  const sessionAt = data.pretraining_session_at
+    ? new Date(data.pretraining_session_at).toLocaleString('en-US', { dateStyle:'medium', timeStyle:'short' })
+    : null;
+
   panel.innerHTML = `
     ${row('Cohort', esc(data.name))}
     ${row('Start date', startsOn ? esc(startsOn) : null)}
-    ${row('Slides URL', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
-    ${row('Recording URL', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
-    ${row('Pre-training session', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
+    ${row('Slides URL', linkOrTbd(data.pretraining_slides_url))}
+    ${row('Recording URL', linkOrTbd(data.pretraining_recording_url))}
+    ${row('Pre-training session', sessionAt ? esc(sessionAt) : tbd)}
+    ${data.pretraining_notes ? row('Notes', `<div style="white-space:pre-wrap;font-size:13px;line-height:1.5">${esc(data.pretraining_notes)}</div>`) : ''}
   `;
 }
 

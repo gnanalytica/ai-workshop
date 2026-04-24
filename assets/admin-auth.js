@@ -10,14 +10,28 @@ export function isSupportFacultyOnly(isAdmin, isFaculty) {
 }
 
 export async function checkAdminOrFaculty(user) {
-  const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-  const { data: facRows } = await supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id);
-  const isAdmin = !!profile?.is_admin;
-  const facultyCohortIds = (facRows || []).map(r => r.cohort_id);
+  const { data: profile } = await supabase.from('profiles').select('is_admin, staff_roles').eq('id', user.id).maybeSingle();
+  const { data: facRows } = await supabase.from('cohort_faculty').select('cohort_id, college_role').eq('user_id', user.id);
+  const staffRoles = new Set(Array.isArray(profile?.staff_roles) ? profile.staff_roles : []);
+  // Bridge: if staff_roles wasn't backfilled, synthesize from is_admin.
+  if (staffRoles.size === 0 && profile?.is_admin) { staffRoles.add('admin'); staffRoles.add('trainer'); }
+  const rows = facRows || [];
+  const facultyCohortIds = rows.map(r => r.cohort_id);
+  const executiveCohortIds = rows.filter(r => r.college_role === 'executive').map(r => r.cohort_id);
+  // isAdmin widens to include anyone who should have admin-level UI access.
+  // This preserves existing gate behavior on admin-*.html — admins/trainers pass,
+  // tech support users also pass (they have admin nav via role-gated allowlist).
+  const isAdmin = staffRoles.has('admin') || staffRoles.has('trainer') || staffRoles.has('tech_support') || !!profile?.is_admin;
   const isFaculty = facultyCohortIds.length > 0;
+  const isTechSupport = staffRoles.has('tech_support');
+  const isExecFaculty = executiveCohortIds.length > 0;
+  const navRoles = new Set(staffRoles);
+  if (rows.some(r => r.college_role === 'support')) navRoles.add('support');
+  if (isExecFaculty) navRoles.add('executive');
   window.isAdmin = isAdmin;
   window.facultyCohortIds = facultyCohortIds;
-  return { isAdmin, isFaculty, facultyCohortIds };
+  window.__ROLES__ = { staffRoles, navRoles, executiveCohortIds, isTechSupport, isExecFaculty };
+  return { isAdmin, isFaculty, facultyCohortIds, isTechSupport, isExecFaculty, staffRoles, executiveCohortIds };
 }
 
 // -----------------------------------------------------------------

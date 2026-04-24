@@ -143,6 +143,30 @@
   </div>
 
   <div class="section-head" style="margin-top:40px">
+    <h2>Pre-training materials</h2>
+    <span class="muted" style="font-size:12.5px">Shown to Support Faculty on <a href="faculty-guide.html" style="color:var(--accent)">faculty-guide.html</a></span>
+  </div>
+  <div class="add-card">
+    <div style="display:grid;grid-template-columns:180px 1fr;gap:10px 14px;align-items:center">
+      <label for="ptCohort" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Cohort</label>
+      <select id="ptCohort" style="background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit"></select>
+      <label for="ptSlides" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Slides URL</label>
+      <input id="ptSlides" type="url" placeholder="https://..." style="background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit" />
+      <label for="ptRecording" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Recording URL</label>
+      <input id="ptRecording" type="url" placeholder="https://..." style="background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit" />
+      <label for="ptSessionAt" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Live session at</label>
+      <input id="ptSessionAt" type="datetime-local" style="background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit" />
+      <label for="ptNotes" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Notes</label>
+      <textarea id="ptNotes" rows="3" placeholder="Anything SF should know before the session (agenda, dress code, dial-in, …)" style="background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);font-family:inherit;resize:vertical"></textarea>
+      <span></span>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button type="button" class="btn-sm primary" id="ptSave" style="padding:8px 14px">Save</button>
+        <span id="ptMsg" class="muted" style="font-size:12.5px"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:40px">
     <h2>Support Faculty readiness</h2>
     <span class="muted" style="font-size:12.5px">10-item pre-session handbook checklist (<a href="faculty-guide.html" style="color:var(--accent)">faculty-guide.html</a>)</span>
   </div>
@@ -269,7 +293,43 @@
     await loadCohorts();
     await loadRows();
     await loadReadiness();
+    await loadPretrainingArtifacts();
     wireAdd();
+    wirePretrainingEditor();
+  }
+
+  async function loadPretrainingArtifacts() {
+    const sel = $('ptCohort'); if (!sel) return;
+    sel.innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
+    if (!COHORTS.length) return;
+    await loadPretrainingFor(sel.value);
+  }
+  async function loadPretrainingFor(cohortId) {
+    const { data, error } = await supabase.from('cohorts')
+      .select('pretraining_slides_url,pretraining_recording_url,pretraining_session_at,pretraining_notes')
+      .eq('id', cohortId).maybeSingle();
+    if (error) { $('ptMsg').textContent = error.message; return; }
+    $('ptSlides').value = data?.pretraining_slides_url || '';
+    $('ptRecording').value = data?.pretraining_recording_url || '';
+    $('ptSessionAt').value = data?.pretraining_session_at ? new Date(data.pretraining_session_at).toISOString().slice(0, 16) : '';
+    $('ptNotes').value = data?.pretraining_notes || '';
+    $('ptMsg').textContent = '';
+  }
+  function wirePretrainingEditor() {
+    $('ptCohort')?.addEventListener('change', (e) => loadPretrainingFor(e.target.value));
+    $('ptSave')?.addEventListener('click', async () => {
+      const cohortId = $('ptCohort').value; if (!cohortId) return;
+      const payload = {
+        pretraining_slides_url: $('ptSlides').value.trim() || null,
+        pretraining_recording_url: $('ptRecording').value.trim() || null,
+        pretraining_session_at: $('ptSessionAt').value ? new Date($('ptSessionAt').value).toISOString() : null,
+        pretraining_notes: $('ptNotes').value.trim() || null,
+      };
+      $('ptMsg').textContent = 'Saving…';
+      const { error } = await supabase.from('cohorts').update(payload).eq('id', cohortId);
+      $('ptMsg').textContent = error ? error.message : 'Saved ✓';
+      if (!error) setTimeout(() => { $('ptMsg').textContent = ''; }, 2000);
+    });
   }
 
   const CHECKLIST_KEYS = ['read_handbook','attended_live','know_pod','verified_labs','setup_dryrun','know_attendance','know_grading','know_triage','tech_contact_saved','board_read'];
