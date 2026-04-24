@@ -8,17 +8,17 @@ faculty:
   main: "Harshith"
   support: "Sanjana"
 reading_time: "10 min"
-tldr: "Today your capstone leaves your laptop. Node + Python + Git locally, Antigravity or Cursor open, and a one-page slice live on a vercel.app URL backed by Supabase. Demo Day starts to feel real."
+tldr: "Today your capstone leaves your laptop. Node + Python + Git locally, **Antigravity** open (primary), **Cursor** optional, and a one-page slice live on a vercel.app URL backed by Supabase. Demo Day starts to feel real."
 tags: ["capstone", "milestone", "deploy", "vercel", "supabase"]
-software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor"]
+software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor (optional)"]
 online_tools: ["Vercel", "Supabase"]
 video: "https://www.youtube.com/embed/seVxXHi2YMs"
 prompt_of_the_day: "Walk me through deploying this Next.js app to Vercel with a Supabase backend. Stop at every command and explain what it does and what could go wrong on a Windows laptop."
 tools_hands_on:
   - { name: "Vercel", url: "https://vercel.com/" }
   - { name: "Supabase", url: "https://supabase.com/" }
-  - { name: "Cursor", url: "https://cursor.com/" }
   - { name: "Antigravity", url: "https://antigravity.google/" }
+  - { name: "Cursor (optional)", url: "https://cursor.com/" }
 tools_reference:
   - { name: "Vercel — deploy Next.js", url: "https://vercel.com/docs/frameworks/nextjs" }
   - { name: "Supabase — quickstart", url: "https://supabase.com/docs/guides/getting-started" }
@@ -28,7 +28,7 @@ resources:
 lab: { title: "Ship one page to a public URL", url: "https://vercel.com/new" }
 objective:
   topic: "Capstone Milestone 4: Workspace Setup and First Deploy"
-  tools: ["Node.js", "Python", "Git", "Vercel", "Supabase", "Cursor"]
+  tools: ["Node.js", "Python", "Git", "Vercel", "Supabase", "Antigravity", "Cursor (optional)"]
   end_goal: "A live `*.vercel.app` URL serving one real page from your capstone, with the repo on GitHub and Supabase wired in."
 ---
 

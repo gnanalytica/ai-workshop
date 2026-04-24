@@ -84,7 +84,7 @@ export async function renderStuckAttendance({ state, container }) {
               cday.day_number,
             )} · ${esc(sessAt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }))}</p>
            <p class="muted" style="font-size:12.5px;line-height:1.5;margin:0 0 10px">
-            Students use the <strong>lesson page</strong> to check in. Nudge from the room; trainers manage exports in Admin.
+            Students check in on the <strong>lesson page</strong>. In-room faculty can prompt check-in; exports and corrections stay in Admin for trainers.
           </p>
            <a class="btn-pill" href="${lessonHref}" style="text-decoration:none;${!inRoom ? 'opacity:0.85' : ''}">Open today’s lesson</a>
            ${

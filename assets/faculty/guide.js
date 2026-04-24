@@ -1,4 +1,5 @@
 import { DAYS, WEEK_TITLES } from '../days.js';
+import { setFacultyHash, setActiveFacultyNav, scrollToFacultySection } from './section-registry.js';
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -6,12 +7,13 @@ function esc(s) {
 
 const SETUP_ITEMS = [
   { id: 'chrome', label: 'Chrome (latest stable)', note: 'Required for web tools, Meet, and browser automation demos.' },
-  { id: 'vscode', label: 'VS Code (or Cursor)', note: 'Editor for day 16+ build and agent sessions.' },
+  { id: 'antigravity', label: 'Google Antigravity', note: 'Primary editor for vibe coding, agents, and build weeks.' },
+  { id: 'cursor', label: 'Cursor (optional)', note: 'Second IDE; install only if the cohort wants both Antigravity and Cursor.' },
   { id: 'node', label: 'Node.js LTS (v20+)', note: 'Needed for npm packages, local scripts, and tooling demos.' },
-  { id: 'git', label: 'Git', note: 'Required for GitHub workflows from Day 16 onward.' },
-  { id: 'python', label: 'Python 3.11+', note: 'Needed for selected AI libs and browser-use demos.' },
+  { id: 'n8n', label: 'n8n (global npm after Node)', note: 'Workflow automation; `npm i -g n8n` then n8n start + localhost:5678 per setup guide.' },
+  { id: 'git', label: 'Git for Windows + setup', note: 'Install Git, set user.name/email, GitHub sign-in, smoke clone—see setup guide §7/7b.' },
+  { id: 'python', label: 'Python 3.11+ + pip (transformers, huggingface_hub, langchain)', note: 'See setup guide: pip install after Python. Used in token/HF and LangChain labs.' },
   { id: 'ollama', label: 'Ollama (instructor machine at minimum)', note: 'Used in local LLM demos. Student devices optional.' },
-  { id: 'docker', label: 'Docker Desktop (optional)', note: 'Helpful for local stacks / self-hosting workflows.' },
 ];
 
 function setupKey(cohortId) {
@@ -42,22 +44,58 @@ function inferCohortDay(cohort) {
 function playbookByDay(day) {
   if (day <= 10) {
     return {
-      before: ['Read objective + in-class checkpoints once.', 'Open Stream and clear yesterday’s stuck items if any.', 'Confirm lab login, Meet/audio, and one fallback example if the trainer’s demo fails.'],
-      during: ['Reinforce the trainer’s outcome; don’t fork the lesson plan.', 'After each trainer demo, get students hands-on before moving on.', 'Circulate: fix passwords, installs, and links before debugging “why won’t my prompt work”.'],
-      after: ['Sweep the stuck queue; escalate grading or policy questions to the trainer.', 'Note repeat blockers for the trainer’s next session plan.', 'Optional: one-line pod nudge on tomorrow’s prep.'],
+      before: [
+        'Read the lesson objective and in-class checkpoints in day.html.',
+        'In Stream, clear or reassign any stuck items carried from the prior session.',
+        'Verify lab logins, Meet, and audio; have a backup demo path if the primary demo fails.',
+      ],
+      during: [
+        "Align in-room work to the trainer’s stated outcome; do not change the published lesson order without the trainer.",
+        'After each trainer segment, run hands-on work before the next block.',
+        'Triage: passwords, installs, and broken links before deep model or prompt debugging.',
+      ],
+      after: [
+        'Update the stuck queue; route grading and policy questions to the trainer.',
+        'Log repeat blockers for the next session plan.',
+        'Distribute the next session prep link per cohort runbook.',
+      ],
     };
   }
   if (day <= 20) {
     return {
-      before: ['Skim lab steps and expected artifacts.', 'Open Insights / Stream and note who is behind.', 'Have a fallback exercise if an API or tool is down.'],
-      during: ['Ask students to explain choices, not paste outputs.', 'Checkpoint every 15–20 minutes with a concrete artifact.', 'Pair students before you step in; avoid doing the task for them.'],
-      after: ['Close stuck items you started; hand off grading to the trainer.', 'Tag repeated failure patterns for the trainer.', 'Skim attendance / activity only to nudge, not to change records.'],
+      before: [
+        'Review lab steps, rubric artifacts, and pass criteria.',
+        'In Insights / Stream, list students who are behind schedule.',
+        'Prepare a reduced-scope exercise if an external API or tool is unavailable.',
+      ],
+      during: [
+        'Have students explain design choices, not only paste model output.',
+        'Checkpoint on a defined artifact on a regular cadence (e.g. 15–20 min).',
+        'Use peer pairing per trainer policy before instructor takeover.',
+      ],
+      after: [
+        'Close stuck items you opened; hand grading to the trainer where policy requires.',
+        'Document repeated failure classes for the trainer.',
+        'Use attendance and activity for triage only; official records follow trainer process.',
+      ],
     };
   }
   return {
-    before: ['Review demo/rubric expectations with the trainer if needed.', 'Prepare coaching prompts for rehearsal (clarity, pacing, ask).', 'Spot-check deploy/showcase links from a fresh browser.'],
-    during: ['Coach delivery and nerves; defer scoring to the trainer.', 'Prioritize blockers that block demo day.', 'Capture one win and one risk per team for the trainer.'],
-    after: ['Send grading and rubric questions to the trainer.', 'Follow up on safety, model, and deployment checklists with students.', 'Help teams set one fix target for the next rehearsal.'],
+    before: [
+      'Align with the trainer on demo and rubric expectations.',
+      'Draft rehearsal prompts: goals, timebox, and expected artifacts.',
+      'Verify deploy and showcase links from a clean browser profile.',
+    ],
+    during: [
+      'Give structure and time feedback; defer formal scoring to the trainer.',
+      'Triage blockers that prevent demo completion first.',
+      'Log open risks and dependencies per team for the trainer’s sync.',
+    ],
+    after: [
+      'Send grading and rubric questions to the trainer.',
+      'Track safety, model-use, and deployment checklist items with students per policy.',
+      'Record one engineering fix or scope cut per team for the next rehearsal.',
+    ],
   };
 }
 
@@ -205,11 +243,11 @@ function teacherSheetHtml({ current, script, pb }) {
     ? `<ul>${script.moments.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`
     : '<div class="muted">No in-class checkpoints parsed.</div>'}
 
-  <h2>Facilitation Checklist</h2>
+  <h2>Runbook checklist</h2>
   <div class="grid">
-    <div class="card"><b>Before class</b><ul>${pb.before.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
-    <div class="card"><b>During class</b><ul>${pb.during.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
-    <div class="card"><b>After class</b><ul>${(script.post.length ? script.post : pb.after).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="card"><b>Pre-session</b><ul>${pb.before.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="card"><b>In-session</b><ul>${pb.during.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="card"><b>Post-session</b><ul>${(script.post.length ? script.post : pb.after).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
   </div>
 </body>
 </html>`;
@@ -227,12 +265,12 @@ export async function renderGuide({ state, container }) {
     <section class="add-card" style="padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
         <div>
-          <div class="kicker">Quick Learn Dashboard</div>
-          <h2 style="margin:6px 0 0">Prepare 1 week ahead</h2>
+          <div class="kicker">Lesson prep</div>
+          <h2 style="margin:6px 0 0">Next five class days</h2>
         </div>
-        <span class="kicker-tag">Current class day: ${esc(String(dayNow).padStart(2, '0'))}</span>
+        <span class="kicker-tag">Cohort class day: ${esc(String(dayNow).padStart(2, '0'))}</span>
       </div>
-      <p class="muted" style="margin:10px 0 14px;font-size:13px">Use this panel to prepare the next 5 sessions before students arrive. Read objective + lab flow + likely blockers in advance.</p>
+      <p class="muted" style="margin:10px 0 14px;font-size:13px">Objectives, lab flow, and known failure modes for the upcoming sessions—read before live block.</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
         ${upcoming.map((d) => `
           <a href="day.html?n=${d.n}" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);background:var(--input-bg);border-radius:12px;padding:12px">
@@ -246,19 +284,19 @@ export async function renderGuide({ state, container }) {
     ${renderSetupChecklist(state.cohortId)}
 
     <section class="add-card" style="padding:16px">
-      <div class="kicker">Day-by-day facilitation guide</div>
-      <h3 style="margin:6px 0 10px">How to run Day ${esc(String(current.n).padStart(2, '0'))} · ${esc(current.title)}</h3>
+      <div class="kicker">Session runbook</div>
+      <h3 style="margin:6px 0 10px">Day ${esc(String(current.n).padStart(2, '0'))} · ${esc(current.title)}</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
         <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--input-bg)">
-          <div class="kicker-tag">Before class</div>
+          <div class="kicker-tag">Pre-session</div>
           <ul style="margin:10px 0 0;padding-left:18px;font-size:13px">${pb.before.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
         </div>
         <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--input-bg)">
-          <div class="kicker-tag">During class</div>
+          <div class="kicker-tag">In-session</div>
           <ul style="margin:10px 0 0;padding-left:18px;font-size:13px">${pb.during.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
         </div>
         <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--input-bg)">
-          <div class="kicker-tag">After class / study hours</div>
+          <div class="kicker-tag">Post-session</div>
           <ul style="margin:10px 0 0;padding-left:18px;font-size:13px">${pb.after.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
         </div>
       </div>
@@ -324,11 +362,33 @@ export async function renderGuide({ state, container }) {
           <b>Cohort tracking</b>
           <div class="muted" style="font-size:12px;margin-top:4px">Attendance, velocity, trends.</div>
         </a>
-        <a href="faculty-guide.html" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
-          <b>Support faculty handbook</b>
-          <div class="muted" style="font-size:12px;margin-top:4px">Role, triage flowchart, debugging recipes, pre-session checklist.</div>
+        <a href="#faculty-handbook" class="fac-handbook-frag" data-frag="" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
+          <b>Program handbook</b>
+          <div class="muted" style="font-size:12px;margin-top:4px">Full reference embedded in the <strong>Handbook</strong> section on this page.</div>
         </a>
       </div>
+    </section>
+
+    <section class="add-card" style="padding:16px">
+      <div class="kicker">Handbook &amp; lab setup</div>
+      <h3 style="margin:0 0 8px;font-size:16px">Jump to embedded documents</h3>
+      <p class="muted" style="font-size:13px;line-height:1.6;margin:0 0 12px">Scrolls this page and moves the iframe to the right fragment (same URLs as standalone <code>faculty-guide.html</code> / <code>setup-guide.html</code>).</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <a href="#faculty-handbook" class="btn-sm fac-handbook-frag" data-frag="lifecycle" style="text-decoration:none">Teaching day</a>
+        <a href="#faculty-handbook" class="btn-sm fac-handbook-frag" data-frag="triage" style="text-decoration:none">Triage flow</a>
+        <a href="#faculty-handbook" class="btn-sm fac-handbook-frag" data-frag="checklist" style="text-decoration:none">Checklist</a>
+        <a href="#faculty-handbook" class="btn-sm fac-handbook-frag" data-frag="artifacts" style="text-decoration:none">Artifacts</a>
+        <a href="#faculty-handbook" class="btn-sm fac-handbook-frag" data-frag="debug" style="text-decoration:none">Quick fixes</a>
+        <a href="#lab-setup" class="btn-sm fac-labsetup-jump" data-frag="one-time-full-setup" style="text-decoration:none">Install playbook</a>
+        <a href="#lab-setup" class="btn-sm fac-labsetup-jump" data-frag="verification" style="text-decoration:none">Verification</a>
+      </div>
+    </section>
+
+    <section class="add-card" style="padding:16px">
+      <div class="kicker">Site</div>
+      <h3 style="margin:0 0 8px;font-size:16px">Searchable setup issues</h3>
+      <p class="muted" style="font-size:13px;line-height:1.6;margin:0 0 10px">If a machine issue repeats, post to the community board with tag <code>setup</code>.</p>
+      <a class="btn-sm" href="board.html" style="text-decoration:none">Community board</a>
     </section>
   `;
 
@@ -346,6 +406,48 @@ export async function renderGuide({ state, container }) {
     w.document.open();
     w.document.write(teacherSheetHtml({ current, script, pb }));
     w.document.close();
+  });
+
+  const setFrameSrc = (id, base, frag) => {
+    const trySet = () => {
+      const fr = document.getElementById(id);
+      if (fr) {
+        fr.src = frag ? `${base}#${frag}` : base;
+        return true;
+      }
+      return false;
+    };
+    if (trySet()) return;
+    let n = 0;
+    const t = setInterval(() => {
+      n += 1;
+      if (trySet() || n > 20) clearInterval(t);
+    }, 50);
+  };
+  const goHandbook = (frag) => {
+    setFacultyHash('faculty-handbook', { replace: false });
+    setActiveFacultyNav('faculty-handbook');
+    scrollToFacultySection('faculty-handbook', { behavior: 'smooth' });
+    requestAnimationFrame(() => setFrameSrc('facHandbookFrame', 'faculty-guide.html', frag));
+  };
+  const goLab = (frag) => {
+    setFacultyHash('lab-setup', { replace: false });
+    setActiveFacultyNav('lab-setup');
+    scrollToFacultySection('lab-setup', { behavior: 'smooth' });
+    requestAnimationFrame(() => setFrameSrc('facLabSetupFrame', 'setup-guide.html', frag));
+  };
+
+  container.querySelectorAll('a.fac-handbook-frag').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      goHandbook(a.getAttribute('data-frag') || '');
+    });
+  });
+  container.querySelectorAll('a.fac-labsetup-jump').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      goLab(a.getAttribute('data-frag') || '');
+    });
   });
 }
 

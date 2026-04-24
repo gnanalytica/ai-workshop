@@ -10,8 +10,10 @@ export const SECTION_ORDER = [
   'stuck-attendance',
   'schedule',
   'review',
+  'guides',
   'handbook',
-  'training',
+  'faculty-handbook',
+  'lab-setup',
 ];
 
 /** Map old tab / bookmark hashes to canonical section ids */
@@ -24,8 +26,12 @@ const LEGACY_ALIASES = {
   agenda: 'schedule',
   grades: 'review',
   analytics: 'review',
-  guide: 'handbook',
+  guide: 'guides',
   handbook: 'handbook',
+  training: 'guides',
+  'faculty-handbook': 'faculty-handbook',
+  'lab-setup': 'lab-setup',
+  setup: 'lab-setup',
   // self
   'stuck-attendance': 'stuck-attendance',
   stuck: 'stuck-attendance',

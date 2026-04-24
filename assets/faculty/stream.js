@@ -238,7 +238,7 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded,
 
   const noPodNote = hasPod
     ? ''
-    : `<div class="muted" style="margin-top:8px;font-size:12.5px">You're not assigned as faculty on any pod in this cohort yet.</div>`;
+    : `<div class="muted" style="margin-top:8px;font-size:12.5px">No pod assignment in this cohort.</div>`;
 
   return `
     ${stuckCohortBlock}
@@ -247,12 +247,12 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded,
     <section class="add-card">${day}${att}${noPodNote}</section>
 
     <section class="add-card">
-      <h3 style="margin:0 0 8px">Before class</h3>
-      <ul style="margin:0 0 12px"><li>Skim today's lesson content (student-facing day page).</li><li>Preview the <a href="faculty.html#schedule" style="color:var(--accent)">Schedule</a> and Today for stuck signals.</li><li>Confirm lab machines/projector/audio with venue staff.</li></ul>
-      <h3 style="margin:0 0 8px">During class</h3>
-      <ul style="margin:0 0 12px"><li>Keep students aligned with the remote trainer's objective.</li><li>Monitor the stuck queue (${stuck.length} open from your pod) and <a href="admin-stuck.html" style="color:var(--accent)">triage</a>.</li><li>Unblock setup and access issues first; escalate concept gaps to the trainer.</li></ul>
-      <h3 style="margin:0 0 8px">After class</h3>
-      <ul style="margin:0"><li>Close the loop on stuck items you own.</li><li>Flag grading or rubric questions to the program trainer.</li><li>Optional: nudge your pod on prep for the next session.</li></ul>
+      <h3 style="margin:0 0 8px">Pre-session</h3>
+      <ul style="margin:0 0 12px"><li>Read the student <a href="day.html?n=${daySched ? esc(String(daySched.day_number)) : '1'}" style="color:var(--accent)">day page</a> for objectives and activities.</li><li>Check <a href="faculty.html#schedule" style="color:var(--accent)">Schedule</a> and this section for stuck counts.</li><li>Confirm AV, lab logins, and network with venue/IT as required.</li></ul>
+      <h3 style="margin:0 0 8px">In-session</h3>
+      <ul style="margin:0 0 12px"><li>Track to the trainer’s stated outcomes and agenda.</li><li>Watch stuck queue (${stuck.length} open in your pod); <a href="admin-stuck.html" style="color:var(--accent)">triage</a> or hand off per pod policy.</li><li>Resolve environment, access, and tooling issues before model/prompt debugging; escalate content questions to the trainer.</li></ul>
+      <h3 style="margin:0 0 8px">Post-session</h3>
+      <ul style="margin:0"><li>Resolve or reassign open stuck items you own.</li><li>Send grading and rubric questions to the program trainer.</li><li>Post the next session’s prep link in the cohort channel if the program requires it.</li></ul>
     </section>
 
     <section class="add-card">
@@ -260,6 +260,6 @@ function tpl({ daySched, subs, stuck, attendance, hasPod, stuckCohort, ungraded,
       ${subs.length ? `<ul style="margin:0">${subs.map((s) => `<li>${who(s.user_id)} · day ${s.assignments?.day_number ?? '—'} · ${esc(s.status || 'submitted')} · ${new Date(s.submitted_at).toLocaleTimeString()}</li>`).join('')}</ul>` : '<div class="muted">None yet.</div>'}
 
       <h3 style="margin:14px 0 8px">Open stuck items — your pod (${stuck.length})</h3>
-      ${stuck.length ? `<ul style="margin:0">${stuck.map((s) => `<li>${who(s.user_id)} · day ${s.day_number ?? '—'} · ${new Date(s.created_at).toLocaleTimeString()} · ${esc(s.status)}${s.message ? ' — ' + esc(String(s.message).slice(0, 80)) : ''}</li>`).join('')}</ul>` : '<div class="muted">Clear.</div>'}
+      ${stuck.length ? `<ul style="margin:0">${stuck.map((s) => `<li>${who(s.user_id)} · day ${s.day_number ?? '—'} · ${new Date(s.created_at).toLocaleTimeString()} · ${esc(s.status)}${s.message ? ' — ' + esc(String(s.message).slice(0, 80)) : ''}</li>`).join('')}</ul>` : '<div class="muted">No open stuck items.</div>'}
     </section>`;
 }

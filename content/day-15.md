@@ -8,15 +8,15 @@ faculty:
   main: "Raunak"
   support: "Harshith"
 reading_time: "12 min"
-tldr: "Vibe coding = describe what you want, AI writes the code. But raw vibes break at scale. Today you learn the *plan-then-code* loop in Antigravity and Cursor, and ship a tiny working app three ways — Bolt, Emergent, Google AI Studio."
+tldr: "Vibe coding = describe what you want, AI writes the code. But raw vibes break at scale. Today you learn the *plan-then-code* loop in **Antigravity** (primary) and optionally Cursor, and ship a tiny working app three ways — Bolt, Emergent, Google AI Studio."
 tags: ["coding", "agents", "ide"]
-software: ["Antigravity", "Cursor"]
+software: ["Antigravity", "Cursor (optional)"]
 online_tools: ["Bolt", "Emergent", "Google AI Studio"]
 video: "https://www.youtube.com/embed/V9_RzjqCXP8"
 prompt_of_the_day: "Build a single-page web app that lets a hostel mess committee mark today's menu (breakfast/lunch/dinner) and shows it to students in read-only view. Use plain HTML + JS, persist to localStorage. First, write a 5-step plan. Wait for me to approve before writing code."
 tools_hands_on:
-  - { name: "Cursor", url: "https://cursor.sh/" }
   - { name: "Antigravity", url: "https://antigravity.google/" }
+  - { name: "Cursor (optional)", url: "https://cursor.sh/" }
   - { name: "Bolt", url: "https://bolt.new/" }
   - { name: "Emergent", url: "https://emergent.sh/" }
   - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
@@ -29,7 +29,7 @@ resources:
 lab: { title: "Mess-menu app — three ways", url: "https://bolt.new/" }
 objective:
   topic: "Vibe Coding with Plan mode"
-  tools: ["Cursor", "Antigravity", "Bolt", "Emergent", "Google AI Studio"]
+  tools: ["Antigravity", "Cursor (optional)", "Bolt", "Emergent", "Google AI Studio"]
   end_goal: "A working mess-menu app shipped in three different vibe-coding tools, with a written plan you approved before any code was generated."
 ---
 
@@ -41,7 +41,7 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 
 **By end of class you will have:**
 1. Built the same tiny app three times — once each in Bolt, Emergent, and Google AI Studio.
-2. Used **Cursor's Plan mode** (or Antigravity's plan flow) to scope a feature *before* a single line of code.
+2. Used **Antigravity's plan flow** (or **Cursor's Plan mode** if you use the optional install) to scope a feature *before* a single line of code.
 3. A felt sense of when to switch tools mid-build.
 
 > *Why this matters.* Your capstone will live or die by how well you can *direct* a code-gen tool. Vibe ≠ winging it.
@@ -50,13 +50,13 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 
 ### Setup (required)
 
-- [ ] **Cursor** installed and signed in (free tier is fine).
+- [ ] **Antigravity** installed and signed in with your cohort Google account (see `setup-guide.html` on lab machines).
+- [ ] **Cursor** (optional) — install only if you want a second editor; free tier is fine.
 - [ ] Bookmarks for **Bolt.new**, **Emergent**, **Google AI Studio**.
-- [ ] Optional: try **Antigravity** if you got an invite.
 
 ### Primer (~5 min)
 
-- **Watch:** Any 4-min "Cursor Plan mode walkthrough" on YouTube.
+- **Watch:** A short Antigravity or “plan before code” walkthrough on YouTube (optional: Cursor Plan mode if you use Cursor).
 - **Read:** Karpathy's original *vibe coding* tweet — https://x.com/karpathy/status/1886192184808149383
 
 ### Bring to class
@@ -74,7 +74,7 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 | Why plan first | 10 min | Demo of vibe-then-fix vs plan-then-code |
 | Lab block A: Bolt + Emergent | 20 min | Same prompt, two tools |
 | Lab block B: AI Studio | 10 min | Gemini-native build |
-| Cursor + Plan mode | 15 min | Take the best output local, iterate |
+| Antigravity (or optional Cursor) + plan | 15 min | Take the best output local, iterate |
 | Poll + discuss | 5 min | Which tool felt fastest *and* most controllable |
 
 ### Plan-then-code in 4 steps
@@ -89,7 +89,7 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 - **Bolt** — fastest for "give me a working web app from scratch." Stackblitz under the hood.
 - **Emergent** — agentic, longer-running tasks; good when you want it to keep going.
 - **Google AI Studio** — best when you want to riff with Gemini directly + see token-level behaviour.
-- **Cursor** — once you have code locally, this is your home base.
+- **Antigravity** — once you have code locally, this is your home base. **Cursor** is an optional second editor if you installed it.
 
 ## 🧪 Lab: Mess-menu app, three ways
 
@@ -97,14 +97,14 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 2. Approve the plan (or correct it), let Bolt generate. Click *Preview* — does it work?
 3. Open **Emergent** in a new tab. Same prompt. Compare its plan to Bolt's.
 4. Open **Google AI Studio** → pick *Build* → same prompt. Compare again.
-5. Take the best output, download it, open in **Cursor**. Toggle **Plan mode** (Cmd-Shift-P / Ctrl-Shift-P). Ask: *"Add a date stamp to each saved menu and show last 7 days."* Approve plan → run.
+5. Take the best output, download it, open in **Antigravity** (or optional **Cursor**). Use your tool’s plan flow: e.g. in Cursor, **Plan mode** (Cmd-Shift-P / Ctrl-Shift-P). Ask: *"Add a date stamp to each saved menu and show last 7 days."* Approve plan → run.
 6. Confirm `localStorage` persistence by reloading the page.
 
 **Artifact.** A GitHub gist (or zipped folder uploaded to Drive) with your final `index.html` + a 4-line note: which tool you'd pick again, for what.
 
 ## 📊 Live poll
 
-**For a 1-day hackathon, which would you start with?** Bolt / Emergent / Google AI Studio / Cursor from scratch / Depends on the project.
+**For a 1-day hackathon, which would you start with?** Bolt / Emergent / Google AI Studio / Antigravity from scratch / optional Cursor / Depends on the project.
 
 ## 💬 Discuss
 
@@ -134,7 +134,7 @@ Day 16 is **Capstone Milestone 3** — you present your prototype.
 
 ## 📚 References
 
-- [Cursor docs — Plan mode](https://docs.cursor.com/) — official.
+- [Antigravity](https://antigravity.google/) — product home. [Cursor — Plan mode](https://docs.cursor.com/) — if you use the optional Cursor install.
 - [Bolt support — prompting tips](https://support.bolt.new/)
 - [Simon Willison's blog](https://simonwillison.net/) — daily notes on building with LLMs.
 - [Geoffrey Huntley — vibe coding is here to stay](https://ghuntley.com/) — practitioner take.

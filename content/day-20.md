@@ -8,15 +8,15 @@ faculty:
   main: "Harshith"
   support: "Sanjana"
 reading_time: "10 min"
-tldr: "Stop re-explaining your project to the AI every time. Today you write a CLAUDE.md, an AGENTS.md, a Cursor rule, and a tiny Skill — and watch the same model behave like it's been on your team for a year."
+tldr: "Stop re-explaining your project to the AI every time. In **Antigravity** (primary) you write a CLAUDE.md, an AGENTS.md, a Cursor rule if you use optional Cursor, and a tiny Skill — and watch the same model behave like it's been on your team for a year."
 tags: ["context-engineering", "tooling", "claude", "cursor"]
-software: ["Antigravity", "Cursor"]
+software: ["Antigravity", "Cursor (optional)"]
 online_tools: ["Claude"]
 video: "https://www.youtube.com/embed/eBVi_sLaYsc"
 prompt_of_the_day: "Read CLAUDE.md and AGENTS.md before doing anything. Then add a /health endpoint to our Express app following the conventions you find there. List the conventions you used."
 tools_hands_on:
-  - { name: "Cursor", url: "https://cursor.com/" }
   - { name: "Antigravity (Google)", url: "https://antigravity.google/" }
+  - { name: "Cursor (optional)", url: "https://cursor.com/" }
   - { name: "Claude (web)", url: "https://claude.ai/" }
 tools_reference:
   - { name: "Anthropic — Claude Code best practices", url: "https://www.anthropic.com/engineering/claude-code-best-practices" }
@@ -27,7 +27,7 @@ resources:
 lab: { title: "Wire up CLAUDE.md, AGENTS.md, a Cursor rule, and a Skill", url: "https://cursor.com/" }
 objective:
   topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
-  tools: ["Cursor", "Antigravity", "Claude"]
+  tools: ["Antigravity", "Cursor (optional)", "Claude"]
   end_goal: "A repo where any agent — Claude Code, Cursor, Antigravity — picks up your conventions on the first turn, with no hand-holding."
 ---
 
@@ -48,7 +48,7 @@ By Day 20 you've written enough AI-assisted code to feel the tax: every new chat
 
 ### Setup (required)
 
-- [ ] Cursor installed and logged in. Antigravity installed (or fall back to Cursor).
+- [ ] **Antigravity** installed and signed in (primary). **Cursor** only if you want the optional second editor and `.cursor/` rules in-tree.
 - [ ] Your capstone repo cloned locally with at least 3 files of real code in it.
 - [ ] Claude.ai tab open for cross-checking your context files.
 

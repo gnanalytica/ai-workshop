@@ -38,6 +38,7 @@
   @media (max-width:720px){
     main.wrap{padding-left:14px;padding-right:14px}
   }
+  .fac-doc-embed{width:100%;min-height:min(85vh,920px);border:0;display:block;background:var(--input-bg)}
 </style>
 </head>
 <body>
@@ -84,7 +85,7 @@
   <header class="lesson-panel" style="margin:18px 0 14px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-        <h1 id="fHello" style="margin:0;font-size:20px">Hello.</h1>
+        <h1 id="fHello" style="margin:0;font-size:20px">Faculty hub</h1>
         <span id="fCohortName" class="muted" style="font-size:13px"></span>
         <span id="fRolePill"></span>
       </div>
@@ -125,20 +126,33 @@
   <section class="fac-hub-section" id="fac-sec-review" data-fac-sec="review" tabindex="-1">
     <h2 class="fac-sec-h" id="fac-label-review">Insights</h2>
     <p class="fac-sec-title" id="fac-sec-reviewTitle">Review</p>
-    <p class="muted" style="font-size:13px;margin:-6px 0 12px;max-width:60ch">Pulse, analytics, and what’s due this week. Trainers use <strong>Student work</strong> for full grading; use this to coach and unblock.</p>
+    <p class="muted" style="font-size:13px;margin:-6px 0 12px;max-width:60ch">Cohort metrics, due work, and trends. Trainers grade in <strong>Student work</strong>; use this section for triage and technical blockers.</p>
     <div id="facMountReview" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-guides" data-fac-sec="guides" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-guides">Prep</h2>
+    <p class="fac-sec-title" id="fac-sec-guidesTitle">Lesson guide</p>
+    <p class="muted" style="font-size:13px;margin:-6px 0 12px;max-width:60ch">Next days, machine checklist, runbook, and embedded handbook/lab jumps—without leaving this page.</p>
+    <div id="facMountGuides" class="fac-sec-body"></div>
   </section>
 
   <section class="fac-hub-section" id="fac-sec-handbook" data-fac-sec="handbook" tabindex="-1">
     <h2 class="fac-sec-h" id="fac-label-handbook">Reference</h2>
-    <p class="fac-sec-title" id="fac-sec-handbookTitle">Handbook</p>
+    <p class="fac-sec-title" id="fac-sec-handbookTitle">Hub FAQ</p>
     <div id="facMountHandbook" class="fac-sec-body" style="margin-bottom:20px"></div>
   </section>
 
-  <section class="fac-hub-section" id="fac-sec-training" data-fac-sec="training" tabindex="-1" style="margin-bottom:40px">
-    <h2 class="fac-sec-h" id="fac-label-training">Onboarding</h2>
-    <p class="fac-sec-title" id="fac-sec-trainingTitle">Pre-training & links</p>
-    <div id="facMountTraining" class="fac-sec-body"></div>
+  <section class="fac-hub-section" id="fac-sec-faculty-handbook" data-fac-sec="faculty-handbook" tabindex="-1">
+    <h2 class="fac-sec-h" id="fac-label-faculty-handbook">Handbook</h2>
+    <p class="fac-sec-title" id="fac-sec-faculty-handbookTitle">Program handbook</p>
+    <div id="facMountFacultyHandbook" class="fac-sec-body"></div>
+  </section>
+
+  <section class="fac-hub-section" id="fac-sec-lab-setup" data-fac-sec="lab-setup" tabindex="-1" style="margin-bottom:40px">
+    <h2 class="fac-sec-h" id="fac-label-lab-setup">Install</h2>
+    <p class="fac-sec-title" id="fac-sec-lab-setupTitle">Lab setup guide</p>
+    <div id="facMountLabSetup" class="fac-sec-body"></div>
   </section>
 </main>
 
@@ -171,8 +185,10 @@
     'stuck-attendance': 'Stuck & in-room',
     schedule: 'Schedule',
     review: 'Review',
-    handbook: 'Handbook',
-    training: 'Pre-training',
+    guides: 'Lesson guide',
+    handbook: 'Hub FAQ',
+    'faculty-handbook': 'Handbook',
+    'lab-setup': 'Lab setup',
   };
 
   function show(id) {
@@ -201,6 +217,7 @@
   function onHash() {
     const id = normalizeFacultyHash(window.location.hash);
     setActiveFacultyNav(id);
+    requestAnimationFrame(() => scrollToFacultySection(id, { behavior: 'auto' }));
   }
 
   async function updateTodayMeta() {
@@ -221,8 +238,8 @@
     const todayDf = todayCday ? dfMine.find(r => r.day_number === todayCday.day_number) : null;
     if (todayDf) {
       $('facTodayBanner').innerHTML = `<div class="today-banner">
-        <span><strong>You're supporting today's session</strong> — Day ${pad(todayCday.day_number)}${todayCday.title ? ': ' + esc(todayCday.title) : ''}</span>
-        <a href="day.html?n=${todayCday.day_number}">Open prep notes</a>
+        <span><strong>Support assignment</strong> — Day ${pad(todayCday.day_number)}${todayCday.title ? ': ' + esc(todayCday.title) : ''}</span>
+        <a href="day.html?n=${todayCday.day_number}">Lesson plan</a>
       </div>`;
     } else {
       $('facTodayBanner').innerHTML = '';
@@ -233,7 +250,7 @@
       .filter(x => x.cd?.live_session_at && new Date(x.cd.live_session_at) >= todayStart)
       .sort((a,b) => new Date(a.cd.live_session_at) - new Date(b.cd.live_session_at))[0];
     $('fNextTeaching').innerHTML = nextMine
-      ? `Next teaching: <a href="day.html?n=${nextMine.r.day_number}">Day ${pad(nextMine.r.day_number)} ${esc(fmtDate(nextMine.cd.live_session_at))}</a>`
+      ? `Next session: <a href="day.html?n=${nextMine.r.day_number}">Day ${pad(nextMine.r.day_number)} ${esc(fmtDate(nextMine.cd.live_session_at))}</a>`
       : '';
   }
 
@@ -250,8 +267,10 @@
       'stuck-attendance': 'facMountStuck',
       schedule: 'facMountSchedule',
       review: 'facMountReview',
+      guides: 'facMountGuides',
       handbook: 'facMountHandbook',
-      training: 'facMountTraining',
+      'faculty-handbook': 'facMountFacultyHandbook',
+      'lab-setup': 'facMountLabSetup',
     };
     for (const sid of SECTION_ORDER) {
       const el = document.getElementById(m[sid]);
@@ -323,10 +342,8 @@
     wrapAdminMainLayout();
     buildTaskNav();
 
-    const hour = new Date().getHours();
-    const greet = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
     const name = (user.user_metadata?.full_name || user.email || '').split('@')[0];
-    $('fHello').textContent = `${greet}${name ? ', ' + name : ''}.`;
+    $('fHello').textContent = name || 'Faculty hub';
     $('fRolePill').innerHTML = `<span class="role-pill ${role === 'support' ? 'support' : ''}">${role === 'executive' ? 'Executive' : 'Support'}</span>`;
 
     const allCohortIds = [...new Set([...(facultyCohortIds || []), ...executiveCohortIds])];

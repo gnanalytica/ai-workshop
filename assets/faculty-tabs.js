@@ -5,10 +5,11 @@ import { renderStream } from './faculty/stream.js';
 import { renderFacultyPeople } from './faculty/people-tab.js';
 import { renderAnalytics } from './faculty/analytics-tab.js';
 import { renderAgenda } from './faculty/agenda-tab.js';
-import { renderTraining } from './faculty/training-tab.js';
 import { renderHandbookSection } from './faculty/handbook-section.js';
 import { renderStuckAttendance } from './faculty/stuck-attendance.js';
 import { renderAssignmentStrip } from './faculty/assignments-review.js';
+import { renderGuide } from './faculty/guide.js';
+import { renderFacultyHandbookEmbed, renderLabSetupEmbed } from './faculty/embedded-docs.js';
 
 async function renderReview(ctx) {
   const { container } = ctx;
@@ -28,12 +29,14 @@ const SECTIONS = {
   'stuck-attendance': renderStuckAttendance,
   schedule: renderAgenda,
   review: renderReview,
+  guides: renderGuide,
   handbook: renderHandbookSection,
-  training: renderTraining,
+  'faculty-handbook': renderFacultyHandbookEmbed,
+  'lab-setup': renderLabSetupEmbed,
 };
 
 /**
- * @param {string} sectionId - canonical id: today | students | stuck-attendance | schedule | review | handbook | training
+ * @param {string} sectionId - canonical id: today | students | stuck-attendance | schedule | review | guides | handbook | faculty-handbook | lab-setup
  * @param {{ state: object, container: HTMLElement }} ctx
  */
 export async function mountFacultySection(sectionId, ctx) {

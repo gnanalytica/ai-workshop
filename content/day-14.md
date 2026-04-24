@@ -123,7 +123,7 @@ Short quiz on Gamma cards vs Canva pages, when to use Magic Design, and the 10/2
 
 Day 15 is **Vibe Coding** — you'll build an actual app from a prompt using Antigravity, Cursor, Bolt, Emergent.
 
-- [ ] Install **Cursor** (https://cursor.sh/) — free tier is fine for class.
+- [ ] Install **Antigravity** (https://antigravity.google/) — primary editor for Vibe Coding. **Cursor** (https://cursor.sh/) is optional if you want a second IDE.
 - [ ] Sign in to **Google AI Studio** (https://aistudio.google.com/) once and accept the terms.
 - [ ] Bring one tiny app idea (UPI splitter, hostel mess menu, attendance tracker) — we'll build it live.
 

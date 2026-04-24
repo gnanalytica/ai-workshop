@@ -190,13 +190,15 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           <li><a href="#extended-tools-track">Optional extra tools</a></li>
           <li><a href="#install-playbook">Install on Windows (click-by-click)</a></li>
           <li><a href="#chrome" class="sub">1 · Chrome</a></li>
-          <li><a href="#cursor" class="sub">2 · Cursor</a></li>
-          <li><a href="#nodejs" class="sub">3 · Node.js</a></li>
-          <li><a href="#python" class="sub">4 · Python</a></li>
-          <li><a href="#git" class="sub">5 · Git</a></li>
-          <li><a href="#ollama" class="sub">6 · Ollama + models</a></li>
-          <li><a href="#vscode" class="sub">7 · VS Code (backup)</a></li>
-          <li><a href="#docker" class="sub">8 · Docker (optional)</a></li>
+          <li><a href="#antigravity" class="sub">2 · Antigravity</a></li>
+          <li><a href="#cursor" class="sub">3 · Cursor (optional)</a></li>
+          <li><a href="#nodejs" class="sub">4 · Node.js</a></li>
+          <li><a href="#n8n" class="sub">5 · n8n</a></li>
+          <li><a href="#python" class="sub">6 · Python</a></li>
+          <li><a href="#python-packages" class="sub">6b · Pip: HF, Transformers, LangChain</a></li>
+          <li><a href="#git" class="sub">7 · Git</a></li>
+          <li><a href="#git-setup" class="sub">7b · Git: name, email, GitHub</a></li>
+          <li><a href="#ollama" class="sub">8 · Ollama + models</a></li>
           <div class="toc-divider"></div>
           <li><a href="#verification">Check everything works</a></li>
           <li><a href="#escalation">Get help</a></li>
@@ -264,17 +266,18 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
         </div>
         <ul class="checklist">
           <li><input type="checkbox" id="full1" /><label for="full1"><a href="#chrome">Chrome</a> — installed and set as a normal user’s browser if your lab policy allows</label></li>
-          <li><input type="checkbox" id="full2" /><label for="full2"><a href="#cursor">Cursor</a> — installed; can open a folder; sign-in works (see cohort invite)</label></li>
+          <li><input type="checkbox" id="full2" /><label for="full2"><a href="#antigravity">Google Antigravity</a> — installed; can open a folder; Google sign-in works (see cohort access; may need a Google account the cohort approved)</label></li>
+          <li><input type="checkbox" id="full2b" /><label for="full2b"><a href="#cursor">Cursor</a> (optional) — for anyone who wants a second editor next to Antigravity</label></li>
           <li><input type="checkbox" id="full3" /><label for="full3"><a href="#nodejs">Node.js (LTS)</a> — installed; optional “IT check” in that section is green</label></li>
+          <li><input type="checkbox" id="full3n" /><label for="full3n"><a href="#n8n">n8n</a> — installed with npm (after Node); UI opens in Chrome as in section 3</label></li>
           <li><input type="checkbox" id="full4" /><label for="full4"><a href="#python">Python 3.11+</a> — installed; “Add python.exe to PATH” was ticked in the installer</label></li>
-          <li><input type="checkbox" id="full5" /><label for="full5"><a href="#git">Git</a> — installed; Git can open from a normal account</label></li>
+          <li><input type="checkbox" id="full4p" /><label for="full4p"><a href="#python-packages">Pip packages</a> — <code>transformers</code>, <code>huggingface_hub</code>, and <code>langchain</code> installed with the two-line <code>pip</code> block in section 3 (or trainer’s <code>requirements.txt</code>)</label></li>
+          <li><input type="checkbox" id="full5" /><label for="full5"><a href="#git">Git for Windows</a> — installed, and <a href="#git-setup">identity + GitHub</a> done so commits and clone/push work (per student or test account)</label></li>
           <li><input type="checkbox" id="full6" /><label for="full6"><a href="#ollama">Ollama + models</a> — Ollama installed; models your trainer named are ready (not first thing on class day)</label></li>
-          <li><input type="checkbox" id="full7" /><label for="full7"><a href="#vscode">VS Code</a> (optional) — only if you want a backup next to Cursor</label></li>
-          <li><input type="checkbox" id="full8" /><label for="full8"><a href="#docker">Docker Desktop</a> — only if the cohort schedule actually uses containers</label></li>
           <li><input type="checkbox" id="full9" /><label for="full9">Browser accounts: Google, GitHub, and the rest in <a href="#accounts-preflight">section 2B</a> (sign in once per machine you use, or as your policy says)</label></li>
           <li><input type="checkbox" id="full10" /><label for="full10">API keys for labs (e.g. Gemini, Groq): your trainer or IT stores them; see <a href="#accounts-preflight">2B</a>—not inside student chat in class</label></li>
           <li><input type="checkbox" id="full11" /><label for="full11"><a href="#verification">“Check everything works”</a> — every item in section 4 passes for at least one test login</label></li>
-          <li><input type="checkbox" id="full12" /><label for="full12">Dry run: open the workshop in Chrome, open one exercise folder in Cursor, and run a tiny local Ollama prompt (trainer can give a one-liner) so nothing is “first time on stage”</label></li>
+          <li><input type="checkbox" id="full12" /><label for="full12">Dry run: open the workshop in Chrome, open one exercise folder in <strong>Antigravity</strong>, and run a tiny local Ollama prompt (trainer can give a one-liner) so nothing is “first time on stage”</label></li>
         </ul>
       </section>
 
@@ -284,7 +287,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
       <section class="section" id="system-requirements">
         <h2>2. System &amp; network (Windows)</h2>
         <div class="callout callout-ok">
-          <strong>Many college labs are already a good match:</strong> 64-bit Windows, 16 GB RAM, 512 GB SSD, and a recent Intel/AMD i5. That is enough to run the workshop, Cursor, and the smaller on-machine AI models.
+          <strong>Many college labs are already a good match:</strong> 64-bit Windows, 16 GB RAM, 512 GB SSD, and a recent Intel/AMD i5. That is enough to run the workshop, <strong>Antigravity</strong>, and the smaller on-machine AI models (Ollama).
         </div>
 
         <table class="req-table">
@@ -320,7 +323,9 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           You do <strong>not</strong> need to type this list into the PC yourself—send it to the network/IT helpdesk. Campus filters often block one of these, which then breaks a single day of the course.
         </p>
         <p class="link-row"><strong>Workshop platform &amp; code</strong> — <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a> (and your project on <code>*.supabase.co</code>), <a href="https://github.com" target="_blank" rel="noopener">github.com</a></p>
-        <p class="link-row"><strong>Python &amp; Node package downloads</strong> — <a href="https://pypi.org" target="_blank" rel="noopener">pypi.org</a>, <a href="https://files.pythonhosted.org" target="_blank" rel="noopener">files.pythonhosted.org</a>, <a href="https://registry.npmjs.org" target="_blank" rel="noopener">registry.npmjs.org</a></p>
+        <p class="link-row"><strong>Python &amp; Node package downloads</strong> — <a href="https://pypi.org" target="_blank" rel="noopener">pypi.org</a>, <a href="https://files.pythonhosted.org" target="_blank" rel="noopener">files.pythonhosted.org</a>, <a href="https://registry.npmjs.org" target="_blank" rel="noopener">registry.npmjs.org</a> (used for <code>npm install -g n8n</code> and n8n’s public nodes/templates)</p>
+        <p class="link-row"><strong>n8n (local + docs)</strong> — <a href="https://n8n.io" target="_blank" rel="noopener">n8n.io</a> and <a href="https://docs.n8n.io" target="_blank" rel="noopener">docs.n8n.io</a>; the editor runs at <code>http://localhost:5678</code> and does <strong>not</strong> need outbound access except what your flows call (e.g. APIs, webhooks the lesson names)</p>
+        <p class="link-row"><strong>Google Antigravity (editor + sign-in)</strong> — <a href="https://antigravity.google/" target="_blank" rel="noopener">antigravity.google</a> and the usual Google account/OAuth domains your IT already allows for Gmail or Google Workspace</p>
         <p class="link-row"><strong>Cloud AIs (depends on the cohort)</strong> — <a href="https://ai.google.dev" target="_blank" rel="noopener">Google AI (Gemini)</a>, <a href="https://api.openai.com" target="_blank" rel="noopener">OpenAI</a>, <a href="https://api.anthropic.com" target="_blank" rel="noopener">Anthropic</a>, <a href="https://huggingface.co" target="_blank" rel="noopener">Hugging Face</a></p>
         <p class="link-row"><strong>Local Ollama</strong> — <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com</a> and the model service at <a href="https://registry.ollama.ai" target="_blank" rel="noopener">registry.ollama.ai</a> (this is <em>not</em> a website students browse; it is where the app downloads model files.)</p>
         <p class="link-row"><strong>Optional / extra days</strong> — e.g. <a href="https://gamma.app" target="_blank" rel="noopener">gamma.app</a>, <a href="https://www.figma.com" target="_blank" rel="noopener">figma.com</a>, <a href="https://zapier.com" target="_blank" rel="noopener">zapier.com</a>, and others your trainer lists for bonus sessions. Your cohort’s schedule is the final word.</p>
@@ -336,7 +341,7 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           <ul>
             <li><strong>Google account</strong> — needed for many AI tools. Use the account your cohort was told to use, or the college G Suite policy.</li>
             <li><strong>GitHub</strong> — <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> if the college does not already provide accounts.</li>
-            <li><strong>API keys</strong> (Gemini, Groq, and others) — the trainer or IT will tell you <em>where to paste them</em> in Cursor, Windows “Environment variables,” or a cohort setup doc. If you are not the person who should see secrets, do not try to set them; hand the machine to the right person and continue with installs only.</li>
+            <li><strong>API keys</strong> (Gemini, Groq, and others) — the trainer or IT will tell you <em>where to paste them</em> in Antigravity, Cursor, Windows “Environment variables,” or a cohort setup doc. If you are not the person who should see secrets, do not try to set them; hand the machine to the right person and continue with installs only.</li>
           </ul>
           <h4>How to check you have keys in Windows (no terminal)</h4>
           <ol>
@@ -375,8 +380,8 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
       <section class="section" id="install-playbook">
         <h2>3. Install on Windows (use links and normal installers)</h2>
         <p>
-          These steps assume you are on an <strong>administrator</strong> account, or the installer can ask for an admin password. Work in the order <strong>1 → 8</strong> the first time you set up a machine. You do
-          <strong>not</strong> need a terminal: every tool has a normal <strong>Download for Windows</strong> button. A few
+          These steps assume you are on an <strong>administrator</strong> account, or the installer can ask for an admin password. Work in the order <strong>1 → 8</strong> the first time you set up a machine (VS Code is <strong>not</strong> part of this workshop—use <strong>Antigravity</strong> as the main editor, and install <strong>Cursor</strong> only if you want an extra option). You do
+          <strong>not</strong> need a terminal for the main path: most tools have a normal <strong>Download for Windows</strong> or installer from the vendor site. A few
           <strong>“If you get stuck / for IT”</strong> notes mention optional short commands.
         </p>
         <div class="callout callout-ok">
@@ -399,22 +404,37 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           <p>After install, the Chrome window should show the Google or “Welcome” page. In the top corner, the three dots menu (⋮) → <strong>Help</strong> → <strong>About Google Chrome</strong> should show a current version and say Chrome is up to date. That is enough.</p>
         </div>
 
-        <!-- 2 — Cursor -->
-        <div class="section tool-block" id="cursor">
-          <h3>2 · Cursor (main code editor) <span class="badge badge-required">Required</span></h3>
-          <p>Cursor is the primary editor for the workshop. Your trainer may send a specific invite, license, or team name—read their email in parallel with the steps below.</p>
-          <p class="link-row">Download: <a href="https://www.cursor.com/downloads" target="_blank" rel="noopener">https://www.cursor.com/downloads</a> (pick <strong>Windows (x64)</strong> or “User installer” for Windows, per that page at install time.)</p>
+        <!-- 2 — Antigravity (main IDE) -->
+        <div class="section tool-block" id="antigravity">
+          <h3>2 · Google Antigravity (main code editor) <span class="badge badge-required">Required</span></h3>
+          <p>
+            <strong>Antigravity</strong> is the primary editor for this workshop (vibe coding, plan mode, agents, and build weeks). It is a Google product—your cohort may need a <strong>Google account</strong> and, in some regions, access/allowlisting from the college. Read your trainer’s email in parallel with the steps below.
+          </p>
+          <p class="link-row">Product home (download and sign-in): <a href="https://antigravity.google/" target="_blank" rel="noopener">https://antigravity.google/</a></p>
           <ol class="win-steps">
-            <li>Run the downloaded installer, accept the licence, and use the default folder unless your IT policy says different.</li>
-            <li>On first open, if you see a sign-in screen, use the method your cohort agreed on (often a Google, GitHub, or Cursor sign-in; your trainer or IT admin may create accounts in advance.)</li>
-            <li>Use <strong>File → Open Folder</strong> and try opening a simple new empty folder. If a chat/assistant side panel is visible and does not show an error, you are in good shape for class.</li>
-            <li>If a corporate “SmartScreen” warning appears, click <strong>More info → Run anyway</strong> only if your team approved Cursor as software on lab PCs.</li>
+            <li>Open the link in Chrome, download the <strong>Windows</strong> installer for your PC (64-bit is typical for modern lab i5s).</li>
+            <li>Run the installer as admin if Windows asks, accept the licence, and use the default install path unless your IT policy says different.</li>
+            <li>On first open, sign in with the <strong>Google account</strong> your cohort was told to use. If you see “no access” or a waitlist, stop and ask the trainer or IT—do not share personal accounts in the classroom without policy approval.</li>
+            <li>Use <strong>File → Open folder</strong> (or the equivalent) and open a new empty test folder. Confirm the agent or chat area loads without a hard error—your trainer can name the exact check for the current term.</li>
+            <li>If Windows SmartScreen blocks the app, use <strong>More info → Run anyway</strong> only after your team has approved Antigravity for lab machines.</li>
           </ol>
         </div>
 
-        <!-- 3 — Node.js -->
+        <!-- 3 — Cursor (optional) -->
+        <div class="section tool-block" id="cursor">
+          <h3>3 · Cursor (optional second editor) <span class="badge" style="background:var(--muted)">Optional</span></h3>
+          <p>Some students or faculty like <strong>Cursor</strong> as an extra option next to Antigravity. It is <strong>not</strong> required for the default lesson path. Install it only if your cohort explicitly wants both.</p>
+          <p class="link-row">Download: <a href="https://www.cursor.com/downloads" target="_blank" rel="noopener">https://www.cursor.com/downloads</a> (pick <strong>Windows (x64)</strong> or the user installer, per that page.)</p>
+          <ol class="win-steps">
+            <li>Run the installer, accept the licence, and use the default folder unless your IT policy says different.</li>
+            <li>On first open, sign in the way your cohort agreed (Google, GitHub, or Cursor account).</li>
+            <li><strong>File → Open folder</strong> to a test folder; confirm the side panel works if you plan to use it in class.</li>
+          </ol>
+        </div>
+
+        <!-- 4 — Node.js -->
         <div class="section tool-block" id="nodejs">
-          <h3>3 · Node.js (LTS) <span class="badge badge-required">Required</span></h3>
+          <h3>4 · Node.js (LTS) <span class="badge badge-required">Required</span></h3>
           <p>Node is used in several lessons. Install the <strong>Long Term Support (LTS)</strong> line, not a preview.</p>
           <p class="link-row">Download: <a href="https://nodejs.org/en" target="_blank" rel="noopener">https://nodejs.org/en</a> — the big green button should say something like <strong>20.x LTS</strong> (version number can change; “LTS” is what you want.)</p>
           <ol class="win-steps">
@@ -428,9 +448,40 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
           </details>
         </div>
 
-        <!-- 4 — Python -->
+        <!-- 5 — n8n (after Node) -->
+        <div class="section tool-block" id="n8n">
+          <h3>5 · n8n (workflow automation) <span class="badge badge-required">Required</span></h3>
+          <p>
+            <strong>n8n</strong> is used for workflow and browser-automation lessons. It runs on <strong>Node.js</strong>—install <a href="#nodejs">section 4</a> first. The standard install for class labs is the <strong>global npm</strong> package (official path: <a href="https://docs.n8n.io/hosting/installation/npm/" target="_blank" rel="noopener">n8n docs — npm</a>).
+          </p>
+          <p class="link-row">Product site (reference, not a separate Windows <code>.exe</code>): <a href="https://n8n.io/" target="_blank" rel="noopener">n8n.io</a></p>
+          <ol class="win-steps">
+            <li>Open <strong>Command Prompt</strong> (same as for Python—press Windows, type <code>cmd</code>, press Enter).</li>
+            <li>Run: <code>node -v</code> and <code>npm -v</code> first. If either is “not found,” fix Node in section 4 before continuing.</li>
+            <li>Install n8n globally (one line, then wait for it to finish):</li>
+          </ol>
+          <pre><code>npm install -g n8n
+</code></pre>
+          <p class="muted" style="font-size:13.5px">
+            If you get a permission error, your IT may need to run the same line from an <strong>elevated</strong> Command Prompt, or set npm’s global folder to a path your user can write to—see the <a href="https://docs.n8n.io/hosting/installation/npm/" target="_blank" rel="noopener">npm install section of the n8n docs</a>.
+          </p>
+          <h4>Confirm the editor UI</h4>
+          <p>In <strong>Command Prompt</strong>, start the server (leave the window open):</p>
+          <pre><code>n8n start
+</code></pre>
+          <p>Then in <strong>Chrome</strong>, open <a href="http://localhost:5678" target="_blank" rel="noopener">http://localhost:5678</a>. You should see the n8n setup or sign-in screen. Use <strong>Ctrl + C</strong> in the Command Prompt window to stop the server when you are done testing.</p>
+          <div class="callout callout-warn">
+            <strong>Shared lab PCs:</strong> n8n stores data under the user profile by default. If every student has a <strong>different</strong> Windows login, each person may need to run <code>n8n start</code> in their own account the first time, or your IT may deploy a shared instance—your trainer will say which model the cohort uses.
+          </div>
+          <details class="it-only">
+            <summary>Optional: IT version check</summary>
+            <p>After install: <code>n8n --version</code> (or <code>n8n -v</code> depending on CLI). For automation from scripts, the same <code>npm</code> global must be on <code>PATH</code> for the account that will run class demos.</p>
+          </details>
+        </div>
+
+        <!-- 6 — Python -->
         <div class="section tool-block" id="python">
-          <h3>4 · Python 3.11+ <span class="badge badge-required">Required</span></h3>
+          <h3>6 · Python 3.11+ <span class="badge badge-required">Required</span></h3>
           <p>Python 3.11 (or a newer 3.11+ release) is used in multiple labs. The Windows “Microsoft Store” shortcut can be confusing; use the real installer from python.org unless IT gave you a different, approved build.</p>
           <p class="link-row">Download: <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">https://www.python.org/downloads/windows/</a> — choose the latest <strong>3.1x</strong> for Windows, 64-bit installer (often named “Windows installer (64-bit)” and ends in <code>.exe</code>).</p>
           <ol class="win-steps">
@@ -439,30 +490,90 @@ details.it-only summary{cursor:pointer;font-weight:600;color:var(--accent-4)}
             <li>On the <strong>optional features</strong> page, the defaults are usually enough; the trainer can tell you if “pip” or “td/tk and IDLE” are required for a specific day.</li>
             <li>At the end, the installer may show “Disable path length limit”—click it if the button is available, then close the installer when it finishes.</li>
           </ol>
+
+          <h4 id="python-packages">Course Python libraries (Hugging Face, Transformers, LangChain)</h4>
+          <p>
+            After Python works, install the packages used in early and mid-course labs: <strong>Transformers</strong> (Hugging Face models), <strong>huggingface_hub</strong> (Hugging Face Hub / sign-in and downloads from Python), and <strong>LangChain</strong> (chaining and RAG-style patterns). There is no separate “Hugging Face app” for this—use <code>pip</code> (comes with Python).
+          </p>
+          <div class="callout callout-info">
+            <strong>Time and disk:</strong> the first install may pull in <strong>PyTorch</strong> and other dependencies (often <strong>several gigabytes</strong> per machine). Run on good Wi-Fi, not the first 5 minutes of class. Close other heavy apps while it runs.
+          </div>
+          <p><strong>Who runs the commands</strong> — a lab admin or IT person is fine; the steps are the same for students on their own laptops.</p>
+          <ol class="win-steps">
+            <li>Press the <strong>Windows</strong> key, type <code>cmd</code>, and open <strong>Command Prompt</strong> (not required to “Run as administrator” unless your college policy says so).</li>
+            <li>Copy the block below, paste into the window, press <strong>Enter</strong>, and wait until the lines stop scrolling and you see a fresh prompt (can take 10–30+ minutes on slow links).</li>
+          </ol>
+          <pre><code>py -m pip install --upgrade pip
+py -m pip install transformers huggingface_hub langchain
+</code></pre>
+          <p class="muted" style="font-size:13.5px">
+            If <code>py</code> does not work, try <code>python -m pip …</code> the same way. If pip reports an error about SSL or permissions, hand the machine to IT. For reproducible classes your trainer may later share a <code>requirements.txt</code> with pinned versions; until then, this one line pulls current stable releases.
+          </p>
+          <h4>Quick “did pip work?” (optional)</h4>
+          <p>In the same <strong>Command Prompt</strong>, run:</p>
+          <pre><code>py -c "import transformers, huggingface_hub, langchain; print('ok')"</code></pre>
+          <p>If the last line is <code>ok</code>, the three stacks are on the <strong>same</strong> Python you just used. If you see <code>ModuleNotFoundError</code>, the install did not finish or a different Python is in use—get IT to align PATH or re-run the install block.</p>
+
           <details class="it-only">
             <summary>Only if a lesson still says “python not found”</summary>
             <p>In <strong>Command Prompt</strong> try <code>py -3.11 -V</code> or <code>python -V</code> after sign-out and sign-in. If the py launcher is missing, repair the same installer from the Control Panel, or re-run the installer and choose <strong>Modify</strong> → make sure <strong>py launcher</strong> and PATH are on.</p>
           </details>
         </div>
 
-        <!-- 5 — Git -->
+        <!-- 7 — Git -->
         <div class="section tool-block" id="git">
-          <h3>5 · Git for Windows <span class="badge badge-required">Required</span></h3>
+          <h3>7 · Git for Windows <span class="badge badge-required">Required</span></h3>
           <p>Git is how students copy, update, and turn in project folders. The installer is long, but the defaults on each screen are fine for a classroom: “Checkout Windows-style, commit Unix-style” is normal.</p>
           <p class="link-row">Download: <a href="https://git-scm.com/download/win" target="_blank" rel="noopener">https://git-scm.com/download/win</a> (the page will auto-suggest a 64-bit <code>Git-…-64-bit.exe</code> for most PCs).</p>
           <ol class="win-steps">
             <li>Run the installer, click <strong>Next</strong> on each screen, and <strong>accept recommended defaults</strong> unless your IT has a one-page override.</li>
-            <li>When the installer offers an editor, <strong>Use Visual Studio Code as Git’s default editor</strong> is a reasonable choice <em>if</em> you already put VS Code on; otherwise the minimal Vim-based option is still OK for command-line work only.</li>
+            <li>When the installer offers a default text editor, choose <strong>Notepad</strong> (built into Windows) or the “minimal” option—this workshop does <strong>not</strong> use VS Code. Students edit code in <strong>Antigravity</strong> (or optionally Cursor), not in Notepad, except for simple merge messages.</li>
             <li>On <strong>Adjusting your PATH</strong>, the common choice is <strong>Git from the command line and also from 3rd-party software</strong>—that keeps lessons simple.</li>
             <li>Reboot or sign out and back in if another tool still cannot find <code>git</code> after a successful install.</li>
           </ol>
-          <h4>GitHub sign-in in the browser</h4>
-          <p>Class does not use “mystical terminal login” in front of you if we can help it. Students usually sign in to <a href="https://github.com" target="_blank" rel="noopener">github.com</a> in <strong>Chrome</strong> first, then in Cursor/VS Code use the built-in “Clone from GitHub” and the browser to approve. Your trainer can demo this on Day 1 if needed.</p>
+
+          <h4 id="git-setup">Set up Git (not just the installer)—name, email, and GitHub</h4>
+          <p>
+            Install alone is <strong>not</strong> enough. Git needs a <strong>name and email on every commit</strong>, and students need a way to talk to <strong>GitHub</strong> (clone, push) without errors. Do this once <strong>per Windows user</strong> who will use the machine (or on your test “student” login before class).
+          </p>
+
+          <h4 style="margin-top:18px">1) Your name and email in Git (two short commands)</h4>
+          <p>Use the <strong>same email you use (or will use) on GitHub</strong>, and a display name the cohort can read (e.g. real name or roll number, per policy).</p>
+          <ol class="win-steps">
+            <li>Open <strong>Command Prompt</strong> (Windows key → type <code>cmd</code> → Enter).</li>
+            <li>Run the two lines below, <strong>editing the quoted parts</strong> for that user—then press Enter after each line.</li>
+          </ol>
+          <pre><code>git config --global user.name "Student or lab test name"
+git config --global user.email "name@example.com"
+</code></pre>
+          <p class="muted" style="font-size:13.5px">Replace the placeholders with a real name and a real address. College labs sometimes use a given <code>@</code> college or Gmail address—follow your trainer’s message, not a fake email.</p>
+          <p>To <strong>check</strong> what Git stored, run: <code>git config --global --list</code> and look for <code>user.name</code> and <code>user.email</code> lines.</p>
+
+          <h4>2) GitHub account in Chrome</h4>
+          <p>Each person needs a <strong>GitHub account</strong> (or a seat on an org the college provides). In <strong>Chrome</strong>, go to <a href="https://github.com" target="_blank" rel="noopener">github.com</a>, sign in, and complete any verification (email, 2FA) <strong>before</strong> the first serious Git lesson.</p>
+
+          <h4>3) How Git on Windows talks to GitHub (no passwords in the terminal)</h4>
+          <p>Modern <strong>Git for Windows</strong> usually includes <strong>Git Credential Manager</strong>. The first time you <strong>clone</strong> or <strong>push</strong> to GitHub, Windows may open a <strong>browser</strong> so you can approve access—say “Yes” or “Authorize” in Chrome when it matches your GitHub login.</p>
+          <p>If a student sees “Authentication failed” or a password prompt in a black window, <strong>do not type the GitHub password</strong> into old-style prompts. Stop, sign in in Chrome, and let the next prompt use the <strong>browser / device login</strong> flow—or ask IT to check that <strong>Git Credential Manager</strong> was not disabled by policy.</p>
+
+          <h4>4) Quick “does Git work with GitHub?” (optional on each account)</h4>
+          <p>From <strong>Command Prompt</strong>, pick a <strong>public</strong> test repo (or a trainer-provided public URL) and run—this only checks that <code>git</code> can download over HTTPS:</p>
+          <pre><code>cd %USERPROFILE%\Desktop
+git clone https://github.com/octocat/Hello-World.git git-smoke-test
+</code></pre>
+          <p>If a folder <code>git-smoke-test</code> appears with files inside, HTTPS Git is working. You can delete that folder from File Explorer when finished. (For <strong>private</strong> class repos, the first clone from Antigravity or Cursor is the real test your trainer will show.)</p>
+
+          <div class="callout callout-info">
+            <strong>Shared lab PCs:</strong> <code>git config --global</code> is stored <strong>per Windows user</strong>. If students share one login, talk to the trainer; if each student has their own login, each should run the name/email lines <strong>once</strong> on first use.
+          </div>
+
+          <h4>Git in class (IDE + browser)</h4>
+          <p>Class does not rely on memorising terminal commands. Students sign in to GitHub in <strong>Chrome</strong>, then use <strong>Antigravity</strong> (or optional Cursor) to clone, branch, and push with the in-app flow; the trainer demos the first time. The steps above are so nothing fails <strong>before</strong> that demo with “Please tell me who you are” or “Could not read from remote repository.”</p>
         </div>
 
-        <!-- 6 — Ollama -->
+        <!-- 8 — Ollama -->
         <div class="section tool-block" id="ollama">
-          <h3>6 · Ollama (local models) <span class="badge badge-required">Required</span></h3>
+          <h3>8 · Ollama (local models) <span class="badge badge-required">Required</span></h3>
           <p>Ollama runs on the PC to download and run <strong>local</strong> AI models (larger than normal apps; plan a quiet time on good Wi-Fi).</p>
           <p class="link-row">Download: <a href="https://ollama.com/download" target="_blank" rel="noopener">https://ollama.com/download</a> for Windows, then run the <code>setup.exe</code> or Microsoft Store path—follow whatever that page offers when you read it. Do this when you have a reliable connection and a few gigabytes of free space.</p>
           <ol class="win-steps">
@@ -480,26 +591,6 @@ ollama pull nomic-embed-text</code></pre>
           <div class="callout callout-warn">
             <strong>Class morning:</strong> do the first model run on a <strong>break</strong> the day before, or right after install—not when students are walking in, unless the trainer has a very small demo model in mind.
           </div>
-        </div>
-
-        <!-- 7 — VS Code -->
-        <div class="section tool-block" id="vscode">
-          <h3>7 · Visual Studio Code (optional backup) <span class="badge" style="background:var(--muted)">Optional</span></h3>
-          <p>Cursor is the main tool. Some faculty keep <strong>VS Code</strong> on the same PC as a lightweight backup, or to match a college that already standardised on it.</p>
-          <p class="link-row">Download: <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">https://code.visualstudio.com/</a> — “Windows” user or system installer per your policy.</p>
-          <ol class="win-steps">
-            <li>Run the installer, and prefer <strong>system install / all users</strong> for shared rooms if that choice appears.</li>
-            <li>Optional: on the “Select additional tasks” page, a desktop icon can help if students look for a blue “VS” logo.</li>
-            <li>First launch, skip heavy theme/setup wizards; you can always tune later. Do not need to “sync settings” in the lab unless the college uses that.</li>
-          </ol>
-        </div>
-
-        <!-- 8 — Docker -->
-        <div class="section tool-block" id="docker">
-          <h3>8 · Docker Desktop (only if the cohort uses containers) <span class="badge" style="background:var(--muted)">Optional</span></h3>
-          <p>Some advanced lessons use <strong>containers</strong> (isolated “mini-machines” for software). That is the only time you need Docker. If the cohort schedule has no container week, you can <strong>skip this entirely</strong>.</p>
-          <p class="link-row">Start here, then follow the current Windows guide linked from that page: <a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">Docker Desktop</a> and <a href="https://docs.docker.com/desktop/install/windows-install/" target="_blank" rel="noopener">Windows install (official docs)</a> — requirements change; your IT team should use this official path.</p>
-          <p><strong>Most colleges:</strong> a network admin or IT desk installs WSL2 or Hyper-V and Docker, because a normal download may fail on locked systems. This block is a pointer, not a promise that a single .exe is enough in every school.</p>
         </div>
 
         <p class="muted" style="font-size:14px">
@@ -525,28 +616,30 @@ ollama pull nomic-embed-text</code></pre>
         <h3>Quick list (tick mentally or print the page with Ctrl + P)</h3>
         <ul class="checklist">
           <li><input type="checkbox" id="v0" /><label for="v0"><strong>Chrome</strong> — open Chrome; the ⋮ menu → <strong>Help</strong> → <strong>About</strong> shows a current year build and updates itself if needed.</label></li>
-          <li><input type="checkbox" id="v1" /><label for="v1"><strong>Cursor</strong> — start Cursor; sign in per cohort instructions; <strong>File → Open folder</strong> to an empty test folder. Side panel (chat) visible without an error banner.</label></li>
+          <li><input type="checkbox" id="v1" /><label for="v1"><strong>Antigravity</strong> — start from the Start menu; sign in with the approved Google account; <strong>File → Open folder</strong> to an empty test folder. Main workspace and agent/chat area load without a blocking error (trainer names the “good enough” test).</label></li>
+          <li><input type="checkbox" id="v1b" /><label for="v1b"><strong>Cursor</strong> (if you installed it) — start Cursor; <strong>File → Open folder</strong>; side panel works. Skip this row if you skipped Cursor on purpose.</label></li>
           <li><input type="checkbox" id="v2" /><label for="v2"><strong>Node + npm (optional UI)</strong> — in Start, if you have <strong>“Node.js command prompt”</strong> or a similar item, that usually means the install took. If you only see the runtime with no check, a trainer/IT can run a one-line class exercise as the real test.</label></li>
-          <li><input type="checkbox" id="v3" /><label for="v3"><strong>Python</strong> — in Start, type <strong>Python 3.1x</strong> (or similar); the store-style stub should <em>not</em> be the only thing—<code>python.org</code> should have installed a real <strong>IDLE / Python 3.1x (64-bit)</strong> you can start once.</label></li>
-          <li><input type="checkbox" id="v4" /><label for="v4"><strong>Git</strong> — in Start, type <strong>Git</strong>—you should at least see <strong>Git GUI</strong> or <strong>Git Bash</strong> if a student ever needs a manual push from the helpdesk. Most class flows use the GitHub + Cursor flow instead of typing git.</label></li>
+          <li><input type="checkbox" id="v2n" /><label for="v2n"><strong>n8n</strong> — per <a href="#n8n">section 3</a>: <code>npm install -g n8n</code> finished, then <code>n8n start</code> and <strong>Chrome</strong> on <a href="http://localhost:5678" target="_blank" rel="noopener">localhost:5678</a> shows the n8n UI. Stop the server with Ctrl+C in the command window when the test is done.</label></li>
+          <li><input type="checkbox" id="v3" /><label for="v3"><strong>Python + course libraries</strong> — <strong>IDLE / Python 3.1x</strong> in Start, and the small import test at <a href="#python-packages">Python → “did pip work?”</a> prints <code>ok</code> (or the trainer’s equivalent smoke test passed).</label></li>
+          <li><input type="checkbox" id="v4" /><label for="v4"><strong>Git + setup</strong> — <a href="#git">Git for Windows</a> in Start plus <a href="#git-setup">name / email and GitHub</a>: <code>git config</code> shows a sensible <code>user.name</code> and <code>user.email</code> for the test user, GitHub opens in Chrome, and an optional <code>git clone</code> of a <strong>public</strong> repo works (or the trainer’s private-repo check is planned for day one).</label></li>
           <li><input type="checkbox" id="v5" /><label for="v5"><strong>Ollama</strong> — Ollama in the Start menu; tray/notification icon is OK. Run <strong>one</strong> simple question in whatever UI your trainer used in rehearsal (or ask IT to run the couple of lines in section 3’s Ollama box). The model your cohort uses must finish once before class, not in front of students for the first time.</label></li>
           <li><input type="checkbox" id="v6" /><label for="v6"><strong>Workshop in Chrome</strong> — the cohort URL and login: dashboard loads, no blank white screen, no “blocked by your organisation” unless IT is already fixing it.</label></li>
         </ul>
-
-        <h3>VS Code and Docker (only if you installed them)</h3>
-        <p>If you put <strong>VS Code</strong> on the machine, open it once, skip account sync until policy allows, and know where the blue “VS” icon is. If <strong>Docker</strong> is required for a later week, open <strong>Docker Desktop</strong> and wait until it is “green”/running, then the trainer/IT can run a hello-world. Otherwise skip both.</p>
 
         <details class="it-only">
           <summary>Optional: exact <code>--version</code> style checks (for IT)</summary>
           <p>Open <strong>Command Prompt</strong> and run, one at a time—compare approximations with your release plan (LTS for Node, Python 3.11+ for python, Ollama current release from the install):</p>
           <pre><code>node -v
+n8n --version
 py -3.11 -V
+py -m pip show transformers huggingface_hub langchain
 where git
+git config --global --get user.name
+git config --global --get user.email
 ollama -v
 ollama list
-docker -v
 </code></pre>
-          <p>On Windows, prefer <code>py -3.11 -V</code> if <code>python -V</code> is ambiguous. Chrome and Cursor are already confirmed via the normal UI.</p>
+          <p>On Windows, prefer <code>py -3.11 -V</code> if <code>python -V</code> is ambiguous. The <code>pip show</code> line should list version lines for all three packages. The two <code>git config --get</code> lines should print the lab user’s name and email (if empty, they skipped <a href="#git-setup">Git setup</a>). Chrome and Antigravity are already confirmed via the normal UI.</p>
         </details>
       </section>
 
@@ -563,7 +656,7 @@ docker -v
 
         <ul>
           <li><strong>Windows build</strong> — <strong>Start → Settings → System → About</strong> and note the edition and version (for example, Windows 11, 23H2) or a photo of that screen</li>
-          <li><strong>Which part failed</strong> — e.g. “Ollama — no tray icon after reboot” or “Cursor — sign-in loop”</li>
+          <li><strong>Which part failed</strong> — e.g. “Ollama — no tray icon after reboot” or “Antigravity — sign-in / access” or “optional Cursor won’t start”</li>
           <li><strong>Words on the error</strong> — full-screen snip, or the exact message text</li>
           <li><strong>Only for IT / optional:</strong> if a command from the grey “IT only” box was used, a screenshot of that <strong>Command Prompt</strong> window</li>
         </ul>
@@ -621,7 +714,7 @@ docker -v
             </li>
             <li>
               <input type="checkbox" id="chk6" />
-              <label for="chk6"><strong>Backup laptop charged</strong> — at least 80% battery, Cursor and Chrome open and ready</label>
+              <label for="chk6"><strong>Backup laptop charged</strong> — at least 80% battery, <strong>Antigravity</strong> and Chrome open and ready (optional Cursor if you use it)</label>
             </li>
             <li>
               <input type="checkbox" id="chk7" />

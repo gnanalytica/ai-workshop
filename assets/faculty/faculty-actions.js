@@ -29,14 +29,14 @@ export function renderFacultyActionStrip({ state, container }) {
       s: 'Team and student capstone view.',
     },
     { href: 'board.html', t: 'Community board', s: 'Post with tag <code>setup</code> for lab issues.' },
-    { href: 'faculty-guide.html', t: 'Handbook (full)', s: 'Triage, contacts, and checklists.' },
-    { href: 'setup-guide.html', t: 'Setup playbook', s: 'Public install steps for lab machines.' },
+    { href: '#faculty-handbook', t: 'Program handbook', s: 'Embedded below—triage, contacts, checklist.' },
+    { href: '#lab-setup', t: 'Lab setup guide', s: 'Embedded below—public install steps.' },
   ];
 
   container.innerHTML = `
   <div class="fac-action-strip" style="margin:0 0 18px">
     <div class="kicker" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Cohort</div>
-    <p class="muted" style="font-size:13px;margin:0 0 12px;line-height:1.5">You’re in <strong>${esc(cname)}</strong>. Full admin and grading tools stay on the admin app — use these shortcuts for the work you do in the room.</p>
+    <p class="muted" style="font-size:13px;margin:0 0 12px;line-height:1.5">Cohort: <strong>${esc(cname)}</strong>. Grading and full admin live on the admin app; use these for triage, schedule, and in-room reference.</p>
     <div class="fac-action-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
       ${cards
         .map(
