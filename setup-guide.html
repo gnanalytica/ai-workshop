@@ -252,8 +252,11 @@ pre code{background:none;border:none;padding:0;font-size:inherit}
         <div class="toc-title">On this page</div>
         <ul>
           <li><a href="#before-you-start">Before you start</a></li>
+          <li><a href="#one-time-full-setup">One-time full setup</a></li>
           <li><a href="#system-requirements">System requirements</a></li>
+          <li><a href="#accounts-preflight">Accounts &amp; API keys</a></li>
           <li><a href="#install-playbook">Install playbook</a></li>
+          <li><a href="#cursor" class="sub">Cursor</a></li>
           <li><a href="#chrome" class="sub">Chrome</a></li>
           <li><a href="#vscode" class="sub">VS Code</a></li>
           <li><a href="#nodejs" class="sub">Node.js LTS</a></li>
@@ -300,6 +303,7 @@ pre code{background:none;border:none;padding:0;font-size:inherit}
           <li><strong>Admin rights</strong> on each lab machine (local admin or domain admin)</li>
           <li><strong>Internet access</strong> from each lab machine — see the allowlist in
             <a href="#system-requirements">System requirements</a></li>
+          <li><strong>Cursor access</strong> for all faculty/student machines (primary IDE in this workshop)</li>
           <li><strong>~30 min per machine</strong> for downloads + installs (faster on campus gigabit)</li>
           <li>A USB drive or shared network folder with the installers pre-downloaded
             saves time if campus bandwidth is slow</li>
@@ -323,6 +327,51 @@ pre code{background:none;border:none;padding:0;font-size:inherit}
           <strong>Ollama models are large (1–4 GB each).</strong> Pull them overnight on lab
           Wi-Fi or wired ethernet — not on the morning of Day 1 in front of students.
         </div>
+      </section>
+
+      <section class="section" id="one-time-full-setup">
+        <h2>1A. One-time full setup (install everything upfront)</h2>
+        <p>
+          If you want everything ready at the beginning, complete this once before the cohort starts.
+          This front-loads tools, accounts, keys, and verification so sessions stay focused on teaching.
+        </p>
+        <h3>Bootstrap quick-start commands</h3>
+        <p class="muted" style="font-size:13.5px">
+          Run these once per machine to validate core tools quickly. If a command fails, use the detailed install section below.
+        </p>
+        <h4>macOS / Linux</h4>
+        <pre><code>chrome --version || echo "Install Chrome"
+cursor --version || echo "Install Cursor"
+node --version || echo "Install Node.js LTS"
+python3 --version || echo "Install Python 3.11+"
+git --version || echo "Install Git"
+ollama --version || echo "Install Ollama"
+ollama list || echo "Pull required models"</code></pre>
+        <h4>Windows (PowerShell)</h4>
+        <pre><code>chrome --version; if ($LASTEXITCODE -ne 0) { echo "Install Chrome" }
+cursor --version; if ($LASTEXITCODE -ne 0) { echo "Install Cursor" }
+node --version; if ($LASTEXITCODE -ne 0) { echo "Install Node.js LTS" }
+python --version; if ($LASTEXITCODE -ne 0) { echo "Install Python 3.11+" }
+git --version; if ($LASTEXITCODE -ne 0) { echo "Install Git" }
+ollama --version; if ($LASTEXITCODE -ne 0) { echo "Install Ollama" }
+ollama list</code></pre>
+        <div class="callout callout-ok">
+          <strong>Recommended:</strong> finish this checklist before Day 1.
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="full1" /><label for="full1">Install and verify <strong>Cursor</strong> (primary IDE)</label></li>
+          <li><input type="checkbox" id="full2" /><label for="full2">Install and verify <strong>Chrome</strong></label></li>
+          <li><input type="checkbox" id="full3" /><label for="full3">Install and verify <strong>Node.js LTS</strong> + npm</label></li>
+          <li><input type="checkbox" id="full4" /><label for="full4">Install and verify <strong>Python 3.11+</strong> + venv</label></li>
+          <li><input type="checkbox" id="full5" /><label for="full5">Install and verify <strong>Git</strong> + GitHub auth</label></li>
+          <li><input type="checkbox" id="full6" /><label for="full6">Install and verify <strong>Ollama</strong> + required model pulls</label></li>
+          <li><input type="checkbox" id="full7" /><label for="full7">Install <strong>VS Code</strong> as backup (optional)</label></li>
+          <li><input type="checkbox" id="full8" /><label for="full8">Install <strong>Docker</strong> only if your cohort includes container labs</label></li>
+          <li><input type="checkbox" id="full9" /><label for="full9">Create all workshop accounts in section 2A</label></li>
+          <li><input type="checkbox" id="full10" /><label for="full10">Set and verify <code>GEMINI_API_KEY</code> and <code>GROQ_API_KEY</code></label></li>
+          <li><input type="checkbox" id="full11" /><label for="full11">Run full verification checklist in section 4 and fix all failures</label></li>
+          <li><input type="checkbox" id="full12" /><label for="full12">Do one dry-run: open Cursor, run sample repo, run one local model query, open dashboard</label></li>
+        </ul>
       </section>
 
       <!-- ════════════════════════════════════════
@@ -379,6 +428,30 @@ registry.ollama.ai     # Ollama model registry (pull models from here)
 github.com             # code repos, pip packages from git
 pypi.org               # Python packages (pip install)
 registry.npmjs.org     # npm packages (node modules)</code></pre>
+
+        <section class="section" id="accounts-preflight">
+          <h3>Account &amp; API key preflight (before Day 16)</h3>
+          <p>
+            Most delivery delays are account/auth issues, not installs. Complete these once per faculty account
+            (and student cohort where relevant) before advanced days begin.
+          </p>
+          <ul>
+            <li><strong>Required accounts:</strong> GitHub, Google account, Groq, Google AI Studio, HuggingFace, Vercel, Supabase, n8n.cloud.</li>
+            <li><strong>Recommended accounts:</strong> Langfuse, Neon, LM Arena, Artificial Analysis, NotebookLM.</li>
+            <li><strong>API keys ready:</strong> <code>GEMINI_API_KEY</code> (required), <code>GROQ_API_KEY</code> (required for some labs), Langfuse keys (optional).</li>
+          </ul>
+          <h4>Quick key check (Terminal)</h4>
+          <pre><code># macOS/Linux
+echo "$GEMINI_API_KEY" | wc -c
+echo "$GROQ_API_KEY" | wc -c
+
+# Windows PowerShell
+$env:GEMINI_API_KEY.Length
+$env:GROQ_API_KEY.Length</code></pre>
+          <div class="callout callout-warn">
+            If keys are empty or accounts cannot sign in, fix this before Day 16+ sessions. Agent, RAG, and deployment labs depend on these.
+          </div>
+        </section>
       </section>
 
       <!-- ════════════════════════════════════════
@@ -391,6 +464,21 @@ registry.npmjs.org     # npm packages (node modules)</code></pre>
           Windows, macOS, and Linux instructions.
           All radio-button tabs work without JavaScript.
         </p>
+
+        <!-- ──────────────────────────────────
+             CURSOR
+        ────────────────────────────────── -->
+        <div class="section" id="cursor">
+          <h3>Cursor <span class="badge badge-required">Required</span></h3>
+          <p>
+            Cursor is the primary IDE for this workshop. Verify it opens, signs in, and can access the cohort workspace.
+            Keep VS Code as a backup IDE only.
+          </p>
+          <div class="callout callout-info">
+            Download Cursor from <a href="https://www.cursor.com/downloads" target="_blank">cursor.com/downloads</a>.
+            After install, open a sample repository and confirm chat/composer works.
+          </div>
+        </div>
 
         <!-- ──────────────────────────────────
              CHROME
@@ -517,9 +605,9 @@ sudo apt install ./google-chrome.deb -y</code></pre>
              VS CODE
         ────────────────────────────────── -->
         <div class="section" id="vscode">
-          <h3>Visual Studio Code <span class="badge badge-required">Required</span></h3>
+          <h3>Visual Studio Code <span class="badge badge-optional">Backup (optional)</span></h3>
           <p>
-            The primary IDE for the workshop. Install these extensions after VS Code itself:
+            Backup IDE only (use if Cursor is unavailable). Install these extensions after VS Code itself:
             <strong>Python</strong>, <strong>Pylance</strong>, <strong>Jupyter</strong>,
             <strong>Continue.dev</strong>, and <strong>Claude for VS Code</strong> (if available for your cohort).
           </p>
@@ -1327,6 +1415,10 @@ docker run --rm hello-world</code></pre>
 
         <div class="version-grid">
           <div class="version-card">
+            <div class="cmd">Open Cursor + sign in</div>
+            <div class="expected">→ Workspace opens and chat works</div>
+          </div>
+          <div class="version-card">
             <div class="cmd">chrome --version</div>
             <div class="expected">→ Google Chrome 120+</div>
           </div>
@@ -1437,7 +1529,7 @@ docker run --rm hello-world</code></pre>
             </li>
             <li>
               <input type="checkbox" id="chk6" />
-              <label for="chk6"><strong>Backup laptop charged</strong> — at least 80% battery, VS Code and Chrome open and ready</label>
+              <label for="chk6"><strong>Backup laptop charged</strong> — at least 80% battery, Cursor and Chrome open and ready</label>
             </li>
             <li>
               <input type="checkbox" id="chk7" />
