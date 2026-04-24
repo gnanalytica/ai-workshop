@@ -1,272 +1,139 @@
 ---
-reading_time: 16 min
-tldr: "An LLM is extremely well-read autocomplete. Tokens, weights, attention — the three words that save you hours of confusion."
-tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/zjkBMFhNj_g
-lab: {"title": "Tokenize everything: see how the model actually reads", "url": "https://tiktokenizer.vercel.app/"}
-prompt_of_the_day: "Explain {{concept}} as if I'm a 2nd-year engineering student who's used ChatGPT but never looked under the hood. Use one analogy from hostel life."
-tools_hands_on: [{"name": "Tiktokenizer", "url": "https://tiktokenizer.vercel.app/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}, {"name": "Claude", "url": "https://claude.ai/"}]
-tools_demo: [{"name": "3Blue1Brown Neural Networks", "url": "https://www.3blue1brown.com/topics/neural-networks"}, {"name": "Attention visualizer (bbycroft)", "url": "https://bbycroft.net/llm"}]
-tools_reference: [{"name": "Karpathy — Intro to LLMs (1h)", "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g"}, {"name": "Jay Alammar — Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/"}]
-resources: [{"title": "Attention is All You Need (the paper)", "url": "https://arxiv.org/abs/1706.03762"}]
+day: 2
+date: "2026-05-04"
+weekday: "Monday"
+week: 1
+topic: "Inside an LLM: tokens, weights, attention, memory"
+faculty:
+  main: "Sanjana"
+  support: "Raunak"
+reading_time: "12 min"
+tldr: "Open the box. Words become tokens, tokens become numbers, numbers slide through weights, attention decides which tokens stare at which. By end of class you'll tokenize your own name and explain why 'bank' isn't always 'bank'."
+tags: ["foundations", "internals", "tokens"]
+software: ["Python", "transformers", "tokenizers"]
+online_tools: ["Token Visualizer", "TikTokenizer"]
+video: "https://www.youtube.com/embed/wjZofJX0v4M"
+prompt_of_the_day: "Explain to a JEE-prep student in 5 lines why an LLM treats 'Bengaluru' as multiple tokens but 'the' as one — using the analogy of a Hindi-English code-switched WhatsApp message."
+tools_hands_on:
+  - { name: "TikTokenizer", url: "https://tiktokenizer.vercel.app/" }
+  - { name: "OpenAI Tokenizer", url: "https://platform.openai.com/tokenizer" }
+  - { name: "Hugging Face Tokenizer Playground", url: "https://huggingface.co/spaces/Xenova/the-tokenizer-playground" }
+tools_reference:
+  - { name: "3Blue1Brown — But what is a GPT?", url: "https://www.youtube.com/watch?v=wjZofJX0v4M" }
+  - { name: "Jay Alammar — Illustrated Transformer", url: "https://jalammar.github.io/illustrated-transformer/" }
+resources:
+  - { title: "Karpathy — Let's build the GPT tokenizer", url: "https://www.youtube.com/watch?v=zduSFxRajkE" }
+  - { title: "Hugging Face — Transformers Quickstart", url: "https://huggingface.co/docs/transformers/quicktour" }
+lab: { title: "Tokenize your own life", url: "https://tiktokenizer.vercel.app/" }
 objective:
-  topic: "Inside an LLM: tokens, weights, attention"
-  tools: ["Tiktokenizer", "ChatGPT", "Claude"]
-  end_goal: "Walk away able to explain tokens, weights, and attention in your own words, with a tokenizer notebook of 5–10 strings that made you rethink how the model actually reads."
+  topic: "Inside an LLM: tokens, weights, attention, memory"
+  tools: ["TikTokenizer", "transformers", "Hugging Face"]
+  end_goal: "A one-page note explaining tokens → embeddings → attention → output, anchored in your own name, your hostel address, and one Hinglish sentence."
 ---
+
+Yesterday you used four chatbots. Today you crack one open. The goal isn't to build a transformer from scratch — it's to lose the magic. Once you see *tokens*, the rest of the course makes sense.
 
 ## 🎯 Today's objective
 
-**Topic.** Inside an LLM: tokens, weights, attention
+**Topic.** Inside an LLM: tokens, weights, attention, memory.
 
-**Tools you'll use.** Tiktokenizer (web, no install) as the playground. ChatGPT and Claude as the reference chatbots to compare behaviour against.
+**By end of class you will have:**
+1. Tokenized your full name, your college email, and one Hinglish sentence in three different tokenizers.
+2. Explained — in your own words — why `"chai"` is one token but `"masaledar"` is three.
+3. A working mental model of how attention picks out *which* word matters in *"Ravi paid Ramesh on UPI"*.
 
-**End goal.** By the end of today you will have:
-1. A tokenizer notebook with 5–10 strings, their token counts, and one surprise each.
-2. A 150-word reflection titled *"Three things that surprised me about how LLMs see text."*
-3. A working mental model of the **tokenise → weigh → attend → predict → repeat** loop — enough to stop nodding politely when someone says "context window."
+> *Why this matters.* Every cost, latency, hallucination, and context-window limit you'll hit in Week 3 traces back to tokens. Get this floor right.
 
-> *Why this matters:* once you internalize these three words, every later topic (hallucination, pricing, context windows, fine-tuning) becomes a small adjustment to the same loop instead of a new mystery.
+## ⏪ Pre-class · ~25 min
 
----
+### Setup (required)
 
-### 🌍 Real-life anchor
+- [ ] Confirm **Python 3.10+** runs on your laptop (`python --version`).
+- [ ] `pip install transformers tokenizers` in a fresh virtualenv.
+- [ ] Open https://tiktokenizer.vercel.app/ and bookmark.
 
-**The picture.** Phone autocomplete guesses the *next* word from what you already typed; you only notice when it is wrong. Reading a long WhatsApp fight, you mentally "look back" at the sentence that started the drama — some words get more weight than others.
+### Primer (~10 min)
 
-**Why it matches today.** **Tokens** are the pieces the model reads; **attention** is which earlier pieces it leans on for the next guess; **weights** are the habits it learned from training — like autocomplete, but trained on the whole internet.
-
-## ⏪ Pre-class · ~20 min
-
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday you met AI in your daily life — Netflix recs, Maps ETAs, UPI fraud, WhatsApp auto-translation — and ran the same placement-mentor prompt through ChatGPT, Claude, and Gemini to feel three distinct personalities. You also separated *chatbot* (the app) from *LLM* (the brain). Today we open the box and explain *why* those three chatbots gave different answers to the same prompt. Keep your Day 1 "three brains" Google Doc handy — we reference it in class.
-
-### Setup (if needed)
-
-- [ ] No install. Just open https://tiktokenizer.vercel.app/ once to confirm it loads. That's our whole lab environment.
-
-### Primer (~5 min)
-
-- **Read**: Skim the glossary below. That's it.
-- **Watch** (optional, 3 min): clip from Karpathy's "Intro to LLMs" where he explains tokens with a slider — https://www.youtube.com/watch?v=zjkBMFhNj_g (you'll come back for the full hour later).
+- **Watch:** 3Blue1Brown's "But what is a GPT?" first 8 minutes — https://www.youtube.com/watch?v=wjZofJX0v4M
+- **Skim:** Jay Alammar's *Illustrated Transformer* — just the diagrams.
 
 ### Bring to class
 
-- [ ] Your Day 1 "three brains" Google Doc — we'll reference it.
-- [ ] 3 random strings to tokenize: your full name, one emoji you use often, one Hindi/regional word. We'll throw them into the tokenizer together.
+- [ ] One sentence in **English**, one in **your mother tongue**, one in **Hinglish**.
+- [ ] A guess: how many tokens is *"Bengaluru Metropolitan Transport Corporation"*?
 
-> 🧠 **Quick glossary for today**
-> - **Token** = a chunk of text the model reads (roughly ¾ of a word).
-> - **Weights** = the billions of numbers inside the model — the "brain" trained on the internet.
-> - **Attention** = how the model picks which parts of your prompt matter for the next word.
-> - **Context window** = how many tokens the model can see at once.
-> - **Temperature** = a dial that controls how random the output is (0 = safe, 1 = creative).
+> 🧠 **Quick glossary.** **Token** = sub-word chunk the model actually sees. **Embedding** = token turned into a vector of numbers. **Attention** = mechanism that weighs which tokens matter for each prediction. **Weights** = the trillions of numbers learned during training. **Context window** = how many tokens fit in one chat.
 
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap Day 1 + hook | 5 min | "AI is autocomplete" — now let's see autocomplete from the inside |
-| Mini-lecture | 20 min | Stack (AI→ML→DL→LLMs→Agents), tokens/weights/attention, temperature |
-| Live lab | 20 min | Tokenize wild strings in Tiktokenizer; watch surprises live |
-| Q&A + discussion | 15 min | What finally clicked? What's still murky? |
+| Recap + tokenizer demo | 10 min | Tokenize "Swiggy delivered my biryani" live |
+| Mini-lecture: tokens → embeddings | 15 min | Why numbers, not letters |
+| Mini-lecture: attention in plain English | 15 min | "Ravi paid Ramesh" — who paid? |
+| Live lab: 3 tokenizers, 3 sentences | 15 min | English vs Tamil vs Hinglish |
+| Discussion + Q&A | 5 min | |
 
-### In-class checkpoints
+### The four moving parts
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Cold-open guess**: instructor types "I'm cooked" into Tiktokenizer. Class guesses how many tokens before the reveal. (It's 4.)
-- **Think-pair-share**: in 90 seconds, try to explain "tokens" to your neighbour without using the word "word". Hardest 90 seconds of the day.
-- **Live tokenizer poll**: everyone types their full name, their hostel mess's name, and one Hindi/regional word into Tiktokenizer. Share the most surprising token counts in chat.
-- **Temperature demo**: instructor runs the same prompt at temperature 0, 0.5, 1, 1.5 — class predicts which one will go off the rails first.
-- **One-line close**: "The thing that finally clicked today was ___."
+1. **Tokens.** GPT-4 sees ~100k unique tokens. English words are usually 1 token, Indian-language words split into 3–8.
+2. **Embeddings.** Each token becomes a 1,500-dim vector. Words with similar meanings sit close (`king ≈ queen + male`).
+3. **Attention.** For each token, the model asks "which earlier tokens should I look at most?" — that's how it knows *paid* connects to *Ravi*, not *Ramesh*.
+4. **Weights & memory.** Weights are frozen after training. Memory inside one chat is just the visible context window — there is no hidden notebook.
 
-### Read: The stack — from "AI" to the chatbot on your phone
+## 🧪 Lab: Tokenize your own life
 
-Everybody says "AI" and means five different things. Let's fix that once and for all.
+1. Open **TikTokenizer** (GPT-4 model) in one tab and **HF Tokenizer Playground** (BERT) in another.
+2. Paste these three lines and screenshot the token counts for each:
+   - `"My name is <your full name> and I study at <your college>."`
+   - One sentence in your mother tongue.
+   - `"Bhai aaj mess mein paneer tha but cold tha yaar."`
+3. Run this Python snippet and paste the output to your Doc:
+   ```python
+   from transformers import AutoTokenizer
+   tok = AutoTokenizer.from_pretrained("gpt2")
+   print(tok.tokenize("Bengaluru Metropolitan Transport Corporation"))
+   ```
+4. Compare token counts across the three tools. Note where Indic scripts blow up.
+5. Write **3 sentences** explaining: *why does my mother-tongue sentence cost 4× more tokens than the English one?*
 
-```
-AI  (big umbrella: anything that mimics thinking)
- └── Machine Learning  (programs that learn from examples, not rules)
-      └── Deep Learning  (ML using big neural networks)
-           └── LLMs  (deep nets trained on text — ChatGPT, Claude, Gemini)
-                └── Agents  (LLMs that take actions: search, click, code)
-```
+**Artifact.** One Google Doc with 3 screenshots + token counts + your 3-sentence answer. Drop the link in the cohort channel.
 
-Think of it like your college:
-- **AI** is the university.
-- **ML** is the engineering department.
-- **Deep Learning** is the CSE branch.
-- **LLMs** are the AI/ML specialisation.
-- **Agents** are the final-year students who actually *do* projects.
+## 📊 Live poll
 
-Each inner circle is more specific, more powerful, and newer. For the rest of this week we're zooming in on LLMs — the machine behind ChatGPT, Claude, Gemini, and every other chatbot you'll use.
+**Which costs more tokens to send to GPT-4?** (a) 100 words English (b) 100 words Hindi in Devanagari (c) 100 words Hinglish in Roman script (d) Same, tokens are tokens.
 
-### Read: Tokens, weights, attention — the three words that save you hours
+## 💬 Discuss
 
-Don't memorise. Just meet them. You'll see them everywhere for the next 29 days.
+- If Hindi costs 4× more tokens, what does that mean for an Indian startup's API bill?
+- Why do you think emoji are sometimes 1 token, sometimes 4?
+- Where would a smarter Indic tokenizer change which products are buildable in India?
 
-#### Tokens
+## ❓ Quiz
 
-A **token** is a chunk of text the model reads. Not a letter. Not exactly a word. Roughly 3–4 characters — about ¾ of an English word on average.
+Short quiz on tokens vs words, what attention does, and where memory lives. Open it from your dashboard when your instructor unlocks it.
 
-Examples (we'll check these live):
+## 📝 Assignment · Tokens in your stack
 
-- `"Hello"` → 1 token
-- `"Bengaluru"` → 3 tokens
-- `"LOL"` → 1 token
-- `"I'm cooked"` → 4 tokens
-- `"Kadak"` → 2 tokens (the model hasn't seen it enough)
-- Full resume ≈ 1,100 tokens
-- A WhatsApp group rant from last Sunday ≈ 4,000 tokens
+**Brief.** Pick **one app you use daily** (Swiggy, Flipkart, ICICI iMobile, Instagram). Imagine its support chatbot runs on GPT-4. In **200 words**: (a) one user message in your mother tongue, (b) the token count from TikTokenizer, (c) one design decision the team must make because of that cost. Be specific — not "they should optimize."
 
-**Why you care**:
-1. You pay per token (API pricing is always per 1K or per 1M tokens).
-2. Long prompts are slow (more tokens = more time).
-3. The **context window** is measured in tokens — exceed it, the model forgets the start of your prompt.
+**Submit.** Paste on dashboard before next class.
 
-#### Weights
+**Rubric.** Specificity (4) · Cost reasoning (4) · Token evidence (2).
 
-The **weights** are the numbers inside the model. Billions of them. Trained for months on trillions of tokens (basically the public internet + books + code).
+## 🔁 Prep for next class
 
-Think of them as a giant mixing board with 175 billion knobs (GPT-3 had about 175B; modern models have 1T+). During training, those knobs got nudged until the model got really, really good at one task: **predict the next token**. That's it. That's the whole show.
+Day 3 is the **CREATE prompting framework** — few-shot, chain-of-thought, structured output. The day you stop *asking* and start *directing* AI.
 
-After training, the weights are **frozen**. The model doesn't learn from your chat. Every new conversation starts with exactly the same brain.
+- [ ] Save 3 of your worst recent prompts (the ones that got mid answers) in a Doc.
+- [ ] Read the OpenAI prompt engineering guide intro — https://platform.openai.com/docs/guides/prompt-engineering
+- [ ] Sign up for **OpenAI Playground** and **Google AI Studio**.
 
-#### Attention
+## 📚 References
 
-The killer move inside transformers. When the model is about to predict the next token, **attention** is how it decides *which earlier tokens matter most*.
-
-Think of reading this paragraph: when you hit the word "it" at the end, you automatically reach back to find what "it" refers to. Attention does that math explicitly — for every new token, it computes a weighted score across all previous tokens and focuses on the relevant ones.
-
-That's why LLMs can handle "In the mess menu I shared earlier, which item has paneer?" — attention scrolls back to the mess menu part of your message and mostly ignores your rant about Wi-Fi.
-
-#### The one-line summary
-
-> **tokenise → weigh → attend → predict → repeat.**
-
-That's the whole loop. Every chatbot you've ever used does exactly this, one token at a time, hundreds of times per response.
-
-### Read: Why the same prompt gives different answers
-
-Two reasons:
-
-**1. Temperature.** A dial the developer sets between 0 and ~1.5. At temperature 0 the model always picks the single most likely next token. Boring but consistent — good for code, structured output, classification. At temperature 0.7 (the default for most chatbots) the model samples from the top few likely tokens with some randomness. At temperature 1.5+ it gets weird, sometimes gloriously, sometimes disastrously.
-
-**2. Different weights.** ChatGPT, Claude, and Gemini read *roughly the same internet* during training, but they were trained differently — different data mixes, different reinforcement from humans, different system prompts. Three toppers, same syllabus, different essays.
-
-That's why yesterday's "three brains" lab gave you three different answers to the same prompt. Same input, three different weight sets, three different personalities.
-
-### Watch: Karpathy — "Intro to LLMs" (first 30 min today, rest this week)
-
-Andrej Karpathy co-founded OpenAI and led AI at Tesla. This is still the clearest single intro on the internet. Watch the first 30 minutes in class; finish the rest this week.
-
-https://www.youtube.com/embed/zjkBMFhNj_g
-
-Watch for:
-- The "two files" analogy (weights + run-code) — clicks the whole stack
-- Why training costs millions of dollars but running is cheap
-- The "dream" explanation of hallucination
-
-### Lab: Tokenize everything (30 min)
-
-Today's lab is web-only. No installs. Budget 30 min, optionally in pairs — one drives, one predicts before each reveal.
-
-> ⚠️ **If you get stuck**
-> - *Tiktokenizer shows `?` for Indic characters* — that's a font fallback, not the tokenizer. The count is still correct; copy the paragraph into Google Docs to verify the script renders.
-> - *Dropdown doesn't have your model* — use `gpt-4o` as the default; tokenization is very similar across GPT-4-class models.
-> - *Your full name tokenizes weirdly (e.g., 7 tokens)* — that's the model having never seen you before. Celebrate briefly.
-
-1. Open **Tiktokenizer** — https://tiktokenizer.vercel.app/
-2. In the model dropdown, pick `gpt-4o` (or `cl100k_base` — same family).
-3. Type your full name. How many tokens? Screenshot it.
-4. Type an emoji you use often (🔥 or 😂). 1 token? 2? 3? Note it.
-5. Type one Hindi / Tamil / Bengali word in its native script. Compare vs its English spelling.
-6. Type `"The mess food was kadak today yaar"`. Count tokens. Hypothesise why.
-7. Paste in a 500-word paragraph from your college syllabus. Note the total.
-8. Now switch the model dropdown to `Llama 3`. Tokenize the same paragraph. Why is the count different?
-9. Final step — paste *"Roses are red, violets are"* and stop there. Read about `token-by-token` generation underneath.
-
-**Artifact**: one Google Doc titled *"My tokenizer notebook"* with 5–10 strings, their token counts, and one sentence each on what surprised you.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| If an LLM is "just autocomplete," why does it *feel* like it understands you? | Distinguishes pattern-match from comprehension; mentions priors the model already holds from training; concedes there's a real illusion but names a specific failure mode that reveals the illusion. |
-| How would you explain "tokens" to your parents in under 60 seconds? | Uses a concrete analogy (per-character SMS pricing, sliced loaf), avoids the word "LLM", and names one practical consequence ("that's why long questions are slower"). |
-| The same prompt gave you different answers across ChatGPT, Claude, Gemini yesterday. What's ACTUALLY different between them? | Mentions both weights AND training choices (RLHF, data mix, system prompt). Bonus: mentions temperature as the controllable dial. |
-| Why does "Bengaluru" tokenize into 3 tokens but "hello" into 1? | Training data frequency — common English words get one token; less common ones (including Indian place names) split into sub-words. Implication: non-English tokenizes less efficiently. |
-| If weights are frozen after training, how does ChatGPT "remember" things you told it last week? | Separates *model weights* (frozen) from *memory layer* (app feature — Claude Projects, ChatGPT memory). The model doesn't learn; the app shovels prior context back in. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate: extend your tokenizer notebook + write the 150 words (~25 min)
-
-1. Open your tokenizer notebook from the lab.
-2. Add three more strings: your most-used WhatsApp group name, a song lyric in your mother tongue, and one code snippet from any project you've touched.
-3. Write a 150-word paragraph titled *"Three things that surprised me about how LLMs see text."*
-4. Save the doc — you'll submit it in step 4.
-
-### 2. Reflect (~10 min)
-
-**Prompt:** *"Explain tokens to your parents in under 60 seconds. What analogy would you use?"* A good reflection drops the jargon completely, picks one familiar analogy (paying per SMS character, sliced bread, etc.), and doesn't sneak the word "LLM" back in. Jot a few lines for your own record.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Four quick ones on tokens, weights, attention, and the AI → ML → DL → LLM → Agents hierarchy. Available on the dashboard. Aim for 70%+ to feel solid going into tomorrow's tool landscape.
-
-### 4. Submit the assignment (~5 min)
-
-Submit your 150-word reflection + tokenizer notebook (PDF) via the dashboard **before next class**.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-
-- **Extra video**: finish Karpathy's full hour at https://www.youtube.com/watch?v=zjkBMFhNj_g — especially the hallucination section.
-- **Extra read**: Jay Alammar's illustrated transformer — https://jalammar.github.io/illustrated-transformer/ — beautiful, still the best visual explainer after 7 years.
-- **Try**: open bbycroft.net/llm — a real-time 3D visualization of a running transformer. Watch attention happen token by token.
-
-### 6. Prep for Day 3 (~35 min — important)
-
-**Tomorrow we map the tool landscape.** Day 3 covers the 7 classes of AI tool every operator should know, closed vs open weights, and the Indian AI stack (Sarvam, BharatGPT, Krutrim). You'll do a live "tool audit" matching tasks from your life to tool classes.
-
-- [ ] **Skim ahead**: browse https://lmarena.ai — try "Direct Chat" once (no login) to feel what it's like to vote between two models blind. Also skim https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard — notice how many top open models you've never heard of.
-- [ ] **Think**: if today showed you weights are the "brain" — what does it mean for a model to be **open-weight** vs **closed-weight**? Bring your guess.
-- [ ] **Set up**: have one product idea you'd build for an Indian user (farmer, parent, grandmother, small-shop owner) ready — we'll compare Sarvam vs Qwen live. Also have your mother tongue ready; you'll be typing in it.
-
----
-
-## 📚 Extra / additional references
-
-Optional deep-dives. Pick what interests you; skip what doesn't.
-
-### Short watches
-
-- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the single clearest long explainer. First 30 min in class.
-- [3Blue1Brown — Neural Networks series](https://www.3blue1brown.com/topics/neural-networks) — visual, beautiful intuition for what's inside an LLM.
-- Finish the rest of Karpathy's video — it covers hallucination, training cost, and the jailbreak economy.
-
-### Reading
-
-- [Jay Alammar — Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — the classic visual explainer.
-- [Attention is All You Need](https://arxiv.org/abs/1706.03762) — the 2017 paper that started this whole era. Read the abstract + figure 1; skip the math.
-
-### Play
-
-- [Tiktokenizer](https://tiktokenizer.vercel.app/) — our lab playground. Come back and tokenize anything that confuses you.
-- [bbycroft.net/llm](https://bbycroft.net/llm) — watch a transformer generate in 3D, token by token.
+- [3Blue1Brown — But what is a GPT? (27 min)](https://www.youtube.com/watch?v=wjZofJX0v4M) — visuals you'll never forget.
+- [Karpathy — Let's build the GPT tokenizer (2 hr)](https://www.youtube.com/watch?v=zduSFxRajkE) — go deep when you're ready.
+- [Jay Alammar — Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — the canonical diagrams.
+- [Hugging Face — Transformers quickstart](https://huggingface.co/docs/transformers/quicktour) — what you'll actually use.

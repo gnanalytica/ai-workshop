@@ -36,6 +36,7 @@ export const ADMIN_PAGES = [
   { href: 'admin-faculty.html',      label: 'Faculty',         group: 'people',   icon: 'briefcase', adminOnly: true, allowedRoles: ['admin'] },
   { href: 'admin-orgs.html',         label: 'Orgs & codes',    group: 'people',   icon: 'building',  adminOnly: true, allowedRoles: ['admin'] },
   { href: 'admin-student.html',      label: 'Student work',    group: 'work',     icon: 'clipboard', allowedRoles: ['admin','trainer','executive'] },
+  { href: 'admin-milestones.html',   label: 'Capstone tracker',group: 'work',     icon: 'chart',     allowedRoles: ['admin','trainer','support','executive'] },
   { href: 'admin-attendance.html',   label: 'Attendance',      group: 'work',     icon: 'check',     allowedRoles: ['admin','trainer','support','executive'] },
   { href: 'admin-stuck.html',        label: 'Stuck queue',     group: 'work',     icon: 'alert',     allowedRoles: ['admin','trainer','tech_support','support'] },
   { href: 'board.html',              label: 'Community board', group: 'work',     icon: 'alert',     allowedRoles: ['admin','trainer','tech_support','support','executive'] },

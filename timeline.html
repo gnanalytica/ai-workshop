@@ -130,17 +130,11 @@
 </style>
 </head>
 <body>
-<a href="#main" class="skip-link">Skip to main content</a>
-
-<nav>
-  <div class="wrap nav-in">
-    <div class="brand"><span class="dot"></span> Gnanalytica · Timeline</div>
-    <div style="display:flex;gap:16px;align-items:center">
-      <a href="dashboard.html" class="back">← Dashboard</a>
-      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-    </div>
-  </div>
-</nav>
+<div id="studentNav"></div>
+<script type="module">
+  import { renderStudentNav } from './assets/student-nav.js';
+  renderStudentNav({ active: 'timeline' });
+</script>
 
 <div id="gnDayRailHost" class="gn-day-rail-host" style="display:none" aria-hidden="true"></div>
 

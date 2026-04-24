@@ -1,256 +1,138 @@
 ---
-reading_time: 16 min
-tldr: "Checkpoint day. You brainstorm, shape, pitch, vote, and leave with a locked capstone one-pager."
-tags: ["exposure", "tools", "capstone", "checkpoint"]
-video: https://www.youtube.com/embed/T9aRN5JkmL8
-lab: {"title": "Ideathon: brainstorm → shape → pitch → vote", "url": "https://claude.ai"}
-prompt_of_the_day: "Help me pick a capstone. Run me through the Heilmeier Catechism for each of these 3 ideas: {{idea_1}}, {{idea_2}}, {{idea_3}}. For each, answer the 9 Heilmeier questions in 2 lines each. Then apply my 3-filter test: (a) is there one real user I can name? (b) can I build a usable slice in 4 weeks? (c) do I care enough to push through week 3 despair? End with a single recommendation and one risk."
-tools_hands_on: [{"name": "Claude", "url": "https://claude.ai"}, {"name": "Perplexity", "url": "https://www.perplexity.ai"}, {"name": "Gamma", "url": "https://gamma.app"}]
-tools_demo: [{"name": "ChatGPT", "url": "https://chatgpt.com"}]
-tools_reference: [{"name": "Heilmeier Catechism (DARPA)", "url": "https://www.darpa.mil"}, {"name": "YC Library", "url": "https://www.ycombinator.com/library"}, {"name": "Teresa Torres — Opportunity Solution Tree", "url": "https://www.producttalk.org"}]
-resources: [{"name": "Heilmeier Catechism", "url": "https://www.darpa.mil"}, {"name": "Paul Graham essays", "url": "https://www.ycombinator.com/library"}]
+day: 10
+date: "2026-05-14"
+weekday: "Thursday"
+week: 2
+topic: "Systems thinking, leverage points, causal loops, SCQA pitch, MindMaps"
+faculty:
+  main: "TBD"
+  support: "TBD"
+reading_time: "10 min"
+tldr: "Most problems are loops, not lines. Today you map the system around your problem, find the leverage point that actually moves things, and pitch it back in SCQA — the structure McKinsey uses to make 5 minutes count."
+tags: ["systems-thinking", "pitch", "scqa"]
+software: []
+online_tools: ["Excalidraw", "DrawIO", "Miro", "Obsidian"]
+video: "https://www.youtube.com/embed/pliaZTDXgU8"
+prompt_of_the_day: "You are Donella Meadows. Here is my problem [paste JTBD]. Help me draw a causal loop diagram with 5–7 nodes. Identify reinforcing (R) and balancing (B) loops. Then point to the single highest-leverage intervention — and explain why the obvious fix is probably the lowest-leverage one."
+tools_hands_on:
+  - { name: "Excalidraw", url: "https://excalidraw.com/" }
+  - { name: "Miro", url: "https://miro.com/" }
+  - { name: "Obsidian", url: "https://obsidian.md/" }
+  - { name: "DrawIO", url: "https://app.diagrams.net/" }
+tools_reference:
+  - { name: "Donella Meadows — Leverage Points essay", url: "https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/" }
+  - { name: "Barbara Minto — SCQA primer", url: "https://untools.co/scqa-framework" }
+resources:
+  - { title: "Systems Innovation — Causal loop diagrams (5 min)", url: "https://www.youtube.com/watch?v=pliaZTDXgU8" }
+  - { title: "MIT — Intro to Systems Dynamics (lecture)", url: "https://ocw.mit.edu/courses/15-871-introduction-to-system-dynamics-fall-2013/" }
+  - { title: "McKinsey — Pyramid Principle (SCQA)", url: "https://www.mckinsey.com/featured-insights/leadership" }
+lab: { title: "Causal loop + SCQA pitch on your problem", url: "https://excalidraw.com/" }
 objective:
-  topic: "Capstone ideathon: brainstorm, shape, pitch, vote, lock a one-pager"
-  tools: ["Claude", "Perplexity", "Gamma"]
-  end_goal: "By tonight: a locked capstone one-pager (problem, scope, non-goals, team, risks, metric) submitted as Milestone 1 — the foundation for Weeks 3 and 4."
+  topic: "Systems thinking, leverage points, causal loops, SCQA pitch"
+  tools: ["Excalidraw", "Miro", "Obsidian"]
+  end_goal: "One causal-loop diagram of your capstone problem + a 4-line SCQA pitch ready for tomorrow's Idea Lock."
 ---
+
+You've talked to users one at a time. Today you zoom out and ask: *what's the system that keeps this problem alive?* The answer changes what you should build.
 
 ## 🎯 Today's objective
 
-**Topic.** Capstone ideathon: brainstorm, shape, pitch, vote, lock a one-pager
+**Topic.** Systems thinking, leverage points, causal loop diagrams, MindMaps, and the SCQA pitch structure.
 
-**Tools you'll use.** Claude (Heilmeier + 3-filter), Perplexity (does-this-exist check), Gamma (future pitch rebuild).
+**By end of class you will have:**
+1. A causal-loop diagram of your capstone problem (5–7 nodes, R/B loops marked).
+2. One identified leverage point you'll target in your build.
+3. A 4-line SCQA pitch — your ammo for tomorrow's Milestone 2.
 
-**End goal.** By the end of today you will have:
-1. Run three candidate ideas through the Heilmeier Catechism.
-2. Picked a team of 2–3 (or committed to solo with sharper scope).
-3. Submitted a locked `capstone-one-pager.md` with the tag `#milestone-1`. Scope locks tonight.
-
-> *Why this matters:* Day 30 you demo. Between now and then every day points at *this* one-pager. The non-goals you write tonight are a gift to your future self in Week 3 at 2 am.
-
----
-
-### 🌍 Real-life anchor
-
-**The picture.** A writers' room pitches ten show ideas; a few get stress-tested with "who watches this, why now, what's the twist?"; one pilot gets greenlit. The room commits — it is not "we might film something someday."
-
-**Why it matches today.** Ideathon + Heilmeier + one-pager is that greenlight moment: **pick the show** (capstone) you will actually make.
+> *Why this matters.* Tomorrow you lock your idea in front of the cohort. Teams that pitch in SCQA get sharper feedback. Teams that don't, get vague nods.
 
 ## ⏪ Pre-class · ~20 min
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday (Day 9) you shipped a 5-slide Gamma deck + a 30-second voiced/avatar intro for your capstone — the dress rehearsal. The Otter transcript from that exercise revealed how you actually talk about your idea (the filler words, the hedges, the one sentence of real insight). Today the vehicle for that talk gets scope-checked. The deck gets rebuilt next week against whatever one-pager you lock tonight; today's work makes sure it's the right one to rebuild.
-
 ### Setup (required)
 
-- [ ] No setup required — your [Claude](https://claude.ai), [Perplexity](https://www.perplexity.ai), and [Gamma](https://gamma.app) accounts from earlier days are all you need.
-- [ ] Open your Jarvis Project in Claude; you will paste today's prompt-of-the-day inside it.
+- [ ] **Excalidraw** (no signup needed) and one of **Miro** / **DrawIO** open in tabs.
+- [ ] **Obsidian** installed locally — bring an empty vault called `workshop`.
 
-### Primer (~5 min)
+### Primer (~10 min)
 
-- **Read**: The one-page [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions, two lines each. Memorize questions 1, 4, and 9; they are the ones your partner will ask you in class.
-- **Watch** (optional): Any 3–5 minute [YC Library](https://www.ycombinator.com/library) clip on "how to pick a startup idea" or Teresa Torres on [opportunity solution trees](https://www.producttalk.org). The framing transfers to capstone scoping directly.
+- **Watch:** *Causal Loop Diagrams* (5 min) — https://www.youtube.com/watch?v=pliaZTDXgU8
+- **Skim:** Untools' SCQA primer — https://untools.co/scqa-framework
 
 ### Bring to class
 
-- [ ] 2–3 candidate capstone problem statements written on paper — hostel life, placement pain, exam prep, family problems all fair game.
-- [ ] For each candidate, one real human's name who might use it — even if you have not asked them yet.
+- [ ] Your updated JTBD statement from Day 9.
+- [ ] A rough sketch (paper is fine) of 3 causes + 2 effects of your problem.
 
-> 🧠 **Quick glossary**
-> - **Capstone** = the one thing you'll build and demo live on Day 30.
-> - **Heilmeier Catechism** = DARPA's 9 ruthless questions every project must answer in 2 lines each.
-> - **3-filter test** = Real user? Small scope? You care? Three yeses = ship.
-> - **Non-goals** = the "won't build" list — the most important section of your one-pager.
-> - **Steelman** = the strongest honest version of an argument, made before critiquing it.
+> 🧠 **Quick glossary.** **Stock** = quantity that accumulates. **Flow** = rate of change. **R loop** = reinforcing (snowball). **B loop** = balancing (thermostat). **Leverage point** = small change → big system effect. **SCQA** = Situation → Complication → Question → Answer.
 
----
+## 🎥 In-class · live session
 
-## 🎥 During class · live session
-
-Today's live session is an **ideathon format**, not the standard agenda: brainstorm → shape → pitch → vote → team-lock. Inside class we run the first half; you finish the one-pager in the post-class block.
-
-### Agenda — ideathon format
+### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Kickoff + rules | 5 min  | Set expectations, team size (2–3), time limits, non-goals matter |
-| Brainstorm (solo, silent) | 10 min | Fill a scoping worksheet — 5 ideas, no filter |
-| Shape in pairs | 15 min | Run top 3 ideas through Heilmeier + 3-filter test with a partner |
-| Pitches (rotating groups, 2 min each) | 20 min | Everyone pitches — partner asks one Heilmeier question per idea |
-| Vote + form teams | 10 min | Commit to a capstone team + problem, start the one-pager |
+| One problem, drawn 3 ways | 10 min | List → MindMap → Causal loop on the same problem |
+| Leverage points | 15 min | Meadows' 12 levels, condensed to 4 you'll actually use |
+| SCQA pitch | 10 min | The pattern, with one Bengaluru-traffic worked example |
+| Lab + peer review | 25 min | Build yours, swap with neighbour |
 
-### In-class checkpoints
+### Leverage points — the short list
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Kickoff fist-of-5**: rate your current conviction in your top idea, 1 to 5. We write the number on a sticky and revisit at 00:55 — did shaping move it up, down, or kill it?
-- **Silent solo brainstorm with 3 sticky notes**: one idea per sticky, no editing, three minutes each. No phones, no Claude yet — this round is pen and paper so the obvious ideas clear out first.
-- **Shape in pairs using Heilmeier template**: partners take turns. Pitcher has 2 minutes; listener must ask questions 1, 4, and 9 from the Heilmeier list (objective, who cares, metrics) before the timer ends. Swap.
-- **Pitch round with one-word feedback**: each pitcher gets 2 minutes. Listeners drop a single word in chat: "sharp", "big", "where?", "care?", "been-done". No sentences, no rescues — the word is the signal.
-- **Team-lock stand-up**: teams form around clusters and read their one-pager's "non-goals" section aloud before "scope". If non-goals are shorter than scope, you have not committed yet — redo it before you submit.
+1. **Parameters / numbers** (lowest leverage). Subsidies, tax, fines.
+2. **Information flows.** Who knows what, when. Often huge.
+3. **Rules of the system.** Incentives, punishments.
+4. **Goals of the system** (highest practical leverage). Change what it's optimising for.
 
-### Read: How to pick a capstone worth four weeks
+### SCQA in 4 lines
 
-**Why scope discipline is the whole game.** Every cohort, the students who ship are not the smartest or the most technical. They are the ones who picked a small enough problem. A capstone is four weeks of part-time work: realistically 40–60 hours total. That is enough for one real feature for one real user, not a platform, not a marketplace, not "the AI for X" where X is an entire industry. If your idea cannot be described in a single honest sentence with a noun for the user, it is too big.
+- **Situation.** Stable status quo everyone agrees with.
+- **Complication.** Something changed / broke.
+- **Question.** What now?
+- **Answer.** Your idea, in one sentence.
 
-**The Heilmeier Catechism.** George Heilmeier, former DARPA director, wrote nine questions that every proposed project must answer. We use them verbatim because they are ruthless and short:
+## 🧪 Lab: Causal loop + SCQA
 
-1. What are you trying to do? Articulate objectives with no jargon.
-2. How is it done today, and what are the limits of current practice?
-3. What is new in your approach and why will it succeed?
-4. Who cares? If you succeed, what difference will it make?
-5. What are the risks?
-6. How much will it cost?
-7. How long will it take?
-8. What are the mid-term and final exams to check for success?
-9. What are the metrics that matter?
+1. **MindMap (5 min).** In Obsidian or Excalidraw, central node = your problem. Branch out 5 causes + 5 effects.
+2. **Causal loop (10 min).** Convert the MindMap into a directed graph. Mark arrows + (same direction) and − (inverse). Identify at least one R or B loop.
+3. **Find leverage (5 min).** Circle one node where a small intervention breaks or strengthens a loop.
+4. **SCQA draft (5 min).** Write your 4-line pitch. Use the leverage point as your *Answer*.
+5. **Peer swap (5 min).** Trade boards with one neighbour. They mark one loop you missed.
 
-If you cannot answer any of the nine in two lines, you do not understand your idea yet. Use today's prompt-of-the-day to run all three of your candidate ideas through the catechism with Claude.
+**Artifact.** Excalidraw/Miro link with: MindMap + causal loop + circled leverage point + 4-line SCQA in a text box. Submit on dashboard.
 
-**The 3-filter test.** A faster gate we use alongside Heilmeier.
+## 📊 Live poll
 
-| Filter | Question | Why it matters |
-|--------|----------|----------------|
-| Real user | Can you name one specific person who will use this in Week 4? | No named user = no feedback loop = no learning |
-| Small scope | Can you ship a crappy but usable version in 10 hours? | If not, you will never reach demo day |
-| You care | Will you still be excited in Week 3 when it breaks at 2 am? | Capstone survival is emotional, not technical |
+**Which leverage level is your circled intervention?** Parameter / Information flow / Rule / Goal / Not sure yet. Instructor uses results to coach the room.
 
-Three yeses = ship. Two yeses = shape the idea for another week before committing. One or fewer = drop it, pick a different idea.
+## 💬 Discuss
 
-**College-relatable examples of well-scoped capstones.**
+- Show one R loop in your system. What keeps it spinning?
+- Where is the *obvious* fix in your diagram, and why is it probably low-leverage?
+- Did SCQA make your pitch sharper or just shorter?
 
-- "A Telegram bot my hostel mess committee uses to log today's menu and collect one-tap feedback." One user (the mess secretary), small scope (bot + sheet), and you eat there daily.
-- "An AI flashcard generator that turns a Bio-Chem textbook chapter into Anki cards for my NEET-repeat cousin." One user (your cousin), small scope (one chapter), and there is a deadline.
-- "A Chrome extension that rewrites my placement cover letters in the voice of the company I'm applying to." One user (you), small scope (extension + prompt), and you feel every bad letter.
+## ❓ Quiz
 
-Poorly-scoped versions of the same ideas: "a full mess management platform", "an AI tutor for all science subjects", "a career-automation suite". Same domains, 10x scope, 0.1x chance of shipping.
+Short quiz on R vs B loops, the leverage hierarchy, and the order of SCQA. Open on dashboard.
 
-**Team formation.** Teams of 2 or 3. Solo is allowed but harder; teams of 4 move slower than teams of 2 for this size of project. Pick complementary skills where you can, but more important: pick someone whose work-rhythm matches yours. A morning person and a 3 am person will miss every standup. Agree on: one primary communication channel, two 30-minute sync times per week, one shared doc for decisions.
+## 📝 Assignment · Idea Lock prep
 
-**The ideathon format (90 minutes total).**
+**Brief.** Polish your causal loop + SCQA pitch into a single 1-pager (Canva or Figma). This is what you'll defend in tomorrow's Milestone 2. Add: problem statement, JTBD, causal loop image, leverage point, SCQA pitch, one risk you're worried about.
 
-- **Round 1 — Brainstorm (10 min).** Every student writes 5 capstone ideas alone, no filter, no judgement. Quantity first.
-- **Round 2 — Shape (15 min).** Pick your top 3. Run today's prompt-of-the-day in Claude. Rewrite each idea into one honest sentence: "I am building <thing> for <user> so they can <outcome>."
-- **Round 3 — Pitch in pairs (20 min).** Pair up with a stranger. Each person pitches all 3 ideas in 2 minutes. Partner asks one Heilmeier question per idea. Switch.
-- **Round 4 — Peer voting (10 min).** Everyone writes their single favorite idea (yours or someone else's) on a sticky. Cluster. Top clusters attract teammates.
-- **Round 5 — Team lock (35 min).** Teams form around clusters. Each team picks one idea, runs it through the 3-filter test together, writes the one-pager, submits.
+**Submit.** Dashboard before Day 11.
 
-**What the one-pager must contain.** Problem (who hurts, one real named user if you have one), scope (one sentence describing the Week-4 demo), non-goals (what you will explicitly NOT build — this is the hardest and most important section), team (names and roles), risks (top 2), and success metric (how you will know at demo day whether it worked).
+**Rubric.** Loop quality (4) · Leverage point defended (4) · SCQA tightness (2).
 
-**Why "what I won't build" matters more than "what I will build".** Scope creep kills every cohort project. The non-goals section is a commitment to your future self: in Week 3 when you are tempted to add auth, mobile, analytics, and payments, the one-pager says no. Locking this today — while you are calm — protects you from yourself later.
+## 🔁 Prep for next class
 
-### Watch: Steelmanning three cohort ideas
+Day 11 is **Capstone Milestone 2 — Idea Lock + Features and Automations with AI**. Sandeep runs the room.
 
-The instructor picks the three most-voted ideas from the morning and steelmans each for four minutes — strongest version of the argument, then the one risk that will kill it. Watch how an idea sharpens when you defend it generously before critiquing it.
+- [ ] 1-pager from above, ready to present in 3 min.
+- [ ] List 5 features your idea needs. Mark which 2 are AI-powered.
+- [ ] List 2 automations (cron, webhook, agent) that could remove human grunt work.
 
-https://www.youtube.com/embed/T9aRN5JkmL8
+## 📚 References
 
-- Notice how "I would use this" beats "the market is $X billion" every time.
-- Listen for the moment an idea gets smaller and better in the same sentence.
-- Watch the instructor refuse to rescue a too-big idea — the kindness is the refusal.
-
-### Lab: Run the ideathon
-
-Time: 90 minutes, run live with the cohort. Artifact: a locked `capstone-one-pager.md` for your team.
-
-1. **Brainstorm (10 min).** Solo. Dump 5 ideas. No editing. Use hostel life, placement pain, exam prep, campus events, family problems as prompts.
-2. **Shape (15 min).** Pick your top 3. Open https://claude.ai and paste today's prompt-of-the-day. Copy the Heilmeier answers back into your notes.
-3. **Research sanity check (5 min, parallel).** For your top idea, one 30-second https://www.perplexity.ai query: "does this already exist?" Celebrate if yes — you now have a differentiator to find.
-4. **Pitch in pairs (20 min).** Find a partner. 2 minutes each. Partner must ask one Heilmeier question per idea. Take notes on your partner's reactions.
-5. **Peer voting (10 min).** Write your single favorite idea on a sticky. Cluster on the board (or in a cohort Miro).
-6. **Team lock (20 min).** Form a team around a cluster. Run the 3-filter test out loud together. If one member fails the "I care" filter, reshape the idea until they pass or they leave the team — both are fine.
-7. **Write the one-pager (10 min).** Use the template: Problem, User, Scope, Non-goals, Team, Risks, Metric. Keep it to one page. Draft in Claude if stuck; rewrite in your own words.
-8. **Submit.** Post `capstone-one-pager.md` to the cohort channel with the tag `#milestone-1`. This is your commitment.
-
-> ⚠️ **If you get stuck**
-> - *Your three candidate ideas all feel too big and Claude keeps encouraging them* → add this line to the Heilmeier prompt: "For each idea, rewrite it 3x smaller — same user, same pain, one-tenth the scope." Pick the smallest version that still feels worth doing.
-> - *No team cluster forms around your idea and you feel rejected* → this is data, not judgment. Either join the cluster closest to your idea (your skill + their problem often beats your problem), or commit to solo with a smaller scope and one named user.
-> - *You cannot name a real human user for Week 4* → stop the one-pager. Spend 15 minutes messaging three people who might hurt from this problem. If none reply by tonight, pick a different idea — "I will find users later" fails every cohort.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which idea did you almost pick that failed the 3-filter test? What killed it? | Names the specific filter (real user / small scope / you care) and the exact test moment it broke. Avoids romanticizing — strong answers sound like a post-mortem, not a eulogy. |
-| When your partner pushed back on your best idea, did you defend it or did it shrink? Which was the right response? | Distinguishes between defending the problem (good) and defending the solution (often bad). Shows one specific pushback where shrinking made the idea better, with the "before vs after" sentence. |
-| Is your team's "won't build" list long enough? What is missing from it? | Lists at least one tempting feature you know you will want to add in Week 3 (auth, mobile, analytics, a second user type). Writing it down is pre-committing against yourself. |
-| Who is the one user you will talk to in Week 3? How will you get them on a call? | Names a real human with a real relationship, and a concrete first-contact plan (WhatsApp today, 15-min call Friday). Vague answers ("someone in my hostel") mean you have no user yet. |
-| What would make you abandon this capstone in Week 3, and how will you prevent that? | Identifies the specific failure mode (team unavailable, tool stops working, user unreachable, you lose interest) and the tripwire that catches it early. Strong answers include a "switch point" — what you will do by end of Week 3 if the signal is red. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate action: submit your locked one-pager — CAPSTONE MILESTONE 1 (~60 min)
-
-1. Lock your capstone one-pager using the template exactly: Problem, Scope, Non-goals, Team, Risks, Success metric — ≤ 400 words.
-2. Make sure the "Non-goals" section is at least as long as "Scope". If not, you have not committed.
-3. Name one real human user by name (not "someone in my hostel") with a plan to contact them this week.
-4. Your team submits a locked capstone one-pager (Markdown, ≤ 400 words) containing:
-   - **Problem** — who hurts, in one sentence. Name a real user if possible.
-   - **Scope** — what the Week-4 demo will do, in one sentence.
-   - **Non-goals** — 3–5 bullet list of what you will explicitly NOT build.
-   - **Team** — names, roles, primary comms channel.
-   - **Risks** — top 2, with a one-line mitigation each.
-   - **Success metric** — one measurable thing that tells you at demo day whether it worked.
-
-### 2. Reflect (~10 min)
-
-*Which of the 3 filters (real user / small scope / you care) is weakest for your locked idea, and what is your tripwire for killing or reshaping it by Week 3?* A good reflection names the weakest filter honestly, describes the specific signal that would tell you the idea is dying (user unreachable, scope ballooning past 15 hours, motivation gone after a bad day), and pre-commits to an action — reshape, pivot, or kill — with a date.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Four checks before you lock. Which two Heilmeier questions did your team answer worst? Which of the 3 filters is weakest for your chosen idea, and what is your plan for it? Can you name one real human who will use your Week-4 demo? What is the single most important thing on your "won't build" list?
-
-### 4. Submit (~5 min)
-
-Submit `capstone-one-pager.md` via the cohort dashboard with the tag `#milestone-1` before midnight. This is Capstone Milestone 1 — the biggest deliverable of the workshop so far and the foundation for Weeks 3–4. Once submitted, your scope is locked — changes after today require instructor approval.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-
-- **Extra read**: A [Paul Graham essay](https://www.ycombinator.com/library) on "how to get startup ideas" — replace "startup" with "capstone" as you read.
-- **Try**: Run your locked idea through the Heilmeier Catechism *again* with a different model (ChatGPT or Gemini) and compare which risks each one surfaces. Different models notice different failure modes.
-
-### 6. Prep for Day 11 (~30-40 min — important)
-
-**Tomorrow we stress-test how you *describe* your capstone.** Day 11 rewrites your problem statement three times — Heilmeier long-form (v1) → 150 words (v2) → sticky note (v3) — plus a 5-Whys root cause and a How Might We reframe.
-
-- [ ] **Skim ahead**: the [Heilmeier Catechism one-pager](https://www.darpa.mil/work-with-us/heilmeier-catechism) once more — tomorrow it becomes the attack template against your own v1. Also glance at [5 Whys (Lean)](https://www.lean.org/lexicon-terms/5-whys/) and [How Might We (IDEO)](https://www.designkit.org/methods/how-might-we.html).
-- [ ] **Think**: write your current capstone problem in ONE sentence — exactly as you would say it to a stranger in a lift. List the three fuzziest weasel words in that sentence (the ones hiding scope).
-- [ ] **Set up**: paper and pen for tomorrow (v1 is written by hand, no typing). Grab an actual sticky note or draw a 3x3 inch box on paper — v3 must fit inside it. Keep Claude open in a browser tab for the attack phase.
-
----
-
-## 📚 Extra / additional references
-
-Optional deep-dives. Pick what interests you; skip what doesn't.
-
-### Short watches
-
-- [YC Library — how to pick an idea](https://www.ycombinator.com/library) — any 3–5 minute clip on picking a startup idea transfers cleanly to capstones.
-- [Teresa Torres on Opportunity Solution Trees](https://www.producttalk.org) — a more structured approach to turning problems into bets.
-
-### Reading
-
-- [Heilmeier Catechism (DARPA)](https://www.darpa.mil) — nine questions that every project must answer.
-- [Paul Graham essays](https://www.ycombinator.com/library) — the patron saint of "make something people want."
-- [Teresa Torres — Opportunity Solution Tree](https://www.producttalk.org) — the clearest framework for turning a problem into a shippable bet.
-
-### Play
-
-- Run your locked idea through Heilmeier again with a different model (ChatGPT or Gemini) and compare risks surfaced.
-- Pitch your one-pager to a non-cohort friend in 60 seconds. If they can restate "who hurts" and "what won't you build" back to you, it's sharp enough.
-
-### If you're hungry for a rabbit hole
-
-- YC Demo Day archive — compressed pitch masterclass; notice how the best ones earn their Complication in under 10 seconds.
-- The history of DARPA's research portfolio — see Heilmeier's questions in the wild.
+- [Donella Meadows — Leverage Points (essay)](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) — the source.
+- [Systems Innovation — CLD video](https://www.youtube.com/watch?v=pliaZTDXgU8) — clearest 5-min explainer.
+- [Untools — SCQA framework](https://untools.co/scqa-framework) — paste your pitch into it.
+- [Obsidian — Canvas docs](https://help.obsidian.md/Plugins/Canvas) — go deeper on visual thinking.

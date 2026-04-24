@@ -100,12 +100,15 @@ const KIND_MATCHERS = [
   { kind: 'postclass',  re: /^📝|^post-?\s*class\b/i },
   { kind: 'extra',      re: /^📚|^extra\b|^additional\s+references\b/i },
   { kind: 'intro',      re: /^intro\b/i },
-  { kind: 'read',       re: /^read\s*:/i },
-  { kind: 'watch',      re: /^watch\s*:/i },
-  { kind: 'lab',        re: /^lab\s*:/i },
-  { kind: 'quiz',       re: /^quiz\b/i },
+  { kind: 'setup',      re: /^🧩|^setup\b/i },
+  { kind: 'read',       re: /^📖|^read\s*:?/i },
+  { kind: 'watch',      re: /^watch\s*:?/i },
+  { kind: 'lab',        re: /^🧪|^lab\s*:?/i },
+  { kind: 'poll',       re: /^📊|^live\s*poll\b|^poll\s*:/i },
+  { kind: 'quiz',       re: /^❓|^quiz\b/i },
   { kind: 'assignment', re: /^assignment\b/i },
-  { kind: 'discuss',    re: /^discuss\s*:/i },
+  { kind: 'discuss',    re: /^💬|^discuss\s*:?/i },
+  { kind: 'prep',       re: /^🔁|^prep\s+for\b|^prep\s*:/i },
 ];
 
 function classifyHeading(title) {
@@ -117,7 +120,7 @@ function stripKindPrefix(title, kind) {
   if (kind === 'section' || kind === 'intro' || kind === 'quiz' || kind === 'assignment') {
     return title.replace(/^(intro|quiz|assignment)\b[\s:—-]*/i, '').trim() || title;
   }
-  return title.replace(/^(read|watch|lab|discuss)\s*:\s*/i, '').trim();
+  return title.replace(/^(read|watch|lab|discuss|setup|poll|prep)\s*:\s*/i, '').trim();
 }
 
 const YT_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})(?:[?&][^\s]*)?/;

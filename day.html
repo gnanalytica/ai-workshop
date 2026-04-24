@@ -119,6 +119,24 @@
   .kbadge-assignment{background:rgba(255,107,107,.1);color:#ffa0a0;border:1px solid rgba(255,107,107,.3)}
   .kbadge-discuss{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line)}
   .kbadge-intro,.kbadge-section{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--line)}
+  .kbadge-objective{background:rgba(195,255,54,.08);color:var(--accent);border:1px solid rgba(195,255,54,.3)}
+  .kbadge-setup{background:rgba(120,180,255,.08);color:#9ec9ff;border:1px solid rgba(120,180,255,.25)}
+  .kbadge-poll{background:rgba(255,140,200,.1);color:#ffa8d3;border:1px solid rgba(255,140,200,.3)}
+  .kbadge-prep{background:rgba(180,220,255,.06);color:#bfe1ff;border:1px solid rgba(180,220,255,.22)}
+  .kbadge-preclass,.kbadge-inclass,.kbadge-postclass,.kbadge-extra{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--line)}
+  .module.kind-objective{background:linear-gradient(145deg,rgba(195,255,54,.05),rgba(195,255,54,.01));border-color:rgba(195,255,54,.22)}
+  .module.kind-poll{background:linear-gradient(145deg,rgba(255,140,200,.05),rgba(255,140,200,.01));border-color:rgba(255,140,200,.2)}
+  .faculty-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+  .faculty-pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted)}
+  .faculty-pill strong{color:var(--ink);font-weight:700;letter-spacing:.02em;text-transform:none;font-size:12.5px;font-family:inherit}
+  .faculty-pill .role{font-size:10px;color:var(--accent);letter-spacing:.16em}
+  .faculty-pill.support .role{color:#9ec9ff}
+  .tools-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+  .tool-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid var(--line);color:#cfcfd6}
+  .tool-chip.soft{background:rgba(195,255,54,.06);border-color:rgba(195,255,54,.22);color:var(--accent)}
+  .tool-chip .ic{opacity:.7;font-size:11px}
+  .faculty-shared-note{margin:14px 0 0;padding:12px 16px;border-radius:10px;border:1px solid rgba(195,255,54,.18);background:rgba(195,255,54,.03);font-size:14px;color:#d4d4dd;line-height:1.55}
+  .faculty-shared-note .fsn-kicker{display:block;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:4px;font-weight:700}
 
   .mod-title{font-size:24px;letter-spacing:-.02em;margin:0 0 14px;font-weight:600;line-height:1.2}
 
@@ -475,6 +493,8 @@
         </div>
         <h1 class="lesson-title" id="lessonTitle">—</h1>
         <p class="lesson-tag" id="weekTitle">—</p>
+        <div class="faculty-meta" id="facultyMeta"></div>
+        <div class="tools-chip-row" id="toolsChipRow"></div>
         <div id="classBanner" class="class-banner">
           <div id="classBannerMeta"></div>
           <div class="live-row" id="liveRow"></div>
@@ -505,6 +525,26 @@
       <div class="notes-sub">Private to you. Auto-saves when you click away.</div>
       <textarea id="notesArea" placeholder="Jot down questions, aha-moments, things to try later…"></textarea>
       <div class="notes-status" id="notesStatus"></div>
+    </section>
+
+    <section class="lesson-panel lesson-panel--notes notes" id="facultyPrepPanel" style="display:none;border-color:rgba(195,255,54,.35)">
+      <h3>Faculty prep <span class="kicker" style="font-size:11px;color:var(--accent);margin-left:8px" id="facultyPrepRole"></span></h3>
+      <div class="notes-sub">Visible only to the Lead and Support faculty for this day.</div>
+      <div style="margin-top:10px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase">My prep notes (private)</div>
+        <textarea id="facPrivateNotes" placeholder="Your private prep notes for this day. Auto-saves when you click away."></textarea>
+        <div class="notes-status" id="facPrivateStatus"></div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase">Shared note for students (visible on this day page)</div>
+        <textarea id="facSharedNotes" placeholder="A short message students will see on this day's page."></textarea>
+        <div class="notes-status" id="facSharedStatus"></div>
+      </div>
+    </section>
+
+    <section class="lesson-panel" id="facultySharedView" style="display:none">
+      <h3 style="margin:0 0 8px;font-size:16px">A note from your faculty</h3>
+      <div id="facultySharedBody" style="font-size:14px;line-height:1.6;color:var(--ink);white-space:pre-wrap"></div>
     </section>
 
     <div class="lesson-panel lesson-panel--wrapup">
@@ -649,6 +689,8 @@
   const KIND_LABELS = {
     intro:'Intro', read:'Read', watch:'Watch', lab:'Lab',
     quiz:'Quiz', assignment:'Assignment', discuss:'Discuss', section:'Section',
+    objective:'Objective', setup:'Setup', poll:'Live poll', prep:'Prep for next',
+    preclass:'Pre-class', inclass:'In-class', postclass:'Post-class', extra:'References',
   };
 
   async function loadLesson(user) {
@@ -795,6 +837,78 @@
       clearTimeout(saveTimer); saveTimer = setTimeout(saveNotes, 300);
     });
 
+    // Faculty prep panel — only renders if the signed-in user is main/support for this day.
+    try {
+      const { data: dfRow } = await supabase
+        .from('day_faculty')
+        .select('main_user_id,support_user_id,main_notes,support_notes,shared_notes')
+        .eq('cohort_id', cohort.id)
+        .eq('day_number', n)
+        .maybeSingle();
+      const isMain = !!(dfRow && dfRow.main_user_id === user.id);
+      const isSupport = !!(dfRow && dfRow.support_user_id === user.id);
+
+      // Always try to show the shared note for students (public view).
+      try {
+        const { data: shared } = await supabase
+          .from('day_faculty_shared')
+          .select('shared_notes')
+          .eq('cohort_id', cohort.id)
+          .eq('day_number', n)
+          .maybeSingle();
+        const sharedTxt = (shared?.shared_notes || '').trim();
+        if (sharedTxt && !(isMain || isSupport)) {
+          $('facultySharedBody').textContent = sharedTxt;
+          $('facultySharedView').style.display = 'block';
+        }
+      } catch (_) { /* view may be empty */ }
+
+      if (isMain || isSupport) {
+        const panel = $('facultyPrepPanel');
+        const roleTag = $('facultyPrepRole');
+        roleTag.textContent = isMain && isSupport ? 'Lead + Support' : (isMain ? 'Lead' : 'Support');
+        panel.style.display = 'block';
+
+        const privArea = $('facPrivateNotes');
+        const privStatus = $('facPrivateStatus');
+        const sharedArea = $('facSharedNotes');
+        const sharedStatus = $('facSharedStatus');
+
+        // Pre-fill: prefer the role-specific column for the private box.
+        const privateInitial = isMain ? (dfRow?.main_notes || '') : (dfRow?.support_notes || '');
+        privArea.value = privateInitial;
+        sharedArea.value = dfRow?.shared_notes || '';
+
+        let privTimer = null, sharedTimer = null;
+
+        async function savePriv() {
+          privStatus.textContent = 'Saving…';
+          const patch = {};
+          if (isMain) patch.main_notes = privArea.value || null;
+          if (isSupport) patch.support_notes = privArea.value || null;
+          const { error } = await supabase.from('day_faculty')
+            .update(patch)
+            .eq('cohort_id', cohort.id)
+            .eq('day_number', n);
+          if (error) privStatus.textContent = `Save failed: ${error.message}`;
+          else privStatus.textContent = 'Saved.';
+        }
+        async function saveShared() {
+          sharedStatus.textContent = 'Saving…';
+          const { error } = await supabase.from('day_faculty')
+            .update({ shared_notes: sharedArea.value || null })
+            .eq('cohort_id', cohort.id)
+            .eq('day_number', n);
+          if (error) sharedStatus.textContent = `Save failed: ${error.message}`;
+          else sharedStatus.textContent = 'Saved.';
+        }
+        privArea.addEventListener('blur', () => { clearTimeout(privTimer); privTimer = setTimeout(savePriv, 300); });
+        sharedArea.addEventListener('blur', () => { clearTimeout(sharedTimer); sharedTimer = setTimeout(saveShared, 300); });
+      }
+    } catch (e) {
+      console.warn('faculty prep panel skipped', e);
+    }
+
     // Pagers
     const prev = n > 1 ? DAYS.find(d => d.n === n - 1) : null;
     const next = n < 30 ? DAYS.find(d => d.n === n + 1) : null;
@@ -849,6 +963,43 @@
     $('objectiveBlock').innerHTML = renderObjective(meta);
     $('introBlock').innerHTML = introHtml ? introHtml : '';
     $('resourcesBlock').innerHTML = renderResourcesBlock(meta);
+    // Faculty meta (main + support) from frontmatter, overridden by day_faculty_shared view.
+    try {
+      let mainName = meta.faculty?.main || null;
+      let supportName = meta.faculty?.support || null;
+      let sharedNote = '';
+      try {
+        const { data: fRow } = await supabase
+          .from('day_faculty_shared')
+          .select('main_name,support_name,shared_notes')
+          .eq('cohort_id', cohort.id)
+          .eq('day_number', n)
+          .maybeSingle();
+        if (fRow) {
+          mainName = fRow.main_name || mainName;
+          supportName = fRow.support_name || supportName;
+          sharedNote = fRow.shared_notes || '';
+        }
+      } catch {}
+      const pills = [];
+      if (mainName) pills.push(`<span class="faculty-pill"><span class="role">Lead</span><strong>${escapeHtml(mainName)}</strong></span>`);
+      if (supportName) pills.push(`<span class="faculty-pill support"><span class="role">Support</span><strong>${escapeHtml(supportName)}</strong></span>`);
+      if (meta.date) pills.push(`<span class="faculty-pill"><span class="role">Date</span><strong>${escapeHtml(meta.date)}${meta.weekday ? ' · '+escapeHtml(meta.weekday) : ''}</strong></span>`);
+      $('facultyMeta').innerHTML = pills.join('');
+      if (sharedNote.trim()) {
+        $('facultyMeta').insertAdjacentHTML('afterend',
+          `<div class="faculty-shared-note"><span class="fsn-kicker">Note from faculty</span><div>${escapeHtml(sharedNote).replace(/\n/g,'<br>')}</div></div>`);
+      }
+    } catch {}
+    // Tools + software chips
+    try {
+      const chips = [];
+      const sw = Array.isArray(meta.software) ? meta.software : [];
+      const ot = Array.isArray(meta.online_tools) ? meta.online_tools : [];
+      sw.forEach((s) => chips.push(`<span class="tool-chip soft"><span class="ic">⚙</span>${escapeHtml(s)}</span>`));
+      ot.forEach((t) => chips.push(`<span class="tool-chip"><span class="ic">◈</span>${escapeHtml(t)}</span>`));
+      $('toolsChipRow').innerHTML = chips.join('');
+    } catch {}
 
     const summaryPanel = document.querySelector('.lesson-panel--summary');
     if (summaryPanel) {
@@ -864,6 +1015,33 @@
       resPanel.style.display = ($('resourcesBlock').innerHTML || '').trim() ? '' : 'none';
     }
 
+    // Demo Day conditional layout
+    const isDemoDay = meta.demo === true || meta.demo === 'true' || meta.kind === 'demo';
+    if (isDemoDay) {
+      try {
+        const head = document.querySelector('.lesson-panel--hero .lesson-head');
+        if (head && !head.querySelector('.demo-kicker')) {
+          const banner = document.createElement('div');
+          banner.className = 'demo-kicker';
+          banner.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px';
+          banner.textContent = '🎤 Demo Day';
+          head.insertBefore(banner, head.firstChild);
+        }
+        // Hide summary panel modules that don't apply
+        const summaryPanel = document.querySelector('.lesson-panel--summary');
+        if (summaryPanel) summaryPanel.style.display = 'none';
+        // Filter modules for demo layout
+        const HIDE_KINDS = new Set(['objective', 'read', 'watch', 'preclass', 'discuss', 'quiz']);
+        const PROMOTE_KIND = 'inclass';
+        modules = modules.filter(m => !HIDE_KINDS.has(m.kind));
+        modules = modules.map(m => {
+          if (m.kind === PROMOTE_KIND) return { ...m, title: 'Demo schedule' };
+          if (m.kind === 'poll') return { ...m, title: 'Audience feedback' };
+          return m;
+        });
+      } catch (e) { console.warn('demo layout setup failed', e); }
+    }
+
     if (!modules.length) {
       $('modules').innerHTML = `<div class="placeholder-note">Content for Day ${pad(n)} is being prepared. Check back soon.</div>`;
     } else {
@@ -877,6 +1055,75 @@
       if (window.__pollsTeardown) window.__pollsTeardown();
       window.__pollsTeardown = mountPollsWidget($('pollsWidget'), { user, cohort, dayNumber: n });
     } catch (e) { /* widget is optional, don't break page */ }
+
+    // Realtime toasts: poll opens + shared_notes updates
+    try {
+      if (window.__dayRealtime) {
+        try { supabase.removeChannel(window.__dayRealtime); } catch {}
+        window.__dayRealtime = null;
+      }
+      const chan = supabase.channel(`day-live-${cohort.id}-${n}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'polls',
+          filter: `cohort_id=eq.${cohort.id}`,
+        }, (payload) => {
+          try {
+            const row = payload.new || {};
+            if (row.day_number !== n) return;
+            const wasOpen = !!(payload.old && payload.old.is_open);
+            if (row.is_open && !wasOpen) {
+              toast('Live poll just opened — vote now ↓');
+              try {
+                const tEl = document.getElementById('app-dialog-toast');
+                if (tEl) {
+                  tEl.style.cursor = 'pointer';
+                  tEl.style.pointerEvents = 'auto';
+                  tEl.onclick = () => $('pollsWidget')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              } catch {}
+              try {
+                if (window.__pollsTeardown) window.__pollsTeardown();
+                window.__pollsTeardown = mountPollsWidget($('pollsWidget'), { user, cohort, dayNumber: n });
+              } catch {}
+            }
+          } catch (e) { /* ignore */ }
+        })
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'day_faculty',
+          filter: `cohort_id=eq.${cohort.id}`,
+        }, (payload) => {
+          try {
+            const row = payload.new || {};
+            if (row.day_number !== n) return;
+            const newNote = (row.shared_notes || '').trim();
+            const oldNote = ((payload.old && payload.old.shared_notes) || '').trim();
+            if (newNote === oldNote) return;
+            toast('New note from faculty');
+            // Update the visible shared-note card live
+            const facMeta = $('facultyMeta');
+            let card = document.querySelector('.faculty-shared-note');
+            if (newNote) {
+              const html = `<span class="fsn-kicker">Note from faculty</span><div>${escapeHtml(newNote).replace(/\n/g,'<br>')}</div>`;
+              if (card) {
+                card.innerHTML = html;
+              } else if (facMeta) {
+                facMeta.insertAdjacentHTML('afterend', `<div class="faculty-shared-note">${html}</div>`);
+              }
+            } else if (card) {
+              card.remove();
+            }
+            // Also update the student-facing facultySharedView panel
+            const sharedBody = $('facultySharedBody');
+            const sharedView = $('facultySharedView');
+            if (sharedBody && sharedView) {
+              if (newNote) { sharedBody.textContent = newNote; sharedView.style.display = 'block'; }
+              else { sharedView.style.display = 'none'; }
+            }
+          } catch (e) { /* ignore */ }
+        })
+        .subscribe();
+      window.__dayRealtime = chan;
+    } catch (e) { /* realtime optional */ }
 
     // Scrollspy for TOC
     setupScrollspy(modules);
@@ -1459,6 +1706,7 @@
     const lastAttempt = prevAttempts?.[0] || null;
 
     const questions = Array.isArray(quiz.questions) ? quiz.questions : [];
+    console.debug("quiz widget v2", questions.length, "questions");
     const passing = Number(quiz.passing_score ?? 70);
 
     let state = 'idle'; // idle | scored
@@ -1621,6 +1869,7 @@
   // ---------- Assignment widget ----------
 
   async function mountAssignmentWidget(container, { user, cohort }) {
+    console.debug("assignment widget v2");
     container.innerHTML = '<div class="asgn-empty">Loading assignment…</div>';
     const { data: asgn } = await supabase.from('assignments')
       .select('*').eq('cohort_id', cohort.id).eq('day_number', n)
@@ -1742,9 +1991,18 @@
       const rubricItems = Array.isArray(asgn.rubric_items) ? asgn.rubric_items : [];
       let rubricItemsHtml = '';
       if (rubricItems.length) {
-        const totalPts = rubricItems.reduce((s, it) => s + (Number(it.points) || 0), 0);
-        const rows = rubricItems.map(it => `<li style="margin:4px 0">${escapeHtml(it.criterion || '')} <span class="muted" style="color:var(--muted)">(${Number(it.points) || 0} pts)</span></li>`).join('');
-        rubricItemsHtml = `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><ul style="margin:6px 0 4px 18px;padding:0">${rows}</ul><div style="margin-top:4px;font-size:12px;color:var(--muted)">Total: ${totalPts} pts</div></div>`;
+        const itemPts = (it) => Number(it.max_points ?? it.points) || 0;
+        const totalPts = rubricItems.reduce((s, it) => s + itemPts(it), 0);
+        const rows = rubricItems.map(it => {
+          const name = it.name || it.criterion || '';
+          const desc = it.description ? `<div style="font-size:12.5px;color:var(--muted);margin-top:2px">${escapeHtml(it.description)}</div>` : '';
+          const levels = Array.isArray(it.levels) ? it.levels : [];
+          const levelsHtml = levels.length
+            ? `<ul style="margin:4px 0 0 16px;padding:0;font-size:12.5px;color:var(--muted);list-style:disc">${levels.map(lv => `<li><span style="font-family:'JetBrains Mono',monospace">${escapeHtml(String(lv.score ?? ''))}</span> · <strong style="color:var(--ink)">${escapeHtml(lv.label || '')}</strong>${lv.description ? ` — ${escapeHtml(lv.description)}` : ''}</li>`).join('')}</ul>`
+            : '';
+          return `<li style="margin:8px 0;list-style:none"><div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><strong style="color:var(--ink)">${escapeHtml(name)}</strong><span class="muted" style="color:var(--muted);font-size:12px">${itemPts(it)} pts</span></div>${desc}${levelsHtml}</li>`;
+        }).join('');
+        rubricItemsHtml = `<div class="asgn-rubric"><strong style="color:var(--ink)">Rubric</strong><ul style="margin:6px 0 4px;padding:0;list-style:none">${rows}</ul><div style="margin-top:4px;font-size:12px;color:var(--muted)">Total: ${totalPts} pts</div></div>`;
       }
       const pts = asgn.points != null ? `<span class="asgn-pts">${escapeHtml(String(asgn.points))} pts</span>` : '';
 

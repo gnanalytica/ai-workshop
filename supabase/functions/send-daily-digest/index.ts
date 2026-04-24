@@ -7,39 +7,11 @@ const SEARCH_URL = "https://gnanalytica.github.io/ai-workshop/search.html";
 const CONTACT_URL = "https://gnanalytica.github.io/ai-workshop/#contact";
 const LIME = "#c3ff36";
 
-// Hardcoded DAY_TITLES (mirrors assets/days.js) — edge runtime can't import local assets.
-const DAY_TITLES: { n: number; w: number; title: string }[] = [
-  { n: 1,  w: 1, title: "What AI is + where it's used in real life" },
-  { n: 2,  w: 1, title: "Inside an LLM: tokens, weights, attention" },
-  { n: 3,  w: 1, title: "AI tool landscape + selection playbook" },
-  { n: 4,  w: 1, title: "Prompting fundamentals + context basics" },
-  { n: 5,  w: 1, title: "Show-and-tell: Personal AI Stack v1" },
-  { n: 6,  w: 2, title: "Frontier chat: fast vs reasoning + memory/projects" },
-  { n: 7,  w: 2, title: "Research: Perplexity + NotebookLM + Deep Research" },
-  { n: 8,  w: 2, title: "Creativity: images + video" },
-  { n: 9,  w: 2, title: "Meetings + voice: batch pipeline & realtime agents" },
-  { n: 10, w: 2, title: "Ideathon 1 + Capstone kickoff" },
-  { n: 11, w: 3, title: "Vague → crisp problem statement" },
-  { n: 12, w: 3, title: "Design thinking — the real version" },
-  { n: 13, w: 3, title: "User empathy + interviews" },
-  { n: 14, w: 3, title: "System map + pitch narrative" },
-  { n: 15, w: 3, title: "Design sprint + locked 1-page spec" },
-  { n: 16, w: 4, title: "Build setup: GitHub + localhost + APIs" },
-  { n: 17, w: 4, title: "Local/cloud LLMs + eval loops (Langfuse)" },
-  { n: 18, w: 4, title: "RAG foundations + prompt vs fine-tune + multimodal" },
-  { n: 19, w: 4, title: "Context engineering: CLAUDE.md + AGENTS.md + slash commands" },
-  { n: 20, w: 4, title: "Workflow automation: n8n + browser agents" },
-  { n: 21, w: 5, title: "Vibe-code your capstone v0" },
-  { n: 22, w: 5, title: "Ship: deploy, cost, UX, discoverability" },
-  { n: 23, w: 5, title: "Agent loop: LangGraph + MCP" },
-  { n: 24, w: 5, title: "Agent foundations + MCP + multi-agent delegation lab" },
-  { n: 25, w: 5, title: "Ideathon 2 + Mini-Demo Day" },
-  { n: 26, w: 6, title: "Safety red-team + ethics workshop" },
-  { n: 27, w: 6, title: "Benchmark literacy + model selection" },
-  { n: 28, w: 6, title: "Personal AI learning system" },
-  { n: 29, w: 6, title: "Demo rehearsal + story polish" },
-  { n: 30, w: 6, title: "Demo Day — live panel" },
-];
+// Day title is read from public.cohort_days.title at runtime.
+// Week is computed from day_number: 5 days/week, weekends excluded by the schedule itself.
+function weekForDay(n: number): number {
+  return Math.max(1, Math.min(6, Math.ceil(n / 5)));
+}
 
 function wrap(inner: string): string {
   return `<!doctype html><html><body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#e5e5e5;">
@@ -100,15 +72,19 @@ async function processCohort(admin: ReturnType<typeof createClient>, cohort: Coh
   const now = Date.now();
   const daysSince = Math.floor((now - start) / (24 * 3600 * 1000)) + 1;
   const dayN = Math.max(1, Math.min(30, daysSince));
-  const dayInfo = DAY_TITLES.find((d) => d.n === dayN) ?? { n: dayN, w: 0, title: `Day ${dayN}` };
-
-  // Today's cohort_days row
+  // Today's cohort_days row (now includes title)
   const { data: cohortDay } = await admin
     .from("cohort_days")
-    .select("is_unlocked, live_session_at, meet_link, notes")
+    .select("is_unlocked, live_session_at, meet_link, notes, title")
     .eq("cohort_id", cohort.id)
     .eq("day_number", dayN)
     .maybeSingle();
+
+  const dayInfo = {
+    n: dayN,
+    w: weekForDay(dayN),
+    title: (cohortDay?.title as string | null | undefined) || `Day ${dayN}`,
+  };
 
   // Latest announcement for cohort (today or recent)
   const { data: announcement } = await admin
@@ -125,7 +101,26 @@ async function processCohort(admin: ReturnType<typeof createClient>, cohort: Coh
     .select("title, question, day_number")
     .eq("cohort_id", cohort.id)
     .eq("is_open", true)
-    .order("opened_at", { ascending: false })
+    .order("opened_at", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Today's faculty (lead/support) + shared notes (read via public view)
+  const { data: dayFaculty } = await admin
+    .from("day_faculty_shared")
+    .select("main_name, support_name, shared_notes")
+    .eq("cohort_id", cohort.id)
+    .eq("day_number", dayN)
+    .maybeSingle();
+
+  // Today's assignment due_at (if any)
+  const { data: todayAssignment } = await admin
+    .from("assignments")
+    .select("title, due_at")
+    .eq("cohort_id", cohort.id)
+    .eq("day_number", dayN)
+    .not("due_at", "is", null)
+    .order("due_at", { ascending: true })
     .limit(1)
     .maybeSingle();
 
@@ -205,10 +200,24 @@ async function processCohort(admin: ReturnType<typeof createClient>, cohort: Coh
     const meetBtn = cohortDay?.meet_link ? btn(cohortDay.meet_link as string, "Join Meet →", true) : "";
     const lessonBtn = btn(`${DAY_URL_BASE}?n=${dayN}`, "Open today's lesson →", !meetBtn);
 
+    const facultyParts: string[] = [];
+    if (dayFaculty?.main_name) facultyParts.push(`Lead: <strong style="color:#fff">${escapeHtml(dayFaculty.main_name as string)}</strong>`);
+    if (dayFaculty?.support_name) facultyParts.push(`Support: <strong style="color:#fff">${escapeHtml(dayFaculty.support_name as string)}</strong>`);
+    const facultyLine = facultyParts.length ? facultyParts.join(" · ") : "";
+    const sharedNotes = (dayFaculty?.shared_notes as string | null) || "";
+    const sharedNotesPreview = sharedNotes ? sharedNotes.slice(0, 240) : "";
+
+    const dueLine = todayAssignment?.due_at
+      ? `Today's assignment <em style="color:#ddd">${escapeHtml(todayAssignment.title as string)}</em> due <strong style="color:#fff">${fmtTime(todayAssignment.due_at as string)}</strong>`
+      : "";
+
     const todayBlock = `
       <div style="font-size:13px;color:#999;">Day ${dayN} · Week ${dayInfo.w}</div>
       <div style="font-size:22px;color:#fff;font-weight:700;margin:4px 0 10px 0;line-height:1.25;">${escapeHtml(dayInfo.title)}</div>
       ${liveLine ? `<div style="font-size:14px;color:#ccc;margin:2px 0 10px 0;">${liveLine}</div>` : ""}
+      ${facultyLine ? `<div style="font-size:13px;color:#bbb;margin:2px 0 8px 0;">${facultyLine}</div>` : ""}
+      ${sharedNotesPreview ? `<div style="font-size:13.5px;color:#bbb;margin:6px 0 10px 0;line-height:1.55;padding:8px 10px;background:#0a0a0a;border-left:2px solid ${LIME};border-radius:4px;">${escapeHtml(sharedNotesPreview)}${sharedNotes.length > 240 ? "…" : ""}</div>` : ""}
+      ${dueLine ? `<div style="font-size:13px;color:#ccc;margin:2px 0 8px 0;">${dueLine}</div>` : ""}
       ${cohortDay?.notes ? `<div style="font-size:14px;color:#bbb;margin:6px 0 12px 0;line-height:1.55;">${escapeHtml(cohortDay.notes as string)}</div>` : ""}
       <div style="margin-top:10px">${meetBtn}${lessonBtn}</div>
     `;

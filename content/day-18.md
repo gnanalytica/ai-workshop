@@ -1,263 +1,160 @@
 ---
-reading_time: 18 min
-tldr: "Turn your PDFs into a RAG bot, store embeddings in pgvector, meet GraphRAG — and learn when to prompt vs retrieve vs fine-tune, plus vision in the loop for scans and screenshots."
-tags: ["build", "technical"]
-video: https://www.youtube.com/embed/T-D1OfcDW1M
-lab: {"title": "Build a working RAG bot on your capstone PDFs (NotebookLM + LlamaIndex + pgvector)", "url": "https://notebooklm.google"}
-prompt_of_the_day: "Act as a RAG architect. My corpus is {{corpus_description}} (size, formats, domain). Recommend: (1) chunk size + overlap, (2) embedding model, (3) vector store, (4) when I should switch to GraphRAG instead of chunk-based RAG. Justify each choice in one line."
-tools_hands_on: [{"name": "NotebookLM", "url": "https://notebooklm.google"}, {"name": "LlamaIndex", "url": "https://docs.llamaindex.ai"}, {"name": "Neon pgvector", "url": "https://neon.com"}]
-tools_demo: [{"name": "Neo4j AuraDB", "url": "https://neo4j.com/cloud/aura/"}, {"name": "Microsoft GraphRAG", "url": "https://github.com/microsoft/graphrag"}, {"name": "Graphify", "url": "https://github.com/graphify"}]
-tools_reference: [{"name": "Chroma", "url": "https://trychroma.com"}, {"name": "Qdrant", "url": "https://qdrant.tech"}, {"name": "Pinecone", "url": "https://pinecone.io"}, {"name": "Sentence-Transformers", "url": "https://sbert.net"}, {"name": "HF MTEB embeddings leaderboard", "url": "https://huggingface.co/spaces/mteb/leaderboard"}, {"name": "Hugging Face — fine-tuning hub", "url": "https://huggingface.co/docs/transformers/training"}, {"name": "OpenAI — vision (multimodal)", "url": "https://platform.openai.com/docs/guides/images-vision"}]
-resources: [{"name": "LlamaIndex + Ollama tutorial", "url": "https://docs.llamaindex.ai/en/stable/examples/llm/ollama/"}, {"name": "pgvector docs", "url": "https://github.com/pgvector/pgvector"}]
+day: 18
+date: "2026-05-26"
+weekday: "Tuesday"
+week: 4
+topic: "Deployment with Vercel and Supabase (OpenCode)"
+faculty:
+  main: "Harshith"
+  support: "Sandeep"
+reading_time: "12 min"
+tldr: "Localhost is for you. A live URL is for everyone else. Today: deploy yesterday's repo to Vercel in under 5 minutes, add a Supabase database, and wire OpenCode/Antigravity/Codex to ship the next change without leaving the chat."
+tags: ["deployment", "vercel", "supabase", "backend"]
+software: ["Node.js", "Python", "Git"]
+online_tools: ["Vercel", "Supabase", "Antigravity", "Codex", "GitHub"]
+video: "https://www.youtube.com/embed/2HBIzEx6IZA"
+prompt_of_the_day: "I have a public GitHub repo with a static index.html that calls a weather API. I want to (a) deploy it on Vercel, (b) add a Supabase table to log every search with timestamp + city, (c) read those logs back on the page. Write me a step-by-step deployment plan. No code yet."
+tools_hands_on:
+  - { name: "Vercel", url: "https://vercel.com/" }
+  - { name: "Supabase", url: "https://supabase.com/" }
+  - { name: "OpenCode", url: "https://opencode.ai/" }
+  - { name: "Antigravity", url: "https://antigravity.google/" }
+  - { name: "Codex", url: "https://chatgpt.com/codex" }
+tools_reference:
+  - { name: "Vercel — Deploy from GitHub", url: "https://vercel.com/docs/getting-started-with-vercel" }
+  - { name: "Supabase — Quickstart", url: "https://supabase.com/docs/guides/getting-started" }
+resources:
+  - { title: "Vercel Edge Functions docs", url: "https://vercel.com/docs/functions" }
+  - { title: "Supabase JS client", url: "https://supabase.com/docs/reference/javascript/introduction" }
+lab: { title: "Repo → Vercel → Supabase logging", url: "https://vercel.com/" }
 objective:
-  topic: "Embeddings, RAG, GraphRAG, prompt vs retrieve vs fine-tune"
-  tools: ["NotebookLM", "LlamaIndex", "Neon pgvector"]
-  end_goal: "Ship a working RAG bot that answers 5 real questions from your own PDFs, plus a before/after from tuning one knob (chunk size, top-K, or embedder)."
+  topic: "Deployment with Vercel and Supabase using OpenCode"
+  tools: ["Vercel", "Supabase", "OpenCode", "Antigravity", "Codex", "GitHub"]
+  end_goal: "A publicly accessible Vercel URL whose page logs each search to a Supabase table and displays the last 5 entries."
 ---
+
+Yesterday you went from laptop folder → public repo. Today you go from public repo → public **URL with a database** — the actual finale-day setup. We'll use OpenCode (or Antigravity / Codex) so most of the work happens inside one chat.
 
 ## 🎯 Today's objective
 
-**Topic.** Embeddings, RAG, GraphRAG, prompt vs retrieve vs fine-tune
+**Topic.** Deployment with Vercel + Supabase, driven by OpenCode-style coding agents.
 
-**Tools you'll use.** NotebookLM (zero-code), LlamaIndex (swap-in-swap-out framework), pgvector on Neon (production-shaped).
+**By end of class you will have:**
+1. Yesterday's GitHub repo deployed to a live `.vercel.app` URL with auto-redeploy on push.
+2. A Supabase project with one `searches` table (id, city, created_at).
+3. Page logs every search and renders the last 5 from the database.
 
-**End goal.** By the end of today you will have:
-1. A RAG bot that answers 5 questions from *your own PDFs*.
-2. A before/after from tuning one knob — chunk size, top-K, or embedder.
-3. A clear mental line between when chunking is enough and when a knowledge graph would help.
-4. A decision rule for **prompt vs RAG vs fine-tuning**, and when **vision** beats text-only pipelines.
+> *Why this matters.* This is *the* skeleton. Most capstone projects are a static front-end + Supabase + Vercel. After today you've built it once.
 
----
+## ⏪ Pre-class · ~25 min
 
-### 🌍 Real-life anchor
+### Setup (required)
 
-**The picture.** **Prompt** = instructions you say once. **RAG** = open-book exam with your own photocopied chapters stapled in. **Fine-tuning** = sending someone to trade school so their *defaults* change — slow, costly, and wrong fix if the handbook updates weekly. **Vision** = the invigilator lets you bring a **photo** of the board, not just typed notes.
+- [ ] **Node.js** ≥ 20: `node -v`.
+- [ ] **Python** 3.10+ for any local scripts.
+- [ ] **Vercel** account, signed in via GitHub.
+- [ ] **Supabase** account + a new empty project (it takes ~2 min to provision — start it before class).
+- [ ] Pick one agent: **OpenCode** CLI, **Antigravity**, or **Codex**. Just one.
 
-**Why it matches today.** That quartet is exactly how builders specialize an LLM without fooling themselves about which lever does what.
+### Primer (~10 min)
 
-## ⏪ Pre-class · ~20 min
+- **Read:** Vercel quickstart — https://vercel.com/docs/getting-started-with-vercel
+- **Read:** Supabase quickstart — https://supabase.com/docs/guides/getting-started
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
+### Bring to class
 
-**Revision / context.** Yesterday (Day 17) you ran three prompt variants against a 10-row eval set and measured win rates in Langfuse. Today the eval skill transfers directly: your 5 PDF questions from pre-class are the new eval set, and we're comparing retrieval strategies instead of prompt variants. Keep your Langfuse account open — we'll trace RAG calls the same way.
+- [ ] Your Day-17 GitHub repo URL.
+- [ ] Supabase project URL + `anon` public key (Settings → API).
 
-Show up with PDFs in hand and a Neon project waiting — the lab only works if your corpus is real.
+> 🧠 **Quick glossary.** **Deployment** = your code runs on someone else's machine, reachable by a URL. **Edge function** = code that runs near the user, on Vercel's network. **anon key** = a public Supabase API key safe to ship to the browser (RLS protects the data). **RLS** = Row Level Security — Postgres rules deciding who can read/write what.
 
-### Setup (10 min)
-- [ ] Sign up free at https://neon.com — pick the free tier, create a project in the region nearest you (Mumbai / Singapore).
-- [ ] Inside that project, enable the `vector` extension (Neon has it preinstalled; just toggle in the dashboard or run `CREATE EXTENSION vector;`).
-- [ ] Open https://notebooklm.google and sign in with your Google account so you skip onboarding in class.
-
-### Gather your corpus (7 min)
-- [ ] Collect **3-5 real PDFs** you care about: lecture notes, a research paper, your college handbook, internship reports. Put them in one folder called `capstone-pdfs/`.
-- [ ] Write down 5 actual questions you'd want an AI to answer from those PDFs — these become your eval set.
-
-### Primer (3 min)
-- [ ] Watch a short RAG explainer on YouTube — search "What is RAG LangChain 5 min" or "Retrieval Augmented Generation explained". Any crisp 3-5 min video works.
-- [ ] Skim https://github.com/pgvector/pgvector README — just the intro, so `vector(384)` doesn't look scary tomorrow.
-
-> 🧠 **Quick glossary for today**
-> - **Embedding** = a vector of numbers that captures the meaning of a piece of text.
-> - **Vector DB** = a database that stores embeddings and finds nearest neighbours fast (pgvector, Chroma, Qdrant).
-> - **Cosine similarity** = the closeness score between two embeddings (−1 to 1; >0.8 is "very close").
-> - **RAG** = Retrieval-Augmented Generation: ingest → retrieve → generate from *your* docs.
-> - **Knowledge graph** = a database of entities (nodes) and relationships (edges) for multi-hop questions.
-> - **Chunk** = a 300–800 token slice of a document with some overlap to its neighbour.
-> - **Fine-tuning / adapter (e.g. LoRA)** = adjusting model weights (or a small adapter layer) on *your* labeled pairs or tasks so the model "defaults" to your style or schema — different from stuffing context at query time.
-
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min | Why the LLM doesn't know about *your* PDFs |
-| Mini-lecture | 20 min | Embeddings, cosine similarity, RAG in 3 steps, when GraphRAG beats chunking |
-| Live lab | 20 min | Upload capstone PDFs to NotebookLM + sketch a pgvector schema together |
-| Q&A + discussion | 15 min | Which 5 questions failed, and was it chunking or retrieval? |
+| Vercel: GitHub → live URL | 10 min | Import, deploy, share link |
+| Supabase: project → table → RLS | 15 min | Schema in the dashboard |
+| Wire `supabase-js` in the page | 15 min | Insert + select |
+| OpenCode-driven change | 15 min | Add a feature without leaving chat |
+| Debug + redeploy | 10 min | Push → Vercel rebuilds in 30 sec |
+| Q&A | 5 min |   |
 
-### In-class checkpoints
+### The deploy loop you'll use forever
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
-- **Cold-open**: instructor asks plain ChatGPT a question from their own college handbook; watches it hallucinate; asks "what does the model NOT know?"
-- **Think-pair-share**: in 90 seconds, name one document you wish AI "knew" and the exact 5 questions you'd ask it.
-- **Live embedding demo**: instructor embeds "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess"; class guesses cosine similarity before the reveal.
-- **Breakout**: in trios, decide for a capstone corpus — plain RAG, hierarchical chunks, or GraphRAG — and defend the call in 60 seconds.
-- **Failure clinic**: one volunteer shares a RAG question that fumbled; class debates whether it's a chunking, retrieval, or generation bug.
+1. Edit code locally.
+2. `git push`.
+3. Vercel auto-detects, rebuilds, redeploys.
+4. Refresh the live URL. Done.
 
-### Read: Embeddings, RAG, and when graphs beat chunks
+### Why Supabase for v1
 
-**Embeddings are coordinates for meaning.** Take any piece of text — a sentence, a paragraph, a whole doc — and an **embedding model** turns it into a list of numbers called a vector, usually 384, 768, or 1536 dimensions long. The magic property: sentences with similar meaning end up close in this high-dimensional space. "The cat sat on the mat" and "A feline rested on the rug" will be neighbours, even though they share almost no words. "Bengaluru traffic is awful" and "Public transit in Bangalore is a mess" will be near each other too.
+- **Postgres** + auth + storage + realtime in one click.
+- Free tier is plenty for a class project (500 MB DB, 50k MAU).
+- `supabase-js` is a one-line import in the browser.
 
-The closeness metric is **cosine similarity**, a number between -1 and 1. Above 0.8 is "very close", around 0.5 is "loosely related", near 0 is "unrelated". This is how every modern search engine works under the hood — including Google, Spotify recommendations, and every AI chatbot that "remembers" your docs.
+## 🧪 Lab: Deploy + database in one sitting
 
-**Why embeddings beat keywords.** Keyword search asks "does this document contain these exact words?" Semantic search asks "is this document about the same *idea*?" A student searching "how to pay college fees online" should find a page titled "Tuition payment portal guide" — they share zero keywords but mean the same thing. Embeddings bridge that gap.
+1. Vercel → *Add New Project* → import your Day-17 repo → *Deploy*. Wait. Open the live URL.
+2. Supabase → *Table Editor* → new table `searches`: `id` (bigint, identity), `city` (text), `created_at` (timestamptz, default `now()`). Disable RLS *for class only* (we'll harden Day 19+).
+3. In `index.html`, add the Supabase client:
 
-**RAG = Retrieval + Augmented Generation.** RAG is the pattern that powers 90% of production AI apps. Three steps:
+```html
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const sb = createClient('YOUR_URL', 'YOUR_ANON_KEY');
 
-1. **Ingest.** Chop your documents into chunks (typically 300–800 tokens each, with 10–20% overlap). Embed each chunk. Store `(chunk_text, embedding, metadata)` in a **vector database**.
-2. **Retrieve.** When the user asks a question, embed the question. Find the top-K chunks nearest to it in vector space (K is usually 3–10).
-3. **Generate.** Stuff those chunks into the LLM's context along with the question: "Given this context, answer the question." The LLM now answers from *your* data, not its training data.
+  document.getElementById('b').addEventListener('click', async () => {
+    const city = 'Bengaluru';
+    // fetch weather (existing code)…
+    await sb.from('searches').insert({ city });
+    const { data } = await sb.from('searches').select('city, created_at').order('created_at', { ascending: false }).limit(5);
+    document.getElementById('log').innerHTML = data.map(r => `${r.city} — ${new Date(r.created_at).toLocaleTimeString()}`).join('<br>');
+  });
+</script>
+<div id="log"></div>
+```
 
-That's the entire trick. Everything else is optimization.
+4. Open **OpenCode** (`opencode` in terminal) or Antigravity / Codex. Prompt: *"In this repo, add an input box so the user can type any city instead of hard-coded Bengaluru. Then commit and push."*
+5. Watch it edit, commit, push. Vercel auto-rebuilds. Refresh your live URL.
+6. Type a city. Watch the log grow. Open Supabase Table Editor — confirm the row.
 
-**Prompting vs RAG vs fine-tuning — pick the smallest fix that works.** Students waste weeks on the wrong lever. Use this table before you touch a GPU:
+**Artifact.** Live Vercel URL + Supabase project name in the cohort channel. Faculty will click and submit a test entry.
 
-| Lever | What you're doing | Reach for it when | Catch |
-|-------|-------------------|-------------------|--------|
-| **Prompting + context files** | Instructions, few-shots, CLAUDE.md-style rules | Output *shape* or *tone* is wrong; facts are generic; you can say the rule in a paragraph | Context window limits; does not magically know this week's 200-page handbook |
-| **RAG (today's core)** | Retrieve chunks at query time, then generate | Facts live in **docs that change**; you need **citations**; corpus is too big to paste | Retrieval bugs (wrong chunk); latency; needs good chunking |
-| **Fine-tuning / adapters** | Train weights on your dataset for a **stable mapping** | Classification with fixed labels; "always our JSON"; brand voice; *repeated* pattern cheap at inference | **Stale** when source docs change unless you retrain; does not replace citations |
+## 📊 Live poll
 
-**Default order:** try **prompt** → then **RAG** → then **fine-tune** only when the first two plateau *and* you have clean, labeled data. Fine-tuning is not a shortcut for "the model didn't read my PDF" — that's RAG. Day 17's eval habit is how you prove which lever moved the number.
+**Where did the deployment friction land?** GitHub auth on Vercel / Supabase RLS error / `import` not working in browser / CORS / Nowhere — clean ride.
 
-**Chunking strategies — the unglamorous 80%.** The quality of RAG is mostly the quality of chunking.
+## 💬 Discuss
 
-- **Fixed-size chunking** — split every N tokens. Easy, dumb, often fine.
-- **Sentence / paragraph chunking** — respect natural boundaries. Better recall on prose.
-- **Semantic chunking** — split where meaning shifts (requires an extra embed step). Best quality, slowest to build.
-- **Hierarchical chunking** — store both small chunks (for precision) and summaries of their parents (for context). Great for long documents.
+- What happens if you commit your `anon` key vs your `service_role` key? Why does Supabase ship a public-by-design key?
+- Vercel rebuilt in 30 seconds. What did it actually do under the hood?
+- When would you add an Edge Function instead of calling Supabase directly from the browser?
 
-Tip: always keep chunk **overlap** (the last ~15% of chunk N repeats as the first ~15% of chunk N+1) so facts that straddle a boundary aren't lost.
+## ❓ Quiz
 
-**Vector stores — where embeddings live.** Your options, from easiest to most production-ready:
+Short quiz on Vercel build flow, Supabase keys, and where RLS lives. Open it on your dashboard.
 
-- **NotebookLM** (Google) — fully managed, zero code. Upload PDFs, ask questions. Best 20-minute RAG on the planet.
-- **Chroma** — open-source, runs on your laptop, Pythonic.
-- **pgvector on Neon** — Postgres with a vector column. One database for both relational and vector data. Neon gives you a free serverless Postgres with pgvector preinstalled.
-- **Qdrant / Pinecone / Weaviate** — dedicated managed vector DBs, great at billion-vector scale.
+## 📝 Assignment · Deployed mini-app
 
-For a student capstone with 50–5000 docs, **Chroma** or **pgvector on Neon** is the sweet spot.
+**Brief.** Take your Day-17 project (or the one we built today) and add **one user-visible feature** that requires writing to and reading from Supabase. Push, redeploy, share the live URL.
 
-**Embedding models — not all equal.** `text-embedding-3-small` (OpenAI) is the workhorse default. `all-MiniLM-L6-v2` (384 dims) runs locally in milliseconds. `bge-large` and `nomic-embed-text` are strong open-source picks. Check the **MTEB leaderboard** on Hugging Face for fresh benchmarks. Rule: whatever embedder you used to ingest, you must use to query. Never mix models.
+**Submit.** Live URL + repo URL on the dashboard.
 
-**When graphs beat chunks — GraphRAG intuition.** Chunk-based RAG breaks when the answer requires connecting facts across many documents. Example: "Which professors in the CSE department co-authored papers with Stanford researchers between 2020 and 2023?" No single chunk contains that answer — it lives in the *relationships* between entities.
+**Rubric.** Live URL works for a stranger (4) · DB write + read both demonstrable (4) · README updated with deploy notes (2).
 
-**GraphRAG** (popularized by Microsoft) does this:
+## 🔁 Prep for next class
 
-1. Run an LLM over your documents to extract entities (people, orgs, concepts) and relationships ("authored", "works at", "cites").
-2. Store them in a **knowledge graph** — a database of nodes and edges — such as **Neo4j AuraDB** (free tier available).
-3. Cluster the graph into communities and pre-summarize each community.
-4. At query time, traverse the graph and feed both **chunks** and **community summaries** to the LLM.
+Day 19 is **Context Engineering — Embeddings & RAG.** You'll teach a model facts it doesn't know.
 
-GraphRAG shines for questions that are multi-hop ("A → B → C"), comparative ("who else is like X?"), or global ("what are the main themes across the corpus?"). It's overkill for simple FAQ lookup.
+- [ ] Install **Python 3.10+** + `pip install langchain chromadb sentence-transformers`.
+- [ ] Sign up for **Hugging Face** (free).
+- [ ] Have your **Gemini** or **ChatGPT** key handy if you have one (we'll use free tier where possible).
 
-**Graphify** is a lightweight skill we use in this workshop to auto-extract knowledge graphs from any input — code, docs, papers, even images. You'll see it live today. The output: an HTML viewer + a JSON graph + an audit report. Great for turning messy PDFs into navigable structure.
+## 📚 References
 
-**Multimodal inputs — when your "document" is pixels.** Text-only RAG assumes you can extract clean text. Real students bring **phone photos of boards**, **scanned forms**, and **screenshots of UIs** where OCR is messy.
-
-Three patterns:
-
-1. **OCR → then RAG** — run a serious OCR pass (or export "text" from the PDF tool) *before* chunking. Still your usual pipeline; quality depends on OCR.
-2. **Caption → embed** — use a **vision model** (Gemini / GPT-4o-class) to describe each page or image, embed the *description* as the chunk. Good when layout matters more than exact words.
-3. **Skip RAG for one-off** — "what does this single screenshot say?" often belongs in **one multimodal chat** with the image attached, not a vector database.
-
-If NotebookLM or your chunker returns garbage on a PDF, check whether the file is **image-only pages** — that failure mode is vision/OCR, not "bad embeddings."
-
-### Watch: NotebookLM to pgvector — RAG on increasing difficulty
-
-Walkthrough starting with NotebookLM (5 minutes, zero code), then LlamaIndex + Ollama + Chroma (more control), then pgvector on Neon (production-shaped), and finally a GraphRAG demo in Neo4j.
-
-https://www.youtube.com/embed/T-D1OfcDW1M
-
-- NotebookLM handles 80% of student RAG use cases with zero setup.
-- LlamaIndex gives you swap-in-swap-out control over chunker, embedder, retriever.
-- pgvector = one DB for everything; cheap to run on Neon's free tier.
-- Reach for graphs only when your questions span many docs.
-
-### Lab: Build a RAG bot on your capstone PDFs
-
-Budget 45–60 minutes. Pick whichever path matches your comfort level — all three count.
-
-1. Collect 5–20 real PDFs for your capstone (textbook chapters, research papers, internal docs, lecture notes).
-2. **Path A — NotebookLM:** go to notebooklm.google, create a new notebook, upload your PDFs. Ask it 5 questions from your assignment list. Note which it nailed and which it fumbled.
-3. **Path B — LlamaIndex + Groq/HuggingFace + Chroma (cloud, no install):** use Claude/Cursor to scaffold a `SimpleDirectoryReader → VectorStoreIndex → query_engine` pipeline. Embeddings via HuggingFace Inference API free tier; generation via Groq. Storage in in-memory Chroma. You direct; it codes. (Only if your laptop has ≥ 8 GB RAM and you're curious, swap to Ollama's `nomic-embed-text` as a stretch.)
-4. **Path C — pgvector on Neon:** create a free Neon project, enable the `vector` extension, create a `documents(id, content, embedding vector(384))` table. Have Claude generate the ingest + query SQL.
-5. Write the 5 target questions down *before* you test — no moving the goalposts.
-6. For each question, compare: did the answer cite the right source? Was it hallucinated? Was the retrieved chunk relevant?
-7. Tune **one** knob: chunk size OR top-K OR embedder. Rerun. Was it better?
-8. Optional: run **Graphify** or Microsoft GraphRAG on the same PDFs. Ask a multi-hop question. Did the graph version win?
-
-> ⚠️ **If you get stuck**
-> - *NotebookLM refuses your PDF as "unsupported" or strips content* → the PDF is probably scanned images; run it through an OCR step first (NotebookLM needs real text) or export pages as text.
-> - *pgvector query returns nothing or wildly wrong chunks* → confirm ingest and query used the same embedder AND dimensions match your column type (`vector(384)` must match a 384-dim embedder like `all-MiniLM-L6-v2`).
-> - *HuggingFace Inference API slow on large PDFs* → batch chunks in groups of 16–32 instead of one mega-call; use `sentence-transformers/all-MiniLM-L6-v2` (fast + free) over bigger embedders.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Did NotebookLM surprise you — in a good or bad way? | Names a specific question it nailed or fumbled and hypothesizes why (chunking, citation, source weighting). |
-| Which of your 5 questions failed, and was it a chunking problem or a retrieval problem? | Separates the two: did the right chunk exist AND get retrieved? Inspected the top-K before blaming generation. |
-| Where in your capstone would a knowledge graph add real value over chunks? | Names a multi-hop, comparative, or global question that no single chunk could answer alone. |
-| If embeddings are "coordinates for meaning", what would "coordinates for tone" look like? | Extends the analogy — sentiment axes, formality, persona — and admits where the metaphor breaks. |
-| Would you trust a RAG bot to answer medical, legal, or academic questions? Under what conditions? | Names the guardrails they'd require: source citations, human sign-off, domain-specific evals, refusal on low confidence. |
-| For your capstone, would prompting, RAG, or fine-tuning be the *wrong* first move — and why? | Picks one lever to *defer*, names a cheaper lever that should come first, cites a stale-data or citation requirement. |
-| Where would vision (screenshots / scans) beat text-only chunking in your project? | Names a concrete user artifact (form photo, UI capture) and picks OCR vs caption-to-embed vs one-shot multimodal chat. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Get a RAG bot answering 5 real questions from your own PDFs — no toy data, no demo corpus.
-
-### 1. Immediate: ship the bot (~25 min)
-- [ ] Pick your path: NotebookLM (easiest), LlamaIndex + Chroma (more control via https://trychroma.com), or pgvector on Neon (most production-shaped).
-- [ ] Run all 5 of your pre-class questions. For each, paste: question, retrieved chunk(s), final answer.
-- [ ] Tune **one** knob: chunk size (try 300 vs 800), top-K (try 3 vs 8), or swap embedder (e.g., `all-MiniLM-L6-v2` vs `bge-small-en` on HuggingFace). Record before/after.
-
-### 2. Reflect (~10 min)
-
-**Prompt:** *"Of my 5 questions, which broke the bot — and was the root cause chunking, retrieval, or generation?"* A strong answer separates the three layers: did the right chunk exist? Did it get retrieved in top-K? Did the model actually use it? Jot a few lines for your own record.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-A few mental check-ins on the dashboard: What's the cosine similarity between two unrelated sentences, roughly? Why does chunk overlap matter? When would GraphRAG beat plain RAG — give one concrete capstone example? Why must ingest and query use the same embedder?
-
-### 4. Submit the assignment (~5 min)
-
-Post the NotebookLM link (or repo URL) plus your 5 Q&A pairs plus the one-knob before/after delta to the cohort channel.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-- [ ] Try Graphify (`/graphify` in Claude Code) or Microsoft GraphRAG at https://github.com/microsoft/graphrag on the same PDFs. Ask one multi-hop question that chunk RAG fumbled.
-- [ ] Explore Neo4j AuraDB free tier at https://neo4j.com/cloud/aura/ — peek at a sample graph.
-
-### 6. Prep for Day 19 (~30-40 min — IMPORTANT, new content)
-
-**Tomorrow is about leverage you can't unsee — context engineering.** Day 19: stop re-explaining your project every chat. Write one CLAUDE.md + AGENTS.md + 3 slash commands and your AI remembers your project forever.
-
-- [ ] **Pick your harness**. Your options, lightest to heaviest: Google Antigravity (antigravity.google.com, web, free), Google AI Studio (aistudio.google.com, web), Google Code Assist (codeassist.google/, free VS Code plugin), Claude Code (claude.com/claude-code, CLI), Cursor (cursor.com, desktop app), or aider (aider.chat, OSS CLI). Install whichever fits your laptop.
-- [ ] **Open your capstone folder.** If you haven't made one yet, create it now and run `git init` so the AI harness has a repo to read.
-- [ ] **Skim** the Anthropic Claude Code docs at https://docs.claude.com/claude-code — especially the "Memory & CLAUDE.md" and "Slash commands" sections.
-- [ ] **Read** the one-page AGENTS.md spec at https://agents.md. Shorter than this prep list.
-- [ ] **Jot down the 3 things you re-explain to AI every chat** on your capstone — these become your first CLAUDE.md rules.
-
----
-
-## 📚 Extra / additional references
-
-### Short watches
-
-- [NotebookLM → pgvector walkthrough](https://www.youtube.com/embed/T-D1OfcDW1M) — re-watch once you've built your own.
-
-### Reading
-
-- **Zero-code RAG**: [NotebookLM](https://notebooklm.google).
-- **When to fine-tune vs RAG** (deeper): [Hugging Face — fine-tuning](https://huggingface.co/docs/transformers/training) — pair with today's table; most capstones stop at RAG + good prompts.
-- **Frameworks**: [LlamaIndex](https://docs.llamaindex.ai), [LlamaIndex + Ollama tutorial](https://docs.llamaindex.ai/en/stable/examples/llm/ollama/).
-- **Vector stores**: [Neon (pgvector)](https://neon.com), [pgvector docs](https://github.com/pgvector/pgvector), [Chroma](https://trychroma.com), [Qdrant](https://qdrant.tech), [Pinecone](https://pinecone.io).
-- **Embedding models + leaderboard**: [Sentence-Transformers](https://sbert.net), [MTEB embeddings leaderboard](https://huggingface.co/spaces/mteb/leaderboard).
-
-### Play
-
-- **GraphRAG**: [Neo4j AuraDB](https://neo4j.com/cloud/aura/), [Microsoft GraphRAG](https://github.com/microsoft/graphrag), [Graphify](https://github.com/graphify).
+- [Vercel — Getting Started](https://vercel.com/docs/getting-started-with-vercel)
+- [Supabase — Getting Started](https://supabase.com/docs/guides/getting-started)
+- [supabase-js reference](https://supabase.com/docs/reference/javascript/introduction)
+- [OpenCode docs](https://opencode.ai/) — the open-source agent CLI.

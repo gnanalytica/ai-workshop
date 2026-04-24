@@ -107,18 +107,17 @@
 </style>
 </head>
 <body>
-<a href="#root" class="skip-link">Skip to main content</a>
-
-<nav>
-  <div class="wrap nav-in">
-    <div class="brand"><span class="dot"></span> Gnanalytica · Showcase</div>
-    <div style="display:flex;gap:16px;align-items:center">
-      <a href="index.html" style="font-size:13px;color:var(--muted)">Home</a>
-      <a href="dashboard.html" style="font-size:13px;color:var(--muted)">Dashboard</a>
-      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-    </div>
-  </div>
-</nav>
+<div id="studentNav"></div>
+<script type="module">
+  import { renderStudentNav } from './assets/student-nav.js';
+  renderStudentNav({
+    active: 'showcase',
+    links: [
+      { href: 'index.html', label: 'Home' },
+      { href: 'dashboard.html', label: 'Dashboard' },
+    ],
+  });
+</script>
 
 <main class="wrap page" id="root">
   <div class="loading" id="loader">Loading showcase…</div>

@@ -39,6 +39,15 @@
     .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
     .table-wrap table{min-width:620px}
   }
+  .pda-cohort{display:flex;gap:10px;align-items:center;margin:0 0 12px}
+  .pda-cohort select{background:var(--input-bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:inherit;font-size:13px;outline:none;min-width:240px}
+  .pda-table{width:100%;border-collapse:collapse}
+  .pda-table th,.pda-table td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;text-align:left;vertical-align:middle}
+  .pda-table th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .pda-table select{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--ink);font-family:inherit;font-size:12.5px;outline:none}
+  .pda-table tr.pda-saved{background:rgba(195,255,54,.05)}
+  .pda-day-n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
+  .pda-topic{color:var(--muted);font-size:12.5px;max-width:280px}
 </style>
 </head>
 <body>
@@ -140,6 +149,31 @@
       </thead>
       <tbody id="rows"></tbody>
     </table>
+  </div>
+
+  <div class="section-head" style="margin-top:40px" id="per-day-assignment">
+    <h2>Per-day assignment</h2>
+    <span class="muted" style="font-size:12.5px">Lead + support faculty per day for the selected cohort. Autosaves on change.</span>
+  </div>
+  <div class="add-card">
+    <div class="pda-cohort">
+      <label class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.08em">Cohort</label>
+      <select id="pdaCohort"></select>
+    </div>
+    <div class="table-wrap">
+      <table class="pda-table">
+        <thead>
+          <tr>
+            <th style="width:60px">Day</th>
+            <th style="width:140px">Date</th>
+            <th>Topic</th>
+            <th style="width:200px">Lead</th>
+            <th style="width:200px">Support</th>
+          </tr>
+        </thead>
+        <tbody id="pdaRows"><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="section-head" style="margin-top:40px">
@@ -294,8 +328,141 @@
     await loadRows();
     await loadReadiness();
     await loadPretrainingArtifacts();
+    await initPerDayAssignment();
     wireAdd();
     wirePretrainingEditor();
+  }
+
+  // ---------- Per-day assignment ----------
+  const TBD_VALUE = '__TBD__';
+  let PDA_DAY_ROWS = new Map(); // day_number -> day_faculty row
+  let PDA_COHORT_DAYS = new Map(); // day_number -> cohort_days row
+  let PDA_FACULTY = []; // [{user_id, full_name}]
+  let PDA_TOPICS = new Map(); // day_number -> topic string
+
+  async function initPerDayAssignment() {
+    const sel = $('pdaCohort'); if (!sel) return;
+    sel.innerHTML = COHORTS.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.slug)}</option>`).join('');
+    if (!COHORTS.length) { $('pdaRows').innerHTML = `<tr><td colspan="5" class="empty-state">No cohorts.</td></tr>`; return; }
+    sel.addEventListener('change', () => loadPerDayFor(sel.value));
+    await loadDayTopics();
+    await loadPerDayFor(sel.value);
+    if (location.hash === '#per-day-assignment') {
+      setTimeout(() => document.getElementById('per-day-assignment')?.scrollIntoView({ behavior: 'smooth' }), 200);
+    }
+  }
+
+  async function loadDayTopics() {
+    if (PDA_TOPICS.size) return;
+    const fetches = [];
+    for (let n = 1; n <= 30; n++) {
+      const num = String(n).padStart(2, '0');
+      fetches.push(fetch(`content/day-${num}.md`)
+        .then(r => r.ok ? r.text() : '')
+        .then(text => {
+          const m = text.match(/^---[\s\S]*?\ntopic:\s*"?([^"\n]+?)"?\s*\n[\s\S]*?---/m);
+          PDA_TOPICS.set(n, m ? m[1].trim() : '');
+        })
+        .catch(() => PDA_TOPICS.set(n, '')));
+    }
+    await Promise.all(fetches);
+  }
+
+  async function loadPerDayFor(cohortId) {
+    $('pdaRows').innerHTML = `<tr><td colspan="5" class="empty-state">Loading…</td></tr>`;
+    // Faculty list for this cohort
+    const { data: facRows, error: fErr } = await supabase
+      .from('cohort_faculty').select('user_id').eq('cohort_id', cohortId);
+    if (fErr) { $('pdaRows').innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${esc(fErr.message)}</td></tr>`; return; }
+    const userIds = [...new Set((facRows || []).map(r => r.user_id))];
+    let profs = [];
+    if (userIds.length) {
+      const { data } = await supabase.from('profiles').select('id,full_name,email').in('id', userIds);
+      profs = data || [];
+    }
+    PDA_FACULTY = profs
+      .map(p => ({ user_id: p.id, full_name: p.full_name || p.email || p.id.slice(0, 8) }))
+      .sort((a, b) => a.full_name.localeCompare(b.full_name));
+
+    // Batch-load 30 cohort_days + 30 day_faculty rows
+    const [cdRes, dfRes] = await Promise.all([
+      supabase.from('cohort_days').select('day_number,live_session_at').eq('cohort_id', cohortId),
+      supabase.from('day_faculty').select('*').eq('cohort_id', cohortId),
+    ]);
+    if (cdRes.error) { $('pdaRows').innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${esc(cdRes.error.message)}</td></tr>`; return; }
+    if (dfRes.error) { $('pdaRows').innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${esc(dfRes.error.message)}</td></tr>`; return; }
+    PDA_COHORT_DAYS = new Map((cdRes.data || []).map(r => [r.day_number, r]));
+    PDA_DAY_ROWS = new Map((dfRes.data || []).map(r => [r.day_number, r]));
+    renderPerDayRows(cohortId);
+  }
+
+  function renderPerDayRows(cohortId) {
+    const fmt = (iso) => {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    };
+    const optsFor = (selectedId) => {
+      const tbdSel = !selectedId ? 'selected' : '';
+      let html = `<option value="${TBD_VALUE}" ${tbdSel}>TBD</option>`;
+      html += PDA_FACULTY.map(f =>
+        `<option value="${esc(f.user_id)}" ${selectedId === f.user_id ? 'selected' : ''}>${esc(f.full_name)}</option>`
+      ).join('');
+      return html;
+    };
+    const rows = [];
+    for (let n = 1; n <= 30; n++) {
+      const cd = PDA_COHORT_DAYS.get(n);
+      const df = PDA_DAY_ROWS.get(n);
+      const topic = PDA_TOPICS.get(n) || '';
+      rows.push(`
+        <tr data-day="${n}">
+          <td><span class="pda-day-n">DAY ${String(n).padStart(2, '0')}</span></td>
+          <td>${esc(fmt(cd?.live_session_at))}</td>
+          <td class="pda-topic">${esc(topic)}</td>
+          <td><select data-role="main">${optsFor(df?.main_user_id || null)}</select></td>
+          <td><select data-role="support">${optsFor(df?.support_user_id || null)}</select></td>
+        </tr>`);
+    }
+    $('pdaRows').innerHTML = rows.join('');
+    $('pdaRows').querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => savePerDayCell(cohortId, sel));
+    });
+  }
+
+  async function savePerDayCell(cohortId, selEl) {
+    const tr = selEl.closest('tr');
+    const day = Number(tr.dataset.day);
+    const role = selEl.dataset.role; // 'main' | 'support'
+    const value = selEl.value;
+    const isTbd = value === TBD_VALUE;
+    const userId = isTbd ? null : value;
+    const name = isTbd ? 'TBD' : (PDA_FACULTY.find(f => f.user_id === userId)?.full_name || 'TBD');
+
+    const existing = PDA_DAY_ROWS.get(day) || {};
+    const payload = {
+      cohort_id: cohortId,
+      day_number: day,
+      main_user_id: existing.main_user_id ?? null,
+      support_user_id: existing.support_user_id ?? null,
+      main_name: existing.main_name ?? 'TBD',
+      support_name: existing.support_name ?? 'TBD',
+    };
+    if (role === 'main') { payload.main_user_id = userId; payload.main_name = name; }
+    else { payload.support_user_id = userId; payload.support_name = name; }
+
+    selEl.disabled = true;
+    const { data, error } = await supabase
+      .from('day_faculty')
+      .upsert(payload, { onConflict: 'cohort_id,day_number' })
+      .select()
+      .single();
+    selEl.disabled = false;
+    if (error) { toast(error.message, 'err'); return; }
+    PDA_DAY_ROWS.set(day, data);
+    tr.classList.add('pda-saved');
+    setTimeout(() => tr.classList.remove('pda-saved'), 1200);
+    toast('Saved');
   }
 
   async function loadPretrainingArtifacts() {

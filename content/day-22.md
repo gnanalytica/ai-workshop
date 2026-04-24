@@ -1,253 +1,149 @@
 ---
-reading_time: 18 min
-tldr: "Push your capstone live, compute what it costs per user, design for trust, and make AI engines cite you."
-tags: ["build", "ship", "agentic"]
-video: https://www.youtube.com/embed/wgmCjrMFoyc
-lab: {"title": "Deploy + trust-UX audit + llms.txt", "url": "https://vercel.com/docs"}
-prompt_of_the_day: "Audit the trust stack of {{product_url}}. For each of: streaming, uncertainty indicators, citations, stop button, undo, and error recovery — tell me what is present, what is missing, and what one change would most increase user trust."
-tools_hands_on: [{"name": "Vercel", "url": "https://vercel.com"}, {"name": "Supabase", "url": "https://supabase.com"}, {"name": "Figma", "url": "https://figma.com"}]
-tools_demo: [{"name": "Neon", "url": "https://neon.tech"}, {"name": "Cloudflare Workers", "url": "https://workers.cloudflare.com"}, {"name": "Schema.org validator", "url": "https://validator.schema.org"}]
-tools_reference: [{"name": "Fly.io", "url": "https://fly.io"}, {"name": "Render", "url": "https://render.com"}, {"name": "Cloudflare Pages", "url": "https://pages.cloudflare.com"}, {"name": "GitHub Pages", "url": "https://pages.github.com"}, {"name": "Netlify", "url": "https://netlify.com"}, {"name": "Deno Deploy", "url": "https://deno.com/deploy"}, {"name": "Turso", "url": "https://turso.tech"}, {"name": "Modal", "url": "https://modal.com"}, {"name": "Replicate", "url": "https://replicate.com"}, {"name": "AWS Bedrock", "url": "https://aws.amazon.com/bedrock"}, {"name": "GCP Vertex AI", "url": "https://cloud.google.com/vertex-ai"}, {"name": "Azure AI Foundry", "url": "https://azure.microsoft.com/products/ai-foundry"}, {"name": "Ola Krutrim Cloud", "url": "https://olakrutrim.com"}]
-resources: [{"name": "llms.txt standard", "url": "https://llmstxt.org"}, {"name": "Schema.org", "url": "https://schema.org"}]
+day: 22
+date: "2026-06-01"
+weekday: "Monday"
+week: 5
+topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agentic System"
+faculty:
+  main: "Sandeep"
+  support: "Harshith"
+reading_time: "12 min"
+tldr: "An LLM that just chats is a calculator. An LLM with tools, memory, and a graph of decisions is an agent. Today you build a ReAct agent in LangGraph, give it two tools, and watch it loop until it's done."
+tags: ["agents", "langgraph", "mcp", "react"]
+software: ["LangChain", "LangGraph", "CrewAI"]
+online_tools: []
+video: "https://www.youtube.com/embed/aHCDrAbH_go"
+prompt_of_the_day: "Build me a ReAct agent in LangGraph with two tools: web_search and calculator. Question to answer: 'What was the GDP per capita of India in the latest IMF data, and how many times has it grown since 2000?' Show the trace."
+tools_hands_on:
+  - { name: "LangGraph", url: "https://langchain-ai.github.io/langgraph/" }
+  - { name: "LangChain", url: "https://python.langchain.com/" }
+  - { name: "CrewAI", url: "https://www.crewai.com/" }
+  - { name: "Model Context Protocol", url: "https://modelcontextprotocol.io/" }
+tools_reference:
+  - { name: "ReAct paper (Yao et al.)", url: "https://arxiv.org/abs/2210.03629" }
+  - { name: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents" }
+resources:
+  - { title: "LangGraph quickstart", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
+  - { title: "MCP servers list", url: "https://github.com/modelcontextprotocol/servers" }
+lab: { title: "Two-tool ReAct agent in LangGraph", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
 objective:
-  topic: "Deploy, cost-per-user math, trust UX, llms.txt"
-  tools: ["Vercel", "Supabase", "Figma"]
-  end_goal: "Submit a live capstone URL, a token-cost worksheet at 10/100/1000 users, a six-element trust-stack audit, and a verified llms.txt at your domain root."
+  topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems"
+  tools: ["LangGraph", "LangChain", "CrewAI", "MCP"]
+  end_goal: "A working ReAct agent in 60 lines of Python that uses two tools and prints its reasoning trace, plus a sketch of a 2-agent CrewAI team."
 ---
+
+A chatbot answers. An agent **acts**. The difference is a loop, a set of tools, and a controller that decides what to do next. Today we open that loop.
 
 ## 🎯 Today's objective
 
-**Topic.** Deploy, cost-per-user math, trust UX, llms.txt
+**Topic.** Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems.
 
-**Tools you'll use.** Vercel (deploy), Supabase (pooled Postgres + auth), Figma (trust-UX audit sketch).
+**By end of class you will have:**
+1. A working ReAct agent in LangGraph with two tools, running locally.
+2. Read its full *Thought → Action → Observation* trace and explained one step.
+3. A 2-agent CrewAI sketch (researcher + writer) and a one-paragraph note on when MCP beats a custom tool.
 
-**End goal.** By the end of today you will have:
-1. A live capstone URL on Vercel, DB-connected via Supabase's pooled endpoint.
-2. A token-cost worksheet at 10 / 100 / 1000 users.
-3. A six-element trust-stack audit (present / partial / missing + one change each).
-4. A verified `yoursite.com/llms.txt` and Schema.org JSON-LD on the landing page.
+> *Why this matters.* Half the capstone projects this cohort will pitch agents. Knowing the wiring under "I built an agent" separates demos from toys.
 
-> *Why this matters:* A capstone that only runs on localhost is a demo of your patience, not your product. Today it goes live, you know the unit economics, and the AI search engines of 2026 can cite you correctly.
+## ⏪ Pre-class · ~25 min
 
----
+### Setup (required)
 
-### 🌍 Real-life anchor
+- [ ] Python venv with `pip install langchain langgraph langchain-openai crewai`.
+- [ ] OpenAI **or** Anthropic API key in `.env`. Confirm with a 2-line `chat.invoke("hi")`.
+- [ ] Optional: install Claude Desktop and try one MCP server (filesystem).
 
-**The picture.** Opening a weekend stall: you rent the spot (**deploy**), put price tags and ingredient labels (**trust**), count what each customer costs you (**unit economics**), and pin a flyer on the community board so people can find you (**discoverability / llms.txt**).
+### Primer (~10 min)
 
-**Why it matches today.** Shipping v0 is that stall going public — not perfect, but **findable, honest, and priced**.
-
-## ⏪ Pre-class · ~20 min
-
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday (Day 21) was Capstone Milestone 3 — you vibe-coded a v0 that runs locally, with a director's commentary and a 90-second recording. Today we take that exact v0 and put it on the public internet. Your Day 21 repo and CLAUDE.md are the inputs to today's deploy.
-
-### Quick glossary
-
-- **Cold start** — the first-request latency penalty on serverless platforms; what users judge you on.
-- **Cost-per-user** — interactions × (input_tokens × input_price + output_tokens × output_price), monthly.
-- **GEO (Generative Engine Optimization)** — the craft of getting cited by ChatGPT, Perplexity, Claude, Gemini.
-- **llms.txt** — a single markdown file at your domain root that tells LLMs what your site is about.
-- **Schema.org** — JSON-LD structured markup that LLMs read preferentially because it's trustworthy.
-- **Trust UX** — the six-part stack: streaming, uncertainty, citations, stop, undo, error recovery.
-
-### Setup
-- [ ] Sign up for [Vercel](https://vercel.com) free tier and link your GitHub.
-- [ ] Confirm your [Supabase](https://supabase.com) account is live (you already have one) and spin up an empty project if you don't.
-- [ ] Push your Day 21 v0 code to GitHub — Vercel deploys from there.
-- [ ] Open the pricing pages for whichever models you use (Claude, OpenAI, Gemini) in tabs.
-
-### Primer (~5 min)
-- **Read**: [llmstxt.org](https://llmstxt.org) — the one-page spec.
-- **Watch** (optional): any "deploy to Vercel" 5-minute walkthrough for your stack.
+- **Watch:** "What is LangGraph?" — https://www.youtube.com/watch?v=aHCDrAbH_go (8 min).
+- **Read:** Anthropic's *Building effective agents* — skim "Workflows vs agents" and "When to use agents."
+- **Skim:** the ReAct paper abstract + Figure 1 (Yao et al.). You don't need the math.
 
 ### Bring to class
-- [ ] Your v0 repo on GitHub, ready to import into Vercel.
-- [ ] A blank spreadsheet (Google Sheets / Numbers) for the token-cost worksheet.
-- [ ] A rough guess at how many interactions per user per month your product expects.
 
----
+- [ ] One *agent-shaped problem* from your capstone. Not "summarise text" — that's a pipeline. Try "find me the cheapest train Bangalore→Hyderabad next Friday and book a placeholder."
 
-## 🎥 During class · live session
+> 🧠 **Quick glossary.** **ReAct** = Reason + Act loop. **Tool** = a function the LLM can call. **LangGraph** = library for building stateful agent graphs. **MCP** = Model Context Protocol — a standard way to plug tools into any agent. **CrewAI** = multi-agent orchestration with role-playing.
+
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min  | Localhost is not a product — today it goes live |
-| Mini-lecture | 20 min | Cold starts, vendor lock-in, cost-per-user math, trust stack, GEO |
-| Live lab     | 20 min | Deploy to Vercel, compute cost-per-user, audit trust stack, publish llms.txt |
-| Q&A + discussion | 15 min | The cost number that shocked you |
+| Chatbot vs workflow vs agent | 10 min | Where each fits |
+| ReAct loop, drawn on the whiteboard | 10 min | Thought → Action → Observation |
+| Live build: LangGraph agent | 20 min | 60 lines, two tools |
+| MCP demo + multi-agent sketch | 10 min | Why MCP, when to use Crew |
+| Lab + Q&A | 5 min |  |
 
-### In-class checkpoints
+### The minimum agent
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
-- **Cold-open**: show of hands — who has a live URL right now? Who's been "deploying tomorrow" for two weeks?
-- **Think-pair-share**: in 90 seconds, tell your partner your worst guess at cost-per-user at 1000 users; partner pushes on one assumption.
-- **Live poll**: drop your system-prompt token count in chat. We'll rank top-3 and bottom-3.
-- **Trust-stack audit breakout**: pair up, open each other's products, each person names two of the six elements that are missing or weak.
-- **GEO challenge**: read one teammate's draft llms.txt aloud; does it describe the site in under 20 seconds?
+```
+loop:
+  thought  = LLM(state)         # "I need the latest GDP figure"
+  action   = pick_tool(thought) # web_search("India GDP per capita 2025")
+  observe  = run_tool(action)   # "$2,710 per IMF April 2025"
+  state    = state + observe
+  if LLM says "done": break
+```
 
-### Read: Shipping, cost math, trust UX, and getting cited by AI
+That's it. Everything else — LangGraph, CrewAI, AutoGen — is sugar on this loop.
 
-#### Free-tier survival and cold starts
+### When to reach for what
 
-Every hosting platform has a free tier. None of them is free the way you think. They are free as long as your usage stays in the sweet spot: low traffic, short-lived requests, small bundles. Cross a line — cold starts on a big Python image, a long-running LLM stream, a DB connection that never releases — and the platform either charges you or kills your request with a 502.
+- **One LLM call** — classification, summary. Don't build an agent.
+- **Fixed pipeline (workflow)** — LangChain chain. Predictable, cheap, debuggable.
+- **Agent (LangGraph)** — when the *path* depends on intermediate results.
+- **Multi-agent (CrewAI)** — when roles are genuinely different and parallel: researcher + critic + writer.
+- **MCP** — when the *same* tool needs to plug into Claude Desktop, Cursor, your custom agent, all at once.
 
-Rules of survival:
+## 🧪 Lab: Two-tool ReAct agent
 
-- **Keep bundles small.** Every MB adds to cold start. Strip dev dependencies, tree-shake, lazy-load model clients.
-- **Stream LLM responses.** A 30-second non-streamed response looks like a timeout. A 30-second stream looks like thinking.
-- **Pool DB connections.** Serverless platforms open a new connection every invocation. Use a pooler (Supabase's pgbouncer, Neon's pooled endpoint) or you will run out of slots at 100 concurrent users.
-- **Cache the cacheable.** Static prompts, embeddings for frequent queries, system-prompt prefixes — cache them at the edge.
+1. New file `agent.py`. Define two `@tool`s: `web_search(query)` (use Tavily or DuckDuckGo) and `calculator(expression)`.
+2. Build a LangGraph `StateGraph` with one node `agent` (the LLM) and one node `tools` (the tool runner). Edges: `agent → tools → agent` until `END`.
+3. Run with the prompt of the day. Print every `(thought, action, observation)` triple.
+4. Break it on purpose: ask a question requiring **three** tool calls. Watch the loop hold up.
 
-Cold starts matter because of the perception gap: if your first request takes 4 seconds and every later request takes 200ms, users judge you on the 4. Warm the function on deploy, or pay for the "always-on" tier on the routes that matter most.
+**Artifact.** `agent.py` + a copy-pasted trace in your repo at `/labs/day-22/`. Push.
 
-#### Vendor lock-in — the real cost you do not see
+> ⚠️ **Cost watch.** Each loop costs ~₹1–4. Cap with `recursion_limit=10` so a runaway agent doesn't burn your credits.
 
-The cheapest way to ship a v0 is to grab the most magical platform: Vercel + its AI SDK, Supabase + its auth, Cloudflare + Workers AI, or bolt.new's stack. That magic has a price you pay later. Vendor lock-in shows up when you try to move and discover your auth assumes Supabase JWT shape, your queue is a Vercel Cron, your file storage is an R2 bucket, and your model calls use a proprietary router.
+## 📊 Live poll
 
-You cannot fully avoid lock-in — and you shouldn't, at v0. But you can **quarantine it**. Wrap the vendor SDKs in your own thin interfaces: `db.query()`, `auth.currentUser()`, `llm.complete()`. When the day comes to swap a vendor, you change one file, not fifty.
+**Where does your capstone need an agent (vs a workflow)?** Auth/forms / Search-and-summarise / Multi-step reasoning / Booking-style flows / *Honestly, nowhere.*
 
-#### Token-cost math per user
+## 💬 Discuss
 
-This is the number most junior AI builders never compute, and it eats startups alive. The math is simple; do it today.
+- A workflow is cheaper and more reliable. When is the agent's flexibility worth the extra cost?
+- Your capstone uses Razorpay. Should that be an MCP server or a hand-coded tool? Argue both sides.
+- Two agents (researcher + writer) vs one agent with two tools — what changes?
 
-For every core interaction a user has with your product, estimate:
+## ❓ Quiz
 
-- **Input tokens**: system prompt + retrieved context + user message. Count generously.
-- **Output tokens**: what the model returns.
-- **Model price**: input $/M tokens and output $/M tokens. Look it up on the provider page.
-- **Interactions per user per month**: your best guess.
+Short quiz on the ReAct loop, when MCP beats custom tools, and what `recursion_limit` does. Open on the dashboard mid-class.
 
-`cost_per_user = interactions × (input_tokens × input_price + output_tokens × output_price)`
+## 📝 Assignment · Your first agent
 
-A chat app with a 2000-token system prompt, 500 tokens of user message, 600 tokens of response, running on a mid-tier model at $3 input / $15 output per million tokens, used 20 times a month, costs you roughly $0.20 per user per month. That is survivable. Make the system prompt 10,000 tokens because "more context is better" and you just multiplied your burn by 5 without making the product better.
+**Brief.** Submit your `agent.py` plus a 150-word note: *what the agent did well, where it failed, what it cost in tokens.*
 
-Do the math for 10, 100, and 1000 users. The first number tells you if a demo week is free. The second tells you when your free provider credits run out. The third tells you what your pricing page has to say.
+**Stretch (optional).** Convert one of your tools into an MCP server (e.g., filesystem read) and call it from Claude Desktop or Cursor. +2 bonus points if you push the server config + a screenshot.
 
-#### UX for AI — the trust stack
+**Submit.** GitHub link + note on the dashboard before Day 23.
 
-AI products have a distinct UX surface area because the model is non-deterministic. Users tolerate weirdness only if the UI tells them what is happening. The **trust stack**:
+**Rubric.** Tools wired and called correctly (4) · Trace is readable, with thoughts visible (4) · Honest reflection on failures + cost (2).
 
-1. **Streaming.** Show tokens as they arrive. Silence feels like a bug.
-2. **Uncertainty indicators.** If the model is not confident, say so — "I'm not sure, but…" prefixes or a confidence bar.
-3. **Citations.** Every factual claim should link to its source. Unsourced claims corrode trust permanently.
-4. **Stop button.** Always. If the user wants to abort a runaway generation, they should be one click away.
-5. **Undo.** Every AI-destructive action (delete, overwrite, commit) must be reversible for at least one minute.
-6. **Error recovery.** When the model fails, say what failed and offer one next step — "Retry", "Try a smaller model", "Report this."
+## 🔁 Prep for next class
 
-Audit your capstone against those six today. Missing two of them is normal for a v0; missing five is a reason users will churn on day one.
+Day 23 is **Cost Estimation of AI** — tokens, knowledge graphs, Neo Cloud GPUs.
 
-#### GEO — Generative Engine Optimization
+- [ ] Save the *exact* token count from today's agent run. We'll cost it out tomorrow.
+- [ ] Read OpenAI's pricing page and Anthropic's pricing page. Note the gap.
+- [ ] Bring one capstone feature you're worried will be expensive at scale.
 
-Google shaped the last 20 years of web UX through SEO. The next decade is shaped by AI search — ChatGPT, Perplexity, Claude, Gemini, every LLM that answers questions with citations. GEO is the craft of getting cited.
+## 📚 References
 
-Three moves that work today:
-
-- **Publish an `llms.txt`.** A single markdown file at `yourdomain.com/llms.txt` that tells LLMs what your site is about, the most important pages, and how to reference you. The spec is at llmstxt.org.
-- **Add Schema.org markup.** JSON-LD blocks that describe your product, FAQs, authors, and articles. LLMs read structured data preferentially because it is trustworthy.
-- **Write for extraction.** Short paragraphs, clear headings, one claim per sentence. If a human can skim your page in 30 seconds and summarize it, a model can too.
-
-GEO is not SEO with new hats. It rewards clarity and structure over keyword density. Put a table of contents on every long page. Answer the obvious question in the first paragraph. Link to primary sources, not your own blog.
-
-### Watch: From localhost to live URL in under 20 minutes
-
-https://www.youtube.com/embed/wgmCjrMFoyc
-
-### Lab: Ship it, cost it, trust it, publish llms.txt
-
-1. Connect your capstone repo to Vercel. Push. Take the production URL.
-2. If you have a DB, provision a Supabase project and point the app at the pooled connection string. Set env vars in Vercel.
-3. Build the **token-cost worksheet**. A spreadsheet with columns: interaction name, input tokens, output tokens, model, price in, price out, cost per interaction, cost per user per month at 10, 100, 1000 users.
-4. Do a **trust-UX audit** of your live product in Figma or on paper. For each of the six trust-stack elements, mark present / partial / missing and note one change.
-5. Create `public/llms.txt` following llmstxt.org. Include project summary, three important URLs, and author. Deploy. Verify at `yoursite.com/llms.txt`.
-
-> ⚠️ **If you get stuck**
-> - *Vercel build fails with "Module not found" even though it runs locally* → check filename casing (macOS is case-insensitive, Linux is not) and confirm the import path matches the file exactly.
-> - *Serverless function times out on the first LLM call* → switch the route to a streaming response and raise `maxDuration` in the route config; non-streamed LLM calls routinely exceed the 10s default.
-> - *Supabase connection errors under light load ("too many connections")* → you're using the direct connection string. Swap to the pooled (pgbouncer) endpoint from the Supabase dashboard and redeploy.
-
-### Live discussion prompts — The cost surprise
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Share the number that shocked you in your token-cost worksheet. | Names the dollar figure at 100 or 1000 users and the single line-item driving it (e.g., "$48/user/mo — the 8k-token system prompt on every call"). |
-| Was it the system prompt, output length, model choice, or interaction count? | Diagnoses the dominant cost term with arithmetic, not vibes. Shows at least one multiplication ("2k in × 20 calls × $3/M = $0.12"). |
-| What change drops cost-per-user by 40% without hurting quality, and how would you verify the quality didn't drop? | Proposes a concrete lever (prompt caching, smaller model for cheap turns, retrieval instead of stuffing) and names an eval — even a 10-example side-by-side — to prove quality held. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate action (~70 min)
-1. Connect your repo to [Vercel](https://vercel.com), ship to production, capture the live URL.
-2. Wire [Supabase](https://supabase.com) (pooled pgbouncer endpoint) via env vars and redeploy.
-3. Build the token-cost worksheet at 10 / 100 / 1000 users using `interactions × (in_tokens × in_price + out_tokens × out_price)`.
-4. Publish `public/llms.txt` per [llmstxt.org](https://llmstxt.org) and verify at `yoursite.com/llms.txt`.
-5. Run the trust-stack audit (six elements) and file present / partial / missing with one-change notes.
-
-### 2. Reflect (~5 min)
-Which of the six trust-stack elements is cheapest to add this week, and which will most change how users feel about your product?
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-1. Why do cold starts hurt perceived performance more than steady-state latency?
-2. What does "quarantining vendor lock-in" look like in code?
-3. Write the formula for cost per user per month.
-4. Name four of the six elements of the AI trust stack.
-5. What does an `llms.txt` file do?
-
-### 4. Submit the assignment (~5 min)
-**Daily:** Submit (a) your live capstone URL, (b) your token-cost worksheet at 10/100/1000 users, and (c) the URL of your published `llms.txt`. Bonus: add Schema.org JSON-LD to your landing page and paste the Schema.org validator result.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional ~30 min)
-- **Extra video**: a Schema.org JSON-LD walkthrough for your framework.
-- **Extra read**: [Schema.org](https://schema.org) Product + FAQ types.
-- **Try**: validate your JSON-LD in the [Schema.org validator](https://validator.schema.org) and paste the result in your submission.
-
-### 6. Prep for Day 23 (~30 min — important)
-
-**Tomorrow you stop one-shot prompting and start building agents.** Day 23: a 3-tool LangGraph agent in a ReAct loop, plus your first MCP server wired into Cursor or Claude Desktop.
-
-- [ ] **Confirm Python 3.11+** is available (`python --version`). If not, prep a Google Colab or Replit notebook and note the URL.
-- [ ] **Install LangGraph** in a fresh venv: `pip install langgraph langchain-google-genai`.
-- [ ] **Have a Gemini API key** from [Google AI Studio](https://aistudio.google.com) ready in an env var. If you already have Claude or OpenAI credits, those are optional alternates.
-- [ ] **Install [Claude Desktop](https://claude.ai) or [Cursor](https://cursor.com)** for the MCP half of the lab.
-- [ ] **Read** the one-page [MCP intro](https://modelcontextprotocol.io).
-- [ ] **Write down** three candidate tools you'd want your capstone agent to use.
-
----
-
-## 📚 Extra / additional references
-
-### Pre-class primers
-- [llmstxt.org](https://llmstxt.org) — the spec in one page.
-- [Schema.org](https://schema.org)
-
-### Covered during class
-- [Vercel](https://vercel.com) — primary deploy target today.
-- [Supabase](https://supabase.com) — Postgres + auth + pooled connections.
-- [Figma](https://figma.com) — for the trust-UX audit sketch.
-- [Schema.org validator](https://validator.schema.org)
-
-### Deep dives (post-class)
-- [Neon](https://neon.tech) — serverless Postgres with pooled endpoints.
-- [Cloudflare Workers](https://workers.cloudflare.com) — edge alternative.
-- [Fly.io](https://fly.io), [Render](https://render.com), [Netlify](https://netlify.com), [Cloudflare Pages](https://pages.cloudflare.com), [Deno Deploy](https://deno.com/deploy) — deploy alternatives.
-- [Modal](https://modal.com), [Replicate](https://replicate.com) — GPU / inference.
-- [AWS Bedrock](https://aws.amazon.com/bedrock), [GCP Vertex AI](https://cloud.google.com/vertex-ai), [Azure AI Foundry](https://azure.microsoft.com/products/ai-foundry), [Ola Krutrim Cloud](https://olakrutrim.com) — hyperscaler model hosting.
-- [Turso](https://turso.tech) — edge SQLite.
-
-### Other videos worth watching
-- A "deploy Next.js + streaming LLM to Vercel" walkthrough for your stack.
+- [LangGraph quickstart](https://langchain-ai.github.io/langgraph/tutorials/introduction/) — the canonical tutorial.
+- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents) — the post that reset this field.
+- [ReAct paper (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) — the original loop.
+- [MCP servers](https://github.com/modelcontextprotocol/servers) — 100+ ready-to-use tools.

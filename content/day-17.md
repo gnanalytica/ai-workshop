@@ -1,243 +1,161 @@
 ---
-reading_time: 17 min
-tldr: "Run an LLM on your own laptop, compare three prompt styles on a 10-row eval set, and trace everything in Langfuse."
-tags: ["build", "technical"]
-video: https://www.youtube.com/embed/rIRkxZSn-A8
-lab: {"title": "Install Ollama + run a 1-3B model + log 10 evals in Langfuse", "url": "https://ollama.com/download"}
-prompt_of_the_day: "Act as a prompt engineer. My task is {{task_description}}. Generate three prompt variants: (A) zero-shot, (B) chain-of-thought with self-critique, (C) few-shot with 3 examples. Output each as a clearly labelled code block so I can paste them into Langfuse."
-tools_hands_on: [{"name": "Ollama", "url": "https://ollama.com"}, {"name": "Open WebUI", "url": "https://openwebui.com"}, {"name": "Langfuse", "url": "https://langfuse.com"}]
-tools_demo: [{"name": "Groq (free Llama 3.3 70B @ 750 tok/s)", "url": "https://groq.com"}, {"name": "Hugging Face model cards", "url": "https://huggingface.co"}, {"name": "OpenRouter", "url": "https://openrouter.ai"}]
-tools_reference: [{"name": "LM Studio", "url": "https://lmstudio.ai"}, {"name": "WebLLM (in-browser)", "url": "https://webllm.mlc.ai"}, {"name": "Together AI", "url": "https://together.ai"}, {"name": "Fireworks AI", "url": "https://fireworks.ai"}, {"name": "LangSmith", "url": "https://smith.langchain.com"}]
-resources: [{"name": "Qwen 2.5 1.5B", "url": "https://ollama.com/library/qwen2.5"}, {"name": "Gemma 2 2B", "url": "https://ollama.com/library/gemma2"}, {"name": "Phi-3 mini 3.8B", "url": "https://ollama.com/library/phi3"}]
+day: 17
+date: "2026-05-25"
+weekday: "Monday"
+week: 4
+topic: "Git, GitHub, localhost, APIs"
+faculty:
+  main: "Raunak"
+  support: "Sandeep"
+reading_time: "12 min"
+tldr: "If your demo lives only on your laptop, it doesn't exist. Today: git basics that actually stick, push to GitHub, run a local dev server, and call your first real API. By the end you have a public repo and a localhost app talking to a public API."
+tags: ["git", "github", "apis", "fundamentals"]
+software: []
+online_tools: []
+video: "https://www.youtube.com/embed/USjZcfj8yxE"
+prompt_of_the_day: "I just ran `git push` and got 'rejected — non-fast-forward'. Explain in 3 sentences what's happening, why, and the safest way to fix it without losing work. Assume I'm a 3rd-year CSE student who's pushed exactly twice before."
+tools_hands_on:
+  - { name: "Git CLI", url: "https://git-scm.com/" }
+  - { name: "GitHub", url: "https://github.com/" }
+  - { name: "Postman", url: "https://www.postman.com/" }
+  - { name: "OpenWeather API", url: "https://openweathermap.org/api" }
+tools_reference:
+  - { name: "GitHub — Hello World", url: "https://docs.github.com/en/get-started/start-your-journey/hello-world" }
+  - { name: "MDN — Fetch API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" }
+resources:
+  - { title: "Pro Git book (free)", url: "https://git-scm.com/book/en/v2" }
+  - { title: "Postman Learning Center", url: "https://learning.postman.com/" }
+lab: { title: "Repo + localhost + API call", url: "https://github.com/" }
 objective:
-  topic: "Local LLMs, prompt patterns, eval habits, tracing"
-  tools: ["Ollama", "Groq", "Langfuse"]
-  end_goal: "Ship a 10-row eval on your capstone task comparing three prompt variants (zero-shot / CoT+critique / few-shot) with win rates per variant."
+  topic: "Git, GitHub, localhost, APIs"
+  tools: ["Git", "GitHub", "Postman", "Public API"]
+  end_goal: "A public GitHub repo containing a tiny web app that runs on localhost and fetches live data from a public API."
 ---
+
+You shipped a demo on Day 16. Today is the plumbing under it. Git so you don't lose work. GitHub so others can see it. Localhost so you can develop fast. APIs so your app can do things it doesn't know how to do alone.
 
 ## 🎯 Today's objective
 
-**Topic.** Local LLMs, prompt patterns, eval habits, tracing
+**Topic.** Git, GitHub, localhost, APIs.
 
-**Tools you'll use.** Ollama (instructor demo), Groq + HuggingFace Chat (your fast cloud brains), Langfuse (tracing + evals).
+**By end of class you will have:**
+1. A public GitHub repo with at least 3 commits and a README.
+2. A localhost dev server running your app.
+3. A working `fetch()` call to a real public API (weather for your city, by default).
 
-**End goal.** By the end of today you will have:
-1. Felt local inference (via the instructor's Ollama demo) and cloud inference (Groq / HF Chat in your own browser).
-2. Written three prompt variants (zero-shot, CoT+self-critique, few-shot) for a real capstone task.
-3. Run them against a 10-row eval set and posted three win-rate numbers to the cohort channel.
+> *Why this matters.* Every job, every internship, every group project. Git fluency compounds for the rest of your career.
 
----
+## ⏪ Pre-class · ~25 min
 
-### 🌍 Real-life anchor
+### Setup (required)
 
-**The picture.** Three cooks try the same spice rub on identical chicken; the house votes blind. Numbers beat opinions — "everyone liked mine" is not a test, **counts** are.
+- [ ] **Git** installed: `git --version` returns 2.40+.
+- [ ] **GitHub** account with email verified.
+- [ ] Set local identity: `git config --global user.name "Your Name"` + `user.email`.
+- [ ] **Postman** desktop or web app signed in.
+- [ ] Free **OpenWeather** API key (https://openweathermap.org/api).
 
-**Why it matches today.** Langfuse + a tiny eval set is that taste test for **prompts and models**: same tasks, different recipes, score what actually wins.
+### Primer (~10 min)
 
-## ⏪ Pre-class · ~20 min
-
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday (Day 16) you learned the four rails — Git, GitHub, localhost, APIs. Today you drive on those rails. Ollama runs on `localhost:11434` (remember port numbers from Day 16?), cloud inference is just an HTTP POST to an API, and Langfuse is another app on a port. If any of yesterday's status codes or JSON-shape vocabulary still feels fuzzy, skim your Hoppscotch lab screenshots before class.
-
-**No local install needed.** Most laptops can't handle 3B+ models anyway — instructor will demo Ollama live. You'll use free cloud inference (Groq + HuggingFace Chat) which is actually *faster* than local on most laptops.
-
-### Setup (10 min — web only, no downloads)
-- [ ] Sign up for **Groq** free tier at https://console.groq.com — your free, instant GPU (Llama 3.3 70B at 750 tok/sec).
-- [ ] Sign in to **Google AI Studio** at https://aistudio.google.com (your Google account works) — free Gemini 2.5 Pro + Flash in a web playground.
-- [ ] Sign up for **HuggingFace** at https://huggingface.co — HuggingFace Chat + model leaderboards.
-- [ ] Sign up for **Langfuse** free tier at https://langfuse.com (Google sign-in, 30 seconds).
-- [ ] *Optional, only if your laptop has ≥ 8 GB RAM and you're curious*: download Ollama from https://ollama.com/download and pull one small model (`ollama pull qwen2.5:1.5b`). Not required — skip without guilt.
-
-### Primer (5 min)
-- [ ] Open https://huggingface.co/chat/ and try one prompt on any listed model. Feel how fast it is.
-- [ ] Skim the Groq homepage — notice the "1000+ tokens/sec" claim. That's the cloud advantage.
+- **Read:** GitHub's *Hello World* — https://docs.github.com/en/get-started/start-your-journey/hello-world
+- **Watch:** "Git in 100 seconds" by Fireship.
 
 ### Bring to class
-- [ ] One task from your capstone you suspect a small model could handle (summarize, classify, extract). Jot 2 example inputs.
-- [ ] Your Groq API key (console.groq.com → API Keys — create one, copy it for class).
 
-> 🧠 **Quick glossary for today**
-> - **Quantization** = compressing model weights to 4 or 8 bits so they fit on your laptop.
-> - **GGUF** = the packaged single-file format for quantized models (used by Ollama, llama.cpp).
-> - **Evals** = a repeatable test of a prompt against a fixed dataset, scored automatically.
-> - **LangSmith / Langfuse** = platforms that log + score every LLM call you make.
-> - **CoT** = Chain-of-Thought; telling the model to "think step by step" before answering.
-> - **Structured JSON** = forcing the model to return valid JSON matching a schema instead of free text.
+- [ ] Your Day-15 vibe-coded mess-menu folder. We'll put it under git.
 
----
+> 🧠 **Quick glossary.** **Repo** = a folder tracked by git. **Commit** = a snapshot. **Push** = upload commits to GitHub. **Origin** = the GitHub remote. **localhost** = your own machine, accessed at `http://localhost:PORT`. **API** = a URL that returns data instead of a webpage. **Endpoint** = one specific API URL.
 
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min | Why run an LLM locally when Groq is free? |
-| Mini-lecture | 20 min | Quantization, prompt patterns (CoT, self-critique, few-shot, JSON), what an eval actually is |
-| Live lab | 20 min | Instructor demos Ollama locally; you hit Groq + HF Chat + log traces in Langfuse |
-| Q&A + discussion | 15 min | When did small beat big? Which prompt pattern moved the number most? |
+| Git mental model | 15 min | Working dir → staging → commit → remote |
+| Live: init → push | 15 min | One repo, every command typed live |
+| Localhost servers | 10 min | `python -m http.server` and Live Server |
+| API anatomy + Postman | 15 min | GET, query params, JSON, status codes |
+| Lab + debug | 15 min | Wire it all together |
 
-### In-class checkpoints
+### The 8 commands you'll use 95% of the time
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
-- **Cold-open bet**: instructor runs the same prompt on Qwen 1.5B and Groq Llama 3.3 70B side by side; class votes which answer is "better" before the reveal.
-- **Think-pair-share**: in 90 seconds, tell your neighbour which task from your capstone would be "shockingly fine" on a 2B local model.
-- **Live poll**: RAM check — 4GB / 8GB / 16GB+ — instructor recommends a model per hand raised.
-- **Breakout**: in trios, rewrite one zero-shot prompt into a CoT + self-critique variant in 4 minutes; share the sharpest rewrite with the room.
-- **Win-rate reveal**: instructor shows a real Langfuse dashboard with three prompt variants; class predicts the winner before the numbers drop.
+```bash
+git init
+git status
+git add <file>
+git commit -m "message"
+git remote add origin <url>
+git push -u origin main
+git pull
+git log --oneline
+```
 
-### Read: Local LLMs, prompting patterns, and evals
+### What APIs feel like
 
-Let's unpack three ideas that make you dangerous: quantization (so models fit on your laptop), prompt patterns (so small models punch above their weight), and evals (so you know which prompt actually works).
+- A URL like `https://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=KEY`
+- You GET it. You get back **JSON** — a structured blob your code can read.
+- `200` = good. `401` = bad key. `404` = wrong URL. `429` = too many requests.
 
-**Quantization in one paragraph.** A neural network is a pile of numbers called weights. Full-precision weights are 16 or 32 bits each. A 7B-parameter model at full precision needs 14GB of RAM. Most of us don't have that. **Quantization** compresses each weight into 4 or 8 bits, shrinking the model 2–4x with only a small quality hit. The file format you'll see everywhere is **GGUF** — a single packaged file containing a quantized model plus its tokenizer. The naming pattern `Q4_K_M` means "4-bit quantization, medium quality variant". Rule of thumb: `Q4_K_M` for most laptops, `Q8_0` if you have RAM to spare, `Q2` only if you're desperate.
+## 🧪 Lab: Repo + localhost + API call
 
-**Which model should you pull?** Match the model to your RAM.
+1. Open your Day-15 folder. `cd` in. Run `git init`.
+2. Create a `README.md` with the app's name + 1-line description. `git add . && git commit -m "init"`.
+3. On GitHub, create a **new public repo** with the same name. Copy the *push existing* commands. Run them.
+4. Confirm the repo shows up on github.com under your username.
+5. Start a localhost server: `python -m http.server 8000`. Open http://localhost:8000.
+6. In Postman, GET `https://api.openweathermap.org/data/2.5/weather?q=YOUR_CITY&appid=YOUR_KEY&units=metric`. Confirm 200 + JSON.
+7. In your `index.html`, add a button + this snippet:
 
-| Laptop RAM | Pick | Approx size |
-|------------|------|-------------|
-| 4 GB | Qwen 2.5 1.5B Q4 | ~1 GB |
-| 6 GB | Gemma 2 2B Q4 | ~1.6 GB |
-| 8 GB+ | Phi-3 mini 3.8B Q4 | ~2.3 GB |
-| 16 GB | Llama 3.1 8B Q4 | ~4.7 GB |
+```html
+<button id="b">Weather</button><pre id="o"></pre>
+<script>
+const KEY = "PASTE_YOUR_KEY";
+document.getElementById('b').onclick = async () => {
+  const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=${KEY}&units=metric`);
+  const j = await r.json();
+  document.getElementById('o').textContent = `${j.name}: ${j.main.temp}°C, ${j.weather[0].description}`;
+};
+</script>
+```
 
-These small models (SLMs) won't replace GPT-5 or Claude, but for summarization, classification, structured extraction, and routing, they're shockingly competent — and **free, offline, private**.
+8. Reload localhost, click the button. Commit + push: `git add . && git commit -m "weather" && git push`.
 
-**Cloud fallback — your free GPU.** When local is too slow for the demo, cloud inference APIs give you 70B-class models at ridiculous speeds. **Groq** serves Llama 3.3 70B at ~750 tokens/sec on a free tier. **Together AI** and **Fireworks AI** offer wide model catalogues with per-token billing. **OpenRouter** (https://openrouter.ai) is the cheat code when you want to A/B many models without juggling keys — one API key routes to 100+ models (OpenAI, Anthropic, Mistral, Llama, DeepSeek, Qwen) behind a single OpenAI-compatible endpoint, with a free tier on several models. Perfect for today's eval work. The workflow: prototype locally with Ollama, switch the endpoint URL to Groq or OpenRouter when you need more brain, and your app code barely changes.
+**Artifact.** GitHub repo URL — paste in the cohort channel. Faculty will click and run.
 
-**Prompting patterns that actually move numbers.** Prompting is not magic words — it's a set of reusable patterns. Four that you should internalize today:
+## 📊 Live poll
 
-1. **Chain-of-Thought (CoT).** Ask the model to think step by step before answering. `"Explain your reasoning step-by-step, then on the final line write FINAL: <answer>."` This single trick can swing accuracy 10–30% on reasoning tasks. Small models benefit most.
+**Where did you get stuck first?** SSH/HTTPS auth / merge conflict / CORS error / API key 401 / Nowhere — smooth sailing.
 
-2. **Self-critique.** Ask the model to answer, then critique its own answer, then revise. `"Step 1: draft. Step 2: list three weaknesses of your draft. Step 3: produce an improved final version."` Great for writing tasks and long-form outputs.
+## 💬 Discuss
 
-3. **Structured JSON output.** Never parse free text if you can help it. `"Return ONLY valid JSON matching this schema: {\"intent\": string, \"confidence\": 0-1, \"entities\": string[]}."` Ollama and most cloud APIs now have a `format: json` flag — use it.
+- What's the difference between `git pull` and `git fetch`, and when does it bite?
+- Why is hard-coding `KEY` in client-side JS a bad idea? Where should it live in production?
+- What's one thing the README should contain that the code can't tell you?
 
-4. **Few-shot.** Show 2–5 worked examples before asking your real question. The examples teach tone, format, and edge cases faster than any instructions can. Budget a few hundred tokens; the payoff is huge.
+## ❓ Quiz
 
-**Evals — the habit that separates builders from tinkerers.** An **eval** is a repeatable test of an LLM prompt against a fixed dataset with an automatic or human-judged score. The minimum viable eval:
+Short quiz on git verbs, HTTP status codes, and the request/response loop. Open it on your dashboard.
 
-- A table of 10 rows. Each row has an `input` and an `expected` (or an `accept_if` rule).
-- Run your prompt across all 10 rows. Collect outputs.
-- Score each output (exact match, contains, LLM-as-judge, or a regex).
-- Tally the pass rate.
+## 📝 Assignment · Public repo, real API
 
-That's it. The magic is the **repeatability** — the next time you tweak your prompt, you rerun the same 10 rows and get a new number. If the number went up, ship it. If it went down, revert. You just graduated from vibes-driven development to data-driven development.
+**Brief.** Pick a *different* public API (https://github.com/public-apis/public-apis). Build a tiny one-page app that calls it and renders one piece of data. Push to GitHub with a real README (what it does, how to run, screenshot).
 
-**Langfuse** is our free, open-source eval + tracing platform. Every LLM call gets logged with inputs, outputs, latency, and tokens. You can tag outputs, group them into "sessions", and run dataset-based evals. It plays nicely with Ollama, OpenAI-compatible APIs, LangChain, and LlamaIndex. Alternatives: **LangSmith** (by LangChain, slicker UI but paid) or rolling your own Google Sheet (works fine for 10 rows).
+**Submit.** Repo URL on the dashboard.
 
-**Tokens and context windows.** One final vocabulary drop. A **token** is roughly 3/4 of an English word. A **context window** is how many tokens a model can "see" at once. Qwen 2.5 handles 32k tokens. Llama 3.3 handles 128k. Gemini 2.5 handles 1M. When a model "forgets" what you said, you've blown the context window — not because the model is dumb, but because you exceeded its RAM.
+**Rubric.** Repo runs after `git clone` (4) · API call works without code edits (3) · README has run instructions + screenshot (3).
 
-### Watch: Ollama in 10 minutes (instructor demo)
+## 🔁 Prep for next class
 
-Live walkthrough by the instructor — installing Ollama, pulling a small model, wiring up Open WebUI, making the first local chat call. You don't install it yourself. Then we switch to Groq on *your* laptop for a side-by-side speed comparison so you see both worlds.
+Day 18 is **Deployment with Vercel + Supabase** — taking your localhost app to a live URL.
 
-https://www.youtube.com/embed/rIRkxZSn-A8
+- [ ] Sign up for **Vercel** (link your GitHub) and **Supabase** (free tier).
+- [ ] Have **Node.js 20+** installed: `node -v`.
+- [ ] Bring the repo from today — it's the one we'll deploy.
 
-- Ollama listens on `http://localhost:11434` — the number matters.
-- Open WebUI gives you a ChatGPT-style interface on top of Ollama.
-- Groq's free tier is faster than any local setup you'll build today.
-- Local is private; cloud is fast. Use both.
+## 📚 References
 
-### Lab: Cloud-first 3-way prompt showdown in Langfuse
-
-Everyone runs models in the browser — no local installs. Instructor demos Ollama on their machine so you see what "local" means, then we move to where your work actually happens: cloud inference.
-
-Budget 45–60 minutes.
-
-1. **Watch the instructor** pull `qwen2.5:1.5b` in Ollama and chat with it in Open WebUI. ~3 minutes. This is the "why local exists" tour — privacy, offline, zero cost.
-2. In your browser, open **Groq Console** (`console.groq.com`). Go to Playground. Pick `llama-3.3-70b-versatile`. Paste: *"Explain RAG in 2 sentences."* Feel the speed.
-3. Open **Google AI Studio** (`aistudio.google.com`). Pick Gemini 2.5 Flash. Paste the same prompt. Compare the formatting + reasoning style.
-4. Open a third tab: **HuggingFace Chat** (`huggingface.co/chat/`). Pick Qwen 2.5 or Gemma. Paste the same prompt. Three answers, three models — notice the personality differences.
-4. Go to **Langfuse** (langfuse.com). Create a project. Grab your public + secret keys. (No code needed today — we log via the web console or Playground trace view.)
-5. Pick **one task from your capstone** you jotted in Before-class. Example: "Summarise a student's lab reflection into 3 bullets."
-6. Write **three prompt variants** using the prompt-of-the-day scaffold:
-   - V1: zero-shot ("Summarise this in 3 bullets: …")
-   - V2: CoT + self-critique ("Think step by step. Draft. Critique. Revise. …")
-   - V3: few-shot with 3 worked examples baked in.
-7. Build a **10-row eval set** in a Google Sheet: columns `input`, `expected`. Real inputs — capstone data, not synthetic.
-8. Run each variant against all 10 rows in the Groq Playground (or HuggingFace Chat). Score each output 1 (pass) or 0 (fail). Compute a win rate per variant.
-9. Screenshot the winning prompt + the Langfuse trace. Crown a winner.
-
-> ⚠️ **If you get stuck**
-> - *Groq rate-limited* → wait 30s and retry, or switch the model dropdown to a smaller option (Llama 3.1 8B) — free tier has per-model quotas.
-> - *HuggingFace Chat says "loading model"* → model is cold-starting; give it 20s or pick another from the dropdown (they're all free).
-> - *Langfuse traces empty* → the web-only flow uses Playground screenshots; to actually log traces you need an API call from code (that's Day 23 material) — for today, screenshots are fine.
-> - *Small local model eager to try anyway (≥8 GB laptop)*: download Ollama at home tonight, `ollama pull qwen2.5:1.5b`, run the same prompts, compare — it's an after-class stretch, not a requirement.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which task surprised you with how well a small local model handled it? | Names the task, the exact model + quantization, and one quality dimension (latency, format, tone) where it matched a frontier model. |
-| Did CoT help or just add latency? When was few-shot worth the token cost? | Cites a measured delta from the eval (e.g. "+20% on classification, +3s latency"), not a vibe. |
-| Share one eval row that broke all three prompts — what does that tell you? | Describes the row, proposes a hypothesis (ambiguity, domain jargon, long input), and suggests which prompt pattern might close the gap. |
-| Would you deploy a 2B local model to real users, or always route to Groq/Claude? | Takes a position, acknowledges the latency / privacy / cost trade-off, and names a specific user-facing task boundary. |
-| What's the smallest eval set you'd trust to ship a prompt change to production? | Gives a number with a reason (variance, coverage of edge cases) and mentions when you'd augment with LLM-as-judge or human review. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Ship the 10-row eval tonight while the lab is still fresh — this is the habit that separates tinkerers from builders.
-
-### 1. Immediate: finish the eval (~25 min)
-- [ ] Build the 10-row eval Google Sheet for your capstone task (`input`, `expected` columns). Real examples, not synthetic.
-- [ ] Run all three prompt variants (zero-shot, CoT+critique, few-shot) via Groq Playground.
-- [ ] Score each output 1/0 and compute win rates per variant.
-
-### 2. Reflect (~10 min)
-
-**Prompt:** *"Which prompt pattern moved the number most on my task — and does that tell me something about the task's actual difficulty?"* A strong reflection names the pattern (CoT vs few-shot vs zero-shot), cites the win-rate delta, and guesses whether the task is bottlenecked by reasoning, format, or domain knowledge.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Four quick ones on the dashboard: Why is `Q4_K_M` the most common quantization? What does chain-of-thought actually add to a prompt — tokens, structure, or both? If Groq is faster and free, why bother with local Ollama? What's the minimum number of rows that makes an eval meaningful for you, honestly?
-
-### 4. Submit the assignment (~5 min)
-
-Post to the cohort channel: the task, the three win-rate numbers, one surprise, and a screenshot of the winning prompt + output. Save the winning prompt in Langfuse's prompt library with a version tag.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-- [ ] Try the **same winning prompt** on a different Groq model (Mixtral, Llama 3.1 8B) — does model matter as much as prompt did? Often no — surprising takeaway.
-- [ ] Open **HuggingFace Chat** and test the same prompt on Qwen 2.5 vs DeepSeek — rate the Indian-language versions if relevant.
-- [ ] *Stretch (capable laptop only)*: install Ollama at home, pull `qwen2.5:1.5b`, run the same prompt offline. Compare quality + speed vs Groq. File the one-line verdict.
-
-### 6. Prep for Day 18 (~30-40 min — IMPORTANT, new content)
-
-**Tomorrow we teach the LLM about *your* world.** Day 18 is RAG: embeddings as coordinates for meaning, chunking, vector stores (pgvector on Neon), and when GraphRAG beats chunk-based RAG. Come in with a real corpus in hand — the lab only works if your PDFs are real.
-
-- [ ] **Gather your corpus**: collect **3-5 real PDFs** you care about — lecture notes, a research paper, your college handbook, internship reports. Put them in one folder called `capstone-pdfs/`.
-- [ ] **Write 5 test questions** you'd want an AI to answer from those PDFs — these become tomorrow's eval set.
-- [ ] **Sign up at Neon** (https://neon.com) free tier, create a project in the region nearest you (Mumbai / Singapore). Enable the `vector` extension in the dashboard.
-- [ ] **Open NotebookLM** (https://notebooklm.google) and sign in with your Google account so you skip onboarding in class.
-- [ ] **Skim** the pgvector README at https://github.com/pgvector/pgvector — just the intro, so `vector(384)` doesn't look scary tomorrow.
-
----
-
-## 📚 Extra / additional references
-
-### Short watches
-
-- [Ollama in 10 minutes](https://www.youtube.com/embed/rIRkxZSn-A8) — instructor demo, re-watch at 1.5x once you've done the lab.
-
-### Reading
-
-- [Langfuse docs](https://langfuse.com) — evals + tracing platform we used today.
-- [LangSmith](https://smith.langchain.com) — LangChain's paid sibling, slicker UI.
-- [Hugging Face model cards](https://huggingface.co) — for when you're picking a new model.
-
-### Play
-
-- **Local inference**: [LM Studio](https://lmstudio.ai), [WebLLM (in-browser)](https://webllm.mlc.ai), [Open WebUI](https://openwebui.com).
-- **Cloud inference free / cheap tiers**: [Groq](https://groq.com), [Together AI](https://together.ai), [Fireworks AI](https://fireworks.ai), [OpenRouter](https://openrouter.ai) (one key, 100+ models, great for eval sweeps).
-- **Models pulled today**: [Qwen 2.5 1.5B](https://ollama.com/library/qwen2.5), [Gemma 2 2B](https://ollama.com/library/gemma2), [Phi-3 mini 3.8B](https://ollama.com/library/phi3).
+- [Pro Git book (free, full)](https://git-scm.com/book/en/v2) — the canonical reference.
+- [GitHub — Hello World](https://docs.github.com/en/get-started/start-your-journey/hello-world)
+- [MDN — Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [Public APIs list](https://github.com/public-apis/public-apis) — pick your assignment API from here.

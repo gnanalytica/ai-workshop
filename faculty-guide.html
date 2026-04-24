@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Support Faculty Handbook · AI Workshop</title>
+<title>Faculty Handbook · AI Workshop</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -169,6 +169,42 @@
   }
   /* Triage SVG theming */
   :root{--triage-fill:var(--card);--triage-stroke:var(--line);--triage-text:var(--ink);--triage-yes:rgba(195,255,54,.25);--triage-no:rgba(255,107,107,.18)}
+
+  /* ── Role matrix table ──────────────────────────────────────── */
+  .role-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  .role-table th,.role-table td{
+    padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  .role-table th{
+    font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--muted);font-weight:600;background:var(--bg-soft);
+  }
+  .role-table td:first-child{font-weight:600}
+  .role-yes{color:var(--accent);font-weight:700}
+  .role-no{color:#ff8a8a;font-weight:600}
+  .role-partial{color:#7dd5ff;font-weight:600}
+
+  /* ── Phase blocks ───────────────────────────────────────────── */
+  .phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:8px}
+  .phase-card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:18px;
+  }
+  .phase-card h4{
+    margin:0 0 10px;font-size:13px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent);
+  }
+  .phase-card ul{margin:0;padding-left:18px;font-size:13px;line-height:1.65}
+  .phase-card ul li{margin-bottom:4px}
+
+  /* ── Callout / tip ──────────────────────────────────────────── */
+  .callout{
+    background:rgba(195,255,54,.06);border:1px solid rgba(195,255,54,.22);
+    border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.6;
+    margin:14px 0;
+  }
+  .callout strong{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -211,15 +247,18 @@
 <!-- TOC bar (sticky below nav) -->
 <div class="toc-bar" id="tocBar" style="display:none">
   <div class="toc-bar-inner">
-    <a href="#role"      data-toc="role">Your role</a>
-    <a href="#day-of"    data-toc="day-of">Day of session</a>
-    <a href="#open-script" data-toc="open-script">Opening script</a>
-    <a href="#triage"    data-toc="triage">Triage</a>
-    <a href="#debug"     data-toc="debug">Quick fixes</a>
-    <a href="#grading"   data-toc="grading">Grading</a>
-    <a href="#contacts"  data-toc="contacts">Contacts</a>
-    <a href="#checklist" data-toc="checklist">Checklist</a>
-    <a href="#artifacts" data-toc="artifacts">Artifacts</a>
+    <a href="#roles"      data-toc="roles">Who does what</a>
+    <a href="#lifecycle"  data-toc="lifecycle">Teaching day</a>
+    <a href="#dayhtml"    data-toc="dayhtml">Using day.html</a>
+    <a href="#facultyhub" data-toc="facultyhub">Faculty hub</a>
+    <a href="#triage-tools" data-toc="triage-tools">Stuck · attendance · board</a>
+    <a href="#grading"    data-toc="grading">Grading</a>
+    <a href="#triage"     data-toc="triage">Triage flow</a>
+    <a href="#debug"      data-toc="debug">Quick fixes</a>
+    <a href="#contacts"   data-toc="contacts">Contacts</a>
+    <a href="#checklist"  data-toc="checklist">Checklist</a>
+    <a href="#artifacts"  data-toc="artifacts">Artifacts</a>
+    <a href="#conduct"    data-toc="conduct">Code of conduct</a>
   </div>
 </div>
 
@@ -228,77 +267,177 @@
   <!-- Cohort selector header -->
   <header style="margin:28px 0 0;display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
     <div>
-      <div class="kicker">Support Faculty</div>
+      <div class="kicker">Faculty</div>
       <h1 style="font-size:clamp(24px,4vw,40px);margin:0 0 4px">Handbook</h1>
     </div>
     <select id="cohortSel" aria-label="Select cohort"></select>
   </header>
   <p class="muted" style="font-size:12.5px;margin:6px 0 32px;line-height:1.5">
-    Your one-stop guide for supporting a cohort session — reference before every class.
+    For trainers, lead and support faculty across the 30-day cohort — reference before every class.
   </p>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 1 — Your role
+       Section 1 — Roles & permissions matrix
   ═══════════════════════════════════════════════════════════════ -->
-  <section class="guide-section" id="role">
+  <section class="guide-section" id="roles">
     <div class="section-kicker">Section 1</div>
-    <h2 class="section-title">Your role in one paragraph</h2>
-    <div class="card" style="font-size:15px;line-height:1.75;max-width:720px">
-      As Support Faculty you own three things inside a cohort: <strong>pod support</strong> (sitting
-      with your assigned pod, answering questions, keeping energy high), <strong>attendance
-      marking</strong> for your pod's students, and <strong>grading your pod's submissions</strong>
-      against the Trainer-supplied rubric. What you don't own: curriculum content, cohort-wide
-      decisions, platform configuration, or the final grade if you're unsure — that always escalates
-      to the Trainer. Think of yourself as the closest expert to the learner, with a clear escalation
-      path for anything outside your lane.
+    <h2 class="section-title">Who does what — Trainer · Lead · Support · Admin</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 14px;max-width:760px">
+      Each day has one <strong>Lead</strong> (runs the room) and one <strong>Support</strong> (sits with students, triages). <strong>Trainers</strong> own curriculum and grading; <strong>Admins</strong> configure the cohort. Roles live on <code>profiles.staff_roles</code> and per-day <code>day_faculty</code>.
+    </p>
+    <div class="card" style="padding:4px 8px;max-width:920px;overflow-x:auto">
+      <table class="role-table">
+        <thead>
+          <tr>
+            <th>Capability</th><th>Admin</th><th>Trainer</th><th>Lead (day)</th><th>Support (day)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Edit curriculum / day content</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+          <tr><td>Edit Faculty prep notes</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td></tr>
+          <tr><td>Run live poll &amp; quiz, drive lab</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-partial">assist</td></tr>
+          <tr><td>Mark attendance</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td></tr>
+          <tr><td>Export attendance CSV</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+          <tr><td>Triage stuck queue · moderate board</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-yes">✓</td></tr>
+          <tr><td>Grade submissions</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+          <tr><td>Manage pods / teams</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+          <tr><td>Set per-day faculty assignments</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+          <tr><td>View cohort analytics</td><td class="role-yes">✓</td><td class="role-yes">✓</td><td class="role-no">—</td><td class="role-no">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>Heads up:</strong> Support faculty see a reduced sidebar — grading, content, pods/teams, and CSV exports are hidden. RLS in <code>20260423_support_faculty_scope.sql</code> enforces this server-side.
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 2 — Day of session
+       Section 2 — Your teaching day lifecycle
   ═══════════════════════════════════════════════════════════════ -->
-  <section class="guide-section" id="day-of">
+  <section class="guide-section" id="lifecycle">
     <div class="section-kicker">Section 2</div>
-    <h2 class="section-title">The day of a session</h2>
+    <h2 class="section-title">Your teaching day — before, during, after</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 14px;max-width:760px">
+      Every <code>content/day-XX.md</code> follows: 🎯 Objective → ⏪ Pre-class → 🎥 In-class → 🧪 Lab → 📊 Poll → 💬 Discuss → ❓ Quiz → 📝 Assignment → 🔁 Prep next → 📚 References.
+    </p>
+
+    <div class="phase-grid">
+      <div class="phase-card">
+        <h4>⏪ Before class</h4>
+        <ul>
+          <li>Open <code>day.html?day=N</code> 24h ahead; read end-to-end.</li>
+          <li>Drop run-of-show into <strong>private prep notes</strong>; one-line greeting into the <strong>shared note</strong> (see §3).</li>
+          <li>Run the lab once locally; verify poll &amp; quiz copy.</li>
+          <li>Confirm pod list, room/Zoom link, and your <code>day_faculty</code> slot.</li>
+        </ul>
+      </div>
+      <div class="phase-card">
+        <h4>🎥 During class</h4>
+        <ul>
+          <li><strong>Lead</strong> drives objective, demo, lab walkthrough; launches poll &amp; quiz at the marked beats.</li>
+          <li><strong>Support</strong> marks attendance live, sweeps stuck queue ~every 10 min, watches for stuck body language.</li>
+          <li>Moderate Discuss: one prompt, two minutes, 2–3 students share.</li>
+        </ul>
+      </div>
+      <div class="phase-card">
+        <h4>🔁 After class</h4>
+        <ul>
+          <li><strong>Trainers:</strong> grade prior day's assignment by 21:00 IST.</li>
+          <li><strong>Lead:</strong> append "what landed / what didn't" to private prep notes.</li>
+          <li><strong>Support:</strong> close resolved stuck items; escalate anything &gt;24h stale.</li>
+          <li>Spot-check attendance before midnight.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 3 — Using day.html as faculty (canonical prep-notes home)
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="dayhtml">
+    <div class="section-kicker">Section 3</div>
+    <h2 class="section-title">Using day.html — Faculty prep panel</h2>
+    <div class="card" style="padding:20px;font-size:14px;line-height:1.7;max-width:780px">
+      <p style="margin:0 0 12px">On <code>day.html?day=N</code>, faculty assigned to that day see a <strong>Faculty prep</strong> panel between the header and Objective. Students never see it.</p>
+      <ul style="margin:0 0 12px;padding-left:20px">
+        <li><strong>Private prep notes</strong> — faculty-only scratchpad: run-of-show, time-boxes, watch-outs. Sign additions with initials.</li>
+        <li><strong>Shared note</strong> — one-line sticky shown to all students above the Objective. Lead writes this before 09:00 IST.</li>
+      </ul>
+      <p style="margin:0">Both fields autosave 800ms after typing stops ("Saved ✓" badge). Both Lead and Support can edit; edits scope to the selected cohort.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 4 — Faculty hub tour
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="facultyhub">
+    <div class="section-kicker">Section 4</div>
+    <h2 class="section-title">Tour of <a href="faculty.html" style="color:var(--accent)">faculty.html</a></h2>
     <ul class="step-list">
-      <li><span><strong>Arrive 15 minutes early.</strong> Open the Faculty hub, select today's cohort, and confirm your pod list under People. Flag any unexpected absences to the Trainer before the session starts.</span></li>
-      <li><span><strong>Mark attendance.</strong> Head to <a href="admin-attendance.html" style="color:var(--accent)">Attendance</a>, find your pod members and mark each as present or absent as students arrive. Do this before the session content begins.</span></li>
-      <li><span><strong>Sit with your pod.</strong> Position yourself physically (or in a breakout room) close to your pod so you can spot blocked body language quickly. Keep the Faculty hub open on a second screen or tab.</span></li>
-      <li><span><strong>Triage questions in real time.</strong> Use the flowchart in Section 3 to decide: answer it yourself, Slack the Trainer, or escalate to Tech Support. Aim to unblock within 3–5 minutes; log anything that takes longer in the Stuck queue.</span></li>
-      <li><span><strong>Close out the session.</strong> Check that all pod members have submitted their lab or marked it in-progress. Add a brief note in the Stuck queue for any issues that need Trainer follow-up. Sign off for the day in the pre-session checklist once all items are done.</span></li>
+      <li><span><strong>Today / Tomorrow.</strong> What's running now, who's on, the day's objective and poll. One-click into <code>day.html</code>.</span></li>
+      <li><span><strong>My pod.</strong> Students you mentor — last submission, attendance streak, open stuck items.</span></li>
+      <li><span><strong>My teaching days.</strong> 30-day calendar filtered to your assigned days. Use it on Sunday to plan the week.</span></li>
+      <li><span><strong>Whole cohort</strong> (trainers/admins). Cross-cohort progress, quiz rates, submissions backlog.</span></li>
+      <li><span><strong>Analytics &amp; Handbook.</strong> Trainer-only analytics; link to this handbook.</span></li>
     </ul>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Opening script — what to actually say in the first 15 minutes
+       Section 5 — Triage tools quick-reference ladder
+       (Workflow / cadence lives in §2 phase cards.)
   ═══════════════════════════════════════════════════════════════ -->
-  <section class="guide-section" id="open-script">
-    <div class="section-kicker">Section 3</div>
-    <h2 class="section-title">First 15 minutes — opening script</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 20px;max-width:720px">
-      New faculty usually ask "what do I actually say?" Here's a concrete template. Read it once before Day 1, then adapt your own voice over time. Nothing here is sacred — timings and exact words are a starting point.
+  <section class="guide-section" id="triage-tools">
+    <div class="section-kicker">Section 5</div>
+    <h2 class="section-title">Stuck queue · attendance · discussion</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 14px;max-width:760px">
+      Quick-reference for the three tools — for <em>when</em> to use them, see the phase cards in §2.
     </p>
-    <div class="card" style="padding:22px;font-size:14px;line-height:1.7;max-width:780px">
-      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 0–2 · Before students arrive.</strong></p>
-      <p style="margin:0 0 18px">Open the Faculty hub on your laptop, pin today's cohort, open <a href="admin-attendance.html" style="color:var(--accent)">Attendance</a> in a second tab. Confirm you know who's in your pod. Set your phone on silent and keep the community board open on your second screen.</p>
+    <div class="card" style="padding:4px 8px;max-width:840px;overflow-x:auto">
+      <table class="role-table">
+        <thead>
+          <tr><th>Tool</th><th>Where</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stuck queue</td>
+            <td><a href="admin-stuck.html" style="color:var(--accent)">admin-stuck.html</a></td>
+            <td>Reply or claim; mark resolved. Escalate to Trainer if &gt;24h or off-curriculum.</td>
+          </tr>
+          <tr>
+            <td>Attendance</td>
+            <td><a href="admin-attendance.html" style="color:var(--accent)">admin-attendance.html</a></td>
+            <td>Pod-scoped for Support, cohort-wide for Trainers. CSV export is trainer-only (RLS).</td>
+          </tr>
+          <tr>
+            <td>Discussion / board</td>
+            <td><a href="dashboard.html#board" style="color:var(--accent)">board.html</a> + per-day prompts</td>
+            <td>Surface 2–3 replies live; pin recurring questions; escalate conduct issues to Admin.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 2–5 · Greet and seat.</strong></p>
-      <p style="margin:0 0 6px">Something like:</p>
-      <blockquote style="margin:0 0 18px 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--input-bg);border-radius:8px;color:var(--ink)">
-        "Hi, I'm <em>&lt;name&gt;</em> — I'm your pod's support faculty. I sit with you during every live session. If you get stuck on anything — the lab, an install, a concept you didn't catch — raise your hand or just tap my shoulder. No stupid questions today or any day."
-      </blockquote>
-
-      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 5–8 · Attendance + quick check.</strong></p>
-      <p style="margin:0 0 6px">As students arrive, mark each present in the Attendance tab. Then ask one round-robin question — something low-stakes so you learn voices and they learn that speaking up is normal:</p>
-      <blockquote style="margin:0 0 18px 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--input-bg);border-radius:8px;color:var(--ink)">
-        "Before we start — quick one-word check-in: how are you feeling about today's topic? One word each."
-      </blockquote>
-
-      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 8–12 · Verify the stack.</strong></p>
-      <p style="margin:0 0 18px">Ask everyone to run the day's verification command (e.g. <code>python --version</code> or <code>ollama list</code>). Catch broken environments <em>now</em>, not 40 minutes into the lab. If more than 2 students are broken, ping Tech Support immediately — don't try to fix them yourself in series.</p>
-
-      <p style="margin:0 0 10px"><strong style="color:var(--accent)">Minute 12–15 · Hand off to Trainer.</strong></p>
-      <p style="margin:0">When the Trainer begins, stop talking and start watching. Note any student who looks confused or idle &gt; 90 seconds — that's your cue to quietly check on them during the first exercise. You are not teaching content; you are noticing and unblocking.</p>
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 6 — Grading (trainers only)
+       (See §1 matrix for full role permissions.)
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="grading">
+    <div class="section-kicker">Section 6</div>
+    <h2 class="section-title">Grading workflow — trainers only</h2>
+    <div class="card" style="font-size:14px;line-height:1.75;max-width:760px">
+      <p style="margin:0 0 10px">
+        Each day's 📝 Assignment carries an inline rubric. Submissions due <strong>21:00 IST next day</strong>. Open <code>day.html?day=N</code> → Submissions panel → click a row.
+      </p>
+      <p style="margin:0 0 10px">
+        Score every criterion with one short actionable comment. Save publishes the grade instantly. Flag borderlines in the comment rather than guessing.
+      </p>
+      <p style="margin:0 0 10px">
+        <strong>Milestone days</strong> (7, 14, 21, 28) add a peer-review step before trainer finalizes. The trainer's score is ground truth — watch for peer inflation.
+      </p>
+      <p style="margin:0">
+        Lead and Support cannot open the grading drawer (UI + RLS). If Support has rubric input, leave a stuck-queue comment tagged <code>grading-input</code>. Full role matrix: see §1.
+      </p>
     </div>
   </section>
 
@@ -306,28 +445,25 @@
        Section 4 — Triage flowchart (with Red flags card)
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="triage">
-    <div class="section-kicker">Section 4</div>
+    <div class="section-kicker">Section 7</div>
     <h2 class="section-title">Triage flowchart</h2>
 
     <!-- Red flags — skip triage, escalate now -->
-    <div class="card" style="padding:18px 20px;margin:0 0 28px;max-width:780px;border:1px solid rgba(255,120,120,.35);background:rgba(255,120,120,.06)">
-      <div style="display:flex;align-items:center;gap:10px;margin:0 0 10px">
+    <div class="card" style="padding:16px 20px;margin:0 0 24px;max-width:780px;border:1px solid rgba(255,120,120,.35);background:rgba(255,120,120,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin:0 0 8px">
         <span style="font-size:16px">⚠️</span>
-        <strong style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#ffa0a0">Red flags — skip triage, escalate immediately</strong>
+        <strong style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#ffa0a0">Red flags — skip triage, phone Trainer + Admin now</strong>
       </div>
-      <p class="muted" style="font-size:13px;margin:0 0 10px;line-height:1.5">If any of these happen, don't go through the flowchart below. Phone the Trainer AND the Admin at the same time — include the student name and a one-line description.</p>
-      <ul style="margin:0;padding-left:20px;font-size:13.5px;line-height:1.75">
-        <li><strong>Student in distress</strong> — panic, tears, reports of harassment or unsafe behaviour in the room.</li>
-        <li><strong>Academic-integrity concern</strong> — credible suspicion of impersonation, paid completion, or leaked answers.</li>
-        <li><strong>Platform-wide outage</strong> — Supabase down, board/dashboard throwing errors for the whole pod.</li>
-        <li><strong>Misuse or policy breach</strong> — students using the tools to generate unsafe or offensive content, or ignoring the cohort code of conduct after one warning.</li>
-        <li><strong>Anything you genuinely don't feel qualified to handle</strong> — that judgment call is correct. Escalate.</li>
+      <ul style="margin:0;padding-left:20px;font-size:13.5px;line-height:1.7">
+        <li><strong>Student in distress</strong> — panic, tears, harassment reports.</li>
+        <li><strong>Academic-integrity concern</strong> — impersonation, paid completion, leaked answers.</li>
+        <li><strong>Platform-wide outage</strong> — Supabase down, errors across the pod.</li>
+        <li><strong>Misuse / policy breach</strong> — unsafe generated content, repeated CoC violations.</li>
+        <li><strong>Anything outside your judgment.</strong> Escalating is the right call.</li>
       </ul>
     </div>
 
-    <p class="muted" style="font-size:13px;margin:0 0 20px">
-      For everything else — a question arrives, walk it through each diamond in order.
-    </p>
+    <p class="muted" style="font-size:13px;margin:0 0 16px">For everything else, walk each diamond in order.</p>
     <div class="triage-wrap">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -420,10 +556,10 @@
        Deliberately short: support faculty triage, Tech Support fixes.
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="debug">
-    <div class="section-kicker">Section 5</div>
+    <div class="section-kicker">Section 8</div>
     <h2 class="section-title">Quick fixes</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 20px;max-width:720px">
-      Try these 30-second fixes first. If the problem isn't on this list or the fix doesn't work in one try, <strong>escalate</strong> — don't spend five minutes debugging while your pod stalls. The full install and troubleshooting playbook lives in <a href="setup-guide.html" style="color:var(--accent)">setup-guide.html</a>; recurring issues end up as <a href="board.html" style="color:var(--accent)">community board</a> posts.
+    <p class="muted" style="font-size:13px;margin:0 0 18px;max-width:720px">
+      30-second fixes first. If none land in one try, <strong>escalate</strong> — full playbook in <a href="setup-guide.html" style="color:var(--accent)">setup-guide.html</a>.
     </p>
 
     <div class="card" style="padding:18px 22px;max-width:780px;margin:0 0 20px">
@@ -459,10 +595,10 @@
       </table>
     </div>
 
-    <div class="card escalate-box" style="padding:18px 22px;max-width:780px">
+    <div class="card escalate-box" style="padding:16px 22px;max-width:780px">
       <strong style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Escalation template</strong>
-      <p class="muted" style="font-size:13px;margin:10px 0 12px;line-height:1.55">
-        When a 30-second fix doesn't land, send this to Tech Support. Copy the template, fill in each line, and drop it in the community board with tag <code>tech</code> (or DM Tech Support if the pod is blocked <em>right now</em>):
+      <p class="muted" style="font-size:13px;margin:8px 0 12px;line-height:1.55">
+        Drop in board with tag <code>tech</code>; DM Tech Support if blocking the pod right now.
       </p>
       <pre style="margin:0;padding:14px 16px;background:var(--input-bg);border-radius:10px;font-size:12.5px;font-family:'JetBrains Mono',monospace;line-height:1.7;white-space:pre-wrap;color:var(--ink)">Student: &lt;name&gt; (pod &lt;letter&gt;)
 OS + version: &lt;macOS 14.4 / Win 11 / Ubuntu 22.04&gt;
@@ -475,37 +611,10 @@ How blocking: &lt;blocked now / can park until break&gt;</pre>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 5 — Grading your pod
-  ═══════════════════════════════════════════════════════════════ -->
-  <section class="guide-section" id="grading">
-    <div class="section-kicker">Section 6</div>
-    <h2 class="section-title">Grading your pod</h2>
-    <div class="card" style="font-size:14px;line-height:1.75;max-width:720px">
-      <p style="margin:0 0 12px">
-        Open the day page (e.g. <code>day.html?day=3</code>), scroll down to the
-        <strong>Submissions panel</strong>, and click a student's row to open their work.
-        The rubric criteria are shown inline — score each dimension and leave a short, actionable
-        comment explaining your score. Hit <strong>Save</strong>; the student's view updates immediately.
-      </p>
-      <p style="margin:0 0 12px">
-        Stick to the rubric. If a submission is borderline or the rubric doesn't cover the situation,
-        <strong>flag it to the Trainer</strong> rather than guess. Leave a note in the comment field:
-        "Flagged — awaiting Trainer review." Never inflate grades to be kind — students rely on
-        accurate feedback to improve.
-      </p>
-      <p style="margin:0">
-        Grades you submit are visible to students right away. If you need to revise after saving,
-        re-open the row and update — revisions are tracked. All grading is scoped to your pod; you
-        cannot see or edit other pods' submissions unless the Trainer explicitly grants access.
-      </p>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       Section 6 — Escalation contacts
+       Section 9 — Escalation contacts
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="contacts">
-    <div class="section-kicker">Section 7</div>
+    <div class="section-kicker">Section 9</div>
     <h2 class="section-title">Escalation contacts</h2>
     <div id="contactsPanel">
       <p class="muted" style="font-size:13px">Loading cohort contacts…</p>
@@ -517,17 +626,16 @@ How blocking: &lt;blocked now / can park until break&gt;</pre>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 7 — Pre-session checklist
+       Section 10 — Pre-session checklist
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="checklist">
-    <div class="section-kicker">Section 8</div>
+    <div class="section-kicker">Section 10</div>
     <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px">
       <h2 class="section-title" style="margin:0">Pre-session checklist</h2>
       <span id="readyPill" style="display:none" class="ready-pill">Ready ✓</span>
     </div>
     <p class="muted" style="font-size:13px;margin:0 0 16px">
-      Complete all items before your first session. Auto-checked items are verified from your account data.
-      Manual items are saved on toggle.
+      Complete before your first session. Auto items verify from account data; manual items save on toggle.
     </p>
 
     <div class="card" id="checklistItems">
@@ -536,13 +644,28 @@ How blocking: &lt;blocked now / can park until break&gt;</pre>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       Section 8 — Per-cohort live-session artifacts
+       Section 11 — Per-cohort live-session artifacts
   ═══════════════════════════════════════════════════════════════ -->
   <section class="guide-section" id="artifacts">
-    <div class="section-kicker">Section 9</div>
+    <div class="section-kicker">Section 11</div>
     <h2 class="section-title">Live-session artifacts</h2>
     <div class="card" id="artifactsPanel">
       <p class="muted" style="font-size:13px">Loading cohort artifacts…</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 12 — Code of conduct & emergencies
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="conduct">
+    <div class="section-kicker">Section 12</div>
+    <h2 class="section-title">Code of conduct & emergencies</h2>
+    <div class="card" style="padding:20px;font-size:14px;line-height:1.7;max-width:780px">
+      <p style="margin:0 0 10px"><strong>Community.</strong> Every question is legitimate. No sarcasm, public shaming, or "you should know this". Faculty disagreements stay between faculty — never debate curriculum in front of the cohort.</p>
+      <p style="margin:0 0 10px"><strong>Inclusion.</strong> Gender-neutral defaults; mirror students' pronouns. Honour name/pronoun updates the same hour.</p>
+      <p style="margin:0 0 10px"><strong>Academic integrity.</strong> Generative tools are encouraged; verbatim peer copies are not. On suspicion of impersonation, document and escalate to the Trainer — do not confront.</p>
+      <p style="margin:0 0 10px"><strong>Emergencies.</strong> Physical safety: local emergency services first, then Admin. Platform outages: Tech Support (§9). Harassment/distress: pause, move to a private space, escalate to Admin within the hour.</p>
+      <p style="margin:0"><strong>Confidentiality.</strong> Stuck posts, prep notes, and grading comments stay inside the platform. No external screenshots of student submissions without consent.</p>
     </div>
   </section>
 

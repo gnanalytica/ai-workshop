@@ -178,6 +178,7 @@
   let COHORTS = [];
   let CURRENT_COHORT = null;
   let DAY_ROWS = new Map(); // day_number -> row
+  let DAY_FACULTY = new Map(); // day_number -> { main_name, support_name }
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
@@ -239,11 +240,36 @@
     $('cohortMeetInput').value = CURRENT_COHORT?.meet_link || '';
     refreshCohortMeetReadOnly();
 
-    const { data, error } = await supabase.from('cohort_days').select('*').eq('cohort_id', cohortId).order('day_number', { ascending: true });
-    if (error) { topMsg(error.message, 'err'); return; }
-    DAY_ROWS = new Map((data || []).map(r => [r.day_number, r]));
+    const [cdRes, dfRes] = await Promise.all([
+      supabase.from('cohort_days').select('*').eq('cohort_id', cohortId).order('day_number', { ascending: true }),
+      supabase.from('day_faculty').select('day_number,main_name,support_name').eq('cohort_id', cohortId),
+    ]);
+    if (cdRes.error) { topMsg(cdRes.error.message, 'err'); return; }
+    DAY_ROWS = new Map((cdRes.data || []).map(r => [r.day_number, r]));
+    DAY_FACULTY = new Map();
+    if (!dfRes.error) {
+      for (const r of (dfRes.data || [])) {
+        DAY_FACULTY.set(r.day_number, { main_name: r.main_name, support_name: r.support_name });
+      }
+    }
     renderSummary();
     renderWeeks();
+  }
+
+  function dayFacultyHtml(n) {
+    const dEntry = DAYS.find(x => x.n === n) || {};
+    const seedMain = dEntry.main || dEntry.main_name || '';
+    const seedSupport = dEntry.support || dEntry.support_name || '';
+    const df = DAY_FACULTY.get(n) || {};
+    const lead = df.main_name || seedMain || 'TBD';
+    const support = df.support_name || seedSupport || 'TBD';
+    const link = (label) =>
+      `<a href="admin-faculty.html#per-day-assignment" style="color:var(--accent);text-decoration:none;font-size:12px">${esc(label)}</a>`;
+    return `
+      <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px">
+        <div><span class="muted" style="text-transform:uppercase;letter-spacing:.08em;font-size:10px">Lead</span> ${link(lead)}</div>
+        <div><span class="muted" style="text-transform:uppercase;letter-spacing:.08em;font-size:10px">Support</span> ${link(support)}</div>
+      </div>`;
   }
 
   function renderSummary() {
@@ -348,6 +374,7 @@
           <div><span class="day-ro-k">Capstone type</span><div>${cap}</div></div>
           ${notesBlock}
         </div>
+        ${dayFacultyHtml(d.n)}
       </div>`;
   }
 
@@ -397,6 +424,7 @@
           <span class="saved-flash" data-flash>✓ saved</span>
           <button class="save-btn" data-save>Save</button>
         </div>
+        ${dayFacultyHtml(d.n)}
       </div>
     `;
   }

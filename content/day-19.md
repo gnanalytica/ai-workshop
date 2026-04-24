@@ -1,270 +1,173 @@
 ---
-reading_time: 17 min
-tldr: "Stop re-prompting. Write CLAUDE.md + AGENTS.md once so your AI remembers your project every time — the real unlock of 2026."
-tags: ["build", "technical"]
-video: https://www.youtube.com/embed/ASAaKhK1B5w
-lab: {"title": "Write your capstone's first CLAUDE.md + AGENTS.md + 3 slash commands", "url": "https://claude.com/claude-code"}
-prompt_of_the_day: "You are a context engineer. Given my capstone description {{capstone_description}} and stack {{stack}}, draft a CLAUDE.md with these sections: Project Overview, Architecture, Coding Rules, File Locations, Testing Patterns, Common Pitfalls, Slash Commands. Make every rule actionable."
-tools_hands_on: [{"name": "Google Antigravity", "url": "https://antigravity.google.com"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Claude Code", "url": "https://claude.com/claude-code"}, {"name": "Cursor", "url": "https://cursor.com"}]
-tools_demo: [{"name": "Battle-tested CLAUDE.md examples", "url": "https://github.com/search?q=CLAUDE.md&type=code"}, {"name": "Custom slash commands (Claude Code)", "url": "https://docs.claude.com/claude-code"}]
-tools_reference: [{"name": "Anthropic Claude Code docs", "url": "https://docs.claude.com/claude-code"}, {"name": "AGENTS.md spec", "url": "https://agents.md"}, {"name": "Cursor rules docs", "url": "https://docs.cursor.com/context/rules"}, {"name": "Google Code Assist", "url": "https://codeassist.google/"}, {"name": "aider", "url": "https://aider.chat"}]
-resources: [{"name": "Sample CLAUDE.md collection", "url": "https://github.com/search?q=filename%3ACLAUDE.md&type=code"}, {"name": "Claude Code hooks guide", "url": "https://docs.claude.com/claude-code"}]
+day: 19
+date: "2026-05-27"
+weekday: "Wednesday"
+week: 4
+topic: "Context Engineering — Embeddings & RAG; prompt vs retrieve vs fine-tune"
+faculty:
+  main: "Sanjana"
+  support: "Sandeep"
+reading_time: "14 min"
+tldr: "LLMs don't know your data. Three ways to fix that: better prompts, retrieval (RAG), or fine-tuning. Today we make the *right* choice for the right job, and build a working RAG pipeline over a real document — your college's exam handbook."
+tags: ["embeddings", "rag", "vector-db", "context"]
+software: ["LangChain", "Chroma", "sentence-transformers", "Pinecone", "pgvector"]
+online_tools: ["ChatGPT", "Hugging Face", "Gemini"]
+video: "https://www.youtube.com/embed/T-D1OfcDW1M"
+prompt_of_the_day: "Given this 40-page college exam handbook, answer the student's question in 3 sentences citing the page numbers I retrieved. If the answer isn't in the retrieved context, reply 'Not in handbook' — do NOT use general knowledge. Question: <user query>. Context: <top-k chunks>."
+tools_hands_on:
+  - { name: "LangChain (Python)", url: "https://www.langchain.com/" }
+  - { name: "Chroma", url: "https://www.trychroma.com/" }
+  - { name: "sentence-transformers", url: "https://www.sbert.net/" }
+  - { name: "Hugging Face", url: "https://huggingface.co/" }
+  - { name: "Gemini API", url: "https://ai.google.dev/" }
+tools_reference:
+  - { name: "Pinecone — What is RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" }
+  - { name: "pgvector", url: "https://github.com/pgvector/pgvector" }
+resources:
+  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
+  - { title: "Lilian Weng — LLM-powered agents", url: "https://lilianweng.github.io/posts/2023-06-23-agent/" }
+lab: { title: "RAG over your college handbook", url: "https://www.trychroma.com/" }
 objective:
-  topic: "Context engineering with reusable project instructions"
-  tools: ["Claude Code", "Cursor", "Google Antigravity"]
-  end_goal: "Ship a CLAUDE.md + AGENTS.md + 3 custom slash commands committed to your capstone repo, with one concrete task where CLAUDE.md made the AI noticeably smarter on the first try."
+  topic: "Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice"
+  tools: ["LangChain", "Chroma", "sentence-transformers", "Gemini"]
+  end_goal: "A working RAG pipeline that ingests a PDF, embeds chunks, and answers questions with citations — refusing to answer when the document doesn't contain the info."
 ---
+
+You've spent two weeks impressed that ChatGPT *seems* to know everything. Today is the trick behind making it know **your** stuff — your handbook, your codebase, your meeting notes. The pattern is **R**etrieval-**A**ugmented **G**eneration, and once you grok it you stop fine-tuning models you didn't need to.
 
 ## 🎯 Today's objective
 
-**Topic.** Context engineering with reusable project instructions
+**Topic.** Context Engineering: Embeddings & RAG; prompt vs retrieve vs fine-tune.
 
-**Tools you'll use.** Pick one harness: Claude Code, Cursor, Antigravity, AI Studio, Code Assist, or aider.
+**By end of class you will have:**
+1. Built a **vector index** of your college's exam handbook (or any PDF you bring).
+2. Run **top-k retrieval** with sentence-transformers + Chroma.
+3. Wired retrieved chunks into a Gemini (or ChatGPT) prompt and gotten cited answers.
+4. A clear rule for when to **prompt**, when to **retrieve**, when to **fine-tune**.
 
-**End goal.** By the end of today you will have:
-1. A committed CLAUDE.md (150–250 lines, every rule testable) at your capstone repo root.
-2. A matching AGENTS.md for vendor-neutral agents (Codex, Cursor, Aider).
-3. Three custom slash commands — `/review`, `/plan`, `/explain` — in `.claude/commands/`.
+> *Why this matters.* Most "AI startups" are RAG with a UI. After today you can build that core in one sitting.
 
----
+## ⏪ Pre-class · ~30 min
 
-### 🌍 Real-life anchor
+### Setup (required)
 
-**The picture.** A new hire gets a **employee handbook** on day one: dress code, how expenses work, who to ping for keys. They do not re-negotiate those rules every morning — they reread the same binder.
+- [ ] Python 3.10+, virtualenv, then `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai`
+- [ ] **Gemini API key** (free) — https://aistudio.google.com/apikey
+- [ ] **Hugging Face** account.
+- [ ] One PDF you care about: college exam handbook, hostel rules, your own notes (5–50 pages).
 
-**Why it matches today.** CLAUDE.md / AGENTS.md are that handbook for the AI: **stable rules** the session opens with, instead of you re-explaining the repo each chat.
+### Primer (~10 min)
 
-## ⏪ Pre-class · ~20 min
+- **Read:** Pinecone's *What is RAG* — https://www.pinecone.io/learn/retrieval-augmented-generation/
+- **Watch:** Any 6-min "Embeddings explained visually" video.
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
+### Bring to class
 
-**Revision / context.** Yesterday (Day 18) you built a RAG bot and learned that giving the LLM *your data* beats a bigger model every time. Today extends that principle one level up: giving the LLM *your project's rules* beats better prompting every time. CLAUDE.md is to your repo what RAG is to your PDFs — persistent context the model reads automatically instead of you re-typing it each chat.
+- [ ] Three real questions about your PDF that the LLM *shouldn't* be able to answer without it.
 
-The lab wants a real repo open in a real AI harness — no toy project, no scratch folder.
+> 🧠 **Quick glossary.** **Embedding** = a vector (list of numbers) representing meaning. **Vector DB** = stores embeddings, finds nearest neighbours fast. **Chunk** = a slice of source text (e.g., 500 tokens). **Top-k** = retrieve the k most similar chunks to a query. **RAG** = retrieve relevant chunks → stuff into prompt → LLM answers using them. **Fine-tune** = adjust the model's weights with new data (expensive, last resort).
 
-### Setup (12 min)
-- [ ] Pick one harness that your laptop supports — in order of weight/heaviness:
-  - **Google Antigravity** (`antigravity.google.com`) — web-based + free with Google account, no local install, lightest option for weak laptops.
-  - **Google AI Studio** (`aistudio.google.com`) — web playground, create a "Build" project, also works fully in browser.
-  - **Google Code Assist** (`codeassist.google/`) — free Gemini-powered VS Code / JetBrains plugin; individual tier has no credit card requirement. Good IDE option if you want inline completions without leaving VS Code.
-  - **Claude Code** (`claude.com/claude-code`) — local CLI, needs Claude Pro or equivalent access.
-  - **Cursor** (`cursor.com`) — local desktop app, free tier OK.
-  - **aider** (`aider.chat`) — OSS CLI pair-programmer, bring-your-own-key. Slick command-line harness if you prefer terminal over IDE.
-- [ ] Open your capstone folder. If you haven't made one yet, create it now and run `git init` so the AI harness has a repo to read.
-- [ ] Confirm your harness opens the repo: from the folder, run `claude` (or open in Cursor) and ask "what's in this repo?" — sanity check.
-
-### Primer (5 min)
-- [ ] Skim the Anthropic Claude Code docs at https://docs.claude.com/claude-code — read the "Memory & CLAUDE.md" and "Slash commands" sections.
-- [ ] Open https://agents.md and read the one-page AGENTS.md spec. It's shorter than this pre-work list.
-- [ ] Browse 2-3 real CLAUDE.md examples from https://github.com/search?q=filename%3ACLAUDE.md&type=code — note structure, not content.
-
-### Bring to class (3 min)
-- [ ] One capstone repo open in your editor.
-- [ ] A list of the **3 things you re-explain to AI every chat** — stack, folder layout, that one weird rule. These become your first CLAUDE.md rules.
-
-> 🧠 **Quick glossary for today**
-> - **CLAUDE.md** = a markdown file Claude Code auto-reads when it opens your project. Your AI "onboarding doc".
-> - **AGENTS.md** = the vendor-neutral version (Codex, Cursor, Aider, etc.) — same idea, wider audience.
-> - **Context engineering** = designing what the AI *already knows* before you type a prompt.
-> - **Slash command** = a saved prompt you trigger with `/name` in Claude Code (lives in `.claude/commands/`).
-> - **Hook** = a script the harness runs automatically on events like PreToolUse / PostToolUse / Stop.
-
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min | Prompting is what you say; context engineering is what the AI already knows |
-| Mini-lecture | 20 min | CLAUDE.md vs AGENTS.md, the 8-section template, slash commands, hooks |
-| Live lab | 20 min | Scaffold a starter CLAUDE.md for your capstone in Claude Code, together |
-| Q&A + discussion | 15 min | Which single rule will save you the most hours? |
+| Three ways to inject knowledge | 15 min | Prompt vs RAG vs fine-tune decision tree |
+| Embeddings, visualised | 10 min | "King − man + woman = queen" + a 2D plot |
+| Live build: ingest → embed → query | 25 min | LangChain + Chroma + sentence-transformers |
+| Wire to Gemini with citations | 10 min | Prompt template + refusal behaviour |
+| Poll + Q&A | 10 min |   |
 
-### In-class checkpoints
+### Decision tree
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
-- **Cold-open**: instructor opens two fresh Claude Code sessions on the same repo — one with a strong CLAUDE.md, one without — asks the same question; class times the difference.
-- **Think-pair-share**: in 90 seconds, list the 3 things you re-explain to AI every single chat on your capstone.
-- **Live draft**: instructor writes a "Common Pitfalls" section on-screen from a real bug they hit; class nominates the next rule to add.
-- **Breakout**: in pairs, critique each other's CLAUDE.md draft — flag anything that's vague, stale, or untestable.
-- **Rule-of-the-day vote**: each student shouts their single highest-leverage rule; class votes on the sharpest.
+| Need | Use |
+|---|---|
+| Change tone/format of answers | **Prompt** |
+| Add facts the model didn't see in training | **Retrieve (RAG)** |
+| Bake a new skill / domain style deeply | **Fine-tune** |
+| Need fresh info that changes daily | **Retrieve** |
+| Have only 50 examples | Prompt → RAG. *Not* fine-tune. |
 
-### Read: From prompting to context engineering
+### Why retrieve before you fine-tune
 
-**The shift in one sentence.** Prompting is what you say. Context engineering is what the AI *already knows* before you say anything.
+- Cheaper. Faster. Updatable in seconds (just re-index).
+- No model drift, no training infra, no leaked data risk.
+- Works with *any* base model. Swap GPT for Gemini in one line.
 
-In 2023, the whole industry was obsessed with prompt wording — the perfect incantation. By 2026, the winning teams don't waste brain cycles on single prompts. They build a **context layer**: files, memory, tool definitions, and rules that travel with every AI interaction in their repo. The result: every new chat starts the AI at skill level 10 instead of level 0.
+## 🧪 Lab: RAG over your handbook
 
-**CLAUDE.md and AGENTS.md — the standard instruction files.**
+```python
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+import google.generativeai as genai, os
 
-- **CLAUDE.md** is a markdown file Claude Code (and many other agents) automatically reads when you open a project. It's your project's "onboarding doc for an AI coworker".
-- **AGENTS.md** is a vendor-neutral spec (see agents.md) pushed by OpenAI, Cursor, and others for the same purpose. Many projects now ship both — Claude reads CLAUDE.md; Codex, Cursor, and Aider read AGENTS.md.
-- **.cursorrules** is Cursor's own flavour, increasingly being replaced by AGENTS.md.
+# 1. Load + chunk
+docs = PyPDFLoader("handbook.pdf").load()
+chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(docs)
 
-A good instruction file has roughly these sections:
+# 2. Embed + index
+emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+db = Chroma.from_documents(chunks, emb, persist_directory="./store")
 
-1. **Project Overview** — 3-sentence summary of what this repo does.
-2. **Architecture** — ASCII or bullet diagram of the main components and how they talk.
-3. **Stack & Conventions** — languages, frameworks, style guides. "TypeScript strict mode. React 19. Tailwind. No class components."
-4. **File Locations** — where things live. "API routes: `app/api/`. Components: `components/`. DB migrations: `drizzle/`."
-5. **Coding Rules** — dos and don'ts. "Always validate inputs with Zod. Never log secrets. Prefer composition over inheritance."
-6. **Testing Patterns** — how to run tests, what framework, where mocks live.
-7. **Common Pitfalls** — every gotcha someone burned 4 hours on once. "Don't import from `@/lib/db` in client components. SSR will crash."
-8. **Slash Commands & Hooks** — custom shortcuts tailored to this project.
+# 3. Retrieve
+q = "What is the re-evaluation deadline for end-sem papers?"
+hits = db.similarity_search(q, k=3)
+context = "\n---\n".join(f"[p.{h.metadata.get('page')}] {h.page_content}" for h in hits)
 
-**Why a good CLAUDE.md saves hours.** Without it: every new chat, you explain the same 8 things. The AI guesses the rest wrong and you fix it twice. With it: you type "implement the signup flow" and the AI already knows to use Zod, put the route under `app/api/auth/signup/route.ts`, write a Vitest test alongside it, and not touch `lib/session.ts` (marked "frozen" in your CLAUDE.md). Real teams report 30–60% less back-and-forth after adopting this.
-
-**Slash commands — workflows as muscle memory.** Claude Code lets you define custom commands under `.claude/commands/` (each is just a markdown file with a prompt template). Typing `/review` in Claude Code runs your review checklist. Typing `/ship` runs your pre-commit ritual. Typing `/debug-api` runs your standard API debugging walkthrough. Three you should always write:
-
-- `/review` — "Review the current diff for reuse, quality, and security. Check against our CLAUDE.md coding rules. Output pass/fail per rule."
-- `/plan` — "Given this task, produce a 5-step implementation plan with files touched and risks. Wait for approval before coding."
-- `/explain` — "Explain this code to me like I'm new to the repo. Use our Architecture section as context."
-
-**Hooks — automating the harness.** Hooks are scripts the Claude Code harness runs automatically at specific events — `PreToolUse`, `PostToolUse`, `Stop`. Common uses: auto-format after every file edit, run tests when Claude finishes, block a command that touches `.env`. Hooks live in `settings.json`. You configure once; they enforce forever. This is how "from now on, always run prettier after an edit" goes from memory-based (unreliable) to harness-enforced (ironclad).
-
-**Project-level memory — the third layer.** Beyond CLAUDE.md there's per-session memory and user-level memory. The hierarchy:
-
-- **User memory** (`~/.claude/CLAUDE.md`) — global preferences. "I'm Sandeep. My email is sandeep@gnanalytica.com. I prefer pnpm over npm."
-- **Project memory** (`./CLAUDE.md`) — this repo's rules. Checked into git.
-- **Session memory** — what the AI learned this conversation. Ephemeral.
-
-Project memory is the highest-leverage layer because it's shared with your teammates.
-
-**Evals for your context file itself.** The meta-move: evaluate your CLAUDE.md like you'd evaluate a prompt. Make a list of 10 realistic project tasks ("add an API route", "write a migration", "fix a bug in component X"). Give them to Claude Code with and without your CLAUDE.md. Compare quality. The delta tells you whether your context file is pulling its weight.
-
-**What goes wrong when CLAUDE.md is bad.** Three anti-patterns:
-
-- **Too vague.** "Write clean code" is not actionable. "No functions longer than 40 lines" is.
-- **Too long.** A 2000-line CLAUDE.md chews your context window and confuses the model. Aim for 100–300 lines. Link out for the rest.
-- **Stale.** Update it when your stack changes. An outdated CLAUDE.md is worse than none — it actively misleads.
-
-**Bottom line.** Prompting is a skill. Context engineering is a leverage multiplier. Writing your first CLAUDE.md today will pay back every single chat you have for the rest of your capstone.
-
-### Watch: A battle-tested CLAUDE.md, annotated
-
-Instructor walks through a real 150-line CLAUDE.md from a production AI project — Project Overview, architecture diagram, coding rules, slash commands, hooks — calling out why each line exists. Then shows what happens when you delete it and start a fresh chat.
-
-https://www.youtube.com/embed/ASAaKhK1B5w
-
-- 100–300 lines is the sweet spot.
-- Every rule should be testable (would a human know if it was violated?).
-- Slash commands turn workflows into one-word shortcuts.
-- Hooks turn rules into harness-level enforcement.
-
-### Lab: Write your capstone's first CLAUDE.md
-
-Budget 45–60 minutes. Do this in Claude Code (preferred) or Cursor.
-
-1. Create a new folder for your capstone repo (or open an existing one). Run `git init` if it isn't a repo yet.
-2. Open it in Claude Code. Ask: "Read my repo and draft a starter CLAUDE.md using the 8-section template." It will produce a draft from the files it sees.
-3. Edit the draft. Remove fluff. Add **concrete, testable** rules — especially the Common Pitfalls section. Aim for 150–250 lines.
-4. Read this, don't type it — this is the shape of what you're writing:
-
-```markdown
-# CLAUDE.md — Capstone: RAG Bot for College Handbook
-
-## Project Overview
-A RAG chatbot answering student queries from the 300-page handbook PDF.
-
-## Stack
-- Next.js 15 (App Router), TypeScript strict
-- LlamaIndex + Ollama (local) / Groq (prod)
-- pgvector on Neon
-
-## Coding Rules
-- Always use Zod for input validation on API routes.
-- Never read PDFs at request time — use the ingested index.
-- All prompts live in `prompts/` as .md files, never inline.
-
-## Common Pitfalls
-- Ollama defaults to port 11434. If absent, fall back to Groq.
-- Do not touch `lib/ingest.ts` without re-running the full eval set.
+# 4. Generate with citations
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+model = genai.GenerativeModel("gemini-2.5-flash")
+prompt = f"""Answer in 3 sentences citing page numbers from the context.
+If the answer isn't in the context, reply exactly 'Not in handbook'.
+Context:\n{context}\n\nQuestion: {q}"""
+print(model.generate_content(prompt).text)
 ```
 
-5. Create an **AGENTS.md** that mirrors the essentials, tuned for non-Claude agents (Codex, Cursor). Keep it shorter — rules only.
-6. Create 3 custom slash commands in `.claude/commands/`: `/review.md`, `/plan.md`, `/explain.md`. Each is a single-prompt markdown file.
-7. (Bonus) Add one hook in `.claude/settings.json` — e.g., auto-run your linter after any file edit.
-8. Test it. Open a fresh Claude Code session and ask it to implement one small capstone feature. Notice how much *less* you have to re-explain.
+1. Drop your PDF in the working directory as `handbook.pdf`.
+2. Run the script. Confirm citations.
+3. Ask one of your three pre-class questions. Confirm it cites pages.
+4. Ask a question whose answer is *not* in the PDF (e.g., "Who won IPL 2024?"). Confirm the model says **"Not in handbook."**
+5. Increase `k` from 3 to 8. Does the answer change? Why?
 
-> ⚠️ **If you get stuck**
-> - *Claude Code doesn't seem to "know" my CLAUDE.md rules* → confirm the file is in the repo root (or `.claude/CLAUDE.md`) and that you opened Claude Code *inside* that directory; it's scoped by cwd.
-> - *Slash command doesn't trigger when I type `/review`* → check the filename is exactly `.claude/commands/review.md` (lowercase, no spaces) and that it's a plain markdown prompt, not JSON.
-> - *Hook fires but silently fails or blocks every tool call* → tail the hook's stderr; a non-zero exit code from a `PreToolUse` hook blocks the action by design, so guard your script and log errors to a file.
+**Artifact.** A GitHub gist with: your script, your 3 questions, the model's answers, and one paragraph on what surprised you.
 
-### Live discussion prompts
+## 📊 Live poll
 
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which single rule in your CLAUDE.md do you expect to save the most hours? | Quotes the exact rule (not a paraphrase), names the past pain it prevents, and explains how you'd know if the AI violated it. |
-| Which section (Architecture? Pitfalls? Slash Commands?) was hardest to write — and why? | Picks one, explains whether the hard part was knowing the truth, writing it tersely, or keeping it current. |
-| Should CLAUDE.md be checked into git publicly, or does it leak too much project detail? | Distinguishes public OSS repos from internal repos, notes what belongs in user-level vs project-level, and calls out secrets risk. |
-| What would a team-wide "house style" CLAUDE.md look like across all projects? | Names 2–3 cross-project invariants (testing stack, commit style, review checklist) and where it would extend vs override per-project files. |
-| When would a hook be a better tool than a CLAUDE.md rule? | Picks a case where a rule is easy to forget or skip (formatting, secret-scanning) and justifies harness-enforcement over memory. |
+**For *your* capstone, the right tool is:** Better prompt only / RAG / Fine-tune / Mix of prompt + RAG / Don't know yet.
 
----
+## 💬 Discuss
 
-## 📝 Post-class · ~2 hour focused block
+- Embeddings put "Bengaluru" close to "Mumbai" but far from "samosa". Why does that property make retrieval work?
+- Your retrieval returned 3 chunks. One was irrelevant. What knobs would you turn first — chunk size, k, embedding model, or query rewriting?
+- Where would Pinecone or pgvector beat Chroma in production?
 
-Commit a CLAUDE.md + AGENTS.md + 3 slash commands tonight — future-you will thank you on every chat.
+## ❓ Quiz
 
-### 1. Immediate: polish and commit the files (~25 min)
-- [ ] Tighten CLAUDE.md to 150-250 lines. Every rule testable ("no functions > 40 lines", not "clean code").
-- [ ] Write **AGENTS.md** mirroring the essentials — rules-only, vendor-neutral per https://agents.md.
-- [ ] Create `.claude/commands/review.md`, `plan.md`, `explain.md`.
-- [ ] Check Cursor rules docs at https://docs.cursor.com/context/rules if your team uses Cursor too.
-- [ ] `git add` + `git commit` it all.
+Short quiz on embedding intuition, top-k retrieval, and the prompt/retrieve/fine-tune choice. Open it on your dashboard.
 
-### 2. Reflect (~10 min)
+## 📝 Assignment · RAG over your own corpus
 
-**Prompt:** *"Which rule will save me the most hours — and how would I know if the AI violated it?"* A strong reflection quotes the exact rule verbatim, names the past pain it prevents, and defines a testable failure signal (code review catches it, a hook blocks it, a lint rule fires).
+**Brief.** Pick a corpus that matters to you — your notes for one subject, 10 of your college's announcement PDFs, your hostel's mess menu archive. Build a tiny RAG pipeline. Demonstrate **3 questions answered correctly with citations** and **1 question correctly refused**.
 
-### 3. Quiz (~17 min)
+**Submit.** GitHub gist or repo + a 90-second Loom showing the 4 questions on the dashboard.
 
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
+**Rubric.** Pipeline runs end-to-end (4) · Citations are correct page/chunk (3) · Refusal behaviour works on out-of-corpus questions (3).
 
-Four to ponder on the dashboard: What's the difference between CLAUDE.md, AGENTS.md, and `.cursorrules`? Why is 2000 lines of CLAUDE.md worse than 200? What's a slash command actually — magic or just a saved prompt? What's a hook, and when would you choose a hook over a rule in CLAUDE.md?
+## 🔁 Prep for next class
 
-### 4. Submit the assignment (~5 min)
+Day 20 deepens this into **production-grade context engineering** (longer-context tricks, hybrid search, reranking).
 
-Post to the cohort channel: a screenshot of your repo's root showing CLAUDE.md + AGENTS.md + `.claude/commands/`, and one example task where CLAUDE.md made the AI noticeably smarter on the first try.
+- [ ] Skim Lilian Weng's *Agents* post — https://lilianweng.github.io/posts/2023-06-23-agent/
+- [ ] Keep your Day-19 vector store on disk — we'll iterate on it.
+- [ ] Bring one *failure case* from today's lab where retrieval got the wrong chunks. We'll debug live.
 
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
+## 📚 References
 
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-- [ ] Add one hook in `.claude/settings.json` (e.g. auto-format after edits) — see the Claude Code hooks guide at https://docs.claude.com/claude-code.
-- [ ] Do a mini "context eval": run the same task in a fresh session with and without CLAUDE.md. Note the delta.
-
-### 6. Prep for Day 20 (~30-40 min — IMPORTANT, new content)
-
-**Tomorrow is the automation unlock.** Day 20: n8n flows (trigger → API → AI → output) plus browser-use agents for the tasks no API exists for. The biggest AI ROI in real offices isn't chat — it's workflows.
-
-- [ ] **Sign up for n8n.cloud** free tier at https://n8n.io. Hosted version works out of the box.
-- [ ] **Confirm your Groq key** from Day 17 is still handy — it's your fast free brain for AI nodes.
-- [ ] **Pick ONE boring weekly task** you actually do — downloading attendance, checking job portals, sorting emails, copying prices. Specific enough that you can name its trigger. Estimate minutes/week it costs you (that's your ROI baseline).
-- [ ] **Browse** https://n8n.io/workflows/ — filter by "AI" and open 2-3 templates to see what a real flow looks like.
-- [ ] **Skim** one of Jina Reader (https://jina.ai/reader) or Firecrawl (https://firecrawl.dev) — decide which scraper you'll try first.
-- [ ] (Optional) skim browser-use install steps at https://docs.browser-use.com so tomorrow's install isn't a surprise.
-
----
-
-## 📚 Extra / additional references
-
-### Short watches
-
-- [Battle-tested CLAUDE.md walkthrough](https://www.youtube.com/embed/ASAaKhK1B5w) — re-watch at 1.5x with your own draft open.
-
-### Reading
-
-- **Harnesses**: [Claude Code](https://claude.com/claude-code), [Cursor](https://cursor.com), [Google Code Assist](https://codeassist.google/), [aider](https://aider.chat).
-- **Specs + docs**: [Anthropic Claude Code docs](https://docs.claude.com/claude-code), [AGENTS.md spec](https://agents.md), [Cursor rules docs](https://docs.cursor.com/context/rules).
-
-### Play
-
-- [Battle-tested CLAUDE.md search](https://github.com/search?q=CLAUDE.md&type=code) — read ten real ones, crib the best sections.
-- [Sample CLAUDE.md collection](https://github.com/search?q=filename%3ACLAUDE.md&type=code).
+- [Pinecone — What is RAG](https://www.pinecone.io/learn/retrieval-augmented-generation/) — clearest 10-min read.
+- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/)
+- [pgvector](https://github.com/pgvector/pgvector) — when you outgrow Chroma and want it inside Postgres/Supabase.
+- [Hugging Face — sentence-transformers](https://www.sbert.net/)
+- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the "embeddings as meaning" intuition.

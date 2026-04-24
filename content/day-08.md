@@ -1,240 +1,129 @@
 ---
-reading_time: 16 min
-tldr: "Pixels are free now. Today you generate a poster and a ten-second video for your capstone pitch."
-tags: ["exposure", "tools"]
-video: https://www.youtube.com/embed/5deYUaqwreo
-lab: {"title": "Ship 1 poster + 1 ten-second video for your capstone", "url": "https://aistudio.google.com"}
-prompt_of_the_day: "Design a poster for a student project called {{project_name}} that solves {{problem}} for {{audience}}. Style: clean, modern, Indian campus aesthetic, 2026 techno-optimist. Composition: hero object center, minimal text, one bold tagline. Palette: {{two colors}}. Format: 2:3 portrait, print-ready."
-tools_hands_on: [{"name": "Nano Banana (Google Imagen via AI Studio)", "url": "https://aistudio.google.com"}, {"name": "Adobe Firefly", "url": "https://firefly.adobe.com"}, {"name": "Kling AI", "url": "https://klingai.com"}]
-tools_demo: [{"name": "Ideogram", "url": "https://ideogram.ai"}, {"name": "Runway", "url": "https://runwayml.com"}, {"name": "Midjourney", "url": "https://midjourney.com"}]
-tools_reference: [{"name": "Pika", "url": "https://pika.art"}, {"name": "Canva Magic Studio", "url": "https://canva.com"}]
-resources: [{"name": "Google AI Studio", "url": "https://aistudio.google.com"}, {"name": "Firefly user guide", "url": "https://firefly.adobe.com"}]
+day: 8
+date: "2026-05-12"
+weekday: "Tuesday"
+week: 2
+topic: "Design thinking as a disciplined five-stage loop"
+faculty:
+  main: "TBD"
+  support: "TBD"
+reading_time: "10 min"
+tldr: "Design thinking isn't sticky notes and vibes — it's a five-stage loop (Empathize → Define → Ideate → Prototype → Test) that catches you before you build the wrong thing. Today you run one full loop on a real campus problem."
+tags: ["design-thinking", "product"]
+software: []
+online_tools: ["Canva", "Figma"]
+video: "https://www.youtube.com/embed/_r0VX-aU_T8"
+prompt_of_the_day: "You are a senior product designer at IDEO. I'm a 3rd-year student trying to redesign the hostel mess feedback box. Walk me through one full design-thinking loop in 10 lines: Empathize → Define → Ideate → Prototype → Test. Be ruthless about what to skip."
+tools_hands_on:
+  - { name: "Figma", url: "https://www.figma.com/" }
+  - { name: "Canva", url: "https://www.canva.com/" }
+  - { name: "ChatGPT", url: "https://chat.openai.com/" }
+tools_reference:
+  - { name: "IDEO — Design Thinking primer", url: "https://designthinking.ideo.com/" }
+resources:
+  - { title: "d.school — An Introduction to Design Thinking (PDF)", url: "https://web.stanford.edu/~mshanks/MichaelShanks/files/509554.pdf" }
+  - { title: "IDEO U — What is Design Thinking?", url: "https://www.ideou.com/blogs/inspiration/what-is-design-thinking" }
+  - { title: "Nielsen Norman Group — Design Thinking 101", url: "https://www.nngroup.com/articles/design-thinking/" }
+lab: { title: "One full loop on a campus pain", url: "https://www.figma.com/" }
 objective:
-  topic: "Image and video generation, diffusion, six-slot prompting"
-  tools: ["Nano Banana (Imagen)", "Adobe Firefly", "Kling AI"]
-  end_goal: "Ship a print-ready 2:3 poster PNG and a 10-second MP4 for your capstone, plus a one-line tagline that makes a stranger understand what you're building."
+  topic: "Design thinking as a disciplined five-stage loop"
+  tools: ["Figma", "Canva", "ChatGPT"]
+  end_goal: "A 1-page Figma/Canva board showing all 5 stages applied to one real campus pain — empathy quotes, problem statement, 10 ideas, low-fi prototype, test plan."
 ---
+
+You've spent a week understanding *how* AI works. This week shifts to *what to build with it*. Day 8 is the discipline that prevents you from solving the wrong problem brilliantly.
 
 ## 🎯 Today's objective
 
-**Topic.** Image and video generation, diffusion, six-slot prompting
+**Topic.** Design thinking as a disciplined five-stage loop — Empathize, Define, Ideate, Prototype, Test.
 
-**Tools you'll use.** Nano Banana (Imagen via Google AI Studio), Adobe Firefly, Kling AI. Ideogram, Runway, Midjourney demoed for contrast.
+**By end of class you will have:**
+1. Run one full DT loop on a real campus pain (mess food, library seats, placement prep, hostel WiFi).
+2. A 1-page Figma or Canva board showing all 5 stages.
+3. Felt the difference between "I have an idea" and "I have a *defined problem worth solving*."
 
-**End goal.** By the end of today you will have:
-1. A print-ready 2:3 poster PNG for your capstone.
-2. A 10-second MP4 with one deliberate motion.
-3. A one-line tagline (under 10 words) that a stranger can understand cold.
-
-> *Why this matters:* Day 10 is the ideathon pitch. A poster + 10-second clip + tagline is a better warm-up than any slide deck.
-
----
-
-### 🌍 Real-life anchor
-
-**The picture.** Ordering a custom cake: flavor, size, who it is for, style (minimal vs extra), and "no nuts" — vague "make it nice" gets a generic cake. The shop needs **slots**, not vibes.
-
-**Why it matches today.** Image and video models are the same: the **six-slot prompt** is your order form; diffusion is the kitchen that bakes from it.
+> *Why this matters.* Demo Day is 22 days out. Half the projects that fail, fail because the team built before they understood. This is the inoculation.
 
 ## ⏪ Pre-class · ~20 min
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday (Day 7) you built your first grounded research brief — Perplexity Pro Search for breadth, NotebookLM's private index + Audio Overview for depth, Gemini Deep Research for the long crawl — and you learned the 4-step hallucination check (click the citation; confirm source; confirm claim; check the date). That discipline transfers directly: today's "click every citation" becomes "specify every slot". A generic poster is a hallucinated poster — the model filled in gaps you didn't. The six-slot template is tonight's grounding.
-
 ### Setup (required)
 
-- [ ] Sign in at [Google AI Studio](https://aistudio.google.com) so Nano Banana / Imagen loads without a sign-up wall.
-- [ ] Create free accounts on [Adobe Firefly](https://firefly.adobe.com) and [Kling AI](https://klingai.com) — both gate generation behind email verify.
+- [ ] Free **Figma** account (free tier is plenty) and **Canva** account.
+- [ ] Pick *one* campus pain you have personally felt this semester. Write it in one line.
 
-### Primer (~5 min)
+### Primer (~10 min)
 
-- **Read**: The [Firefly user guide](https://firefly.adobe.com) intro on prompt structure — subject, style, composition. Same vocabulary we use for the six-slot template.
-- **Watch** (optional): A 3–5 minute image-to-video walkthrough on Kling or [Pika](https://pika.art) so text-to-video vs image-to-video is not abstract when class starts.
+- **Watch:** "What is Design Thinking?" (5 min) — https://www.youtube.com/watch?v=_r0VX-aU_T8
+- **Skim:** Nielsen Norman Group's *Design Thinking 101* — https://www.nngroup.com/articles/design-thinking/
 
 ### Bring to class
 
-- [ ] A locked capstone working title — one or two words, even if it changes later.
-- [ ] Two color hex codes (or named colors) you want on your poster, picked before class so you do not dither mid-lab.
+- [ ] Two friends who've also lived your pain (you'll "interview" them in 5 min during class).
 
-> 🧠 **Quick glossary**
-> - **Diffusion** = the model starts from pure noise and denoises step by step, guided by your prompt, until an image appears.
-> - **Negative prompt** = a field where you list what you do NOT want (e.g., "no text, no extra fingers").
-> - **Image-to-video** = start from a still image instead of plain text — far more controllable than text-to-video.
-> - **C2PA** = invisible provenance tags most platforms embed to mark AI-generated media.
-> - **Edit-by-reference** = upload a photo and generate consistent variations from it (Nano Banana's superpower).
+> 🧠 **Quick glossary.** **Empathize** = listen, don't pitch. **Define** = one sharp problem statement. **Ideate** = quantity beats quality (target 10+). **Prototype** = cheapest thing that tests the riskiest assumption. **Test** = put it in front of a real human.
 
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min  | Pixels are free — so what becomes scarce? |
-| Mini-lecture | 20 min | Diffusion intuition + the six-slot image prompt + 2026 tool landscape |
-| Live lab     | 20 min | Ship 1 poster (Nano Banana / Firefly) + 1 ten-second video (Kling) |
-| Q&A + discussion | 15 min | Taste, slop, and labeling AI-generated media |
+| Why "feel before build" | 10 min | The 30-cr lessons IIT teams learned the hard way |
+| The 5 stages, fast | 15 min | One example end-to-end: Bengaluru auto-rickshaw fares |
+| Lab: your loop | 25 min | Run all 5 on your campus pain |
+| Gallery walk | 10 min | 3 boards reviewed live |
 
-### In-class checkpoints
+### The loop in one breath
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **One-line cold open**: type your capstone tagline into the chat in under 10 words. We read three at random and guess what the product is — if we cannot guess, your tagline is the first problem.
-- **Think-pair-share**: in 90 seconds, swap prompts with a neighbor. Each person rewrites the other's prompt using the six-slot template (subject, action, setting, style, composition, modifiers). Notice how many adjectives get replaced by nouns.
-- **Live generation demo**: I run one cohort member's prompt through Nano Banana and Firefly side by side on screen. We vote on which won and why — the loser's prompt gets one surgical fix live.
-- **Stand-up critique**: three volunteers hold up their draft poster on camera for 30 seconds each. Cohort shouts out one thing that works and one thing to cut. No compliments without a specific noun.
+1. **Empathize** — 3 quick interviews. Quote them verbatim.
+2. **Define** — *"[User] needs [need] because [insight]"* in one line.
+3. **Ideate** — 10 ideas in 10 minutes. No filtering.
+4. **Prototype** — paper, Figma frame, or a fake screenshot. Cheap.
+5. **Test** — show it to one person who isn't your friend group.
 
-### Read: Diffusion, prompts, and the state of video in 2026
+## 🧪 Lab: One full loop on a campus pain
 
-**A one-paragraph mental model of diffusion.** Most modern image generators are diffusion models. During training, the model sees millions of image-caption pairs and learns to turn clear images into noise, step by step. To generate, it runs the process in reverse: start from pure noise, denoise one step at a time, guided by your text prompt, until a coherent image emerges. You do not need the math. You need the intuition: the model is a sculptor removing noise until your prompt appears. Your prompt is the chisel. Video models do the same trick across time — they denoise frames that are consistent with each other.
+1. **Empathize (8 min).** Interview 2 classmates about your chosen pain. Capture 3 verbatim quotes per person. No leading questions.
+2. **Define (3 min).** Write one problem statement: *"[X type of student] needs [Y] because [Z insight from quotes]."*
+3. **Ideate (10 min).** List 10 solutions. At least 3 must use AI. At least 1 must be deliberately bad — that unblocks the brain.
+4. **Prototype (8 min).** Pick the best idea. Sketch one screen in Figma OR a one-pager in Canva. Use AI to draft the copy.
+5. **Test (5 min).** Send the prototype link to one person outside class. Note their first reaction in one sentence.
 
-**What good image prompts look like.** Six slots, every time.
+**Artifact.** A single Figma frame or Canva page with **all 5 stages visible** (quotes → statement → idea list → screen → tester reaction). Drop the link in the cohort channel.
 
-| Slot | Example |
-|------|---------|
-| Subject | "A jute tote bag full of mess-hall tiffins" |
-| Action / state | "sitting on a wooden bench" |
-| Setting | "late-evening NITK hostel corridor, warm tungsten lights" |
-| Style | "editorial photograph, 50mm, shallow depth of field" |
-| Composition | "subject center, negative space top, 2:3 portrait" |
-| Modifiers | "film grain, natural shadows, no text" |
+## 📊 Live poll
 
-Short prompts produce generic images. Long prompts with specific nouns produce distinctive images. The mistake beginners make is adjectives; the fix is nouns. "Beautiful" is weaker than "brass tiffin, steam". "Cinematic" is weaker than "golden hour, 85mm, Kodak Portra 400".
+**Which stage tripped you up most?** Empathize / Define / Ideate / Prototype / Test. Instructor opens this after the gallery walk.
 
-**Negative prompts and iteration.** Every serious tool has a negative prompt field: list what you do not want. "no text, no watermark, no extra fingers, no distorted faces" catches 90% of junk. Iterate: the first image is a draft. Use in-tool editing (Firefly's generative fill, Nano Banana's reference-image edits) instead of re-rolling from scratch.
+## 💬 Discuss
 
-### Read: The 2026 image-tool landscape
+- Which interview quote *changed* your problem statement? What was it?
+- Where did AI help in the loop, and where did it actively mislead you?
+- "Prototype" vs "MVP" — what's the difference, in your words?
 
-| Tool | Strength | Weak at | Best use |
-|------|----------|---------|----------|
-| Nano Banana (Imagen in AI Studio) | Photorealism, character consistency, edit-by-reference | Stylized art | Capstone product shots, Indian faces and contexts |
-| Firefly | Commercially safe (trained on licensed data) | Less edgy | Anything you will publish or submit |
-| Ideogram | Perfect text inside images | Photorealism | Posters, logos, memes with words |
-| Midjourney | Aesthetics and vibe | Speed, text | Mood boards |
+## ❓ Quiz
 
-For this cohort we lean on **Nano Banana** (via Google AI Studio) because it is free, very good at Indian faces and environments, and excellent at edit-by-reference — you can upload a photo of your hostel and generate consistent variations. Firefly is our fallback for anything that must be commercially safe (your resume header, LinkedIn banner, a submitted project).
+Short quiz on the order of the 5 stages, what an empathy quote is, and why ideation rewards quantity. Open on dashboard.
 
-### Read: Video generation in 2026
+## 📝 Assignment · Refined problem statement
 
-We finally crossed the "useful" line. Kling, Veo 3, Runway Gen-4, Pika 2, Wan and Higgsfield all produce 5–10 second clips with believable motion, physics, and (on some) synchronized audio. Free tiers give you a handful of credits per day — enough for a pitch. Rules that still hold:
+**Brief.** Re-run **only the Define stage** with 2 *new* people. Write three problem-statement variants. Pick the sharpest. Submit a 200-word note explaining why it's sharper than your in-class version.
 
-- Keep clips short. 5–10 seconds looks great; 30 seconds looks cursed.
-- Describe motion explicitly: "camera slowly pushes in", "leaves flutter left to right", "subject turns head 30 degrees". Models default to static.
-- Start from an image when you can. Text-to-video is lottery; image-to-video is direction.
-- Consistency across shots is still hard. Use the same reference image for every clip in a sequence.
+**Submit.** Paste in the dashboard before next class.
 
-**Ethics and safety.** Three red lines: do not generate real people without consent (your friend's face, a professor, a celebrity), do not generate images of minors in any suggestive context ever, and label AI-generated media as AI-generated when you share it. Most platforms already embed invisible C2PA provenance tags, but you should label it anyway. For a student capstone this almost never bites, but the habit matters.
+**Rubric.** Specificity (4) · Evidence from interviews (4) · Why-this-version (2).
 
-**Copyright in India, briefly.** As of 2026, purely AI-generated output is not copyrightable on its own; human creative input (your prompt, your edits, your selection) is what makes it protectable. For a capstone or portfolio, you own the creative direction; do not claim you manually drew what the model made.
+## 🔁 Prep for next class
 
-### Watch: Prompt-to-pixel, same idea across four tools
+Day 9 is the deep cut on user interviews — *The Mom Test*, JTBD, and how to listen for signal vs noise.
 
-A speedrun where we take one capstone idea — "a mobile lab-report scanner for chemistry students" — and generate a poster in Nano Banana, Firefly, Ideogram, and Midjourney with the same prompt. Watch which tool nails which slot.
+- [ ] Read Chapter 1 of *The Mom Test* (search "Mom Test Chapter 1 Rob Fitzpatrick" — free preview online).
+- [ ] Sign up on any one of Read.AI / OtterAI / Fireflies (free tier).
+- [ ] Line up one 10-min call with a friend you can interview live in class.
 
-https://www.youtube.com/embed/5deYUaqwreo
+## 📚 References
 
-- Notice which tool gets the Indian hostel context right without being told.
-- See how Ideogram wins the text-rendering slot instantly.
-- Watch the Midjourney output: beautiful, but does it say anything?
-
-### Lab: Poster + 10-second video for your capstone
-
-Time: 45 minutes. Artifact: one poster image + one short video, posted to the cohort showcase.
-
-1. Open https://aistudio.google.com and select Nano Banana / Imagen. Paste today's prompt-of-the-day with `{{project_name}}`, `{{problem}}`, `{{audience}}`, and two colors filled in for your capstone idea.
-2. Generate 4 variations. Pick the best. Use the **edit** feature to fix one thing (add a tagline, swap a color, remove clutter).
-3. Open https://firefly.adobe.com. Re-run the same prompt there. Compare. Keep whichever is stronger as your final poster. Export as PNG, 2:3.
-4. Still on your poster, if you need crisp text on the image, paste the prompt into https://ideogram.ai and use its output for the typography layer. Composite in Canva if needed.
-5. Open https://klingai.com and sign in with the free tier. Upload your poster as a reference image.
-6. Prompt the video model: "Camera slowly pushes in on the hero object. Gentle parallax. Soft ambient motion in background. 10 seconds, 16:9." Generate.
-7. If Kling credits run out, fall back to https://runwayml.com or https://pika.art free tier.
-8. Export the 10-second MP4. Post poster + video to the cohort showcase with a one-line capstone tagline.
-
-> ⚠️ **If you get stuck**
-> - *Every poster comes out looking generic or stock-photo-ish* → you have too many adjectives and not enough nouns. Replace "beautiful modern" with "brass tiffin, hostel corridor, 50mm, golden hour" and specify composition (center, 2:3, negative space top).
-> - *Kling / Runway / Pika daily credits are exhausted* → fall back to image-to-video on the other tool you have not tried yet, or generate a subtle motion GIF from your poster in Canva Magic Studio. A 5-second clip with one deliberate motion beats a 10-second lottery.
-> - *Text on the poster comes out garbled* → stop asking Nano Banana or Firefly to render words. Export the image text-free, then composite the tagline in Canva, or regenerate just the text layer in Ideogram.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Did any of your generations feel generic? What was missing from the prompt? | Diagnoses against the six slots (subject, action, setting, style, composition, modifiers). Names the specific slot you under-specified and the noun you should have used instead of an adjective. |
-| Which tool's aesthetic felt most "you"? | Ties taste to a concrete output attribute — color palette, framing, realism vs. illustration, attitude toward Indian contexts. Not "vibes" but features. |
-| Did you label your output as AI-generated when posting? Why or why not? | Takes a position and names the audience cost/benefit. If not, explains under what conditions you would. Acknowledges C2PA tags exist regardless. |
-| When pixels are free, what becomes scarce — taste, distribution, or honesty? | Picks one and defends it with a real example from today's lab or your feed. Strong answers resist "all of the above" and commit to the one that constrains you personally. |
-| Would you pay a human designer for this poster now? At what price? | Gives a number and a scenario (portfolio, investor pitch, client work). Shows you understand what the AI did NOT do — art direction, iteration with you in the room, brand consistency. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate action: lock poster + video + tagline (~45 min)
-
-1. Finalize your poster PNG (2:3, print-ready) in Nano Banana or Firefly, with text composited in Canva or Ideogram if needed.
-2. Export your 10-second MP4 from Kling, Runway, or Pika — one deliberate motion, no lottery.
-3. Write a one-line tagline (under 10 words) that would make a stranger understand your capstone.
-
-### 2. Reflect (~10 min)
-
-*Which of the six prompt slots did you under-specify, and how did that show up in the image?* A good reflection picks one slot (setting, composition, modifiers…) and names the specific noun you should have used instead of an adjective — "brass tiffin on wooden bench" vs "beautiful Indian object". Shows you can debug a prompt, not just generate one.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Three checks on the dashboard. In one sentence, what is a diffusion model doing? Which tool would you trust for a commercially safe LinkedIn banner, and why not Midjourney? What is the single prompt change that most reliably improves a mediocre video — a fancier adjective, an explicit camera motion, or a longer clip?
-
-### 4. Submit (~5 min)
-
-Post to the cohort showcase with `#day08-showcase` before 11 pm:
-
-1. Your final poster PNG.
-2. Your 10-second MP4.
-3. A one-line tagline for your capstone. No essay — let the visual sell it.
-
-This is your daily artifact. It is also a preview of your Friday ideathon pitch.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-### 5. Deepen (optional, ~30 min)
-
-- **Extra video**: Any 5-minute [Runway](https://runwayml.com) Gen-4 or [Midjourney](https://midjourney.com) prompt-craft walkthrough — watch how a pro iterates, never accepting the first roll.
-- **Extra read**: The [Ideogram](https://ideogram.ai) docs on text-in-image — the one thing Nano Banana still garbles.
-- **Try**: Regenerate your poster in [Canva Magic Studio](https://canva.com) using the same prompt plus a brand kit. Notice what "production-ready" adds vs raw Firefly.
-
-### 6. Prep for Day 9 (~30-40 min — important)
-
-**Tomorrow the pitch gets a voice and a structure.** Day 9 is AI that listens, speaks, and presents — Otter/Whisper for transcription, Gamma for deck-gen, Napkin AI for diagrams, ElevenLabs for voice, HeyGen for avatars. You'll ship a 5-slide deck PDF plus a 30-second AI-avatar or ElevenLabs-voiced MP4 for your capstone. Today's six-slot template reappears as outline → slide, paragraph → narration.
-
-- [ ] **Skim ahead**: [Gamma templates](https://gamma.app) — notice how outlines, not slides, drive layout. Tomorrow you write an outline, not slides.
-- [ ] **Think**: a one-paragraph description of your capstone idea — the kind you would say to a friend, not a professor. Gamma and Otter both eat paragraphs; draft one tonight.
-- [ ] **Set up**: create free accounts on [Otter](https://otter.ai), [Gamma](https://gamma.app), [ElevenLabs](https://elevenlabs.io), and [HeyGen](https://heygen.com) — all four gate output behind email verify. Test your laptop mic by recording a 10-second voice note (ElevenLabs cloning needs clean audio). Have headphones ready.
-
----
-
-## 📚 Extra / additional references
-
-Optional deep-dives. Pick what interests you; skip what doesn't.
-
-### Short watches
-
-- [Prompt-to-pixel across four tools](https://www.youtube.com/embed/5deYUaqwreo) — the class speedrun at 1.5x.
-
-### Reading
-
-- [Google AI Studio](https://aistudio.google.com) — where Nano Banana / Imagen lives.
-- [Firefly user guide](https://firefly.adobe.com) — prompt-structure vocabulary and commercial-safety notes.
-- [Ideogram](https://ideogram.ai) — docs on text-in-image, the one thing Nano Banana still garbles.
-
-### Play
-
-- [Nano Banana (AI Studio)](https://aistudio.google.com), [Adobe Firefly](https://firefly.adobe.com), [Kling AI](https://klingai.com) — the hands-on stack.
-- [Ideogram](https://ideogram.ai), [Runway](https://runwayml.com), [Midjourney](https://midjourney.com) — demoed for contrast.
-- [Pika](https://pika.art) — fallback image-to-video when Kling credits die.
-- [Canva Magic Studio](https://canva.com) — compositing text and brand kits on top of AI-generated hero images.
+- [d.school — Intro to Design Thinking (PDF)](https://web.stanford.edu/~mshanks/MichaelShanks/files/509554.pdf) — 12 pages, the original primer.
+- [IDEO U — What is Design Thinking?](https://www.ideou.com/blogs/inspiration/what-is-design-thinking) — practitioner take.
+- [NN/g — Design Thinking 101](https://www.nngroup.com/articles/design-thinking/) — the diagram you'll actually remember.
+- [Figma — Design 101 free course](https://www.figma.com/resource-library/design-basics/) — go deeper on prototyping.

@@ -1,223 +1,137 @@
 ---
-reading_time: 16 min
-tldr: "Design thinking is not sticky-note theatre — it is a disciplined loop of divergence and convergence, and today you run all five stages on your capstone."
-tags: ["design", "design-thinking", "capstone", "process"]
-video: https://www.youtube.com/embed/ldYzbV0NDp8
-lab: {"title": "Map all 5 stages of design thinking on your capstone in FigJam", "url": "https://www.figma.com/figjam/"}
-prompt_of_the_day: "Act as a senior product designer reviewing my capstone design-thinking map. Capstone: {{my_capstone}}. For each stage — Empathize, Define, Ideate, Prototype, Test — tell me: (1) what I seem to have skipped, (2) where I am confusing divergence with convergence, (3) one concrete artifact I should add before moving on."
-tools_hands_on: [{"name": "Figma / FigJam", "url": "https://www.figma.com/figjam/"}]
-tools_demo: [{"name": "tldraw", "url": "https://www.tldraw.com"}, {"name": "Stanford d.school case studies", "url": "https://dschool.stanford.edu/resources"}]
-tools_reference: [{"name": "IDEO Design Kit", "url": "https://www.designkit.org"}, {"name": "Stanford d.school toolkit", "url": "https://dschool.stanford.edu/resources"}]
-resources: [{"name": "IDEO Design Kit — Methods", "url": "https://www.designkit.org/methods.html"}, {"name": "d.school Design Thinking Bootleg", "url": "https://dschool.stanford.edu/resources/design-thinking-bootleg"}]
+day: 12
+date: "2026-05-18"
+weekday: "Monday"
+week: 3
+topic: "Text2Image — Stable Diffusion, ChatGPT Images, Nano Banana, Adobe Firefly"
+faculty:
+  main: "Jayasaagar"
+  support: "Sanjana"
+reading_time: "10 min"
+tldr: "Four image models, one prompt, very different outputs. Today you learn the prompt grammar that actually works (subject + style + lighting + camera + negatives), then ship the hero image your capstone needs."
+tags: ["image-gen", "diffusion", "creative"]
+software: []
+online_tools: ["Stable Diffusion", "ChatGPT Images", "Nano Banana", "Adobe Firefly"]
+video: "https://www.youtube.com/embed/1CIpzeNxIhU"
+prompt_of_the_day: "A young Indian student in a hostel room at 2 AM, lit only by laptop glow, focused expression, papers scattered. Cinematic photography, 35mm lens, shallow depth of field, warm rim light from a desk lamp, photorealistic, hyperdetailed. Negative: cartoon, low-res, extra fingers, text, watermark."
+tools_hands_on:
+  - { name: "Adobe Firefly", url: "https://firefly.adobe.com/" }
+  - { name: "ChatGPT Images", url: "https://chat.openai.com/" }
+  - { name: "Stable Diffusion (Hugging Face)", url: "https://huggingface.co/spaces/stabilityai/stable-diffusion" }
+  - { name: "Nano Banana (Gemini)", url: "https://gemini.google.com/" }
+tools_reference:
+  - { name: "Stability AI — model card", url: "https://stability.ai/" }
+  - { name: "Lexica — prompt library", url: "https://lexica.art/" }
+resources:
+  - { title: "Computerphile — How Stable Diffusion works (15 min)", url: "https://www.youtube.com/watch?v=1CIpzeNxIhU" }
+  - { title: "OpenArt — prompt book", url: "https://openart.ai/promptbook" }
+  - { title: "Adobe — Firefly prompt guide", url: "https://helpx.adobe.com/firefly/get-set-up/learn-the-basics/prompts.html" }
+lab: { title: "Same prompt × four image models", url: "https://firefly.adobe.com/" }
 objective:
-  topic: "Design thinking as a disciplined five-stage loop"
-  tools: ["Figma / FigJam", "Claude"]
-  end_goal: "A full 5-column FigJam board (Empathize, Define, Ideate, Prototype, Test) + a POV statement + one Claude critique captured — submitted to the cohort channel tonight."
+  topic: "Generate, compare, and iterate images across four leading T2I models"
+  tools: ["Stable Diffusion", "ChatGPT Images", "Nano Banana", "Adobe Firefly"]
+  end_goal: "One hero image for your capstone, generated across all 4 tools, with a written prompt-engineering note explaining your final pick."
 ---
+
+Welcome to Week 3. After two weeks of words, today you make pixels. The same diffusion idea — start from noise, denoise toward the prompt — sits behind all four tools. The differences are in training data, safety filters, and how they interpret your words.
 
 ## 🎯 Today's objective
 
-**Topic.** Design thinking as a disciplined five-stage loop
+**Topic.** Text-to-image generation across four major models. Prompt grammar, negative prompts, and iteration.
 
-**Tools you'll use.** Figma / FigJam (the canvas), Claude (the d.school coach).
+**By end of class you will have:**
+1. Run the same image prompt on Stable Diffusion, ChatGPT Images, Nano Banana, and Adobe Firefly.
+2. A working prompt grammar: *subject + style + lighting + camera + composition + negative*.
+3. One polished hero image you'll actually use in your capstone deck.
 
-**End goal.** By the end of today you will have:
-1. A 5-column FigJam board (Empathize, Define, Ideate, Prototype, Test) with at least 20 ideas in the Ideate column.
-2. A Point of View statement: *[specific user] needs [verb-based need] because [surprising insight]*.
-3. One Claude critique and a one-line plan to close the biggest gap before Day 14.
-
-> *Why this matters:* Week 3 is the week your capstone becomes a *design* artifact, not just a tool demo. Every day this week builds on the previous — and tomorrow's user interviews are only useful if today's Empathize assumptions are written down.
-
----
-
-### 🌍 Real-life anchor
-
-**The picture.** A test kitchen: brainstorm many dishes (diverge), taste and kill half (converge), plate one prototype, watch people eat it (test). Sticky notes without tasting is theatre; tasting without variety is a single stubborn recipe.
-
-**Why it matches today.** The five design-thinking stages are that kitchen loop applied to your capstone — **Empathize → Define → Ideate → Prototype → Test**.
+> *Why this matters.* Demo Day decks live or die by their hero image. Generic ones get scrolled. Specific ones get screenshot.
 
 ## ⏪ Pre-class · ~20 min
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday (Day 11) you rewrote your capstone problem three times — v1 Heilmeier long-form, v2 150 words, v3 on a sticky note — plus a 5-Whys root cause and a How Might We reframe. That v3 sticky note is *today's Define column anchor*. The three weasel words you cut from v1? Those are your clue to the assumptions hiding in Empathize. The HMW line is the bridge between Define and Ideate. Bring all of it into FigJam — today is not fresh thinking, it is the thinking of Day 11 in structured form.
-
 ### Setup (required)
 
-- [ ] Create a free [FigJam account](https://www.figma.com/figjam/) if you do not already have one — you will need it for the lab.
+- [ ] Free **Adobe Firefly** account (uses your Adobe ID).
+- [ ] **Gemini** account for Nano Banana, **ChatGPT** for image gen, and a **Hugging Face** account for hosted SD.
+- [ ] Optional: GPU laptop → install AUTOMATIC1111 / ComfyUI overnight.
 
-### Primer (~5 min)
+### Primer (~10 min)
 
-- **Watch**: A 5-minute design-thinking clip from the [Stanford d.school resources library](https://dschool.stanford.edu/resources) — pick any "Design Thinking in Action" case. Watch for the moment the team throws away their first POV statement; that pivot is the whole skill.
-- **Read** (optional): Skim the [IDEO Design Kit methods page](https://www.designkit.org/methods.html) — pick three methods whose names you do not recognise.
+- **Watch:** Computerphile, *How Stable Diffusion Works* (15 min) — https://www.youtube.com/watch?v=1CIpzeNxIhU
+- **Skim:** OpenArt prompt book — https://openart.ai/promptbook (pick one style page).
 
 ### Bring to class
 
-- [ ] A list of 3 assumptions about your capstone user that you have NOT yet verified with a real human.
-- [ ] Your Day 11 v3 sticky-note problem statement (you will build the DT map on top of it).
-- [ ] A willingness to generate deliberately bad ideas — the $1 version, the no-screen version, the 7-year-old version.
+- [ ] 3 image briefs from your capstone: hero shot, illustration, icon.
+- [ ] One reference image you'd love to "match the vibe of" (no copyright drama — say a Diwali street photo from Unsplash).
 
-> 🧠 **Quick glossary**
-> - **Design thinking** = a five-stage loop (empathize → define → ideate → prototype → test) for solving fuzzy human problems.
-> - **Divergent thinking** = open the funnel — generate many options without judging.
-> - **Convergent thinking** = close the funnel — cut ruthlessly to the strongest option.
-> - **Prototype** = the cheapest possible thing you can put in front of a user to learn something true.
-> - **HMW ("How Might We")** = the reframing question that turns a defined problem into fuel for ideation.
+> 🧠 **Quick glossary.** **Diffusion** = denoise from random noise toward a target. **CFG** = how strongly the model obeys your prompt. **Seed** = the starting noise; same seed + same prompt = same image. **Negative prompt** = what NOT to include. **LoRA** = a small style/character add-on weight.
 
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min  | Why sticky-note theatre fails — design thinking as discipline, not décor |
-| Mini-lecture | 20 min | The five stages and the specific trap inside each |
-| Live lab     | 20 min | Run one diverge → converge cycle on a volunteer's capstone |
-| Q&A + discussion | 15 min | Where does your process cheat? |
+| Diffusion in 1 slide | 10 min | Noise → denoise, why CFG matters |
+| The 6-part prompt grammar | 15 min | Worked example: chai-wallah at dawn |
+| Lab: same prompt × 4 tools | 25 min | Compare outputs |
+| Iteration round | 15 min | Reroll, refine, narrow |
+| Show & critique | 15 min | 5 hero images on screen |
 
-### In-class checkpoints
+### The 6-part prompt grammar
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Cold-open**: raise a hand if you have already decided what to build. Instructor calls on 2 hands and asks "which stage did you skip to get there?"
-- **Think-pair-share**: 90 seconds — tell your partner one assumption about your user you have NOT verified, and what evidence would change your mind.
-- **Diverge drill**: everyone generates 10 capstone ideas in 3 minutes; no judgement, no editing; count them out loud.
-- **Converge debate**: two volunteers defend opposite POV statements for the same problem; class votes which one names a surprising insight vs. restates the premise.
-- **Prototype gut-check**: shout out the cheapest prototype you could build tonight; if anyone says "a Figma mockup," the class says "not cheap enough."
+1. **Subject.** Who/what, in 5 words.
+2. **Style.** Photorealistic / oil painting / Studio Ghibli / flat illustration.
+3. **Lighting.** Golden hour / rim light / overcast / neon.
+4. **Camera.** 35mm / wide-angle / macro / overhead drone.
+5. **Composition.** Rule of thirds / centred / negative space on right.
+6. **Negative.** "no text, no watermark, no extra fingers, no low-res."
 
-### Read: The five stages, and the traps inside each one
+## 🧪 Lab: Same prompt × four models
 
-Design thinking is a loop of five stages: **Empathize, Define, Ideate, Prototype, Test**. The linear diagrams lie — you will bounce between them many times before shipping. What matters is not the order but the *rhythm* inside each stage: diverge (widen the possibility space), then converge (commit to one thing and move on). Skipping either half is the most common failure.
+1. **Write your prompt** using all 6 parts. Save it.
+2. **Run on all 4 tools.** Same prompt, default settings. Save outputs as `sd.png`, `chatgpt.png`, `nano.png`, `firefly.png`.
+3. **Compare on:** prompt fidelity, photorealism, hand/face quality, content-policy blocks.
+4. **Iterate (3 rounds).** Pick your best tool. Tweak: lighting → camera → negatives. Save each iteration.
+5. **Final pick.** One image. Note the seed and the final prompt verbatim.
 
-**Empathize.** You are not the user. You are almost never the user, even if you think you are. The goal of this stage is to genuinely inhabit another person's context — their constraints, their emotions, their workarounds, the things they will never put in a survey because they are embarrassed or bored. Tools: shadowing, contextual inquiry, diary studies, open interviews (Day 13 goes deep on this). Anti-pattern: "I asked my co-founder and she agreed." That is not research. That is confirmation.
+**Artifact.** A Google Doc with: original prompt, 4 first-pass images side-by-side, your 3 iterations, and the final hero with prompt + seed + tool. Drop link on dashboard.
 
-**Define.** You took everything you heard in Empathize and now you squeeze it into one sentence — the Point of View (POV) statement. Format: *[specific user] needs [need, stated as a verb] because [surprising insight].* Example: "Aisha, a solo accountant serving 40 small businesses, needs a way to triage client emails by urgency because she currently checks her inbox 47 times a day out of anxiety, not because she found anything new." Notice the insight is not obvious. If your POV is "users want it to be faster," you have not defined anything — you have restated the premise.
+> ⚠️ **Content policy.** Firefly is the strictest, ChatGPT next, Nano middle, SD loosest. If one blocks you, the others may not. Document the blocks.
 
-**Ideate.** This is the diverge stage, and most teams butcher it by converging too early. The rule: go wide before going deep. Aim for 30+ ideas in 20 minutes. Use constraints to force creativity — "what would the solution look like if it cost $1? If it had no screen? If it had to work offline? If a 7-year-old had to use it?" Then, and only then, converge. Dot-vote. Kill 80% of the ideas. Pick two to three to prototype. A team that generates ten ideas and builds the first one is not ideating; it is defaulting.
+## 📊 Live poll
 
-**Prototype.** A prototype is the cheapest possible thing that forces a real reaction. It is not a finished product. It is not a polished Figma mockup. It can be a paper sketch, a Wizard-of-Oz demo (you play the AI behind the curtain), a 10-line script, a role-play, a Notion page pretending to be an app. The test of a prototype is: *if this is wrong, will we find out in under a day?* If not, you are overbuilding.
+**Which tool gave your best first-pass result?** Stable Diffusion / ChatGPT Images / Nano Banana / Adobe Firefly / They were all bad. Instructor opens this mid-lab.
 
-**Test.** Put the prototype in front of a real human — not your mom, not your co-founder, not the cohort chat. A real candidate user. Observe more than you ask. Note where they hesitate, what they touch first, what they ignore, what makes them smile. Then go back to Empathize, or Define, or Ideate — wherever the evidence points. Testing without updating upstream stages is theatre.
+## 💬 Discuss
 
-**Divergent vs convergent thinking.** This is the hidden engine of the whole method. Every stage has both. Empathize diverges across users, then converges on one or two personas. Define diverges across possible framings, then converges on one POV. The anti-pattern is holding both at once: brainstorming while simultaneously critiquing. The brain cannot do both well, so you end up doing neither. Separate them in time. When diverging, no "yes, but." When converging, no "what if we also."
+- Which tool understood "Indian context" best (clothing, faces, streets)? Which was Western-default?
+- Where did the negative prompt earn its keep?
+- Is your final image one you'd put in a placement portfolio? If not, what's missing?
 
-**Anti-pattern: PowerPoint prototypes.** A 40-slide deck is not a prototype; it is a document about a prototype that does not exist. If a user cannot interact with it (even by pretending), you have not tested anything.
+## ❓ Quiz
 
-**Anti-pattern: validation theatre.** You show your prototype to five friendly users. They all smile. You call it "validated." What actually happened: friendly users said friendly things and you heard what you wanted to hear. Real testing surfaces disconfirming evidence. If you walked out of a test with no surprises, you tested wrong — you either picked the wrong users, asked the wrong questions, or built something so vague no one could disagree with it.
+Short quiz on diffusion in one line, what CFG and seed do, and the 6-part prompt grammar. Opens on dashboard.
 
-**Anti-pattern: falling in love with stage one.** Some teams spend three weeks in Empathize and never ship. Others skip it entirely and Ideate for a week. A healthy capstone cycles through all five stages at least twice in four weeks. Speed is a design-thinking skill.
+## 📝 Assignment · Three capstone images
 
-IDEO built the original Design Kit at designkit.org with over 50 methods, each with instructions and timeboxes. Stanford's d.school publishes the "Bootleg" — a playful toolkit of every method they teach. Both are free and you will use them repeatedly over the next three weeks. Bookmark them now.
+**Brief.** Generate **3 polished images** for your capstone: (1) hero, (2) feature illustration, (3) app icon or logo. Use whichever tool wins per image — but use at least 2 different tools across the three. Keep all prompts + seeds.
 
-### Watch: A real design-thinking case from Stanford d.school
+**Submit.** Dashboard. Single PDF or Notion page.
 
-Watch a short d.school walk-through of a project that cycled through all five stages. Notice how much time was spent in Empathize relative to Prototype — and how the POV statement changed twice before the team committed.
+**Rubric.** Image quality (4) · Prompt discipline (4) · Tool-fit reasoning (2).
 
-https://www.youtube.com/embed/ldYzbV0NDp8
+## 🔁 Prep for next class
 
-- Empathy was not an exercise — it was a continuous input that kept re-shaping Define.
-- The prototype was crude on purpose; polish would have delayed learning.
-- The team's strongest insight came from a user they had initially dismissed as "not the target."
+Day 13 is **Workflow + browser automation** with **n8n, Zapier, Firecrawl**. Sandeep + Harshith.
 
-### Lab: Map the full cycle on your capstone in FigJam (45 min)
+- [ ] Free accounts on **n8n.cloud** and **Zapier**.
+- [ ] Sign up for **Firecrawl** (free tier).
+- [ ] List 2 boring tasks in your week (form-filling, screenshot-collecting, tracking deadlines). One of them gets automated tomorrow.
 
-1. **Open FigJam (figma.com/figjam)** and create a new board titled "[Your capstone name] — DT map v1."
-2. **Draw five columns** left to right: Empathize, Define, Ideate, Prototype, Test.
-3. **Empathize column (7 min).** List 3 candidate users (name, age, context). List 5 questions you do not yet know the answer to. Mark each question D (diverge — open-ended) or C (converge — needs a specific answer).
-4. **Define column (7 min).** Draft your Point of View statement: *[user] needs [verb-based need] because [surprising insight].* If you cannot fill the "surprising" slot, write "I have not yet earned this insight" and move on honestly.
-5. **Ideate column (10 min).** Set a 10-minute timer. Generate at least 20 solution ideas. Include three deliberately bad ones (the $1 version, the no-screen version, the 7-year-old version). Then dot-vote your top three.
-6. **Prototype column (7 min).** For your top idea, describe the cheapest possible prototype in one sentence. Is it a paper sketch? A Wizard-of-Oz script? A fake landing page? Name the format and the build time.
-7. **Test column (7 min).** Name 3 real humans (first names only) you could test with by Day 15. Name 3 questions you will NOT ask them (leading ones, "would you use this?" types) and 3 you will.
-8. **Run the Claude review (5 min).** Export the FigJam as an image, paste into Claude with today's Prompt of the Day, and write down every gap it finds.
+## 📚 References
 
-Screenshot the final board.
-
-> ⚠️ **If you get stuck**
-> - *You can only think of 5 ideas in the Ideate column, not 20* → add a forced constraint: rewrite the brief as "what if it cost $1," "what if it had no screen," "what if a 7-year-old had to use it" — each constraint unlocks a different 5.
-> - *Your POV statement's "surprising insight" slot is empty* → write "I have not yet earned this insight" and move on; do not fabricate one. Day 13 interviews are where you earn it.
-> - *Claude's critique feels generic ("add more detail")* → re-run the prompt with the specific column that feels weakest pasted on its own, and ask "what would a skeptical d.school coach say is missing from THIS stage only?"
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which stage did you rush, and what would slowing down by 2x cost you? | Names the specific stage and the real cost (a week of build time, a delayed launch) — not a vague "I'd have more clarity." Honest about the tradeoff, not just virtuous. |
-| What "surprising insight" slot did you struggle to fill — and what does that tell you about your empathy work so far? | Admits whether the gap is "I have not talked to enough people" vs. "I talked but did not listen for surprise"; points at a concrete next action before Day 13. |
-| Which of your 20 ideas was the best *bad* idea, and why might it actually contain a real one? | Picks one deliberately absurd idea (no-screen, $1 version, 7-year-old version) and extracts the principle inside it — a constraint, a form factor, a user assumption worth testing. |
-| When did you last feel the urge to build before defining? What triggered it? | Specific moment (yesterday at 2am, in a call), specific trigger (excitement, fear of falling behind, a flashy demo); connects the urge to a pattern in past projects. |
-| If you had to pick between a crude prototype tomorrow and a polished one in a week, which serves learning more — and which serves your ego? | Names the crude one as serving learning and admits the ego pull of polish; may note one case where polish genuinely matters (e.g., testing aesthetic response). |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate action: finish the 5-column board + POV (~50 min)
-
-1. Finish mapping all five columns (Empathize, Define, Ideate, Prototype, Test) on your FigJam board.
-2. Write the POV statement in the Define column using the format *[specific user] needs [verb-based need] because [surprising insight]* — if the insight slot is empty, say so in writing.
-3. Run today's Prompt of the Day on your exported board and capture the one critique that stung hardest.
-4. Screenshot the board and post it to the cohort channel with your POV as plain text.
-5. Add a one-line plan to close the biggest gap before Day 14.
-
-### 2. Reflect (~10 min)
-
-*Where did I converge too early today?* A strong reflection names the exact stage (usually Ideate), the idea you clung to before you had earned it, and the specific evidence you still need before locking it in.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Pick the anti-pattern. A team runs a two-hour ideation session where every idea is followed by "yes, but will it scale?" — what broke? A team shows a 30-slide deck to users and calls it a prototype — what broke? A team interviews only their co-founders and reports "strong validation" — what broke? If you can name the failure in each (converging mid-diverge, no interactive prototype, validation theatre), you are ready.
-
-### 4. Submit (~5 min)
-
-Submit a screenshot of your full 5-column FigJam board to the cohort channel. Include your POV statement in the post body as plain text. Also share the one gap Claude surfaced that stung the most — and how you plan to close it before Day 14.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-
-- **Extra video**: A d.school bootleg walkthrough — watch how teams move between stages non-linearly.
-- **Extra read**: The [d.school Design Thinking Bootleg](https://dschool.stanford.edu/resources/design-thinking-bootleg) — try one method you have never used.
-- **Try**: Apply the five-stage loop to a non-capstone annoyance from your own week (e.g., a broken commute, a messy inbox). Practising on low-stakes problems builds the muscle.
-
-### 6. Prep for Day 13 (~30-40 min — important)
-
-**Tomorrow is The Mom Test — user interviews.** You will draft questions, run a live 8-minute paired drill, plan two real candidate-user interviews before Day 15. The Empathize assumptions you wrote today are what you will test in real conversations.
-
-- [ ] **Skim ahead**: the intro page of [The Mom Test](https://www.momtestbook.com) — the three rules fit on one card (talk about their life, past specifics not future generics, listen more than talk). Memorise them before you walk in.
-- [ ] **Think**: identify 2 real people willing to be interviewed this week — a friend, a family member, an acquaintance who plausibly hits your capstone's problem. Get a "yes" by text before class tomorrow; book 20-minute slots before Day 15. Also draft 5 interview questions tonight — and make sure NONE of them mention your idea.
-- [ ] **Set up**: create a free [Otter.ai](https://otter.ai) account — you will record and transcribe during class. Test your microphone and headphones. Keep your Day 12 POV statement ready; it guides your questions but never gets pitched.
-
----
-
-## 📚 Extra / additional references
-
-Optional deep-dives. Pick what interests you; skip what doesn't.
-
-### Short watches
-
-- [Stanford d.school resources](https://dschool.stanford.edu/resources) — short case studies; any "Design Thinking in Action" clip.
-- A d.school bootleg walkthrough on non-linear movement between stages.
-
-### Reading
-
-- [IDEO Design Kit — Methods](https://www.designkit.org/methods.html) — 50+ methods with instructions and timeboxes.
-- [d.school Design Thinking Bootleg](https://dschool.stanford.edu/resources/design-thinking-bootleg) — the canonical toolkit, free.
-- [IDEO Design Kit (full site)](https://www.designkit.org) — case studies, mindsets, and methods.
-
-### Play
-
-- [tldraw](https://www.tldraw.com) — an alternate sketching surface if FigJam feels heavy.
-- Run the five-stage loop on a non-capstone problem from your week (a broken commute, a messy inbox). Low-stakes reps build the muscle.
-
-### If you're hungry for a rabbit hole
-
-- Tim Brown (IDEO) — *Change by Design*, for the full origin story of design thinking in practice.
-- The history of Stanford d.school — how the method moved from consultancy work into academia.
+- [Computerphile — Stable Diffusion (15 min)](https://www.youtube.com/watch?v=1CIpzeNxIhU) — clearest mental model.
+- [OpenArt prompt book](https://openart.ai/promptbook) — borrowable grammar.
+- [Lexica](https://lexica.art/) — search prompts by image.
+- [Firefly prompt guide](https://helpx.adobe.com/firefly/get-set-up/learn-the-basics/prompts.html) — official, useful for commercial use.

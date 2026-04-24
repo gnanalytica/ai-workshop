@@ -255,6 +255,7 @@ pre code{background:none;border:none;padding:0;font-size:inherit}
           <li><a href="#one-time-full-setup">One-time full setup</a></li>
           <li><a href="#system-requirements">System requirements</a></li>
           <li><a href="#accounts-preflight">Accounts &amp; API keys</a></li>
+          <li><a href="#extended-tools-track">Extended tools track</a></li>
           <li><a href="#install-playbook">Install playbook</a></li>
           <li><a href="#cursor" class="sub">Cursor</a></li>
           <li><a href="#chrome" class="sub">Chrome</a></li>
@@ -379,6 +380,10 @@ ollama list</code></pre>
       ════════════════════════════════════════ -->
       <section class="section" id="system-requirements">
         <h2>2. System requirements</h2>
+        <div class="callout callout-ok">
+          <strong>Your current lab baseline is good:</strong> Windows (12th/13th/14th Gen i5), 16 GB RAM, 512 GB SSD.
+          This comfortably meets workshop requirements, including Cursor and local Ollama usage with smaller models.
+        </div>
 
         <table class="req-table">
           <thead>
@@ -413,6 +418,10 @@ ollama list</code></pre>
           </tbody>
         </table>
 
+        <p class="muted" style="font-size:13px;margin-top:8px">
+          Since all systems are Windows, you can prioritize Windows steps throughout this guide and treat macOS/Linux sections as reference only.
+        </p>
+
         <h3>Network allowlist</h3>
         <p>
           Work with your IT / network team to ensure the following domains are
@@ -427,7 +436,15 @@ ollama.com             # Ollama website
 registry.ollama.ai     # Ollama model registry (pull models from here)
 github.com             # code repos, pip packages from git
 pypi.org               # Python packages (pip install)
-registry.npmjs.org     # npm packages (node modules)</code></pre>
+registry.npmjs.org     # npm packages (node modules)
+gamma.app              # presentation tooling
+heygen.com             # text-to-video/avatar demos
+stability.ai           # Stable Diffusion API
+figma.com              # wireframes/prototyping
+vapi.ai                # voice agent platform
+whisper.openai.com     # STT API usage (if used in labs)
+elevenlabs.io          # voice synthesis
+zapier.com             # no-code automations</code></pre>
 
         <section class="section" id="accounts-preflight">
           <h3>Account &amp; API key preflight (before Day 16)</h3>
@@ -450,6 +467,39 @@ $env:GEMINI_API_KEY.Length
 $env:GROQ_API_KEY.Length</code></pre>
           <div class="callout callout-warn">
             If keys are empty or accounts cannot sign in, fix this before Day 16+ sessions. Agent, RAG, and deployment labs depend on these.
+          </div>
+        </section>
+
+        <section class="section" id="extended-tools-track">
+          <h3>Extended tools track (your added sessions)</h3>
+          <p>If you are adding these special sessions, pre-create accounts and verify access before the listed dates.</p>
+          <table class="req-table">
+            <thead><tr><th>Topic</th><th>Tool</th><th>Date</th><th>Setup needed</th></tr></thead>
+            <tbody>
+              <tr><td>Presentation</td><td>Gamma</td><td>8 May</td><td>Account login + one sample deck creation</td></tr>
+              <tr><td>Text to Image</td><td>Stable Diffusion / HeyGen</td><td>11 May</td><td>API/account access + one generated sample</td></tr>
+              <tr><td>Text to Video</td><td>HeyGen / equivalent</td><td>12 May</td><td>Credits/quota check + export test</td></tr>
+              <tr><td>Voice agents</td><td>Vapi / Whisper</td><td>18 May</td><td>Mic permissions + key setup + STT test</td></tr>
+              <tr><td>Wireframing</td><td>Figma</td><td>21 May</td><td>Account + team/project permissions</td></tr>
+              <tr><td>Automations</td><td>Zapier</td><td>22 May</td><td>Account + app connector permissions</td></tr>
+              <tr><td>Voice synthesis</td><td>ElevenLabs</td><td>YTD</td><td>API/account access + short TTS generation test</td></tr>
+              <tr><td>Chatbot</td><td>RAG (with/without retrieval)</td><td>YTD</td><td>Vector DB + embedding model + eval checklist ready</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Open-source alternatives you can keep ready</h4>
+          <ul>
+            <li><strong>Image generation:</strong> Stable Diffusion WebUI / ComfyUI</li>
+            <li><strong>Video editing/generation pipeline:</strong> FFmpeg + open model pipelines</li>
+            <li><strong>Speech-to-text:</strong> faster-whisper</li>
+            <li><strong>Text-to-speech:</strong> Coqui TTS / Piper</li>
+            <li><strong>Automation/self-host:</strong> n8n (self-hosted)</li>
+            <li><strong>RAG frameworks:</strong> LangChain, LlamaIndex, Haystack</li>
+            <li><strong>Vector stores:</strong> pgvector (Postgres), Qdrant, Chroma</li>
+            <li><strong>Model runtime:</strong> Ollama, vLLM, LocalAI</li>
+          </ul>
+          <div class="callout callout-info">
+            Keep this extended track optional per cohort. Core 30-day outcomes should not depend on paid tools only.
           </div>
         </section>
       </section>

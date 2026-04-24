@@ -1,247 +1,141 @@
 ---
-reading_time: 17 min
-tldr: "Chain AI with APIs and triggers in n8n, automate a browser task you hate, and ship your first real workflow to prod."
-tags: ["build", "technical"]
-video: https://www.youtube.com/embed/4cQWJViybAQ
-lab: {"title": "Build an n8n flow (AI + real API + trigger) and one browser-use automation", "url": "https://n8n.io"}
-prompt_of_the_day: "Act as an automation designer. My boring manual task is {{task_description}}. Design an n8n flow: (1) trigger, (2) data fetch via which API, (3) AI step and prompt, (4) output destination. List each node in sequence with the exact config I'd paste."
-tools_hands_on: [{"name": "n8n", "url": "https://n8n.io"}, {"name": "browser-use", "url": "https://github.com/browser-use/browser-use"}]
-tools_demo: [{"name": "Firecrawl", "url": "https://firecrawl.dev"}, {"name": "Jina Reader", "url": "https://jina.ai/reader"}]
-tools_reference: [{"name": "Zapier AI Actions", "url": "https://zapier.com/ai"}, {"name": "Make.com", "url": "https://make.com"}, {"name": "Playwright MCP", "url": "https://github.com/microsoft/playwright-mcp"}, {"name": "Claude computer-use", "url": "https://docs.claude.com/claude-code"}]
-resources: [{"name": "n8n templates gallery", "url": "https://n8n.io/workflows/"}, {"name": "browser-use quickstart", "url": "https://docs.browser-use.com"}]
+day: 20
+date: "2026-05-28"
+weekday: "Thursday"
+week: 4
+topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
+faculty:
+  main: "Harshith"
+  support: "Sanjana"
+reading_time: "10 min"
+tldr: "Stop re-explaining your project to the AI every time. Today you write a CLAUDE.md, an AGENTS.md, a Cursor rule, and a tiny Skill — and watch the same model behave like it's been on your team for a year."
+tags: ["context-engineering", "tooling", "claude", "cursor"]
+software: ["Antigravity", "Cursor"]
+online_tools: ["Claude"]
+video: "https://www.youtube.com/embed/eBVi_sLaYsc"
+prompt_of_the_day: "Read CLAUDE.md and AGENTS.md before doing anything. Then add a /health endpoint to our Express app following the conventions you find there. List the conventions you used."
+tools_hands_on:
+  - { name: "Cursor", url: "https://cursor.com/" }
+  - { name: "Antigravity (Google)", url: "https://antigravity.google/" }
+  - { name: "Claude (web)", url: "https://claude.ai/" }
+tools_reference:
+  - { name: "Anthropic — Claude Code best practices", url: "https://www.anthropic.com/engineering/claude-code-best-practices" }
+  - { name: "Cursor Rules docs", url: "https://docs.cursor.com/context/rules" }
+resources:
+  - { title: "agents.md spec", url: "https://agents.md/" }
+  - { title: "Anthropic Skills overview", url: "https://docs.anthropic.com/en/docs/agents/skills" }
+lab: { title: "Wire up CLAUDE.md, AGENTS.md, a Cursor rule, and a Skill", url: "https://cursor.com/" }
 objective:
-  topic: "Workflow automation: trigger, API, AI step, action"
-  tools: ["n8n", "browser-use", "Jina Reader / Firecrawl"]
-  end_goal: "Ship one working n8n flow relevant to your capstone plus one browser-use automation of a task you hate, with a 60-second Loom and a weekly-hours-saved number."
+  topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
+  tools: ["Cursor", "Antigravity", "Claude"]
+  end_goal: "A repo where any agent — Claude Code, Cursor, Antigravity — picks up your conventions on the first turn, with no hand-holding."
 ---
+
+By Day 20 you've written enough AI-assisted code to feel the tax: every new chat starts dumb. Today we fix that. Context engineering is the discipline of writing *for the model that will read your repo tomorrow*.
 
 ## 🎯 Today's objective
 
-**Topic.** Workflow automation: trigger, API, AI step, action
+**Topic.** Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills.
 
-**Tools you'll use.** n8n (visual workflow builder), browser-use (AI-driven browser agent), Jina Reader / Firecrawl (scrapers for RAG).
+**By end of class you will have:**
+1. A working `CLAUDE.md` and `AGENTS.md` in your capstone repo, each under 60 lines, no fluff.
+2. One Cursor rule (`.cursor/rules/*.mdc`) that auto-applies when you edit a specific folder.
+3. One reusable Skill (a `SKILL.md` + helper file) that survives across chats.
 
-**End goal.** By the end of today you will have:
-1. One live n8n flow (real trigger, real API, real AI node, real output).
-2. One browser-use automation of a task you personally hate doing manually.
-3. A 60-second Loom walking through both, plus a weekly-hours-saved ROI number.
+> *Why this matters.* Day 21 you deploy your capstone. If your context files are honest, the agent stops asking "where does auth live?" every turn.
 
----
+## ⏪ Pre-class · ~25 min
 
-### 🌍 Real-life anchor
+### Setup (required)
 
-**The picture.** **n8n-style:** when the clock hits 9:00, the coffee maker starts and the spreadsheet row turns green — fixed steps, predictable handoffs. **Browser agent:** asking a roommate to queue at a shop that has **no** delivery app — they improvise clicks because the "API" is a human in front of a screen.
+- [ ] Cursor installed and logged in. Antigravity installed (or fall back to Cursor).
+- [ ] Your capstone repo cloned locally with at least 3 files of real code in it.
+- [ ] Claude.ai tab open for cross-checking your context files.
 
-**Why it matches today.** Automation chains are the coffee timer; browser agents are the "there is no official button for this" errand runner.
+### Primer (~10 min)
 
-## ⏪ Pre-class · ~20 min
+- **Watch:** "Claude Code in 30 minutes" — https://www.youtube.com/watch?v=eBVi_sLaYsc — focus on the CLAUDE.md section.
+- **Read:** the agents.md homepage (5 min). Notice how short the spec is.
+- **Skim:** Cursor Rules docs — the `alwaysApply` vs `globs` vs `manual` distinction.
 
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
+### Bring to class
 
-**Revision / context.** Yesterday (Day 19) you locked in your project's context with CLAUDE.md + slash commands. Today we extend that leverage outside the editor: if CLAUDE.md automates what the AI *knows*, n8n automates what the AI *does*. Same principle — set it up once, reap compounding returns. Keep your Groq API key from Day 17 handy; you'll wire it into n8n's AI Agent node.
+- [ ] One sentence: *"The thing the AI keeps getting wrong about my project is ___."* That sentence is the first line of your CLAUDE.md.
 
-Week 4 capstone day — come in with accounts, tokens, and a task you genuinely hate doing manually.
+> 🧠 **Quick glossary.** **CLAUDE.md** = repo memory that Claude Code auto-reads. **AGENTS.md** = vendor-neutral version, same idea. **Rule** = Cursor's per-folder/per-glob context. **Skill** = packaged instructions + scripts an agent can invoke by name.
 
-### Setup (12 min)
-- [ ] Sign up for the **n8n.cloud** free tier at https://n8n.io — the hosted version works out of the box (self-hosting via Docker is optional).
-- [ ] Create a **Groq** account at https://groq.com and copy your API key somewhere safe — this is your free fast-brain.
-- [ ] (Optional) Skim browser-use install steps at https://docs.browser-use.com so tonight's install isn't a surprise.
-
-### Pick your target task (5 min)
-- [ ] Write down **one** boring weekly task you actually do — downloading attendance, checking job portals, sorting emails, copying prices, compiling club reports. Specific enough that you can name its trigger.
-- [ ] Estimate minutes/week it costs you. This is your baseline ROI number.
-
-### Primer (3 min)
-- [ ] Browse https://n8n.io/workflows/ — filter by "AI" and open 2-3 templates just to see what a real flow looks like.
-- [ ] Skim one of: Jina Reader at https://jina.ai/reader or Firecrawl at https://firecrawl.dev — decide which scraper you'll try first.
-
-> 🧠 **Quick glossary for today**
-> - **Webhook** = a URL that external services POST to when something happens (a form fills, a PR opens).
-> - **Trigger** = whatever kicks a workflow off — schedule, webhook, new email, DB change.
-> - **Automation** = trigger → data fetch → AI step → output, composed visually in n8n/Make/Zapier.
-> - **Browser agent** = an AI that operates a real browser by seeing + clicking like a human (browser-use, Claude computer-use).
-> - **Firecrawl** = "give me a URL, get back clean markdown" — handles JS-rendered pages for RAG ingestion.
-> - **Scraping** = pulling data off web pages when no API exists (last resort after APIs).
-
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min | The real AI ROI isn't chat — it's trigger → AI → action |
-| Mini-lecture | 20 min | n8n anatomy, the triage-bot flow, when to reach for browser-use, Firecrawl + Jina Reader |
-| Live lab | 20 min | Build one n8n flow (trigger + API + AI + output) together |
-| Q&A + discussion | 15 min | What manual task is first on the chopping block? |
+| Why every new chat is dumb | 10 min | The repeating-yourself tax |
+| CLAUDE.md vs AGENTS.md vs Rules vs Skills | 15 min | Where each one fits |
+| Live edit: Harshith's repo | 15 min | Watch the file shrink as it gets sharper |
+| Lab | 15 min | You write yours |
+| Show + tear-down | 5 min |  |
 
-### In-class checkpoints
+### The four layers, plain
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Lab confidence (quick)** — After the live lab: fist-of-5 on shipping tonight's artifact (Zoom hands; not graded).
-- **Cold-open math**: instructor writes "4 min per ticket × 40 tickets × 5 days = ?" on the board; class shouts the hours saved per week.
-- **Think-pair-share**: in 90 seconds, tell your neighbour the single most boring task in your week and what triggers it.
-- **Live build**: instructor drags the Google Form trigger, AI Agent, and Slack nodes on-screen; class calls out what prompt goes into the AI node.
-- **Debate**: API-first purist vs browser-agent pragmatist — two volunteers, 2 minutes each, on a task only reachable behind a login.
-- **Dry-run check**: each student declares which node in their flow they'd wrap in human-in-the-loop approval first.
+1. **CLAUDE.md / AGENTS.md** — *what this repo is + non-obvious conventions*. Lives at repo root. Read every turn.
+2. **Sub-CLAUDE.md** — folder-scoped overrides. Useful for `/migrations` or `/edge-functions`.
+3. **Cursor rules** — IDE-specific, glob-triggered. Best for "when editing `*.tsx`, prefer Server Components."
+4. **Skills** — invoked by name. Best for repeated workflows: `/graphify`, `/security-review`.
 
-### Read: APIs, n8n, and browser agents
+### Rules of thumb
 
-**Automation is the 80% practical use case.** Ask any working professional where AI is actually saving them time this year. It's rarely "I had a deep chat with Claude". It's "every morning at 9 AM, an agent reads yesterday's support tickets, tags them by priority and topic, drafts responses for the routine ones, and posts a summary to Slack." That's not a chatbot. It's a **workflow**: trigger → data fetch → AI reasoning → action.
+- **Write what's not obvious.** "Use TypeScript" is noise. "Filter submissions via `assignments!inner(cohort_id)` — there is no direct `cohort_id`" is gold.
+- **One file, one job.** If CLAUDE.md is doing five things, split it.
+- **Delete more than you add.** Every line costs tokens on every turn.
 
-The pattern has three parts:
+## 🧪 Lab: Wire your repo for agents
 
-1. **Trigger.** What kicks the flow off? A schedule (every morning), a webhook (when a new form fills), a database change, a new email, a button click.
-2. **Middle.** Fetch data from APIs, transform it, pass it through an AI step (summarize, classify, extract, generate).
-3. **Output.** Post to Slack, write to a spreadsheet, send an email, call another API, update a database.
+In your capstone repo:
 
-You compose these visually in **n8n**, **Make.com**, or **Zapier**. n8n is our pick because it's open-source, self-hostable, code-optional (you can drop down to JavaScript/Python nodes if needed), and has excellent native AI nodes (OpenAI, Anthropic, Ollama, LangChain agents).
+1. Create `CLAUDE.md` at the root. Sections: *What this is* (2 lines), *Key surfaces* (file map), *Non-obvious architecture* (the gotchas), *Conventions*. Cap at 60 lines.
+2. Create `AGENTS.md` — copy CLAUDE.md, strip Anthropic-specific bits, point both at the same content if identical.
+3. Create `.cursor/rules/styling.mdc` with `globs: ["**/*.tsx", "**/*.css"]` and 5 lines of styling rules.
+4. Create `.claude/skills/changelog/SKILL.md` — a tiny skill that, given a git diff, writes one-line changelog entries.
+5. Open a fresh Cursor chat: ask "What does this repo do, and what's one gotcha?" Verify it answers from your file, not from guessing.
 
-**Why n8n wins for builders.**
+**Artifact.** Push the four files. Paste the link to your repo + a screenshot of Cursor quoting your CLAUDE.md back, in the cohort channel.
 
-- Open-source + self-host = no per-task cost at scale.
-- 400+ pre-built integrations (Slack, Gmail, Notion, Airtable, Postgres, HTTP, webhook).
-- Native AI Agent node — drop in a system prompt, tools, and memory.
-- Free cloud tier at n8n.cloud for those who don't want to self-host.
-- Visual canvas — you direct; you don't type framework boilerplate.
+> ⚠️ **Tell.** If the model answers correctly *without* citing your files, you wrote noise. Rewrite.
 
-**A concrete flow — the capstone triage bot.** Imagine you run student support for your college club. A Google Form collects queries. You want each query auto-tagged (`academic / logistics / event / complaint`), routed to the right lead over Slack, and stored in Airtable. Manually that's 4 minutes per ticket × 40 tickets/day = 160 minutes/day gone. In n8n:
+## 📊 Live poll
 
-- **Node 1 — Google Form trigger.** Fires whenever a new submission lands.
-- **Node 2 — AI Agent (Groq + Llama 3.3 70B).** System prompt: "Classify this query into one of [academic, logistics, event, complaint]. Return JSON with `category`, `urgency` (1-5), and a `one_line_summary`."
-- **Node 3 — Switch.** Routes on `category`.
-- **Node 4 — Slack node.** Posts to `#academic-leads` (or whichever channel matches).
-- **Node 5 — Airtable node.** Appends the row with timestamps.
+**Which layer will you actually maintain in 3 months?** CLAUDE.md / AGENTS.md / Cursor rules / Skills / *honestly, none*. We'll discuss the honest answer.
 
-Build time: 30 minutes. Time saved: 160 minutes every single day. That's the multiplier.
+## 💬 Discuss
 
-**Browser agents — for when no API exists.** A huge chunk of boring work lives on websites with no API. University portals. Government forms. Old-school vendor dashboards. Linkedin. For those, you need a **browser agent** — an AI that actually sees a webpage and clicks, types, scrolls, like a human would.
+- What's one convention in your repo that *only you* know? That's your CLAUDE.md line 1.
+- Where does a Cursor rule beat CLAUDE.md, and vice versa?
+- A Skill vs a long prompt — when is each worth it?
 
-- **browser-use** (github.com/browser-use/browser-use) — open-source, Python, uses Playwright under the hood. Give it a task in plain English ("log into my college portal and download this week's attendance sheet") and it figures out the clicks.
-- **Claude computer-use** — Anthropic's first-party capability; Claude can literally control your screen.
-- **Playwright MCP** — a more controlled, deterministic approach for repeatable flows.
+## ❓ Quiz
 
-Browser agents are slower and flakier than API calls (pages change, popups interrupt, CAPTCHAs happen) but they unlock the 50% of workflows that are "trapped behind a login". Rule of thumb: **API first, browser agent as last resort**.
+Short quiz on file precedence, glob triggering, and when a Skill beats a rule. Open on your dashboard during class.
 
-**Web scraping for AI — Firecrawl and Jina Reader.** When you just need clean content from a public page, don't write a scraper. Two services do it brilliantly:
+## 📝 Assignment · Context that earns its tokens
 
-- **Firecrawl** — point it at a URL, get back markdown. Handles JS-rendered pages, pagination, and structured extraction. Great for ingesting docs into RAG.
-- **Jina Reader** — literally prepend `https://r.jina.ai/` to any URL. Get clean markdown back. Zero config. Free tier is generous.
+**Brief.** Submit your repo URL with `CLAUDE.md`, `AGENTS.md`, one rule, one Skill. In a 100-word note, paste **one before/after**: a question the agent got wrong without your context, and got right with it.
 
-Both are drop-in `HTTP Request` nodes in n8n.
+**Submit.** Repo URL + note on the dashboard before next class.
 
-**Chaining it all — the real picture.** A production AI workflow often looks like this:
+**Rubric.** Specificity of conventions (4) · Before/after evidence (4) · File hygiene — under 60 lines, no fluff (2).
 
-Webhook trigger → Firecrawl (scrape a competitor's pricing page) → AI step (extract pricing table as JSON) → Postgres write (store prices with timestamp) → Slack alert (if price changed > 10%) → schedule this whole thing daily.
+## 🔁 Prep for next class
 
-None of those individual steps is AI magic. The magic is the **chain**. Small models, tight prompts, real APIs, real triggers, shipped to production.
+Day 21 is **Capstone Milestone 4: Workspace Setup and First Deploy**.
 
-**Cost and safety.** Two gotchas:
+- [ ] Confirm Node.js 20+, Python 3.11+, and Git are installed and on PATH.
+- [ ] Create accounts on **Vercel** and **Supabase** with your college email.
+- [ ] Pick the *smallest possible* slice of your capstone you could deploy tomorrow. One page is fine.
 
-- **Token cost.** A flow that runs 10,000 times/day using GPT-5 Opus will destroy your budget. Use small local models (Ollama) or cheap hosted ones (Groq, Together) for high-volume nodes. Reserve big models for steps that need real reasoning.
-- **Guardrails.** AI agents acting on the real world can do real damage. Start with **dry-run mode** (log the action instead of performing it), add **human-in-the-loop approval** for any destructive step, and always set **rate limits**.
+## 📚 References
 
-**Where this fits your capstone.** Every capstone benefits from one automation flow. If your capstone is a RAG bot, the flow ingests new docs daily. If it's a research assistant, it watches arxiv and summarizes relevant papers every morning. If it's a tutoring system, it posts a daily progress digest. The flow is not the capstone — it's the layer that keeps the capstone alive in production.
-
-### Watch: From zero to a running n8n flow in 20 minutes
-
-Live-build of a Gmail-to-Slack AI triage agent in n8n cloud, followed by a browser-use run on a real college portal, followed by a Jina Reader + AI summarizer chain.
-
-https://www.youtube.com/embed/4cQWJViybAQ
-
-- n8n's AI Agent node is drop-in; plug Ollama or Groq as the brain.
-- browser-use is slow but real — budget a few minutes per task.
-- Jina Reader is the "just add water" scraper.
-- Always build with test data first; connect real data last.
-
-### Lab: Build one real n8n flow + one browser automation
-
-Budget 60 minutes. Pick boring tasks you actually do.
-
-1. Sign up for **n8n.cloud** free tier (or self-host via Docker if you prefer — docs at n8n.io). Create a new workflow.
-2. Pick a trigger relevant to your capstone — Schedule (every hour), Webhook (on form submission), or Gmail (on new email matching a filter).
-3. Add an HTTP Request node that calls a real public API — OpenLibrary, weather, GitHub, or Jina Reader on a page you care about.
-4. Add an **AI Agent** or **OpenAI** node. Wire Groq or your Ollama endpoint as the model. Prompt: extract, classify, or summarize the data.
-5. Add an output node — Slack, Google Sheets, Discord, or plain Email.
-6. Execute the workflow. Watch each node turn green. Debug the red ones. Celebrate.
-7. Now switch to **browser-use**. Install via the quickstart at docs.browser-use.com. Pick one task you hate — "download attendance from college portal", "scrape job listings from careers page", "check Amazon price every morning".
-8. Give browser-use the task in plain English. Watch it actually operate the browser. Note what it got right and where a human still needs to help.
-
-> ⚠️ **If you get stuck**
-> - *n8n AI Agent node throws 401 / "invalid API key"* → the credential is bound to the node; open "Credentials" in the node panel and re-paste the Groq or OpenAI key (n8n doesn't auto-sync environment variables).
-> - *Webhook trigger never fires* → you're probably testing on the "Test URL" but your producer is hitting the "Production URL" (or vice versa); they are different URLs in n8n until the workflow is activated.
-> - *browser-use fails on a login page (CAPTCHA or 2FA loop)* → browser agents can't solve CAPTCHAs; run a manual first-time login with persistent browser context, then let the agent reuse the stored session.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which manual task in your week is first on the chopping block? | Names the task, its frequency, the trigger, and a rough minutes-saved-per-week number — not just "email stuff". |
-| What went wrong in your n8n flow the first time — data shape, auth, or the AI node? | Picks one, describes the red-node error message, and how they debugged it (inspect JSON, pin test data, retry). |
-| When is browser-use genuinely useful vs. a fragile hack? | Cites a use-case with no API available AND low-frequency tolerance for flakiness; contrasts with cases where it's the wrong tool. |
-| How do you sleep at night giving an agent access to your email or Slack? | Names concrete guardrails: scoped OAuth, dry-run, allow-list of recipients, rate limits, audit logs. |
-| Where does automation stop being helpful and start being creepy or unsafe? | Draws a line around consent, scale, and reversibility — gives one concrete example that crosses it. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-This is the **Week 4 capstone checkpoint** — ship both automations tonight, not "next week".
-
-### 1. Immediate: ship the n8n flow (~25 min)
-- [ ] Complete your trigger → API → AI node → output chain in n8n.cloud. Test with real data (not mock JSON).
-- [ ] Activate the workflow and confirm the trigger fires end-to-end at least once.
-- [ ] Add guardrails: dry-run mode on destructive nodes, a rate limit, and a human-approval step if the action is scary.
-
-### 2. Reflect (~10 min)
-
-**Prompt:** *"Which node in my flow is most likely to silently fail at 3 AM — and what would the user see if it did?"* A strong reflection picks a specific failure mode (API rate limit, auth token expired, malformed JSON from the AI step) and sketches a one-line monitoring signal or fallback.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Four on the dashboard: What's the difference between a trigger and a webhook? When would you reach for browser-use instead of an HTTP Request? Why is "dry-run mode" the first thing you should configure? Why would you pick Groq over GPT-5 for a flow running 10k/day?
-
-### 4. Submit the assignment (~5 min — **Week 4 deliverable**)
-
-Record a 60-second Loom walking through both the n8n flow and the browser-use automation. Post the Loom link plus a one-paragraph write-up ("what it saves me per week") plus the ROI number from your pre-work estimate to the cohort channel.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~30 min)
-- [ ] Install browser-use per https://docs.browser-use.com quickstart (if you haven't already) and point it at the one boring task you picked in pre-work. Run it once; note what it nailed and where it needed help (captchas, 2FA, weird popups).
-- [ ] Try Playwright MCP at https://github.com/microsoft/playwright-mcp if you need something more deterministic.
-
-### 6. Prep for Day 21 (~30-40 min — IMPORTANT, new content)
-
-**Tomorrow is Week 5 kickoff and the v0 prototype milestone.** Day 21: you stop being a typist and start being a director. You vibe-code your capstone v0 in Cursor / bolt.new / Antigravity and submit a **live URL that actually loads**. This is Capstone Milestone 3.
-
-- [ ] **Install [Cursor](https://cursor.com)** OR open [bolt.new](https://bolt.new) in a fresh tab — pick one as your primary for tomorrow.
-- [ ] **Pull your capstone repo locally** and confirm your Day 19 **CLAUDE.md is at the root and current**. Update it if your stack has drifted.
-- [ ] **Re-read your Day 15 capstone spec** — highlight the **single smallest end-to-end slice** (input → AI call → output). That's what you'll ship tomorrow.
-- [ ] **Write a one-paragraph v0 scope** for that slice.
-- [ ] **Prime read**: [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices), sections 1-3.
-- [ ] **Have a Gemini API key** from [Google AI Studio](https://aistudio.google.com) ready if your tool asks for BYOK. If you already have a Claude or OpenAI key, that's also fine.
-
----
-
-## 📚 Extra / additional references
-
-### Short watches
-
-- [n8n live-build walkthrough](https://www.youtube.com/embed/4cQWJViybAQ) — re-watch at 1.5x with your own flow open.
-
-### Reading
-
-- **Workflow builders**: [n8n](https://n8n.io), [n8n templates gallery](https://n8n.io/workflows/), [Zapier AI Actions](https://zapier.com/ai), [Make.com](https://make.com).
-- **Browser + computer agents**: [browser-use](https://github.com/browser-use/browser-use), [browser-use quickstart](https://docs.browser-use.com), [Playwright MCP](https://github.com/microsoft/playwright-mcp), [Claude computer-use](https://docs.claude.com/claude-code).
-- **Scraping for AI**: [Firecrawl](https://firecrawl.dev), [Jina Reader](https://jina.ai/reader).
-
-### Play
-
-- [Groq](https://groq.com) — fast, cheap inference for high-volume AI nodes.
+- [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices) — the canonical CLAUDE.md guide.
+- [agents.md](https://agents.md/) — the cross-vendor spec.
+- [Cursor Rules](https://docs.cursor.com/context/rules) — globs, alwaysApply, examples.
+- [Anthropic Skills](https://docs.anthropic.com/en/docs/agents/skills) — when to package vs prompt.

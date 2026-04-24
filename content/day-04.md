@@ -1,271 +1,143 @@
 ---
-reading_time: 16 min
-tldr: "A good prompt is not a magic spell. It's a well-briefed junior — context, role, examples, constraints, tone, evaluation."
-tags: ["foundations", "theory"]
-video: https://www.youtube.com/embed/T9aRN5JkmL8
-lab: {"title": "Iterate one prompt five times", "url": "https://claude.ai/"}
-prompt_of_the_day: "You are a {{role}}. Context: {{one paragraph about the situation}}. Task: {{what you want done}}. Constraints: {{bullet list of must-dos and must-nots}}. Examples: {{1-2 good examples}}. Output format: {{JSON / markdown / table}}."
-tools_hands_on: [{"name": "Claude", "url": "https://claude.ai/"}, {"name": "ChatGPT", "url": "https://chat.openai.com/"}]
-tools_demo: [{"name": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library"}, {"name": "Google AI Studio", "url": "https://aistudio.google.com/"}]
-tools_reference: [{"name": "Anthropic Prompt Engineering Guide", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}, {"name": "DAIR.AI Prompt Engineering Guide", "url": "https://www.promptingguide.ai/"}, {"name": "OpenAI Prompting Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering"}]
-resources: [{"title": "Chain-of-Thought paper", "url": "https://arxiv.org/abs/2201.11903"}, {"title": "Anthropic 'Context is King' post", "url": "https://www.anthropic.com/"}]
+day: 4
+date: "2026-05-06"
+weekday: "Wednesday"
+week: 1
+topic: "OpenSource Models and the Indian Stack"
+faculty:
+  main: "Sanjana"
+  support: "Harshith"
+reading_time: "12 min"
+tldr: "ChatGPT isn't the only model. Today you meet Sarvam (built for Indic), Mistral, Qwen, LLaMA, DeepSeek — pull one from Hugging Face, run it locally or on a free GPU, and feel the difference between closed and open."
+tags: ["open-source", "indian-stack", "huggingface"]
+software: ["Python", "transformers", "huggingface_hub"]
+online_tools: ["Sarvam AI", "Mistral AI", "Hugging Face", "Qwen", "LLama", "DeepSeek"]
+video: "https://www.youtube.com/embed/zjkBMFhNj_g"
+prompt_of_the_day: "Translate this Swiggy delivery instruction from Hinglish to crisp Tamil for a Chennai partner: 'Bhaiya gate ke andar mat aana, chowkidar ko bag de dena, paneer wala alag bag mein hai.'"
+tools_hands_on:
+  - { name: "Hugging Face", url: "https://huggingface.co/models" }
+  - { name: "Sarvam AI Playground", url: "https://www.sarvam.ai/" }
+  - { name: "Mistral Le Chat", url: "https://chat.mistral.ai/" }
+  - { name: "Qwen Chat", url: "https://chat.qwen.ai/" }
+  - { name: "DeepSeek Chat", url: "https://chat.deepseek.com/" }
+  - { name: "Google Colab (free GPU)", url: "https://colab.research.google.com/" }
+tools_reference:
+  - { name: "Open LLM Leaderboard", url: "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard" }
+  - { name: "Sarvam-1 model card", url: "https://huggingface.co/sarvamai/sarvam-1" }
+resources:
+  - { title: "Hugging Face — Models 101", url: "https://huggingface.co/docs/hub/models" }
+  - { title: "Ollama — run LLMs locally", url: "https://ollama.com/" }
+  - { title: "AI Bharat — IndicNLP", url: "https://ai4bharat.iitm.ac.in/" }
+lab: { title: "Three models, one Indic task", url: "https://www.sarvam.ai/" }
 objective:
-  topic: "Prompting craft: CREATE, few-shot, chain-of-thought, structured output"
-  tools: ["Claude", "ChatGPT"]
-  end_goal: "Walk away with 5 versions of one prompt (V1 lazy → V5 structured), your first entry in a personal Prompt Library, and the habit of auditing any weak prompt against CREATE."
+  topic: "OpenSource Models and the Indian Stack"
+  tools: ["Hugging Face", "Sarvam", "Mistral", "Colab"]
+  end_goal: "A short comparison of one closed model (ChatGPT) vs. two open models (one Indic, one global) on the same Indic-language task — with a recommendation."
 ---
+
+Yesterday you mastered prompting. Today you mastery-test **which model** to point those prompts at. Closed APIs are easy — but `gpt-4o` doesn't speak Bhojpuri, charges per token, and your data sits on someone else's server. Time to see what else is on the shelf.
 
 ## 🎯 Today's objective
 
-**Topic.** Prompting craft: CREATE, few-shot, chain-of-thought, structured output
+**Topic.** OpenSource Models and the Indian Stack.
 
-**Tools you'll use.** Claude (primary lab tool today), ChatGPT (comparison).
+**By end of class you will have:**
+1. Browsed the Hugging Face hub and downloaded one model card without panicking.
+2. Run **Sarvam-1** (or another Indic model) on a real Hindi/Tamil/Telugu task.
+3. Compared one closed model (ChatGPT) vs. two open models on the same Indic prompt.
+4. A clear answer to *"when would my future startup ditch the OpenAI API?"*
 
-**End goal.** By the end of today you will have:
-1. Five versions of the same real prompt — V1 lazy, V5 fully CREATE-structured with JSON output — and a one-line diagnosis of where quality jumped.
-2. The first entry in your **Prompt Library** (a Notion / Doc / `.md` file you'll populate all week).
-3. The reflex to ask "which CREATE letter am I skipping?" before hitting send.
+> *Why this matters.* If you build for India, the customer is going to type in Devanagari, Tamil, or Hinglish. Closed models charge 4× the tokens to mishandle that. Sarvam, IndicBERT, and Qwen change the math.
 
-> *Why this matters:* the difference between a student who gets 3x output from AI and one who gives up saying "AI is mid" is not intelligence — it's prompt craft. CREATE is the cheapest career skill you'll pick up all month.
+## ⏪ Pre-class · ~25 min
 
----
+### Setup (required)
 
-### 🌍 Real-life anchor
+- [ ] Create a free **Hugging Face** account and generate a read token.
+- [ ] Open a free **Google Colab** notebook (no local GPU? Colab gives you a T4 free).
+- [ ] Optional: install **Ollama** (https://ollama.com/) for local models.
 
-**The picture.** A good brief to a new intern: who they are, what "good" looks like (examples), hard limits (budget, deadline), tone, and how you'll check the work. A lazy brief gets lazy output — same as human teams.
+### Primer (~10 min)
 
-**Why it matches today.** CREATE is that briefing checklist translated into prompts: **C**ontext, **R**ole, **E**xamples, **A**ctive constraints, **T**one, **E**valuation.
-
-## ⏪ Pre-class · ~20 min
-
-**Faculty note.** Budget ~2 minutes for the 🌍 *Real-life anchor* above — read it aloud or ask one volunteer to restate it in their own words — so the analogy lands before setup.
-
-**Revision / context.** Yesterday you mapped 7 tool classes (chat, research, Indian AI, creative, code, open-source, automation) and matched 3 tasks from your life to Perplexity, NotebookLM, Sarvam, and friends. You walked away with a named personal stack. Today we zoom in on one skill that transfers *across every tool in that stack*: how you phrase the request. The "right tool" matters; the right prompt matters more.
-
-### Setup (if needed)
-
-- [ ] No new setup required — Claude and ChatGPT accounts from Day 1 are enough.
-- [ ] Create an empty Notion page, Google Doc, or markdown file called **"My Prompt Library"** — we start populating it today.
-
-### Primer (~5 min)
-
-- **Read**: The Anthropic Prompt Engineering overview (https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — skim the left sidebar to see which techniques exist. You don't need to understand them yet.
-- **Watch** (optional): Any 3–5 min "prompt engineering intro" video — instructor to link one in the channel if a great one surfaces, otherwise skip.
+- **Watch:** Yannic Kilcher's "What is Hugging Face?" (8 min) or any short HF Hub overview.
+- **Read:** the Sarvam-1 model card on Hugging Face.
 
 ### Bring to class
 
-- [ ] One real weak prompt you've typed in the past week — the worse the better. We'll rewrite it live.
-- [ ] One real task you've been putting off that AI could help with (resume bullet, DBMS notes, a difficult email) — this becomes your V1 in the lab.
+- [ ] One sentence in your **mother tongue** + its English meaning.
+- [ ] One *use case* you wish was native to your language (parent-WhatsApp summariser, JEE-doubt solver in Marathi, hostel mess complaint in Tamil).
 
-> 🧠 **Quick glossary**
-> - **Prompt** = the instruction you give the AI. Everything you type is a prompt.
-> - **Context** = extra info you give the AI beyond the instruction (your notes, a file, a role).
-> - **Zero-shot** = ask without examples ("summarise this").
-> - **Few-shot** = give 2–3 examples inside the prompt so AI mimics the pattern.
-> - **Chain-of-thought (CoT)** = ask AI to "think step by step" before answering.
+> 🧠 **Quick glossary.** **Open-weight** = model weights are downloadable; you can run/fine-tune. **Closed model** = API only (GPT-4, Claude). **Indic model** = trained heavily on Indian languages. **Quantization** = shrink a model so it fits on smaller GPUs. **Inference** = running the model.
 
----
-
-## 🎥 During class · live session
+## 🎥 In-class · live session
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Recap + hook | 5 min  | This week's tool landscape — today, how to actually *talk* to any of them |
-| Mini-lecture | 20 min | The CREATE framework + zero-shot vs few-shot vs chain-of-thought |
-| Live lab     | 20 min | Iterate one real prompt five times — watch quality climb |
-| Q&A + discussion | 15 min | Which CREATE letter do you skip — and what's it costing you? |
+| Why open-source matters | 10 min | Cost, privacy, language fit |
+| Tour of HF Hub | 10 min | Filters, model cards, leaderboards |
+| The Indian stack | 15 min | Sarvam, AI4Bharat, Krutrim, Ola |
+| Lab: 3 models on 1 Indic prompt | 20 min | Live |
+| Discussion + Q&A | 5 min | |
 
-### In-class checkpoints
+### The shelf, simplified
 
-- **Live poll (LMS)** — Run the **dashboard Live poll** for today so counts match in-class discussion (same wording as the official cohort poll for this day).
-- **Cold-open prompt read-aloud**: instructor pastes a terrible 8-word prompt on screen. Students shout in chat which CREATE letter is missing most. First correct answer gets credit for the day.
-- **Think-pair-share**: 90 seconds on *"Which CREATE letter do you skip most often — and what's it costing you?"* Each pair names their shared skip and one concrete cost.
-- **Live poll**: *"Is asking for JSON output cheating or just how adults use LLMs?"* Bars appear. Instructor calls on a "cheating" voter and a "adult" voter to steelman the other side in 20 seconds each.
-- **Live rewrite relay**: one student drops a real weak prompt in chat. Three volunteers each add one CREATE letter on screen — C, then R, then E — while the room watches the output quality jump between versions.
-- **Chat close**: *"The CREATE letter I'm adding to every prompt from tomorrow is ___."*
+- **Closed API titans.** GPT-4, Claude, Gemini — best raw quality, English-first, paid.
+- **Global open weights.** **LLaMA 3** (Meta), **Mistral**, **Qwen** (Alibaba), **DeepSeek** — strong, free to download.
+- **Indian stack.** **Sarvam-1** (22B, 10 Indic languages), **AI4Bharat IndicTrans2**, **Krutrim**, **Hanooman**, **Bhashini** APIs.
+- **Tiny but useful.** **Phi-3-mini**, **Gemma-2-2B** — run on your laptop.
 
-### Read: CREATE — the only prompt framework you need
+## 🧪 Lab: Three models, one Indic task
 
-Forget "prompt engineering" as some mystical art. A prompt is a briefing. You brief a junior intern by giving them enough to not waste your time. Do the same with the model.
+1. Pick **one task** in your mother tongue: a 4-line WhatsApp message to your dad explaining your placement situation, OR translate a Swiggy delivery note.
+2. Run it on **ChatGPT** (free tier).
+3. Run the same prompt on **Sarvam Playground** (https://www.sarvam.ai/).
+4. Run it on **Mistral Le Chat** *or* **Qwen Chat**.
+5. (Bonus) In Colab, run this snippet:
+   ```python
+   from transformers import pipeline
+   pipe = pipeline("text-generation", model="sarvamai/sarvam-1", device_map="auto")
+   print(pipe("मेरा नाम", max_new_tokens=50)[0]["generated_text"])
+   ```
+6. Score each on **fluency**, **cultural fit**, **factual correctness** (1–5).
+7. Write 3 sentences: *for this task, I'd ship with model X because…*
 
-**C — Context.** What's the situation? Who am I? What's already been tried?
-**R — Role.** Who should the AI be? (Expert? Peer? Critic?)
-**E — Examples.** Show, don't just tell. Even one example 5x the output quality.
-**A — Active constraints.** What MUST the output do, and what MUST it NOT do?
-**T — Tone.** Formal? Casual? Sarcastic? Hinglish?
-**E — Evaluation.** How will you judge the answer? Tell the model.
+**Artifact.** Google Doc with task, 3 outputs, score table, and recommendation. Share link in cohort channel.
 
-Worked example. Compare these two prompts:
+## 📊 Live poll
 
-> **Weak:** "Write me a cover letter for SDE internship."
+**For an Indic-language WhatsApp bot serving Tier-2 cities, which would you ship with?** (a) GPT-4 (b) Claude (c) Sarvam-1 (d) Mistral (e) Qwen (f) Build hybrid.
 
-> **Strong:** "**Context:** I'm a 3rd-year CSE student at VIT Vellore, CGPA 8.1, two hackathon wins, one React side project. Applying to Razorpay SDE-Intern. **Role:** You are a senior engineer at Razorpay who's reviewed 500 intern applications. **Examples:** [paste one cover letter you like]. **Constraints:** Under 250 words, mention one specific Razorpay product, no clichés like 'passionate' or 'go-getter'. **Tone:** confident but humble, Indian English. **Evaluation:** If a hiring manager would skim past this, it fails."
+## 💬 Discuss
 
-The second one takes 90 seconds longer to write. It saves 30 minutes of editing.
+- Where did Sarvam *win* and where did it *lose* against ChatGPT?
+- If your fintech startup must keep customer data on Indian soil, what changes in your stack?
+- Why do open weights matter for a 2nd-year student in Tier-3 college, today?
 
-### Read: Zero-shot, few-shot, chain-of-thought — three patterns to know
+## ❓ Quiz
 
-**Zero-shot:** Ask without any example. Fastest. Works for simple tasks.
-*"Summarise this article in 3 bullets."*
+Short quiz on closed vs open, where Sarvam is trained, and what a model card tells you. Open from your dashboard when unlocked.
 
-**Few-shot:** Give 1-5 examples first. Dramatically better for formatting or style tasks.
+## 📝 Assignment · Pick your stack
 
-```
-Example 1:
-Input: "Prof cancelled class yaar"
-Sentiment: relieved
-Reason: "class cancelled" + "yaar" signals relief
+**Brief.** Imagine you're founding a startup serving farmers in your home state. In **250 words**: (a) the language(s) the product speaks, (b) one closed + one open model you'd combine, (c) one decision driven by cost, one by privacy, one by language quality. No vague "we'll use AI" — name models and explain trade-offs.
 
-Example 2:
-Input: "Mess food was peak today, I'm cooked"
-Sentiment: positive
-Reason: "peak" is Gen-Z slang for excellent
+**Submit.** Paste on dashboard before next class.
 
-Now classify:
-Input: "Placements list dropped and I'm not on it"
-```
+**Rubric.** Stack specificity (4) · Trade-off clarity (4) · Indian-context realism (2).
 
-**Chain-of-thought (CoT):** Add "Think step by step before answering." The model writes out reasoning before the final answer. Works shockingly well on math, logic, and debugging.
+## 🔁 Prep for next class
 
-*"A mess charges ₹3200/month for unlimited meals. I eat 20 days/month, 2 meals a day. Street food costs ₹80/meal. Which is cheaper? Think step by step."*
+Day 5 is **grounded research with AI** — Fast vs Thinking vs Deep Research, NotebookLM, Perplexity. The day you stop trusting AI's first answer.
 
-### Read: Structured output — the hidden superpower
+- [ ] Sign up free on **Perplexity** and **NotebookLM**.
+- [ ] Drop one PDF you actually need to read (textbook chapter, paper, hostel rule book) into NotebookLM.
+- [ ] Bring 2 questions you've Googled in the last week and *didn't* find a good answer to.
 
-If you ask nicely, the model will reply in any format you want: JSON, CSV, markdown tables, YAML. This is how you go from "AI gives me text" to "AI gives me data I can paste into Excel."
+## 📚 References
 
-Example prompt:
-*"Give me 5 project ideas for a 3rd-year CSE student. Return as JSON with keys: title, difficulty (1-5), time\_days, tech\_stack (array), one\_line\_pitch."*
-
-The model will reply:
-```json
-[
-  {"title": "Hostel mess rating app", "difficulty": 2, "time_days": 7, "tech_stack": ["React Native", "Firebase"], "one_line_pitch": "Tinder for paneer."}
-]
-```
-
-Now you can paste that straight into a spreadsheet. That's the leap.
-
-### Read: A peek at "context engineering" (Week 3 teaser)
-
-Prompt engineering = one good message. **Context engineering** = designing the *whole information environment* around the AI: what it knows, what it has access to, what it doesn't see, what it remembers across chats. In Week 3 (Day 19) you'll build a `CLAUDE.md` file — a permanent context brief that travels with every chat. For now, just know: the future of working with AI is not better prompts, it's better *context systems*.
-
-| Prompt engineering | Context engineering |
-|---|---|
-| One message | A whole environment |
-| "Write me X" | "Here's who I am, what I've built, what I'm building, and how I work — now write X" |
-| Repeats every time | Loads once, reuses forever |
-| Good for: one-off tasks | Good for: personal AI teammates |
-
-### Watch: Prompting masterclass snippets
-
-Short curated clip covering CREATE, few-shot, CoT, and structured output.
-
-https://www.youtube.com/embed/T9aRN5JkmL8
-
-Watch for:
-- Why "think step by step" doubles accuracy on reasoning tasks
-- How role-prompting changes tone without you asking
-- The one-example trick that beats zero-shot every time
-
-### Lab: Iterate one prompt five times (35 min)
-
-One prompt. Five rewrites. You'll feel the curve.
-
-> ⚠️ **If you get stuck**
-> - *Your V2–V5 outputs all look basically the same* → your "real task" is probably too generic ("write me a LinkedIn post"). Pick something with constraints reality actually has — a specific internship, a specific reader, a word limit — then the CREATE letters have something to bite into.
-> - *Claude asks you to verify email / hits a usage limit mid-lab* → switch to ChatGPT for the remaining versions. Note the switch in your doc. The framework works identically across models; that's the point.
-> - *V5 JSON output comes back with surrounding prose ("Sure, here's your JSON:…")* → add one line at the end: *"Return ONLY valid JSON, no preamble, no code fences."* If it still adds fences, that's usually fine — the content is the artifact, not the wrapper.
-
-1. Pick a real task you actually need done. Suggestions: *"Draft 3 LinkedIn posts about my last internship" / "Summarise my DBMS notes into exam flashcards" / "Plan my study week for end-sems."* Whatever you pick, it must be real.
-2. Open Claude. Write your first prompt in 10 seconds — however you'd normally ask. Save the output as V1.
-3. Rewrite using **C** and **R** only (add context + role). Save as V2.
-4. Rewrite adding **E** (one example of what good output looks like). Save as V3.
-5. Rewrite adding **A** and **T** (constraints + tone). Save as V4.
-6. Rewrite adding structured output (ask for JSON, table, or markdown with headings). Save as V5.
-7. Line up V1 through V5 in a Google Doc. Read them in order. Write one sentence: *"The biggest jump happened between V__ and V__ because __."*
-8. Pick the best of the five. Clean it up. Add it to a new note called "My Prompt Library" — this is your first entry.
-
-**Artifact**: Google Doc with 5 versions + one reflection sentence. Plus your first library entry.
-
-### Live discussion prompts
-
-| Prompt | What a strong answer sounds like |
-|---|---|
-| Which of the six CREATE letters do you skip most often — and what's it costing you? | Names one specific letter (not "all of them") and one specific failure mode it causes — e.g., "I skip Examples, so the model defaults to LinkedIn-bro tone every time." Shows self-awareness, not guilt. |
-| Is asking for JSON "cheating," or is it how adults use LLMs? | Reframes the question: structured output isn't a trick, it's the bridge between "AI text" and "software that uses AI." Mentions a real use (spreadsheets, APIs, pipelines). |
-| When does few-shot *hurt* instead of help? | Gives at least one case: when your examples accidentally encode a bias, when the task is genuinely novel (examples anchor the model to the wrong shape), or when examples eat your token budget on a long context. |
-| Your prompt library has 10 entries today. In 3 months, how big should it be, and what categories will dominate? | Doesn't just say "bigger." Predicts which categories *grow* vs which stay small — based on what the student actually does every day. Shows the library is a living artifact, not a trophy. |
-| Where's the line between "prompting" and just "writing clearly"? | Concedes there isn't a hard line — great prompting IS clear writing with extra scaffolding (role, examples, output format) that you wouldn't add when writing to humans. |
-
----
-
-## 📝 Post-class · ~2 hour focused block
-
-Block the evening. Phone on DND. Do these in order.
-
-### 1. Immediate: build your 10-template prompt library (~50 min)
-
-1. Open your "My Prompt Library" doc.
-2. Build 10 reusable templates — one each for: study/notes, resume/cover letter, LinkedIn post, code explanation, email/message, brainstorming, summarisation, translation, debate/devil's advocate, and a 10th of your choice.
-3. Every template must include `{{placeholder}}` variables so future-you can just fill in blanks.
-4. Each template should apply at least 3 of the CREATE letters visibly (tagged in the template itself is fine).
-5. Export to PDF or share a Notion link — you'll submit in step 4.
-
-### 2. Reflect (~10 min)
-
-**Prompt:** *"Which of the 10 templates will I actually use this week — and which did I include just to hit the count?"* A good reflection is honest: most people have 2–3 genuinely load-bearing templates and 7 aspirational ones. Naming the gap is the whole point; it tells you where to invest next.
-
-### 3. Quiz (~17 min)
-
-Includes transfer scenarios + spaced recall from earlier days (~8+ items total). If a question feels easy, treat it as speed practice.
-
-Four questions on CREATE, zero-shot vs few-shot, CoT, and structured output. Available on the dashboard. You don't have to name the framework — you have to recognize the parts.
-
-### 4. Submit the assignment (~5 min)
-
-Submit your 10-template Prompt Library (PDF or Notion link) via the dashboard before next class. This is an artifact you'll *actually* use for the next two years — don't skip the export.
-
-**Peer or self-review:** One line (chat or DM): what changed after someone skimmed your artifact — or the biggest gap if you worked solo.
-
-**Stretch (optional):** Pick one rubric row and over-ship it (extra example, tighter screenshot, or second iteration).
-
-
-### 5. Deepen (optional, ~25 min)
-
-- **Extra video**: Instructor-curated CREATE deep-dive (posted in the cohort channel based on the class's weakest CREATE letters).
-- **Extra read**: DAIR.AI's Prompt Engineering Guide (https://www.promptingguide.ai/) — the most comprehensive free resource online; bookmark, don't binge.
-- **Try**: Take your best V5 from the lab and run it on three models (Claude, ChatGPT, Gemini). Same prompt, same CREATE structure — see which model rewards structure most. That's your "writing model."
-
-### 6. Prep for Day 5 (~30 min — important)
-
-**Tomorrow closes Week 1.** Day 5 is a show-and-tell: every student pitches their single best AI moment from Days 1–4 in 2 minutes, the room votes Most Useful / Creative / Surprising, and you end the day with your **Personal AI Stack v1** — a 1–2 page PDF that locks in your tools, top 10 prompts, top 3 use cases, and your "next bet" for Day 30.
-
-- [ ] **Skim ahead**: pick your single best AI moment from Days 1–4 — a prompt, an output, a surprise, a fail — and draft a 2-minute pitch (what was the task, what did you do, why did it work).
-- [ ] **Think**: which one belief about AI that you entered Day 1 with is *gone* after four days? Bring a specific answer, not a vibe.
-- [ ] **Set up**: open a blank Google Doc titled *"Cohort Tricks — Week 1"* so you can take notes live during show-and-tell. Also have your Day 3 tool audit + Day 4 prompt library handy — both feed into Day 5's Personal AI Stack deliverable.
-
----
-
-## 📚 Extra / additional references
-
-Optional deep-dives. Pick what interests you; skip what doesn't.
-
-### Short watches
-
-- Short clip covering CREATE, few-shot, CoT, structured output — https://www.youtube.com/embed/T9aRN5JkmL8
-- [Anthropic "Context is King"](https://www.anthropic.com/) — the original post that coined how most practitioners now think about context vs prompts.
-
-### Reading
-
-- [Anthropic Prompt Engineering Overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — short, official, unhyped.
-- [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) — the encyclopedia.
-- [OpenAI Prompting Guide](https://platform.openai.com/docs/guides/prompt-engineering) — official, terse, worth a full read once.
-- [Chain-of-Thought paper](https://arxiv.org/abs/2201.11903) — the 2022 paper that made "think step by step" famous.
-
-### Play
-
-- [Claude](https://claude.ai/) — today's primary lab tool.
-- [Anthropic Prompt Library](https://docs.anthropic.com/en/prompt-library/library) — steal-worthy templates by the dozen.
-- [Google AI Studio](https://aistudio.google.com/) — free place to test Gemini prompts with a system prompt field.
+- [Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) — keep an eye on it monthly.
+- [Sarvam-1 model card](https://huggingface.co/sarvamai/sarvam-1) — built in Bengaluru for Indic.
+- [AI4Bharat](https://ai4bharat.iitm.ac.in/) — IIT Madras' open Indic NLP work.
+- [Ollama](https://ollama.com/) — easiest way to run LLaMA/Mistral/Qwen on your laptop.
