@@ -77,6 +77,7 @@ export function initAdminNavChrome() {
   if (!panel || !panel.classList.contains('admin-shell') || panel.dataset.adminNavChrome === '1') return;
   panel.dataset.adminNavChrome = '1';
   document.body.classList.add('has-admin-shell');
+  document.body.classList.toggle('has-admin-shell-drawer-only', panel.classList.contains('admin-shell--drawer-only'));
 
   const navIn = document.querySelector('body > nav .nav-in');
   if (navIn && !navIn.querySelector('.admin-nav-burger')) {
@@ -109,7 +110,7 @@ export function initAdminNavChrome() {
       document.body.style.overflow = '';
     };
     const openDrawer = () => {
-      if (window.matchMedia('(min-width: 961px)').matches) return;
+      if (window.matchMedia('(min-width: 961px)').matches && !panel.classList.contains('admin-shell--drawer-only')) return;
       panel.classList.add('admin-shell--drawer-open');
       burger.setAttribute('aria-expanded', 'true');
       backdrop.classList.add('is-visible');
