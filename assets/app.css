@@ -279,38 +279,9 @@ main.admin-shell{
   }
 }
 
-/* Burger: only when admin shell is active */
-.admin-nav-burger{
-  display:none;
-  align-items:center;
-  justify-content:center;
-  width:42px;
-  height:42px;
-  margin-right:4px;
-  padding:0;
-  border-radius:10px;
-  border:1px solid var(--line);
-  background:var(--card);
-  color:var(--ink);
-  cursor:pointer;
-  flex-shrink:0;
-  transition:border-color .15s, background .15s;
-}
-.admin-nav-burger:hover{
-  border-color:color-mix(in oklab, var(--accent) 40%, var(--line));
-  background:var(--bg-soft);
-}
-body.has-admin-shell .admin-nav-burger{
-  display:inline-flex;
-}
-@media (min-width:961px){
-  body.has-admin-shell .admin-nav-burger{
-    display:none !important;
-  }
-}
-body.has-admin-shell-drawer-only .admin-nav-burger{
-  display:inline-flex !important;
-}
+/* Burger trigger retired — the rail is always visible (collapsed on narrow viewports,
+   hover-to-expand on desktop). Hide it everywhere. */
+.admin-nav-burger{display:none !important;}
 
 .admin-nav-backdrop{
   display:none;
@@ -486,28 +457,35 @@ body.has-admin-shell-drawer-only .admin-nav-burger{
 
   /* Desktop: collapsed-by-default admin rail that hover-expands over content. */
   main.admin-shell:not(.admin-shell--drawer-only){
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: 60px minmax(0, 1fr);
   }
   #adminNav.admin-nav-slot{
-    width:64px;
-    max-width:64px;
+    width:60px;
+    max-width:60px;
     overflow:visible;
   }
   #adminNav.admin-nav-slot .admin-nav-aside{
-    width:64px;
-    max-width:64px;
+    width:60px;
+    max-width:60px;
     transition: width .22s ease, box-shadow .22s ease, max-width .22s ease;
     z-index:60;
+    /* Dark rail (matches reference) */
+    background: #0f1014;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 0;
+  }
+  [data-theme="light"] #adminNav.admin-nav-slot .admin-nav-aside{
+    background: #111217;
   }
   #adminNav.admin-nav-slot:hover .admin-nav-aside,
   #adminNav.admin-nav-slot:focus-within .admin-nav-aside{
-    width:260px;
-    max-width:260px;
-    box-shadow:6px 0 28px rgba(0,0,0,.25);
+    width:240px;
+    max-width:240px;
+    box-shadow:10px 0 40px rgba(0,0,0,.45);
   }
-  /* Collapsed state: keep icons, hide labels + group headers + subnav text */
+  /* Collapsed state: icon-only, hide everything text-y */
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
-    padding:12px 6px 14px;
+    padding:10px 6px 14px;
   }
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group__label,
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-link__txt,
@@ -518,23 +496,125 @@ body.has-admin-shell-drawer-only .admin-nav-burger{
     display:none !important;
   }
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
-    padding:9px 0;
+    padding:10px 0;
     justify-content:center;
     gap:0;
-  }
-  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link--active{
-    box-shadow:none;
-    border-color:transparent;
-    background:color-mix(in oklab, var(--accent) 16%, transparent);
+    border-radius:10px;
+    margin:2px 4px;
   }
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group{
-    margin-bottom:4px;
+    margin-bottom:2px;
   }
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub,
   #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub{
     padding:6px 0;
     border:none;
-    margin:8px 0;
+    margin:6px 0;
+  }
+  /* Rail chrome: icons + active state restyled to look good on dark bg */
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link{
+    color: rgba(255,255,255,.72);
+    border-color: transparent;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link .admin-nav-link__ic{
+    color: rgba(255,255,255,.58);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link:hover{
+    background: rgba(255,255,255,.06);
+    border-color: transparent;
+    color: #fff;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link:hover .admin-nav-link__ic{
+    color: var(--accent);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link--active{
+    background: var(--accent);
+    color: #0b0b10;
+    border-color: transparent;
+    box-shadow: none;
+    font-weight: 700;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-link--active .admin-nav-link__ic{
+    color: #0b0b10;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside .admin-nav-group__label{
+    color: rgba(255,255,255,.48);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside .admin-nav-sub,
+  #adminNav.admin-nav-slot .admin-nav-aside .admin-nav-faculty-sub{
+    border-color: rgba(255,255,255,.08);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside .admin-nav-sub__label,
+  #adminNav.admin-nav-slot .admin-nav-aside .admin-nav-faculty-sub__label{
+    color: rgba(255,255,255,.52);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-sub-link,
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-faculty-link{
+    color: rgba(255,255,255,.66);
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-sub-link:hover,
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-faculty-link:hover{
+    background: rgba(255,255,255,.06);
+    color: #fff;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-sub-link--active,
+  #adminNav.admin-nav-slot .admin-nav-aside a.admin-nav-faculty-link--active{
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+    color: var(--accent);
+  }
+}
+
+/* Mobile: narrower always-visible rail (the drawer no longer applies since
+   the burger is retired). Collapsed shows icons; tap to focus-within expands. */
+@media (max-width: 960px) {
+  main.admin-shell:not(.admin-shell--drawer-only){
+    display:grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 0 12px;
+  }
+  #adminNav.admin-nav-slot{
+    height: auto;
+    min-height: 0;
+    width: 56px;
+    max-width: 56px;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    grid-row: auto;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside{
+    position: sticky;
+    top: 56px;
+    transform: none;
+    width: 56px;
+    max-width: 56px;
+    height: calc(100vh - 64px);
+    border-radius: 0;
+    background: #0f1014;
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: none;
+    transition: width .22s ease;
+    z-index: 60;
+  }
+  #adminNav.admin-nav-slot:hover .admin-nav-aside,
+  #adminNav.admin-nav-slot:focus-within .admin-nav-aside{
+    width: 240px;
+    max-width: 240px;
+    box-shadow: 10px 0 40px rgba(0,0,0,.45);
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-link__txt,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-sub-link,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__head{
+    display: none !important;
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
+    padding: 10px 0;
+    justify-content: center;
+    gap: 0;
   }
 }
 
