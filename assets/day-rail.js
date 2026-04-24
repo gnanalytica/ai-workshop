@@ -40,15 +40,19 @@ export function teardownCourseNavUI() {
   }
 }
 
-function syncCourseWeekOpenState(activeDay) {
-  const wide = window.matchMedia('(min-width: 900px)').matches;
+/**
+ * Set the initial open/closed state of week sections. After this, the user
+ * controls it via normal <details> clicks — we don't reapply on resize.
+ * Default: the week containing the active day is open; on dashboard (no
+ * active day), only Week 1 is open.
+ */
+function setInitialWeekOpenState(activeDay) {
   document.querySelectorAll('.gn-course-week').forEach((det) => {
     const wk = det.dataset.week;
-    if (wide) {
+    const hasCurrent = !!det.querySelector('.gn-course-nav__day--current');
+    if (hasCurrent) {
       det.setAttribute('open', '');
-    } else if (activeDay == null) {
-      det.toggleAttribute('open', wk === '1');
-    } else if (det.querySelector('.gn-course-nav__day--current')) {
+    } else if (activeDay == null && wk === '1') {
       det.setAttribute('open', '');
     } else {
       det.removeAttribute('open');
@@ -204,12 +208,14 @@ export function mountDayRail(
       });
     };
     syncDashboardLinks();
-    syncCourseWeekOpenState(activeDay);
+    setInitialWeekOpenState(activeDay);
     window.addEventListener('hashchange', syncDashboardLinks, { signal: courseNavAbort.signal });
     window.addEventListener(
       'resize',
       () => {
-        syncCourseWeekOpenState(activeDay);
+        // Don't touch week open/closed on resize — the user owns that state
+        // after first render. Only close the mobile drawer if we've crossed
+        // into desktop width.
         if (window.matchMedia('(min-width: 900px)').matches) {
           document.body.classList.remove('gn-course-nav-drawer-open');
           document.body.style.overflow = '';
@@ -224,7 +230,7 @@ export function mountDayRail(
       el.querySelector('.gn-course-nav__day--current')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
   } else {
-    syncCourseWeekOpenState(activeDay);
+    setInitialWeekOpenState(activeDay);
   }
 }
 
