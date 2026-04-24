@@ -285,8 +285,8 @@
 
   async function checkAdmin(user) {
     // Strict admin-only
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return show('denied');
+    const { data: profile } = await supabase.from('profiles').select('staff_roles').eq('id', user.id).maybeSingle();
+    if (!Array.isArray(profile?.staff_roles) || !profile.staff_roles.includes('admin')) return show('denied');
     show('panel');
     $('adminNav').innerHTML = renderAdminNav('admin-faculty.html', { role: 'admin' });
     wrapAdminMainLayout();

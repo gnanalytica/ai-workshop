@@ -604,7 +604,7 @@ async function gate(user) {
   STATE.isFaculty = isFaculty;
 
   // Also accept users with staffRoles trainer/tech_support/admin via profiles.
-  // checkAdminOrFaculty already covers isAdmin (profiles.is_admin) and isFaculty
+  // checkAdminOrFaculty already covers isAdmin (staff_roles: admin/trainer/tech_support) and isFaculty
   // (cohort_faculty rows). We additionally look at profiles.staff_roles.
   const { data: profileData } = await supabase
     .from('profiles')
@@ -669,19 +669,32 @@ async function onCohortChange() {
 // ── Section 6 — Contacts ────────────────────────────────────────────────────
 async function loadContacts() {
   if (!STATE.cohortId) return;
-  const { data, error } = await supabase
-    .from('cohort_faculty')
-    .select('user_id, is_admin, cohort_id, profiles(id, full_name, email)')
-    .eq('cohort_id', STATE.cohortId);
-
   const panel = $('contactsPanel');
-  if (error || !data || !data.length) {
+  const [{ data: college, error: cErr }, { data: staffProfs, error: sErr }] = await Promise.all([
+    supabase.from('cohort_faculty')
+      .select('user_id, college_role, cohort_id, profiles(id, full_name, email)')
+      .eq('cohort_id', STATE.cohortId),
+    // Trainers + tech support live on profiles.staff_roles (not cohort_faculty).
+    supabase.from('profiles')
+      .select('id, full_name, email, staff_roles')
+      .not('staff_roles', 'eq', '{}'),
+  ]);
+
+  if ((cErr && sErr) || ((!college || !college.length) && (!staffProfs || !staffProfs.length))) {
     panel.innerHTML = `<div class="muted" style="font-size:13px">No contacts found — ask your admin to populate faculty contacts in <a href="admin-faculty.html" style="color:var(--accent)">admin-faculty</a>.</div>`;
     return;
   }
 
-  const trainers = data.filter((r) => r.is_admin);
-  const support = data.filter((r) => !r.is_admin);
+  const trainerRows = (staffProfs || [])
+    .filter((p) => Array.isArray(p.staff_roles) && (p.staff_roles.includes('trainer') || p.staff_roles.includes('admin')))
+    .map((p) => ({ profiles: p }));
+  const techRows = (staffProfs || [])
+    .filter((p) => Array.isArray(p.staff_roles) && p.staff_roles.includes('tech_support'))
+    .map((p) => ({ profiles: p }));
+  const support = (college || []).filter((r) => r.college_role === 'support');
+  const execs = (college || []).filter((r) => r.college_role === 'executive');
+  const trainers = trainerRows;
+  const techSupport = techRows;
 
   function cardHtml(row, roleLabel) {
     const p = row.profiles || {};
@@ -694,7 +707,12 @@ async function loadContacts() {
 
   let html = '<div class="contacts-grid">';
   trainers.forEach((r) => { html += cardHtml(r, 'Trainer'); });
-  support.forEach((r) => { html += cardHtml(r, 'Tech / Support'); });
+  techSupport.forEach((r) => { html += cardHtml(r, 'Tech Support'); });
+  support.forEach((r) => { html += cardHtml(r, 'Support Faculty'); });
+  execs.forEach((r) => { html += cardHtml(r, 'Executive Faculty'); });
+  if (!trainers.length && !techSupport.length && !support.length && !execs.length) {
+    html += '<div class="muted" style="font-size:13px">No contacts populated yet.</div>';
+  }
   html += '</div>';
   panel.innerHTML = html;
 }

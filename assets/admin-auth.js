@@ -10,18 +10,16 @@ export function isSupportFacultyOnly(isAdmin, isFaculty) {
 }
 
 export async function checkAdminOrFaculty(user) {
-  const { data: profile } = await supabase.from('profiles').select('is_admin, staff_roles').eq('id', user.id).maybeSingle();
+  const { data: profile } = await supabase.from('profiles').select('staff_roles').eq('id', user.id).maybeSingle();
   const { data: facRows } = await supabase.from('cohort_faculty').select('cohort_id, college_role').eq('user_id', user.id);
   const staffRoles = new Set(Array.isArray(profile?.staff_roles) ? profile.staff_roles : []);
-  // Bridge: if staff_roles wasn't backfilled, synthesize from is_admin.
-  if (staffRoles.size === 0 && profile?.is_admin) { staffRoles.add('admin'); staffRoles.add('trainer'); }
   const rows = facRows || [];
   const facultyCohortIds = rows.map(r => r.cohort_id);
   const executiveCohortIds = rows.filter(r => r.college_role === 'executive').map(r => r.cohort_id);
   // isAdmin widens to include anyone who should have admin-level UI access.
-  // This preserves existing gate behavior on admin-*.html — admins/trainers pass,
-  // tech support users also pass (they have admin nav via role-gated allowlist).
-  const isAdmin = staffRoles.has('admin') || staffRoles.has('trainer') || staffRoles.has('tech_support') || !!profile?.is_admin;
+  // Admins/trainers pass; tech support users also pass (they have admin nav
+  // via role-gated allowlist). Source of truth is profiles.staff_roles.
+  const isAdmin = staffRoles.has('admin') || staffRoles.has('trainer') || staffRoles.has('tech_support');
   const isFaculty = facultyCohortIds.length > 0;
   const isTechSupport = staffRoles.has('tech_support');
   const isExecFaculty = executiveCohortIds.length > 0;
@@ -59,15 +57,10 @@ export async function resolveRoles(user, cohortId = null) {
       facultyCohortIds: [], executiveCohortIds: [], can: computeCaps(new Set(), null) };
   }
   const [{ data: profile }, { data: facRows }] = await Promise.all([
-    supabase.from('profiles').select('staff_roles, is_admin').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('staff_roles').eq('id', user.id).maybeSingle(),
     supabase.from('cohort_faculty').select('cohort_id, college_role').eq('user_id', user.id),
   ]);
   const staffRoles = new Set(Array.isArray(profile?.staff_roles) ? profile.staff_roles : []);
-  // Bridge: if staff_roles wasn't backfilled for this user (shouldn't happen
-  // post-migration, but guard anyway), fall back to is_admin.
-  if (staffRoles.size === 0 && profile?.is_admin) {
-    staffRoles.add('admin'); staffRoles.add('trainer');
-  }
   const rows = facRows || [];
   const facultyCohortIds = rows.map(r => r.cohort_id);
   const executiveCohortIds = rows.filter(r => r.college_role === 'executive').map(r => r.cohort_id);
@@ -154,8 +147,9 @@ export function renderAccountMenuHtml(isAdmin, isFaculty, currentView) {
 export async function routeAfterSignIn(user) {
   if (!user) return false;
   try {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (profile?.is_admin) return false;
+    const { data: profile } = await supabase.from('profiles').select('staff_roles').eq('id', user.id).maybeSingle();
+    const roles = new Set(Array.isArray(profile?.staff_roles) ? profile.staff_roles : []);
+    if (roles.has('admin') || roles.has('trainer')) return false;
     const { data: fac } = await supabase.from('cohort_faculty').select('cohort_id').eq('user_id', user.id).limit(1);
     if (fac && fac.length) {
       // Avoid redirect loop if we're already on faculty.html.

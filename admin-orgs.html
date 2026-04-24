@@ -261,8 +261,8 @@
   });
 
   async function checkAdmin(user) {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-    if (!profile?.is_admin) return showDenied();
+    const { data: profile } = await supabase.from('profiles').select('staff_roles').eq('id', user.id).maybeSingle();
+    if (!Array.isArray(profile?.staff_roles) || !profile.staff_roles.includes('admin')) return showDenied();
     showPanel();
     await loadAll();
   }
