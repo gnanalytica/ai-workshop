@@ -331,6 +331,55 @@ main.admin-shell .admin-main{
   display:none !important;
 }
 
+/* Sidebar always uses dark chrome regardless of the rest of the page's theme,
+   so light-mode tokens (--ink, --muted) don't camouflage labels against the
+   dark rail background. */
+.admin-nav-aside,
+.admin-nav-aside *{
+  --ink:#ececf2;
+  --muted:#a0a0b0;
+  --line:rgba(255,255,255,.08);
+  --bg-soft:#15161c;
+  --input-bg:#1a1b22;
+  --card:#15161c;
+}
+.admin-nav-aside a.admin-nav-link{
+  color:rgba(255,255,255,.78);
+}
+.admin-nav-aside a.admin-nav-link:hover{
+  color:#fff;
+}
+.admin-nav-aside .admin-nav-group__label{
+  color:rgba(255,255,255,.5);
+}
+.admin-nav-aside .admin-nav-aside__title{
+  color:rgba(255,255,255,.6);
+}
+.admin-nav-aside .admin-nav-link__ic{
+  color:rgba(255,255,255,.6);
+}
+.admin-nav-aside a.admin-nav-link:hover .admin-nav-link__ic{
+  color:var(--accent);
+}
+.admin-nav-aside a.admin-nav-link--active{
+  background:var(--accent);
+  color:#0b0b10;
+}
+.admin-nav-aside a.admin-nav-link--active .admin-nav-link__ic{
+  color:#0b0b10;
+}
+.admin-nav-aside .admin-nav-footer{
+  color:rgba(255,255,255,.55);
+}
+.admin-nav-aside .admin-nav-badge{
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.1);
+}
+.admin-nav-aside .admin-nav-switch{
+  color:var(--accent);
+}
+
 /* Universal: <details class=admin-nav-group> children must always render,
    since the rail has no UI to close groups (arrow hidden on desktop, label
    pointer-events:none). Without this, only the active group's links show. */
