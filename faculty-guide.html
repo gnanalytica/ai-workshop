@@ -16,6 +16,11 @@
     border-bottom:1px solid var(--line);
     overflow-x:auto;scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
+    /* Clear the fixed admin rail so links don't hide under it */
+    padding-left:72px;
+  }
+  @media (max-width:960px){
+    .toc-bar{padding-left:64px}
   }
   .toc-bar::-webkit-scrollbar{display:none}
   .toc-bar-inner{
