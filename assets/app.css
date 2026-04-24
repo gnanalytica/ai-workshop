@@ -457,9 +457,13 @@ main.admin-shell .admin-main{
   .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-footer{
     display:none !important;
   }
-  /* Override <details> native "closed" hiding so every group's icons show. */
-  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group .admin-nav-group__links{
+  /* Always show every group's links — on desktop the rail has no collapse
+     affordance (arrow hidden, label pointer-events:none). <details> native
+     hiding would otherwise drop everything but the active-group's links. */
+  .admin-nav-aside .admin-nav-group .admin-nav-group__links{
     display:flex !important;
+  }
+  .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group .admin-nav-group__links{
     padding:0;
   }
   .admin-nav-aside:not(:hover):not(:focus-within) a.admin-nav-link{
