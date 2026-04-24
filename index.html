@@ -243,7 +243,7 @@
     </div>
     <div style="display:flex;gap:10px;align-items:center">
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
-      <a class="cta" href="#" onclick="openAccess();return false;">Sign in / Enroll →</a>
+      <a class="cta" id="navAccessCta" href="#" onclick="openAccess();return false;">Sign in / Enroll →</a>
     </div>
   </div>
 </nav>
@@ -766,6 +766,32 @@
     accessModal.classList.add('open');
     applyAccessMode('new');
     showAccessMsg("You're in. We'll email cohort details soon.", 'ok');
+  });
+
+  // If a session already exists (persisted via localStorage), swap the
+  // nav CTA to a friendly "Open dashboard" link and prefill any sign-in
+  // helpers with the known email so logged-in users don't see a stranger's UX.
+  async function reflectSession() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const cta = document.getElementById('navAccessCta');
+      if (!cta) return;
+      if (session?.user) {
+        const meta = session.user.user_metadata || {};
+        const first = (meta.full_name || session.user.email || '').split(' ')[0].split('@')[0] || 'you';
+        cta.textContent = `${first}'s dashboard →`;
+        cta.setAttribute('href', 'dashboard.html');
+        cta.removeAttribute('onclick');
+      } else {
+        cta.textContent = 'Sign in / Enroll →';
+        cta.setAttribute('href', '#');
+        cta.setAttribute('onclick', 'openAccess();return false;');
+      }
+    } catch (_) { /* non-critical */ }
+  }
+  reflectSession();
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') reflectSession();
   });
 </script>
 <script type="module">
