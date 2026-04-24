@@ -483,6 +483,59 @@ body.has-admin-shell-drawer-only .admin-nav-burger{
   .admin-nav-group__label::after{
     display:none;
   }
+
+  /* Desktop: collapsed-by-default admin rail that hover-expands over content. */
+  main.admin-shell:not(.admin-shell--drawer-only){
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  #adminNav.admin-nav-slot{
+    width:64px;
+    max-width:64px;
+    overflow:visible;
+  }
+  #adminNav.admin-nav-slot .admin-nav-aside{
+    width:64px;
+    max-width:64px;
+    transition: width .22s ease, box-shadow .22s ease, max-width .22s ease;
+    z-index:60;
+  }
+  #adminNav.admin-nav-slot:hover .admin-nav-aside,
+  #adminNav.admin-nav-slot:focus-within .admin-nav-aside{
+    width:260px;
+    max-width:260px;
+    box-shadow:6px 0 28px rgba(0,0,0,.25);
+  }
+  /* Collapsed state: keep icons, hide labels + group headers + subnav text */
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-aside__scroll{
+    padding:12px 6px 14px;
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-link__txt,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub__label,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-sub-link,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-faculty-link{
+    display:none !important;
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link{
+    padding:9px 0;
+    justify-content:center;
+    gap:0;
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) a.admin-nav-link--active{
+    box-shadow:none;
+    border-color:transparent;
+    background:color-mix(in oklab, var(--accent) 16%, transparent);
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-group{
+    margin-bottom:4px;
+  }
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-sub,
+  #adminNav.admin-nav-slot:not(:hover):not(:focus-within) .admin-nav-faculty-sub{
+    padding:6px 0;
+    border:none;
+    margin:8px 0;
+  }
 }
 
 a.admin-nav-link{

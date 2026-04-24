@@ -351,3 +351,69 @@ body.gn-has-course-nav main.lesson-shell {
 .gn-day-rail-host--embedded .gn-course-nav-drawer-x {
   display: none !important;
 }
+
+/* Desktop: collapsed-by-default rail that expands on hover.
+   Only applies when mounted as the fixed sidebar (not the embedded aside). */
+@media (min-width: 900px) {
+  #gnDayRailHost.gn-day-rail-host--sidebar {
+    width: 64px;
+    transition: width 0.22s ease;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:hover,
+  #gnDayRailHost.gn-day-rail-host--sidebar:focus-within {
+    width: min(280px, 86vw);
+    box-shadow: 6px 0 28px rgba(15, 23, 42, 0.12);
+  }
+  body.gn-has-course-nav main.wrap:not(.lesson-shell),
+  body.gn-has-course-nav main.lesson-shell {
+    padding-left: 72px;
+  }
+  /* Collapsed state: hide prose, abbreviate to numbers + week pills. */
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__kicker,
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-week__hint,
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__day-title,
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__day-status,
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__legend,
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-week__summary::after {
+    display: none !important;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav {
+    padding: 12px 6px 20px;
+    align-items: stretch;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__link {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-left: none;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-week__summary {
+    padding: 8px 0;
+    text-align: center;
+    align-items: center;
+    border-left: none;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-week__n {
+    font-size: 11px;
+    color: var(--muted, #64748b);
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__day {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 4px 0;
+    margin-left: 0;
+    border-left: none;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__day-num {
+    padding-top: 0;
+  }
+  /* Keep the current-day pill visible as a thin vertical accent even when collapsed. */
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__day--current {
+    border-radius: 6px;
+  }
+  #gnDayRailHost.gn-day-rail-host--sidebar:not(:hover):not(:focus-within) .gn-course-nav__divider {
+    margin: 8px 12px 10px;
+  }
+}
