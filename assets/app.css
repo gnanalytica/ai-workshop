@@ -335,6 +335,13 @@ main.admin-shell .admin-main{
   max-width:260px;
   box-shadow:10px 0 40px rgba(0,0,0,.45);
 }
+
+/* Universal: <details class=admin-nav-group> children must always render,
+   since the rail has no UI to close groups (arrow hidden on desktop, label
+   pointer-events:none). Without this, only the active group's links show. */
+.admin-nav-aside .admin-nav-group .admin-nav-group__links{
+  display:flex !important;
+}
 .admin-nav-aside__head{
   display:none;
   flex-shrink:0;
@@ -456,12 +463,6 @@ main.admin-shell .admin-main{
   .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-aside__head,
   .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-footer{
     display:none !important;
-  }
-  /* Always show every group's links — on desktop the rail has no collapse
-     affordance (arrow hidden, label pointer-events:none). <details> native
-     hiding would otherwise drop everything but the active-group's links. */
-  .admin-nav-aside .admin-nav-group .admin-nav-group__links{
-    display:flex !important;
   }
   .admin-nav-aside:not(:hover):not(:focus-within) .admin-nav-group .admin-nav-group__links{
     padding:0;

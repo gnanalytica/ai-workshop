@@ -174,18 +174,15 @@ export function setAdminNavSubActive(key) {
  */
 function resolveRoleSet(opts) {
   if (Array.isArray(opts.roles) && opts.roles.length) return new Set(opts.roles);
-  if (opts.role === 'admin') return new Set(['admin','trainer']);
-  if (opts.role === 'faculty') {
-    // Legacy: use whatever resolveRoles stashed on window, else assume support.
-    const fromWindow = window.__ROLES__;
-    if (fromWindow?.staffRoles || fromWindow?.collegeRole) {
-      const set = new Set(Array.from(fromWindow.staffRoles || []));
-      if (fromWindow.collegeRole) set.add(fromWindow.collegeRole);
-      if (!set.size) set.add('support');
-      return set;
-    }
-    return new Set(['support']);
+  // Prefer the navRoles set stashed by checkAdminOrFaculty — it's the union
+  // of staff + college roles the current user holds, which is what the
+  // allowlist filter needs.
+  const fromWindow = window.__ROLES__;
+  if (fromWindow?.navRoles instanceof Set && fromWindow.navRoles.size > 0) {
+    return new Set(fromWindow.navRoles);
   }
+  if (opts.role === 'admin') return new Set(['admin','trainer']);
+  if (opts.role === 'faculty') return new Set(['support']);
   return new Set(['admin','trainer']);
 }
 
