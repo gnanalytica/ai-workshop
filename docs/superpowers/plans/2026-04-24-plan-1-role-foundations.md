@@ -127,13 +127,13 @@ git commit -m "feat(db): add profiles.staff_roles with backfill from is_admin"
 - Create: `supabase/migrations/20260424_0010_cohort_faculty_college_role.sql`
 - Modify: `supabase/verify/plan-1-assertions.sql`
 
-- [ ] **Step 1: Pre-flight — confirm `cohort_faculty.is_admin` column exists with that name**
+- [ ] **Step 1: Pre-flight — confirm `cohort_faculty` has `role` (legacy) but no `college_role` yet, and no `is_admin`**
 
-```sql
-select column_name from information_schema.columns
-where table_schema='public' and table_name='cohort_faculty' and column_name='is_admin';
--- Expected: 1 row. If 0 rows, adjust the spec + Plan 2 references before proceeding.
-```
+Pre-flight ran 2026-04-24 against ai-workshop: `cohort_faculty` columns are
+`id, cohort_id, user_id, role, created_by, created_at`. There is no
+`is_admin` column (spec was wrong on that point). Plan 2 must NOT attempt
+to drop `cohort_faculty.is_admin`. The existing `role` column coexists
+with the new `college_role`.
 
 - [ ] **Step 2: Write migration SQL**
 
@@ -142,8 +142,9 @@ Create `supabase/migrations/20260424_0010_cohort_faculty_college_role.sql`:
 ```sql
 -- cohort_faculty gains college_role: college-side per-cohort role.
 -- Values: 'support' (pod support faculty) or 'executive' (cohort oversight).
--- Existing is_admin column on cohort_faculty is retained for now; it will
--- be dropped in Plan 2 once RLS no longer depends on it.
+-- The existing `role text` column (values: faculty/ta/lead as of 2026-04-24)
+-- is orthogonal and stays. Plan 2 will migrate app code to college_role;
+-- `role` can be retired in a later cleanup.
 
 alter table public.cohort_faculty
   add column if not exists college_role text;
@@ -345,9 +346,11 @@ revoke all on function public.executive_cohort_ids() from public;
 grant execute on function public.executive_cohort_ids() to authenticated;
 
 -- can_grade_submission: admin/trainer unrestricted; support faculty only if
--- the submission's student is in a pod they're assigned to. Pod assignment
--- lives in pod_faculty (faculty side) + pod_members (student side) under a
--- cohort_pod belonging to the submission's cohort.
+-- the submission's student shares a pod with them in the submission's cohort.
+-- Real column names (verified 2026-04-24 against ai-workshop):
+--   pod_faculty.faculty_user_id  (NOT user_id)
+--   pod_members.student_user_id  (NOT user_id)
+--   pod_members.cohort_id        (so no join through cohort_pods needed)
 create or replace function public.can_grade_submission(submission uuid)
 returns boolean
 language sql
@@ -367,9 +370,12 @@ as $$
     or exists (
       select 1
       from s
-      join public.cohort_pods cp on cp.cohort_id = s.cohort_id
-      join public.pod_faculty pf on pf.pod_id = cp.id and pf.user_id = auth.uid()
-      join public.pod_members pm on pm.pod_id = cp.id and pm.user_id = s.student_id
+      join public.pod_members pm
+        on pm.student_user_id = s.student_id
+       and pm.cohort_id = s.cohort_id
+      join public.pod_faculty pf
+        on pf.pod_id = pm.pod_id
+       and pf.faculty_user_id = auth.uid()
       where public.college_role_in(s.cohort_id) = 'support'
     );
 $$;

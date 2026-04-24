@@ -81,7 +81,10 @@ After backfill, trainers-without-admin are manually demoted by removing `'admin'
 alter table cohort_faculty add column college_role text
   check (college_role in ('support','executive'));
 -- backfill: all existing rows → 'support' (Executive Faculty didn't exist)
--- drop column is_admin (trainers now live on profiles.staff_roles)
+-- NOTE: cohort_faculty has no is_admin column in prod (verified 2026-04-24);
+-- it has a legacy `role text` column with values {faculty, ta, lead}.
+-- That column is orthogonal and stays. Plan 2 migrates app code to
+-- college_role; `role` can be retired in a later cleanup.
 -- unique (cohort_id, user_id) stays (one college role per person per cohort)
 ```
 

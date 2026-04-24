@@ -55,9 +55,11 @@ revoke all on function public.executive_cohort_ids() from public;
 grant execute on function public.executive_cohort_ids() to authenticated;
 
 -- can_grade_submission: admin/trainer unrestricted; support faculty only if
--- the submission's student is in a pod they're assigned to. Pod assignment
--- lives in pod_faculty (faculty side) + pod_members (student side) under a
--- cohort_pod belonging to the submission's cohort.
+-- the submission's student shares a pod with them in the submission's cohort.
+-- Real column names (verified 2026-04-24 against ai-workshop):
+--   pod_faculty.faculty_user_id  (NOT user_id)
+--   pod_members.student_user_id  (NOT user_id)
+--   pod_members.cohort_id        (so no join through cohort_pods needed)
 create or replace function public.can_grade_submission(submission uuid)
 returns boolean
 language sql
@@ -77,9 +79,12 @@ as $$
     or exists (
       select 1
       from s
-      join public.cohort_pods cp on cp.cohort_id = s.cohort_id
-      join public.pod_faculty pf on pf.pod_id = cp.id and pf.user_id = auth.uid()
-      join public.pod_members pm on pm.pod_id = cp.id and pm.user_id = s.student_id
+      join public.pod_members pm
+        on pm.student_user_id = s.student_id
+       and pm.cohort_id = s.cohort_id
+      join public.pod_faculty pf
+        on pf.pod_id = pm.pod_id
+       and pf.faculty_user_id = auth.uid()
       where public.college_role_in(s.cohort_id) = 'support'
     );
 $$;
