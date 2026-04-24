@@ -269,6 +269,19 @@ main.admin-shell{
 main.admin-shell .admin-main{
   padding-top:0;
 }
+/* Inside the admin shell the page wrap should fill the viewport minus the
+   always-open sidebar, so content fans out across the freed space instead
+   of staying capped at the marketing-page max-width and floating off-centre. */
+main.admin-shell .wrap{
+  max-width:none;
+  margin:0;
+  padding:0 28px;
+}
+@media (max-width:640px){
+  main.admin-shell .wrap{
+    padding:0 16px;
+  }
+}
 #adminNav.admin-nav-slot{
   /* The slot is a stub; the aside inside it is fixed-positioned at the
      viewport edge so DOM-level dimensions don't matter. */
