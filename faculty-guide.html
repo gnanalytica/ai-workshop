@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Support Faculty Handbook · AI Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark';</script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="stylesheet" href="assets/app.css" />
+<style>
+  /* ── Page-local layout ───────────────────────────────────────── */
+  .toc-bar{
+    position:sticky;top:57px;z-index:40;
+    background:var(--nav-bg);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .toc-bar::-webkit-scrollbar{display:none}
+  .toc-bar-inner{
+    display:flex;gap:0;
+    max-width:1240px;margin:0 auto;padding:0 24px;
+  }
+  .toc-bar-inner a{
+    padding:11px 14px;font-size:13px;color:var(--muted);
+    white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-1px;transition:color .15s;
+  }
+  .toc-bar-inner a:hover{color:var(--ink)}
+  .toc-bar-inner a.active{color:var(--ink);border-bottom-color:var(--accent)}
+
+  /* ── Content sections ────────────────────────────────────────── */
+  .guide-section{padding:56px 0;border-bottom:1px solid var(--line)}
+  .guide-section:last-child{border-bottom:none}
+  .section-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;font-weight:600}
+  .section-title{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0 0 20px}
+  .step-list{list-style:none;padding:0;margin:0;counter-reset:steps}
+  .step-list li{
+    counter-increment:steps;
+    display:grid;grid-template-columns:2rem 1fr;gap:12px;
+    align-items:flex-start;padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .step-list li:last-child{border-bottom:none}
+  .step-list li::before{
+    content:counter(steps);
+    font-size:12px;font-weight:700;
+    background:rgba(195,255,54,.12);
+    color:var(--accent);
+    border:1px solid rgba(195,255,54,.25);
+    border-radius:50%;width:26px;height:26px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+
+  /* ── Triage SVG ──────────────────────────────────────────────── */
+  .triage-wrap{overflow-x:auto;padding:4px 0}
+  .triage-wrap svg{display:block;margin:0 auto}
+
+  /* ── Debug collapsibles ──────────────────────────────────────── */
+  .debug-item{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:14px;margin-bottom:10px;overflow:hidden;
+  }
+  .debug-item summary{
+    cursor:pointer;padding:14px 18px;
+    font-size:14px;font-weight:600;
+    list-style:none;display:flex;align-items:center;gap:10px;
+    user-select:none;
+  }
+  .debug-item summary::-webkit-details-marker{display:none}
+  .debug-item summary::before{
+    content:'›';font-size:18px;color:var(--accent);
+    transition:transform .18s;flex-shrink:0;
+  }
+  .debug-item[open] summary::before{transform:rotate(90deg)}
+  .debug-body{padding:0 18px 16px}
+  .debug-body .symptom-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.14em;
+    color:var(--muted);margin:0 0 4px;font-weight:600;
+  }
+  .debug-body p{margin:0 0 10px;font-size:13.5px;line-height:1.6}
+  .debug-body ol{margin:0 0 10px;padding-left:18px;font-size:13.5px;line-height:1.7}
+  .debug-body code{
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    background:var(--bg-soft);border:1px solid var(--line);
+    border-radius:6px;padding:2px 6px;
+  }
+  .escalate-box{
+    margin-top:10px;padding:10px 14px;
+    background:rgba(195,255,54,.06);border:1px solid rgba(195,255,54,.2);
+    border-radius:10px;font-size:12.5px;line-height:1.6;
+  }
+
+  /* ── Checklist ───────────────────────────────────────────────── */
+  .checklist-item{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--line);
+  }
+  .checklist-item:last-child{border-bottom:none}
+  .checklist-item input[type=checkbox]{
+    width:17px;height:17px;cursor:pointer;
+    accent-color:var(--accent);flex-shrink:0;margin-top:2px;
+  }
+  .checklist-item input[type=checkbox]:disabled{cursor:not-allowed;opacity:.65}
+  .checklist-label{font-size:14px;line-height:1.5}
+  .checklist-label .auto-badge{
+    font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+    padding:1px 6px;border-radius:999px;
+    background:rgba(56,189,248,.12);color:#7dd5ff;
+    border:1px solid rgba(56,189,248,.25);margin-left:6px;
+    vertical-align:middle;
+  }
+  .ready-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 12px;border-radius:999px;
+    background:rgba(195,255,54,.12);color:var(--accent);
+    border:1px solid rgba(195,255,54,.3);
+    font-size:12px;font-weight:700;letter-spacing:.06em;
+    margin-left:12px;
+  }
+
+  /* ── Contacts grid ───────────────────────────────────────────── */
+  .contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .contact-card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:16px;
+  }
+  .contact-role{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+    color:var(--muted);font-weight:600;margin-bottom:4px;
+  }
+  .contact-name{font-size:15px;font-weight:600;margin-bottom:2px}
+  .contact-email{font-size:12.5px;color:var(--muted)}
+
+  /* ── Artifacts ───────────────────────────────────────────────── */
+  .artifact-row{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:8px;
+    padding:12px 0;border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .artifact-row:last-child{border-bottom:none}
+  .artifact-label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+  .artifact-value{font-size:14px}
+  .artifact-value a{color:var(--accent)}
+
+  /* ── Toast / misc ────────────────────────────────────────────── */
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+    background:var(--card);border:1px solid var(--accent);
+    color:var(--accent);padding:10px 20px;border-radius:999px;
+    font-size:13px;font-weight:600;z-index:300;
+    opacity:0;transition:opacity .2s;pointer-events:none;
+  }
+  .toast.show{opacity:1}
+  .toast.err{border-color:#ff6b6b;color:#ffa0a0}
+  .denied{padding:40px;text-align:center;color:var(--muted)}
+  select{
+    background:var(--input-bg);border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;color:var(--ink);
+    font-family:inherit;font-size:13px;outline:none;
+  }
+  /* Triage SVG theming */
+  :root{--triage-fill:var(--card);--triage-stroke:var(--line);--triage-text:var(--ink);--triage-yes:rgba(195,255,54,.25);--triage-no:rgba(255,107,107,.18)}
+</style>
+</head>
+<body>
+<a href="#panel" class="skip-link">Skip to main content</a>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><span class="dot"></span><span> Gnanalytica · Faculty Guide</span></div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="faculty.html" class="muted" style="font-size:13px">← Faculty hub</a>
+      <a href="index.html" class="muted" style="font-size:13px">Home</a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<!-- Auth states -->
+<div class="gate" id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="kicker">Faculty login</div>
+    <h2>Sign in</h2>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" name="email" required /></div>
+      <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="gate" id="denied" style="display:none">
+  <div class="gate-card">
+    <div class="denied">
+      <h2 style="text-align:center">Not authorized</h2>
+      <p>You're signed in but not assigned as faculty on any cohort. Ask an admin to add you.</p>
+      <button class="submit-btn" style="margin-top:12px" id="signOutAlt">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOC bar (sticky below nav) -->
+<div class="toc-bar" id="tocBar" style="display:none">
+  <div class="toc-bar-inner">
+    <a href="#role"     data-toc="role">Your role</a>
+    <a href="#day-of"   data-toc="day-of">Day of session</a>
+    <a href="#triage"   data-toc="triage">Triage</a>
+    <a href="#debug"    data-toc="debug">Debugging</a>
+    <a href="#grading"  data-toc="grading">Grading</a>
+    <a href="#contacts" data-toc="contacts">Contacts</a>
+    <a href="#checklist" data-toc="checklist">Checklist</a>
+    <a href="#artifacts" data-toc="artifacts">Artifacts</a>
+  </div>
+</div>
+
+<main class="wrap" id="panel" style="display:none">
+  <!-- Cohort selector header -->
+  <header style="margin:28px 0 0;display:flex;gap:14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
+    <div>
+      <div class="kicker">Support Faculty</div>
+      <h1 style="font-size:clamp(24px,4vw,40px);margin:0 0 4px">Handbook</h1>
+    </div>
+    <select id="cohortSel" aria-label="Select cohort"></select>
+  </header>
+  <p class="muted" style="font-size:12.5px;margin:6px 0 32px;line-height:1.5">
+    Your one-stop guide for supporting a cohort session — reference before every class.
+  </p>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 1 — Your role
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="role">
+    <div class="section-kicker">Section 1</div>
+    <h2 class="section-title">Your role in one paragraph</h2>
+    <div class="card" style="font-size:15px;line-height:1.75;max-width:720px">
+      As Support Faculty you own three things inside a cohort: <strong>pod support</strong> (sitting
+      with your assigned pod, answering questions, keeping energy high), <strong>attendance
+      marking</strong> for your pod's students, and <strong>grading your pod's submissions</strong>
+      against the Trainer-supplied rubric. What you don't own: curriculum content, cohort-wide
+      decisions, platform configuration, or the final grade if you're unsure — that always escalates
+      to the Trainer. Think of yourself as the closest expert to the learner, with a clear escalation
+      path for anything outside your lane.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 2 — Day of session
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="day-of">
+    <div class="section-kicker">Section 2</div>
+    <h2 class="section-title">The day of a session</h2>
+    <ul class="step-list">
+      <li><span><strong>Arrive 15 minutes early.</strong> Open the Faculty hub, select today's cohort, and confirm your pod list under People. Flag any unexpected absences to the Trainer before the session starts.</span></li>
+      <li><span><strong>Mark attendance.</strong> Head to <a href="admin-attendance.html" style="color:var(--accent)">Attendance</a>, find your pod members and mark each as present or absent as students arrive. Do this before the session content begins.</span></li>
+      <li><span><strong>Sit with your pod.</strong> Position yourself physically (or in a breakout room) close to your pod so you can spot blocked body language quickly. Keep the Faculty hub open on a second screen or tab.</span></li>
+      <li><span><strong>Triage questions in real time.</strong> Use the flowchart in Section 3 to decide: answer it yourself, Slack the Trainer, or escalate to Tech Support. Aim to unblock within 3–5 minutes; log anything that takes longer in the Stuck queue.</span></li>
+      <li><span><strong>Close out the session.</strong> Check that all pod members have submitted their lab or marked it in-progress. Add a brief note in the Stuck queue for any issues that need Trainer follow-up. Sign off for the day in the pre-session checklist once all items are done.</span></li>
+    </ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 3 — Triage flowchart
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="triage">
+    <div class="section-kicker">Section 3</div>
+    <h2 class="section-title">Triage flowchart</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 20px">
+      A question arrives — walk it through each diamond in order.
+    </p>
+    <div class="triage-wrap">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 620 640"
+        width="620"
+        role="img"
+        aria-label="Triage decision flowchart for support faculty"
+        style="max-width:100%;height:auto"
+      >
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--muted)" />
+          </marker>
+        </defs>
+        <!-- START -->
+        <rect x="210" y="10" width="200" height="44" rx="22"
+          fill="var(--accent)" />
+        <text x="310" y="37" text-anchor="middle" font-family="Inter,sans-serif"
+          font-size="13" font-weight="700" fill="#0b0b10">Question arrives</text>
+
+        <!-- Arrow START → D1 -->
+        <line x1="310" y1="54" x2="310" y2="100" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+
+        <!-- Diamond 1 — today's concept? -->
+        <polygon points="310,100 440,155 310,210 180,155"
+          fill="var(--card)" stroke="var(--line)" stroke-width="1.5" />
+        <text x="310" y="149" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">Today's</text>
+        <text x="310" y="165" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">concept?</text>
+
+        <!-- YES → answer -->
+        <line x1="440" y1="155" x2="540" y2="155" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="479" y="148" font-family="Inter,sans-serif" font-size="11" fill="var(--accent)">Yes</text>
+        <rect x="540" y="128" width="68" height="54" rx="10"
+          fill="var(--triage-yes)" stroke="rgba(195,255,54,.35)" stroke-width="1" />
+        <text x="574" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">Answer</text>
+        <text x="574" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">or ping</text>
+        <text x="574" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">Trainer</text>
+
+        <!-- NO → D2 -->
+        <line x1="310" y1="210" x2="310" y2="270" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="320" y="244" font-family="Inter,sans-serif" font-size="11" fill="var(--muted)">No</text>
+
+        <!-- Diamond 2 — tech/setup? -->
+        <polygon points="310,270 440,325 310,380 180,325"
+          fill="var(--card)" stroke="var(--line)" stroke-width="1.5" />
+        <text x="310" y="319" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">Tech /</text>
+        <text x="310" y="335" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">setup?</text>
+
+        <!-- YES → common fix -->
+        <line x1="440" y1="325" x2="540" y2="325" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="479" y="318" font-family="Inter,sans-serif" font-size="11" fill="var(--accent)">Yes</text>
+        <rect x="540" y="298" width="68" height="54" rx="10"
+          fill="var(--triage-yes)" stroke="rgba(195,255,54,.35)" stroke-width="1" />
+        <text x="574" y="320" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">Common</text>
+        <text x="574" y="334" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">fixes or</text>
+        <text x="574" y="348" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">Tech Support</text>
+
+        <!-- NO → D3 -->
+        <line x1="310" y1="380" x2="310" y2="440" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="320" y="414" font-family="Inter,sans-serif" font-size="11" fill="var(--muted)">No</text>
+
+        <!-- Diamond 3 — platform/grade? -->
+        <polygon points="310,440 440,495 310,550 180,495"
+          fill="var(--card)" stroke="var(--line)" stroke-width="1.5" />
+        <text x="310" y="489" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">Platform /</text>
+        <text x="310" y="505" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink)">grade?</text>
+
+        <!-- YES → Trainer -->
+        <line x1="440" y1="495" x2="540" y2="495" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="479" y="488" font-family="Inter,sans-serif" font-size="11" fill="var(--accent)">Yes</text>
+        <rect x="540" y="471" width="68" height="48" rx="10"
+          fill="var(--triage-yes)" stroke="rgba(195,255,54,.35)" stroke-width="1" />
+        <text x="574" y="491" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">→ Trainer</text>
+        <text x="574" y="507" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="var(--ink)">always</text>
+
+        <!-- NO bottom -->
+        <line x1="310" y1="550" x2="310" y2="600" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)" />
+        <text x="320" y="578" font-family="Inter,sans-serif" font-size="11" fill="var(--muted)">No</text>
+        <rect x="210" y="600" width="200" height="32" rx="8"
+          fill="var(--triage-no)" stroke="rgba(255,107,107,.3)" stroke-width="1" />
+        <text x="310" y="621" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#ffa0a0">
+          Escalate to Trainer — unknown type
+        </text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 4 — Common debugging recipes
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="debug">
+    <div class="section-kicker">Section 4</div>
+    <h2 class="section-title">Common debugging recipes</h2>
+
+    <details class="debug-item">
+      <summary>Ollama won't start</summary>
+      <div class="debug-body">
+        <p class="symptom-label">Symptom</p>
+        <p>Running <code>ollama serve</code> or <code>ollama run llama3</code> returns a connection refused error or the process exits immediately.</p>
+        <ol>
+          <li>Check Ollama is installed: <code>ollama --version</code>. If missing, reinstall from <code>https://ollama.com/download</code>.</li>
+          <li>Kill any stuck process: <code>pkill -f ollama</code> (macOS/Linux) or end <em>ollama.exe</em> in Task Manager (Windows), then restart.</li>
+          <li>Check available RAM — Ollama needs at least 8 GB free. Close heavy apps (browser, VS Code with many extensions) and retry.</li>
+        </ol>
+        <div class="escalate-box">
+          <strong>If still stuck — escalate to Tech Support with:</strong> OS + version (e.g. macOS 14.4), Ollama version (<code>ollama --version</code>), full error text from terminal, and a screenshot of the terminal output.
+        </div>
+      </div>
+    </details>
+
+    <details class="debug-item">
+      <summary>Python venv broken</summary>
+      <div class="debug-body">
+        <p class="symptom-label">Symptom</p>
+        <p><code>import</code> fails with <em>ModuleNotFoundError</em> even after running the install script, or <code>python</code> resolves to the wrong version.</p>
+        <ol>
+          <li>Confirm the venv is activated: terminal prompt should show <code>(venv)</code> or the env name. If not, run <code>source venv/bin/activate</code> (macOS/Linux) or <code>venv\Scripts\activate</code> (Windows).</li>
+          <li>Reinstall dependencies inside the active venv: <code>pip install -r requirements.txt</code>. Check for error lines in the output.</li>
+          <li>If Python version mismatch (<code>python --version</code> is not 3.11+), recreate venv with the correct interpreter: <code>python3.11 -m venv venv</code>.</li>
+        </ol>
+        <div class="escalate-box">
+          <strong>If still stuck — escalate to Tech Support with:</strong> OS, Python version (<code>python --version</code>), error text, and a screenshot of the terminal after activation attempt.
+        </div>
+      </div>
+    </details>
+
+    <details class="debug-item">
+      <summary>VS Code extension missing</summary>
+      <div class="debug-body">
+        <p class="symptom-label">Symptom</p>
+        <p>A required extension (Python, Pylance, Jupyter, etc.) is not found or IntelliSense is not working.</p>
+        <ol>
+          <li>Open the Extensions panel (<code>Ctrl+Shift+X</code> / <code>Cmd+Shift+X</code>), search by name, and click Install.</li>
+          <li>After installing, reload the window: <kbd>Ctrl+Shift+P</kbd> → <em>Developer: Reload Window</em>.</li>
+          <li>If the extension installs but Python still isn't detected, open Command Palette → <em>Python: Select Interpreter</em> and choose the venv Python path.</li>
+        </ol>
+        <div class="escalate-box">
+          <strong>If still stuck — escalate to Tech Support with:</strong> OS, VS Code version (Help → About), extension name and version, and a screenshot of the error or extension panel.
+        </div>
+      </div>
+    </details>
+
+    <details class="debug-item">
+      <summary>Supabase login loop</summary>
+      <div class="debug-body">
+        <p class="symptom-label">Symptom</p>
+        <p>Student clicks "Send magic link", receives the email, clicks the link, but is returned to the sign-in page in a loop.</p>
+        <ol>
+          <li>Clear browser cookies and site data for the workshop domain, then try the magic link again in a fresh tab.</li>
+          <li>Try a different browser or an incognito/private window — some browsers block third-party storage required by Supabase Auth.</li>
+          <li>Confirm the magic link hasn't expired (links expire after 1 hour). Resend a new magic link from the sign-in page.</li>
+        </ol>
+        <div class="escalate-box">
+          <strong>If still stuck — escalate to Tech Support with:</strong> OS, browser name and version, description of the loop (e.g. "redirects back to login after clicking link"), and a screenshot of the URL in the address bar after clicking the link.
+        </div>
+      </div>
+    </details>
+
+    <details class="debug-item">
+      <summary>Magic link not arriving</summary>
+      <div class="debug-body">
+        <p class="symptom-label">Symptom</p>
+        <p>Student submitted their email but receives no magic link email after several minutes.</p>
+        <ol>
+          <li>Check spam/junk folder — email clients frequently filter transactional mail from Supabase.</li>
+          <li>Confirm the email address is correct and matches the registration exactly (case-insensitive, but no typos).</li>
+          <li>If nothing arrives within 5 minutes, ask the student to try again — there is a rate limit of one email per 60 seconds per address.</li>
+        </ol>
+        <div class="escalate-box">
+          <strong>If still stuck — escalate to Tech Support with:</strong> OS, email client, email address (without sharing publicly), time the request was made, and a screenshot of their inbox/spam folder showing no email.
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 5 — Grading your pod
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="grading">
+    <div class="section-kicker">Section 5</div>
+    <h2 class="section-title">Grading your pod</h2>
+    <div class="card" style="font-size:14px;line-height:1.75;max-width:720px">
+      <p style="margin:0 0 12px">
+        Open the day page (e.g. <code>day.html?day=3</code>), scroll down to the
+        <strong>Submissions panel</strong>, and click a student's row to open their work.
+        The rubric criteria are shown inline — score each dimension and leave a short, actionable
+        comment explaining your score. Hit <strong>Save</strong>; the student's view updates immediately.
+      </p>
+      <p style="margin:0 0 12px">
+        Stick to the rubric. If a submission is borderline or the rubric doesn't cover the situation,
+        <strong>flag it to the Trainer</strong> rather than guess. Leave a note in the comment field:
+        "Flagged — awaiting Trainer review." Never inflate grades to be kind — students rely on
+        accurate feedback to improve.
+      </p>
+      <p style="margin:0">
+        Grades you submit are visible to students right away. If you need to revise after saving,
+        re-open the row and update — revisions are tracked. All grading is scoped to your pod; you
+        cannot see or edit other pods' submissions unless the Trainer explicitly grants access.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 6 — Escalation contacts
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="contacts">
+    <div class="section-kicker">Section 6</div>
+    <h2 class="section-title">Escalation contacts</h2>
+    <div id="contactsPanel">
+      <p class="muted" style="font-size:13px">Loading cohort contacts…</p>
+    </div>
+    <p style="margin-top:18px;font-size:13.5px">
+      For async questions, use the community board:
+      <a href="dashboard.html#board" style="color:var(--accent)">board.html</a>
+    </p>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 7 — Pre-session checklist
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="checklist">
+    <div class="section-kicker">Section 7</div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+      <h2 class="section-title" style="margin:0">Pre-session checklist</h2>
+      <span id="readyPill" style="display:none" class="ready-pill">Ready ✓</span>
+    </div>
+    <p class="muted" style="font-size:13px;margin:0 0 16px">
+      Complete all items before your first session. Auto-checked items are verified from your account data.
+      Manual items are saved on toggle.
+    </p>
+
+    <!-- FIXME: faculty_pretraining_progress RLS needs policies; user will add. -->
+    <div class="card" id="checklistItems">
+      <p class="muted" style="font-size:13px">Loading checklist…</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Section 8 — Per-cohort live-session artifacts
+  ═══════════════════════════════════════════════════════════════ -->
+  <section class="guide-section" id="artifacts">
+    <div class="section-kicker">Section 8</div>
+    <h2 class="section-title">Live-session artifacts</h2>
+    <div class="card" id="artifactsPanel">
+      <p class="muted" style="font-size:13px">Loading cohort artifacts…</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from './assets/supabase.js';
+import { checkAdminOrFaculty } from './assets/admin-auth.js';
+import { wireThemeToggle } from './assets/theme.js';
+wireThemeToggle();
+
+const $ = (id) => document.getElementById(id);
+
+// ── State ───────────────────────────────────────────────────────────────────
+const STATE = {
+  user: null,
+  cohortId: null,
+  cohorts: [],
+  isAdmin: false,
+  isFaculty: false,
+  staffRoles: new Set(),
+  checklist: null,   // { item_key: iso_ts | false }
+  podId: null,       // uuid of user's pod in selected cohort (for auto-check)
+  hasPodMembers: false,
+};
+
+// ── Auth gate display ───────────────────────────────────────────────────────
+function show(id) {
+  ['gate', 'denied', 'panel'].forEach((x) => {
+    const el = $(x);
+    if (!el) return;
+    el.style.display = x === id ? (id === 'panel' ? 'block' : 'grid') : 'none';
+  });
+  $('tocBar').style.display = id === 'panel' ? 'block' : 'none';
+}
+
+// ── Toast ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, isErr = false) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+// ── Escape util ─────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+// ── Magic-link login ────────────────────────────────────────────────────────
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('loginBtn'); const msg = $('loginMsg');
+  btn.disabled = true; btn.textContent = 'Sending…'; msg.className = 'msg';
+  const email = new FormData(e.target).get('email');
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+  if (error) {
+    msg.className = 'msg show err'; msg.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Send magic link →';
+  } else {
+    msg.className = 'msg show ok'; msg.textContent = 'Check your email.'; btn.textContent = 'Sent ✓';
+  }
+});
+
+$('signOutAlt').addEventListener('click', async () => { await supabase.auth.signOut(); location.reload(); });
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) gate(session.user);
+  if (event === 'SIGNED_OUT') show('gate');
+});
+
+// ── Entry point ─────────────────────────────────────────────────────────────
+async function init() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return show('gate');
+  await gate(session.user);
+}
+
+async function gate(user) {
+  const { isAdmin, isFaculty, facultyCohortIds } = await checkAdminOrFaculty(user);
+  STATE.user = user;
+  STATE.isAdmin = isAdmin;
+  STATE.isFaculty = isFaculty;
+
+  // Also accept users with staffRoles trainer/tech_support/admin via profiles.
+  // checkAdminOrFaculty already covers isAdmin (profiles.is_admin) and isFaculty
+  // (cohort_faculty rows). We additionally look at profiles.staff_roles.
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('staff_roles')
+    .eq('id', user.id)
+    .maybeSingle();
+  const staffRoles = new Set(Array.isArray(profileData?.staff_roles) ? profileData.staff_roles : []);
+  STATE.staffRoles = staffRoles;
+
+  const allowedByStaffRole = staffRoles.has('trainer') || staffRoles.has('tech_support') || staffRoles.has('admin');
+
+  if (!isAdmin && !isFaculty && !allowedByStaffRole) return show('denied');
+
+  show('panel');
+  await loadCohorts(facultyCohortIds, isAdmin);
+}
+
+// ── Cohort selector ─────────────────────────────────────────────────────────
+async function loadCohorts(facultyCohortIds, isAdmin) {
+  let q = supabase.from('cohorts').select('id,name,starts_on').order('starts_on', { ascending: false });
+  if (!isAdmin) {
+    if (!facultyCohortIds.length) {
+      // staff_roles user not in cohort_faculty — show first cohort if any
+      const { data: allC } = await supabase.from('cohorts').select('id,name,starts_on').order('starts_on', { ascending: false }).limit(5);
+      STATE.cohorts = allC || [];
+    } else {
+      q = q.in('id', facultyCohortIds);
+      const { data } = await q;
+      STATE.cohorts = data || [];
+    }
+  } else {
+    const { data } = await q;
+    STATE.cohorts = data || [];
+  }
+
+  const sel = $('cohortSel');
+  if (!STATE.cohorts.length) {
+    sel.innerHTML = '<option value="">No cohorts available</option>';
+    return;
+  }
+  sel.innerHTML = STATE.cohorts.map((c) => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  STATE.cohortId = STATE.cohorts[0].id;
+  if (!sel.dataset.wired) {
+    sel.dataset.wired = '1';
+    sel.addEventListener('change', () => {
+      STATE.cohortId = sel.value;
+      onCohortChange();
+    });
+  }
+  await onCohortChange();
+}
+
+async function onCohortChange() {
+  await Promise.all([
+    loadContacts(),
+    loadChecklist(),
+    loadArtifacts(),
+  ]);
+  wireTocScroll();
+}
+
+// ── Section 6 — Contacts ────────────────────────────────────────────────────
+async function loadContacts() {
+  if (!STATE.cohortId) return;
+  const { data, error } = await supabase
+    .from('cohort_faculty')
+    .select('user_id, is_admin, cohort_id, profiles(id, full_name, email)')
+    .eq('cohort_id', STATE.cohortId);
+
+  const panel = $('contactsPanel');
+  if (error || !data || !data.length) {
+    panel.innerHTML = `<div class="muted" style="font-size:13px">No contacts found — ask your admin to populate faculty contacts in <a href="admin-faculty.html" style="color:var(--accent)">admin-faculty</a>.</div>`;
+    return;
+  }
+
+  const trainers = data.filter((r) => r.is_admin);
+  const support = data.filter((r) => !r.is_admin);
+
+  function cardHtml(row, roleLabel) {
+    const p = row.profiles || {};
+    return `<div class="contact-card">
+      <div class="contact-role">${esc(roleLabel)}</div>
+      <div class="contact-name">${esc(p.full_name || 'Unknown')}</div>
+      <div class="contact-email">${esc(p.email || '')}</div>
+    </div>`;
+  }
+
+  let html = '<div class="contacts-grid">';
+  trainers.forEach((r) => { html += cardHtml(r, 'Trainer'); });
+  support.forEach((r) => { html += cardHtml(r, 'Tech / Support'); });
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+// ── Section 7 — Checklist ───────────────────────────────────────────────────
+const CHECKLIST_ITEMS = [
+  { key: 'read_handbook',      label: 'Read this handbook end-to-end',                                           auto: false },
+  { key: 'attended_live',      label: 'Attended the 90-min live pre-training',                                    auto: false },
+  { key: 'know_pod',           label: 'Know my assigned pod',                                                     auto: true  },
+  { key: 'verified_labs',      label: 'Verified lab setup on at least 3 machines',                               auto: false },
+  { key: 'setup_dryrun',       label: 'Completed the setup dry-run',                                              auto: false },
+  { key: 'know_attendance',    label: 'Know how to mark attendance',                                              auto: false },
+  { key: 'know_grading',       label: 'Walked through one assignment grading with the Trainer',                  auto: false },
+  { key: 'know_triage',        label: 'Know the triage flowchart',                                                auto: false },
+  { key: 'tech_contact_saved', label: 'Tech Support contact saved',                                              auto: false },
+  { key: 'board_read',         label: 'Read at least one community board post',                                  auto: false },
+];
+
+async function autoCheckKnowPod() {
+  // know_pod auto-check: user has a pod in this cohort AND that pod has members.
+  if (!STATE.user || !STATE.cohortId) return false;
+  const { data: podFacRows } = await supabase
+    .from('pod_faculty')
+    .select('pod_id, cohort_pods(cohort_id)')
+    .eq('faculty_user_id', STATE.user.id);
+  if (!podFacRows || !podFacRows.length) return false;
+  const podInCohort = podFacRows.find((r) => r.cohort_pods?.cohort_id === STATE.cohortId);
+  if (!podInCohort) return false;
+  STATE.podId = podInCohort.pod_id;
+  const { data: members } = await supabase
+    .from('pod_members')
+    .select('id')
+    .eq('pod_id', STATE.podId)
+    .limit(1);
+  return !!(members && members.length);
+}
+
+async function loadChecklist() {
+  if (!STATE.user || !STATE.cohortId) return;
+
+  // Load persisted progress
+  // FIXME: faculty_pretraining_progress RLS needs policies; user will add.
+  const { data, error } = await supabase
+    .from('faculty_pretraining_progress')
+    .select('progress')
+    .eq('user_id', STATE.user.id)
+    .eq('cohort_id', STATE.cohortId)
+    .maybeSingle();
+
+  if (error) {
+    // RLS or table issue — render checklist in local-only mode
+    console.warn('[faculty-guide] checklist read failed:', error.message, '— running in local-only mode');
+  }
+
+  const saved = (data?.progress?.checklist) || {};
+  STATE.checklist = Object.fromEntries(CHECKLIST_ITEMS.map((item) => [item.key, saved[item.key] || false]));
+
+  // Auto-check know_pod
+  const podAutoOk = await autoCheckKnowPod();
+  if (podAutoOk && !STATE.checklist['know_pod']) {
+    STATE.checklist['know_pod'] = new Date().toISOString();
+    await persistChecklist(false); // silent save, no toast
+  }
+
+  renderChecklist();
+}
+
+function renderChecklist() {
+  const container = $('checklistItems');
+  const all = CHECKLIST_ITEMS.every((item) => !!STATE.checklist[item.key]);
+
+  let html = '';
+  CHECKLIST_ITEMS.forEach((item) => {
+    const checked = !!STATE.checklist[item.key];
+    const disabled = item.auto ? 'disabled' : '';
+    const badge = item.auto ? '<span class="auto-badge">auto</span>' : '';
+    html += `<div class="checklist-item">
+      <input type="checkbox" id="chk-${esc(item.key)}" data-key="${esc(item.key)}"
+        ${checked ? 'checked' : ''} ${disabled} aria-label="${esc(item.label)}" />
+      <label class="checklist-label" for="chk-${esc(item.key)}">
+        ${esc(item.label)}${badge}
+      </label>
+    </div>`;
+  });
+  container.innerHTML = html;
+  $('readyPill').style.display = all ? 'inline-flex' : 'none';
+
+  // Wire manual checkboxes
+  container.querySelectorAll('input[type=checkbox]:not([disabled])').forEach((cb) => {
+    cb.addEventListener('change', async () => {
+      const key = cb.dataset.key;
+      STATE.checklist[key] = cb.checked ? new Date().toISOString() : false;
+      await persistChecklist(true);
+      renderChecklist();
+    });
+  });
+}
+
+async function persistChecklist(showToast = true) {
+  if (!STATE.user || !STATE.cohortId) return;
+  // Load existing progress so we only patch the checklist key
+  const { data: existing } = await supabase
+    .from('faculty_pretraining_progress')
+    .select('progress, signoff')
+    .eq('user_id', STATE.user.id)
+    .eq('cohort_id', STATE.cohortId)
+    .maybeSingle();
+
+  const progress = { ...(existing?.progress || {}), checklist: STATE.checklist };
+  const { error } = await supabase
+    .from('faculty_pretraining_progress')
+    .upsert({
+      user_id: STATE.user.id,
+      cohort_id: STATE.cohortId,
+      progress,
+      signoff: !!existing?.signoff,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,cohort_id' });
+
+  if (error) {
+    console.warn('[faculty-guide] checklist save failed:', error.message);
+    if (showToast) toast('Could not save — check permissions', true);
+  } else {
+    if (showToast) toast('Checklist saved');
+  }
+}
+
+// ── Section 8 — Artifacts ───────────────────────────────────────────────────
+async function loadArtifacts() {
+  if (!STATE.cohortId) return;
+  const { data, error } = await supabase
+    .from('cohorts')
+    .select('id,name,starts_on')
+    .eq('id', STATE.cohortId)
+    .maybeSingle();
+
+  const panel = $('artifactsPanel');
+  if (error || !data) {
+    panel.innerHTML = `<p class="muted" style="font-size:13px">Could not load cohort data.</p>`;
+    return;
+  }
+
+  function row(label, value) {
+    return `<div class="artifact-row">
+      <span class="artifact-label">${esc(label)}</span>
+      <span class="artifact-value">${value || '<span class="muted">—</span>'}</span>
+    </div>`;
+  }
+
+  const startsOn = data.starts_on ? new Date(data.starts_on).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : null;
+
+  panel.innerHTML = `
+    ${row('Cohort', esc(data.name))}
+    ${row('Start date', startsOn ? esc(startsOn) : null)}
+    ${row('Slides URL', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
+    ${row('Recording URL', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
+    ${row('Pre-training session', '<span class="muted" style="font-size:12.5px">TBD — Trainer will fill in</span>')}
+  `;
+}
+
+// ── TOC active-link on scroll ───────────────────────────────────────────────
+function wireTocScroll() {
+  const sections = document.querySelectorAll('.guide-section[id]');
+  const links = document.querySelectorAll('.toc-bar-inner a[data-toc]');
+  if (!sections.length || !links.length) return;
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        links.forEach((a) => a.classList.toggle('active', a.dataset.toc === id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach((s) => obs.observe(s));
+}
+
+init();
+</script>
+<script type="module">
+  import { prependNavFind } from './assets/nav-search.js';
+  prependNavFind();
+</script>
+</body>
+</html>
