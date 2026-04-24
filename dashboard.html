@@ -286,6 +286,7 @@
   </section>
   <div id="buddyCard" class="progress-wrap" style="display:none;margin-bottom:16px"></div>
   <div id="teamCard" class="progress-wrap" style="display:none"></div>
+  <div id="boardRecent" style="margin-top:16px"></div>
     </aside>
   </div>
   </section>
@@ -413,6 +414,7 @@
   import { routeAfterSignIn } from './assets/admin-auth.js';
   import { openCommandPalette } from './assets/nav-search.js';
   import { mountDayRail, teardownCourseNavUI } from './assets/day-rail.js';
+  import { mountBoardRecent } from './assets/board-widget.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -728,6 +730,7 @@
     renderCapstoneEditor(user, cohort);
     renderAnnouncements(cohort);
     renderMentor(cohort);
+    mountBoardRecent(document.getElementById('boardRecent'), { limit: 5, filter: 'recent' });
 
     const railHost = $('gnDayRailHost');
     if (railHost) {

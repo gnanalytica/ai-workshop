@@ -324,9 +324,9 @@ export async function renderGuide({ state, container }) {
           <b>Cohort tracking</b>
           <div class="muted" style="font-size:12px;margin-top:4px">Attendance, velocity, trends.</div>
         </a>
-        <a href="faculty-pretraining.html" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
-          <b>Support faculty pre-training LMS</b>
-          <div class="muted" style="font-size:12px;margin-top:4px">1-week training, setup, quizzes, practicals, certification.</div>
+        <a href="faculty-guide.html" style="display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--input-bg)">
+          <b>Support faculty handbook</b>
+          <div class="muted" style="font-size:12px;margin-top:4px">Role, triage flowchart, debugging recipes, pre-session checklist.</div>
         </a>
       </div>
     </section>

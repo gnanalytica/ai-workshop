@@ -85,6 +85,8 @@
 
   <p class="muted" style="font-size:12.5px;margin:12px 0 18px;line-height:1.5">Switch sections from the left sidebar under <strong>In this hub</strong>.</p>
 
+  <div id="fBoardUnanswered" style="margin-bottom:20px"></div>
+
   <section id="fPanel"></section>
 </main>
 
@@ -96,6 +98,7 @@
   import { checkAdminOrFaculty, NO_COHORT_MSG, renderAccountMenuHtml } from './assets/admin-auth.js';
   import { wireThemeToggle } from './assets/theme.js';
   import { mountFacultyTab } from './assets/faculty-tabs.js';
+  import { mountBoardRecent } from './assets/board-widget.js';
   wireThemeToggle();
   const $ = (id) => document.getElementById(id);
 
@@ -186,6 +189,7 @@
 
     await loadCohorts(facultyCohortIds, isAdmin);
     wireTabs();
+    mountBoardRecent($('fBoardUnanswered'), { limit: 5, filter: 'unanswered', title: 'Open on the community board' });
     await mountActiveTab();
   }
 
