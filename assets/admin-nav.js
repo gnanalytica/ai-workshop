@@ -190,6 +190,7 @@ function resolveRoleSet(opts) {
 
 export function renderAdminNav(active, opts = {}) {
   const { subnav = null } = opts;
+  const role = typeof opts.role === 'string' ? opts.role : null;
   const roles = resolveRoleSet(opts);
   const alsoFaculty =
     typeof opts.alsoFaculty === 'boolean'
