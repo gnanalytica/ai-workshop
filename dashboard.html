@@ -177,6 +177,9 @@
       <button type="submit" class="submit-btn" id="loginBtn">Send magic link →</button>
       <div class="msg" id="loginMsg"></div>
     </form>
+    <div id="gateSignedInRow" style="display:none;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);text-align:center">
+      Signed in as <span id="gateSignedInEmail" style="color:var(--ink)"></span> · <button type="button" id="gateSignOutBtn" style="background:none;border:none;color:var(--accent);font:inherit;cursor:pointer;padding:0;text-decoration:underline">Sign out</button>
+    </div>
   </div>
 </div>
 
@@ -505,7 +508,7 @@
     await loadDashboard(session.user);
   }
 
-  function showGate() {
+  async function showGate(signedInUser) {
     teardownCourseNavUI();
     $('gate').style.display = 'grid';
     $('dash').style.display = 'none';
@@ -517,6 +520,19 @@
     }
     const nb = $('navProfileBtn');
     if (nb) nb.style.display = 'none';
+    const row = $('gateSignedInRow');
+    if (!row) return;
+    let user = signedInUser;
+    if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      user = session?.user || null;
+    }
+    if (user) {
+      $('gateSignedInEmail').textContent = user.email || '';
+      row.style.display = 'block';
+    } else {
+      row.style.display = 'none';
+    }
   }
 
   function showDash(user) {
@@ -590,6 +606,11 @@
       location.reload();
     });
   }
+
+  $('gateSignOutBtn')?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    location.reload();
+  });
 
   const navProfileBtn = $('navProfileBtn');
   const navProfileDd = $('navProfileDd');
