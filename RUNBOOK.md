@@ -1,172 +1,60 @@
-# Instructor Runbook
+# RUNBOOK
 
-The day-by-day manual for running a cohort on this platform.
+Operational reference for the AI Workshop SaaS LMS.
 
----
+## Stack
 
-## Before Day 1 (setup checklist)
+- **Frontend**: Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind v4 + shadcn-style primitives. Hosted on Vercel.
+- **Backend**: Supabase Postgres (RLS-driven RBAC), Supabase Auth (magic link), Supabase Edge Functions for email, Resend for delivery.
+- **Tooling**: pnpm, ESLint flat, Prettier, Vitest, Playwright.
 
-1. **Supabase dashboard** — confirm all edge function secrets are set:
-   - `RESEND_API_KEY` (status-change email)
-   - `RESEND_FROM` (optional; defaults to `onboarding@resend.dev`)
-   - `TRIGGER_SECRET` (DB trigger → edge function header; also stored in `webhook_config`)
-   - `GOOGLE_SERVICE_ACCOUNT_JSON` (Meet provisioning)
-   - `INSTRUCTOR_EMAIL` (who owns provisioned Meet rooms)
+## Provisioning a new environment
 
-2. **Google Admin** — verify domain-wide delegation for the service account with scope `https://www.googleapis.com/auth/meetings.space.created`.
+1. Create a Supabase project. Note the URL, anon key, service-role key.
+2. Apply migrations in order: `0001_init_schema.sql … 0007_views.sql` (Supabase Dashboard SQL editor or `supabase db push`).
+3. (Optional) Apply `supabase/seed/cohort.sql` for staging only — never in prod.
+4. Run `supabase/tests/rbac.sql` to verify capability resolution: every assertion must print `PASS`.
+5. Deploy edge functions: `supabase functions deploy send-registration-email send-daily-digest`.
+6. Set Edge Function env: `RESEND_API_KEY`, `EMAIL_FROM`, `SITE_URL`, `EDGE_FUNCTION_SHARED_SECRET`.
+7. Schedule the daily digest (Supabase Cron):
+   ```
+   0 7 * * *  POST /functions/v1/send-daily-digest  (Bearer EDGE_FUNCTION_SHARED_SECRET)
+   ```
+8. Vercel project: link `web/`. Set env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`. Build cmd `pnpm build`, output dir `.next`.
 
-3. **Enrollment code** — confirm `COHORT01` is live (default), or create a new code in `/admin-orgs.html`.
+## Provisioning users
 
-4. **Cohort branding** — `/admin-orgs.html` → set logo, primary color, tagline.
+- **Admin/Trainer/Tech Support** (global staff): create the auth user, then `update profiles set staff_roles = '{admin}'` (or `{trainer}`, `{tech_support}`).
+- **Support / Executive Faculty** (per cohort): `insert into cohort_faculty(user_id, cohort_id, college_role) values (..., 'support')` (or `'executive'`).
+- **Students**: insert a `registrations` row with `status='pending'`; flip to `'confirmed'` to enroll. The `send-registration-email` webhook fires on the status change.
 
-5. **Create Meet rooms** — `/admin-teams.html` → Provision Meet rooms. Creates one main cohort Meet + one per team after teams are assigned.
+## Common ops
 
-6. **Assign faculty** (if any) — `/admin-faculty.html` → paste email + pick cohort + role.
+| Task                            | How                                                            |
+|---------------------------------|----------------------------------------------------------------|
+| Unlock a day                    | `update cohort_days set is_unlocked=true where cohort_id=… and day_number=N` |
+| Move a student between pods     | `select rpc_pod_faculty_event(pod_id, 'member_added', student_id)` (also handles old pod removal via unique index) |
+| Hand off pod primary            | `select rpc_pod_faculty_event(pod_id, 'handoff', from_user, to_user_id := …)` |
+| Self check-in                   | `select rpc_self_check_in(cohort_id, day_number)`              |
+| Mark attendance (faculty)       | `select rpc_mark_attendance(cohort, day, user, 'present')`     |
+| Grade a submission              | `select rpc_grade_submission(submission_id, score, feedback)`  |
+| Soft-delete announcement        | `update announcements set deleted_at=now() where id=…`         |
 
-7. **Create mentor pods** (if any) — `/admin-pods.html` → create pods, attach one or more faculty per pod (one marked primary), bulk-assign students or CSV-import a `student_email,pod_name` file. Faculty land on `/faculty.html` after sign-in with Today / My pod / Whole cohort / Analytics / Handbook tabs. Students see their mentor on `/dashboard.html`.
+## Email
 
-8. **Test enrollment** — sign up with a throwaway email using the code. Verify magic link arrives and redirects to dashboard.
+Both edge functions write to `notifications_log` (with `status` ∈ `queued|sent|failed`). Use it for delivery debugging:
+```sql
+select * from notifications_log where status='failed' order by created_at desc limit 50;
+```
 
----
+## RLS spec
 
-## Each teaching day (live session ~60 min)
+`supabase/tests/rbac.sql` exercises capability resolution per persona. Run it whenever you change `0002_helpers.sql` or `0003_rls.sql`. Any FAIL means a capability is wrong.
 
-### Before class (~30 min)
+## Schema change workflow
 
-- [ ] Open `/admin-home.html` — check the **At-risk students** list. Decide who to check in with today.
-- [ ] `/admin-schedule.html` — verify today's day is unlocked + session time set + Meet link present.
-- [ ] `/admin-polls.html` — queue the day's polls from the day's "In-class checkpoints" block:
-  - Opening cold-open poll (30s answer)
-  - Mid-lecture concept check (1 min)
-  - End-of-class reflection poll
-- [ ] Skim the day's content page to remember the specific lab + discussion prompts.
-- [ ] `/admin-announcements.html` — post any last-minute announcement (Meet link change, schedule shift, etc.).
-
-### During class (~60 min)
-
-Use the lesson **Agenda** table and **In-class checkpoints** as the source of truth; the list below is the default facilitation rhythm (adjust to fit how the day actually runs).
-
-Key moves during class:
-
-- [ ] **Opening** — launch the cold-open poll from `/admin-polls.html`. Give ~30s to answer. Share screen and read results live.
-- [ ] **Early** — think-pair-share; use Meet breakout rooms or let students pair in chat.
-- [ ] **Mid** — run the mid-lecture poll or checkpoint activity. Watch `/admin-stuck.html` for raised hands.
-- [ ] **Late** — debate or breakout; TAs focus on the stuck queue.
-- [ ] **Closing** — one-line reflection in chat (or the day’s listed close).
-
-### After class (~20 min)
-
-- [ ] `/admin-home.html` — check **Recent activity**. Respond to any open stuck queue entries.
-- [ ] `/admin-announcements.html` — optional: post recap + link to tonight's homework.
-- [ ] If it was a milestone day (D10/15/21/25/30) — go to `/admin-content.html` and click **Assign peer reviewers (2 per submission)** once submissions arrive.
-
----
-
-## Weekly rituals
-
-### Friday (or Week wrap)
-
-- [ ] `/admin-teams.html` → **Accountability buddies** → Auto-pair this week's buddies.
-- [ ] `/admin-polls.html` → create/launch a "best of the week" vote (most useful prompt, most creative artifact, etc.).
-- [ ] Grade pending milestone submissions (`/admin-content.html` → the milestone → inline grading with rubric).
-- [ ] Post weekly announcement: featured students, winners, what's coming next.
-
-### Sunday (prep for next week)
-
-- [ ] `/admin-schedule.html` → unlock upcoming week's days (use **Select week** + **Enable selected**).
-- [ ] Review next week's lesson content — any updates to make?
-- [ ] Check Resend dashboard — any bounces/failures on magic-link emails?
-
----
-
-## Milestone days (D10, D15, D21, D25, D30)
-
-### D10 — Capstone kickoff
-
-- [ ] Run the ideathon format in class (see Day 10 **Agenda** for block order and timings).
-- [ ] End-of-day: review submitted one-pagers; approve or push back.
-- [ ] Assign peer reviewers after submissions come in.
-
-### D15 — Locked spec
-
-- [ ] After class: mark milestone assignments.
-- [ ] Assign peer reviewers.
-- [ ] In `/admin-teams.html`: confirm all students are in a team by end of day.
-
-### D21 — v0 prototype
-
-- [ ] Check submitted URLs — do they actually load? Any broken?
-- [ ] Assign peer reviewers.
-- [ ] Monitor stuck queue closely — this week students hit the wall most.
-
-### D25 — Mini-demo
-
-- [ ] Use `/admin-polls.html` → **Create team-vote poll** to run live voting during demos.
-- [ ] Record the session if possible.
-- [ ] Mark milestone submissions.
-
-### D30 — Final demo day
-
-- [ ] Prepare panel (external judges, alumni, etc.).
-- [ ] Use team-vote poll again.
-- [ ] `/admin-teams.html` → flip **is_featured** star on standout capstones → they appear on `/hall-of-fame.html`.
-- [ ] Announce winners via `/admin-announcements.html`.
-- [ ] Certificates auto-issue on `/certificate.html` for students with 30/30 progress.
-
----
-
-## Common scenarios
-
-### "A student can't sign up"
-- Check `/admin-orgs.html` → enrollment code — is it expired or at max uses?
-- Check Supabase Auth logs for SMTP errors (default: dashboard → Logs → auth).
-
-### "A student hasn't logged in for a week"
-- Admin home → At-risk list. DM them via the platform's cohort directory or external channel.
-
-### "Meet rooms aren't working"
-- `/admin-teams.html` → Provision Meet rooms button → re-provision.
-- Verify service account secrets still set in Supabase.
-
-### "A student's work is private but I need to see it"
-- `/admin-student.html?u=<user_id>` — admin drill-down shows all their submissions, notes, quiz attempts.
-
-### "I want to send one email to all students"
-- `/admin-announcements.html` — posts on their dashboard. If you need email too, do it outside the platform (the platform only sends transactional emails).
-
----
-
-## Admin hub reference
-
-| Page | Use when |
-|---|---|
-| `admin-home.html` | Default landing — today's status, at-risk, pending |
-| `admin.html` | Registrations (approve/confirm/waitlist) |
-| `admin-schedule.html` | Unlock days, set session times, Meet links |
-| `admin-content.html` | Create/edit quizzes + assignments + rubrics + grading |
-| `admin-teams.html` | Team CRUD, auto-pair, Meet provision, buddy pairs, Feature star |
-| `admin-attendance.html` | Live attendance grid, mark manually, CSV export |
-| `admin-polls.html` | Launch live polls during class |
-| `admin-stuck.html` | Live "I'm stuck" queue during studio days |
-| `admin-activity.html` | Live feed of everything happening in the cohort |
-| `admin-student.html` | Per-student drill-down (all their submissions, notes, quiz history) |
-| `admin-analytics.html` | Cohort stats, signups, completion heatmap, leaderboard |
-| `admin-orgs.html` | Orgs + enrollment codes (admin only) |
-| `admin-announcements.html` | Post cohort-wide messages with severity levels |
-| `admin-faculty.html` | Assign faculty/TA roles (admin only) |
-
----
-
-## Platform architecture (quick reference)
-
-- **Frontend**: static HTML/CSS/JS on GitHub Pages, auto-deployed from `main` branch of `gnanalytica/ai-workshop`
-- **Backend**: Supabase (Postgres + Auth + Storage + Edge Functions + Realtime)
-- **Project ref**: `qvqlpcnvculkrjpkdrwi`
-- **Edge functions**:
-  - `send-registration-email` — triggered by DB on `registrations.status` change
-  - `provision-meets` — invoked by admin button on `/admin-teams.html`
-- **Storage bucket**: `submissions` — student file uploads, private, 10MB cap
-
----
-
-*This runbook lives at `RUNBOOK.md` in the repo. Update as the cohort evolves.*
+1. Add migration `00NN_description.sql` (next sequential number).
+2. Run all migrations against a clean DB locally.
+3. Re-run `rbac.sql` — should still all PASS.
+4. Add a query in `web/lib/queries/<entity>.ts` if needed; never reach into Supabase from a component.
+5. Deploy: dashboard SQL editor or `supabase db push`.

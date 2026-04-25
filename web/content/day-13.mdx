@@ -1,0 +1,140 @@
+---
+day: 13
+date: "2026-05-19"
+weekday: "Tuesday"
+week: 3
+topic: "Workflow automation, browser automation"
+faculty:
+  main: "Sandeep"
+  support: "Harshith"
+reading_time: "10 min"
+tldr: "Stop doing the same 7 clicks every morning. Today you wire a real automation in n8n, scrape a page with Firecrawl, and feel the moment a workflow runs without you. By end of class one boring task in your life is dead."
+tags: ["automation", "n8n", "firecrawl"]
+software: ["n8n", "firecrawl"]
+online_tools: ["Zapier", "n8n"]
+video: "https://www.youtube.com/embed/1MwSoB0gnM4"
+prompt_of_the_day: "You are a senior automation engineer. I want a workflow that: (1) reads a Google Sheet of company names, (2) for each, scrapes the careers page using Firecrawl, (3) extracts new openings matching 'data analyst intern Bengaluru', (4) emails me a daily digest at 9am IST. Sketch the n8n node graph + the prompt I should use for the LLM extractor."
+tools_hands_on:
+  - { name: "n8n.cloud", url: "https://n8n.io/" }
+  - { name: "Zapier", url: "https://zapier.com/" }
+  - { name: "Firecrawl", url: "https://www.firecrawl.dev/" }
+  - { name: "Google Sheets", url: "https://sheets.google.com/" }
+tools_reference:
+  - { name: "n8n docs", url: "https://docs.n8n.io/" }
+  - { name: "Firecrawl docs", url: "https://docs.firecrawl.dev/" }
+resources:
+  - { title: "n8n — Build your first workflow (12 min)", url: "https://www.youtube.com/watch?v=1MwSoB0gnM4" }
+  - { title: "Zapier — Automation 101", url: "https://zapier.com/learn/" }
+  - { title: "Firecrawl — Scrape + Extract guide", url: "https://docs.firecrawl.dev/features/extract" }
+lab: { title: "Wire one real automation: scrape → extract → notify", url: "https://n8n.io/" }
+objective:
+  topic: "Build a real workflow + browser automation that runs without you"
+  tools: ["n8n", "Firecrawl", "Zapier"]
+  end_goal: "One n8n workflow that scrapes a page (Firecrawl), runs an LLM extraction step, and notifies you (email or Slack/Telegram) — running on a schedule."
+---
+
+You've now spent 12 days building skills. Today is the first day a *machine* does something for you, on a schedule, while you're asleep. That feeling — "it just ran" — is the rest of the workshop in microcosm.
+
+## 🎯 Today's objective
+
+**Topic.** Workflow automation (n8n, Zapier) + browser/page automation (Firecrawl).
+
+**By end of class you will have:**
+1. One scheduled n8n workflow with at least 4 nodes (trigger → scrape → extract → notify).
+2. A working Firecrawl call that pulls clean markdown from a real page.
+3. Killed one repetitive task you currently do by hand.
+
+> *Why this matters.* Capstone teams that ship by Day 30 have automation in their stack — for ingestion, monitoring, or reminders. Today you stop being the human cron job.
+
+## ⏪ Pre-class · ~20 min
+
+### Setup (required)
+
+- [ ] Sign up for **n8n.cloud** (free trial) OR install **n8n** locally with Docker (`docker run -p 5678:5678 n8nio/n8n`).
+- [ ] **Firecrawl** account → grab API key from dashboard.
+- [ ] **Zapier** free account (we compare briefly).
+- [ ] A Gmail / Slack / Telegram bot you can post to.
+
+### Primer (~10 min)
+
+- **Watch:** *Build your first n8n workflow* (12 min) — https://www.youtube.com/watch?v=1MwSoB0gnM4
+- **Skim:** Firecrawl's `extract` docs — https://docs.firecrawl.dev/features/extract
+
+### Bring to class
+
+- [ ] 2 boring tasks from your week. Pick the most repetitive, lowest-stakes one for the lab.
+- [ ] One URL you regularly check (Naukri search page, IPL stats, a college notice board).
+
+> 🧠 **Quick glossary.** **Workflow** = a chain of steps. **Trigger** = what starts it (cron, webhook, manual). **Node** = one step. **Webhook** = a URL that, when hit, runs the workflow. **Scrape** = pull HTML; **extract** = turn it into structured fields. **Idempotent** = safe to run twice.
+
+## 🎥 In-class · live session
+
+### Agenda
+
+| Block | Time | What |
+|---|---|---|
+| Why automation > AI alone | 10 min | The 80/20: most "AI products" are 80% plumbing |
+| n8n tour | 15 min | Trigger, HTTP, Code, IF, Schedule, AI nodes |
+| Firecrawl in 5 min | 5 min | One curl, clean markdown out |
+| Lab: build yours | 30 min | Trigger → scrape → LLM extract → notify |
+| Schedule + verify | 10 min | Set cron, watch it run live |
+| n8n vs Zapier | 10 min | When to pick which |
+
+### Mental model
+
+```
+trigger ──▶ fetch (Firecrawl) ──▶ transform (LLM) ──▶ act (email / Slack / Sheet)
+```
+
+If you can name those four boxes for *any* automation in your life, you can build it.
+
+## 🧪 Lab: Wire one real automation
+
+1. **Pick the task.** Example: "Every morning, give me a list of new internships matching X on Y site."
+2. **Trigger.** Add a *Schedule* node, set to daily 9:00 IST.
+3. **Scrape.** Add an *HTTP Request* node calling Firecrawl `/scrape` with your URL → markdown out.
+4. **Extract.** Add an *OpenAI / Anthropic* node. Prompt: *"From this page markdown, return JSON: [&#123;title, location, link&#125;]"*. Use structured output.
+5. **Filter.** *IF* node: only items containing your keyword (e.g., "Bengaluru").
+6. **Notify.** *Gmail* / *Slack* / *Telegram* node → send the digest to you.
+7. **Run manually once.** Then activate the schedule.
+
+**Artifact.** Screenshot of the activated workflow + the first message it sent you. Submit on dashboard.
+
+> ⚠️ **Don't get banned.** Respect robots.txt. Don't poll faster than once per minute. Use Firecrawl's caching.
+
+## 📊 Live poll
+
+**Where did your workflow break first?** Auth / scraping blocked / LLM JSON malformed / wrong cron / it actually worked first try. Instructor uses this to decide what to debug live.
+
+## 💬 Discuss
+
+- Which task did you automate, and how many minutes/week does it save? Be specific.
+- Where did you reach for an LLM step vs plain code? Was the LLM overkill?
+- n8n vs Zapier — which would you pick for your capstone, and why?
+
+## ❓ Quiz
+
+Short quiz on trigger types, what Firecrawl returns, why structured outputs matter, and the n8n-vs-Zapier tradeoff. Opens on dashboard.
+
+## 📝 Assignment · Capstone automation #1
+
+**Brief.** Build **one automation that lives inside your capstone**. Examples: nightly ingestion of new data, daily user digest, on-form-submit notification, a webhook that triggers an LLM. Document trigger + nodes + sample output.
+
+**Submit.** Dashboard with screenshot + workflow JSON export.
+
+**Rubric.** Real utility to capstone (4) · Reliability + error handling (4) · Cost / rate-limit awareness (2).
+
+## 🔁 Prep for next class
+
+Day 14 (covered in the next batch) builds on this — agents that *decide* the next step instead of following a hard-coded graph.
+
+- [ ] Read OpenAI's *Function Calling* docs — https://platform.openai.com/docs/guides/function-calling
+- [ ] Have your n8n workflow from today still running — we'll convert one node to an agent loop.
+- [ ] Skim 2 examples of public n8n templates that include an "AI Agent" node.
+
+## 📚 References
+
+- [n8n docs](https://docs.n8n.io/) — comprehensive, copy from here.
+- [Firecrawl docs](https://docs.firecrawl.dev/) — scrape, crawl, extract.
+- [Zapier learn](https://zapier.com/learn/) — easier UX, less power.
+- [Awesome n8n templates](https://n8n.io/workflows/) — steal good ones.

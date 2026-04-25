@@ -1,0 +1,143 @@
+---
+day: 25
+date: "2026-06-04"
+weekday: "Thursday"
+week: 5
+topic: "Local LLMs, prompt patterns, eval habits, tracing"
+faculty:
+  main: "Harshith"
+  support: "Sanjana"
+reading_time: "11 min"
+tldr: "A model on your laptop, three prompt patterns that actually move the needle, an eval set of 10 examples, and a LangSmith trace you can show your skeptical CTO. Today is the engineering hygiene Demo Day will reward."
+tags: ["local-llm", "ollama", "evals", "tracing", "langsmith"]
+software: ["OpenEvals", "Galileo", "LangSmith", "Ollama"]
+online_tools: []
+video: "https://www.youtube.com/embed/UU1WVnMk4E8"
+prompt_of_the_day: "Take my 'classify customer email' prompt. Generate 10 diverse Indian-context test cases (banking, edtech, ecommerce, mixed Hinglish), run them through both Llama-3.1-8B (Ollama) and GPT-4o-mini, and show me a per-case pass/fail table."
+tools_hands_on:
+  - { name: "Ollama", url: "https://ollama.com/" }
+  - { name: "LangSmith", url: "https://smith.langchain.com/" }
+  - { name: "OpenEvals", url: "https://github.com/langchain-ai/openevals" }
+  - { name: "Galileo", url: "https://www.galileo.ai/" }
+tools_reference:
+  - { name: "Anthropic — prompt engineering", url: "https://docs.anthropic.com/en/docs/prompt-engineering" }
+  - { name: "OpenAI — Evals cookbook", url: "https://cookbook.openai.com/examples/evaluation/getting_started_with_openai_evals" }
+resources:
+  - { title: "Hamel Husain — Your AI app needs evals", url: "https://hamel.dev/blog/posts/evals/" }
+  - { title: "Eugene Yan — Evals", url: "https://eugeneyan.com/writing/evals/" }
+lab: { title: "Local LLM + 10-example eval set + traced run", url: "https://ollama.com/" }
+objective:
+  topic: "Local LLMs, prompt patterns, eval habits, tracing"
+  tools: ["Ollama", "LangSmith", "OpenEvals"]
+  end_goal: "A 10-case eval set running against both a local Llama and a hosted GPT, with every call traced in LangSmith and a pass/fail report you can paste into your README."
+---
+
+Anyone can ship a prompt. Engineers ship a prompt **with an eval set behind it**. Today is the day your capstone stops being a vibes-based demo.
+
+## 🎯 Today's objective
+
+**Topic.** Local LLMs, prompt patterns, eval habits, tracing.
+
+**By end of class you will have:**
+1. Llama-3.1-8B running locally via Ollama, answering your capstone's core prompt.
+2. Three prompt patterns applied — *role + format + few-shot* — and the before/after delta measured.
+3. A 10-case eval set running through OpenEvals, with traces visible in LangSmith.
+
+> *Why this matters.* Demo Day judges will ask "how do you know it works?" "It looked good in testing" loses. "Here's our 10-case eval, 90% pass, here's the trace" wins.
+
+## ⏪ Pre-class · ~30 min
+
+### Setup (required)
+
+- [ ] Install Ollama. `ollama pull llama3.1:8b` and `ollama pull qwen2.5:7b`. Confirm both run.
+- [ ] LangSmith account + `LANGCHAIN_API_KEY` in `.env`. Set `LANGCHAIN_TRACING_V2=true`.
+- [ ] `pip install openevals langchain langsmith ollama`.
+- [ ] Have two prompts from your capstone ready — one good, one flaky.
+
+### Primer (~12 min)
+
+- **Watch:** "Run any LLM locally with Ollama" — https://www.youtube.com/watch?v=UU1WVnMk4E8 (10 min).
+- **Read:** Hamel Husain's "Your AI app needs evals" — the *level 1 → 4* progression. Aim for level 2 today.
+- **Skim:** Anthropic's prompt engineering docs — *XML tags*, *chain of thought*, *prefilling*.
+
+### Bring to class
+
+- [ ] 10 *real* inputs your capstone receives (or will receive). Not synthetic — actual user-shaped messages, including Hinglish if applicable.
+
+> 🧠 **Quick glossary.** **Local LLM** = model running on your laptop (no API). **Eval** = a test case for an LLM. **Trace** = the full record of a run: inputs, prompts, tokens, latency. **OpenEvals** = LangChain's eval harness. **LangSmith** = the trace viewer.
+
+## 🎥 In-class · live session
+
+### Agenda
+
+| Block | Time | What |
+|---|---|---|
+| Local LLMs — when worth it | 10 min | Privacy, cost, latency, offline |
+| 3 prompt patterns that move scores | 15 min | Role, format, few-shot |
+| Eval mindset | 10 min | Why 10 cases beat 0 |
+| Lab | 20 min | Build + run + trace |
+| Share + tear-down | 5 min |  |
+
+### Three prompt patterns, in order of ROI
+
+1. **Explicit role + output format.** *"You are X. Return JSON with keys A, B, C. No prose."* Cuts hallucination, makes parsing trivial.
+2. **Few-shot with edge cases.** Three examples beats three paragraphs of instruction. Pick examples that look like the *failures* you've seen.
+3. **Chain of thought / scratchpad.** *"Think step-by-step in `<thinking>` tags before you answer."* Worth the tokens for any reasoning task.
+
+### When local Llama actually wins
+
+- **Privacy** — student health data, exam answers, anything you can't send to OpenAI.
+- **Cost at high volume** — once you cross ~10M tokens/month, your laptop or a cheap GPU box wins.
+- **Offline / unreliable network** — campus during exams, rural deployments.
+- **Latency** — first token in 50ms vs 800ms over the API.
+
+It does *not* win on raw quality. Llama-3.1-8B is roughly GPT-3.5 level. Plan accordingly.
+
+## 🧪 Lab: Local LLM + eval set + trace
+
+1. Pick **one** capstone prompt. Run it through `ollama` directly: `ollama run llama3.1:8b "<your prompt>"`. Note the output.
+2. Apply the three patterns (role/format, 2 few-shot examples, scratchpad). Run again. Note the delta.
+3. Build `evals.jsonl` — 10 lines, each `&#123;"input": "...", "expected": "..."&#125;`. Indian-context examples preferred.
+4. Wire OpenEvals: write a grader (`exact_match` or LLM-as-judge), run all 10 cases against both `llama3.1:8b` and `gpt-4o-mini` with `LANGCHAIN_TRACING_V2=true`.
+5. Open LangSmith. Find the slowest case. Find the most expensive case. Screenshot both.
+
+**Artifact.** Push `evals.jsonl`, `run_evals.py`, and a `README.md` with your pass-rate table + LangSmith share link to `/labs/day-25/`.
+
+> ⚠️ **Indian-context note.** Llama-3.1 tokenizes Devanagari/Tamil at ~2 chars/token vs ~4 for English. Hinglish prompts cost more than they look. Measure.
+
+## 📊 Live poll
+
+**On your eval set, which model wins?** Llama-3.1-8B local / Qwen2.5-7B local / GPT-4o-mini / Claude Haiku / *Tied.*
+
+## 💬 Discuss
+
+- One case where local Llama beat the API on *your* eval. Why?
+- LLM-as-judge vs exact-match — when does each lie?
+- A prompt with a 70% pass rate — ship it or fix it? Defend.
+
+## ❓ Quiz
+
+Short quiz on prompt patterns, when to choose local vs hosted, and what a trace shows. On the dashboard during class.
+
+## 📝 Assignment · Eval-driven prompt fix
+
+**Brief.** Take your flakiest capstone prompt. Submit (a) the original prompt + 10-case eval, (b) the improved prompt, (c) before/after pass rate, (d) LangSmith share link.
+
+**Submit.** GitHub link + LangSmith link on the dashboard before Day 26.
+
+**Rubric.** Eval set is realistic — Indian-context, includes edge cases (4) · Measurable improvement, with numbers (4) · Trace link works for a stranger (2).
+
+## 🔁 Prep for next class
+
+Day 26 starts the home stretch. Polish, deploy hardening, and the demo script.
+
+- [ ] Run your eval set on production. If pass rate &lt; 80%, that's tomorrow's first task.
+- [ ] Time your full demo flow end-to-end. Note where it stalls.
+- [ ] Pick the *one* slide you'd keep if you could only show one.
+
+## 📚 References
+
+- [Hamel Husain — Your AI app needs evals](https://hamel.dev/blog/posts/evals/) — the practitioner's bible.
+- [Eugene Yan — Evals](https://eugeneyan.com/writing/evals/) — taxonomy, examples, code.
+- [Anthropic prompt engineering](https://docs.anthropic.com/en/docs/prompt-engineering) — XML, prefill, CoT.
+- [Ollama](https://ollama.com/) — `pull`, `run`, `serve`. That's the whole API.
