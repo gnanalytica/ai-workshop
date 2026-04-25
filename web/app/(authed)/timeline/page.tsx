@@ -14,8 +14,10 @@ async function listTimeline(cohortId: string): Promise<TimelineItem[]> {
     sb.from("attendance").select("cohort_id, day_number, status, marked_at").eq("cohort_id", cohortId).order("marked_at", { ascending: false }).limit(20),
   ]);
   const items: TimelineItem[] = [];
-  for (const r of (subs.data ?? []) as Array<{ id: string; status: string; updated_at: string; assignments: { title: string; day_number: number } }>) {
-    items.push({ id: `sub-${r.id}`, kind: "submission", label: r.status === "graded" ? "Submission graded" : "Submission updated", detail: `Day ${r.assignments.day_number} · ${r.assignments.title}`, at: r.updated_at });
+  for (const r of (subs.data ?? []) as unknown as Array<{ id: string; status: string; updated_at: string; assignments: { title: string; day_number: number } | Array<{ title: string; day_number: number }> }>) {
+    const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
+    if (!a) continue;
+    items.push({ id: `sub-${r.id}`, kind: "submission", label: r.status === "graded" ? "Submission graded" : "Submission updated", detail: `Day ${a.day_number} · ${a.title}`, at: r.updated_at });
   }
   for (const r of (labs.data ?? []) as Array<{ user_id: string; day_number: number; lab_id: string; status: string; updated_at: string }>) {
     items.push({ id: `lab-${r.user_id}-${r.day_number}-${r.lab_id}`, kind: "lab", label: r.status === "done" ? "Lab completed" : "Lab progress", detail: `Day ${r.day_number} · ${r.lab_id}`, at: r.updated_at });

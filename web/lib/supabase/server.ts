@@ -1,14 +1,17 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import type { Database } from "./types";
 
 /**
  * Server-side Supabase client for RSC and server actions. Uses anon key + the
  * caller's session cookies, so RLS is enforced.
+ *
+ * Untyped at the client boundary — supabase-js's strict insert/update typing
+ * is too restrictive for our patterns. Per-query types come from
+ * `lib/supabase/database.types.ts` where the call site benefits from them.
  */
 export async function getSupabaseServer() {
   const cookieStore = await cookies();
-  return createServerClient<Database>(
+  return createServerClient(
     requiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
     requiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {

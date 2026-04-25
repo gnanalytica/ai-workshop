@@ -28,7 +28,7 @@ export default async function RosterPage() {
           <Badge>Waitlist</Badge>
         </div>
       </header>
-      <RosterTable rows={rows} />
+      <RosterTable rows={rows} cohortId={cohort.id} />
     </div>
   );
 }

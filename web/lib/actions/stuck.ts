@@ -1,0 +1,68 @@
+"use server";
+
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { requireCapability } from "@/lib/auth/requireCapability";
+import { getSupabaseServer } from "@/lib/supabase/server";
+import { actionFail, actionOk, withSupabase, type ActionResult } from "./_helpers";
+
+const reportSchema = z.object({
+  cohort_id: z.string().uuid(),
+  kind: z.enum(["content", "tech", "team", "other"]),
+  message: z.string().min(1).max(1000),
+});
+
+export async function reportStuck(input: z.infer<typeof reportSchema>): Promise<ActionResult> {
+  const parsed = reportSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  return withSupabase(async (sb) => {
+    const { data: user } = await sb.auth.getUser();
+    if (!user.user) return { data: null, error: { message: "Not signed in" } };
+    return sb
+      .from("stuck_queue")
+      .insert({
+        cohort_id: parsed.data.cohort_id,
+        user_id: user.user.id,
+        kind: parsed.data.kind,
+        message: parsed.data.message,
+        status: "open",
+      })
+      .select()
+      .single();
+  }, "/admin/stuck");
+}
+
+const claimSchema = z.object({ id: z.string().uuid() });
+
+export async function claimStuck(input: z.infer<typeof claimSchema>): Promise<ActionResult> {
+  const parsed = claimSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  const sb = await getSupabaseServer();
+  const { error } = await sb.rpc("rpc_claim_stuck", { p_id: parsed.data.id } as never);
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/stuck");
+  revalidatePath("/faculty");
+  return actionOk();
+}
+
+const resolveSchema = z.object({
+  id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+  resolution: z.string().max(1000).optional(),
+});
+
+export async function resolveStuck(input: z.infer<typeof resolveSchema>): Promise<ActionResult> {
+  const parsed = resolveSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("support.triage", parsed.data.cohort_id);
+  return withSupabase(
+    (sb) =>
+      sb
+        .from("stuck_queue")
+        .update({ status: "resolved", resolution: parsed.data.resolution ?? null })
+        .eq("id", parsed.data.id)
+        .select()
+        .single(),
+    ["/admin/stuck", "/faculty"],
+  );
+}

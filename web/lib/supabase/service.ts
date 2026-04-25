@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "./types";
 
 /**
  * Service-role Supabase client. NEVER expose this to a browser. Use only in
@@ -11,7 +10,7 @@ export function getSupabaseService() {
   if (!url || !key) {
     throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set; refusing to create service client");
   }
-  return createClient<Database>(url, key, {
+  return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

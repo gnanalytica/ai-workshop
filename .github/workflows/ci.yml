@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+  NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+jobs:
+  web:
+    name: web (typecheck / lint / vitest / build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+
+  build:
+    name: web (production build)
+    runs-on: ubuntu-latest
+    needs: web
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  schema:
+    name: supabase migrations + RLS spec
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stub auth schema
+        env:
+          PGPASSWORD: test
+        run: |
+          psql -h 127.0.0.1 -U postgres -d postgres -c "create database lms;"
+          cat > /tmp/auth_stub.sql <<'EOF'
+          create schema if not exists auth;
+          create table if not exists auth.users (
+            id uuid primary key default gen_random_uuid(),
+            email text,
+            raw_user_meta_data jsonb default '{}'::jsonb,
+            created_at timestamptz default now()
+          );
+          create or replace function auth.uid() returns uuid language sql stable as $$
+            select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
+          $$;
+          create role authenticated noinherit;
+          create role anon noinherit;
+          create role service_role noinherit;
+          EOF
+          psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -d lms -f /tmp/auth_stub.sql
+
+      - name: Apply migrations
+        env:
+          PGPASSWORD: test
+        run: |
+          for f in supabase/migrations/*.sql; do
+            echo "Applying $f"
+            psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -d lms -f "$f"
+          done
+
+      - name: Apply seed
+        env:
+          PGPASSWORD: test
+        run: |
+          psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -d lms -f supabase/seed/cohort.sql
+
+      - name: Run RBAC spec (FAIL if any assertion fails)
+        env:
+          PGPASSWORD: test
+        run: |
+          out=$(psql -h 127.0.0.1 -U postgres -d lms -f supabase/tests/rbac.sql 2>&1)
+          echo "$out"
+          if echo "$out" | grep -q "FAIL:"; then
+            echo "::error::One or more RBAC assertions failed"
+            exit 1
+          fi

@@ -4,8 +4,13 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
 import { DayRail } from "@/components/day-rail/DayRail";
+import { CheckIn } from "@/components/day-interactive/CheckIn";
+import { AssignmentBlock } from "@/components/day-interactive/AssignmentBlock";
+import { QuizBlock } from "@/components/day-interactive/QuizBlock";
+import { PollBlock } from "@/components/day-interactive/PollBlock";
 import { loadDay, listDays } from "@/lib/content/loader";
 import { getMyCurrentCohort, listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
+import { getDayInteractive } from "@/lib/queries/day-interactive";
 import { fmtDateTime } from "@/lib/format";
 
 export default async function DayPage({ params }: { params: Promise<{ n: string }> }) {
@@ -17,10 +22,11 @@ export default async function DayPage({ params }: { params: Promise<{ n: string 
   const dayNumber = n === "today" ? today : Number(n);
   if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 30) notFound();
 
-  const [content, allDays, cohortDays] = await Promise.all([
+  const [content, allDays, cohortDays, interactive] = await Promise.all([
     loadDay(dayNumber),
     listDays(),
     listCohortDays(cohort.id),
+    getDayInteractive(cohort.id, dayNumber),
   ]);
   if (!content) notFound();
 
@@ -56,6 +62,13 @@ export default async function DayPage({ params }: { params: Promise<{ n: string 
               <Badge key={t}>{t}</Badge>
             ))}
           </div>
+          <div className="mt-4">
+            <CheckIn
+              cohortId={cohort.id}
+              dayNumber={dayNumber}
+              initialStatus={interactive.attendance.status}
+            />
+          </div>
         </header>
 
         {meta.prompt_of_the_day && (
@@ -68,6 +81,15 @@ export default async function DayPage({ params }: { params: Promise<{ n: string 
         )}
 
         <MarkdownView source={content.body} />
+
+        {(interactive.assignment || interactive.quiz || interactive.poll) && (
+          <section className="mt-10 space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">Today&apos;s work</h2>
+            {interactive.assignment && <AssignmentBlock assignment={interactive.assignment} />}
+            {interactive.quiz && <QuizBlock quiz={interactive.quiz} dayNumber={dayNumber} />}
+            {interactive.poll && <PollBlock poll={interactive.poll} />}
+          </section>
+        )}
 
         {(meta.tools_hands_on?.length ?? 0) > 0 && (
           <section className="mt-10">

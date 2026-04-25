@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { listBoardPosts } from "@/lib/queries/board";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { relTime } from "@/lib/format";
+import { BoardLiveRefresh } from "./BoardLive";
 
 export default async function BoardPage() {
   const cohort = await getMyCurrentCohort();
@@ -12,6 +13,7 @@ export default async function BoardPage() {
   const posts = await listBoardPosts(cohort.id);
   return (
     <div className="space-y-6">
+      <BoardLiveRefresh cohortId={cohort.id} />
       <header className="flex items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">Q&amp;A Board</p>

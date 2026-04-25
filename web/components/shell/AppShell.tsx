@@ -26,9 +26,9 @@ export async function AppShell({
   return (
     <div className="bg-bg text-ink flex min-h-screen">
       <Sidebar caps={caps} />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Topbar profile={profile} navItems={items} cohortName={cohortName} />
-        <main className="flex-1 overflow-x-hidden p-6 md:p-8">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-4 md:p-8">{children}</main>
       </div>
     </div>
   );

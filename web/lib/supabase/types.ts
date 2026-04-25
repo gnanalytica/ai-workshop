@@ -1,13 +1,6 @@
 /**
- * Stub Supabase Database type. Once schema is finalised, regenerate via:
- *   supabase gen types typescript --linked > lib/supabase/database.types.ts
- * and import from there.
+ * Re-export the Supabase-CLI generated Database type. Regenerate via:
+ *   pnpm gen:types   # = supabase gen types typescript --project-id qvqlpcnvculkrjpkdrwi
+ * or via the Supabase MCP tool.
  */
-export interface Database {
-  public: {
-    Tables: Record<string, never>;
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-  };
-}
+export type { Database } from "./database.types";
