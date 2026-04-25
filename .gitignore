@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+*.log
+
+# graphify outputs
+graphify-out/
+
+# environment
+.env
+.env.local
+.env*.local
+
+# editor
+.vscode/
+.idea/

@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-bg: hsl(var(--bg));
+  --color-bg-soft: hsl(var(--bg-soft));
+  --color-card: hsl(var(--card));
+  --color-ink: hsl(var(--ink));
+  --color-muted: hsl(var(--muted));
+  --color-line: hsl(var(--line));
+  --color-accent: hsl(var(--accent));
+  --color-accent-2: hsl(var(--accent-2));
+  --color-input-bg: hsl(var(--input-bg));
+  --color-nav-bg: hsl(var(--nav-bg));
+  --color-cta-ink: hsl(var(--cta-ink));
+
+  --shadow-soft: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 3px 0 rgb(0 0 0 / 0.08);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+@layer base {
+  :root {
+    --bg: 220 14% 8%;
+    --bg-soft: 220 14% 11%;
+    --card: 220 14% 13%;
+    --ink: 0 0% 96%;
+    --muted: 220 9% 60%;
+    --line: 220 13% 22%;
+    --accent: 78 100% 60%;
+    --accent-2: 200 95% 56%;
+    --input-bg: 220 14% 14%;
+    --nav-bg: 220 14% 10%;
+    --cta-ink: 220 25% 8%;
+  }
+
+  [data-theme="light"] {
+    --bg: 0 0% 100%;
+    --bg-soft: 220 14% 96%;
+    --card: 0 0% 100%;
+    --ink: 220 25% 12%;
+    --muted: 220 9% 38%;
+    --line: 220 13% 86%;
+    --accent: 78 65% 38%;
+    --accent-2: 200 85% 42%;
+    --input-bg: 0 0% 98%;
+    --nav-bg: 0 0% 100%;
+    --cta-ink: 0 0% 100%;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    background: hsl(var(--bg));
+    color: hsl(var(--ink));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.35);
+    color: hsl(var(--ink));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+}
