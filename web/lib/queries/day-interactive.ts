@@ -13,7 +13,7 @@ export interface DayAssignment {
     status: "draft" | "submitted" | "graded" | "returned";
     score: number | null;
     feedback_md: string | null;
-    ai_graded: boolean;
+    published: boolean;
     ai_strengths: string[];
     ai_weaknesses: string[];
     updated_at: string;
@@ -67,7 +67,7 @@ export const getDayInteractive = cache(
       sb
         .from("assignments")
         .select(
-          "id, title, body_md, kind, due_at, submissions(id, body, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, updated_at, user_id)",
+          "id, title, body_md, kind, due_at, submissions(id, body, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
@@ -111,6 +111,7 @@ export const getDayInteractive = cache(
           id: string; body: string | null; status: DayAssignment["submission"] extends { status: infer S } ? S : never;
           score: number | null; feedback_md: string | null;
           ai_graded: boolean | null; ai_strengths: string[] | null; ai_weaknesses: string[] | null;
+          human_reviewed_at: string | null;
           updated_at: string; user_id: string;
         }>;
       };
@@ -126,11 +127,11 @@ export const getDayInteractive = cache(
               id: mine.id,
               body: mine.body,
               status: mine.status,
-              score: mine.score,
-              feedback_md: mine.feedback_md,
-              ai_graded: mine.ai_graded ?? false,
-              ai_strengths: mine.ai_strengths ?? [],
-              ai_weaknesses: mine.ai_weaknesses ?? [],
+              score: mine.human_reviewed_at ? mine.score : null,
+              feedback_md: mine.human_reviewed_at ? mine.feedback_md : null,
+              published: !!mine.human_reviewed_at,
+              ai_strengths: mine.human_reviewed_at ? (mine.ai_strengths ?? []) : [],
+              ai_weaknesses: mine.human_reviewed_at ? (mine.ai_weaknesses ?? []) : [],
               updated_at: mine.updated_at,
             }
           : null,

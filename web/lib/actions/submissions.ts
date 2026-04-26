@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { gradeWithAI } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
@@ -15,27 +16,21 @@ const submitSchema = z.object({
 export async function submitAssignment(input: z.infer<typeof submitSchema>) {
   const parsed = submitSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
-  const sb = await getSupabaseServer();
-  const { data: user } = await sb.auth.getUser();
-  if (!user.user) return actionFail("Not signed in");
-
-  const { data: row, error } = await sb
-    .from("submissions")
-    .upsert({
-      assignment_id: parsed.data.assignment_id,
-      user_id: user.user.id,
-      body: parsed.data.body,
-      attachments: parsed.data.attachments,
-      status: "submitted",
-    })
-    .select("id")
-    .single();
-  if (error || !row) return actionFail(error?.message ?? "Failed");
-
-  // Fire-and-forget AI grade. Failures are logged but don't block the submit.
-  void runAIGrade(row.id, parsed.data.assignment_id);
-
-  return actionOk(row);
+  return withSupabase(async (sb) => {
+    const { data: user } = await sb.auth.getUser();
+    if (!user.user) return { data: null, error: { message: "Not signed in" } };
+    return sb
+      .from("submissions")
+      .upsert({
+        assignment_id: parsed.data.assignment_id,
+        user_id: user.user.id,
+        body: parsed.data.body,
+        attachments: parsed.data.attachments,
+        status: "submitted",
+      })
+      .select()
+      .single();
+  });
 }
 
 export async function saveDraft(input: z.infer<typeof submitSchema>) {
@@ -62,68 +57,60 @@ export async function revalidateDayPage(day: number) {
   revalidatePath(`/day/${day}`);
 }
 
-const overrideSchema = z.object({
-  submission_id: z.string().uuid(),
-  score: z.number().min(0).max(100).optional(),
-  feedback_md: z.string().max(20_000).optional(),
-});
+// -----------------------------------------------------------------------------
+// Staff grading actions (admin / trainer / tech_support, gated by
+// grading.write:cohort). Faculty are read-only.
+// -----------------------------------------------------------------------------
 
-export async function overrideGrade(input: z.infer<typeof overrideSchema>) {
-  const parsed = overrideSchema.safeParse(input);
-  if (!parsed.success) return actionFail("Invalid input");
-  const sb = await getSupabaseServer();
-  const { data: user } = await sb.auth.getUser();
-  if (!user.user) return actionFail("Not signed in");
+const batchSchema = z.object({ assignment_id: z.string().uuid() });
 
-  const patch: Record<string, unknown> = {
-    human_reviewed_at: new Date().toISOString(),
-    human_reviewer_id: user.user.id,
-    status: "graded",
-  };
-  if (parsed.data.score !== undefined) patch.score = parsed.data.score;
-  if (parsed.data.feedback_md !== undefined) patch.feedback_md = parsed.data.feedback_md;
-
-  const { error } = await sb
-    .from("submissions")
-    .update(patch)
-    .eq("id", parsed.data.submission_id);
-  if (error) return actionFail(error.message);
-  revalidatePath("/faculty/review");
-  return actionOk();
+export interface BatchGradeResult {
+  ok: true;
+  graded: number;
+  failed: number;
+  skipped: number;
 }
 
-async function runAIGrade(submissionId: string, assignmentId: string) {
-  try {
-    const sb = await getSupabaseServer();
-    const [{ data: assignment }, { data: submission }] = await Promise.all([
-      sb
-        .from("assignments")
-        .select("title, body_md, rubric_id, rubric_templates(criteria)")
-        .eq("id", assignmentId)
-        .maybeSingle(),
-      sb
-        .from("submissions")
-        .select("body, attachments")
-        .eq("id", submissionId)
-        .maybeSingle(),
-    ]);
-    if (!assignment || !submission?.body) return;
+export async function batchGradeAssignment(
+  input: z.infer<typeof batchSchema>,
+): Promise<{ ok: true; data: { graded: number; failed: number; skipped: number } } | { ok: false; error: string }> {
+  const parsed = batchSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Invalid input" };
+  await requireCapability("grading.write:cohort");
 
-    type RubricCriteria = { name: string; weight?: number; description?: string };
-    const rubricRaw = ((assignment as unknown) as { rubric_templates: { criteria: unknown } | null })
-      ?.rubric_templates?.criteria;
-    const criteria = Array.isArray(rubricRaw) ? (rubricRaw as RubricCriteria[]) : null;
+  const sb = await getSupabaseServer();
+  const { data: assignment } = await sb
+    .from("assignments")
+    .select("title, body_md, rubric_id, rubric_templates(criteria)")
+    .eq("id", parsed.data.assignment_id)
+    .maybeSingle();
+  if (!assignment) return { ok: false, error: "Assignment not found" };
 
+  type RubricCriteria = { name: string; weight?: number; description?: string };
+  const rubricRaw = ((assignment as unknown) as { rubric_templates: { criteria: unknown } | null })
+    ?.rubric_templates?.criteria;
+  const criteria = Array.isArray(rubricRaw) ? (rubricRaw as RubricCriteria[]) : null;
+
+  // Re-grade everything that hasn't been published yet (status='submitted'
+  // OR ai_graded but not human_reviewed). Skip already-published rows.
+  const { data: subs } = await sb
+    .from("submissions")
+    .select("id, body, attachments, ai_graded, human_reviewed_at, status")
+    .eq("assignment_id", parsed.data.assignment_id)
+    .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)");
+
+  let graded = 0, failed = 0, skipped = 0;
+  for (const s of (subs ?? []) as Array<{ id: string; body: string | null; attachments: { name: string; url: string }[] | null }>) {
+    if (!s.body) { skipped++; continue; }
     const result = await gradeWithAI({
       assignmentTitle: (assignment as { title: string }).title,
       assignmentBody: (assignment as { body_md: string | null }).body_md,
       rubricCriteria: criteria,
-      studentBody: submission.body,
-      attachments: (submission.attachments as { name: string; url: string }[] | null) ?? null,
+      studentBody: s.body,
+      attachments: s.attachments ?? null,
     });
-    if (!result) return;
-
-    await sb
+    if (!result) { failed++; continue; }
+    const { error } = await sb
       .from("submissions")
       .update({
         ai_graded: true,
@@ -132,13 +119,72 @@ async function runAIGrade(submissionId: string, assignmentId: string) {
         ai_strengths: result.strengths,
         ai_weaknesses: result.weaknesses,
         ai_graded_at: new Date().toISOString(),
-        score: result.score,
-        feedback_md: result.feedback_md,
-        status: "graded",
-        graded_at: new Date().toISOString(),
       })
-      .eq("id", submissionId);
-  } catch (err) {
-    console.error("[runAIGrade] failed", err);
+      .eq("id", s.id);
+    if (error) { failed++; continue; }
+    graded++;
   }
+
+  revalidatePath("/admin/grading");
+  return { ok: true, data: { graded, failed, skipped } };
+}
+
+const publishSchema = z.object({
+  submission_id: z.string().uuid(),
+  score: z.number().min(0).max(100).optional(),
+  feedback_md: z.string().max(20_000).optional(),
+});
+
+/**
+ * Publish a grade to the student. Defaults to copying ai_score / ai_feedback_md
+ * onto the canonical score / feedback_md columns; explicit score+feedback_md
+ * args override those (i.e., manual edit before publish).
+ */
+export async function publishGrade(input: z.infer<typeof publishSchema>) {
+  const parsed = publishSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("grading.write:cohort");
+
+  const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+
+  const { data: row } = await sb
+    .from("submissions")
+    .select("ai_score, ai_feedback_md")
+    .eq("id", parsed.data.submission_id)
+    .maybeSingle();
+  if (!row) return actionFail("Submission not found");
+
+  const score = parsed.data.score ?? (row as { ai_score: number | null }).ai_score;
+  const feedback = parsed.data.feedback_md ?? (row as { ai_feedback_md: string | null }).ai_feedback_md;
+  if (score === null || score === undefined) return actionFail("No score to publish");
+
+  const { error } = await sb
+    .from("submissions")
+    .update({
+      score,
+      feedback_md: feedback,
+      status: "graded",
+      graded_at: new Date().toISOString(),
+      graded_by: user.user.id,
+      human_reviewed_at: new Date().toISOString(),
+      human_reviewer_id: user.user.id,
+    })
+    .eq("id", parsed.data.submission_id);
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/grading");
+  revalidatePath("/faculty/review");
+  return actionOk();
+}
+
+const manualSchema = z.object({
+  submission_id: z.string().uuid(),
+  score: z.number().min(0).max(100),
+  feedback_md: z.string().max(20_000).optional(),
+});
+
+/** Score a submission manually (no AI involved) and publish in one step. */
+export async function manualGrade(input: z.infer<typeof manualSchema>) {
+  return publishGrade(input);
 }

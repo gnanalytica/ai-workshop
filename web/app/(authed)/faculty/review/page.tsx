@@ -19,21 +19,17 @@ export default async function FacultyReviewPage(props: {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {f.cohort.name} · grading
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Review queue</h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Pod grades</h1>
         <CardSub className="mt-1 flex items-center gap-2">
-          {subs.length} submissions awaiting review
+          Read-only · grades are published by trainers via /admin/grading.
           <Badge variant="accent">Pod-scoped</Badge>
         </CardSub>
       </header>
 
       {subs.length === 0 ? (
-        <Card><CardSub>Inbox zero.</CardSub></Card>
+        <Card><CardSub>Nothing pending in your pod.</CardSub></Card>
       ) : (
-        <ReviewQueueClient
-          submissions={subs}
-          initialId={id ?? null}
-          canGrade={true}
-        />
+        <ReviewQueueClient submissions={subs} initialId={id ?? null} />
       )}
     </div>
   );

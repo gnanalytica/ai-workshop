@@ -56,7 +56,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
   { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", icon: "users" },
   { label: "Stuck Queue", href: "/faculty/stuck",       cap: "support.triage", group: "faculty", icon: "life-buoy" },
-  { label: "Grading",     href: "/faculty/review",      cap: "grading.read",   group: "faculty", icon: "check-square" },
+  { label: "Pod Grades",  href: "/faculty/review",      cap: "grading.read",   group: "faculty", icon: "check-square" },
   { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
   { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
 
@@ -68,6 +68,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Teams",       href: "/admin/teams",      cap: "roster.read",            group: "admin", section: "Cohort", icon: "users" },
   { label: "Pods",        href: "/pods",             cap: "pods.write",             group: "admin", section: "Cohort", icon: "layers" },
   { label: "Faculty",     href: "/admin/faculty",    cap: "faculty.write",          group: "admin", section: "Cohort", icon: "user-check" },
+  { label: "Grading",     href: "/admin/grading",    cap: "grading.write:cohort",   group: "admin", section: "Cohort", icon: "check-square" },
 
   // ----- Admin · Engagement -----
   { label: "Polls",       href: "/admin/polls",      cap: "content.write",          group: "admin", section: "Engagement", icon: "vote" },

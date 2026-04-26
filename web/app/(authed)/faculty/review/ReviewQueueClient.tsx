@@ -1,70 +1,23 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { toast } from "sonner";
+import { useState, useEffect } from "react";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { overrideGrade } from "@/lib/actions/submissions";
 import type { PendingSubmission } from "@/lib/queries/faculty";
 import { fmtDateTime, relTime } from "@/lib/format";
 
 export function ReviewQueueClient({
   submissions,
   initialId,
-  canGrade,
 }: {
   submissions: PendingSubmission[];
   initialId: string | null;
-  canGrade: boolean;
 }) {
   const [activeId, setActiveId] = useState<string | null>(initialId ?? submissions[0]?.id ?? null);
-  const [score, setScore] = useState<string>("");
-  const [feedback, setFeedback] = useState("");
-  const [pending, start] = useTransition();
   const active = submissions.find((s) => s.id === activeId) ?? null;
-
   useEffect(() => {
-    if (active) {
-      setScore(active.score?.toString() ?? active.ai_score?.toString() ?? "");
-      setFeedback(active.ai_feedback_md ?? "");
-    } else {
-      setScore("");
-      setFeedback("");
-    }
-  }, [active]);
-
-  function submit() {
-    if (!active) return;
-    const numeric = Number(score);
-    if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
-      toast.error("Score must be 0-100");
-      return;
-    }
-    start(async () => {
-      const r = await overrideGrade({ submission_id: active.id, score: numeric, feedback_md: feedback });
-      if (r.ok) {
-        toast.success("Saved override");
-        setActiveId(submissions.find((s) => s.id !== active.id)?.id ?? null);
-      } else {
-        toast.error(r.error);
-      }
-    });
-  }
-
-  function approveAsIs() {
-    if (!active) return;
-    start(async () => {
-      const r = await overrideGrade({ submission_id: active.id });
-      if (r.ok) {
-        toast.success("Approved");
-        setActiveId(submissions.find((s) => s.id !== active.id)?.id ?? null);
-      } else {
-        toast.error(r.error);
-      }
-    });
-  }
+    if (!activeId && submissions[0]) setActiveId(submissions[0].id);
+  }, [activeId, submissions]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
@@ -85,10 +38,12 @@ export function ReviewQueueClient({
               D{String(s.day_number).padStart(2, "0")} · {s.assignment_title}
             </p>
             <div className="mt-1 flex items-center gap-1">
-              {s.ai_graded ? (
-                <Badge variant="ok">AI · {s.ai_score}</Badge>
+              {s.human_reviewed_at ? (
+                <Badge variant="ok">Published · {s.score}</Badge>
+              ) : s.ai_graded ? (
+                <Badge variant="warn">AI · {s.ai_score}</Badge>
               ) : (
-                <Badge variant="warn">Not graded</Badge>
+                <Badge variant="danger">Not graded</Badge>
               )}
               <span className="text-muted text-[10px]">{relTime(s.updated_at)}</span>
             </div>
@@ -116,31 +71,22 @@ export function ReviewQueueClient({
           {active.attachments.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {active.attachments.map((a) => (
-                <a
-                  key={a.url}
-                  href={a.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border-line bg-card hover:border-accent/40 rounded-md border px-3 py-1.5 text-xs"
-                >
+                <a key={a.url} href={a.url} target="_blank" rel="noreferrer" className="border-line bg-card hover:border-accent/40 rounded-md border px-3 py-1.5 text-xs">
                   {a.name} ↗
                 </a>
               ))}
             </div>
           )}
 
-          {active.ai_graded && (
-            <div className="border-line bg-bg-soft space-y-3 rounded-md border p-4">
+          {active.human_reviewed_at ? (
+            <div className="border-line bg-bg-soft space-y-2 rounded-md border p-4">
               <div className="flex items-center gap-2">
-                <Badge variant="ok">AI graded</Badge>
-                <span className="text-accent font-mono text-lg font-semibold">{active.ai_score}</span>
-                <span className="text-muted text-xs">
-                  · {active.ai_graded_at ? relTime(active.ai_graded_at) : ""}
-                </span>
+                <Badge variant="ok">Published</Badge>
+                <span className="text-accent font-mono text-lg font-semibold">{active.score}</span>
               </div>
               {active.ai_strengths.length > 0 && (
                 <div>
-                  <p className="text-muted mb-1 text-xs uppercase tracking-wider">Strengths</p>
+                  <p className="text-muted text-xs uppercase">Strengths</p>
                   <ul className="text-ink/85 list-disc pl-5 text-sm">
                     {active.ai_strengths.map((s, i) => (<li key={i}>{s}</li>))}
                   </ul>
@@ -148,48 +94,24 @@ export function ReviewQueueClient({
               )}
               {active.ai_weaknesses.length > 0 && (
                 <div>
-                  <p className="text-muted mb-1 text-xs uppercase tracking-wider">Improvement areas</p>
+                  <p className="text-muted text-xs uppercase">Improvement areas</p>
                   <ul className="text-ink/85 list-disc pl-5 text-sm">
                     {active.ai_weaknesses.map((s, i) => (<li key={i}>{s}</li>))}
                   </ul>
                 </div>
               )}
             </div>
-          )}
-
-          {canGrade ? (
-            <div className="space-y-3">
-              <p className="text-muted text-xs">
-                AI has already graded this. Override only if needed; otherwise approve as-is.
-              </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  placeholder="Score 0–100"
-                  value={score}
-                  onChange={(e) => setScore(e.target.value)}
-                  className="max-w-[140px]"
-                />
-                <Button variant="outline" onClick={approveAsIs} disabled={pending}>
-                  Approve AI grade
-                </Button>
-                <Button onClick={submit} disabled={pending}>
-                  {pending ? "Saving…" : "Save override"}
-                </Button>
-              </div>
-              <textarea
-                rows={6}
-                placeholder="Feedback (defaults to AI's draft — edit as needed)"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="border-line bg-input-bg text-ink placeholder:text-muted w-full rounded-md border p-3 text-sm"
-              />
-            </div>
+          ) : active.ai_graded ? (
+            <Card>
+              <CardSub>
+                AI draft is ready (score {active.ai_score}). Awaiting trainer review before publishing to the student.
+              </CardSub>
+            </Card>
           ) : (
             <Card>
-              <CardSub>Read-only view.</CardSub>
+              <CardSub>
+                Not yet graded. Trainer/admin will run AI batch or grade manually.
+              </CardSub>
             </Card>
           )}
         </Card>

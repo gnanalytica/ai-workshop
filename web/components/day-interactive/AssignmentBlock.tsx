@@ -13,7 +13,9 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
   const [body, setBody] = useState(assignment.submission?.body ?? "");
   const [pending, start] = useTransition();
   const status = assignment.submission?.status ?? "draft";
-  const locked = status === "graded" || status === "returned";
+  const submitted = status === "submitted";
+  const published = !!assignment.submission?.published;
+  const locked = published || submitted;
 
   function go(action: "draft" | "submit") {
     start(async () => {
@@ -43,11 +45,20 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
         <p className="text-ink/85 text-sm whitespace-pre-line">{assignment.body_md}</p>
       )}
 
-      {locked ? (
+      {locked && !published ? (
+        <Card className="bg-bg-soft">
+          <CardSub className="text-accent font-mono text-xs uppercase">Submitted</CardSub>
+          <p className="text-ink/85 mt-2 text-sm">
+            Your submission is in. Feedback will appear once a trainer has reviewed it.
+          </p>
+          {assignment.submission?.body && (
+            <p className="text-muted mt-3 text-xs whitespace-pre-line">{assignment.submission.body.slice(0, 240)}{(assignment.submission.body.length ?? 0) > 240 ? "…" : ""}</p>
+          )}
+        </Card>
+      ) : locked ? (
         <Card className="bg-bg-soft space-y-3">
           <div className="flex items-center gap-2">
             <CardSub className="text-accent font-mono text-xs uppercase">Feedback</CardSub>
-            {assignment.submission?.ai_graded && <Badge>AI graded</Badge>}
           </div>
           <p className="text-ink text-sm">
             Score: <span className="text-accent font-mono font-semibold">{assignment.submission?.score ?? "—"}</span>
