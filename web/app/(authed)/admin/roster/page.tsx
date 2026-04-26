@@ -4,17 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { getAdminCohort } from "@/lib/queries/admin-context";
 import { listRoster } from "@/lib/queries/admin";
 import { RosterTable } from "./RosterTable";
-import { BuddyGenerator } from "./BuddyGenerator";
-import { checkCapability } from "@/lib/auth/requireCapability";
 
 export default async function RosterPage() {
   await requireCapability("roster.read");
   const cohort = await getAdminCohort();
   if (!cohort) return <Card><CardTitle>No cohort</CardTitle></Card>;
-  const [rows, canWrite] = await Promise.all([
-    listRoster(cohort.id),
-    checkCapability("roster.write", cohort.id),
-  ]);
+  const rows = await listRoster(cohort.id);
 
   return (
     <div className="space-y-6">
@@ -33,7 +28,6 @@ export default async function RosterPage() {
           <Badge>Waitlist</Badge>
         </div>
       </header>
-      {canWrite && <BuddyGenerator cohortId={cohort.id} />}
       <RosterTable rows={rows} cohortId={cohort.id} />
     </div>
   );

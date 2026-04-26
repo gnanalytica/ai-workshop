@@ -3,12 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getMyPod } from "@/lib/queries/pod";
-import { getMyBuddies } from "@/lib/queries/buddies";
 
 export default async function MyPodPage() {
   const cohort = await getMyCurrentCohort();
   if (!cohort) return <Card><CardTitle>No active cohort</CardTitle></Card>;
-  const [pod, buddies] = await Promise.all([getMyPod(cohort.id), getMyBuddies(cohort.id)]);
+  const pod = await getMyPod(cohort.id);
   if (!pod) {
     return (
       <div className="space-y-4">
@@ -56,25 +55,6 @@ export default async function MyPodPage() {
           ))}
         </div>
       </Card>
-      {buddies.length > 0 && (
-        <Card>
-          <CardTitle>Accountability buddies</CardTitle>
-          <CardSub className="mt-1">Check in with your buddy each week.</CardSub>
-          <div className="mt-4 space-y-3">
-            {buddies.map((b) => (
-              <div key={b.id} className="flex items-center justify-between gap-3">
-                <StudentRow
-                  fullName={b.partner_name}
-                  email={b.partner_email}
-                  avatarUrl={b.partner_avatar_url}
-                  hint={`Week ${b.week_number}`}
-                />
-                <Badge>Week {b.week_number}</Badge>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
     </div>
   );
 }
