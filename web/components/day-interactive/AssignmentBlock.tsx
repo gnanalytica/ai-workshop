@@ -44,16 +44,37 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
       )}
 
       {locked ? (
-        <Card className="bg-bg-soft">
-          <CardSub className="text-accent font-mono text-xs uppercase">Feedback</CardSub>
-          <p className="text-ink mt-1 text-sm">
-            Score: {assignment.submission?.score ?? "—"} ·{" "}
-            {assignment.submission?.updated_at && relTime(assignment.submission.updated_at)}
+        <Card className="bg-bg-soft space-y-3">
+          <div className="flex items-center gap-2">
+            <CardSub className="text-accent font-mono text-xs uppercase">Feedback</CardSub>
+            {assignment.submission?.ai_graded && <Badge>AI graded</Badge>}
+          </div>
+          <p className="text-ink text-sm">
+            Score: <span className="text-accent font-mono font-semibold">{assignment.submission?.score ?? "—"}</span>
+            {assignment.submission?.updated_at && (
+              <span className="text-muted ml-2 text-xs">· {relTime(assignment.submission.updated_at)}</span>
+            )}
           </p>
           {assignment.submission?.feedback_md && (
-            <p className="text-ink/85 mt-2 text-sm whitespace-pre-line">
+            <p className="text-ink/85 text-sm whitespace-pre-line">
               {assignment.submission.feedback_md}
             </p>
+          )}
+          {(assignment.submission?.ai_strengths.length ?? 0) > 0 && (
+            <div>
+              <p className="text-muted mb-1 text-xs uppercase tracking-wider">Strengths</p>
+              <ul className="text-ink/85 list-disc pl-5 text-sm">
+                {assignment.submission?.ai_strengths.map((s, i) => (<li key={i}>{s}</li>))}
+              </ul>
+            </div>
+          )}
+          {(assignment.submission?.ai_weaknesses.length ?? 0) > 0 && (
+            <div>
+              <p className="text-muted mb-1 text-xs uppercase tracking-wider">Improvement areas</p>
+              <ul className="text-ink/85 list-disc pl-5 text-sm">
+                {assignment.submission?.ai_weaknesses.map((s, i) => (<li key={i}>{s}</li>))}
+              </ul>
+            </div>
           )}
         </Card>
       ) : (

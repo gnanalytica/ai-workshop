@@ -13,6 +13,9 @@ export interface DayAssignment {
     status: "draft" | "submitted" | "graded" | "returned";
     score: number | null;
     feedback_md: string | null;
+    ai_graded: boolean;
+    ai_strengths: string[];
+    ai_weaknesses: string[];
     updated_at: string;
   } | null;
 }
@@ -64,7 +67,7 @@ export const getDayInteractive = cache(
       sb
         .from("assignments")
         .select(
-          "id, title, body_md, kind, due_at, submissions(id, body, status, score, feedback_md, updated_at, user_id)",
+          "id, title, body_md, kind, due_at, submissions(id, body, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, updated_at, user_id)",
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
@@ -106,7 +109,9 @@ export const getDayInteractive = cache(
         id: string; title: string; body_md: string | null; kind: DayAssignment["kind"]; due_at: string | null;
         submissions: Array<{
           id: string; body: string | null; status: DayAssignment["submission"] extends { status: infer S } ? S : never;
-          score: number | null; feedback_md: string | null; updated_at: string; user_id: string;
+          score: number | null; feedback_md: string | null;
+          ai_graded: boolean | null; ai_strengths: string[] | null; ai_weaknesses: string[] | null;
+          updated_at: string; user_id: string;
         }>;
       };
       const mine = a.submissions?.find((s) => s.user_id === uid) ?? null;
@@ -123,6 +128,9 @@ export const getDayInteractive = cache(
               status: mine.status,
               score: mine.score,
               feedback_md: mine.feedback_md,
+              ai_graded: mine.ai_graded ?? false,
+              ai_strengths: mine.ai_strengths ?? [],
+              ai_weaknesses: mine.ai_weaknesses ?? [],
               updated_at: mine.updated_at,
             }
           : null,
