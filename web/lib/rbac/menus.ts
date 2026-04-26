@@ -12,7 +12,7 @@ export type NavGroup = "student" | "faculty" | "admin" | "system";
 
 export const NAV: readonly NavItem[] = [
   // ----- Student -----
-  { label: "Dashboard",        href: "/dashboard",     cap: null,             group: "student" },
+  { label: "Home",             href: "/learn",         cap: null,             group: "student" },
   { label: "Today's Lesson",   href: "/day/today",     cap: "content.read",   group: "student" },
   { label: "My Pod",           href: "/pod",           cap: null,             group: "student" },
   { label: "Classmates",       href: "/people",        cap: null,             group: "student" },

@@ -66,26 +66,15 @@ export function SignUpForm({ email }: { email: string }) {
       )}
 
       {role === "faculty" && (
-        <>
-          <Field label="Cohort invite code" hint="The cohort you'll teach in.">
-            <input
-              name="cohort_code"
-              required
-              placeholder="e.g. JAN26-XYZ8"
-              autoCapitalize="characters"
-              className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
-            />
-          </Field>
-          <Field label="Faculty invite code" hint="Sets your support / executive role.">
-            <input
-              name="faculty_code"
-              required
-              placeholder="e.g. FAC-A1B2"
-              autoCapitalize="characters"
-              className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
-            />
-          </Field>
-        </>
+        <Field label="Faculty invite code" hint="Encodes your cohort and support / executive role.">
+          <input
+            name="faculty_code"
+            required
+            placeholder="e.g. FAC-A1B2"
+            autoCapitalize="characters"
+            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
+          />
+        </Field>
       )}
 
       {role === "staff" && (

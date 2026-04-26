@@ -96,8 +96,8 @@ const signUpSchema = z
     if (v.role === "student" && !v.cohort_code) {
       ctx.addIssue({ code: "custom", path: ["cohort_code"], message: "Cohort code required" });
     }
-    if (v.role === "faculty" && (!v.cohort_code || !v.faculty_code)) {
-      ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Both cohort and faculty codes required" });
+    if (v.role === "faculty" && !v.faculty_code) {
+      ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
     }
     if (v.role === "staff" && !v.staff_code) {
       ctx.addIssue({ code: "custom", path: ["staff_code"], message: "Staff code required" });
