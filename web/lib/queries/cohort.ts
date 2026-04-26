@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { workingDayNumber } from "@/lib/calendar";
 
 export interface ActiveCohort {
   id: string;
@@ -68,11 +69,10 @@ export const getCohortDay = cache(
   },
 );
 
-/** Today's day_number relative to cohort start, clamped to [1, 30]. */
+/**
+ * Today's working day_number relative to cohort start (Mon–Fri only),
+ * clamped to [1, 30]. On weekends, returns the most recent weekday's number.
+ */
 export function todayDayNumber(cohort: ActiveCohort, today = new Date()): number {
-  const start = new Date(cohort.starts_on);
-  const diff = Math.floor(
-    (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  return Math.max(1, Math.min(30, diff + 1));
+  return Math.min(30, workingDayNumber(cohort.starts_on, today));
 }

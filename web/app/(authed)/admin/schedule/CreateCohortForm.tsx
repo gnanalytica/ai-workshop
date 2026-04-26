@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createCohort } from "@/lib/actions/schedule";
+import { addWorkingDays, isWeekdayISO } from "@/lib/calendar";
+
+const WORKSHOP_DAYS = 30;
 
 export function CreateCohortForm() {
   const router = useRouter();
@@ -10,9 +13,14 @@ export function CreateCohortForm() {
   const [slug, setSlug] = useState("");
   const [name, setName] = useState("");
   const [startsOn, setStartsOn] = useState("");
-  const [endsOn, setEndsOn] = useState("");
   const [status, setStatus] = useState<"draft" | "live" | "archived">("draft");
   const [err, setErr] = useState<string | null>(null);
+
+  const preview = useMemo(() => {
+    if (!startsOn || !/^\d{4}-\d{2}-\d{2}$/.test(startsOn)) return null;
+    if (!isWeekdayISO(startsOn)) return { invalid: true } as const;
+    return { invalid: false, ends_on: addWorkingDays(startsOn, WORKSHOP_DAYS) } as const;
+  }, [startsOn]);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,7 +30,6 @@ export function CreateCohortForm() {
         slug: slug.toLowerCase(),
         name,
         starts_on: startsOn,
-        ends_on: endsOn,
         status,
       });
       if (!out.ok) {
@@ -32,7 +39,6 @@ export function CreateCohortForm() {
       setSlug("");
       setName("");
       setStartsOn("");
-      setEndsOn("");
       setStatus("draft");
       router.refresh();
     });
@@ -58,21 +64,21 @@ export function CreateCohortForm() {
           className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
         />
       </Field>
-      <Field label="Starts on">
+      <Field
+        label="Start date"
+        hint={
+          preview?.invalid
+            ? "⚠ Pick a weekday (Mon–Fri). Workshop runs Mon–Fri."
+            : preview
+            ? `30 working days → ends on ${preview.ends_on}`
+            : "Workshop runs 30 working days, Mon–Fri (weekends skipped)."
+        }
+      >
         <input
           required
           type="date"
           value={startsOn}
           onChange={(e) => setStartsOn(e.target.value)}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
-        />
-      </Field>
-      <Field label="Ends on">
-        <input
-          required
-          type="date"
-          value={endsOn}
-          onChange={(e) => setEndsOn(e.target.value)}
           className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
         />
       </Field>
@@ -90,7 +96,7 @@ export function CreateCohortForm() {
       <div className="md:col-span-2">
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || !!preview?.invalid}
           className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create cohort"}

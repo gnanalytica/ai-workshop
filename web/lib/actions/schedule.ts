@@ -5,24 +5,24 @@ import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { addWorkingDays, isWeekdayISO } from "@/lib/calendar";
 
-const createCohortSchema = z
-  .object({
-    slug: z
-      .string()
-      .trim()
-      .min(3)
-      .max(60)
-      .regex(/^[a-z0-9-]+$/, "Lowercase letters, digits, hyphens only"),
-    name: z.string().trim().min(3).max(120),
-    starts_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD"),
-    ends_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD"),
-    status: z.enum(["draft", "live", "archived"]).default("draft"),
-  })
-  .refine((v) => v.ends_on >= v.starts_on, {
-    path: ["ends_on"],
-    message: "End date must be on or after start",
-  });
+const WORKSHOP_DAYS = 30;
+
+const createCohortSchema = z.object({
+  slug: z
+    .string()
+    .trim()
+    .min(3)
+    .max(60)
+    .regex(/^[a-z0-9-]+$/, "Lowercase letters, digits, hyphens only"),
+  name: z.string().trim().min(3).max(120),
+  starts_on: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD")
+    .refine(isWeekdayISO, { message: "Start date must be a weekday (Mon–Fri)" }),
+  status: z.enum(["draft", "live", "archived"]).default("draft"),
+});
 
 export async function createCohort(input: z.infer<typeof createCohortSchema>) {
   const parsed = createCohortSchema.safeParse(input);
@@ -31,11 +31,13 @@ export async function createCohort(input: z.infer<typeof createCohortSchema>) {
   }
   await requireCapability("schedule.write");
 
+  const ends_on = addWorkingDays(parsed.data.starts_on, WORKSHOP_DAYS);
+
   const sb = await getSupabaseServer();
   const { data, error } = await sb
     .from("cohorts")
-    .insert(parsed.data)
-    .select("id, slug, name, status")
+    .insert({ ...parsed.data, ends_on })
+    .select("id, slug, name, status, starts_on, ends_on")
     .single();
   if (error) return actionFail(error.message);
 
