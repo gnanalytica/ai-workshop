@@ -192,15 +192,18 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
     if (error) return { ok: false, message: error.message };
   }
 
-  // Send a magic link so the user lands authenticated.
-  const sb = await getSupabaseServer();
-  const { error: otpErr } = await sb.auth.signInWithOtp({
+  // Generate a one-time magic link server-side and redirect the browser
+  // straight to it — no email round-trip. The link hits /auth/callback,
+  // which exchanges it for a session cookie and lands on /dashboard.
+  const { data: linkData, error: linkErr } = await svc.auth.admin.generateLink({
+    type: "magiclink",
     email,
-    options: { emailRedirectTo: `${siteUrl()}/auth/callback?next=/dashboard` },
+    options: { redirectTo: `${siteUrl()}/auth/callback?next=/dashboard` },
   });
-  if (otpErr) return { ok: false, message: otpErr.message };
-
-  return { ok: true, message: "Account created. Check your email for the sign-in link." };
+  if (linkErr || !linkData.properties?.action_link) {
+    return { ok: false, message: linkErr?.message ?? "Could not generate sign-in link." };
+  }
+  redirect(linkData.properties.action_link);
 }
 
 export async function signOut() {
