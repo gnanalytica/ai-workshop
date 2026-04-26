@@ -22,9 +22,7 @@ export default async function FacultyReviewPage(props: {
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Review queue</h1>
         <CardSub className="mt-1 flex items-center gap-2">
           {subs.length} submissions awaiting review
-          <Badge variant={f.college_role === "executive" ? "default" : "accent"}>
-            {f.college_role === "executive" ? "Read-only" : "Pod-scoped"}
-          </Badge>
+          <Badge variant="accent">Pod-scoped</Badge>
         </CardSub>
       </header>
 
@@ -34,7 +32,7 @@ export default async function FacultyReviewPage(props: {
         <ReviewQueueClient
           submissions={subs}
           initialId={id ?? null}
-          canGrade={f.college_role !== "executive"}
+          canGrade={true}
         />
       )}
     </div>

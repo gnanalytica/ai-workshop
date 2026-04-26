@@ -71,7 +71,7 @@ export function FacultyOps({
             <option value="">Add faculty…</option>
             {addable.map((c) => (
               <option key={c.user_id} value={c.user_id}>
-                {c.full_name ?? c.user_id} ({c.college_role})
+                {c.full_name ?? c.user_id}
               </option>
             ))}
           </select>

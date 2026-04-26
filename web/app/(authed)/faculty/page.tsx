@@ -33,7 +33,7 @@ export default async function FacultyTodayPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
-            {f.cohort.name} · {f.college_role === "executive" ? "Executive" : "Support"} faculty
+            {f.cohort.name} · Faculty
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Today&apos;s queue</h1>
           {todayDay && (

@@ -12,7 +12,6 @@ export function CreateInviteForm({
 }) {
   const [kind, setKind] = useState<Kind>("student");
   const [cohortId, setCohortId] = useState<string>(cohorts[0]?.id ?? "");
-  const [collegeRole, setCollegeRole] = useState<"support" | "executive">("support");
   const [staffRole, setStaffRole] = useState<"admin" | "trainer" | "tech_support">("admin");
   const [maxUses, setMaxUses] = useState<number>(1);
   const [expiresAt, setExpiresAt] = useState<string>("");
@@ -27,7 +26,6 @@ export function CreateInviteForm({
       const out = await createInvite({
         kind,
         cohort_id: kind === "staff" ? null : cohortId || null,
-        college_role: kind === "faculty" ? collegeRole : null,
         staff_role: kind === "staff" ? staffRole : null,
         max_uses: maxUses,
         expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
@@ -69,19 +67,6 @@ export function CreateInviteForm({
                 {c.name} ({c.status})
               </option>
             ))}
-          </select>
-        </Field>
-      )}
-
-      {kind === "faculty" && (
-        <Field label="Faculty role">
-          <select
-            value={collegeRole}
-            onChange={(e) => setCollegeRole(e.target.value as "support" | "executive")}
-            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="support">Support faculty</option>
-            <option value="executive">Executive faculty</option>
           </select>
         </Field>
       )}

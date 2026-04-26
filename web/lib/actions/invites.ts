@@ -20,12 +20,8 @@ const createSchema = baseSchema.superRefine((v, ctx) => {
   if (v.kind === "student" && !v.cohort_id) {
     ctx.addIssue({ code: "custom", path: ["cohort_id"], message: "Cohort required" });
   }
-  if (v.kind === "faculty" && (!v.cohort_id || !v.college_role)) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["college_role"],
-      message: "Cohort and faculty role required",
-    });
+  if (v.kind === "faculty" && !v.cohort_id) {
+    ctx.addIssue({ code: "custom", path: ["cohort_id"], message: "Cohort required" });
   }
   if (v.kind === "staff" && !v.staff_role) {
     ctx.addIssue({ code: "custom", path: ["staff_role"], message: "Staff role required" });
@@ -59,7 +55,9 @@ export async function createInvite(input: z.infer<typeof baseSchema>) {
       code,
       kind: v.kind,
       cohort_id: v.kind === "staff" ? null : v.cohort_id ?? null,
-      college_role: v.kind === "faculty" ? v.college_role ?? null : null,
+      // Faculty role distinction (support vs executive) collapsed in
+      // 0019_unify_faculty_role; we always store 'support' for new invites.
+      college_role: v.kind === "faculty" ? "support" : null,
       staff_role: v.kind === "staff" ? v.staff_role ?? null : null,
       max_uses: v.max_uses,
       expires_at: v.expires_at || null,

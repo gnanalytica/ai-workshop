@@ -53,8 +53,7 @@ export default async function AdminInvitesPage() {
                       <td className="py-2 pr-4 capitalize">{i.kind}</td>
                       <td className="py-2 pr-4">
                         {i.kind === "student" && (i.cohort_name ?? "—")}
-                        {i.kind === "faculty" &&
-                          `${i.cohort_name ?? "—"} · ${i.college_role ?? "—"}`}
+                        {i.kind === "faculty" && (i.cohort_name ?? "—")}
                         {i.kind === "staff" && (i.staff_role ?? "—")}
                       </td>
                       <td className="py-2 pr-4">
