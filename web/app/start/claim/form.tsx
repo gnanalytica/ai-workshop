@@ -7,13 +7,26 @@ import { claimInvite, type SignInState } from "@/lib/auth/actions";
 type Role = "student" | "faculty" | "staff";
 const initial: SignInState = {};
 
-export function ClaimForm() {
+export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
   const [state, action] = useActionState(claimInvite, initial);
   const [role, setRole] = useState<Role>("student");
 
   return (
     <form action={action} className="flex flex-col gap-4">
       <input type="hidden" name="role" value={role} />
+
+      <Field label="Full name">
+        <input
+          name="full_name"
+          type="text"
+          required
+          maxLength={120}
+          defaultValue={defaultName}
+          placeholder="Ada Lovelace"
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm"
+        />
+      </Field>
+
       <fieldset className="flex flex-col gap-2">
         <legend className="text-muted text-xs font-medium tracking-wide uppercase">
           I&apos;m joining as

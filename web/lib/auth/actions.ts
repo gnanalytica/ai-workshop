@@ -241,6 +241,7 @@ export async function signInWithGoogle(formData: FormData) {
  */
 const claimSchema = z
   .object({
+    full_name: z.string().trim().min(1, "Name is required").max(120),
     role: z.enum(["student", "faculty", "staff"]),
     cohort_code: z.string().trim().optional(),
     faculty_code: z.string().trim().optional(),
@@ -267,6 +268,7 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
   const userId = userData.user.id;
 
   const parsed = claimSchema.safeParse({
+    full_name: formData.get("full_name"),
     role: formData.get("role"),
     cohort_code: formData.get("cohort_code") || undefined,
     faculty_code: formData.get("faculty_code") || undefined,
@@ -277,6 +279,14 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
   }
   const v = parsed.data;
   const svc = getSupabaseService();
+
+  // Persist confirmed name on the profile (auto-created by handle_new_auth_user
+  // trigger; we always overwrite with what the user typed here).
+  const { error: nameErr } = await svc
+    .from("profiles")
+    .update({ full_name: v.full_name })
+    .eq("id", userId);
+  if (nameErr) return { ok: false, message: nameErr.message };
 
   // Validate codes first to avoid half-applied state.
   const codes = [v.cohort_code, v.faculty_code, v.staff_code].filter(Boolean) as string[];
