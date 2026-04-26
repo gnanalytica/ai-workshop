@@ -65,7 +65,6 @@ export const NAV: readonly NavItem[] = [
   { label: "Teams",       href: "/admin/teams",      cap: "roster.read",            group: "admin", section: "Cohort", icon: "users" },
   { label: "Pods",        href: "/pods",             cap: "pods.write",             group: "admin", section: "Cohort", icon: "layers" },
   { label: "Faculty",     href: "/admin/faculty",    cap: "faculty.write",          group: "admin", section: "Cohort", icon: "user-check" },
-  { label: "Attendance",  href: "/admin/attendance", cap: "attendance.mark:cohort", group: "admin", section: "Cohort", icon: "check-square" },
 
   // ----- Admin · Engagement -----
   { label: "Polls",       href: "/admin/polls",      cap: "content.write",          group: "admin", section: "Engagement", icon: "vote" },

@@ -1,9 +1,8 @@
 /**
  * Canonical capability list. The TypeScript constants here MUST match the
- * strings produced by the Postgres `auth_caps()` function in
- * `supabase/migrations-v2/0002_helpers.sql`. The two lists are the single
- * source of truth — UI hides actions by capability, RLS enforces them
- * server-side.
+ * strings produced by the Postgres `auth_caps()` function. The two lists are
+ * the single source of truth — UI hides actions by capability, RLS enforces
+ * them server-side.
  *
  * Adding a capability:
  *  1. Add to CAPABILITIES below.
@@ -22,16 +21,13 @@ export const CAPABILITIES = [
   "grading.read",
   "grading.write:cohort",
   "grading.write:pod",
-  "attendance.mark:cohort",
-  "attendance.mark:pod",
   "attendance.self",
   "analytics.read:cohort",
   "analytics.read:program",
-  "announcements.read:cohort",
-  "announcements.write:cohort",
   "moderation.write",
   "support.triage",
   "support.tech_only",
+  "support.escalate",
   "orgs.write",
   "self.read",
   "self.write",
@@ -46,8 +42,7 @@ export const ROLES = [
   "admin",
   "trainer",
   "tech_support",
-  "support_faculty",
-  "executive_faculty",
+  "faculty",
   "student",
 ] as const;
 export type Role = (typeof ROLES)[number];
@@ -69,13 +64,12 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "faculty.write",
     "grading.read",
     "grading.write:cohort",
-    "attendance.mark:cohort",
     "analytics.read:cohort",
     "analytics.read:program",
-    "announcements.write:cohort",
     "moderation.write",
     "support.triage",
     "support.tech_only",
+    "support.escalate",
     "orgs.write",
   ],
   trainer: [
@@ -88,10 +82,9 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "faculty.write",
     "grading.read",
     "grading.write:cohort",
-    "attendance.mark:cohort",
     "analytics.read:cohort",
-    "announcements.write:cohort",
     "support.triage",
+    "support.escalate",
   ],
   tech_support: [
     "content.read",
@@ -99,28 +92,19 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "roster.read",
     "support.triage",
     "support.tech_only",
+    "support.escalate",
     "moderation.write",
   ],
-  support_faculty: [
+  faculty: [
     "content.read",
     "schedule.read",
     "roster.read",
     "pods.write",
     "grading.read",
     "grading.write:pod",
-    "attendance.mark:pod",
-    "announcements.read:cohort",
     "support.triage",
-  ],
-  executive_faculty: [
-    "content.read",
-    "schedule.read",
-    "roster.read",
-    "pods.write",
-    "grading.read",
-    "analytics.read:cohort",
-    "announcements.write:cohort",
-    "announcements.read:cohort",
+    "support.escalate",
+    "moderation.write",
   ],
   student: [
     "content.read",

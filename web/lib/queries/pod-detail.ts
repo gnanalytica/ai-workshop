@@ -6,13 +6,13 @@ export interface PodDetail {
   cohort_id: string;
   name: string;
   mentor_note: string | null;
-  faculty: { user_id: string; full_name: string | null; is_primary: boolean }[];
+  faculty: { user_id: string; full_name: string | null }[];
   members: { user_id: string; full_name: string | null; email: string }[];
   events: { id: string; kind: string; payload: Record<string, unknown>; at: string; actor_name: string | null }[];
 }
 
 export interface PodCandidates {
-  faculty: { user_id: string; full_name: string | null; college_role: "support" | "executive" }[];
+  faculty: { user_id: string; full_name: string | null }[];
   unassignedStudents: { user_id: string; full_name: string | null; email: string }[];
 }
 
@@ -22,7 +22,7 @@ export const getPodCandidates = cache(
     const [facRes, regRes, assignedRes] = await Promise.all([
       sb
         .from("cohort_faculty")
-        .select("user_id, college_role, profiles!inner(full_name)")
+        .select("user_id, profiles!inner(full_name)")
         .eq("cohort_id", cohortId),
       sb
         .from("registrations")
@@ -43,12 +43,10 @@ export const getPodCandidates = cache(
 
     const faculty = ((facRes.data ?? []) as unknown as Array<{
       user_id: string;
-      college_role: "support" | "executive";
       profiles: { full_name: string | null };
     }>).map((f) => ({
       user_id: f.user_id,
       full_name: f.profiles.full_name,
-      college_role: f.college_role,
     }));
 
     const unassignedStudents = ((regRes.data ?? []) as unknown as Array<{
@@ -72,7 +70,7 @@ export const getPodDetail = cache(async (podId: string): Promise<PodDetail | nul
   const { data, error } = await sb
     .from("pods")
     .select(
-      "id, cohort_id, name, mentor_note, pod_faculty(faculty_user_id, is_primary, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name, email))",
+      "id, cohort_id, name, mentor_note, pod_faculty(faculty_user_id, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name, email))",
     )
     .eq("id", podId)
     .maybeSingle();
@@ -80,7 +78,7 @@ export const getPodDetail = cache(async (podId: string): Promise<PodDetail | nul
 
   const d = data as unknown as {
     id: string; cohort_id: string; name: string; mentor_note: string | null;
-    pod_faculty: Array<{ faculty_user_id: string; is_primary: boolean; profiles: { full_name: string | null } | null }>;
+    pod_faculty: Array<{ faculty_user_id: string; profiles: { full_name: string | null } | null }>;
     pod_members: Array<{ student_user_id: string; profiles: { full_name: string | null; email: string } | null }>;
   };
 
@@ -99,7 +97,6 @@ export const getPodDetail = cache(async (podId: string): Promise<PodDetail | nul
     faculty: d.pod_faculty.map((f) => ({
       user_id: f.faculty_user_id,
       full_name: f.profiles?.full_name ?? null,
-      is_primary: f.is_primary,
     })),
     members: d.pod_members.map((m) => ({
       user_id: m.student_user_id,

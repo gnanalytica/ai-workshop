@@ -23,10 +23,10 @@ export const getFacultyPods = cache(async (cohortId: string): Promise<FacultyPod
   const sb = await getSupabaseServer();
   const { data: pods } = await sb
     .from("pod_faculty")
-    .select("is_primary, pods!inner(id, name, cohort_id, mentor_note)")
+    .select("pods!inner(id, name, cohort_id, mentor_note)")
     .eq("pods.cohort_id", cohortId);
 
-  type PodRel = { is_primary: boolean; pods: { id: string; name: string; cohort_id: string; mentor_note: string | null } };
+  type PodRel = { pods: { id: string; name: string; cohort_id: string; mentor_note: string | null } };
   const list = (pods ?? []) as unknown as PodRel[];
 
   const out: FacultyPod[] = [];

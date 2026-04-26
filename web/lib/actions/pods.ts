@@ -11,8 +11,6 @@ const eventKind = z.enum([
   "member_removed",
   "faculty_added",
   "faculty_removed",
-  "primary_changed",
-  "handoff",
 ]);
 
 const evSchema = z.object({

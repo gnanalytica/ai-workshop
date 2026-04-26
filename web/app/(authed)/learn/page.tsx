@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DayCard } from "@/components/day-card/DayCard";
 import { getMyCurrentCohort, listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
-import {
-  getDashboardKpis,
-  listRecentAnnouncements,
-} from "@/lib/queries/dashboard";
-import { fmtDate, relTime } from "@/lib/format";
+import { getDashboardKpis } from "@/lib/queries/dashboard";
+import { fmtDate } from "@/lib/format";
 
 export default async function DashboardPage() {
   const cohort = await getMyCurrentCohort();
@@ -26,10 +22,9 @@ export default async function DashboardPage() {
   }
 
   const today = todayDayNumber(cohort);
-  const [kpis, days, announcements] = await Promise.all([
+  const [kpis, days] = await Promise.all([
     getDashboardKpis(cohort.id),
     listCohortDays(cohort.id),
-    listRecentAnnouncements(cohort.id),
   ]);
 
   const todayDay = days.find((d) => d.day_number === today);
@@ -67,7 +62,6 @@ export default async function DashboardPage() {
           value={kpis.pendingAssignments}
           tone={kpis.pendingAssignments > 0 ? "warn" : "default"}
         />
-        <StatCard label="Announcements" value={kpis.unreadAnnouncements} />
       </KpiGrid>
 
       {todayDay && (
@@ -103,29 +97,6 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Announcements</h2>
-        {announcements.length === 0 ? (
-          <Card>
-            <CardSub>No announcements yet.</CardSub>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {announcements.map((a) => (
-              <Card key={a.id}>
-                <div className="flex items-baseline justify-between">
-                  <CardTitle>{a.title}</CardTitle>
-                  <Badge>{relTime(a.created_at)}</Badge>
-                </div>
-                <p className="text-ink/90 mt-2 text-sm whitespace-pre-line">
-                  {a.body_md.slice(0, 280)}
-                  {a.body_md.length > 280 ? "…" : ""}
-                </p>
-              </Card>
-            ))}
-          </div>
-        )}
-      </section>
     </div>
   );
 }

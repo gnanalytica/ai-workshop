@@ -25,7 +25,7 @@ export interface PodRow {
   name: string;
   member_count: number;
   faculty_count: number;
-  primary_name: string | null;
+  faculty_names: string[];
 }
 
 export interface FacultyRow {
@@ -82,25 +82,24 @@ export const listPods = cache(async (cohortId: string): Promise<PodRow[]> => {
   const { data } = await sb
     .from("pods")
     .select(
-      "id, cohort_id, name, pod_members(count), pod_faculty(count, is_primary, profiles:faculty_user_id(full_name))",
+      "id, cohort_id, name, pod_members(count), pod_faculty(faculty_user_id, profiles:faculty_user_id(full_name))",
     )
     .eq("cohort_id", cohortId)
     .order("name");
   return ((data ?? []) as unknown as Array<{
     id: string; cohort_id: string; name: string;
     pod_members: Array<{ count: number }>;
-    pod_faculty: Array<{ count: number; is_primary: boolean; profiles: { full_name: string | null } | null }>;
-  }>).map((p) => {
-    const primary = p.pod_faculty.find((f) => f.is_primary);
-    return {
-      pod_id: p.id,
-      cohort_id: p.cohort_id,
-      name: p.name,
-      member_count: p.pod_members?.[0]?.count ?? 0,
-      faculty_count: p.pod_faculty?.[0]?.count ?? 0,
-      primary_name: primary?.profiles?.full_name ?? null,
-    };
-  });
+    pod_faculty: Array<{ faculty_user_id: string; profiles: { full_name: string | null } | null }>;
+  }>).map((p) => ({
+    pod_id: p.id,
+    cohort_id: p.cohort_id,
+    name: p.name,
+    member_count: p.pod_members?.[0]?.count ?? 0,
+    faculty_count: p.pod_faculty?.length ?? 0,
+    faculty_names: p.pod_faculty
+      .map((f) => f.profiles?.full_name)
+      .filter((n): n is string => !!n),
+  }));
 });
 
 export const listFaculty = cache(async (cohortId: string): Promise<FacultyRow[]> => {

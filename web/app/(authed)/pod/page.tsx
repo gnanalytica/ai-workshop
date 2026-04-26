@@ -1,5 +1,4 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getMyPod } from "@/lib/queries/pod";
@@ -21,8 +20,6 @@ export default async function MyPodPage() {
       </div>
     );
   }
-  const primary = pod.faculty.find((f) => f.is_primary);
-  const others = pod.faculty.filter((f) => !f.is_primary);
   return (
     <div className="space-y-6">
       <header>
@@ -33,18 +30,7 @@ export default async function MyPodPage() {
       <Card>
         <CardTitle>Your faculty</CardTitle>
         <div className="mt-4 space-y-3">
-          {primary && (
-            <div className="flex items-center justify-between gap-3">
-              <StudentRow
-                fullName={primary.full_name}
-                email=""
-                avatarUrl={primary.avatar_url}
-                hint="Primary mentor"
-              />
-              <Badge variant="accent">Primary</Badge>
-            </div>
-          )}
-          {others.map((f) => (
+          {pod.faculty.map((f) => (
             <StudentRow
               key={f.user_id}
               fullName={f.full_name}

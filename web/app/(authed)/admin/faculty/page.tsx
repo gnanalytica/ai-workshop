@@ -23,7 +23,7 @@ export default async function AdminFacultyPage() {
       <section>
         <div className="mb-3 flex items-center gap-2">
           <h2 className="text-lg font-semibold tracking-tight">Faculty</h2>
-          <Badge>pod-scoped grading + attendance + announcements</Badge>
+          <Badge>pod-scoped grading + moderation</Badge>
         </div>
         {faculty.length === 0 ? (
           <Card><p className="text-muted text-sm">None assigned yet.</p></Card>

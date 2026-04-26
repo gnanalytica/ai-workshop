@@ -54,7 +54,7 @@ export default async function PodsPage() {
               name={p.name}
               memberCount={p.member_count}
               facultyCount={p.faculty_count}
-              primaryFaculty={p.primary_name}
+              facultyNames={p.faculty_names}
               href={`/pods/${p.pod_id}`}
             />
           ))}

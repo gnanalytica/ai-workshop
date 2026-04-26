@@ -8,7 +8,6 @@ import { podEvent } from "@/lib/actions/pods";
 interface FacultyOpt {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
 }
 interface StudentOpt {
   user_id: string;
@@ -22,7 +21,7 @@ export function FacultyOps({
   candidates,
 }: {
   podId: string;
-  current: { user_id: string; full_name: string | null; is_primary: boolean }[];
+  current: { user_id: string; full_name: string | null }[];
   candidates: FacultyOpt[];
 }) {
   const [pending, start] = useTransition();
@@ -30,7 +29,7 @@ export function FacultyOps({
   const currentIds = new Set(current.map((c) => c.user_id));
   const addable = candidates.filter((c) => !currentIds.has(c.user_id));
 
-  function call(kind: "faculty_added" | "faculty_removed" | "primary_changed", uid: string) {
+  function call(kind: "faculty_added" | "faculty_removed", uid: string) {
     start(async () => {
       const r = await podEvent({ pod_id: podId, kind, target_user_id: uid });
       if (r.ok) toast.success("Updated");
@@ -48,14 +47,7 @@ export function FacultyOps({
     <div className="space-y-2">
       {current.map((f) => (
         <div key={f.user_id} className="flex items-center gap-2">
-          <span className="flex-1 text-sm">
-            {f.full_name ?? "—"} {f.is_primary && <span className="text-accent">· primary</span>}
-          </span>
-          {!f.is_primary && (
-            <Button size="sm" variant="outline" onClick={() => call("primary_changed", f.user_id)} disabled={pending}>
-              Make primary
-            </Button>
-          )}
+          <span className="flex-1 text-sm">{f.full_name ?? "—"}</span>
           <Button size="sm" variant="danger" onClick={() => call("faculty_removed", f.user_id)} disabled={pending}>
             Remove
           </Button>

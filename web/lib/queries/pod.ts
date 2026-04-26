@@ -4,7 +4,6 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 export interface MyPodFaculty {
   user_id: string;
   full_name: string | null;
-  is_primary: boolean;
   avatar_url: string | null;
 }
 
