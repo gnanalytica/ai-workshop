@@ -27,21 +27,15 @@ export interface PendingSubmission {
   attachments: { name: string; url: string }[];
 }
 
-/** Faculty's primary cohort: first cohort_faculty row. */
+/** Faculty's *current* cohort — honors the currentCohort cookie set by the
+ *  topbar switcher, falling back to the most recent assignment. */
 export const getFacultyCohort = cache(async () => {
-  const sb = await getSupabaseServer();
-  const { data } = await sb
-    .from("cohort_faculty")
-    .select("cohort_id, college_role, cohorts(id, slug, name, status, starts_on, ends_on)")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (!data) return null;
+  const { getCurrentFacultyCohort } = await import("@/lib/faculty/currentCohort");
+  const c = await getCurrentFacultyCohort();
+  if (!c) return null;
   return {
-    cohort: (data as unknown as {
-      cohorts: { id: string; slug: string; name: string; status: "draft"|"live"|"archived"; starts_on: string; ends_on: string };
-    }).cohorts,
-    college_role: (data as unknown as { college_role: "support" | "executive" }).college_role,
+    cohort: { id: c.id, slug: c.slug, name: c.name, status: c.status, starts_on: c.starts_on, ends_on: c.ends_on },
+    college_role: c.college_role,
   };
 });
 

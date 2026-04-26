@@ -1,0 +1,34 @@
+"use client";
+
+import { useRef } from "react";
+import { setCurrentFacultyCohort } from "@/lib/actions/faculty-cohort";
+
+export function CohortSwitcherClient({
+  cohorts,
+  currentId,
+}: {
+  cohorts: { id: string; name: string }[];
+  currentId: string;
+}) {
+  const formRef = useRef<HTMLFormElement>(null);
+  return (
+    <form ref={formRef} action={setCurrentFacultyCohort} className="flex items-center gap-2">
+      <label htmlFor="cohort_id" className="text-muted text-xs tracking-wide uppercase">
+        Cohort
+      </label>
+      <select
+        id="cohort_id"
+        name="cohort_id"
+        defaultValue={currentId}
+        onChange={() => formRef.current?.requestSubmit()}
+        className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-sm"
+      >
+        {cohorts.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
+        ))}
+      </select>
+    </form>
+  );
+}

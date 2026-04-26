@@ -1,6 +1,7 @@
 import { ThemeToggle } from "./ThemeToggle";
 import { UserMenu } from "./UserMenu";
 import { NavSearch } from "./NavSearch";
+import { CohortSwitcher } from "./CohortSwitcher";
 import type { NavItem } from "@/lib/rbac/menus";
 import type { UserProfile } from "@/lib/auth/session";
 
@@ -19,6 +20,7 @@ export function Topbar({
         <span className="text-muted text-sm">
           {cohortName ? cohortName : "Dashboard"}
         </span>
+        <CohortSwitcher />
       </div>
       <div className="flex items-center gap-3">
         <NavSearch items={navItems} />

@@ -1,31 +1,43 @@
 import { getSession } from "@/lib/auth/session";
 import { getSupabaseService } from "@/lib/supabase/service";
 
+/**
+ * Resolve the post-auth landing path. Invariants enforced in DB
+ * (see migration 0015_role_invariants):
+ *   - admin/trainer/tech_support is global; cannot also be student/faculty
+ *   - student has at most one confirmed registration
+ *   - faculty may be assigned to multiple cohorts (cookie picks current)
+ *
+ *   /admin        — has any of admin / trainer / tech_support staff_role
+ *   /faculty      — has any cohort_faculty assignment
+ *   /learn        — has a confirmed registration
+ *   /start/claim  — authenticated but no role yet
+ *   /start        — not authenticated
+ */
 const STAFF_HOMES: Record<string, string> = {
   admin: "/admin",
   trainer: "/admin",
   tech_support: "/admin",
 };
 
-/**
- * Resolve the post-auth landing path for the current user.
- *
- *   /admin        — has any of admin / trainer / tech_support staff_role
- *   /faculty      — has any cohort_faculty assignment
- *   /learn        — has any confirmed registration
- *   /start/claim  — authenticated but no role yet (just signed in via OAuth)
- *   /start        — not authenticated
- *
- * Single source of truth — every "go home" link, callback, and post-claim
- * redirect should pass through here so role-routing isn't sprinkled around.
- */
 export async function resolveHome(): Promise<string> {
   const user = await getSession();
   if (!user) return "/start";
 
   const svc = getSupabaseService();
-  const [profileRes, facRes, regRes] = await Promise.all([
-    svc.from("profiles").select("staff_roles").eq("id", user.id).maybeSingle(),
+  const { data: profile } = await svc
+    .from("profiles")
+    .select("staff_roles")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const roles = (profile?.staff_roles ?? []) as string[];
+  for (const r of roles) {
+    if (STAFF_HOMES[r]) return STAFF_HOMES[r];
+  }
+
+  // Not staff — check faculty / student in parallel.
+  const [fac, reg] = await Promise.all([
     svc.from("cohort_faculty").select("user_id").eq("user_id", user.id).limit(1).maybeSingle(),
     svc
       .from("registrations")
@@ -36,11 +48,7 @@ export async function resolveHome(): Promise<string> {
       .maybeSingle(),
   ]);
 
-  const staffRoles = (profileRes.data?.staff_roles ?? []) as string[];
-  for (const role of staffRoles) {
-    if (STAFF_HOMES[role]) return STAFF_HOMES[role];
-  }
-  if (facRes.data) return "/faculty";
-  if (regRes.data) return "/learn";
+  if (fac.data) return "/faculty";
+  if (reg.data) return "/learn";
   return "/start/claim";
 }
