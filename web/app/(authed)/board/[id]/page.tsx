@@ -6,6 +6,7 @@ import { getBoardPost } from "@/lib/queries/board-detail";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { getSession } from "@/lib/auth/session";
 import { checkCapability } from "@/lib/auth/requireCapability";
+import { listCohortRoster } from "@/lib/queries/cohort-roster-mini";
 import { ReplyForm } from "./ReplyForm";
 import { ReplyActions, PostModeration } from "./ReplyActions";
 
@@ -16,6 +17,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
   const user = await getSession();
   const canModerate = await checkCapability("moderation.write");
   const isAuthor = !!user && user.id === post.author_id;
+  const roster = await listCohortRoster(post.cohort_id);
 
   return (
     <article className="mx-auto max-w-3xl space-y-6">
@@ -80,7 +82,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
         )}
       </section>
 
-      <ReplyForm postId={post.id} />
+      <ReplyForm postId={post.id} roster={roster} />
     </article>
   );
 }

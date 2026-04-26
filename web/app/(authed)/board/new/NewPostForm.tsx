@@ -6,9 +6,11 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { MentionEditor } from "@/components/mention-editor/MentionEditor";
 import { createBoardPost } from "@/lib/actions/board";
+import type { RosterMember } from "@/lib/queries/cohort-roster-mini";
 
-export function NewPostForm({ cohortId }: { cohortId: string }) {
+export function NewPostForm({ cohortId, roster }: { cohortId: string; roster: RosterMember[] }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [tagsRaw, setTagsRaw] = useState("");
@@ -40,12 +42,13 @@ export function NewPostForm({ cohortId }: { cohortId: string }) {
   return (
     <Card className="space-y-4 p-5">
       <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <textarea
-        rows={10}
-        placeholder="Body (markdown)"
+      <MentionEditor
         value={body}
-        onChange={(e) => setBody(e.target.value)}
-        className="border-line bg-input-bg text-ink w-full rounded-md border p-3 font-mono text-sm"
+        onChange={setBody}
+        roster={roster}
+        rows={10}
+        placeholder="Body (markdown). Type @ to mention someone."
+        className="font-mono"
       />
       <Input
         placeholder="tags, comma, separated"

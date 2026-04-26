@@ -1,9 +1,12 @@
+import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
+import { Sparkline } from "@/components/sparkline/Sparkline";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
+import { getCohortTrend } from "@/lib/queries/cohort-trends";
 
 function classifyStudent(att: number, labs: number): "ok" | "at_risk" | "stuck" {
   if (att < 3 && labs < 3) return "stuck";
@@ -30,44 +33,60 @@ export default async function FacultyPodPage() {
       {pods.length === 0 ? (
         <Card><CardSub>You aren&apos;t assigned to a pod in this cohort yet.</CardSub></Card>
       ) : (
-        pods.map((p) => (
-          <section key={p.pod_id}>
-            <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-lg font-semibold tracking-tight">{p.pod_name}</h2>
-              <Badge>{p.members.length} members</Badge>
-            </div>
-            {p.shared_notes && (
-              <Card className="mb-3 bg-bg-soft">
-                <CardSub>{p.shared_notes}</CardSub>
-              </Card>
-            )}
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {p.members.map((m) => (
-                <Card key={m.user_id} className="p-4">
-                  <StudentRow
-                    fullName={m.full_name}
-                    email={m.email}
-                    avatarUrl={m.avatar_url}
-                    status={classifyStudent(m.attendance_count, m.labs_done)}
-                  />
-                  <div className="text-muted mt-3 flex gap-3 text-xs">
-                    <span>{m.attendance_count}d present</span>
-                    <span>·</span>
-                    <span>{m.labs_done} labs</span>
-                    {m.pending_submissions > 0 && (
-                      <>
-                        <span>·</span>
-                        <span className="text-amber-400">
-                          {m.pending_submissions} to review
-                        </span>
-                      </>
-                    )}
-                  </div>
+        await Promise.all(pods.map(async (p) => {
+          const memberIds = p.members.map((m) => m.user_id);
+          const trend = await getCohortTrend(f.cohort.id, memberIds);
+          return (
+            <section key={p.pod_id}>
+              <div className="mb-3 flex items-center gap-2">
+                <h2 className="text-lg font-semibold tracking-tight">{p.pod_name}</h2>
+                <Badge>{p.members.length} members</Badge>
+              </div>
+              {p.shared_notes && (
+                <Card className="mb-3 bg-bg-soft">
+                  <CardSub>{p.shared_notes}</CardSub>
                 </Card>
-              ))}
-            </div>
-          </section>
-        ))
+              )}
+              <Card className="mb-3">
+                <p className="text-muted mb-2 text-xs uppercase tracking-wider">
+                  Last 14 days · this pod
+                </p>
+                <div className="grid gap-6 sm:grid-cols-3">
+                  <Sparkline label="Labs" data={trend.labsDone} total={trend.totalLabs} />
+                  <Sparkline label="Submissions" data={trend.submissions} total={trend.totalSubmissions} />
+                  <Sparkline label="Posts" data={trend.posts} total={trend.totalPosts} />
+                </div>
+              </Card>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {p.members.map((m) => (
+                  <Link key={m.user_id} href={`/faculty/student/${m.user_id}`}>
+                    <Card className="hover:border-accent/40 p-4 transition-colors">
+                      <StudentRow
+                        fullName={m.full_name}
+                        email={m.email}
+                        avatarUrl={m.avatar_url}
+                        status={classifyStudent(m.attendance_count, m.labs_done)}
+                      />
+                      <div className="text-muted mt-3 flex gap-3 text-xs">
+                        <span>{m.attendance_count}d present</span>
+                        <span>·</span>
+                        <span>{m.labs_done} labs</span>
+                        {m.pending_submissions > 0 && (
+                          <>
+                            <span>·</span>
+                            <span className="text-amber-400">
+                              {m.pending_submissions} to review
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        }))
       )}
     </div>
   );

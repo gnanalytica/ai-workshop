@@ -3,6 +3,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
 import { listFacultyHandbook, type HandbookModule } from "@/lib/queries/handbook";
+import { HandbookProgress } from "./HandbookProgress";
 
 const STATUS_TONE: Record<NonNullable<HandbookModule["status"]>, "default" | "warn" | "ok"> = {
   not_started: "default",
@@ -52,7 +53,10 @@ export default async function FacultyHandbookPage({
                 </span>
                 {m.title}
               </CardTitle>
-              {m.status && <Badge variant={STATUS_TONE[m.status]}>{m.status.replace("_", " ")}</Badge>}
+              <div className="flex items-center gap-2">
+                {m.status && <Badge variant={STATUS_TONE[m.status]}>{m.status.replace("_", " ")}</Badge>}
+                <HandbookProgress moduleId={m.id} status={m.status} />
+              </div>
             </div>
             <Card className="p-6">
               {m.body_md ? (

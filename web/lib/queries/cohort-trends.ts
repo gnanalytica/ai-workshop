@@ -20,30 +20,35 @@ function bucketIndex(ts: string, base: Date): number {
   return DAYS - 1 - diff;
 }
 
-export const getCohortTrend = cache(async (cohortId: string): Promise<CohortTrend> => {
+export const getCohortTrend = cache(async (cohortId: string, userIds?: string[]): Promise<CohortTrend> => {
   const sb = await getSupabaseServer();
   const since = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000).toISOString();
   const today = new Date(new Date().toDateString());
+  const scope = userIds && userIds.length > 0 ? userIds : null;
+
+  const labQ = sb
+    .from("lab_progress")
+    .select("updated_at")
+    .eq("cohort_id", cohortId)
+    .eq("status", "done")
+    .gte("updated_at", since);
+  const subQ = sb
+    .from("submissions")
+    .select("updated_at, assignments!inner(cohort_id)")
+    .eq("status", "submitted")
+    .eq("assignments.cohort_id", cohortId)
+    .gte("updated_at", since);
+  const postQ = sb
+    .from("board_posts")
+    .select("created_at")
+    .eq("cohort_id", cohortId)
+    .is("deleted_at", null)
+    .gte("created_at", since);
 
   const [labs, subs, posts] = await Promise.all([
-    sb
-      .from("lab_progress")
-      .select("updated_at")
-      .eq("cohort_id", cohortId)
-      .eq("status", "done")
-      .gte("updated_at", since),
-    sb
-      .from("submissions")
-      .select("updated_at, assignments!inner(cohort_id)")
-      .eq("status", "submitted")
-      .eq("assignments.cohort_id", cohortId)
-      .gte("updated_at", since),
-    sb
-      .from("board_posts")
-      .select("created_at")
-      .eq("cohort_id", cohortId)
-      .is("deleted_at", null)
-      .gte("created_at", since),
+    scope ? labQ.in("user_id", scope) : labQ,
+    scope ? subQ.in("user_id", scope) : subQ,
+    scope ? postQ.in("author_id", scope) : postQ,
   ]);
 
   const empty = () => Array(DAYS).fill(0) as number[];

@@ -4,9 +4,11 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { MentionEditor } from "@/components/mention-editor/MentionEditor";
 import { createBoardReply } from "@/lib/actions/board";
+import type { RosterMember } from "@/lib/queries/cohort-roster-mini";
 
-export function ReplyForm({ postId }: { postId: string }) {
+export function ReplyForm({ postId, roster }: { postId: string; roster: RosterMember[] }) {
   const [body, setBody] = useState("");
   const [pending, start] = useTransition();
   function submit() {
@@ -23,12 +25,12 @@ export function ReplyForm({ postId }: { postId: string }) {
   }
   return (
     <Card className="p-5">
-      <textarea
-        rows={4}
-        placeholder="Your reply (markdown supported)"
+      <MentionEditor
         value={body}
-        onChange={(e) => setBody(e.target.value)}
-        className="border-line bg-input-bg text-ink w-full rounded-md border p-3 text-sm"
+        onChange={setBody}
+        roster={roster}
+        rows={4}
+        placeholder="Your reply (markdown supported). Type @ to mention."
       />
       <div className="mt-3 flex justify-end">
         <Button onClick={submit} disabled={pending}>
