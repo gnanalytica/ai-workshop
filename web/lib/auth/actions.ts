@@ -123,6 +123,27 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   const email = v.email.toLowerCase();
   const svc = getSupabaseService();
 
+  // Already-registered guard: someone landed on /start/sign-up via back button or
+  // a stale link. Send them a sign-in magic link instead of trying to recreate.
+  const { data: existingProfile } = await svc
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .maybeSingle();
+  if (existingProfile) {
+    const sb = await getSupabaseServer();
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${siteUrl()}/auth/callback?next=/dashboard` },
+    });
+    if (error) return { ok: false, message: error.message };
+    return {
+      ok: true,
+      message:
+        "You already have an account — we sent you a sign-in link instead. Check your email.",
+    };
+  }
+
   // Validate codes up-front so we don't create an auth user we can't redeem against.
   const codesToValidate = [v.cohort_code, v.faculty_code, v.staff_code].filter(Boolean) as string[];
   for (const code of codesToValidate) {
