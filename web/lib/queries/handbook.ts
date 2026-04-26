@@ -7,6 +7,7 @@ export interface HandbookModule {
   title: string;
   body_md: string | null;
   ordinal: number;
+  category: "technical" | "non_technical";
   status: "not_started" | "in_progress" | "completed" | null;
 }
 
@@ -17,7 +18,7 @@ export const listFacultyHandbook = cache(async (): Promise<HandbookModule[]> => 
 
   const { data: modules } = await sb
     .from("faculty_pretraining_modules")
-    .select("id, slug, title, body_md, ordinal")
+    .select("id, slug, title, body_md, ordinal, category")
     .order("ordinal");
   if (!modules) return [];
 
@@ -32,13 +33,14 @@ export const listFacultyHandbook = cache(async (): Promise<HandbookModule[]> => 
     );
   }
 
-  return (modules as Array<{ id: string; slug: string; title: string; body_md: string | null; ordinal: number }>).map(
+  return (modules as Array<{ id: string; slug: string; title: string; body_md: string | null; ordinal: number; category: "technical" | "non_technical" }>).map(
     (m) => ({
       id: m.id,
       slug: m.slug,
       title: m.title,
       body_md: m.body_md,
       ordinal: m.ordinal,
+      category: m.category,
       status: progressMap.get(m.id) ?? null,
     }),
   );

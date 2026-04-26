@@ -63,6 +63,34 @@ export async function resolveStuck(input: z.infer<typeof resolveSchema>): Promis
         .eq("id", parsed.data.id)
         .select()
         .single(),
-    ["/admin/stuck", "/faculty"],
+    ["/admin/stuck", "/faculty", "/faculty/stuck"],
   );
+}
+
+const escalateSchema = z.object({
+  id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+  note: z.string().min(1).max(1000),
+});
+
+export async function escalateStuck(input: z.infer<typeof escalateSchema>): Promise<ActionResult> {
+  const parsed = escalateSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("support.escalate", parsed.data.cohort_id);
+  const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+  const { error } = await sb
+    .from("stuck_queue")
+    .update({
+      escalated_at: new Date().toISOString(),
+      escalated_by: user.user.id,
+      escalation_note: parsed.data.note,
+      kind: "tech",
+    })
+    .eq("id", parsed.data.id);
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/stuck");
+  revalidatePath("/faculty/stuck");
+  return actionOk();
 }

@@ -52,10 +52,13 @@ export const NAV: readonly NavItem[] = [
   { label: "Certificate",    href: "/certificate",  cap: null,           group: "student", icon: "award" },
 
   // ----- Faculty -----
-  { label: "Today",            href: "/faculty",          cap: "schedule.read", group: "faculty", icon: "home" },
-  { label: "Grading",          href: "/faculty/review",   cap: "grading.read",  group: "faculty", icon: "check-square" },
-  { label: "My Pod",           href: "/faculty/pod",      cap: "roster.read",   group: "faculty", icon: "users" },
-  { label: "Faculty Handbook", href: "/faculty/handbook", cap: "schedule.read", group: "faculty", icon: "library" },
+  { label: "Today",       href: "/faculty",             cap: "schedule.read",  group: "faculty", icon: "home" },
+  { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
+  { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", icon: "users" },
+  { label: "Stuck Queue", href: "/faculty/stuck",       cap: "support.triage", group: "faculty", icon: "life-buoy" },
+  { label: "Grading",     href: "/faculty/review",      cap: "grading.read",   group: "faculty", icon: "check-square" },
+  { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
+  { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
 
   // ----- Admin · Cohort -----
   { label: "Cohort Home", href: "/admin",            cap: "schedule.read",          group: "admin", section: "Cohort", icon: "home" },
