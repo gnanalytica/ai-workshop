@@ -8,6 +8,7 @@ import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { fmtDate } from "@/lib/format";
 import { CreateCohortForm } from "./CreateCohortForm";
+import { CohortRowActions } from "./CohortRowActions";
 
 export default async function AdminSchedulePage() {
   await requireCapability("schedule.write");
@@ -59,6 +60,7 @@ export default async function AdminSchedulePage() {
                 <p className="text-muted mt-3 text-sm">
                   {fmtDate(c.starts_on)} → {fmtDate(c.ends_on)}
                 </p>
+                <CohortRowActions cohortId={c.id} name={c.name} />
               </Card>
             ))}
           </div>

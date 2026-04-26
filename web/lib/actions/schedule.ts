@@ -50,6 +50,42 @@ export async function createCohort(input: z.infer<typeof createCohortSchema>) {
   return actionOk(data);
 }
 
+const deleteCohortSchema = z.object({ cohort_id: z.string().uuid() });
+
+export async function deleteCohort(input: z.infer<typeof deleteCohortSchema>) {
+  const parsed = deleteCohortSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("schedule.write");
+
+  const sb = await getSupabaseServer();
+
+  // Refuse to delete a cohort that already has confirmed registrations or
+  // faculty assignments — admin should archive in that case, not delete.
+  const [reg, fac] = await Promise.all([
+    sb
+      .from("registrations")
+      .select("user_id", { count: "exact", head: true })
+      .eq("cohort_id", parsed.data.cohort_id),
+    sb
+      .from("cohort_faculty")
+      .select("user_id", { count: "exact", head: true })
+      .eq("cohort_id", parsed.data.cohort_id),
+  ]);
+  const regCount = reg.count ?? 0;
+  const facCount = fac.count ?? 0;
+  if (regCount > 0 || facCount > 0) {
+    return actionFail(
+      `Cohort has ${regCount} student(s) and ${facCount} faculty assignment(s). Archive it instead of deleting.`,
+    );
+  }
+
+  const { error } = await sb.from("cohorts").delete().eq("id", parsed.data.cohort_id);
+  if (error) return actionFail(error.message);
+
+  revalidatePath("/admin/schedule");
+  return actionOk();
+}
+
 const updateDaySchema = z.object({
   cohort_id: z.string().uuid(),
   day_number: z.number().int().min(1).max(60),

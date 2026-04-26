@@ -3,20 +3,64 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { navForPersona, type NavGroup } from "@/lib/rbac/menus";
+import {
+  Activity,
+  Award,
+  BarChart,
+  Book,
+  Building,
+  Calendar,
+  CheckSquare,
+  GraduationCap,
+  History,
+  Home,
+  Layers,
+  Library,
+  LifeBuoy,
+  type LucideIcon,
+  Menu,
+  MessageSquare,
+  Milestone,
+  Shield,
+  Ticket,
+  Trophy,
+  UserCheck,
+  UserPlus,
+  Users,
+  UsersRound,
+  Vote,
+  X,
+} from "lucide-react";
+import { navForPersona, type NavIcon, type NavItem } from "@/lib/rbac/menus";
 import type { Persona } from "@/lib/auth/persona";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const GROUP_LABELS: Record<NavGroup, string> = {
-  student: "Student",
-  faculty: "Faculty",
-  admin: "Admin",
-  system: "System",
+const ICONS: Record<NavIcon, LucideIcon> = {
+  home: Home,
+  calendar: Calendar,
+  book: Book,
+  users: Users,
+  "user-plus": UserPlus,
+  "user-check": UserCheck,
+  "users-round": UsersRound,
+  "message-square": MessageSquare,
+  history: History,
+  trophy: Trophy,
+  award: Award,
+  "graduation-cap": GraduationCap,
+  "check-square": CheckSquare,
+  vote: Vote,
+  "life-buoy": LifeBuoy,
+  shield: Shield,
+  "bar-chart": BarChart,
+  milestone: Milestone,
+  activity: Activity,
+  ticket: Ticket,
+  building: Building,
+  layers: Layers,
+  library: Library,
 };
-
-const GROUP_ORDER: readonly NavGroup[] = ["student", "faculty", "admin", "system"];
 
 export function Sidebar({
   caps,
@@ -29,16 +73,13 @@ export function Sidebar({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setOpen(false); // close drawer on route change
+    setOpen(false);
   }, [activePath]);
 
   const items = navForPersona(caps, persona);
-  const grouped = new Map<NavGroup, typeof items>();
-  for (const it of items) {
-    const arr = grouped.get(it.group) ?? [];
-    arr.push(it);
-    grouped.set(it.group, arr);
-  }
+
+  // Group by `section` if present (admin), else single bucket.
+  const sections = sectionize(items);
 
   const navContent = (
     <>
@@ -46,45 +87,45 @@ export function Sidebar({
         <span className="bg-accent inline-block h-3 w-3 rounded-full" />
         <span className="font-semibold tracking-tight">AI Workshop</span>
       </Link>
-      {GROUP_ORDER.map((g) => {
-        const list = grouped.get(g);
-        if (!list?.length) return null;
-        return (
-          <div key={g} className="mb-5">
-            <p className="text-muted mb-2 px-2 text-xs font-medium tracking-widest uppercase">
-              {GROUP_LABELS[g]}
+
+      {sections.map(({ name, items }) => (
+        <div key={name ?? "_"} className="mb-5">
+          {name && (
+            <p className="text-muted mb-2 px-2 text-[10px] font-medium tracking-widest uppercase">
+              {name}
             </p>
-            <ul className="space-y-0.5">
-              {list.map((it) => {
-                const active =
-                  activePath === it.href ||
-                  (it.href !== "/dashboard" && activePath.startsWith(it.href + "/"));
-                return (
-                  <li key={it.href}>
-                    <Link
-                      href={it.href}
-                      className={cn(
-                        "block rounded-md px-2.5 py-1.5 transition-colors",
-                        active
-                          ? "bg-bg-soft text-ink font-medium"
-                          : "text-muted hover:bg-bg-soft hover:text-ink",
-                      )}
-                    >
-                      {it.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
+          )}
+          <ul className="space-y-0.5">
+            {items.map((it) => {
+              const Icon = it.icon ? ICONS[it.icon] : null;
+              const active =
+                activePath === it.href ||
+                (it.href !== "/dashboard" && activePath.startsWith(it.href + "/"));
+              return (
+                <li key={it.href}>
+                  <Link
+                    href={it.href}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors",
+                      active
+                        ? "bg-bg-soft text-ink font-medium"
+                        : "text-muted hover:bg-bg-soft hover:text-ink",
+                    )}
+                  >
+                    {Icon && <Icon size={15} className="shrink-0 opacity-80" />}
+                    <span>{it.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </>
   );
 
   return (
     <>
-      {/* Mobile hamburger */}
       <Button
         variant="ghost"
         size="icon"
@@ -95,12 +136,10 @@ export function Sidebar({
         <Menu size={18} />
       </Button>
 
-      {/* Desktop sidebar */}
       <nav className="bg-nav-bg border-line hidden h-full w-60 shrink-0 overflow-y-auto border-r p-4 text-sm md:block">
         {navContent}
       </nav>
 
-      {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal>
           <div
@@ -125,4 +164,18 @@ export function Sidebar({
       )}
     </>
   );
+}
+
+function sectionize(items: NavItem[]): { name: string | null; items: NavItem[] }[] {
+  const order: (string | null)[] = [];
+  const buckets = new Map<string | null, NavItem[]>();
+  for (const it of items) {
+    const key = it.section ?? null;
+    if (!buckets.has(key)) {
+      order.push(key);
+      buckets.set(key, []);
+    }
+    buckets.get(key)!.push(it);
+  }
+  return order.map((name) => ({ name, items: buckets.get(name)! }));
 }
