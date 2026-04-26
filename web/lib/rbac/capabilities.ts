@@ -70,6 +70,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.tech_only",
     "support.escalate",
     "orgs.write",
+    "board.read",
+    "board.write",
   ],
   trainer: [
     "content.read",
@@ -84,6 +86,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "analytics.read:cohort",
     "support.triage",
     "support.escalate",
+    "board.read",
+    "board.write",
   ],
   tech_support: [
     "content.read",
@@ -95,6 +99,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.tech_only",
     "support.escalate",
     "moderation.write",
+    "board.read",
+    "board.write",
   ],
   faculty: [
     "content.read",
@@ -105,6 +111,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.triage",
     "support.escalate",
     "moderation.write",
+    "board.read",
+    "board.write",
   ],
   student: [
     "content.read",

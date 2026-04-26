@@ -2,9 +2,8 @@ import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
 export interface FacultyTodayKpis {
-  pendingGrading: number;
+  pendingReview: number;
   stuckOpen: number;
-  attendancePending: number;
   podSize: number;
 }
 
@@ -48,37 +47,69 @@ export const getFacultyCohort = cache(async () => {
   };
 });
 
-export const getFacultyTodayKpis = cache(async (cohortId: string): Promise<FacultyTodayKpis> => {
+async function listFacultyPodStudentIds(
+  cohortId: string,
+  facultyUserId: string,
+): Promise<string[]> {
   const sb = await getSupabaseServer();
-  const [grading, stuck, podMembers] = await Promise.all([
+  const { data: myPods } = await sb
+    .from("pod_faculty")
+    .select("pod_id, pods!inner(cohort_id)")
+    .eq("faculty_user_id", facultyUserId)
+    .eq("pods.cohort_id", cohortId);
+  const podIds = ((myPods ?? []) as Array<{ pod_id: string }>).map((r) => r.pod_id);
+  if (podIds.length === 0) return [];
+
+  const { data: members } = await sb
+    .from("pod_members")
+    .select("student_user_id")
+    .in("pod_id", podIds);
+  return ((members ?? []) as Array<{ student_user_id: string }>).map((m) => m.student_user_id);
+}
+
+export const getFacultyTodayKpis = cache(async (cohortId: string, facultyUserId: string): Promise<FacultyTodayKpis> => {
+  const studentIds = await listFacultyPodStudentIds(cohortId, facultyUserId);
+  if (studentIds.length === 0) {
+    return { pendingReview: 0, stuckOpen: 0, podSize: 0 };
+  }
+  const sb = await getSupabaseServer();
+  const [toReview, stuck] = await Promise.all([
     sb
       .from("submissions")
       .select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
-      .eq("status", "submitted")
-      .eq("assignments.cohort_id", cohortId),
-    sb.from("stuck_queue").select("id", { count: "exact", head: true }).eq("cohort_id", cohortId).in("status", ["open", "helping"]),
-    sb.from("pod_members").select("student_user_id, pod_faculty!inner(faculty_user_id, pods!inner(cohort_id))", { count: "exact", head: true }).eq("pod_faculty.pods.cohort_id", cohortId),
+      .eq("assignments.cohort_id", cohortId)
+      .in("user_id", studentIds)
+      .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)"),
+    sb
+      .from("stuck_queue")
+      .select("id", { count: "exact", head: true })
+      .eq("cohort_id", cohortId)
+      .in("user_id", studentIds)
+      .in("status", ["open", "helping"]),
   ]);
   return {
-    pendingGrading: grading.count ?? 0,
+    pendingReview: toReview.count ?? 0,
     stuckOpen: stuck.count ?? 0,
-    attendancePending: 0,
-    podSize: podMembers.count ?? 0,
+    podSize: studentIds.length,
   };
 });
 
-export const listPendingSubmissions = cache(async (cohortId: string): Promise<PendingSubmission[]> => {
+export const listPendingSubmissions = cache(async (cohortId: string, facultyUserId?: string): Promise<PendingSubmission[]> => {
   const sb = await getSupabaseServer();
+  const studentIds = facultyUserId ? await listFacultyPodStudentIds(cohortId, facultyUserId) : null;
+  if (facultyUserId && (!studentIds || studentIds.length === 0)) return [];
   // Surface (a) AI-graded items not yet human-reviewed and (b) anything still
   // stuck in 'submitted' (AI grading skipped or failed). Faculty review is now
   // optional — they're auditing AI's verdict, not generating it.
-  const { data } = await sb
+  let query = sb
     .from("submissions")
     .select(
       "id, user_id, updated_at, body, attachments, score, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, status, assignments!inner(title, day_number, cohort_id), profiles:user_id(full_name)",
     )
     .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)")
-    .eq("assignments.cohort_id", cohortId)
+    .eq("assignments.cohort_id", cohortId);
+  if (studentIds) query = query.in("user_id", studentIds);
+  const { data } = await query
     .order("ai_graded_at", { ascending: false, nullsFirst: false })
     .order("updated_at", { ascending: false })
     .limit(50);
@@ -132,9 +163,11 @@ export interface StuckEntry {
   created_at: string;
 }
 
-export const listStuckOpen = cache(async (cohortId: string): Promise<StuckEntry[]> => {
+export const listStuckOpen = cache(async (cohortId: string, facultyUserId?: string): Promise<StuckEntry[]> => {
   const sb = await getSupabaseServer();
-  const { data } = await sb
+  const studentIds = facultyUserId ? await listFacultyPodStudentIds(cohortId, facultyUserId) : null;
+  if (facultyUserId && (!studentIds || studentIds.length === 0)) return [];
+  let query = sb
     .from("stuck_queue")
     .select(
       "id, user_id, kind, status, message, created_at, profiles:user_id(full_name), claimer:profiles!stuck_queue_claimed_by_fkey(full_name)",
@@ -142,6 +175,8 @@ export const listStuckOpen = cache(async (cohortId: string): Promise<StuckEntry[
     .eq("cohort_id", cohortId)
     .in("status", ["open", "helping"])
     .order("created_at", { ascending: true });
+  if (studentIds) query = query.in("user_id", studentIds);
+  const { data } = await query;
   return ((data ?? []) as unknown as Array<{
     id: string; user_id: string; kind: StuckEntry["kind"]; status: StuckEntry["status"];
     message: string | null; created_at: string;

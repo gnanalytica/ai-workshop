@@ -5,7 +5,7 @@ export interface AnalyticsSummary {
   totalStudents: number;
   avgDaysComplete: number;
   attendanceRate: number;
-  pendingGrading: number;
+  pendingReview: number;
 }
 
 export interface DayAttendanceBucket {
@@ -26,7 +26,7 @@ export interface AtRiskRow {
 
 export const getAnalyticsSummary = cache(async (cohortId: string): Promise<AnalyticsSummary> => {
   const sb = await getSupabaseServer();
-  const [students, labs, attendance, grading] = await Promise.all([
+  const [students, labs, attendance, submitted] = await Promise.all([
     sb.from("registrations").select("user_id", { count: "exact", head: true }).eq("cohort_id", cohortId).eq("status", "confirmed"),
     sb.from("lab_progress").select("user_id, day_number, status").eq("cohort_id", cohortId).eq("status", "done"),
     sb.from("attendance").select("status").eq("cohort_id", cohortId),
@@ -52,7 +52,7 @@ export const getAnalyticsSummary = cache(async (cohortId: string): Promise<Analy
     totalStudents,
     avgDaysComplete,
     attendanceRate,
-    pendingGrading: grading.count ?? 0,
+    pendingReview: submitted.count ?? 0,
   };
 });
 

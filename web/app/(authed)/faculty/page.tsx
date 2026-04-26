@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
+import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
@@ -11,19 +12,22 @@ import {
   listStuckOpen,
 } from "@/lib/queries/faculty";
 import { todayDayNumber, listCohortDays } from "@/lib/queries/cohort";
+import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
 import { fmtDateTime, relTime } from "@/lib/format";
 
 export default async function FacultyTodayPage() {
   await requireCapability("schedule.read");
+  const me = await getSession();
   const f = await getFacultyCohort();
-  if (!f) {
+  if (!f || !me) {
     return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   }
-  const [kpis, days, subs, stuck] = await Promise.all([
-    getFacultyTodayKpis(f.cohort.id),
+  const [kpis, days, subs, stuck, atRisk] = await Promise.all([
+    getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
-    listPendingSubmissions(f.cohort.id),
-    listStuckOpen(f.cohort.id),
+    listPendingSubmissions(f.cohort.id, me.id),
+    listStuckOpen(f.cohort.id, me.id),
+    listAtRiskStudents(f.cohort.id),
   ]);
   const today = todayDayNumber(f.cohort);
   const todayDay = days.find((d) => d.day_number === today);
@@ -47,21 +51,35 @@ export default async function FacultyTodayPage() {
           <Button variant="outline" asChild>
             <Link href="/faculty/pod">My pod</Link>
           </Button>
+          <Button variant="outline" asChild>
+            <Link href="/day/today">Today&apos;s lesson</Link>
+          </Button>
           <Button asChild>
-            <Link href="/faculty/review">Open grading queue</Link>
+            <Link href="/faculty/review">Open review queue</Link>
           </Button>
         </div>
       </header>
 
       <KpiGrid>
-        <StatCard label="To grade" value={kpis.pendingGrading} tone={kpis.pendingGrading > 0 ? "warn" : "ok"} />
+        <StatCard label="To review" value={kpis.pendingReview} tone={kpis.pendingReview > 0 ? "warn" : "ok"} />
         <StatCard label="Stuck open" value={kpis.stuckOpen} tone={kpis.stuckOpen > 0 ? "danger" : "default"} />
         <StatCard label="Pod size" value={kpis.podSize} />
+        <StatCard
+          label="At risk"
+          value={atRisk.length}
+          tone={atRisk.length > 0 ? "danger" : "ok"}
+          hint=">3d inactive"
+        />
         <StatCard label="Day" value={today} hint="of 30" tone="accent" />
       </KpiGrid>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Pending submissions</h2>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">Pending reviews</h2>
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/faculty/review">See all</Link>
+          </Button>
+        </div>
         {subs.length === 0 ? (
           <Card><CardSub>Inbox zero. Nice.</CardSub></Card>
         ) : (
@@ -84,7 +102,12 @@ export default async function FacultyTodayPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Stuck queue</h2>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">Stuck queue</h2>
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/faculty/stuck">Open queue</Link>
+          </Button>
+        </div>
         {stuck.length === 0 ? (
           <Card><CardSub>No one stuck right now.</CardSub></Card>
         ) : (

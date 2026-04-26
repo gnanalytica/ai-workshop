@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { requireCapability } from "@/lib/auth/requireCapability";
 import { listBoardPosts } from "@/lib/queries/board";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { relTime } from "@/lib/format";
@@ -14,6 +15,7 @@ export default async function BoardPage({
 }) {
   const cohort = await getMyCurrentCohort();
   if (!cohort) return <Card><CardTitle>No active cohort</CardTitle></Card>;
+  await requireCapability("board.read", cohort.id);
   const filter = (await searchParams).filter ?? "all";
   const all = await listBoardPosts(cohort.id);
   const posts = filter === "faq" ? all.filter((p) => p.is_canonical) : all;

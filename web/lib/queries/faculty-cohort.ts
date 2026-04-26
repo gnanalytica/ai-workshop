@@ -14,7 +14,7 @@ export interface CohortKpis {
   students: number;
   pods: number;
   unassignedStudents: number;
-  pendingGrading: number;
+  pendingReview: number;
   stuckOpen: number;
   atRisk: number;
 }
@@ -29,7 +29,7 @@ export interface AtRiskStudent {
 
 export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis> => {
   const sb = await getSupabaseServer();
-  const [students, pods, assignedStudents, grading, stuck] = await Promise.all([
+  const [students, pods, assignedStudents, submitted, stuck] = await Promise.all([
     sb.from("registrations").select("user_id", { count: "exact", head: true })
       .eq("cohort_id", cohortId).eq("status", "confirmed"),
     sb.from("pods").select("id", { count: "exact", head: true }).eq("cohort_id", cohortId),
@@ -46,7 +46,7 @@ export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis>
     students: total,
     pods: pods.count ?? 0,
     unassignedStudents: Math.max(0, total - assigned),
-    pendingGrading: grading.count ?? 0,
+    pendingReview: submitted.count ?? 0,
     stuckOpen: stuck.count ?? 0,
     atRisk: 0,
   };

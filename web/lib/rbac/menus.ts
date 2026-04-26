@@ -56,7 +56,8 @@ export const NAV: readonly NavItem[] = [
   { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
   { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", icon: "users" },
   { label: "Stuck Queue", href: "/faculty/stuck",       cap: "support.triage", group: "faculty", icon: "life-buoy" },
-  { label: "Pod Grades",  href: "/faculty/review",      cap: "grading.read",   group: "faculty", icon: "check-square" },
+  { label: "Review Queue", href: "/faculty/review",     cap: "grading.read",   group: "faculty", icon: "check-square" },
+  { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", icon: "message-square" },
   { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
   { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
 
@@ -73,6 +74,7 @@ export const NAV: readonly NavItem[] = [
   // ----- Admin · Engagement -----
   { label: "Polls",       href: "/admin/polls",      cap: "content.write",          group: "admin", section: "Engagement", icon: "vote" },
   { label: "Stuck Queue", href: "/admin/stuck",      cap: "support.triage",         group: "admin", section: "Engagement", icon: "life-buoy" },
+  { label: "Community Board", href: "/board",        cap: "board.read",             group: "admin", section: "Engagement", icon: "message-square" },
   { label: "Board (Mod)", href: "/admin/board",      cap: "moderation.write",       group: "admin", section: "Engagement", icon: "shield" },
 
   // ----- Admin · Insights -----

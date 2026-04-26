@@ -51,9 +51,9 @@ export default async function FacultyCohortPage() {
           tone={kpis.unassignedStudents > 0 ? "warn" : "ok"}
         />
         <StatCard
-          label="Pending grading"
-          value={kpis.pendingGrading}
-          tone={kpis.pendingGrading > 0 ? "warn" : "default"}
+          label="Pending review"
+          value={kpis.pendingReview}
+          tone={kpis.pendingReview > 0 ? "warn" : "default"}
         />
         <StatCard
           label="Stuck open"

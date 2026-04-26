@@ -52,9 +52,9 @@ export default async function AdminAnalyticsPage() {
           tone={summary.attendanceRate > 0.7 ? "ok" : "warn"}
         />
         <StatCard
-          label="Pending grading"
-          value={summary.pendingGrading}
-          tone={summary.pendingGrading > 5 ? "warn" : "default"}
+          label="Pending review"
+          value={summary.pendingReview}
+          tone={summary.pendingReview > 5 ? "warn" : "default"}
         />
       </KpiGrid>
 
