@@ -65,21 +65,32 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
         {student.submissions.length === 0 ? (
           <Card><CardSub>None yet.</CardSub></Card>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {student.submissions.map((s) => (
-              <Card key={s.id} className="flex items-center justify-between p-3">
-                <div>
+              <Card key={s.id} className="space-y-2 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="text-ink text-sm font-medium">
                     Day {s.day_number} · {s.title}
                   </p>
-                  <p className="text-muted text-xs">Updated {fmtDate(s.updated_at)}</p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={s.status === "graded" ? "ok" : s.status === "submitted" ? "warn" : "default"}>
+                      {s.status}
+                    </Badge>
+                    {s.score !== null && <Badge variant="accent">{s.score}</Badge>}
+                    <span className="text-muted text-xs">{fmtDate(s.updated_at)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={s.status === "graded" ? "ok" : s.status === "submitted" ? "warn" : "default"}>
-                    {s.status}
-                  </Badge>
-                  {s.score !== null && <Badge variant="accent">{s.score}</Badge>}
-                </div>
+                {s.body && (
+                  <p className="bg-bg-soft border-line text-ink/85 max-h-40 overflow-y-auto rounded-md border p-3 text-xs whitespace-pre-line">
+                    {s.body}
+                  </p>
+                )}
+                {s.feedback_md && (
+                  <p className="border-accent/40 bg-accent/5 text-ink/85 rounded-md border p-3 text-xs whitespace-pre-line">
+                    <span className="text-accent font-mono text-[10px] uppercase">Feedback · </span>
+                    {s.feedback_md}
+                  </p>
+                )}
               </Card>
             ))}
           </div>

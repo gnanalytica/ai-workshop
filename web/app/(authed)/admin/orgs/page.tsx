@@ -3,6 +3,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { listOrgs, listPromos } from "@/lib/queries/orgs";
 import { fmtDate } from "@/lib/format";
+import { NewOrgForm, NewPromoForm } from "./OrgsForms";
 
 export default async function AdminOrgsPage() {
   await requireCapability("orgs.write");
@@ -15,6 +16,11 @@ export default async function AdminOrgsPage() {
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Customers &amp; promo codes</h1>
         <CardSub className="mt-1">{orgs.length} organizations · {promos.length} promo codes</CardSub>
       </header>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        <NewOrgForm />
+        <NewPromoForm orgs={orgs.map((o) => ({ id: o.id, name: o.name }))} />
+      </section>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Organizations</h2>

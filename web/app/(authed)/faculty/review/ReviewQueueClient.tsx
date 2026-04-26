@@ -3,7 +3,6 @@
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { gradeSubmission } from "@/lib/actions/grading";
@@ -85,9 +84,24 @@ export function ReviewQueueClient({
             </p>
           </div>
 
-          <div>
-            <Badge>Body preview pending wiring; open via /admin/student/&lt;id&gt; for full work.</Badge>
+          <div className="bg-bg-soft border-line max-h-72 overflow-y-auto rounded-md border p-4 text-sm whitespace-pre-line">
+            {active.body || <span className="text-muted italic">— empty —</span>}
           </div>
+          {active.attachments.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {active.attachments.map((a) => (
+                <a
+                  key={a.url}
+                  href={a.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border-line bg-card hover:border-accent/40 rounded-md border px-3 py-1.5 text-xs"
+                >
+                  {a.name} ↗
+                </a>
+              ))}
+            </div>
+          )}
 
           {canGrade ? (
             <div className="space-y-3">

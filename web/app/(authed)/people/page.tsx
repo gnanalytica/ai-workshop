@@ -2,11 +2,14 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { listClassmates } from "@/lib/queries/people";
+import { getSession } from "@/lib/auth/session";
+import { KudosButton } from "./KudosButton";
 
 export default async function PeoplePage() {
   const cohort = await getMyCurrentCohort();
   if (!cohort) return <Card><CardTitle>No active cohort</CardTitle></Card>;
   const classmates = await listClassmates(cohort.id);
+  const me = await getSession();
   return (
     <div className="space-y-6">
       <header>
@@ -16,7 +19,7 @@ export default async function PeoplePage() {
       </header>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {classmates.map((c) => (
-          <Card key={c.user_id} className="p-4">
+          <Card key={c.user_id} className="space-y-3 p-4">
             <StudentRow
               fullName={c.full_name}
               email={c.email}
@@ -24,6 +27,9 @@ export default async function PeoplePage() {
               pod={c.pod_name}
               hint={c.college ?? undefined}
             />
+            {me && me.id !== c.user_id && (
+              <KudosButton toUserId={c.user_id} cohortId={cohort.id} />
+            )}
           </Card>
         ))}
       </div>

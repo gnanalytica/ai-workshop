@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
 import { DayRail } from "@/components/day-rail/DayRail";
 import { CheckIn } from "@/components/day-interactive/CheckIn";
+import { StuckButton } from "@/components/day-interactive/StuckButton";
 import { AssignmentBlock } from "@/components/day-interactive/AssignmentBlock";
 import { QuizBlock } from "@/components/day-interactive/QuizBlock";
 import { PollBlock } from "@/components/day-interactive/PollBlock";
@@ -62,12 +63,13 @@ export default async function DayPage({ params }: { params: Promise<{ n: string 
               <Badge key={t}>{t}</Badge>
             ))}
           </div>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-start gap-3">
             <CheckIn
               cohortId={cohort.id}
               dayNumber={dayNumber}
               initialStatus={interactive.attendance.status}
             />
+            <StuckButton cohortId={cohort.id} />
           </div>
         </header>
 

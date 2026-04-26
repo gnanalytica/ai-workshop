@@ -2,7 +2,8 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { withSupabase, actionFail } from "./_helpers";
+import { getSupabaseServer } from "@/lib/supabase/server";
+import { actionFail, actionOk } from "./_helpers";
 
 const submitSchema = z.object({
   quiz_id: z.string().uuid(),
@@ -10,29 +11,16 @@ const submitSchema = z.object({
   day_number: z.number().int().min(1).max(60),
 });
 
-/**
- * Submit a quiz attempt. Score computation happens client-side from
- * quiz_questions answers — RLS limits read of correct answers anyway, so for
- * v1 we trust the client and persist the submission. A future migration can
- * move scoring server-side via a SECURITY DEFINER RPC.
- */
+/** Submits + scores via SECURITY DEFINER RPC; answers are hidden from clients. */
 export async function submitQuiz(input: z.infer<typeof submitSchema>) {
   const parsed = submitSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
-  const result = await withSupabase(async (sb) => {
-    const { data: user } = await sb.auth.getUser();
-    if (!user.user) return { data: null, error: { message: "Not signed in" } };
-    return sb
-      .from("quiz_attempts")
-      .upsert({
-        quiz_id: parsed.data.quiz_id,
-        user_id: user.user.id,
-        answers: parsed.data.answers,
-        completed_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-  });
+  const sb = await getSupabaseServer();
+  const { data, error } = await sb.rpc("rpc_submit_quiz_attempt", {
+    p_quiz: parsed.data.quiz_id,
+    p_answers: parsed.data.answers,
+  } as never);
+  if (error) return actionFail(error.message);
   revalidatePath(`/day/${parsed.data.day_number}`);
-  return result;
+  return actionOk<{ score: number }>({ score: Number(data ?? 0) });
 }

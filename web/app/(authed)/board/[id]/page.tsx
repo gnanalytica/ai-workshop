@@ -4,19 +4,28 @@ import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
 import { getBoardPost } from "@/lib/queries/board-detail";
 import { fmtDateTime, relTime } from "@/lib/format";
+import { getSession } from "@/lib/auth/session";
+import { checkCapability } from "@/lib/auth/requireCapability";
 import { ReplyForm } from "./ReplyForm";
+import { ReplyActions, PostModeration } from "./ReplyActions";
 
 export default async function BoardPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const post = await getBoardPost(id);
   if (!post) notFound();
+  const user = await getSession();
+  const canModerate = await checkCapability("moderation.write");
+  const isAuthor = !!user && user.id === post.author_id;
 
   return (
     <article className="mx-auto max-w-3xl space-y-6">
       <header>
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
-          {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
+          <div className="flex items-center gap-2">
+            {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
+            <PostModeration postId={post.id} pinned={!!post.pinned_at} canModerate={canModerate} />
+          </div>
         </div>
         <p className="text-muted mt-2 text-xs">
           {post.author_name ?? "Member"} · {fmtDateTime(post.created_at)} · {relTime(post.created_at)}
@@ -50,6 +59,15 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
               </div>
               <div className="mt-2">
                 <MarkdownView source={r.body_md} />
+              </div>
+              <div className="mt-3">
+                <ReplyActions
+                  replyId={r.id}
+                  postId={post.id}
+                  isAccepted={r.is_accepted}
+                  canAccept={isAuthor}
+                  canModerate={canModerate}
+                />
               </div>
             </Card>
           ))

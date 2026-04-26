@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireCapability } from "@/lib/auth/requireCapability";
+import { requireCapability, checkCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { getAdminCohort } from "@/lib/queries/admin-context";
 import { getAdminCohortKpis } from "@/lib/queries/admin";
 import { listRecentAnnouncements } from "@/lib/queries/dashboard";
 import { fmtDate, relTime } from "@/lib/format";
+import { AnnouncementsClient } from "./AnnouncementsClient";
 
 export default async function AdminHomePage() {
   await requireCapability("schedule.read");
@@ -22,9 +23,10 @@ export default async function AdminHomePage() {
       </Card>
     );
   }
-  const [kpis, announcements] = await Promise.all([
+  const [kpis, announcements, canAnnounce] = await Promise.all([
     getAdminCohortKpis(cohort.id),
-    listRecentAnnouncements(cohort.id),
+    listRecentAnnouncements(cohort.id, 10),
+    checkCapability("announcements.write:cohort", cohort.id),
   ]);
 
   return (
@@ -55,8 +57,10 @@ export default async function AdminHomePage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Recent announcements</h2>
-        {announcements.length === 0 ? (
+        <h2 className="mb-3 text-lg font-semibold tracking-tight">Announcements</h2>
+        {canAnnounce ? (
+          <AnnouncementsClient cohortId={cohort.id} initial={announcements} />
+        ) : announcements.length === 0 ? (
           <Card><CardSub>No announcements yet.</CardSub></Card>
         ) : (
           <div className="space-y-3">

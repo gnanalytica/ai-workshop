@@ -7,6 +7,7 @@ export interface UserProfile {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
+  college: string | null;
   staff_roles: string[];
 }
 
@@ -25,7 +26,7 @@ export const getProfile = cache(async (): Promise<UserProfile | null> => {
   if (!user) return null;
   const { data, error } = await sb
     .from("profiles")
-    .select("id, email, full_name, avatar_url, staff_roles")
+    .select("id, email, full_name, avatar_url, college, staff_roles")
     .eq("id", user.id)
     .single();
   if (error) return null;

@@ -16,6 +16,8 @@ export interface CohortDay {
   title: string;
   is_unlocked: boolean;
   live_session_at: string | null;
+  meet_link: string | null;
+  notes: string | null;
   capstone_kind: "none" | "spec_review" | "mid_review" | "demo_day";
 }
 
@@ -47,7 +49,7 @@ export const listCohortDays = cache(async (cohortId: string): Promise<CohortDay[
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("cohort_days")
-    .select("cohort_id, day_number, title, is_unlocked, live_session_at, capstone_kind")
+    .select("cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind")
     .eq("cohort_id", cohortId)
     .order("day_number");
   return (data ?? []) as CohortDay[];
@@ -58,7 +60,7 @@ export const getCohortDay = cache(
     const sb = await getSupabaseServer();
     const { data } = await sb
       .from("cohort_days")
-      .select("cohort_id, day_number, title, is_unlocked, live_session_at, capstone_kind")
+      .select("cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind")
       .eq("cohort_id", cohortId)
       .eq("day_number", dayNumber)
       .maybeSingle();

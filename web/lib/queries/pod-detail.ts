@@ -11,6 +11,62 @@ export interface PodDetail {
   events: { id: string; kind: string; payload: Record<string, unknown>; at: string; actor_name: string | null }[];
 }
 
+export interface PodCandidates {
+  faculty: { user_id: string; full_name: string | null; college_role: "support" | "executive" }[];
+  unassignedStudents: { user_id: string; full_name: string | null; email: string }[];
+}
+
+export const getPodCandidates = cache(
+  async (cohortId: string, podId: string): Promise<PodCandidates> => {
+    const sb = await getSupabaseServer();
+    const [facRes, regRes, assignedRes] = await Promise.all([
+      sb
+        .from("cohort_faculty")
+        .select("user_id, college_role, profiles!inner(full_name)")
+        .eq("cohort_id", cohortId),
+      sb
+        .from("registrations")
+        .select("user_id, profiles!inner(full_name, email)")
+        .eq("cohort_id", cohortId)
+        .eq("status", "confirmed"),
+      sb
+        .from("pod_members")
+        .select("student_user_id, pods!inner(cohort_id)")
+        .eq("pods.cohort_id", cohortId),
+    ]);
+
+    const assigned = new Set(
+      ((assignedRes.data ?? []) as unknown as Array<{ student_user_id: string }>).map(
+        (r) => r.student_user_id,
+      ),
+    );
+
+    const faculty = ((facRes.data ?? []) as unknown as Array<{
+      user_id: string;
+      college_role: "support" | "executive";
+      profiles: { full_name: string | null };
+    }>).map((f) => ({
+      user_id: f.user_id,
+      full_name: f.profiles.full_name,
+      college_role: f.college_role,
+    }));
+
+    const unassignedStudents = ((regRes.data ?? []) as unknown as Array<{
+      user_id: string;
+      profiles: { full_name: string | null; email: string };
+    }>)
+      .filter((r) => !assigned.has(r.user_id))
+      .map((r) => ({
+        user_id: r.user_id,
+        full_name: r.profiles.full_name,
+        email: r.profiles.email,
+      }));
+
+    void podId;
+    return { faculty, unassignedStudents };
+  },
+);
+
 export const getPodDetail = cache(async (podId: string): Promise<PodDetail | null> => {
   const sb = await getSupabaseServer();
   const { data, error } = await sb

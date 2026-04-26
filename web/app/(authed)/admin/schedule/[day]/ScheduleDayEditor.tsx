@@ -11,7 +11,8 @@ import { updateCohortDay, setDayUnlocked } from "@/lib/actions/schedule";
 
 export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: CohortDay }) {
   const [title, setTitle] = useState(day.title);
-  const [meetLink, setMeetLink] = useState(""); // not in CohortDay type; future: load
+  const [meetLink, setMeetLink] = useState(day.meet_link ?? "");
+  const [notes, setNotes] = useState(day.notes ?? "");
   const [liveAt, setLiveAt] = useState<string>(day.live_session_at?.slice(0, 16) ?? "");
   const [unlocked, setUnlocked] = useState(day.is_unlocked);
   const [pending, start] = useTransition();
@@ -24,6 +25,7 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
         title,
         live_session_at: liveAt ? new Date(liveAt).toISOString() : null,
         meet_link: meetLink || null,
+        notes: notes || null,
       });
       if (r.ok) toast.success("Saved");
       else toast.error(r.error);
@@ -65,6 +67,15 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
           placeholder="https://meet…"
           value={meetLink}
           onChange={(e) => setMeetLink(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="text-muted text-xs uppercase tracking-widest">Notes (private to staff)</label>
+        <textarea
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="border-line bg-input-bg text-ink w-full rounded-md border p-3 text-sm"
         />
       </div>
       <div className="flex items-center gap-3">

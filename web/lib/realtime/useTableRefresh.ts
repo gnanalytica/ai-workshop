@@ -14,10 +14,12 @@ export function useTableRefresh(
   filter?: { column: string; value: string },
 ) {
   const router = useRouter();
+  const filterColumn = filter?.column;
+  const filterValue = filter?.value;
   useEffect(() => {
     const sb = getSupabaseBrowser();
     const ch = sb
-      .channel(`rt:${table}:${filter?.value ?? "*"}`)
+      .channel(`rt:${table}:${filterValue ?? "*"}`)
       .on(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         "postgres_changes" as any,
@@ -25,7 +27,9 @@ export function useTableRefresh(
           event: "*",
           schema: "public",
           table,
-          ...(filter ? { filter: `${filter.column}=eq.${filter.value}` } : {}),
+          ...(filterColumn && filterValue
+            ? { filter: `${filterColumn}=eq.${filterValue}` }
+            : {}),
         },
         () => router.refresh(),
       )
@@ -33,5 +37,5 @@ export function useTableRefresh(
     return () => {
       sb.removeChannel(ch);
     };
-  }, [table, filter?.column, filter?.value, router]);
+  }, [table, filterColumn, filterValue, router]);
 }

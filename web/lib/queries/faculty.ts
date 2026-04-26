@@ -23,6 +23,8 @@ export interface PendingSubmission {
   assignment_title: string;
   day_number: number;
   updated_at: string;
+  body: string | null;
+  attachments: { name: string; url: string }[];
 }
 
 /** Faculty's primary cohort: first cohort_faculty row. */
@@ -66,23 +68,32 @@ export const listPendingSubmissions = cache(async (cohortId: string): Promise<Pe
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("submissions")
-    .select("id, user_id, updated_at, assignments!inner(title, day_number, cohort_id), profiles:user_id(full_name)")
+    .select(
+      "id, user_id, updated_at, body, attachments, assignments!inner(title, day_number, cohort_id), profiles:user_id(full_name)",
+    )
     .eq("status", "submitted")
     .eq("assignments.cohort_id", cohortId)
     .order("updated_at", { ascending: false })
     .limit(25);
   return ((data ?? []) as unknown as Array<{
     id: string; user_id: string; updated_at: string;
-    assignments: { title: string; day_number: number };
+    body: string | null;
+    attachments: { name: string; url: string }[] | null;
+    assignments: { title: string; day_number: number } | Array<{ title: string; day_number: number }>;
     profiles: { full_name: string | null } | null;
-  }>).map((r) => ({
-    id: r.id,
-    user_id: r.user_id,
-    user_name: r.profiles?.full_name ?? null,
-    assignment_title: r.assignments.title,
-    day_number: r.assignments.day_number,
-    updated_at: r.updated_at,
-  }));
+  }>).map((r) => {
+    const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
+    return {
+      id: r.id,
+      user_id: r.user_id,
+      user_name: r.profiles?.full_name ?? null,
+      assignment_title: a?.title ?? "",
+      day_number: a?.day_number ?? 0,
+      updated_at: r.updated_at,
+      body: r.body,
+      attachments: r.attachments ?? [],
+    };
+  });
 });
 
 export interface StuckEntry {

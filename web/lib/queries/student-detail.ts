@@ -15,6 +15,8 @@ export interface StudentDetail {
     title: string;
     status: string;
     score: number | null;
+    body: string | null;
+    feedback_md: string | null;
     updated_at: string;
   }[];
 }
@@ -26,7 +28,7 @@ export const getStudentDetail = cache(
       sb.from("profiles").select("full_name, email, college").eq("id", userId).maybeSingle(),
       sb.from("attendance").select("day_number, status").eq("cohort_id", cohortId).eq("user_id", userId).order("day_number"),
       sb.from("lab_progress").select("day_number, lab_id, status").eq("cohort_id", cohortId).eq("user_id", userId).order("day_number"),
-      sb.from("submissions").select("id, status, score, updated_at, assignments!inner(title, day_number, cohort_id)").eq("user_id", userId).eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }),
+      sb.from("submissions").select("id, status, score, body, feedback_md, updated_at, assignments!inner(title, day_number, cohort_id)").eq("user_id", userId).eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }),
       sb.from("pod_members").select("pods(name)").eq("student_user_id", userId).eq("cohort_id", cohortId).maybeSingle(),
     ]);
     if (!profile.data) return null;
@@ -39,7 +41,8 @@ export const getStudentDetail = cache(
       attendance: ((att.data ?? []) as Array<{ day_number: number; status: string }>),
       labs: ((labs.data ?? []) as Array<{ day_number: number; lab_id: string; status: string }>),
       submissions: ((subs.data ?? []) as unknown as Array<{
-        id: string; status: string; score: number | null; updated_at: string;
+        id: string; status: string; score: number | null;
+        body: string | null; feedback_md: string | null; updated_at: string;
         assignments: { title: string; day_number: number } | Array<{ title: string; day_number: number }>;
       }>).map((s) => {
         const a = Array.isArray(s.assignments) ? s.assignments[0] : s.assignments;
@@ -49,6 +52,8 @@ export const getStudentDetail = cache(
           title: a?.title ?? "",
           status: s.status,
           score: s.score,
+          body: s.body,
+          feedback_md: s.feedback_md,
           updated_at: s.updated_at,
         };
       }),

@@ -13,6 +13,7 @@ export interface AnnouncementSummary {
   title: string;
   body_md: string;
   created_at: string;
+  pinned_at: string | null;
 }
 
 export const getDashboardKpis = cache(async (cohortId: string): Promise<DashboardKpis> => {
@@ -52,7 +53,7 @@ export const listRecentAnnouncements = cache(
     const sb = await getSupabaseServer();
     const { data } = await sb
       .from("announcements")
-      .select("id, title, body_md, created_at")
+      .select("id, title, body_md, created_at, pinned_at")
       .eq("cohort_id", cohortId)
       .is("deleted_at", null)
       .order("created_at", { ascending: false })

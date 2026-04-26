@@ -6,9 +6,9 @@ import { DataTable, type ColumnDef } from "@/components/data-table/DataTable";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, exportCsv } from "@/lib/format";
 import type { RosterRow } from "@/lib/queries/admin";
-import { bulkUpdateRegistrationStatus } from "@/lib/actions/roster";
+import { bulkUpdateRegistrationStatus, updateRegistrationStatus } from "@/lib/actions/roster";
 
 const STATUS_VARIANT: Record<RosterRow["status"], "ok" | "warn" | "default" | "danger"> = {
   confirmed: "ok",
@@ -16,6 +16,33 @@ const STATUS_VARIANT: Record<RosterRow["status"], "ok" | "warn" | "default" | "d
   waitlist: "default",
   cancelled: "danger",
 };
+
+function RowStatus({
+  row,
+  cohortId,
+  disabled,
+  onChange,
+}: {
+  row: RosterRow;
+  cohortId: string;
+  disabled: boolean;
+  onChange: (status: RosterRow["status"]) => void;
+}) {
+  return (
+    <select
+      value={row.status}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value as RosterRow["status"])}
+      data-cohort={cohortId}
+      className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-xs"
+    >
+      <option value="pending">pending</option>
+      <option value="confirmed">confirmed</option>
+      <option value="waitlist">waitlist</option>
+      <option value="cancelled">cancelled</option>
+    </select>
+  );
+}
 
 const COLUMNS: ColumnDef<RosterRow>[] = [
   {
@@ -64,9 +91,32 @@ export function RosterTable({ rows, cohortId }: { rows: RosterRow[]; cohortId: s
     });
   };
 
+  const rowChange = (row: RosterRow, status: RosterRow["status"]) => {
+    start(async () => {
+      const r = await updateRegistrationStatus({
+        cohort_id: cohortId,
+        user_id: row.user_id,
+        status,
+      });
+      if (r.ok) toast.success(`Marked ${row.full_name ?? row.email} as ${status}`);
+      else toast.error(r.error);
+    });
+  };
+
+  const columns: ColumnDef<RosterRow>[] = [
+    ...COLUMNS.filter((c) => c.id !== "status"),
+    {
+      id: "status",
+      header: "Status",
+      cell: (r) => <RowStatus row={r} cohortId={cohortId} disabled={pending} onChange={(s) => rowChange(r, s)} />,
+      accessor: (r) => r.status,
+      width: "140px",
+    },
+  ];
+
   return (
     <DataTable
-      columns={COLUMNS}
+      columns={columns}
       rows={rows}
       rowKey={(r) => r.user_id}
       searchPlaceholder="Search by name, email, college, pod…"
@@ -81,6 +131,23 @@ export function RosterTable({ rows, cohortId }: { rows: RosterRow[]; cohortId: s
           </Button>
           <Button size="sm" variant="danger" disabled={pending} onClick={() => bulk("cancelled")(selected)}>
             Cancel
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              exportCsv(`roster-${cohortId.slice(0, 8)}`, selected, [
+                { header: "Name", value: (r) => r.full_name ?? "" },
+                { header: "Email", value: (r) => r.email },
+                { header: "College", value: (r) => r.college ?? "" },
+                { header: "Status", value: (r) => r.status },
+                { header: "Pod", value: (r) => r.pod_name ?? "" },
+                { header: "Source", value: (r) => r.source ?? "" },
+                { header: "Registered", value: (r) => fmtDate(r.created_at) },
+              ])
+            }
+          >
+            Export CSV
           </Button>
         </div>
       )}

@@ -1,7 +1,8 @@
 "use client";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, User } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
 
 export function UserMenu({
@@ -32,6 +33,15 @@ export function UserMenu({
             <p className="text-ink text-sm font-medium">{fullName || email}</p>
             {fullName && <p className="text-muted text-xs">{email}</p>}
           </div>
+          <DropdownMenu.Separator className="bg-line my-1 h-px" />
+          <DropdownMenu.Item asChild>
+            <Link
+              href="/settings/profile"
+              className="text-ink hover:bg-bg-soft flex items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none"
+            >
+              <User size={14} /> Profile
+            </Link>
+          </DropdownMenu.Item>
           <DropdownMenu.Separator className="bg-line my-1 h-px" />
           <form action={signOut}>
             <DropdownMenu.Item asChild>
