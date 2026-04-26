@@ -3,10 +3,10 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * Refresh the Supabase session cookie on every request. This is the only thing
- * middleware does — capability gating happens inside route components via
+ * the proxy does — capability gating happens inside route components via
  * `requireCapability()`, which has access to RSC context.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next({ request });
 
   const supabase = createServerClient(
