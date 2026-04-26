@@ -53,3 +53,25 @@ export function navForCaps(caps: readonly string[]): NavItem[] {
   const has = (c: Capability | null) => c == null || caps.includes(c);
   return NAV.filter((n) => has(n.cap));
 }
+
+/**
+ * Filter NAV by both capability AND the persona the UI is rendering for.
+ * - student persona → only "student" group items
+ * - faculty persona → only "faculty" group items
+ * - admin persona  → "admin" + "system" groups
+ * - null persona   → empty (user has no role yet)
+ */
+export function navForPersona(
+  caps: readonly string[],
+  persona: "admin" | "faculty" | "student" | null,
+): NavItem[] {
+  if (!persona) return [];
+  const allowedGroups: Record<typeof persona, NavGroup[]> = {
+    admin: ["admin", "system"],
+    faculty: ["faculty"],
+    student: ["student"],
+  };
+  const groups = new Set<NavGroup>(allowedGroups[persona]);
+  const has = (c: Capability | null) => c == null || caps.includes(c);
+  return NAV.filter((n) => groups.has(n.group) && has(n.cap));
+}

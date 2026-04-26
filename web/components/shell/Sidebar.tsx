@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { navForCaps, type NavGroup } from "@/lib/rbac/menus";
+import { navForPersona, type NavGroup } from "@/lib/rbac/menus";
+import type { Persona } from "@/lib/auth/persona";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,13 @@ const GROUP_LABELS: Record<NavGroup, string> = {
 
 const GROUP_ORDER: readonly NavGroup[] = ["student", "faculty", "admin", "system"];
 
-export function Sidebar({ caps }: { caps: readonly string[] }) {
+export function Sidebar({
+  caps,
+  persona,
+}: {
+  caps: readonly string[];
+  persona: Persona | null;
+}) {
   const activePath = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
 
@@ -25,7 +32,7 @@ export function Sidebar({ caps }: { caps: readonly string[] }) {
     setOpen(false); // close drawer on route change
   }, [activePath]);
 
-  const items = navForCaps(caps);
+  const items = navForPersona(caps, persona);
   const grouped = new Map<NavGroup, typeof items>();
   for (const it of items) {
     const arr = grouped.get(it.group) ?? [];
