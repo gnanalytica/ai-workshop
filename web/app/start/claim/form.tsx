@@ -13,30 +13,25 @@ export function ClaimForm() {
 
   return (
     <form action={action} className="flex flex-col gap-4">
+      <input type="hidden" name="role" value={role} />
       <fieldset className="flex flex-col gap-2">
         <legend className="text-muted text-xs font-medium tracking-wide uppercase">
           I&apos;m joining as
         </legend>
         <div className="grid grid-cols-3 gap-2">
           {(["student", "faculty", "staff"] as const).map((r) => (
-            <label
+            <button
               key={r}
+              type="button"
+              onClick={() => setRole(r)}
               className={`cursor-pointer rounded-md border px-3 py-2 text-center text-sm capitalize ${
                 role === r
                   ? "border-accent bg-accent/10 text-ink"
                   : "border-line text-muted hover:text-ink"
               }`}
             >
-              <input
-                type="radio"
-                name="role"
-                value={r}
-                checked={role === r}
-                onChange={() => setRole(r)}
-                className="sr-only"
-              />
               {r}
-            </label>
+            </button>
           ))}
         </div>
       </fieldset>
