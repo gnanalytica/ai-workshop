@@ -47,12 +47,15 @@ select _set_uid('support1@seed.local');
 select _expect('support has grading.write:pod', has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), true);
 select _expect('support lacks grading.write:cohort', has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
 select _expect('support has attendance.mark:pod', has_cap('attendance.mark:pod','11111111-1111-1111-1111-111111111111'), true);
+select _expect('support has pods.write in cohort', has_cap('pods.write','11111111-1111-1111-1111-111111111111'), true);
+select _expect('support lacks pods.write outside cohort', has_cap('pods.write'), false);
 
 \echo '--- executive faculty: analytics + announcements, no grading.write ---'
 select _set_uid('exec@seed.local');
 select _expect('exec has analytics.read:cohort', has_cap('analytics.read:cohort','11111111-1111-1111-1111-111111111111'), true);
 select _expect('exec lacks grading.write:pod', has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), false);
 select _expect('exec has announcements.write:cohort', has_cap('announcements.write:cohort','11111111-1111-1111-1111-111111111111'), true);
+select _expect('exec has pods.write in cohort', has_cap('pods.write','11111111-1111-1111-1111-111111111111'), true);
 
 \echo '--- student: self + content read + board, no grading ---'
 select _set_uid('student01@seed.local');
@@ -60,6 +63,7 @@ select _expect('student has content.read', has_cap('content.read','11111111-1111
 select _expect('student has board.write', has_cap('board.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('student lacks grading.read', has_cap('grading.read','11111111-1111-1111-1111-111111111111'), false);
 select _expect('student has attendance.self', has_cap('attendance.self','11111111-1111-1111-1111-111111111111'), true);
+select _expect('student lacks pods.write', has_cap('pods.write','11111111-1111-1111-1111-111111111111'), false);
 
 drop function _expect(text, boolean, boolean);
 drop function _set_uid(text);

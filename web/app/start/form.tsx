@@ -2,12 +2,12 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { sendMagicLink, type SignInState } from "@/lib/auth/actions";
+import { startFlow, type StartState } from "@/lib/auth/actions";
 
-const initial: SignInState = {};
+const initial: StartState = {};
 
-export function SignInForm({ next }: { next: string }) {
-  const [state, action] = useActionState(sendMagicLink, initial);
+export function StartForm({ next }: { next: string }) {
+  const [state, action] = useActionState(startFlow, initial);
   return (
     <form action={action} className="flex flex-col gap-3">
       <input type="hidden" name="next" value={next} />
@@ -25,11 +25,7 @@ export function SignInForm({ next }: { next: string }) {
       />
       <SubmitButton />
       {state.message && (
-        <p
-          className={
-            state.ok ? "text-accent mt-1 text-sm" : "mt-1 text-sm text-red-400"
-          }
-        >
+        <p className={state.ok ? "text-accent mt-1 text-sm" : "mt-1 text-sm text-red-400"}>
           {state.message}
         </p>
       )}
@@ -45,7 +41,7 @@ function SubmitButton() {
       disabled={pending}
       className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium disabled:opacity-60"
     >
-      {pending ? "Sending…" : "Send magic link"}
+      {pending ? "Checking…" : "Continue →"}
     </button>
   );
 }

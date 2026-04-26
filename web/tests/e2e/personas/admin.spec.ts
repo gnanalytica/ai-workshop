@@ -14,7 +14,7 @@ import { expect, test } from "@playwright/test";
  *   1. Sign in as admin (bypass cookie).
  *   2. Land on /admin — see KPI dashboard + announcements editor.
  *   3. /admin/roster — see all confirmed students; filter; bulk action.
- *   4. /admin/pods — create or rebalance a pod via rpc_pod_faculty_event.
+ *   4. /pods — create or rebalance a pod via rpc_pod_faculty_event.
  *   5. /admin/schedule/[day] — edit a day's lab/lecture content.
  *   6. /admin/faculty — assign a college_role (support|executive).
  *   7. Verify announcements broadcast appears on student dashboard (cross-persona).
@@ -39,8 +39,8 @@ test.describe("Admin golden path", () => {
     // TODO: filter by pod or status, assert filtered count.
   });
 
-  test("/admin/pods can rebalance a pod", async ({ page }) => {
-    await page.goto("/admin/pods");
+  test("/pods can rebalance a pod", async ({ page }) => {
+    await page.goto("/pods");
     // TODO: click "Move student" → choose target pod → assert pod_events row appears.
   });
 

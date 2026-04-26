@@ -34,7 +34,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Content",      href: "/admin/content",    cap: "content.write",          group: "admin" },
   { label: "Roster",       href: "/admin/roster",     cap: "roster.read",            group: "admin" },
   { label: "Teams",        href: "/admin/teams",      cap: "roster.read",            group: "admin" },
-  { label: "Pods",         href: "/admin/pods",       cap: "pods.write",             group: "admin" },
+  { label: "Pods",         href: "/pods",             cap: "pods.write",             group: "admin" },
   { label: "Faculty",      href: "/admin/faculty",    cap: "faculty.write",          group: "admin" },
   { label: "Attendance",   href: "/admin/attendance", cap: "attendance.mark:cohort", group: "admin" },
   { label: "Stuck Queue",  href: "/admin/stuck",      cap: "support.triage",         group: "admin" },
@@ -45,7 +45,8 @@ export const NAV: readonly NavItem[] = [
   { label: "Activity",     href: "/admin/activity",   cap: "roster.read",            group: "admin" },
 
   // ----- System (admin only) -----
-  { label: "Organizations", href: "/admin/orgs", cap: "orgs.write", group: "system" },
+  { label: "Invites",       href: "/admin/invites", cap: "orgs.write", group: "system" },
+  { label: "Organizations", href: "/admin/orgs",    cap: "orgs.write", group: "system" },
 ];
 
 export function navForCaps(caps: readonly string[]): NavItem[] {

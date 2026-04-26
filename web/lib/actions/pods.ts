@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { actionFail, actionOk } from "./_helpers";
 
@@ -33,7 +34,57 @@ export async function podEvent(input: z.infer<typeof evSchema>) {
     p_payload: {},
   } as never);
   if (error) return actionFail(error.message);
-  revalidatePath("/admin/pods");
-  revalidatePath(`/admin/pods/${parsed.data.pod_id}`);
+  revalidatePath("/pods");
+  revalidatePath(`/pods/${parsed.data.pod_id}`);
   return actionOk();
+}
+
+const createSchema = z.object({
+  cohort_id: z.string().uuid(),
+  name: z.string().trim().min(1).max(80),
+  mentor_note: z.string().max(2000).optional().nullable(),
+});
+
+export async function createPod(input: z.infer<typeof createSchema>) {
+  const parsed = createSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  const sb = await getSupabaseServer();
+  const { data, error } = await sb.rpc("rpc_create_pod", {
+    p_cohort: parsed.data.cohort_id,
+    p_name: parsed.data.name,
+    p_mentor_note: parsed.data.mentor_note ?? null,
+  } as never);
+  if (error) return actionFail(error.message);
+  revalidatePath("/pods");
+  return actionOk(data);
+}
+
+const updateSchema = z.object({
+  pod_id: z.string().uuid(),
+  name: z.string().trim().min(1).max(80).optional(),
+  mentor_note: z.string().max(2000).optional().nullable(),
+});
+
+export async function updatePod(input: z.infer<typeof updateSchema>) {
+  const parsed = updateSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  const sb = await getSupabaseServer();
+  const { error } = await sb.rpc("rpc_update_pod", {
+    p_pod_id: parsed.data.pod_id,
+    p_name: parsed.data.name ?? null,
+    p_mentor_note: parsed.data.mentor_note ?? null,
+  } as never);
+  if (error) return actionFail(error.message);
+  revalidatePath("/pods");
+  revalidatePath(`/pods/${parsed.data.pod_id}`);
+  return actionOk();
+}
+
+export async function deletePod(podId: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(podId)) return actionFail("Invalid pod id");
+  const sb = await getSupabaseServer();
+  const { error } = await sb.rpc("rpc_delete_pod", { p_pod_id: podId } as never);
+  if (error) return actionFail(error.message);
+  revalidatePath("/pods");
+  redirect("/pods");
 }

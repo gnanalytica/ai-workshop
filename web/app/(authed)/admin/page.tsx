@@ -50,7 +50,7 @@ export default async function AdminHomePage() {
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Quick actions</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Button variant="outline" asChild><Link href="/admin/roster">Manage roster →</Link></Button>
-          <Button variant="outline" asChild><Link href="/admin/pods">Pods →</Link></Button>
+          <Button variant="outline" asChild><Link href="/pods">Pods →</Link></Button>
           <Button variant="outline" asChild><Link href="/admin/attendance">Attendance →</Link></Button>
           <Button variant="outline" asChild><Link href="/admin/analytics">Analytics →</Link></Button>
         </div>
