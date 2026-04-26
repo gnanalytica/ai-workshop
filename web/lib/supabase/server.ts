@@ -18,8 +18,13 @@ export async function getSupabaseServer() {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (entries: { name: string; value: string; options: CookieOptions }[]) => {
-          for (const { name, value, options } of entries) {
-            cookieStore.set(name, value, options);
+          try {
+            for (const { name, value, options } of entries) {
+              cookieStore.set(name, value, options);
+            }
+          } catch {
+            // Called from a Server Component — cookies are read-only there.
+            // The middleware will refresh tokens on the next request.
           }
         },
       },

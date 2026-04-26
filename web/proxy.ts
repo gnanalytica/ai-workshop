@@ -1,13 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Refresh the Supabase session cookie on every request. This is the only thing
- * the proxy does — capability gating happens inside route components via
- * `requireCapability()`, which has access to RSC context.
- */
 export async function proxy(request: NextRequest) {
-  const response = NextResponse.next({ request });
+  let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,8 +11,11 @@ export async function proxy(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (entries: { name: string; value: string; options: CookieOptions }[]) => {
-          for (const { name, value, options } of entries) {
+          for (const { name, value } of entries) {
             request.cookies.set(name, value);
+          }
+          response = NextResponse.next({ request });
+          for (const { name, value, options } of entries) {
             response.cookies.set(name, value, options);
           }
         },
@@ -25,13 +23,15 @@ export async function proxy(request: NextRequest) {
     },
   );
 
+  // IMPORTANT: do not put any logic between createServerClient and getUser —
+  // it refreshes the session and writes the new cookies onto `response`.
   await supabase.auth.getUser();
+
   return response;
 }
 
 export const config = {
   matcher: [
-    // skip static, image, and favicon assets
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.svg).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
