@@ -211,3 +211,99 @@ export async function signOut() {
   await sb.auth.signOut();
   redirect("/");
 }
+
+/**
+ * Kick off Google OAuth via Supabase. Server action: gets the provider URL
+ * from Supabase and redirects the browser there. Google then sends the user
+ * back to Supabase's /auth/v1/callback, which forwards to our /auth/callback.
+ */
+export async function signInWithGoogle(formData: FormData) {
+  const next = safeNext((formData.get("next") as string) ?? "/dashboard");
+  const sb = await getSupabaseServer();
+  const { data, error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
+      queryParams: { access_type: "offline", prompt: "consent" },
+    },
+  });
+  if (error || !data?.url) {
+    throw new Error(error?.message ?? "Could not start Google sign-in");
+  }
+  redirect(data.url);
+}
+
+/**
+ * For Google-authenticated users with no role yet. The user is already
+ * signed in (auth.users + profiles row exist via the on-insert trigger),
+ * but they have no registration / cohort_faculty / staff_roles. They land
+ * here from /auth/callback after OAuth, redeem an invite, and go to /dashboard.
+ */
+const claimSchema = z
+  .object({
+    role: z.enum(["student", "faculty", "staff"]),
+    cohort_code: z.string().trim().optional(),
+    faculty_code: z.string().trim().optional(),
+    staff_code: z.string().trim().optional(),
+  })
+  .superRefine((v, ctx) => {
+    if (v.role === "student" && !v.cohort_code) {
+      ctx.addIssue({ code: "custom", path: ["cohort_code"], message: "Cohort code required" });
+    }
+    if (v.role === "faculty" && !v.faculty_code) {
+      ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
+    }
+    if (v.role === "staff" && !v.staff_code) {
+      ctx.addIssue({ code: "custom", path: ["staff_code"], message: "Staff code required" });
+    }
+  });
+
+export async function claimInvite(_prev: SignInState, formData: FormData): Promise<SignInState> {
+  const sb = await getSupabaseServer();
+  const { data: userData } = await sb.auth.getUser();
+  if (!userData.user) {
+    redirect("/start");
+  }
+  const userId = userData.user.id;
+
+  const parsed = claimSchema.safeParse({
+    role: formData.get("role"),
+    cohort_code: formData.get("cohort_code") || undefined,
+    faculty_code: formData.get("faculty_code") || undefined,
+    staff_code: formData.get("staff_code") || undefined,
+  });
+  if (!parsed.success) {
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid form" };
+  }
+  const v = parsed.data;
+  const svc = getSupabaseService();
+
+  // Validate codes first to avoid half-applied state.
+  const codes = [v.cohort_code, v.faculty_code, v.staff_code].filter(Boolean) as string[];
+  for (const code of codes) {
+    const { error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
+    if (error) return { ok: false, message: `Invite code "${code}" is not valid.` };
+  }
+
+  if (v.role === "student") {
+    const { error } = await svc.rpc("rpc_redeem_student_invite", {
+      p_code: v.cohort_code!,
+      p_user: userId,
+    } as never);
+    if (error) return { ok: false, message: error.message };
+  } else if (v.role === "faculty") {
+    const { error } = await svc.rpc("rpc_redeem_faculty_invite", {
+      p_code: v.faculty_code!,
+      p_user: userId,
+    } as never);
+    if (error) return { ok: false, message: error.message };
+  } else if (v.role === "staff") {
+    const { error } = await svc.rpc("rpc_redeem_staff_invite", {
+      p_code: v.staff_code!,
+      p_user: userId,
+    } as never);
+    if (error) return { ok: false, message: error.message };
+  }
+
+  redirect("/dashboard");
+}
