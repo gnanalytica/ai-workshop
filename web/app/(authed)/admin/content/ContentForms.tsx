@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -179,7 +180,11 @@ export function QuizzesTable({ rows }: { rows: QuizRow[] }) {
           {rows.map((q) => (
             <tr key={q.id} className="border-line border-t">
               <td className="px-3 py-2 font-mono text-xs">D{String(q.day_number).padStart(2, "0")}</td>
-              <td className="px-3 py-2">{q.title}</td>
+              <td className="px-3 py-2">
+                <Link href={`/admin/content/quiz/${q.id}`} className="text-accent hover:underline">
+                  {q.title}
+                </Link>
+              </td>
               <td className="text-muted px-3 py-2 text-xs">v{q.version}</td>
               <td className="px-3 py-2 text-right tabular-nums">{q.question_count}</td>
               <td className="px-3 py-2 text-right tabular-nums">{q.attempt_count}</td>

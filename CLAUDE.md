@@ -106,3 +106,11 @@ psql "$DB_URL" -f supabase/tests/rbac.sql
 ```
 
 Deploy: Vercel (frontend) + Supabase (backend). `EDGE_FUNCTION_SHARED_SECRET` gates webhook calls into edge functions.
+
+## Deployment workflow
+
+- Vercel is wired to GitHub via the Vercel↔GitHub integration. **Do not use the Vercel CLI** (`vercel`, `vercel deploy`, `vercel link`, `vercel env …`) — the user manages deploys exclusively through GitHub pushes + the Vercel dashboard.
+- Vercel project: `build-with-ai` under team `gnanalytica`. Root Directory must be set to `web` in Project Settings (the Next app is not at repo root).
+- To trigger a deploy: commit + push to the GitHub branch wired to the project. Preview deploys come from non-default branches; production from the default branch.
+- Env vars, Root Directory, Framework preset, and Git settings are all managed in the Vercel dashboard by the user — never via CLI from this repo.
+- Use the Vercel MCP plugin for read-only checks (deployments, build logs, project status). Write operations (env vars, settings, redeploy) → ask the user to do them in the dashboard.
