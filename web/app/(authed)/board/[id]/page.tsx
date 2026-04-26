@@ -23,8 +23,14 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
           <div className="flex items-center gap-2">
+            {post.is_canonical && <Badge variant="ok">FAQ</Badge>}
             {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
-            <PostModeration postId={post.id} pinned={!!post.pinned_at} canModerate={canModerate} />
+            <PostModeration
+              postId={post.id}
+              pinned={!!post.pinned_at}
+              isCanonical={post.is_canonical}
+              canModerate={canModerate}
+            />
           </div>
         </div>
         <p className="text-muted mt-2 text-xs">

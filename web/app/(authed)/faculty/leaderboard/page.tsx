@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +65,11 @@ export default async function LeaderboardPage({
                 {students.map((s, i) => (
                   <tr key={s.user_id} className="border-t border-line/30">
                     <td className="py-2 text-muted">{i + 1}</td>
-                    <td className="text-ink font-medium">{s.full_name ?? "—"}</td>
+                    <td className="text-ink font-medium">
+                      <Link href={`/faculty/student/${s.user_id}`} className="hover:text-accent">
+                        {s.full_name ?? "—"}
+                      </Link>
+                    </td>
                     <td className="text-muted">{s.pod_name ?? "—"}</td>
                     <td className="text-right">{s.quiz_score}</td>
                     <td className="text-right">{s.submission_score}</td>

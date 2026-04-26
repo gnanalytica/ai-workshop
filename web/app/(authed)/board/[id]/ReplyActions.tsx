@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { acceptAnswer, moderateBoard } from "@/lib/actions/board";
+import { acceptAnswer, moderateBoard, setCanonical } from "@/lib/actions/board";
 
 export function ReplyActions({
   replyId,
@@ -57,10 +57,12 @@ export function ReplyActions({
 export function PostModeration({
   postId,
   pinned,
+  isCanonical,
   canModerate,
 }: {
   postId: string;
   pinned: boolean;
+  isCanonical: boolean;
   canModerate: boolean;
 }) {
   const [pending, start] = useTransition();
@@ -70,6 +72,14 @@ export function PostModeration({
     start(async () => {
       const r = await moderateBoard({ kind: "post", id: postId, pinned: !pinned });
       if (r.ok) toast.success(pinned ? "Unpinned" : "Pinned");
+      else toast.error(r.error);
+    });
+  }
+
+  function toggleFaq() {
+    start(async () => {
+      const r = await setCanonical({ post_id: postId, is_canonical: !isCanonical });
+      if (r.ok) toast.success(isCanonical ? "Removed from FAQ" : "Marked as FAQ");
       else toast.error(r.error);
     });
   }
@@ -85,6 +95,9 @@ export function PostModeration({
 
   return (
     <div className="flex items-center gap-2">
+      <Button size="sm" variant="outline" onClick={toggleFaq} disabled={pending}>
+        {isCanonical ? "Unmark FAQ" : "Mark as FAQ"}
+      </Button>
       <Button size="sm" variant="outline" onClick={togglePin} disabled={pending}>
         {pinned ? "Unpin" : "Pin"}
       </Button>

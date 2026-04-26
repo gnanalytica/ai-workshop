@@ -5,12 +5,15 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { Button } from "@/components/ui/button";
+import { Sparkline } from "@/components/sparkline/Sparkline";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import {
   getCohortKpis,
-  listCohortPods,
   listAtRiskStudents,
 } from "@/lib/queries/faculty-cohort";
+import { getCohortPodRoster } from "@/lib/queries/cohort-roster";
+import { getCohortTrend } from "@/lib/queries/cohort-trends";
+import { PodBoard } from "./PodBoard";
 
 export default async function FacultyCohortPage() {
   await requireCapability("roster.read");
@@ -19,10 +22,11 @@ export default async function FacultyCohortPage() {
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   const cohortId = f.cohort.id;
 
-  const [kpis, pods, atRisk] = await Promise.all([
+  const [kpis, atRisk, roster, trend] = await Promise.all([
     getCohortKpis(cohortId),
-    listCohortPods(cohortId, me.id),
     listAtRiskStudents(cohortId),
+    getCohortPodRoster(cohortId, me.id),
+    getCohortTrend(cohortId),
   ]);
 
   return (
@@ -65,34 +69,21 @@ export default async function FacultyCohortPage() {
       </KpiGrid>
 
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight">All pods</h2>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/pods">Manage →</Link>
-          </Button>
-        </div>
-        {pods.length === 0 ? (
-          <Card><CardSub>No pods yet.</CardSub></Card>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {pods.map((p) => (
-              <Link key={p.pod_id} href={`/pods/${p.pod_id}`}>
-                <Card className="hover:border-accent/50 transition-colors">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle>{p.name}</CardTitle>
-                    {p.is_my_pod && <Badge variant="accent">Mine</Badge>}
-                  </div>
-                  <CardSub className="mt-1">
-                    {p.member_count} students · {p.faculty_count} faculty
-                  </CardSub>
-                  {p.faculty_names.length > 0 && (
-                    <p className="text-muted mt-2 text-sm">{p.faculty_names.join(", ")}</p>
-                  )}
-                </Card>
-              </Link>
-            ))}
+        <h2 className="mb-3 text-lg font-semibold tracking-tight">Last 14 days</h2>
+        <Card>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Sparkline label="Labs done" data={trend.labsDone} total={trend.totalLabs} />
+            <Sparkline label="Submissions" data={trend.submissions} total={trend.totalSubmissions} />
+            <Sparkline label="Board posts" data={trend.posts} total={trend.totalPosts} />
           </div>
-        )}
+        </Card>
+      </section>
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-tight">Pods · drag to move</h2>
+        </div>
+        <PodBoard pods={roster.pods} unassigned={roster.unassigned} />
       </section>
 
       <section>
@@ -104,10 +95,10 @@ export default async function FacultyCohortPage() {
             <ul className="divide-y divide-line/50">
               {atRisk.map((s) => (
                 <li key={s.user_id} className="flex items-center justify-between py-2 text-sm">
-                  <div>
+                  <Link href={`/faculty/student/${s.user_id}`} className="hover:text-accent">
                     <span className="text-ink font-medium">{s.full_name ?? "—"}</span>
                     {s.pod_name && <span className="text-muted ml-2">· {s.pod_name}</span>}
-                  </div>
+                  </Link>
                   <Badge variant="warn">{s.days_since_active}d inactive</Badge>
                 </li>
               ))}
