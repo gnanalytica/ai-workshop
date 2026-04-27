@@ -41,34 +41,32 @@ export type NavIcon =
 
 export const NAV: readonly NavItem[] = [
   // ----- Student -----
-  { label: "Home",           href: "/learn",        cap: null,           group: "student", icon: "home" },
-  { label: "Help desk",     href: "/help-desk",   cap: null,           group: "student", icon: "life-buoy" },
-  { label: "Today's Lesson", href: "/day/today",    cap: "content.read", group: "student", icon: "book" },
-  { label: "My Pod",         href: "/pod",          cap: null,           group: "student", icon: "users" },
-  { label: "Classmates",     href: "/people",       cap: null,           group: "student", icon: "users-round" },
-  { label: "Teams",          href: "/teams",        cap: null,           group: "student", icon: "users" },
-  { label: "Q&A Board",      href: "/board",        cap: "board.read",   group: "student", icon: "message-square" },
-  { label: "Timeline",       href: "/timeline",     cap: null,           group: "student", icon: "history" },
-  { label: "Showcase",       href: "/showcase",     cap: null,           group: "student", icon: "trophy" },
-  { label: "Certificate",    href: "/certificate",  cap: null,           group: "student", icon: "award" },
+  { label: "Home",        href: "/learn",       cap: null,           group: "student",                       icon: "home" },
+  { label: "Today",       href: "/day/today",   cap: "content.read", group: "student",                       icon: "book" },
+  { label: "Help desk",   href: "/help-desk",   cap: null,           group: "student",                       icon: "life-buoy" },
+  { label: "Community",   href: "/board",       cap: "board.read",   group: "student",                       icon: "message-square" },
+
+  { label: "My Pod",      href: "/pod",         cap: null,           group: "student", section: "People",    icon: "users" },
+  { label: "Teams",       href: "/teams",       cap: null,           group: "student", section: "People",    icon: "users" },
+  { label: "Classmates",  href: "/people",      cap: null,           group: "student", section: "People",    icon: "users-round" },
+
+  { label: "Leaderboard", href: "/leaderboard", cap: null,           group: "student", section: "Reference", icon: "trophy" },
+  { label: "Showcase",    href: "/showcase",    cap: null,           group: "student", section: "Reference", icon: "trophy" },
+  { label: "Certificate", href: "/certificate", cap: null,           group: "student", section: "Reference", icon: "award" },
 
   // ----- Faculty -----
-  { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
-  { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", section: "Daily",     icon: "users-round" },
-  { label: "Help desk",   href: "/faculty/stuck",       cap: "support.triage", group: "faculty", section: "Daily",     icon: "life-buoy" },
-  { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", section: "Reference", icon: "message-square" },
-  { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
-  { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
+  { label: "My Pod",      href: "/faculty/pod",      cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
+  { label: "Cohort",      href: "/faculty/cohort",   cap: "roster.read",    group: "faculty", section: "Daily",     icon: "users-round" },
+  { label: "Help desk",   href: "/faculty/stuck",    cap: "support.triage", group: "faculty", section: "Daily",     icon: "life-buoy" },
+  { label: "Community",   href: "/board",            cap: "board.read",     group: "faculty", section: "Reference", icon: "message-square" },
+  { label: "Leaderboard", href: "/leaderboard",      cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
+  { label: "Handbook",    href: "/faculty/handbook", cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
 
-  // ----- Admin · Cohorts (cohort list, then enter scope) -----
-  { label: "Cohorts",     href: "/admin",            cap: "schedule.read",          group: "admin", section: "Cohorts",  icon: "home" },
-
-  // ----- Admin · Community -----
-  { label: "Community Board", href: "/board",        cap: "board.read",             group: "admin", section: "Community", icon: "message-square" },
-
-  // ----- System (admin only) -----
-  { label: "Invites",       href: "/admin/invites", cap: "orgs.write", group: "system", section: "System", icon: "ticket" },
-  { label: "Organizations", href: "/admin/orgs",    cap: "orgs.write", group: "system", section: "System", icon: "building" },
+  // ----- Admin (no sections — only 4 items) -----
+  { label: "Cohorts",       href: "/admin",         cap: "schedule.read", group: "admin",                  icon: "home" },
+  { label: "Community",     href: "/board",         cap: "board.read",    group: "admin",                  icon: "message-square" },
+  { label: "Invites",       href: "/admin/invites", cap: "orgs.write",    group: "system",                 icon: "ticket" },
+  { label: "Organizations", href: "/admin/orgs",    cap: "orgs.write",    group: "system",                 icon: "building" },
 ];
 
 export function navForCaps(caps: readonly string[]): NavItem[] {

@@ -20,7 +20,7 @@ const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "schedule", label: "Schedule", href: (c) => `/admin/cohorts/${c}/schedule` },
   { id: "content", label: "Content", href: (c) => `/admin/cohorts/${c}/content` },
   { id: "grading", label: "Grading", href: (c) => `/admin/cohorts/${c}/grading` },
-  { id: "stuck", label: "Escalations", href: (c) => `/admin/cohorts/${c}/stuck` },
+  { id: "stuck", label: "Help desk", href: (c) => `/admin/cohorts/${c}/stuck` },
   { id: "polls", label: "Polls", href: (c) => `/admin/cohorts/${c}/polls` },
   { id: "analytics", label: "Analytics", href: (c) => `/admin/cohorts/${c}/analytics` },
   { id: "milestones", label: "Milestones", href: (c) => `/admin/cohorts/${c}/milestones` },

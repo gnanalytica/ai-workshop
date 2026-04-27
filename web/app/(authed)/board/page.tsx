@@ -36,10 +36,10 @@ export default async function BoardPage({
         <header className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-accent font-mono text-xs tracking-widest uppercase">
-              Q&amp;A Board · moderation
+              Community · moderation
             </p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-              Discussion
+              Community
             </h1>
             <CardSub className="mt-1">
               {modPosts.length} posts ·{" "}
@@ -64,10 +64,10 @@ export default async function BoardPage({
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
-            Q&amp;A Board
+            Community
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-            Discussion
+            Community
           </h1>
         </div>
         <div className="flex items-center gap-2">
