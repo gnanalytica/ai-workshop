@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface StatCardProps {
@@ -6,6 +7,7 @@ export interface StatCardProps {
   delta?: string;
   hint?: string;
   tone?: "default" | "accent" | "warn" | "ok" | "danger";
+  href?: string;
   className?: string;
 }
 
@@ -17,9 +19,9 @@ const TONE_STYLES: Record<NonNullable<StatCardProps["tone"]>, string> = {
   danger: "text-red-400",
 };
 
-export function StatCard({ label, value, delta, hint, tone = "default", className }: StatCardProps) {
-  return (
-    <div className={cn("border-line bg-card rounded-lg border p-5", className)}>
+export function StatCard({ label, value, delta, hint, tone = "default", href, className }: StatCardProps) {
+  const body = (
+    <>
       <p className="text-muted text-xs font-medium tracking-widest uppercase">{label}</p>
       <p className={cn("mt-2 text-3xl font-semibold tracking-tight", TONE_STYLES[tone])}>
         {value}
@@ -30,8 +32,24 @@ export function StatCard({ label, value, delta, hint, tone = "default", classNam
           {hint && <span>{hint}</span>}
         </p>
       )}
-    </div>
+    </>
   );
+  const base = "border-line bg-card rounded-lg border p-5";
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          base,
+          "hover:border-accent/40 hover:bg-bg-soft block transition-colors",
+          className,
+        )}
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className={cn(base, className)}>{body}</div>;
 }
 
 export function KpiGrid({ children }: { children: React.ReactNode }) {

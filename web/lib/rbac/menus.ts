@@ -53,12 +53,12 @@ export const NAV: readonly NavItem[] = [
   { label: "Certificate",    href: "/certificate",  cap: null,           group: "student", icon: "award" },
 
   // ----- Faculty -----
-  { label: "My Pod",      href: "/faculty",             cap: "roster.read",    group: "faculty", icon: "home" },
-  { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
-  { label: "Help desk",   href: "/faculty/stuck",     cap: "support.triage", group: "faculty", icon: "life-buoy" },
-  { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", icon: "message-square" },
-  { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
-  { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
+  { label: "My Pod",      href: "/faculty",             cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
+  { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", section: "Daily",     icon: "users-round" },
+  { label: "Help desk",   href: "/faculty/stuck",       cap: "support.triage", group: "faculty", section: "Daily",     icon: "life-buoy" },
+  { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", section: "Reference", icon: "message-square" },
+  { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
+  { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
 
   // ----- Admin · Cohort -----
   { label: "Cohort Home", href: "/admin",            cap: "schedule.read",          group: "admin", section: "Cohort", icon: "home" },

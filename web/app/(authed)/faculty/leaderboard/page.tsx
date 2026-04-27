@@ -1,13 +1,16 @@
-import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getFacultyCohort } from "@/lib/queries/faculty";
+import { getFacultyPods } from "@/lib/queries/faculty-pod";
 import {
   listStudentLeaderboard,
   listPodLeaderboard,
   listTeamLeaderboard,
 } from "@/lib/queries/faculty-cohort";
+import { StudentLeaderboardTable } from "./StudentLeaderboardTable";
+import { PodLeaderboardTable } from "./PodLeaderboardTable";
+import { TeamLeaderboardTable } from "./TeamLeaderboardTable";
 
 export default async function LeaderboardPage({
   searchParams,
@@ -20,11 +23,14 @@ export default async function LeaderboardPage({
   const cohortId = f.cohort.id;
   const tab = ((await searchParams).tab ?? "student") as "student" | "pod" | "team";
 
-  const [students, pods, teams] = await Promise.all([
+  const [students, pods, teams, myPods] = await Promise.all([
     listStudentLeaderboard(cohortId),
     listPodLeaderboard(cohortId),
     listTeamLeaderboard(cohortId),
+    getFacultyPods(cohortId),
   ]);
+
+  const myPodName = myPods[0]?.pod_name ?? null;
 
   return (
     <div className="space-y-6">
@@ -44,106 +50,19 @@ export default async function LeaderboardPage({
 
       {tab === "student" && (
         <Card>
-          {students.length === 0 ? (
-            <CardSub>No scores yet.</CardSub>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="text-muted text-xs uppercase tracking-wider">
-                <tr className="text-left">
-                  <th className="py-2">#</th>
-                  <th>Student</th>
-                  <th>Pod</th>
-                  <th className="text-right">Quiz</th>
-                  <th className="text-right">Subs</th>
-                  <th className="text-right">Posts</th>
-                  <th className="text-right">Comm</th>
-                  <th className="text-right">Votes</th>
-                  <th className="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((s, i) => (
-                  <tr key={s.user_id} className="border-t border-line/30">
-                    <td className="py-2 text-muted">{i + 1}</td>
-                    <td className="text-ink font-medium">
-                      <Link href={`/faculty/student/${s.user_id}`} className="hover:text-accent">
-                        {s.full_name ?? "—"}
-                      </Link>
-                    </td>
-                    <td className="text-muted">{s.pod_name ?? "—"}</td>
-                    <td className="text-right">{s.quiz_score}</td>
-                    <td className="text-right">{s.submission_score}</td>
-                    <td className="text-right">{s.posts_score}</td>
-                    <td className="text-right">{s.comments_score}</td>
-                    <td className="text-right">{s.upvotes_score}</td>
-                    <td className="text-accent text-right font-semibold">{s.total_score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <StudentLeaderboardTable rows={students} myPodName={myPodName} />
         </Card>
       )}
 
       {tab === "pod" && (
         <Card>
-          {pods.length === 0 ? (
-            <CardSub>No pods yet.</CardSub>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="text-muted text-xs uppercase tracking-wider">
-                <tr className="text-left">
-                  <th className="py-2">#</th>
-                  <th>Pod</th>
-                  <th className="text-right">Members</th>
-                  <th className="text-right">Avg</th>
-                  <th className="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pods.map((p, i) => (
-                  <tr key={p.pod_id} className="border-t border-line/30">
-                    <td className="py-2 text-muted">{i + 1}</td>
-                    <td className="text-ink font-medium">{p.pod_name}</td>
-                    <td className="text-right">{p.member_count}</td>
-                    <td className="text-right">{p.avg_score}</td>
-                    <td className="text-accent text-right font-semibold">{p.total_score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <PodLeaderboardTable rows={pods} />
         </Card>
       )}
 
       {tab === "team" && (
         <Card>
-          {teams.length === 0 ? (
-            <CardSub>No teams yet.</CardSub>
-          ) : (
-            <table className="w-full text-sm">
-              <thead className="text-muted text-xs uppercase tracking-wider">
-                <tr className="text-left">
-                  <th className="py-2">#</th>
-                  <th>Team</th>
-                  <th className="text-right">Members</th>
-                  <th className="text-right">Avg</th>
-                  <th className="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {teams.map((t, i) => (
-                  <tr key={t.team_id} className="border-t border-line/30">
-                    <td className="py-2 text-muted">{i + 1}</td>
-                    <td className="text-ink font-medium">{t.team_name}</td>
-                    <td className="text-right">{t.member_count}</td>
-                    <td className="text-right">{t.avg_score}</td>
-                    <td className="text-accent text-right font-semibold">{t.total_score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <TeamLeaderboardTable rows={teams} />
         </Card>
       )}
     </div>

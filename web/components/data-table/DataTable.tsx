@@ -24,6 +24,8 @@ export interface DataTableProps<T> {
   emptyMessage?: string;
   bulkActions?: (selected: T[]) => ReactNode;
   initialSortId?: string;
+  /** Optional per-row className for highlighting. */
+  rowClassName?: (row: T) => string | undefined;
 }
 
 /** Generic filterable, sortable, optionally bulk-selectable table.
@@ -36,6 +38,7 @@ export function DataTable<T>({
   emptyMessage = "Nothing here yet.",
   bulkActions,
   initialSortId,
+  rowClassName,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ id: string; dir: "asc" | "desc" } | null>(
@@ -157,6 +160,7 @@ export function DataTable<T>({
                     className={cn(
                       "border-line border-t",
                       isSelected ? "bg-bg-soft" : "hover:bg-bg-soft/40",
+                      rowClassName?.(row),
                     )}
                   >
                     {bulkActions && (

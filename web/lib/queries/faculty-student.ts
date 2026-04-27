@@ -6,6 +6,7 @@ export interface StudentDrill {
   full_name: string | null;
   email: string;
   avatar_url: string | null;
+  pod_id: string | null;
   pod_name: string | null;
   score: {
     quiz: number; submissions: number; posts: number; comments: number; upvotes: number; total: number;
@@ -38,7 +39,7 @@ export const getStudentDrill = cache(
     ] = await Promise.all([
       sb
         .from("pod_members")
-        .select("pods!inner(name, cohort_id)")
+        .select("pods!inner(id, name, cohort_id)")
         .eq("student_user_id", userId)
         .eq("cohort_id", cohortId)
         .maybeSingle(),
@@ -91,6 +92,7 @@ export const getStudentDrill = cache(
       full_name: prof.full_name,
       email: prof.email,
       avatar_url: prof.avatar_url,
+      pod_id: ((pod as unknown) as { pods: { id: string } } | null)?.pods.id ?? null,
       pod_name: ((pod as unknown) as { pods: { name: string } } | null)?.pods.name ?? null,
       score: score
         ? {

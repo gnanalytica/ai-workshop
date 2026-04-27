@@ -10,6 +10,7 @@ import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
 import { fmtDateTime } from "@/lib/format";
+import { FacultyTabs } from "@/components/faculty-tabs/FacultyTabs";
 import { PodMembers } from "./PodMembers";
 
 export default async function FacultyPodPage() {
@@ -31,13 +32,16 @@ export default async function FacultyPodPage() {
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-accent font-mono text-xs tracking-widest uppercase">My pods</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">{f.cohort.name}</h1>
+        <p className="text-accent font-mono text-xs tracking-widest uppercase">
+          {f.cohort.name}
+        </p>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Faculty</h1>
         <CardSub className="mt-1">
           {pods.length} {pods.length === 1 ? "pod" : "pods"} ·{" "}
-          {pods.reduce((s, p) => s + p.members.length, 0)} students total
+          {pods.reduce((s, p) => s + p.members.length, 0)} students
         </CardSub>
       </header>
+      <FacultyTabs active="pod" />
       <Card className="bg-bg-soft">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
@@ -52,16 +56,23 @@ export default async function FacultyPodPage() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={kpis.stuckOpen > 0 ? "danger" : "default"}>
-              {kpis.stuckOpen} help desk open
-            </Badge>
+            <Link href="/faculty/stuck" className="hover:opacity-80">
+              <Badge variant={kpis.stuckOpen > 0 ? "danger" : "default"}>
+                {kpis.stuckOpen} help desk open
+              </Badge>
+            </Link>
             <Badge variant={kpis.pendingReview > 0 ? "warn" : "default"}>
               {kpis.pendingReview} to review
             </Badge>
-            <Badge variant={atRisk > 0 ? "warn" : "ok"}>
-              {atRisk} at risk
-            </Badge>
-            <Link href="/day/today" className="text-accent text-sm font-medium hover:underline">
+            <Link href="/faculty/cohort#at-risk" className="hover:opacity-80">
+              <Badge variant={atRisk > 0 ? "warn" : "ok"}>
+                {atRisk} at risk
+              </Badge>
+            </Link>
+            <Link
+              href="/day/today"
+              className="text-accent text-sm font-medium hover:underline"
+            >
               Today&apos;s lesson
             </Link>
           </div>

@@ -7,26 +7,38 @@ import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getStudentDrill } from "@/lib/queries/faculty-student";
+import { listCohortPods } from "@/lib/queries/faculty-cohort";
 import { fmtDateTime, relTime } from "@/lib/format";
+import { StudentActions } from "./StudentActions";
 
 export default async function StudentDrillPage({ params }: { params: Promise<{ id: string }> }) {
   await requireCapability("roster.read");
   const f = await getFacultyCohort();
   if (!f) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   const { id } = await params;
-  const s = await getStudentDrill(f.cohort.id, id);
+  const [s, pods] = await Promise.all([
+    getStudentDrill(f.cohort.id, id),
+    listCohortPods(f.cohort.id, ""),
+  ]);
   if (!s) notFound();
+  const podOptions = pods.map((p) => ({ pod_id: p.pod_id, name: p.name }));
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="space-y-3">
         <p className="text-accent font-mono text-xs tracking-widest uppercase">{f.cohort.name} · Student</p>
-        <div className="mt-2">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <StudentRow
             fullName={s.full_name}
             email={s.email}
             avatarUrl={s.avatar_url}
             hint={s.pod_name ? `Pod · ${s.pod_name}` : "No pod"}
+          />
+          <StudentActions
+            userId={s.user_id}
+            email={s.email}
+            currentPodId={s.pod_id}
+            pods={podOptions}
           />
         </div>
       </header>
@@ -47,11 +59,17 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           <h2 className="mb-2 text-lg font-semibold tracking-tight">Score breakdown</h2>
           <Card>
             <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-5">
-              <Slice label="Quiz" value={s.score.quiz} />
-              <Slice label="Submissions" value={s.score.submissions} />
-              <Slice label="Posts" value={s.score.posts} />
-              <Slice label="Comments" value={s.score.comments} />
-              <Slice label="Upvotes" value={s.score.upvotes} />
+              <Slice label="Quiz" value={s.score.quiz} total={s.score.total} />
+              <Slice label="Submissions" value={s.score.submissions} total={s.score.total} />
+              <Slice label="Posts" value={s.score.posts} total={s.score.total} />
+              <Slice label="Comments" value={s.score.comments} total={s.score.total} />
+              <Slice label="Upvotes" value={s.score.upvotes} total={s.score.total} />
+            </div>
+            <div className="border-line mt-4 flex items-center justify-between border-t pt-3 text-sm">
+              <span className="text-muted">Total</span>
+              <span className="text-accent font-mono text-lg font-semibold">
+                {s.score.total}
+              </span>
             </div>
           </Card>
         </section>
@@ -128,11 +146,13 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
   );
 }
 
-function Slice({ label, value }: { label: string; value: number }) {
+function Slice({ label, value, total }: { label: string; value: number; total: number }) {
+  const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
     <div>
       <p className="text-muted text-xs uppercase tracking-wider">{label}</p>
       <p className="text-ink mt-1 font-mono text-lg">{value}</p>
+      <p className="text-muted text-[10px]">{pct}% of total</p>
     </div>
   );
 }

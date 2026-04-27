@@ -19,12 +19,24 @@ export interface CohortKpis {
   atRisk: number;
 }
 
+export type AtRiskSignal =
+  | "no_activity"
+  | "no_submissions"
+  | "low_labs"
+  | "open_help";
+
 export interface AtRiskStudent {
   user_id: string;
   full_name: string | null;
   pod_name: string | null;
   days_since_active: number | null;
   reason: "no_activity" | "low_completion";
+  signals: AtRiskSignal[];
+  details: {
+    submissions: number;
+    labs_done: number;
+    open_stuck: number;
+  };
 }
 
 export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis> => {
@@ -87,24 +99,78 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
   if (list.length === 0) return [];
 
   const userIds = list.map((r) => r.user_id);
-  const { data: recentLab } = await sb
-    .from("lab_progress")
-    .select("user_id, updated_at")
-    .eq("cohort_id", cohortId)
-    .in("user_id", userIds)
-    .gte("updated_at", since);
-  const recentSet = new Set(((recentLab ?? []) as Array<{ user_id: string }>).map((r) => r.user_id));
+  const [{ data: recentLab }, { data: subs }, { data: labs }, { data: stuck }] =
+    await Promise.all([
+      sb
+        .from("lab_progress")
+        .select("user_id, updated_at")
+        .eq("cohort_id", cohortId)
+        .in("user_id", userIds)
+        .gte("updated_at", since),
+      sb
+        .from("submissions")
+        .select("user_id, assignments!inner(cohort_id)")
+        .eq("assignments.cohort_id", cohortId)
+        .in("user_id", userIds),
+      sb
+        .from("lab_progress")
+        .select("user_id")
+        .eq("cohort_id", cohortId)
+        .eq("status", "done")
+        .in("user_id", userIds),
+      sb
+        .from("stuck_queue")
+        .select("user_id")
+        .eq("cohort_id", cohortId)
+        .in("status", ["open", "helping"])
+        .in("user_id", userIds),
+    ]);
 
-  return list
-    .filter((r) => !recentSet.has(r.user_id))
-    .slice(0, 25)
-    .map((r) => ({
+  const recentSet = new Set(
+    ((recentLab ?? []) as Array<{ user_id: string }>).map((r) => r.user_id),
+  );
+  const subsByUser = new Map<string, number>();
+  ((subs ?? []) as Array<{ user_id: string }>).forEach((r) => {
+    subsByUser.set(r.user_id, (subsByUser.get(r.user_id) ?? 0) + 1);
+  });
+  const labsByUser = new Map<string, number>();
+  ((labs ?? []) as Array<{ user_id: string }>).forEach((r) => {
+    labsByUser.set(r.user_id, (labsByUser.get(r.user_id) ?? 0) + 1);
+  });
+  const stuckByUser = new Map<string, number>();
+  ((stuck ?? []) as Array<{ user_id: string }>).forEach((r) => {
+    stuckByUser.set(r.user_id, (stuckByUser.get(r.user_id) ?? 0) + 1);
+  });
+
+  const enriched: AtRiskStudent[] = list.map((r) => {
+    const subCount = subsByUser.get(r.user_id) ?? 0;
+    const labCount = labsByUser.get(r.user_id) ?? 0;
+    const stuckCount = stuckByUser.get(r.user_id) ?? 0;
+    const inactive = !recentSet.has(r.user_id);
+    const signals: AtRiskSignal[] = [];
+    if (inactive) signals.push("no_activity");
+    if (subCount === 0) signals.push("no_submissions");
+    if (labCount < 3) signals.push("low_labs");
+    if (stuckCount > 0) signals.push("open_help");
+    return {
       user_id: r.user_id,
       full_name: r.profiles.full_name,
       pod_name: r.pod_members?.[0]?.pods?.name ?? null,
-      days_since_active: sinceDays,
-      reason: "no_activity" as const,
-    }));
+      days_since_active: inactive ? sinceDays : null,
+      reason: inactive ? "no_activity" : "low_completion",
+      signals,
+      details: {
+        submissions: subCount,
+        labs_done: labCount,
+        open_stuck: stuckCount,
+      },
+    };
+  });
+
+  return enriched
+    .filter((s) => s.signals.length > 0)
+    .sort((a, b) => b.signals.length - a.signals.length)
+    .slice(0, 25);
 });
 
 export interface ScoreRow {
