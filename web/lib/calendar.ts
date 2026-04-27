@@ -3,8 +3,6 @@
  * skipped both when sizing a cohort and when computing the current day_number.
  */
 
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
 function parseDateUTC(iso: string): Date {
   // Treat 'YYYY-MM-DD' as UTC midnight to avoid TZ drift.
   return new Date(iso + "T00:00:00Z");

@@ -178,13 +178,10 @@ export async function publishGrade(input: z.infer<typeof publishSchema>) {
   return actionOk();
 }
 
-const manualSchema = z.object({
-  submission_id: z.string().uuid(),
-  score: z.number().min(0).max(100),
-  feedback_md: z.string().max(20_000).optional(),
-});
-
-/** Score a submission manually (no AI involved) and publish in one step. */
-export async function manualGrade(input: z.infer<typeof manualSchema>) {
+export async function manualGrade(input: {
+  submission_id: string;
+  score: number;
+  feedback_md?: string;
+}) {
   return publishGrade(input);
 }

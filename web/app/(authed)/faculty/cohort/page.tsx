@@ -81,7 +81,8 @@ export default async function FacultyCohortPage() {
 
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight">Pods · drag to move</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
+          <CardSub className="text-xs">Search, multi-select, or drag to assign</CardSub>
         </div>
         <PodBoard pods={roster.pods} unassigned={roster.unassigned} />
       </section>

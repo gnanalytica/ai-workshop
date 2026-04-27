@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
