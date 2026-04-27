@@ -24,9 +24,11 @@ export const listMyFacultyCohorts = cache(async (): Promise<FacultyCohort[]> => 
     .from("cohort_faculty")
     .select("college_role, cohorts(id, slug, name, status, starts_on, ends_on)")
     .order("created_at", { ascending: false });
+  const seen = new Set<string>();
   return (data ?? []).flatMap((row) => {
     const c = (row as unknown as { cohorts: FacultyCohort | null }).cohorts;
-    if (!c) return [];
+    if (!c || seen.has(c.id)) return [];
+    seen.add(c.id);
     return [{ ...c, college_role: (row as { college_role: "support" | "executive" }).college_role }];
   });
 });
