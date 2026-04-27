@@ -19,7 +19,7 @@ export default async function FacultyPodPage() {
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   const [pods, kpis, days, atRiskAll] = await Promise.all([
-    getFacultyPods(f.cohort.id),
+    getFacultyPods(f.cohort.id, me.id),
     getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
     listAtRiskStudents(f.cohort.id),
@@ -70,7 +70,7 @@ export default async function FacultyPodPage() {
               </Badge>
             </Link>
             <Link
-              href="/day/today"
+              href="/faculty/day/today"
               className="text-accent text-sm font-medium hover:underline"
             >
               Today&apos;s lesson

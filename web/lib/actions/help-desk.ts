@@ -38,7 +38,7 @@ export async function claimTicket(input: z.infer<typeof claimSchema>): Promise<A
   const parsed = claimSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   const sb = await getSupabaseServer();
-  const { error } = await sb.rpc("rpc_claim_stuck", { p_id: parsed.data.id } as never);
+  const { error } = await sb.rpc("rpc_claim_help_desk_ticket", { p_id: parsed.data.id } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/cohorts", "layout");
   revalidatePath("/faculty/help-desk");

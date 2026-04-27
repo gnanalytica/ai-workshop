@@ -18,7 +18,8 @@ export interface FacultyHelpDeskEntry {
 
 /**
  * Help-desk tickets from students in pods this faculty member belongs to.
- * Falls back to all cohort entries when the faculty has no pods (rare).
+ * Returns an empty list when they have no pod_faculty rows (RLS + claim RPC
+ * also require pod scope for non–global staff; see migration 0030).
  */
 export const listFacultyHelpDesk = cache(
   async (cohortId: string, facultyUserId: string): Promise<FacultyHelpDeskEntry[]> => {

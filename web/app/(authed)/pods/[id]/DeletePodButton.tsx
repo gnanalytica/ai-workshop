@@ -3,7 +3,15 @@
 import { useTransition } from "react";
 import { deletePod } from "@/lib/actions/pods";
 
-export function DeletePodButton({ podId, podName }: { podId: string; podName: string }) {
+export function DeletePodButton({
+  podId,
+  podName,
+  cohortId,
+}: {
+  podId: string;
+  podName: string;
+  cohortId: string;
+}) {
   const [pending, start] = useTransition();
 
   function onClick() {
@@ -14,7 +22,7 @@ export function DeletePodButton({ podId, podName }: { podId: string; podName: st
     )
       return;
     start(async () => {
-      await deletePod(podId);
+      await deletePod(podId, cohortId);
     });
   }
 

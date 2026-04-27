@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub } from "@/components/ui/card";
@@ -15,13 +16,18 @@ export default async function PodDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="space-y-6">
+      <p className="text-muted text-xs">
+        <Link href={`/pods?cohort=${pod.cohort_id}`} className="text-accent hover:underline">
+          ← Pods
+        </Link>
+      </p>
       <header className="flex items-start justify-between gap-4">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">Pod</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">{pod.name}</h1>
           {pod.shared_notes && <p className="text-muted mt-2 text-sm">{pod.shared_notes}</p>}
         </div>
-        <DeletePodButton podId={pod.pod_id} podName={pod.name} />
+        <DeletePodButton podId={pod.pod_id} podName={pod.name} cohortId={pod.cohort_id} />
       </header>
 
       <section>

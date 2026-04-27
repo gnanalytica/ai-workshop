@@ -2,11 +2,16 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { PodCard } from "@/components/pod-card/PodCard";
 import { listPods } from "@/lib/queries/admin";
-import { getUserCohort } from "@/lib/queries/user-cohort";
+import { resolvePodsPageCohort } from "@/lib/pods/resolvePodsCohort";
 import { CreatePodForm } from "./CreatePodForm";
 
-export default async function PodsPage() {
-  const cohort = await getUserCohort();
+export default async function PodsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cohort?: string }>;
+}) {
+  const { cohort: cohortParam } = await searchParams;
+  const cohort = await resolvePodsPageCohort(cohortParam ?? null);
   if (!cohort) {
     return (
       <Card>
@@ -17,6 +22,7 @@ export default async function PodsPage() {
   }
   await requireCapability("pods.write", cohort.id);
   const pods = await listPods(cohort.id);
+  const cohortQuery = `cohort=${cohort.id}`;
 
   return (
     <div className="space-y-6">
@@ -55,7 +61,7 @@ export default async function PodsPage() {
               memberCount={p.member_count}
               facultyCount={p.faculty_count}
               facultyNames={p.faculty_names}
-              href={`/pods/${p.pod_id}`}
+              href={`/pods/${p.pod_id}?${cohortQuery}`}
             />
           ))}
         </div>

@@ -34,6 +34,7 @@ export async function podEvent(input: z.infer<typeof evSchema>) {
   if (error) return actionFail(error.message);
   revalidatePath("/faculty/pod");
   revalidatePath("/faculty/cohort");
+  revalidatePath("/faculty/help-desk");
   revalidatePath(`/faculty/student/${parsed.data.target_user_id}`);
   return actionOk();
 }
@@ -55,6 +56,8 @@ export async function createPod(input: z.infer<typeof createSchema>) {
   } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/help-desk");
   return actionOk(data);
 }
 
@@ -76,14 +79,19 @@ export async function updatePod(input: z.infer<typeof updateSchema>) {
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
   revalidatePath(`/pods/${parsed.data.pod_id}`);
+  revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/help-desk");
   return actionOk();
 }
 
-export async function deletePod(podId: string) {
+export async function deletePod(podId: string, cohortId?: string) {
   if (!/^[0-9a-f-]{36}$/i.test(podId)) return actionFail("Invalid pod id");
   const sb = await getSupabaseServer();
   const { error } = await sb.rpc("rpc_delete_pod", { p_pod_id: podId } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
-  redirect("/pods");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/help-desk");
+  const q = cohortId && /^[0-9a-f-]{36}$/i.test(cohortId) ? `?cohort=${cohortId}` : "";
+  redirect(`/pods${q}`);
 }

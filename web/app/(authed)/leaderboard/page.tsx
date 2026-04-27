@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
 import { checkCapability } from "@/lib/auth/requireCapability";
+import { getSession } from "@/lib/auth/session";
 import {
   listStudentLeaderboard,
   listPodLeaderboard,
@@ -31,11 +32,12 @@ export default async function LeaderboardPage({
     | "team";
 
   const isFaculty = await checkCapability("roster.read", cohortId);
+  const me = await getSession();
   const [students, pods, teams, myPods] = await Promise.all([
     listStudentLeaderboard(cohortId),
     listPodLeaderboard(cohortId),
     listTeamLeaderboard(cohortId),
-    isFaculty ? getFacultyPods(cohortId) : Promise.resolve([]),
+    isFaculty && me ? getFacultyPods(cohortId, me.id) : Promise.resolve([]),
   ]);
 
   const myPodName = myPods[0]?.pod_name ?? null;
