@@ -16,6 +16,9 @@
 
 drop index if exists pod_faculty_one_primary;
 
+-- v_pod_summary (0007) references pod_faculty.is_primary; drop before the column.
+drop view if exists v_pod_summary;
+
 alter table pod_faculty drop column if exists is_primary;
 
 -- ----- rpc_pod_faculty_event: drop primary_changed / handoff -----------------
@@ -104,9 +107,8 @@ as $$
     and m.student_user_id = auth.uid();
 $$;
 
--- ----- v_pod_summary: drop primary_faculty_id --------------------------------
+-- ----- v_pod_summary: recreate without primary_faculty_id / is_primary -------
 
-drop view if exists v_pod_summary;
 create view v_pod_summary as
 select
   p.id as pod_id,
@@ -115,6 +117,9 @@ select
   (select count(*) from pod_members m where m.pod_id = p.id) as member_count,
   (select count(*) from pod_faculty f where f.pod_id = p.id) as faculty_count
 from pods p;
+
+-- Restored after recreate (see 0016_security_hardening).
+alter view public.v_pod_summary set (security_invoker = on);
 
 -- ----- stuck_queue: escalation channel ---------------------------------------
 
