@@ -6,16 +6,16 @@ import { toast } from "sonner";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { moderateBoard } from "@/lib/actions/board";
-import type { ModPost } from "@/lib/queries/board-mod";
+import { moderateCommunity } from "@/lib/actions/community";
+import type { ModPost } from "@/lib/queries/community-mod";
 import { fmtDateTime, relTime } from "@/lib/format";
 
-export function ModBoardClient({ posts }: { posts: ModPost[] }) {
+export function ModCommunityClient({ posts }: { posts: ModPost[] }) {
   const [pending, start] = useTransition();
 
   function pin(post: ModPost) {
     start(async () => {
-      const r = await moderateBoard({ kind: "post", id: post.id, pinned: !post.pinned_at });
+      const r = await moderateCommunity({ kind: "post", id: post.id, pinned: !post.pinned_at });
       if (r.ok) toast.success(post.pinned_at ? "Unpinned" : "Pinned");
       else toast.error(r.error);
     });
@@ -23,7 +23,7 @@ export function ModBoardClient({ posts }: { posts: ModPost[] }) {
   function hide(post: ModPost) {
     if (!post.deleted_at && !window.confirm(`Hide "${post.title}"?`)) return;
     start(async () => {
-      const r = await moderateBoard({ kind: "post", id: post.id, deleted: !post.deleted_at });
+      const r = await moderateCommunity({ kind: "post", id: post.id, deleted: !post.deleted_at });
       if (r.ok) toast.success(post.deleted_at ? "Restored" : "Hidden");
       else toast.error(r.error);
     });
@@ -36,7 +36,7 @@ export function ModBoardClient({ posts }: { posts: ModPost[] }) {
       {posts.map((p) => (
         <Card key={p.id} className={p.deleted_at ? "opacity-60" : ""}>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <Link href={`/board/${p.id}`} className="hover:text-accent">
+            <Link href={`/community/${p.id}`} className="hover:text-accent">
               <CardTitle>{p.title}</CardTitle>
             </Link>
             <div className="flex items-center gap-2">

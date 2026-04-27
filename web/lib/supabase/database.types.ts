@@ -186,7 +186,7 @@ export type Database = {
           },
         ]
       }
-      board_posts: {
+      community_posts: {
         Row: {
           author_id: string | null
           body_md: string
@@ -225,21 +225,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "board_posts_author_id_fkey"
+            foreignKeyName: "community_posts_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "board_posts_cohort_id_fkey"
+            foreignKeyName: "community_posts_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "cohorts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "board_posts_cohort_id_fkey"
+            foreignKeyName: "community_posts_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "v_cohort_summary"
@@ -247,7 +247,7 @@ export type Database = {
           },
         ]
       }
-      board_replies: {
+      community_replies: {
         Row: {
           author_id: string | null
           body_md: string
@@ -280,22 +280,22 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "board_replies_author_id_fkey"
+            foreignKeyName: "community_replies_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "board_replies_post_id_fkey"
+            foreignKeyName: "community_replies_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "board_posts"
+            referencedRelation: "community_posts"
             referencedColumns: ["id"]
           },
         ]
       }
-      board_votes: {
+      community_votes: {
         Row: {
           post_id: string | null
           reply_id: string | null
@@ -319,21 +319,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "board_votes_post_id_fkey"
+            foreignKeyName: "community_votes_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "board_posts"
+            referencedRelation: "community_posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "board_votes_reply_id_fkey"
+            foreignKeyName: "community_votes_reply_id_fkey"
             columns: ["reply_id"]
             isOneToOne: false
-            referencedRelation: "board_replies"
+            referencedRelation: "community_replies"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "board_votes_user_id_fkey"
+            foreignKeyName: "community_votes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1217,21 +1217,21 @@ export type Database = {
           cohort_id: string
           created_at: string
           id: string
-          mentor_note: string | null
+          shared_notes: string | null
           name: string
         }
         Insert: {
           cohort_id: string
           created_at?: string
           id?: string
-          mentor_note?: string | null
+          shared_notes?: string | null
           name: string
         }
         Update: {
           cohort_id?: string
           created_at?: string
           id?: string
-          mentor_note?: string | null
+          shared_notes?: string | null
           name?: string
         }
         Relationships: [
@@ -1664,16 +1664,16 @@ export type Database = {
         }
         Relationships: []
       }
-      stuck_queue: {
+      help_desk_queue: {
         Row: {
           claimed_by: string | null
           cohort_id: string
           created_at: string
           id: string
-          kind: Database["public"]["Enums"]["stuck_kind"]
+          kind: Database["public"]["Enums"]["help_desk_kind"]
           message: string | null
           resolution: string | null
-          status: Database["public"]["Enums"]["stuck_status"]
+          status: Database["public"]["Enums"]["help_desk_status"]
           updated_at: string
           user_id: string
         }
@@ -1682,10 +1682,10 @@ export type Database = {
           cohort_id: string
           created_at?: string
           id?: string
-          kind: Database["public"]["Enums"]["stuck_kind"]
+          kind: Database["public"]["Enums"]["help_desk_kind"]
           message?: string | null
           resolution?: string | null
-          status?: Database["public"]["Enums"]["stuck_status"]
+          status?: Database["public"]["Enums"]["help_desk_status"]
           updated_at?: string
           user_id: string
         }
@@ -1694,37 +1694,37 @@ export type Database = {
           cohort_id?: string
           created_at?: string
           id?: string
-          kind?: Database["public"]["Enums"]["stuck_kind"]
+          kind?: Database["public"]["Enums"]["help_desk_kind"]
           message?: string | null
           resolution?: string | null
-          status?: Database["public"]["Enums"]["stuck_status"]
+          status?: Database["public"]["Enums"]["help_desk_status"]
           updated_at?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "stuck_queue_claimed_by_fkey"
+            foreignKeyName: "help_desk_queue_claimed_by_fkey"
             columns: ["claimed_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "stuck_queue_cohort_id_fkey"
+            foreignKeyName: "help_desk_queue_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "cohorts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "stuck_queue_cohort_id_fkey"
+            foreignKeyName: "help_desk_queue_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "v_cohort_summary"
             referencedColumns: ["cohort_id"]
           },
           {
-            foreignKeyName: "stuck_queue_user_id_fkey"
+            foreignKeyName: "help_desk_queue_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1964,28 +1964,28 @@ export type Database = {
           },
         ]
       }
-      v_stuck_open: {
+      v_help_desk_open: {
         Row: {
           claimed_by_name: string | null
           cohort_id: string | null
           created_at: string | null
           id: string | null
-          kind: Database["public"]["Enums"]["stuck_kind"] | null
+          kind: Database["public"]["Enums"]["help_desk_kind"] | null
           message: string | null
-          status: Database["public"]["Enums"]["stuck_status"] | null
+          status: Database["public"]["Enums"]["help_desk_status"] | null
           student_email: string | null
           student_name: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "stuck_queue_cohort_id_fkey"
+            foreignKeyName: "help_desk_queue_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "cohorts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "stuck_queue_cohort_id_fkey"
+            foreignKeyName: "help_desk_queue_cohort_id_fkey"
             columns: ["cohort_id"]
             isOneToOne: false
             referencedRelation: "v_cohort_summary"
@@ -2038,23 +2038,23 @@ export type Database = {
       has_cap: { Args: { p_cap: string; p_cohort?: string }; Returns: boolean }
       has_staff_role: { Args: { role: string }; Returns: boolean }
       is_enrolled_in: { Args: { p_cohort: string }; Returns: boolean }
-      rpc_claim_stuck: {
+      rpc_claim_help_desk_ticket: {
         Args: { p_id: string }
         Returns: {
           claimed_by: string | null
           cohort_id: string
           created_at: string
           id: string
-          kind: Database["public"]["Enums"]["stuck_kind"]
+          kind: Database["public"]["Enums"]["help_desk_kind"]
           message: string | null
           resolution: string | null
-          status: Database["public"]["Enums"]["stuck_status"]
+          status: Database["public"]["Enums"]["help_desk_status"]
           updated_at: string
           user_id: string
         }
         SetofOptions: {
           from: "*"
-          to: "stuck_queue"
+          to: "help_desk_queue"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2135,7 +2135,7 @@ export type Database = {
         Args: { p_cohort: string }
         Returns: {
           faculty: Json
-          mentor_note: string
+          shared_notes: string
           pod_id: string
           pod_name: string
         }[]
@@ -2213,8 +2213,8 @@ export type Database = {
       pretraining_status: "not_started" | "in_progress" | "completed"
       quiz_question_kind: "single" | "multi" | "short"
       registration_status: "pending" | "confirmed" | "waitlist" | "cancelled"
-      stuck_kind: "content" | "tech" | "team" | "other"
-      stuck_status: "open" | "helping" | "resolved" | "cancelled"
+      help_desk_kind: "content" | "tech" | "team" | "other"
+      help_desk_status: "open" | "helping" | "resolved" | "cancelled"
       submission_status: "draft" | "submitted" | "graded" | "returned"
     }
     CompositeTypes: {
@@ -2371,8 +2371,8 @@ export const Constants = {
       pretraining_status: ["not_started", "in_progress", "completed"],
       quiz_question_kind: ["single", "multi", "short"],
       registration_status: ["pending", "confirmed", "waitlist", "cancelled"],
-      stuck_kind: ["content", "tech", "team", "other"],
-      stuck_status: ["open", "helping", "resolved", "cancelled"],
+      help_desk_kind: ["content", "tech", "team", "other"],
+      help_desk_status: ["open", "helping", "resolved", "cancelled"],
       submission_status: ["draft", "submitted", "graded", "returned"],
     },
   },

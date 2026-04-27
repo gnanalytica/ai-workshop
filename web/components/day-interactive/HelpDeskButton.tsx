@@ -4,11 +4,11 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { reportStuck } from "@/lib/actions/stuck";
+import { reportTicket } from "@/lib/actions/help-desk";
 
 type Kind = "content" | "tech" | "team" | "other";
 
-export function StuckButton({ cohortId }: { cohortId: string }) {
+export function HelpDeskButton({ cohortId }: { cohortId: string }) {
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<Kind>("content");
   const [message, setMessage] = useState("");
@@ -20,7 +20,7 @@ export function StuckButton({ cohortId }: { cohortId: string }) {
       return;
     }
     start(async () => {
-      const r = await reportStuck({ cohort_id: cohortId, kind, message: message.trim() });
+      const r = await reportTicket({ cohort_id: cohortId, kind, message: message.trim() });
       if (r.ok) {
         toast.success("Help is on the way");
         setMessage("");

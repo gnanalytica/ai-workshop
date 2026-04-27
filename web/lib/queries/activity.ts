@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
-export type ActivityKind = "registration" | "lab" | "submission" | "attendance" | "stuck" | "kudos";
+export type ActivityKind = "registration" | "lab" | "submission" | "attendance" | "help_desk" | "kudos";
 
 export interface ActivityItem {
   id: string;
@@ -13,12 +13,12 @@ export interface ActivityItem {
 
 export const listCohortActivity = cache(async (cohortId: string, limit = 40): Promise<ActivityItem[]> => {
   const sb = await getSupabaseServer();
-  const [regs, labs, subs, atts, stucks, kudos] = await Promise.all([
+  const [regs, labs, subs, atts, helpDesks, kudos] = await Promise.all([
     sb.from("registrations").select("user_id, status, updated_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("lab_progress").select("user_id, day_number, lab_id, status, updated_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("submissions").select("id, status, updated_at, profiles:user_id(full_name), assignments!inner(title, day_number, cohort_id)").eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("attendance").select("user_id, day_number, status, marked_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("marked_at", { ascending: false }).limit(limit),
-    sb.from("stuck_queue").select("id, kind, status, updated_at, profiles:user_id(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
+    sb.from("help_desk_queue").select("id, kind, status, updated_at, profiles:user_id(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("kudos").select("id, note, created_at, from:profiles!from_user_id(full_name), to:profiles!to_user_id(full_name)").eq("cohort_id", cohortId).order("created_at", { ascending: false }).limit(limit),
   ]);
 
@@ -60,10 +60,10 @@ export const listCohortActivity = cache(async (cohortId: string, limit = 40): Pr
       at: r.marked_at,
     });
   }
-  for (const r of (stucks.data ?? []) as unknown as Array<{ id: string; kind: string; status: string; updated_at: string; profiles: { full_name: string | null } | null }>) {
+  for (const r of (helpDesks.data ?? []) as unknown as Array<{ id: string; kind: string; status: string; updated_at: string; profiles: { full_name: string | null } | null }>) {
     items.push({
-      id: `stuck-${r.id}-${r.updated_at}`,
-      kind: "stuck",
+      id: `help-desk-${r.id}-${r.updated_at}`,
+      kind: "help_desk",
       user_name: r.profiles?.full_name ?? null,
       detail: `Help desk ${r.kind} · ${r.status}`,
       at: r.updated_at,

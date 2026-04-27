@@ -31,7 +31,7 @@ export const listUnreadMentions = cache(async (limit = 20): Promise<MentionRow[]
   const byIds = [...new Set(rows.map((r) => r.payload.by).filter((s): s is string => !!s))];
   const [posts, profs] = await Promise.all([
     postIds.length
-      ? sb.from("board_posts").select("id, title").in("id", postIds)
+      ? sb.from("community_posts").select("id, title").in("id", postIds)
       : Promise.resolve({ data: [] as Array<{ id: string; title: string }> } as never),
     byIds.length
       ? sb.from("profiles").select("id, full_name").in("id", byIds)

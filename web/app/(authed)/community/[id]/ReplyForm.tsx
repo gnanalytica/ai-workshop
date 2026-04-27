@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MentionEditor } from "@/components/mention-editor/MentionEditor";
-import { createBoardReply } from "@/lib/actions/board";
+import { createCommunityReply } from "@/lib/actions/community";
 import type { RosterMember } from "@/lib/queries/cohort-roster-mini";
 
 export function ReplyForm({ postId, roster }: { postId: string; roster: RosterMember[] }) {
@@ -14,7 +14,7 @@ export function ReplyForm({ postId, roster }: { postId: string; roster: RosterMe
   function submit() {
     if (!body.trim()) return;
     start(async () => {
-      const r = await createBoardReply({ post_id: postId, body_md: body.trim() });
+      const r = await createCommunityReply({ post_id: postId, body_md: body.trim() });
       if (r.ok) {
         toast.success("Replied");
         setBody("");

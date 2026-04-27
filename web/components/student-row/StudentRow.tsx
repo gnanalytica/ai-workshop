@@ -6,7 +6,7 @@ export interface StudentRowProps {
   email: string;
   avatarUrl?: string | null;
   pod?: string | null;
-  status?: "ok" | "at_risk" | "stuck" | null;
+  status?: "ok" | "at_risk" | "behind" | null;
   hint?: string;
   className?: string;
 }
@@ -14,7 +14,7 @@ export interface StudentRowProps {
 const STATUS: Record<NonNullable<StudentRowProps["status"]> & string, { label: string; variant: "ok" | "warn" | "danger" }> = {
   ok:      { label: "On track", variant: "ok" },
   at_risk: { label: "At risk",  variant: "warn" },
-  stuck:   { label: "Stuck",    variant: "danger" },
+  behind:  { label: "Behind",   variant: "danger" },
 };
 
 export function StudentRow({ fullName, email, avatarUrl, pod, status, hint, className }: StudentRowProps) {

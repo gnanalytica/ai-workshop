@@ -15,7 +15,7 @@ export interface CohortKpis {
   pods: number;
   unassignedStudents: number;
   pendingReview: number;
-  stuckOpen: number;
+  helpDeskOpen: number;
   atRisk: number;
 }
 
@@ -35,13 +35,13 @@ export interface AtRiskStudent {
   details: {
     submissions: number;
     labs_done: number;
-    open_stuck: number;
+    open_help_desk: number;
   };
 }
 
 export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis> => {
   const sb = await getSupabaseServer();
-  const [students, pods, assignedStudents, submitted, stuck] = await Promise.all([
+  const [students, pods, assignedStudents, submitted, helpDesk] = await Promise.all([
     sb.from("registrations").select("user_id", { count: "exact", head: true })
       .eq("cohort_id", cohortId).eq("status", "confirmed"),
     sb.from("pods").select("id", { count: "exact", head: true }).eq("cohort_id", cohortId),
@@ -49,7 +49,7 @@ export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis>
       .eq("cohort_id", cohortId),
     sb.from("submissions").select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
       .eq("status", "submitted").eq("assignments.cohort_id", cohortId),
-    sb.from("stuck_queue").select("id", { count: "exact", head: true })
+    sb.from("help_desk_queue").select("id", { count: "exact", head: true })
       .eq("cohort_id", cohortId).in("status", ["open", "helping"]),
   ]);
   const total = students.count ?? 0;
@@ -59,7 +59,7 @@ export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis>
     pods: pods.count ?? 0,
     unassignedStudents: Math.max(0, total - assigned),
     pendingReview: submitted.count ?? 0,
-    stuckOpen: stuck.count ?? 0,
+    helpDeskOpen: helpDesk.count ?? 0,
     atRisk: 0,
   };
 });
@@ -99,7 +99,7 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
   if (list.length === 0) return [];
 
   const userIds = list.map((r) => r.user_id);
-  const [{ data: recentLab }, { data: subs }, { data: labs }, { data: stuck }] =
+  const [{ data: recentLab }, { data: subs }, { data: labs }, { data: helpDesk }] =
     await Promise.all([
       sb
         .from("lab_progress")
@@ -119,7 +119,7 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
         .eq("status", "done")
         .in("user_id", userIds),
       sb
-        .from("stuck_queue")
+        .from("help_desk_queue")
         .select("user_id")
         .eq("cohort_id", cohortId)
         .in("status", ["open", "helping"])
@@ -137,21 +137,21 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
   ((labs ?? []) as Array<{ user_id: string }>).forEach((r) => {
     labsByUser.set(r.user_id, (labsByUser.get(r.user_id) ?? 0) + 1);
   });
-  const stuckByUser = new Map<string, number>();
-  ((stuck ?? []) as Array<{ user_id: string }>).forEach((r) => {
-    stuckByUser.set(r.user_id, (stuckByUser.get(r.user_id) ?? 0) + 1);
+  const helpDeskByUser = new Map<string, number>();
+  ((helpDesk ?? []) as Array<{ user_id: string }>).forEach((r) => {
+    helpDeskByUser.set(r.user_id, (helpDeskByUser.get(r.user_id) ?? 0) + 1);
   });
 
   const enriched: AtRiskStudent[] = list.map((r) => {
     const subCount = subsByUser.get(r.user_id) ?? 0;
     const labCount = labsByUser.get(r.user_id) ?? 0;
-    const stuckCount = stuckByUser.get(r.user_id) ?? 0;
+    const helpDeskCount = helpDeskByUser.get(r.user_id) ?? 0;
     const inactive = !recentSet.has(r.user_id);
     const signals: AtRiskSignal[] = [];
     if (inactive) signals.push("no_activity");
     if (subCount === 0) signals.push("no_submissions");
     if (labCount < 3) signals.push("low_labs");
-    if (stuckCount > 0) signals.push("open_help");
+    if (helpDeskCount > 0) signals.push("open_help");
     return {
       user_id: r.user_id,
       full_name: r.profiles.full_name,
@@ -162,7 +162,7 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
       details: {
         submissions: subCount,
         labs_done: labCount,
-        open_stuck: stuckCount,
+        open_help_desk: helpDeskCount,
       },
     };
   });

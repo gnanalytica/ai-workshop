@@ -5,7 +5,7 @@ export interface PodDetail {
   pod_id: string;
   cohort_id: string;
   name: string;
-  mentor_note: string | null;
+  shared_notes: string | null;
   faculty: { user_id: string; full_name: string | null }[];
   members: { user_id: string; full_name: string | null; email: string }[];
   events: { id: string; kind: string; payload: Record<string, unknown>; at: string; actor_name: string | null }[];
@@ -70,14 +70,14 @@ export const getPodDetail = cache(async (podId: string): Promise<PodDetail | nul
   const { data, error } = await sb
     .from("pods")
     .select(
-      "id, cohort_id, name, mentor_note, pod_faculty(faculty_user_id, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name, email))",
+      "id, cohort_id, name, shared_notes, pod_faculty(faculty_user_id, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name, email))",
     )
     .eq("id", podId)
     .maybeSingle();
   if (error || !data) return null;
 
   const d = data as unknown as {
-    id: string; cohort_id: string; name: string; mentor_note: string | null;
+    id: string; cohort_id: string; name: string; shared_notes: string | null;
     pod_faculty: Array<{ faculty_user_id: string; profiles: { full_name: string | null } | null }>;
     pod_members: Array<{ student_user_id: string; profiles: { full_name: string | null; email: string } | null }>;
   };
@@ -93,7 +93,7 @@ export const getPodDetail = cache(async (podId: string): Promise<PodDetail | nul
     pod_id: d.id,
     cohort_id: d.cohort_id,
     name: d.name,
-    mentor_note: d.mentor_note,
+    shared_notes: d.shared_notes,
     faculty: d.pod_faculty.map((f) => ({
       user_id: f.faculty_user_id,
       full_name: f.profiles?.full_name ?? null,

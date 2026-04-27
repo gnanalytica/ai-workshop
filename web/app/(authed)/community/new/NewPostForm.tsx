@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MentionEditor } from "@/components/mention-editor/MentionEditor";
-import { createBoardPost } from "@/lib/actions/board";
+import { createCommunityPost } from "@/lib/actions/community";
 import type { RosterMember } from "@/lib/queries/cohort-roster-mini";
 
 export function NewPostForm({ cohortId, roster }: { cohortId: string; roster: RosterMember[] }) {
@@ -25,7 +25,7 @@ export function NewPostForm({ cohortId, roster }: { cohortId: string; roster: Ro
     if (title.trim().length < 3) return toast.error("Title too short");
     if (body.trim().length < 1) return toast.error("Body required");
     start(async () => {
-      const r = await createBoardPost({
+      const r = await createCommunityPost({
         cohort_id: cohortId,
         title: title.trim(),
         body_md: body.trim(),
@@ -34,7 +34,7 @@ export function NewPostForm({ cohortId, roster }: { cohortId: string; roster: Ro
       if (r.ok) {
         toast.success("Posted");
         const id = (r.data as { id?: string } | undefined)?.id;
-        router.push(id ? `/board/${id}` : "/board");
+        router.push(id ? `/community/${id}` : "/community");
       } else toast.error(r.error);
     });
   }

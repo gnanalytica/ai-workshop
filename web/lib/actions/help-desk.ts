@@ -12,14 +12,14 @@ const reportSchema = z.object({
   message: z.string().min(1).max(1000),
 });
 
-export async function reportStuck(input: z.infer<typeof reportSchema>): Promise<ActionResult> {
+export async function reportTicket(input: z.infer<typeof reportSchema>): Promise<ActionResult> {
   const parsed = reportSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   return withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
     return sb
-      .from("stuck_queue")
+      .from("help_desk_queue")
       .insert({
         cohort_id: parsed.data.cohort_id,
         user_id: user.user.id,
@@ -29,19 +29,19 @@ export async function reportStuck(input: z.infer<typeof reportSchema>): Promise<
       })
       .select()
       .single();
-  }, ["/admin/stuck", "/faculty/stuck", "/faculty/pod", "/help-desk", "/learn"]);
+  }, ["/admin/help-desk", "/faculty/help-desk", "/faculty/pod", "/help-desk", "/learn"]);
 }
 
 const claimSchema = z.object({ id: z.string().uuid() });
 
-export async function claimStuck(input: z.infer<typeof claimSchema>): Promise<ActionResult> {
+export async function claimTicket(input: z.infer<typeof claimSchema>): Promise<ActionResult> {
   const parsed = claimSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   const sb = await getSupabaseServer();
   const { error } = await sb.rpc("rpc_claim_stuck", { p_id: parsed.data.id } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/cohorts", "layout");
-  revalidatePath("/faculty/stuck");
+  revalidatePath("/faculty/help-desk");
   revalidatePath("/faculty/pod");
   revalidatePath("/help-desk");
   revalidatePath("/learn");
@@ -54,19 +54,19 @@ const resolveSchema = z.object({
   resolution: z.string().max(1000).optional(),
 });
 
-export async function resolveStuck(input: z.infer<typeof resolveSchema>): Promise<ActionResult> {
+export async function resolveTicket(input: z.infer<typeof resolveSchema>): Promise<ActionResult> {
   const parsed = resolveSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("support.triage", parsed.data.cohort_id);
   return withSupabase(
     (sb) =>
       sb
-        .from("stuck_queue")
+        .from("help_desk_queue")
         .update({ status: "resolved", resolution: parsed.data.resolution ?? null })
         .eq("id", parsed.data.id)
         .select()
         .single(),
-    ["/admin/stuck", "/faculty", "/faculty/pod", "/faculty/stuck", "/help-desk", "/learn"],
+    ["/admin/help-desk", "/faculty", "/faculty/pod", "/faculty/help-desk", "/help-desk", "/learn"],
   );
 }
 
@@ -76,7 +76,7 @@ const escalateSchema = z.object({
   note: z.string().min(1).max(1000),
 });
 
-export async function escalateStuck(input: z.infer<typeof escalateSchema>): Promise<ActionResult> {
+export async function escalateTicket(input: z.infer<typeof escalateSchema>): Promise<ActionResult> {
   const parsed = escalateSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("support.escalate", parsed.data.cohort_id);
@@ -84,7 +84,7 @@ export async function escalateStuck(input: z.infer<typeof escalateSchema>): Prom
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return actionFail("Not signed in");
   const { error } = await sb
-    .from("stuck_queue")
+    .from("help_desk_queue")
     .update({
       escalated_at: new Date().toISOString(),
       escalated_by: user.user.id,
@@ -94,7 +94,7 @@ export async function escalateStuck(input: z.infer<typeof escalateSchema>): Prom
     .eq("id", parsed.data.id);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/cohorts", "layout");
-  revalidatePath("/faculty/stuck");
+  revalidatePath("/faculty/help-desk");
   revalidatePath("/faculty/pod");
   revalidatePath("/help-desk");
   revalidatePath("/learn");

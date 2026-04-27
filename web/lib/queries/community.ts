@@ -13,12 +13,12 @@ export interface BoardPostSummary {
   author_name: string | null;
 }
 
-export const listBoardPosts = cache(async (cohortId: string): Promise<BoardPostSummary[]> => {
+export const listCommunityPosts = cache(async (cohortId: string): Promise<BoardPostSummary[]> => {
   const sb = await getSupabaseServer();
   const { data } = await sb
-    .from("board_posts")
+    .from("community_posts")
     .select(
-      "id, title, body_md, tags, pinned_at, is_canonical, created_at, profiles:author_id(full_name), board_replies(count)",
+      "id, title, body_md, tags, pinned_at, is_canonical, created_at, profiles:author_id(full_name), community_replies(count)",
     )
     .eq("cohort_id", cohortId)
     .is("deleted_at", null)
@@ -34,7 +34,7 @@ export const listBoardPosts = cache(async (cohortId: string): Promise<BoardPostS
     is_canonical: boolean;
     created_at: string;
     profiles: { full_name: string | null } | null;
-    board_replies: Array<{ count: number }>;
+    community_replies: Array<{ count: number }>;
   }>).map((r) => ({
     id: r.id,
     title: r.title,
@@ -43,7 +43,7 @@ export const listBoardPosts = cache(async (cohortId: string): Promise<BoardPostS
     pinned_at: r.pinned_at,
     is_canonical: r.is_canonical ?? false,
     created_at: r.created_at,
-    reply_count: r.board_replies?.[0]?.count ?? 0,
+    reply_count: r.community_replies?.[0]?.count ?? 0,
     author_name: r.profiles?.full_name ?? null,
   }));
 });

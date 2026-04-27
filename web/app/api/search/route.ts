@@ -46,7 +46,7 @@ export async function GET(req: Request) {
         .or(`full_name.ilike.%${q}%,email.ilike.%${q}%,college.ilike.%${q}%`, { foreignTable: "profiles" })
         .limit(8),
       sb
-        .from("board_posts")
+        .from("community_posts")
         .select("id, title")
         .eq("cohort_id", cohort.id)
         .is("deleted_at", null)
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
       });
     }
     for (const p of (posts.data ?? []) as unknown as Array<{ id: string; title: string }>) {
-      hits.push({ kind: "post", href: `/board/${p.id}`, title: p.title, hint: "Q&A" });
+      hits.push({ kind: "post", href: `/community/${p.id}`, title: p.title, hint: "Q&A" });
     }
   }
 

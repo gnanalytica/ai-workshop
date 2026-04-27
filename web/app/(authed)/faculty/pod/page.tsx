@@ -56,9 +56,9 @@ export default async function FacultyPodPage() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link href="/faculty/stuck" className="hover:opacity-80">
-              <Badge variant={kpis.stuckOpen > 0 ? "danger" : "default"}>
-                {kpis.stuckOpen} help desk open
+            <Link href="/faculty/help-desk" className="hover:opacity-80">
+              <Badge variant={kpis.helpDeskOpen > 0 ? "danger" : "default"}>
+                {kpis.helpDeskOpen} help desk open
               </Badge>
             </Link>
             <Badge variant={kpis.pendingReview > 0 ? "warn" : "default"}>

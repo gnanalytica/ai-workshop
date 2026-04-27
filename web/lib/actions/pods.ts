@@ -41,7 +41,7 @@ export async function podEvent(input: z.infer<typeof evSchema>) {
 const createSchema = z.object({
   cohort_id: z.string().uuid(),
   name: z.string().trim().min(1).max(80),
-  mentor_note: z.string().max(2000).optional().nullable(),
+  shared_notes: z.string().max(2000).optional().nullable(),
 });
 
 export async function createPod(input: z.infer<typeof createSchema>) {
@@ -51,7 +51,7 @@ export async function createPod(input: z.infer<typeof createSchema>) {
   const { data, error } = await sb.rpc("rpc_create_pod", {
     p_cohort: parsed.data.cohort_id,
     p_name: parsed.data.name,
-    p_mentor_note: parsed.data.mentor_note ?? null,
+    p_shared_notes: parsed.data.shared_notes ?? null,
   } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
@@ -61,7 +61,7 @@ export async function createPod(input: z.infer<typeof createSchema>) {
 const updateSchema = z.object({
   pod_id: z.string().uuid(),
   name: z.string().trim().min(1).max(80).optional(),
-  mentor_note: z.string().max(2000).optional().nullable(),
+  shared_notes: z.string().max(2000).optional().nullable(),
 });
 
 export async function updatePod(input: z.infer<typeof updateSchema>) {
@@ -71,7 +71,7 @@ export async function updatePod(input: z.infer<typeof updateSchema>) {
   const { error } = await sb.rpc("rpc_update_pod", {
     p_pod_id: parsed.data.pod_id,
     p_name: parsed.data.name ?? null,
-    p_mentor_note: parsed.data.mentor_note ?? null,
+    p_shared_notes: parsed.data.shared_notes ?? null,
   } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/pods");

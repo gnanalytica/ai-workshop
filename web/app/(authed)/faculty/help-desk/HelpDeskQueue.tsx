@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { relTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { StuckActions } from "./StuckActions";
-import type { FacultyStuckEntry } from "@/lib/queries/faculty-stuck";
+import { HelpDeskActions } from "./HelpDeskActions";
+import type { FacultyHelpDeskEntry } from "@/lib/queries/faculty-help-desk";
 
 type FilterKey = "all" | "open" | "helping" | "mine" | "tech" | "other";
 type SortKey = "oldest" | "newest" | "stalled";
@@ -20,7 +20,7 @@ function ageMs(iso: string): number {
   return Date.now() - new Date(iso).getTime();
 }
 
-function priorityBorder(s: FacultyStuckEntry): string {
+function priorityBorder(s: FacultyHelpDeskEntry): string {
   const age = ageMs(s.created_at);
   if (s.kind === "tech" || s.escalated_at || age > SIXTY_MIN) {
     return "border-l-4 border-l-red-500/60";
@@ -34,12 +34,12 @@ function priorityBorder(s: FacultyStuckEntry): string {
   return "border-l-4 border-l-transparent";
 }
 
-export function StuckQueue({
+export function HelpDeskQueue({
   items,
   meId,
   cohortId,
 }: {
-  items: FacultyStuckEntry[];
+  items: FacultyHelpDeskEntry[];
   meId: string;
   cohortId: string;
 }) {
@@ -180,7 +180,7 @@ export function StuckQueue({
                   <p className="text-danger mt-1 text-xs">escalation: {s.escalation_note}</p>
                 )}
               </div>
-              <StuckActions
+              <HelpDeskActions
                 id={s.id}
                 cohortId={cohortId}
                 status={s.status}

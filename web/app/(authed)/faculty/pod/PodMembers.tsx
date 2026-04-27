@@ -20,10 +20,10 @@ export interface PodMember {
   pending_submissions: number;
 }
 
-type Status = "ok" | "at_risk" | "stuck";
+type Status = "ok" | "at_risk" | "behind";
 
 function classify(att: number, labs: number): Status {
-  if (att < 3 && labs < 3) return "stuck";
+  if (att < 3 && labs < 3) return "behind";
   if (att < 6 || labs < 6) return "at_risk";
   return "ok";
 }
@@ -44,16 +44,16 @@ export function PodMembers({
   const counts = useMemo(() => {
     let ok = 0,
       at_risk = 0,
-      stuck = 0,
+      behind = 0,
       to_review = 0;
     members.forEach((m) => {
       const s = classify(m.attendance_count, m.labs_done);
       if (s === "ok") ok++;
       else if (s === "at_risk") at_risk++;
-      else stuck++;
+      else behind++;
       if (m.pending_submissions > 0) to_review++;
     });
-    return { all: members.length, ok, at_risk, stuck, to_review };
+    return { all: members.length, ok, at_risk, behind, to_review };
   }, [members]);
 
   const filtered = useMemo(() => {
@@ -107,10 +107,10 @@ export function PodMembers({
           count={counts.all}
         />
         <FilterPill
-          active={filter === "stuck"}
-          onClick={() => setFilter("stuck")}
-          label="Stuck"
-          count={counts.stuck}
+          active={filter === "behind"}
+          onClick={() => setFilter("behind")}
+          label="Behind"
+          count={counts.behind}
           tone="danger"
         />
         <FilterPill
@@ -200,7 +200,7 @@ export function PodMembers({
                 key={m.user_id}
                 className={cn(
                   "relative h-full p-4 transition-all hover:-translate-y-0.5 hover:shadow-md",
-                  status === "stuck" && "border-l-4 border-l-red-500/60",
+                  status === "behind" && "border-l-4 border-l-red-500/60",
                   status === "at_risk" && "border-l-4 border-l-amber-500/60",
                   status === "ok" && "border-l-4 border-l-emerald-500/40",
                   isSelected && "ring-accent/40 ring-2",
@@ -265,7 +265,7 @@ function Stat({
   tone: Status;
 }) {
   const barColor =
-    tone === "stuck"
+    tone === "behind"
       ? "bg-red-500/70"
       : tone === "at_risk"
         ? "bg-amber-500/70"

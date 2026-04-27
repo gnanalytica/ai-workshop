@@ -10,7 +10,7 @@ export interface MyPodFaculty {
 export interface MyPod {
   pod_id: string;
   pod_name: string;
-  mentor_note: string | null;
+  shared_notes: string | null;
   faculty: MyPodFaculty[];
 }
 

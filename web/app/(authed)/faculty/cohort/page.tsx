@@ -76,9 +76,9 @@ export default async function FacultyCohortPage() {
         />
         <StatCard
           label="Help desk (open)"
-          value={kpis.stuckOpen}
-          tone={kpis.stuckOpen > 0 ? "danger" : "default"}
-          href="/faculty/stuck"
+          value={kpis.helpDeskOpen}
+          tone={kpis.helpDeskOpen > 0 ? "danger" : "default"}
+          href="/faculty/help-desk"
         />
         <StatCard
           label="At risk"
@@ -161,8 +161,8 @@ export default async function FacultyCohortPage() {
                       <span className="text-muted text-[11px]">
                         {s.details.submissions} subs · {s.details.labs_done}{" "}
                         labs
-                        {s.details.open_stuck > 0 &&
-                          ` · ${s.details.open_stuck} help`}
+                        {s.details.open_help_desk > 0 &&
+                          ` · ${s.details.open_help_desk} help`}
                       </span>
                     </div>
                   </div>

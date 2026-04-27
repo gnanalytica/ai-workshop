@@ -3,12 +3,12 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { checkCapability, requireCapability } from "@/lib/auth/requireCapability";
-import { listBoardPosts } from "@/lib/queries/board";
-import { listModBoardPosts } from "@/lib/queries/board-mod";
+import { listCommunityPosts } from "@/lib/queries/community";
+import { listModCommunityPosts } from "@/lib/queries/community-mod";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { relTime } from "@/lib/format";
-import { BoardLiveRefresh } from "./BoardLive";
-import { ModBoardClient } from "@/app/(authed)/admin/board/ModBoardClient";
+import { CommunityLiveRefresh } from "./CommunityLive";
+import { ModCommunityClient } from "@/app/(authed)/admin/community/ModCommunityClient";
 
 export default async function BoardPage({
   searchParams,
@@ -22,7 +22,7 @@ export default async function BoardPage({
         <CardTitle>No active cohort</CardTitle>
       </Card>
     );
-  await requireCapability("board.read", cohort.id);
+  await requireCapability("community.read", cohort.id);
 
   const sp = await searchParams;
   const filter = sp.filter ?? "all";
@@ -30,7 +30,7 @@ export default async function BoardPage({
   const inModView = canModerate && sp.mod === "1";
 
   if (inModView) {
-    const modPosts = await listModBoardPosts(cohort.id);
+    const modPosts = await listModCommunityPosts(cohort.id);
     return (
       <div className="space-y-6">
         <header className="flex flex-wrap items-end justify-between gap-3">
@@ -48,19 +48,19 @@ export default async function BoardPage({
             </CardSub>
           </div>
           <Button variant="outline" asChild>
-            <Link href="/board">Exit moderation</Link>
+            <Link href="/community">Exit moderation</Link>
           </Button>
         </header>
-        <ModBoardClient posts={modPosts} />
+        <ModCommunityClient posts={modPosts} />
       </div>
     );
   }
 
-  const all = await listBoardPosts(cohort.id);
+  const all = await listCommunityPosts(cohort.id);
   const posts = filter === "faq" ? all.filter((p) => p.is_canonical) : all;
   return (
     <div className="space-y-6">
-      <BoardLiveRefresh cohortId={cohort.id} />
+      <CommunityLiveRefresh cohortId={cohort.id} />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
@@ -72,7 +72,7 @@ export default async function BoardPage({
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="/board"
+            href="/community"
             className={`rounded-md px-3 py-1.5 text-sm ${
               filter === "all" ? "bg-accent text-bg" : "text-muted hover:text-ink"
             }`}
@@ -80,7 +80,7 @@ export default async function BoardPage({
             All
           </Link>
           <Link
-            href="/board?filter=faq"
+            href="/community?filter=faq"
             className={`rounded-md px-3 py-1.5 text-sm ${
               filter === "faq" ? "bg-accent text-bg" : "text-muted hover:text-ink"
             }`}
@@ -89,11 +89,11 @@ export default async function BoardPage({
           </Link>
           {canModerate && (
             <Button variant="outline" asChild>
-              <Link href="/board?mod=1">Moderate</Link>
+              <Link href="/community?mod=1">Moderate</Link>
             </Button>
           )}
           <Button asChild>
-            <Link href="/board/new">New post</Link>
+            <Link href="/community/new">New post</Link>
           </Button>
         </div>
       </header>
@@ -116,7 +116,7 @@ export default async function BoardPage({
               className="hover:border-accent/40 transition-colors"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <Link href={`/board/${p.id}`} className="hover:text-accent">
+                <Link href={`/community/${p.id}`} className="hover:text-accent">
                   <CardTitle>{p.title}</CardTitle>
                 </Link>
                 <div className="flex items-center gap-1.5">

@@ -13,8 +13,8 @@ import { expect, test } from "@playwright/test";
  *   2. /faculty redirects to /faculty/pod (pod-first default view).
  *   3. /faculty/pod — view assigned pod members and student activity.
  *   4. /faculty/student/[id] — inspect submissions, quiz/assignment outcomes,
- *      progress, and recent stuck history for a pod student.
- *   5. /faculty/stuck — view/triage only stuck items from assigned pod students.
+ *      progress, and recent help-desk history for a pod student.
+ *   5. /faculty/help-desk — view/triage only help-desk tickets from assigned pod students.
  *   6. /faculty/handbook — verify MDX renders for content.read.
  *
  * Golden path (executive): same pod-scoped read flow without grading actions.
@@ -42,8 +42,8 @@ test.describe("Support faculty golden path", () => {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 
-  test("/faculty/stuck is pod-scoped", async ({ page }) => {
-    await page.goto("/faculty/stuck");
+  test("/faculty/help-desk is pod-scoped", async ({ page }) => {
+    await page.goto("/faculty/help-desk");
     // TODO: assert all listed students belong to faculty-assigned pod(s).
   });
 
@@ -59,8 +59,8 @@ test.describe("Executive faculty (read-only)", () => {
     "Requires seeded Supabase + auth bypass — see RUNBOOK (tests/e2e/README.md)",
   );
 
-  test("/faculty/stuck opens with pod-scoped read/triage", async ({ page }) => {
-    await page.goto("/faculty/stuck");
+  test("/faculty/help-desk opens with pod-scoped read/triage", async ({ page }) => {
+    await page.goto("/faculty/help-desk");
     // TODO: assert pod-scoped items visible and triage actions are available.
   });
 

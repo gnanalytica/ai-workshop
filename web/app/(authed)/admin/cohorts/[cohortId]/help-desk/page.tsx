@@ -3,8 +3,8 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
-import { listStuckOpen } from "@/lib/queries/faculty";
-import { StuckQueueClient } from "@/app/(authed)/admin/stuck/StuckQueueClient";
+import { listHelpDeskOpen } from "@/lib/queries/faculty";
+import { HelpDeskQueueClient } from "@/app/(authed)/admin/help-desk/HelpDeskQueueClient";
 
 export default async function CohortStuckPage({
   params,
@@ -15,16 +15,16 @@ export default async function CohortStuckPage({
   const { cohortId } = await params;
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
-  const items = await listStuckOpen(cohort.id);
+  const items = await listHelpDeskOpen(cohort.id);
 
   return (
     <>
-      <CohortShell cohort={cohort} active="stuck" />
+      <CohortShell cohort={cohort} active="help-desk" />
       <CardSub className="max-w-2xl">
         {items.length} open · cohort-wide. Students open tickets from their lessons; pod faculty triage first.
         Escalations and tech-tagged items appear here for trainers, admins, and tech support.
       </CardSub>
-      <StuckQueueClient cohortId={cohort.id} items={items} />
+      <HelpDeskQueueClient cohortId={cohort.id} items={items} />
     </>
   );
 }

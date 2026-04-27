@@ -111,7 +111,7 @@ begin
   end loop;
 end $$;
 
--- ----- a couple of announcements + a stuck queue entry -----------------------
+-- ----- a couple of announcements + a help desk queue entry -----------------------
 insert into announcements (cohort_id, title, body_md, audience)
   values
     ('11111111-1111-1111-1111-111111111111', 'Welcome!',
@@ -120,7 +120,7 @@ insert into announcements (cohort_id, title, body_md, audience)
      'Check your dashboard for your pod and primary mentor.', 'students')
 on conflict do nothing;
 
-insert into stuck_queue (user_id, cohort_id, kind, status, message)
+insert into help_desk_queue (user_id, cohort_id, kind, status, message)
   select p.id, '11111111-1111-1111-1111-111111111111', 'content', 'open',
          'Confused on the day-2 LLM exercise — getting auth errors.'
     from profiles p where p.email = 'student01@seed.local'

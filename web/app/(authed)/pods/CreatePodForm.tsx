@@ -18,7 +18,7 @@ export function CreatePodForm({ cohortId }: { cohortId: string }) {
       const out = await createPod({
         cohort_id: cohortId,
         name: name.trim(),
-        mentor_note: note.trim() || null,
+        shared_notes: note.trim() || null,
       });
       if (!out.ok) {
         setError(out.error);

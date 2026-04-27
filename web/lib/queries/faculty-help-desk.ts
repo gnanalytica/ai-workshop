@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
-export interface FacultyStuckEntry {
+export interface FacultyHelpDeskEntry {
   id: string;
   user_id: string;
   user_name: string | null;
@@ -17,11 +17,11 @@ export interface FacultyStuckEntry {
 }
 
 /**
- * Stuck items from students in pods this faculty member belongs to.
+ * Help-desk tickets from students in pods this faculty member belongs to.
  * Falls back to all cohort entries when the faculty has no pods (rare).
  */
-export const listFacultyStuck = cache(
-  async (cohortId: string, facultyUserId: string): Promise<FacultyStuckEntry[]> => {
+export const listFacultyHelpDesk = cache(
+  async (cohortId: string, facultyUserId: string): Promise<FacultyHelpDeskEntry[]> => {
     const sb = await getSupabaseServer();
     const { data: myPods } = await sb
       .from("pod_faculty")
@@ -42,9 +42,9 @@ export const listFacultyStuck = cache(
     if (studentIds.length === 0) return [];
 
     const { data } = await sb
-      .from("stuck_queue")
+      .from("help_desk_queue")
       .select(
-        "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, claimed_by, profiles:user_id(full_name), claimer:profiles!stuck_queue_claimed_by_fkey(full_name)",
+        "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, claimed_by, profiles:user_id(full_name), claimer:profiles!help_desk_queue_claimed_by_fkey(full_name)",
       )
       .eq("cohort_id", cohortId)
       .in("user_id", studentIds)
@@ -53,7 +53,7 @@ export const listFacultyStuck = cache(
       .limit(50);
 
     return ((data ?? []) as unknown as Array<{
-      id: string; user_id: string; kind: FacultyStuckEntry["kind"]; status: FacultyStuckEntry["status"];
+      id: string; user_id: string; kind: FacultyHelpDeskEntry["kind"]; status: FacultyHelpDeskEntry["status"];
       message: string | null; created_at: string;
       escalated_at: string | null; escalation_note: string | null;
       claimed_by: string | null;

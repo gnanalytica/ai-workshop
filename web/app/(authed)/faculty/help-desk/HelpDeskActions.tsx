@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { claimStuck, resolveStuck, escalateStuck } from "@/lib/actions/stuck";
+import { claimTicket, resolveTicket, escalateTicket } from "@/lib/actions/help-desk";
 
-export function StuckActions({
+export function HelpDeskActions({
   id,
   cohortId,
   status,
@@ -22,14 +22,14 @@ export function StuckActions({
 
   function claim() {
     start(async () => {
-      const r = await claimStuck({ id });
+      const r = await claimTicket({ id });
       if (r.ok) toast.success("Claimed");
       else toast.error(r.error);
     });
   }
   function resolve() {
     start(async () => {
-      const r = await resolveStuck({ id, cohort_id: cohortId });
+      const r = await resolveTicket({ id, cohort_id: cohortId });
       if (r.ok) toast.success("Resolved");
       else toast.error(r.error);
     });
@@ -40,7 +40,7 @@ export function StuckActions({
       return;
     }
     start(async () => {
-      const r = await escalateStuck({ id, cohort_id: cohortId, note });
+      const r = await escalateTicket({ id, cohort_id: cohortId, note });
       if (r.ok) {
         toast.success("Sent to help desk (staff)");
         setShowEscalate(false);

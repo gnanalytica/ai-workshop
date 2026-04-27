@@ -12,7 +12,7 @@ export interface StudentDrill {
     quiz: number; submissions: number; posts: number; comments: number; upvotes: number; total: number;
   } | null;
   recentSubmissions: { id: string; assignment_title: string; day_number: number; status: string; score: number | null; updated_at: string }[];
-  recentStuck: { id: string; kind: string; status: string; message: string | null; created_at: string }[];
+  recentHelpDesk: { id: string; kind: string; status: string; message: string | null; created_at: string }[];
   recentPosts: { id: string; title: string; created_at: string }[];
   lastActiveAt: string | null;
   labsDone: number;
@@ -32,7 +32,7 @@ export const getStudentDrill = cache(
       { data: pod },
       { data: score },
       { data: subs },
-      { data: stuck },
+      { data: helpDesk },
       { data: posts },
       { data: lastLab },
       { count: labCount },
@@ -57,14 +57,14 @@ export const getStudentDrill = cache(
         .order("updated_at", { ascending: false })
         .limit(8),
       sb
-        .from("stuck_queue")
+        .from("help_desk_queue")
         .select("id, kind, status, message, created_at")
         .eq("user_id", userId)
         .eq("cohort_id", cohortId)
         .order("created_at", { ascending: false })
         .limit(8),
       sb
-        .from("board_posts")
+        .from("community_posts")
         .select("id, title, created_at")
         .eq("author_id", userId)
         .eq("cohort_id", cohortId)
@@ -112,7 +112,7 @@ export const getStudentDrill = cache(
         score: s.score,
         updated_at: s.updated_at,
       })),
-      recentStuck: (stuck ?? []) as StudentDrill["recentStuck"],
+      recentHelpDesk: (helpDesk ?? []) as StudentDrill["recentHelpDesk"],
       recentPosts: (posts ?? []) as StudentDrill["recentPosts"],
       lastActiveAt: ((lastLab ?? []) as Array<{ updated_at: string }>)[0]?.updated_at ?? null,
       labsDone: labCount ?? 0,

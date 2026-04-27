@@ -51,7 +51,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           value={s.lastActiveAt ? relTime(s.lastActiveAt) : "—"}
           hint={s.lastActiveAt ? fmtDateTime(s.lastActiveAt) : ""}
         />
-        <StatCard label="Help desk" value={s.recentStuck.length} hint="recent" tone={s.recentStuck.length > 0 ? "warn" : "default"} />
+        <StatCard label="Help desk" value={s.recentHelpDesk.length} hint="recent" tone={s.recentHelpDesk.length > 0 ? "warn" : "default"} />
       </KpiGrid>
 
       {s.score && (
@@ -103,12 +103,12 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
 
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Help desk (recent)</h2>
-        {s.recentStuck.length === 0 ? (
+        {s.recentHelpDesk.length === 0 ? (
           <Card><CardSub>No help desk activity for this student.</CardSub></Card>
         ) : (
           <Card>
             <ul className="divide-y divide-line/50">
-              {s.recentStuck.map((r) => (
+              {s.recentHelpDesk.map((r) => (
                 <li key={r.id} className="py-2 text-sm">
                   <div className="flex items-center gap-2">
                     <Badge variant={r.kind === "tech" ? "danger" : "warn"}>{r.kind}</Badge>
@@ -132,7 +132,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
             <ul className="divide-y divide-line/50">
               {s.recentPosts.map((p) => (
                 <li key={p.id} className="flex items-center justify-between py-2 text-sm">
-                  <Link href={`/board/${p.id}`} className="hover:text-accent text-ink">
+                  <Link href={`/community/${p.id}`} className="hover:text-accent text-ink">
                     {p.title}
                   </Link>
                   <span className="text-muted text-xs">{relTime(p.created_at)}</span>

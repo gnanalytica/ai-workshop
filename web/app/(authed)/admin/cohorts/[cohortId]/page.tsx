@@ -14,7 +14,7 @@ const KIND_TONE: Record<ActivityKind, "default" | "ok" | "warn" | "accent" | "da
   lab: "ok",
   submission: "ok",
   attendance: "default",
-  stuck: "warn",
+  help_desk: "warn",
   kudos: "accent",
 };
 
@@ -112,7 +112,7 @@ export default async function AdminCohortHome({
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/stuck`}
+            href={`/admin/cohorts/${cohort.id}/help-desk`}
           >
             <div className="text-ink font-medium">Escalations</div>
             <div className="text-muted text-xs">Tech + cohort-wide tickets</div>
@@ -126,7 +126,7 @@ export default async function AdminCohortHome({
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href="/board?mod=1"
+            href="/community?mod=1"
           >
             <div className="text-ink font-medium">Board moderation</div>
             <div className="text-muted text-xs">Pin / hide / delete</div>

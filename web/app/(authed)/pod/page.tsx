@@ -25,7 +25,7 @@ export default async function MyPodPage() {
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">My pod</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">{pod.pod_name}</h1>
-        {pod.mentor_note && <p className="text-muted mt-2 text-sm">{pod.mentor_note}</p>}
+        {pod.shared_notes && <p className="text-muted mt-2 text-sm">{pod.shared_notes}</p>}
       </header>
       <Card>
         <CardTitle>Your faculty</CardTitle>

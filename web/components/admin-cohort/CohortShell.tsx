@@ -17,7 +17,7 @@ export async function CohortShell({
     | "pods"
     | "grading"
     | "polls"
-    | "stuck"
+    | "help-desk"
     | "analytics"
     | "milestones";
 }) {

@@ -17,8 +17,8 @@ export function MentionInbox({ unread, items }: { unread: number; items: Mention
     start(async () => {
       await markMentionRead({ id: item.id });
       const href = item.reply_id
-        ? `/board/${item.post_id}#reply-${item.reply_id}`
-        : `/board/${item.post_id}`;
+        ? `/community/${item.post_id}#reply-${item.reply_id}`
+        : `/community/${item.post_id}`;
       router.push(href);
     });
     setOpen(false);
@@ -80,7 +80,7 @@ export function MentionInbox({ unread, items }: { unread: number; items: Mention
             )}
           </div>
           <div className="border-line border-t px-3 py-2 text-right">
-            <Link href="/board" onClick={() => setOpen(false)} className="text-accent text-xs hover:underline">
+            <Link href="/community" onClick={() => setOpen(false)} className="text-accent text-xs hover:underline">
               Open board →
             </Link>
           </div>

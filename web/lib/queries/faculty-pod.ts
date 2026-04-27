@@ -23,10 +23,10 @@ export const getFacultyPods = cache(async (cohortId: string): Promise<FacultyPod
   const sb = await getSupabaseServer();
   const { data: pods } = await sb
     .from("pod_faculty")
-    .select("pods!inner(id, name, cohort_id, mentor_note)")
+    .select("pods!inner(id, name, cohort_id, shared_notes)")
     .eq("pods.cohort_id", cohortId);
 
-  type PodRel = { pods: { id: string; name: string; cohort_id: string; mentor_note: string | null } };
+  type PodRel = { pods: { id: string; name: string; cohort_id: string; shared_notes: string | null } };
   const list = (pods ?? []) as unknown as PodRel[];
 
   if (list.length === 0) return [];
@@ -52,7 +52,7 @@ export const getFacultyPods = cache(async (cohortId: string): Promise<FacultyPod
       pod_id: r.pods.id,
       pod_name: r.pods.name,
       cohort_id: r.pods.cohort_id,
-      shared_notes: r.pods.mentor_note,
+      shared_notes: r.pods.shared_notes,
       members: [],
     }));
   }
@@ -109,7 +109,7 @@ export const getFacultyPods = cache(async (cohortId: string): Promise<FacultyPod
     pod_id: r.pods.id,
     pod_name: r.pods.name,
     cohort_id: r.pods.cohort_id,
-    shared_notes: r.pods.mentor_note,
+    shared_notes: r.pods.shared_notes,
     members: membersByPod.get(r.pods.id) ?? [],
   }));
 });

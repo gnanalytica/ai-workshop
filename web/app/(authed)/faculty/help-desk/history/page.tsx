@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getFacultyCohort } from "@/lib/queries/faculty";
-import { listFacultyStuck } from "@/lib/queries/faculty-stuck";
+import { listFacultyHelpDesk } from "@/lib/queries/faculty-help-desk";
 import { relTime } from "@/lib/format";
 
 const PAGE_SIZE = 20;
@@ -21,7 +21,7 @@ export default async function FacultyStuckHistoryPage({
 
   const sp = await searchParams;
   const requested = Number.parseInt(sp.page ?? "1", 10);
-  const items = await listFacultyStuck(f.cohort.id, me.id);
+  const items = await listFacultyHelpDesk(f.cohort.id, me.id);
   const resolved = items
     .filter((i) => i.status === "resolved")
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -44,7 +44,7 @@ export default async function FacultyStuckHistoryPage({
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-semibold tracking-tight">Resolved tickets</h1>
           <Link
-            href="/faculty/stuck"
+            href="/faculty/help-desk"
             className="text-accent hover:text-accent/80 text-sm font-medium"
           >
             ← Back to help desk
@@ -95,7 +95,7 @@ export default async function FacultyStuckHistoryPage({
                 </span>
               ) : (
                 <Link
-                  href={`/faculty/stuck/history?page=${page - 1}`}
+                  href={`/faculty/help-desk/history?page=${page - 1}`}
                   className="border-line text-ink hover:bg-input-bg rounded-md border px-3 py-1.5 text-sm"
                 >
                   ← Prev
@@ -107,7 +107,7 @@ export default async function FacultyStuckHistoryPage({
                 </span>
               ) : (
                 <Link
-                  href={`/faculty/stuck/history?page=${page + 1}`}
+                  href={`/faculty/help-desk/history?page=${page + 1}`}
                   className="border-line text-ink hover:bg-input-bg rounded-md border px-3 py-1.5 text-sm"
                 >
                   Next →

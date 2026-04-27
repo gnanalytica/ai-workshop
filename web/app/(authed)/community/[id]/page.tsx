@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
-import { getBoardPost } from "@/lib/queries/board-detail";
+import { getCommunityPost } from "@/lib/queries/community-detail";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { getSession } from "@/lib/auth/session";
 import { checkCapability } from "@/lib/auth/requireCapability";
@@ -12,7 +12,7 @@ import { ReplyActions, PostModeration } from "./ReplyActions";
 
 export default async function BoardPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const post = await getBoardPost(id);
+  const post = await getCommunityPost(id);
   if (!post) notFound();
   const user = await getSession();
   const canModerate = await checkCapability("moderation.write");

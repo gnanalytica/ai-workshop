@@ -60,7 +60,7 @@ select _expect('exec has pods.write in cohort', has_cap('pods.write','11111111-1
 \echo '--- student: self + content read + board, no grading ---'
 select _set_uid('student01@seed.local');
 select _expect('student has content.read', has_cap('content.read','11111111-1111-1111-1111-111111111111'), true);
-select _expect('student has board.write', has_cap('board.write','11111111-1111-1111-1111-111111111111'), true);
+select _expect('student has community.write', has_cap('community.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('student lacks grading.read', has_cap('grading.read','11111111-1111-1111-1111-111111111111'), false);
 select _expect('student has attendance.self', has_cap('attendance.self','11111111-1111-1111-1111-111111111111'), true);
 select _expect('student lacks pods.write', has_cap('pods.write','11111111-1111-1111-1111-111111111111'), false);

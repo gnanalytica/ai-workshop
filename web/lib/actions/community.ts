@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { extractMentions, recordMentions } from "@/lib/board/mentions";
+import { extractMentions, recordMentions } from "@/lib/community/mentions";
 import { withSupabase, actionFail } from "./_helpers";
 
 const newPostSchema = z.object({
@@ -14,14 +14,14 @@ const newPostSchema = z.object({
   tags: z.array(z.string().max(40)).max(8).default([]),
 });
 
-export async function createBoardPost(input: z.infer<typeof newPostSchema>) {
+export async function createCommunityPost(input: z.infer<typeof newPostSchema>) {
   const parsed = newPostSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   const sb = await getSupabaseServer();
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return actionFail("Not signed in");
   const { data: row, error } = await sb
-    .from("board_posts")
+    .from("community_posts")
     .insert({
       cohort_id: parsed.data.cohort_id,
       author_id: user.user.id,
@@ -42,7 +42,7 @@ export async function createBoardPost(input: z.infer<typeof newPostSchema>) {
     cohortId: parsed.data.cohort_id,
     authorId: user.user.id,
   });
-  revalidatePath("/board");
+  revalidatePath("/community");
   return { ok: true as const, data: row };
 }
 
@@ -51,23 +51,23 @@ const replySchema = z.object({
   body_md: z.string().min(1).max(20_000),
 });
 
-export async function createBoardReply(input: z.infer<typeof replySchema>) {
+export async function createCommunityReply(input: z.infer<typeof replySchema>) {
   const parsed = replySchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   const sb = await getSupabaseServer();
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return actionFail("Not signed in");
   const { data: row, error } = await sb
-    .from("board_replies")
+    .from("community_replies")
     .insert({
       post_id: parsed.data.post_id,
       author_id: user.user.id,
       body_md: parsed.data.body_md,
     })
-    .select("id, post_id, board_posts:post_id(cohort_id)")
+    .select("id, post_id, community_posts:post_id(cohort_id)")
     .single();
   if (error || !row) return actionFail(error?.message ?? "Failed");
-  const cohortId = ((row as unknown) as { board_posts: { cohort_id: string } }).board_posts.cohort_id;
+  const cohortId = ((row as unknown) as { community_posts: { cohort_id: string } }).community_posts.cohort_id;
   const mentioned = await extractMentions(parsed.data.body_md, cohortId);
   await recordMentions(mentioned, {
     kind: "reply",
@@ -76,7 +76,7 @@ export async function createBoardReply(input: z.infer<typeof replySchema>) {
     cohortId,
     authorId: user.user.id,
   });
-  revalidatePath(`/board/${parsed.data.post_id}`);
+  revalidatePath(`/community/${parsed.data.post_id}`);
   return { ok: true as const, data: row };
 }
 
@@ -87,12 +87,12 @@ export async function acceptAnswer(input: z.infer<typeof acceptSchema>) {
   return withSupabase(
     (sb) =>
       sb
-        .from("board_replies")
+        .from("community_replies")
         .update({ is_accepted: true })
         .eq("id", parsed.data.reply_id)
         .select()
         .single(),
-    `/board/${parsed.data.post_id}`,
+    `/community/${parsed.data.post_id}`,
   );
 }
 
@@ -103,11 +103,11 @@ const moderateSchema = z.object({
   deleted: z.boolean().optional(),
 });
 
-export async function moderateBoard(input: z.infer<typeof moderateSchema>) {
+export async function moderateCommunity(input: z.infer<typeof moderateSchema>) {
   const parsed = moderateSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("moderation.write");
-  const table = parsed.data.kind === "post" ? "board_posts" : "board_replies";
+  const table = parsed.data.kind === "post" ? "community_posts" : "community_replies";
   const patch: Record<string, string | null> = {};
   if (parsed.data.pinned !== undefined && parsed.data.kind === "post") {
     patch.pinned_at = parsed.data.pinned ? new Date().toISOString() : null;
@@ -117,12 +117,12 @@ export async function moderateBoard(input: z.infer<typeof moderateSchema>) {
   }
   return withSupabase(
     (sb) => sb.from(table).update(patch).eq("id", parsed.data.id).select().single(),
-    "/admin/board",
+    "/admin/community",
   );
 }
 
 export async function revalidateBoard() {
-  revalidatePath("/board");
+  revalidatePath("/community");
 }
 
 const canonicalSchema = z.object({
@@ -136,11 +136,11 @@ export async function setCanonical(input: z.infer<typeof canonicalSchema>) {
   return withSupabase(
     (sb) =>
       sb
-        .from("board_posts")
+        .from("community_posts")
         .update({ is_canonical: parsed.data.is_canonical })
         .eq("id", parsed.data.post_id)
         .select()
         .single(),
-    ["/board", `/board/${parsed.data.post_id}`],
+    ["/community", `/community/${parsed.data.post_id}`],
   );
 }

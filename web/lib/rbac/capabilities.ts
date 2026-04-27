@@ -30,8 +30,8 @@ export const CAPABILITIES = [
   "orgs.write",
   "self.read",
   "self.write",
-  "board.read",
-  "board.write",
+  "community.read",
+  "community.write",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
@@ -70,8 +70,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.tech_only",
     "support.escalate",
     "orgs.write",
-    "board.read",
-    "board.write",
+    "community.read",
+    "community.write",
   ],
   trainer: [
     "content.read",
@@ -86,8 +86,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "analytics.read:cohort",
     "support.triage",
     "support.escalate",
-    "board.read",
-    "board.write",
+    "community.read",
+    "community.write",
   ],
   tech_support: [
     "content.read",
@@ -99,8 +99,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.tech_only",
     "support.escalate",
     "moderation.write",
-    "board.read",
-    "board.write",
+    "community.read",
+    "community.write",
   ],
   faculty: [
     "content.read",
@@ -111,16 +111,16 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "support.triage",
     "support.escalate",
     "moderation.write",
-    "board.read",
-    "board.write",
+    "community.read",
+    "community.write",
   ],
   student: [
     "content.read",
     "schedule.read",
     "self.read",
     "self.write",
-    "board.read",
-    "board.write",
+    "community.read",
+    "community.write",
     "attendance.self",
   ],
 };

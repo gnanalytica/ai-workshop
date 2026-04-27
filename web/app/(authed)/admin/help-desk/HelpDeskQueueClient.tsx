@@ -5,19 +5,19 @@ import { toast } from "sonner";
 import { Card, CardSub } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { claimStuck, resolveStuck } from "@/lib/actions/stuck";
-import type { StuckEntry } from "@/lib/queries/faculty";
+import { claimTicket, resolveTicket } from "@/lib/actions/help-desk";
+import type { HelpDeskEntry } from "@/lib/queries/faculty";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { useTableRefresh } from "@/lib/realtime/useTableRefresh";
 
-const KIND_TONE: Record<StuckEntry["kind"], "warn" | "danger" | "default" | "accent"> = {
+const KIND_TONE: Record<HelpDeskEntry["kind"], "warn" | "danger" | "default" | "accent"> = {
   content: "warn",
   tech: "danger",
   team: "accent",
   other: "default",
 };
 
-const STATUS_TONE: Record<StuckEntry["status"], "warn" | "accent" | "ok" | "default"> = {
+const STATUS_TONE: Record<HelpDeskEntry["status"], "warn" | "accent" | "ok" | "default"> = {
   open: "warn",
   helping: "accent",
   resolved: "ok",
@@ -34,21 +34,21 @@ const FILTER_LABEL: Record<Filter, string> = {
   other: "Other",
 };
 
-export function StuckQueueClient({
+export function HelpDeskQueueClient({
   cohortId,
   items,
 }: {
   cohortId: string;
-  items: StuckEntry[];
+  items: HelpDeskEntry[];
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [pending, start] = useTransition();
-  useTableRefresh("stuck_queue", { column: "cohort_id", value: cohortId });
+  useTableRefresh("help_desk_queue", { column: "cohort_id", value: cohortId });
   const filtered = filter === "all" ? items : items.filter((i) => i.kind === filter);
 
   function onClaim(id: string) {
     start(async () => {
-      const r = await claimStuck({ id });
+      const r = await claimTicket({ id });
       if (r.ok) toast.success("Claimed");
       else toast.error(r.error);
     });
@@ -56,7 +56,7 @@ export function StuckQueueClient({
   function onResolve(id: string) {
     const note = window.prompt("Resolution note (optional)") ?? "";
     start(async () => {
-      const r = await resolveStuck({ id, cohort_id: cohortId, resolution: note || undefined });
+      const r = await resolveTicket({ id, cohort_id: cohortId, resolution: note || undefined });
       if (r.ok) toast.success("Resolved");
       else toast.error(r.error);
     });

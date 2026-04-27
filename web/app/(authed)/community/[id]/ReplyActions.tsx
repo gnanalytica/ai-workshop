@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { acceptAnswer, moderateBoard, setCanonical } from "@/lib/actions/board";
+import { acceptAnswer, moderateCommunity, setCanonical } from "@/lib/actions/community";
 
 export function ReplyActions({
   replyId,
@@ -31,7 +31,7 @@ export function ReplyActions({
   function remove() {
     if (!window.confirm("Delete this reply?")) return;
     start(async () => {
-      const r = await moderateBoard({ kind: "reply", id: replyId, deleted: true });
+      const r = await moderateCommunity({ kind: "reply", id: replyId, deleted: true });
       if (r.ok) toast.success("Removed");
       else toast.error(r.error);
     });
@@ -70,7 +70,7 @@ export function PostModeration({
 
   function togglePin() {
     start(async () => {
-      const r = await moderateBoard({ kind: "post", id: postId, pinned: !pinned });
+      const r = await moderateCommunity({ kind: "post", id: postId, pinned: !pinned });
       if (r.ok) toast.success(pinned ? "Unpinned" : "Pinned");
       else toast.error(r.error);
     });
@@ -87,7 +87,7 @@ export function PostModeration({
   function remove() {
     if (!window.confirm("Delete this post?")) return;
     start(async () => {
-      const r = await moderateBoard({ kind: "post", id: postId, deleted: true });
+      const r = await moderateCommunity({ kind: "post", id: postId, deleted: true });
       if (r.ok) toast.success("Deleted");
       else toast.error(r.error);
     });

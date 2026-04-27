@@ -2,7 +2,7 @@
 
 import { useTableRefresh } from "@/lib/realtime/useTableRefresh";
 
-export function BoardLiveRefresh({ cohortId }: { cohortId: string }) {
-  useTableRefresh("board_posts", { column: "cohort_id", value: cohortId });
+export function CommunityLiveRefresh({ cohortId }: { cohortId: string }) {
+  useTableRefresh("community_posts", { column: "cohort_id", value: cohortId });
   return null;
 }

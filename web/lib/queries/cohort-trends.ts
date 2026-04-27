@@ -39,7 +39,7 @@ export const getCohortTrend = cache(async (cohortId: string, userIds?: string[])
     .eq("assignments.cohort_id", cohortId)
     .gte("updated_at", since);
   const postQ = sb
-    .from("board_posts")
+    .from("community_posts")
     .select("created_at")
     .eq("cohort_id", cohortId)
     .is("deleted_at", null)

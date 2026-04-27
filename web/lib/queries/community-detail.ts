@@ -24,12 +24,12 @@ export interface BoardPostDetail {
   replies: BoardReply[];
 }
 
-export const getBoardPost = cache(async (postId: string): Promise<BoardPostDetail | null> => {
+export const getCommunityPost = cache(async (postId: string): Promise<BoardPostDetail | null> => {
   const sb = await getSupabaseServer();
   const { data, error } = await sb
-    .from("board_posts")
+    .from("community_posts")
     .select(
-      "id, cohort_id, title, body_md, tags, pinned_at, is_canonical, created_at, author_id, profiles:author_id(full_name), board_replies(id, body_md, is_accepted, created_at, author_id, profiles:author_id(full_name))",
+      "id, cohort_id, title, body_md, tags, pinned_at, is_canonical, created_at, author_id, profiles:author_id(full_name), community_replies(id, body_md, is_accepted, created_at, author_id, profiles:author_id(full_name))",
     )
     .eq("id", postId)
     .is("deleted_at", null)
@@ -40,7 +40,7 @@ export const getBoardPost = cache(async (postId: string): Promise<BoardPostDetai
     tags: string[]; pinned_at: string | null; is_canonical: boolean; created_at: string;
     author_id: string | null;
     profiles: { full_name: string | null } | null;
-    board_replies: Array<{
+    community_replies: Array<{
       id: string; body_md: string; is_accepted: boolean;
       created_at: string; author_id: string | null;
       profiles: { full_name: string | null } | null;
@@ -57,7 +57,7 @@ export const getBoardPost = cache(async (postId: string): Promise<BoardPostDetai
     created_at: d.created_at,
     author_name: d.profiles?.full_name ?? null,
     author_id: d.author_id,
-    replies: (d.board_replies ?? [])
+    replies: (d.community_replies ?? [])
       .map((r) => ({
         id: r.id,
         body_md: r.body_md,

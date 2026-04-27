@@ -19,7 +19,7 @@ export default async function PodDetailPage({ params }: { params: Promise<{ id: 
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">Pod</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">{pod.name}</h1>
-          {pod.mentor_note && <p className="text-muted mt-2 text-sm">{pod.mentor_note}</p>}
+          {pod.shared_notes && <p className="text-muted mt-2 text-sm">{pod.shared_notes}</p>}
         </div>
         <DeletePodButton podId={pod.pod_id} podName={pod.name} />
       </header>
