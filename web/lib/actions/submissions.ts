@@ -174,7 +174,7 @@ export async function publishGrade(input: z.infer<typeof publishSchema>) {
     .eq("id", parsed.data.submission_id);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/grading");
-  revalidatePath("/faculty/review");
+  revalidatePath("/faculty/pod");
   return actionOk();
 }
 

@@ -52,11 +52,9 @@ export const NAV: readonly NavItem[] = [
   { label: "Certificate",    href: "/certificate",  cap: null,           group: "student", icon: "award" },
 
   // ----- Faculty -----
-  { label: "Today",       href: "/faculty",             cap: "schedule.read",  group: "faculty", icon: "home" },
+  { label: "My Pod",      href: "/faculty",             cap: "roster.read",    group: "faculty", icon: "home" },
   { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
-  { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", icon: "users" },
   { label: "Stuck Queue", href: "/faculty/stuck",       cap: "support.triage", group: "faculty", icon: "life-buoy" },
-  { label: "Review Queue", href: "/faculty/review",     cap: "grading.read",   group: "faculty", icon: "check-square" },
   { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", icon: "message-square" },
   { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
   { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
