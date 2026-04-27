@@ -9,6 +9,7 @@ import { checkCapability } from "@/lib/auth/requireCapability";
 import { listCohortRoster } from "@/lib/queries/cohort-roster-mini";
 import { ReplyForm } from "./ReplyForm";
 import { ReplyActions, PostModeration } from "./ReplyActions";
+import { CommunityVoteControls } from "../CommunityVoteControls";
 
 export default async function BoardPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,23 +17,35 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
   if (!post) notFound();
   const user = await getSession();
   const canModerate = await checkCapability("moderation.write");
+  const canWriteCommunity = await checkCapability("community.write", post.cohort_id);
   const isAuthor = !!user && user.id === post.author_id;
   const roster = await listCohortRoster(post.cohort_id);
 
   return (
     <article className="mx-auto max-w-3xl space-y-6">
       <header>
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
-          <div className="flex items-center gap-2">
-            {post.is_canonical && <Badge variant="ok">FAQ</Badge>}
-            {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
-            <PostModeration
-              postId={post.id}
-              pinned={!!post.pinned_at}
-              isCanonical={post.is_canonical}
-              canModerate={canModerate}
-            />
+        <div className="flex flex-wrap items-start gap-3">
+          <CommunityVoteControls
+            cohortId={post.cohort_id}
+            postId={post.id}
+            score={post.post_vote_score}
+            myVote={post.my_post_vote}
+            canVote={canWriteCommunity}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
+              <div className="flex items-center gap-2">
+                {post.is_canonical && <Badge variant="ok">FAQ</Badge>}
+                {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
+                <PostModeration
+                  postId={post.id}
+                  pinned={!!post.pinned_at}
+                  isCanonical={post.is_canonical}
+                  canModerate={canModerate}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <p className="text-muted mt-2 text-xs">
@@ -57,7 +70,18 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
           <Card><CardSub>Be the first to reply.</CardSub></Card>
         ) : (
           post.replies.map((r) => (
-            <Card key={r.id} className={r.is_accepted ? "border-emerald-500/40" : ""}>
+            <Card key={r.id} className={`p-4 ${r.is_accepted ? "border-emerald-500/40" : ""}`}>
+              <div className="flex gap-3">
+                <CommunityVoteControls
+                  cohortId={post.cohort_id}
+                  postId={post.id}
+                  replyId={r.id}
+                  score={r.vote_score}
+                  myVote={r.my_vote}
+                  canVote={canWriteCommunity}
+                  compact
+                />
+                <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between">
                 <CardTitle className="text-sm">{r.author_name ?? "Member"}</CardTitle>
                 <div className="flex items-center gap-2">
@@ -77,12 +101,18 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
                   canModerate={canModerate}
                 />
               </div>
+                </div>
+              </div>
             </Card>
           ))
         )}
       </section>
 
-      <ReplyForm postId={post.id} roster={roster} />
+      {canWriteCommunity ? (
+        <ReplyForm postId={post.id} roster={roster} />
+      ) : (
+        <p className="text-muted text-sm">You can read this thread; posting requires community access for this cohort.</p>
+      )}
     </article>
   );
 }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { actionFail, actionOk, withSupabase, type ActionResult } from "./_helpers";
+import { getFacultyCohort } from "@/lib/queries/faculty";
 
 const reportSchema = z.object({
   cohort_id: z.string().uuid(),
@@ -30,6 +31,47 @@ export async function reportTicket(input: z.infer<typeof reportSchema>): Promise
       .select()
       .single();
   }, ["/admin/help-desk", "/faculty/help-desk", "/faculty/pod", "/help-desk", "/learn"]);
+}
+
+const facultyTechSchema = z.object({
+  cohort_id: z.string().uuid(),
+  message: z.string().min(1).max(2000),
+});
+
+/**
+ * Faculty opens a help-desk ticket to platform / tech staff, same lane as a tech
+ * escalation (kind `tech`, pre-marked escalated) so `support.tech_only` can triage.
+ */
+export async function reportFacultyTechTicket(
+  input: z.infer<typeof facultyTechSchema>,
+): Promise<ActionResult> {
+  const parsed = facultyTechSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  const cohortId = parsed.data.cohort_id;
+  await requireCapability("support.triage", cohortId);
+  const f = await getFacultyCohort();
+  if (!f || f.cohort.id !== cohortId) {
+    return actionFail("Cohort does not match your active faculty assignment");
+  }
+  return withSupabase(async (sb) => {
+    const { data: user } = await sb.auth.getUser();
+    if (!user.user) return { data: null, error: { message: "Not signed in" } };
+    const now = new Date().toISOString();
+    return sb
+      .from("help_desk_queue")
+      .insert({
+        cohort_id: cohortId,
+        user_id: user.user.id,
+        kind: "tech",
+        message: parsed.data.message.trim(),
+        status: "open",
+        escalated_at: now,
+        escalated_by: user.user.id,
+        escalation_note: "Faculty request — routed to platform / tech (direct).",
+      })
+      .select()
+      .single();
+  }, ["/admin/cohorts", "/admin/help-desk", "/faculty/help-desk", "/faculty/pod", "/help-desk", "/learn"]);
 }
 
 const claimSchema = z.object({ id: z.string().uuid() });

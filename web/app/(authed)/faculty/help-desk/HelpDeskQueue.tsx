@@ -64,7 +64,9 @@ export function HelpDeskQueue({
       if (q) {
         const name = (s.user_name ?? "").toLowerCase();
         const msg = (s.message ?? "").toLowerCase();
-        if (!name.includes(q) && !msg.includes(q)) return false;
+        let hay = `${name} ${msg}`;
+        if (s.is_self_request) hay += " you your request platform tech";
+        if (!hay.includes(q)) return false;
       }
       switch (filter) {
         case "open":
@@ -120,7 +122,7 @@ export function HelpDeskQueue({
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by student or message…"
+          placeholder="Search by name, message, or “you” for your tech request…"
           className="w-72"
         />
         <select
@@ -165,7 +167,12 @@ export function HelpDeskQueue({
             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-ink text-sm font-medium">{s.user_name ?? "—"}</span>
+                  <span className="text-ink text-sm font-medium">
+                    {s.is_self_request ? "You" : s.user_name ?? "—"}
+                  </span>
+                  {s.is_self_request && (
+                    <Badge variant="accent">Your request → tech</Badge>
+                  )}
                   {s.pod_name && <Badge>{s.pod_name}</Badge>}
                   <Badge variant={s.kind === "tech" ? "danger" : "warn"}>{s.kind}</Badge>
                   <Badge variant={s.status === "helping" ? "accent" : "default"}>{s.status}</Badge>
@@ -185,6 +192,7 @@ export function HelpDeskQueue({
                 cohortId={cohortId}
                 status={s.status}
                 alreadyEscalated={!!s.escalated_at}
+                isSelfToTechRequest={s.is_self_request && s.kind === "tech"}
               />
             </Card>
           ))}

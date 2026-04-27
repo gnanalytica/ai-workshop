@@ -80,12 +80,83 @@ const baseComponents: MDXRemoteProps["components"] = {
   del: (p) => <del {...p} className="text-muted line-through" />,
 };
 
-export function MarkdownView({ source }: { source: string }) {
+/** Long-form modules (e.g. faculty handbook): sectioned typography, calmer list rhythm */
+const handbookComponents: MDXRemoteProps["components"] = {
+  ...baseComponents,
+  h1: (p) => (
+    <h1
+      {...p}
+      className="font-display text-ink mt-10 mb-4 border-b border-hairline pb-3 text-2xl font-semibold tracking-tight [font-variation-settings:'opsz'60] first:mt-0"
+    />
+  ),
+  h2: (p) => (
+    <h2
+      {...p}
+      className="font-display text-ink/95 mt-10 mb-3 border-l-2 border-accent/70 pl-4 text-[1.35rem] font-semibold leading-snug tracking-tight [font-variation-settings:'opsz'56] first:mt-0"
+    />
+  ),
+  h3: (p) => (
+    <h3 {...p} className="text-ink/95 mt-8 mb-2 text-base font-semibold leading-snug tracking-tight" />
+  ),
+  h4: (p) => <h4 {...p} className="text-ink/90 mt-5 mb-1.5 text-sm font-semibold uppercase tracking-wider" />,
+  p: (p) => <p {...p} className="text-ink/88 my-3.5 text-[0.95rem] leading-7" />,
+  ul: (p) => <ul {...p} className="my-4 list-disc space-y-2.5 pl-5 marker:text-accent" />,
+  ol: (p) => <ol {...p} className="my-4 list-decimal space-y-2.5 pl-5 marker:font-mono marker:text-sm marker:text-muted" />,
+  li: (props) => {
+    const { className, children, ...rest } = props as React.LiHTMLAttributes<HTMLLIElement>;
+    if (className?.includes("task-list-item")) {
+      return (
+        <li
+          {...rest}
+          className="border-line/60 bg-bg-soft/50 text-ink/90 -ml-1 flex list-none items-start gap-2.5 rounded-r-md border border-l-2 border-l-accent/40 pl-3 py-2.5"
+        >
+          {children}
+        </li>
+      );
+    }
+    return (
+      <li {...rest} className="text-ink/90 pl-0.5 leading-7 [text-wrap:pretty]">
+        {children}
+      </li>
+    );
+  },
+  blockquote: (p) => (
+    <blockquote
+      {...p}
+      className="text-muted my-5 border-l-2 border-accent/35 bg-gradient-to-r from-bg-soft/90 to-transparent py-1.5 pl-4 text-sm italic leading-7"
+    />
+  ),
+  hr: (p) => (
+    <hr
+      {...p}
+      className="my-10 h-px border-0 bg-gradient-to-r from-transparent via-line/50 to-transparent"
+    />
+  ),
+  strong: (p) => <strong {...p} className="text-ink font-semibold" />,
+  a: (p) => (
+    <a {...p} className="text-accent [text-underline-offset:3px] decoration-accent/30 hover:decoration-accent" />
+  ),
+};
+
+export function MarkdownView({
+  source,
+  variant = "default",
+  className = "",
+}: {
+  source: string;
+  variant?: "default" | "handbook";
+  className?: string;
+}) {
+  const components = variant === "handbook" ? handbookComponents : baseComponents;
   return (
-    <article className="max-w-none">
+    <article
+      className={
+        variant === "handbook" ? `handbook-prose max-w-none ${className}`.trim() : `max-w-none ${className}`.trim()
+      }
+    >
       <MDXRemote
         source={source}
-        components={baseComponents}
+        components={components}
         options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
       />
     </article>

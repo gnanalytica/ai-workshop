@@ -10,11 +10,14 @@ export function HelpDeskActions({
   cohortId,
   status,
   alreadyEscalated,
+  isSelfToTechRequest,
 }: {
   id: string;
   cohortId: string;
   status: "open" | "helping" | "resolved" | "cancelled";
   alreadyEscalated: boolean;
+  /** Faculty’s own ticket filed directly to tech — no triage actions here */
+  isSelfToTechRequest?: boolean;
 }) {
   const [pending, start] = useTransition();
   const [showEscalate, setShowEscalate] = useState(false);
@@ -50,6 +53,16 @@ export function HelpDeskActions({
   }
 
   if (status === "resolved") return null;
+
+  if (isSelfToTechRequest) {
+    return (
+      <p className="text-muted max-w-[14rem] text-right text-xs leading-snug">
+        {status === "helping"
+          ? "Platform or tech is handling this."
+          : "Queued with platform / tech staff. They’ll pick it up from the tech queue."}
+      </p>
+    );
+  }
 
   return (
     <div className="flex flex-col items-end gap-2">

@@ -22,19 +22,31 @@ export function HandbookProgress({
   }
   if (status === "completed") {
     return (
-      <Button size="sm" variant="outline" onClick={() => set("not_started")} disabled={pending}>
+      <Button
+        size="sm"
+        variant="outline"
+        className="rounded-lg"
+        onClick={() => set("not_started")}
+        disabled={pending}
+      >
         Mark incomplete
       </Button>
     );
   }
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {status !== "in_progress" && (
-        <Button size="sm" variant="outline" onClick={() => set("in_progress")} disabled={pending}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="rounded-lg"
+          onClick={() => set("in_progress")}
+          disabled={pending}
+        >
           Start
         </Button>
       )}
-      <Button size="sm" onClick={() => set("completed")} disabled={pending}>
+      <Button size="sm" className="rounded-lg" onClick={() => set("completed")} disabled={pending}>
         Mark complete
       </Button>
     </div>

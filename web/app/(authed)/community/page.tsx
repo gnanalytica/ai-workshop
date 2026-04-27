@@ -25,6 +25,7 @@ export default async function BoardPage({
 
   const sp = await searchParams;
   const canModerate = await checkCapability("moderation.write", cohort.id);
+  const canWrite = await checkCapability("community.write", cohort.id);
   const inModView = canModerate && sp.mod === "1";
 
   if (inModView) {
@@ -71,9 +72,11 @@ export default async function BoardPage({
               <Link href="/community?mod=1">Moderate</Link>
             </Button>
           )}
-          <Button asChild>
-            <Link href="/community/new">New post</Link>
-          </Button>
+          {canWrite && (
+            <Button asChild>
+              <Link href="/community/new">New post</Link>
+            </Button>
+          )}
         </div>
       </header>
       <CommunityList posts={all} />

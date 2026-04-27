@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { listFacultyHelpDesk } from "@/lib/queries/faculty-help-desk";
+import { FacultyTechRequestForm } from "./FacultyTechRequestForm";
 import { HelpDeskQueue } from "./HelpDeskQueue";
 import { HelpDeskScopeNotice } from "./HelpDeskScopeNotice";
 
@@ -33,9 +34,12 @@ export default async function FacultyStuckPage() {
         </div>
         <p className="text-muted mt-1 text-sm">
           Open tickets from students in your pod. Claim when you&apos;re helping, resolve when it&apos;s fixed.
-          Escalate (or route to tech) if it needs cohort staff or platform help.
+          Escalate (or route to tech) if it needs cohort staff or platform help. You can also file a
+          request straight to platform / tech for your own access or tooling issues.
         </p>
       </header>
+
+      <FacultyTechRequestForm cohortId={f.cohort.id} />
 
       <HelpDeskScopeNotice />
 

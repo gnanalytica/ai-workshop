@@ -17,6 +17,7 @@ const newPostSchema = z.object({
 export async function createCommunityPost(input: z.infer<typeof newPostSchema>) {
   const parsed = newPostSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("community.write", parsed.data.cohort_id);
   const sb = await getSupabaseServer();
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return actionFail("Not signed in");
@@ -55,6 +56,15 @@ export async function createCommunityReply(input: z.infer<typeof replySchema>) {
   const parsed = replySchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   const sb = await getSupabaseServer();
+  const { data: postRow } = await sb
+    .from("community_posts")
+    .select("cohort_id")
+    .eq("id", parsed.data.post_id)
+    .is("deleted_at", null)
+    .maybeSingle();
+  const cohortId = (postRow as { cohort_id: string } | null)?.cohort_id;
+  if (!cohortId) return actionFail("Post not found");
+  await requireCapability("community.write", cohortId);
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return actionFail("Not signed in");
   const { data: row, error } = await sb
@@ -67,7 +77,6 @@ export async function createCommunityReply(input: z.infer<typeof replySchema>) {
     .select("id, post_id, community_posts:post_id(cohort_id)")
     .single();
   if (error || !row) return actionFail(error?.message ?? "Failed");
-  const cohortId = ((row as unknown) as { community_posts: { cohort_id: string } }).community_posts.cohort_id;
   const mentioned = await extractMentions(parsed.data.body_md, cohortId);
   await recordMentions(mentioned, {
     kind: "reply",
@@ -78,6 +87,56 @@ export async function createCommunityReply(input: z.infer<typeof replySchema>) {
   });
   revalidatePath(`/community/${parsed.data.post_id}`);
   return { ok: true as const, data: row };
+}
+
+const voteSchema = z
+  .object({
+    cohort_id: z.string().uuid(),
+    post_id: z.string().uuid().optional(),
+    reply_id: z.string().uuid().optional(),
+    value: z.union([z.literal(1), z.literal(-1), z.literal(0)]),
+  })
+  .refine((d) => Boolean(d.post_id) !== Boolean(d.reply_id), { message: "Choose post or reply" });
+
+/** Upvote / downvote / clear vote on a post or reply. Requires community.write. */
+export async function setCommunityVote(input: z.infer<typeof voteSchema>) {
+  const parsed = voteSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("community.write", parsed.data.cohort_id);
+  const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+  const uid = user.user.id;
+  const { post_id, reply_id, value } = parsed.data;
+
+  if (value === 0) {
+    let del = sb.from("community_votes").delete().eq("user_id", uid);
+    if (post_id) del = del.eq("post_id", post_id).is("reply_id", null);
+    else del = del.eq("reply_id", reply_id!).is("post_id", null);
+    const { error } = await del;
+    if (error) return actionFail(error.message);
+  } else {
+    let del = sb.from("community_votes").delete().eq("user_id", uid);
+    if (post_id) del = del.eq("post_id", post_id).is("reply_id", null);
+    else del = del.eq("reply_id", reply_id!).is("post_id", null);
+    await del;
+    const { error } = await sb.from("community_votes").insert({
+      user_id: uid,
+      post_id: post_id ?? null,
+      reply_id: reply_id ?? null,
+      value,
+    });
+    if (error) return actionFail(error.message);
+  }
+
+  let revalidatePost = post_id;
+  if (!revalidatePost && reply_id) {
+    const { data: r } = await sb.from("community_replies").select("post_id").eq("id", reply_id).maybeSingle();
+    revalidatePost = (r as { post_id: string } | null)?.post_id;
+  }
+  revalidatePath("/community");
+  if (revalidatePost) revalidatePath(`/community/${revalidatePost}`);
+  return { ok: true as const };
 }
 
 const acceptSchema = z.object({ reply_id: z.string().uuid(), post_id: z.string().uuid() });
