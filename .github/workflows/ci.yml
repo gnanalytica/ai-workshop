@@ -95,6 +95,27 @@ jobs:
           create role service_role noinherit;
           EOF
           psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -d lms -f /tmp/auth_stub.sql
+          cat > /tmp/storage_stub.sql <<'EOF'
+          create schema if not exists storage;
+          create table if not exists storage.buckets (
+            id text primary key,
+            name text not null,
+            public boolean not null default false,
+            file_size_limit bigint null,
+            allowed_mime_types text[] null
+          );
+          create or replace function storage.foldername(name text)
+          returns text[] language sql immutable parallel safe as $$
+            select string_to_array(nullif(trim(both '/' from name), ''), '/');
+          $$;
+          create table if not exists storage.objects (
+            id uuid primary key default gen_random_uuid(),
+            bucket_id text not null references storage.buckets(id) on delete cascade,
+            name text not null
+          );
+          alter table storage.objects enable row level security;
+          EOF
+          psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -d lms -f /tmp/storage_stub.sql
 
       - name: Apply migrations
         env:

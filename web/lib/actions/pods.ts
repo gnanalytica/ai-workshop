@@ -86,7 +86,7 @@ export async function updatePod(input: z.infer<typeof updateSchema>) {
   return actionOk();
 }
 
-export async function deletePod(podId: string, cohortId?: string) {
+export async function deletePod(podId: string, _cohortId?: string) {
   if (!/^[0-9a-f-]{36}$/i.test(podId)) return actionFail("Invalid pod id");
   const sb = await getSupabaseServer();
   const { error } = await sb.rpc("rpc_delete_pod", { p_pod_id: podId } as never);
