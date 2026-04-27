@@ -162,7 +162,7 @@ export function NewQuizForm({ cohortId }: { cohortId: string }) {
   );
 }
 
-export function QuizzesTable({ rows }: { rows: QuizRow[] }) {
+export function QuizzesTable({ rows, cohortId }: { rows: QuizRow[]; cohortId: string }) {
   if (rows.length === 0) return <Card><CardSub>No quizzes yet.</CardSub></Card>;
   return (
     <div className="border-line overflow-hidden rounded-lg border">
@@ -181,7 +181,10 @@ export function QuizzesTable({ rows }: { rows: QuizRow[] }) {
             <tr key={q.id} className="border-line border-t">
               <td className="px-3 py-2 font-mono text-xs">D{String(q.day_number).padStart(2, "0")}</td>
               <td className="px-3 py-2">
-                <Link href={`/admin/content/quiz/${q.id}`} className="text-accent hover:underline">
+                <Link
+                  href={`/admin/cohorts/${cohortId}/content/quiz/${q.id}`}
+                  className="text-accent hover:underline"
+                >
                   {q.title}
                 </Link>
               </td>

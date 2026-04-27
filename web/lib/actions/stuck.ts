@@ -40,7 +40,7 @@ export async function claimStuck(input: z.infer<typeof claimSchema>): Promise<Ac
   const sb = await getSupabaseServer();
   const { error } = await sb.rpc("rpc_claim_stuck", { p_id: parsed.data.id } as never);
   if (error) return actionFail(error.message);
-  revalidatePath("/admin/stuck");
+  revalidatePath("/admin/cohorts", "layout");
   revalidatePath("/faculty/stuck");
   revalidatePath("/faculty/pod");
   revalidatePath("/help-desk");
@@ -93,7 +93,7 @@ export async function escalateStuck(input: z.infer<typeof escalateSchema>): Prom
     })
     .eq("id", parsed.data.id);
   if (error) return actionFail(error.message);
-  revalidatePath("/admin/stuck");
+  revalidatePath("/admin/cohorts", "layout");
   revalidatePath("/faculty/stuck");
   revalidatePath("/faculty/pod");
   revalidatePath("/help-desk");

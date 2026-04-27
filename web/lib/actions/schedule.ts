@@ -46,7 +46,8 @@ export async function createCohort(input: z.infer<typeof createCohortSchema>) {
   const { error: seedErr } = await sb.rpc("seed_curriculum_for", { p_cohort: cohortId } as never);
   if (seedErr) return actionFail(`Created but seed failed: ${seedErr.message}`);
 
-  revalidatePath("/admin/schedule");
+  revalidatePath("/admin", "layout");
+  revalidatePath("/admin/cohorts", "layout");
   return actionOk(data);
 }
 
@@ -82,7 +83,8 @@ export async function deleteCohort(input: z.infer<typeof deleteCohortSchema>) {
   const { error } = await sb.from("cohorts").delete().eq("id", parsed.data.cohort_id);
   if (error) return actionFail(error.message);
 
-  revalidatePath("/admin/schedule");
+  revalidatePath("/admin", "layout");
+  revalidatePath("/admin/cohorts", "layout");
   return actionOk();
 }
 

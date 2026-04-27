@@ -1,0 +1,52 @@
+import { notFound } from "next/navigation";
+import { requireCapability } from "@/lib/auth/requireCapability";
+import { CardSub } from "@/components/ui/card";
+import { CohortShell } from "@/components/admin-cohort/CohortShell";
+import { getAdminCohortById } from "@/lib/queries/admin-context";
+import { listAssignments, listQuizzes } from "@/lib/queries/content";
+import {
+  NewAssignmentForm,
+  AssignmentsTable,
+  NewQuizForm,
+  QuizzesTable,
+} from "@/app/(authed)/admin/content/ContentForms";
+
+export default async function AdminCohortContentPage({
+  params,
+}: {
+  params: Promise<{ cohortId: string }>;
+}) {
+  await requireCapability("content.write");
+  const { cohortId } = await params;
+  const cohort = await getAdminCohortById(cohortId);
+  if (!cohort) notFound();
+  const [assignments, quizzes] = await Promise.all([
+    listAssignments(cohort.id),
+    listQuizzes(cohort.id),
+  ]);
+
+  return (
+    <>
+      <CohortShell cohort={cohort} active="content" />
+
+      <CardSub>
+        {assignments.length} assignments · {quizzes.length} quizzes
+      </CardSub>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        <NewAssignmentForm cohortId={cohort.id} />
+        <NewQuizForm cohortId={cohort.id} />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-semibold tracking-tight">Assignments</h2>
+        <AssignmentsTable rows={assignments} cohortId={cohort.id} />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-semibold tracking-tight">Quizzes</h2>
+        <QuizzesTable rows={quizzes} cohortId={cohort.id} />
+      </section>
+    </>
+  );
+}

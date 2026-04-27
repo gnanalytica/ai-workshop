@@ -60,26 +60,11 @@ export const NAV: readonly NavItem[] = [
   { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
   { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
 
-  // ----- Admin · Cohort -----
-  { label: "Cohort Home", href: "/admin",            cap: "schedule.read",          group: "admin", section: "Cohort", icon: "home" },
-  { label: "Schedule",    href: "/admin/schedule",   cap: "schedule.write",         group: "admin", section: "Cohort", icon: "calendar" },
-  { label: "Content",     href: "/admin/content",    cap: "content.write",          group: "admin", section: "Cohort", icon: "book" },
-  { label: "Roster",      href: "/admin/roster",     cap: "roster.read",            group: "admin", section: "Cohort", icon: "users-round" },
-  { label: "Teams",       href: "/admin/teams",      cap: "roster.read",            group: "admin", section: "Cohort", icon: "users" },
-  { label: "Pods",        href: "/pods",             cap: "pods.write",             group: "admin", section: "Cohort", icon: "layers" },
-  { label: "Faculty",     href: "/admin/faculty",    cap: "faculty.write",          group: "admin", section: "Cohort", icon: "user-check" },
-  { label: "Grading",     href: "/admin/grading",    cap: "grading.write:cohort",   group: "admin", section: "Cohort", icon: "check-square" },
+  // ----- Admin · Cohorts (cohort list, then enter scope) -----
+  { label: "Cohorts",     href: "/admin",            cap: "schedule.read",          group: "admin", section: "Cohorts",  icon: "home" },
 
-  // ----- Admin · Engagement -----
-  { label: "Polls",       href: "/admin/polls",      cap: "content.write",          group: "admin", section: "Engagement", icon: "vote" },
-  { label: "Help desk",   href: "/admin/stuck",      cap: "support.triage",         group: "admin", section: "Engagement", icon: "life-buoy" },
-  { label: "Community Board", href: "/board",        cap: "board.read",             group: "admin", section: "Engagement", icon: "message-square" },
-  { label: "Board (Mod)", href: "/admin/board",      cap: "moderation.write",       group: "admin", section: "Engagement", icon: "shield" },
-
-  // ----- Admin · Insights -----
-  { label: "Analytics",  href: "/admin/analytics",  cap: "analytics.read:cohort",   group: "admin", section: "Insights", icon: "bar-chart" },
-  { label: "Milestones", href: "/admin/milestones", cap: "grading.read",            group: "admin", section: "Insights", icon: "milestone" },
-  { label: "Activity",   href: "/admin/activity",   cap: "roster.read",             group: "admin", section: "Insights", icon: "activity" },
+  // ----- Admin · Community -----
+  { label: "Community Board", href: "/board",        cap: "board.read",             group: "admin", section: "Community", icon: "message-square" },
 
   // ----- System (admin only) -----
   { label: "Invites",       href: "/admin/invites", cap: "orgs.write", group: "system", section: "System", icon: "ticket" },

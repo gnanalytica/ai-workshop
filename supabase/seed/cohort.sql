@@ -79,21 +79,16 @@ insert into pods (id, cohort_id, name)
     from (values ('Pod Alpha'),('Pod Bravo'),('Pod Charlie'),('Pod Delta'),('Pod Echo')) v(name)
 on conflict do nothing;
 
--- assign support faculty as primary on first 2 pods
-insert into pod_faculty (pod_id, faculty_user_id, is_primary)
-  select p.id, prof.id, true
+-- assign support faculty to pods (support1 covers Alpha + Charlie/Delta/Echo, support2 covers Bravo)
+insert into pod_faculty (pod_id, faculty_user_id)
+  select p.id, prof.id
     from pods p
     cross join profiles prof
     where p.cohort_id = '11111111-1111-1111-1111-111111111111'
-      and p.name = 'Pod Alpha' and prof.email = 'support1@seed.local'
-on conflict do nothing;
-
-insert into pod_faculty (pod_id, faculty_user_id, is_primary)
-  select p.id, prof.id, true
-    from pods p
-    cross join profiles prof
-    where p.cohort_id = '11111111-1111-1111-1111-111111111111'
-      and p.name = 'Pod Bravo' and prof.email = 'support2@seed.local'
+      and (
+        (p.name in ('Pod Alpha','Pod Charlie','Pod Delta','Pod Echo') and prof.email = 'support1@seed.local')
+        or (p.name = 'Pod Bravo' and prof.email = 'support2@seed.local')
+      )
 on conflict do nothing;
 
 -- distribute students round-robin to pods
