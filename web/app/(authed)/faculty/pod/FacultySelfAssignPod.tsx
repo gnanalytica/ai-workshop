@@ -130,7 +130,7 @@ function DropZone({
       className={cn(
         "min-h-[72px] min-w-[104px] rounded-md border px-3 py-2 text-sm transition-colors",
         tone === "mine" && "border-accent/50 bg-accent/10 ring-accent/20 ring-1",
-        tone === "warn" && "border-amber-500/30 bg-bg-soft",
+        tone === "warn" && "border-warn/30 bg-bg-soft",
         tone === "default" && "border-line bg-bg-soft",
         highlight && "ring-2 ring-accent/35",
       )}

@@ -12,7 +12,7 @@ export interface PodCardProps {
 
 export function PodCard({ name, memberCount, facultyCount, facultyNames, href }: PodCardProps) {
   const inner = (
-    <Card className="hover:border-accent/50 cursor-pointer transition-colors">
+    <Card className="hover:border-accent/50 hover:shadow-soft cursor-pointer transition-all duration-200 motion-safe:hover:-translate-y-px">
       <CardTitle>{name}</CardTitle>
       <CardSub className="mt-1">
         {memberCount} students · {facultyCount} faculty

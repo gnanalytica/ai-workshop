@@ -46,7 +46,7 @@ export function CreateInviteForm({
         <select
           value={kind}
           onChange={(e) => setKind(e.target.value as Kind)}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         >
           <option value="student">Student</option>
           <option value="faculty">Faculty</option>
@@ -60,7 +60,7 @@ export function CreateInviteForm({
             value={cohortId}
             onChange={(e) => setCohortId(e.target.value)}
             required
-            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           >
             {cohorts.map((c) => (
               <option key={c.id} value={c.id}>
@@ -78,7 +78,7 @@ export function CreateInviteForm({
             onChange={(e) =>
               setStaffRole(e.target.value as "admin" | "trainer" | "tech_support")
             }
-            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           >
             <option value="admin">Admin</option>
             <option value="trainer">Trainer</option>
@@ -94,7 +94,7 @@ export function CreateInviteForm({
           max={1000}
           value={maxUses}
           onChange={(e) => setMaxUses(parseInt(e.target.value || "1", 10))}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
 
@@ -103,7 +103,7 @@ export function CreateInviteForm({
           type="date"
           value={expiresAt}
           onChange={(e) => setExpiresAt(e.target.value)}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
 
@@ -114,7 +114,7 @@ export function CreateInviteForm({
           placeholder="Who is this for?"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
 
@@ -122,7 +122,7 @@ export function CreateInviteForm({
         <button
           type="submit"
           disabled={pending}
-          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
+          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium transition-all duration-200 disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create invite"}
         </button>
@@ -132,7 +132,7 @@ export function CreateInviteForm({
             share with the recipient.
           </p>
         )}
-        {result.ok === false && <p className="mt-3 text-sm text-red-400">{result.error}</p>}
+        {result.ok === false && <p className="text-danger mt-3 text-sm">{result.error}</p>}
       </div>
     </form>
   );

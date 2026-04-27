@@ -18,7 +18,7 @@ export function UserMenu({
       <DropdownMenu.Trigger asChild>
         <button
           aria-label="User menu"
-          className="bg-bg-soft text-ink hover:bg-card border-line inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium"
+          className="bg-bg-soft text-ink hover:bg-card hover:border-accent/30 border-line inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         >
           {initial}
         </button>
@@ -37,7 +37,7 @@ export function UserMenu({
           <DropdownMenu.Item asChild>
             <Link
               href="/settings/profile"
-              className="text-ink hover:bg-bg-soft flex items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none"
+              className="text-ink hover:bg-bg-soft focus:bg-bg-soft flex items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none transition-colors"
             >
               <User size={14} /> Profile
             </Link>
@@ -47,7 +47,7 @@ export function UserMenu({
             <DropdownMenu.Item asChild>
               <button
                 type="submit"
-                className="text-ink hover:bg-bg-soft flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none"
+                className="text-ink hover:bg-bg-soft focus:bg-bg-soft flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none transition-colors"
               >
                 <LogOut size={14} /> Sign out
               </button>

@@ -35,7 +35,7 @@ export function CohortRowActions({ cohortId, name }: { cohortId: string; name: s
             type="button"
             onClick={onDelete}
             disabled={pending}
-            className="rounded-md bg-red-500/10 px-2.5 py-1 text-red-300 hover:bg-red-500/20 disabled:opacity-60"
+            className="bg-danger-soft text-danger hover:bg-danger/20 rounded-md px-2.5 py-1 transition-colors disabled:opacity-60"
           >
             {pending ? "Deleting…" : "Confirm delete"}
           </button>
@@ -47,7 +47,7 @@ export function CohortRowActions({ cohortId, name }: { cohortId: string; name: s
             Cancel
           </button>
         </div>
-        {err && <p className="text-red-400">{err}</p>}
+        {err && <p className="text-danger">{err}</p>}
       </div>
     );
   }

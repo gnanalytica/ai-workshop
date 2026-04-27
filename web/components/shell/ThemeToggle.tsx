@@ -12,6 +12,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       aria-label="Toggle theme"
+      className="hover:bg-bg-soft"
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
       {isDark ? <Sun size={16} /> : <Moon size={16} />}

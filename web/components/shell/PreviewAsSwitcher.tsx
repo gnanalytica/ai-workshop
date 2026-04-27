@@ -16,7 +16,7 @@ export function PreviewAsSwitcher({ effective }: { effective: Persona }) {
         name="persona"
         defaultValue={effective}
         onChange={() => formRef.current?.requestSubmit()}
-        className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-sm"
+        className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
       >
         <option value="admin">Admin</option>
         <option value="faculty">Faculty (preview)</option>

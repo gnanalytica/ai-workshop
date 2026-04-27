@@ -70,10 +70,10 @@ export default async function AdminCohortAnalyticsPage({
           <Card>
             <StackedBarChart rows={chartRows} />
             <div className="text-muted mt-4 flex flex-wrap gap-3 text-xs">
-              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-emerald-500/70" /> Present</span>
-              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-amber-500/70" /> Late</span>
+              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-ok/70" /> Present</span>
+              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-warn/70" /> Late</span>
               <span><span className="bg-bg-soft mr-1 inline-block h-2 w-2 rounded" /> Excused</span>
-              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-red-500/70" /> Absent</span>
+              <span><span className="mr-1 inline-block h-2 w-2 rounded bg-danger/70" /> Absent</span>
             </div>
           </Card>
         )}

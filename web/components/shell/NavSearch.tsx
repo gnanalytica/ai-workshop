@@ -69,7 +69,7 @@ export function NavSearch({ items }: { items: NavItem[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-muted border-line bg-bg-soft hover:text-ink inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm"
+        className="text-muted border-line bg-bg-soft hover:text-ink hover:border-accent/30 inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
       >
         <Search size={14} />
         <span>Search</span>
@@ -81,7 +81,7 @@ export function NavSearch({ items }: { items: NavItem[] }) {
         <div
           role="dialog"
           aria-modal
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[15vh]"
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-3 pt-[12vh] sm:px-4 sm:pt-[15vh]"
           onClick={() => setOpen(false)}
         >
           <Command
@@ -113,7 +113,7 @@ export function NavSearch({ items }: { items: NavItem[] }) {
                         setOpen(false);
                         router.push(h.href);
                       }}
-                      className="text-ink data-[selected=true]:bg-bg-soft flex cursor-pointer items-center justify-between gap-3 rounded-sm px-3 py-2 text-sm"
+                      className="text-ink data-[selected=true]:bg-bg-soft flex cursor-pointer items-center justify-between gap-3 rounded-sm px-3 py-2 text-sm transition-colors duration-200 ease-out"
                     >
                       <span>
                         <span className="text-muted mr-2 font-mono text-[10px] uppercase">
@@ -140,7 +140,7 @@ export function NavSearch({ items }: { items: NavItem[] }) {
                         setOpen(false);
                         router.push(it.href);
                       }}
-                      className="text-ink data-[selected=true]:bg-bg-soft cursor-pointer rounded-sm px-3 py-2 text-sm"
+                      className="text-ink data-[selected=true]:bg-bg-soft cursor-pointer rounded-sm px-3 py-2 text-sm transition-colors duration-200 ease-out"
                     >
                       {it.label}
                     </Command.Item>

@@ -6,7 +6,7 @@ export default async function DeniedPage(props: {
   const params = await props.searchParams;
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
-      <p className="mb-3 font-mono text-xs tracking-widest text-red-400 uppercase">
+      <p className="text-danger mb-3 font-mono text-xs tracking-widest uppercase">
         Access denied
       </p>
       <h1 className="text-3xl font-semibold tracking-tight">Not authorized</h1>

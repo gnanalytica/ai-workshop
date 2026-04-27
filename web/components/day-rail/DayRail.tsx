@@ -26,7 +26,7 @@ export function DayRail({
         {items.map((it) => {
           const active = it.day === activeDay;
           const cls = cn(
-            "flex items-center gap-2 rounded-md px-2.5 py-1.5",
+            "flex items-center gap-2 rounded-md px-2.5 py-1.5 transition-all duration-200 ease-out",
             active
               ? "bg-bg-soft text-ink font-medium"
               : it.unlocked
@@ -43,7 +43,13 @@ export function DayRail({
           return (
             <li key={it.day}>
               {it.unlocked ? (
-                <Link href={`${basePath}/${it.day}`} className={cls}>
+                <Link
+                  href={`${basePath}/${it.day}`}
+                  className={cn(
+                    cls,
+                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]",
+                  )}
+                >
                   {inner}
                 </Link>
               ) : (

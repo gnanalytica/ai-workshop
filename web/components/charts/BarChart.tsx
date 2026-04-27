@@ -4,9 +4,9 @@ export interface BarSegment { value: number; label: string; tone: "ok" | "warn" 
 export interface BarRow { id: string | number; label: string; segments: BarSegment[] }
 
 const TONE_BG: Record<BarSegment["tone"], string> = {
-  ok: "bg-emerald-500/70",
-  warn: "bg-amber-500/70",
-  danger: "bg-red-500/70",
+  ok: "bg-ok/70",
+  warn: "bg-warn/70",
+  danger: "bg-danger/70",
   default: "bg-bg-soft",
 };
 

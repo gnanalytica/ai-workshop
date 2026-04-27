@@ -27,8 +27,8 @@ export async function Topbar({
   const [unread, mentions] = await Promise.all([countUnreadMentions(), listUnreadMentions(10)]);
 
   return (
-    <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-6 backdrop-blur-md">
-      <div className="flex min-w-0 items-center gap-4">
+    <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-3 backdrop-blur-md sm:px-4 md:px-6">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-4">
         {cohortName ? (
           <div className="flex min-w-0 items-baseline gap-3">
             <span className="eyebrow">Cohort</span>
@@ -46,13 +46,19 @@ export async function Topbar({
             Preview · {effectivePersona}
           </span>
         )}
-        <CohortSwitcher />
+        <div className="hidden lg:block">
+          <CohortSwitcher />
+        </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {truePersona === "admin" && effectivePersona && (
+          <div className="hidden xl:block">
           <PreviewAsSwitcher effective={effectivePersona} />
+          </div>
         )}
-        <NavSearch items={navItems} />
+        <div className="hidden sm:block">
+          <NavSearch items={navItems} />
+        </div>
         <MentionInbox unread={unread} items={mentions} />
         <ThemeToggle />
         <UserMenu email={profile.email} fullName={profile.full_name} />

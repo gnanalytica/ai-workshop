@@ -32,7 +32,7 @@ export function DayCard({
   const inner = (
     <div
       className={cn(
-        "border-line bg-card hover:border-accent/40 rounded-lg border p-4 transition-colors",
+        "border-line bg-card hover:border-accent/40 hover:shadow-soft rounded-lg border p-4 transition-all duration-200 motion-safe:hover:-translate-y-px",
         !isUnlocked && "opacity-60",
         className,
       )}
@@ -51,7 +51,7 @@ export function DayCard({
     </div>
   );
   return href && isUnlocked ? (
-    <Link href={href} className="block">
+    <Link href={href} className="block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]">
       {inner}
     </Link>
   ) : (

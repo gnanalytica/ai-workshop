@@ -31,8 +31,8 @@ function statusKey(status: HandbookModule["status"]): Exclude<StatusFilter, "all
 
 function dotClass(status: HandbookModule["status"]): string {
   const key = statusKey(status);
-  if (key === "completed") return "bg-emerald-500 ring-1 ring-emerald-500/30";
-  if (key === "in_progress") return "bg-amber-500 ring-1 ring-amber-500/30";
+  if (key === "completed") return "bg-ok ring-1 ring-ok/30";
+  if (key === "in_progress") return "bg-warn ring-1 ring-warn/30";
   return "bg-muted ring-1 ring-line/50";
 }
 

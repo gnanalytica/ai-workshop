@@ -125,7 +125,7 @@ export function Sidebar({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "bg-nav-bg border-hairline fixed top-0 bottom-0 left-0 z-40 flex flex-col border-r transition-[width] duration-200 ease-out",
+            "bg-nav-bg border-hairline fixed top-0 bottom-0 left-0 z-40 flex flex-col border-r transition-[width,box-shadow] duration-200 ease-out",
             expanded ? "shadow-lift" : "",
           )}
           style={{ width: expanded ? 248 : 64 }}
@@ -172,7 +172,7 @@ export function Sidebar({
                           href={it.href}
                           title={!expanded ? it.label : undefined}
                           className={cn(
-                            "group relative flex h-9 items-center gap-3 rounded-md px-2.5 text-[13px] transition-colors",
+                            "group relative flex h-9 items-center gap-3 rounded-md px-2.5 text-[13px] transition-all duration-200 ease-out",
                             active
                               ? "text-ink"
                               : "text-muted hover:text-ink hover:bg-bg-soft",
@@ -180,21 +180,21 @@ export function Sidebar({
                         >
                           {/* Active accent — thin terracotta bar at the left edge */}
                           {active && (
-                            <span className="bg-accent absolute top-1.5 bottom-1.5 -left-3 w-[3px] rounded-r" />
+                            <span className="bg-accent absolute top-1.5 bottom-1.5 -left-3 w-[3px] rounded-r transition-all duration-200 ease-out" />
                           )}
                           {Icon && (
                             <Icon
                               size={17}
                               strokeWidth={1.6}
                               className={cn(
-                                "shrink-0",
+                                "shrink-0 transition-colors duration-200 ease-out",
                                 active ? "text-accent" : "opacity-80",
                               )}
                             />
                           )}
                           <span
                             className={cn(
-                              "whitespace-nowrap transition-opacity",
+                              "whitespace-nowrap transition-opacity duration-200 ease-out",
                               expanded ? "opacity-100" : "pointer-events-none opacity-0",
                               active && "font-medium",
                             )}
@@ -227,7 +227,7 @@ export function Sidebar({
               )}
               <span
                 className={cn(
-                  "whitespace-nowrap transition-opacity",
+                  "whitespace-nowrap transition-opacity duration-200 ease-out",
                   expanded ? "opacity-100" : "pointer-events-none opacity-0",
                 )}
               >
@@ -278,7 +278,7 @@ export function Sidebar({
                           <Link
                             href={it.href}
                             className={cn(
-                              "flex h-9 items-center gap-3 rounded-md px-2.5 text-sm",
+                              "flex h-9 items-center gap-3 rounded-md px-2.5 text-sm transition-all duration-200 ease-out",
                               active
                                 ? "text-ink bg-bg-soft font-medium"
                                 : "text-muted hover:text-ink hover:bg-bg-soft",

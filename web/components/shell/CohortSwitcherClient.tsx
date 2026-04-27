@@ -21,7 +21,7 @@ export function CohortSwitcherClient({
         name="cohort_id"
         defaultValue={currentId}
         onChange={() => formRef.current?.requestSubmit()}
-        className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-sm"
+        className="border-line bg-input-bg text-ink rounded-md border px-2 py-1 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
       >
         {cohorts.map((c) => (
           <option key={c.id} value={c.id}>

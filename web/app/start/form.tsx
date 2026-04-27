@@ -25,11 +25,11 @@ export function StartForm({ next }: { next: string }) {
           required
           autoComplete="email"
           placeholder="you@school.edu"
-          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
         <SubmitButton />
         {state.message && (
-          <p className={state.ok ? "text-accent mt-1 text-sm" : "mt-1 text-sm text-red-400"}>
+          <p className={state.ok ? "text-accent mt-1 text-sm" : "text-danger mt-1 text-sm"}>
             {state.message}
           </p>
         )}
@@ -54,7 +54,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium disabled:opacity-60"
+      className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all duration-200 disabled:opacity-60"
     >
       {pending ? "Checking…" : "Continue →"}
     </button>

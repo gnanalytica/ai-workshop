@@ -389,7 +389,7 @@ function DropColumn({
       className={cn(
         "min-h-[180px] transition-colors",
         tone === "mine" && "border-accent/40 ring-accent/20 ring-1",
-        tone === "warn" && "border-amber-500/30",
+        tone === "warn" && "border-warn/30",
       )}
     >
       <div className="mb-1 flex items-start justify-between gap-2">

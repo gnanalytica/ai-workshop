@@ -200,9 +200,9 @@ export function PodMembers({
                 key={m.user_id}
                 className={cn(
                   "relative h-full p-4 transition-all hover:-translate-y-0.5 hover:shadow-md",
-                  status === "behind" && "border-l-4 border-l-red-500/60",
-                  status === "at_risk" && "border-l-4 border-l-amber-500/60",
-                  status === "ok" && "border-l-4 border-l-emerald-500/40",
+                  status === "behind" && "border-l-4 border-l-danger/60",
+                  status === "at_risk" && "border-l-4 border-l-warn/60",
+                  status === "ok" && "border-l-4 border-l-ok/40",
                   isSelected && "ring-accent/40 ring-2",
                 )}
               >
@@ -266,10 +266,10 @@ function Stat({
 }) {
   const barColor =
     tone === "behind"
-      ? "bg-red-500/70"
+      ? "bg-danger/70"
       : tone === "at_risk"
-        ? "bg-amber-500/70"
-        : "bg-emerald-500/70";
+        ? "bg-warn/70"
+        : "bg-ok/70";
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-[11px]">
@@ -301,11 +301,11 @@ function FilterPill({
 }) {
   const toneClass =
     tone === "danger"
-      ? "data-[active=true]:border-red-500/60 data-[active=true]:bg-red-500/10 data-[active=true]:text-red-400"
+      ? "data-[active=true]:border-danger/60 data-[active=true]:bg-danger/10 data-[active=true]:text-danger"
       : tone === "warn"
-        ? "data-[active=true]:border-amber-500/60 data-[active=true]:bg-amber-500/10 data-[active=true]:text-amber-400"
+        ? "data-[active=true]:border-warn/60 data-[active=true]:bg-warn/10 data-[active=true]:text-warn"
         : tone === "ok"
-          ? "data-[active=true]:border-emerald-500/60 data-[active=true]:bg-emerald-500/10 data-[active=true]:text-emerald-400"
+          ? "data-[active=true]:border-ok/60 data-[active=true]:bg-ok/10 data-[active=true]:text-ok"
           : "data-[active=true]:border-accent/60 data-[active=true]:bg-accent/10 data-[active=true]:text-accent";
   return (
     <button

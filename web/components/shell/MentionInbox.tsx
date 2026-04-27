@@ -37,7 +37,7 @@ export function MentionInbox({ unread, items }: { unread: number; items: Mention
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Mentions"
-        className="text-muted hover:text-ink relative rounded-md p-2"
+        className="text-muted hover:text-ink hover:bg-bg-soft relative rounded-md p-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
       >
         <Bell className="h-4 w-4" />
         {unread > 0 && (
@@ -47,11 +47,11 @@ export function MentionInbox({ unread, items }: { unread: number; items: Mention
         )}
       </button>
       {open && (
-        <div className="border-line bg-bg absolute right-0 z-40 mt-2 w-80 rounded-md border shadow-lg">
+        <div className="border-line bg-bg absolute right-0 z-40 mt-2 w-[min(20rem,calc(100vw-1.5rem))] rounded-md border shadow-lg">
           <div className="border-line flex items-center justify-between border-b px-3 py-2">
             <span className="text-ink text-sm font-medium">Mentions</span>
             {items.length > 0 && (
-              <button onClick={clearAll} className="text-muted hover:text-ink text-xs">
+              <button onClick={clearAll} className="text-muted hover:text-ink text-xs transition-colors">
                 Mark all read
               </button>
             )}
@@ -65,7 +65,7 @@ export function MentionInbox({ unread, items }: { unread: number; items: Mention
                   <li key={m.id}>
                     <button
                       onClick={() => clickItem(m)}
-                      className="hover:bg-input-bg w-full px-3 py-2 text-left text-sm"
+                      className="hover:bg-input-bg w-full px-3 py-2 text-left text-sm transition-colors"
                     >
                       <p className="text-ink">
                         <span className="font-medium">{m.by_name ?? "Someone"}</span>

@@ -29,6 +29,12 @@
   --color-hairline:  hsl(var(--hairline));
   --color-accent:    hsl(var(--accent));
   --color-accent-2:  hsl(var(--accent-2));
+  --color-ok:        hsl(var(--ok));
+  --color-warn:      hsl(var(--warn));
+  --color-danger:    hsl(var(--danger));
+  --color-ok-soft:   hsl(var(--ok-soft));
+  --color-warn-soft: hsl(var(--warn-soft));
+  --color-danger-soft: hsl(var(--danger-soft));
   --color-input-bg:  hsl(var(--input-bg));
   --color-nav-bg:    hsl(var(--nav-bg));
   --color-cta-ink:   hsl(var(--cta-ink));
@@ -54,6 +60,12 @@
     --hairline:  36 14% 86%;   /* finer line for editorial dividers */
     --accent:     12 65% 48%;  /* terracotta */
     --accent-2:  205 55% 38%;  /* deep ink-blue (rare, for highlights) */
+    --ok:        156 62% 32%;
+    --warn:       32 84% 40%;
+    --danger:      0 70% 44%;
+    --ok-soft:   156 55% 92%;
+    --warn-soft:  36 92% 92%;
+    --danger-soft: 0 86% 93%;
     --input-bg:  40 30% 96%;
     --nav-bg:    38 28% 94%;   /* rail slightly darker than canvas */
     --cta-ink:   40 30% 98%;
@@ -69,6 +81,12 @@
     --hairline:  30 7% 18%;
     --accent:     14 70% 60%;  /* terracotta, brightened for dark */
     --accent-2:  200 50% 60%;
+    --ok:        156 68% 62%;
+    --warn:       38 95% 68%;
+    --danger:      0 88% 68%;
+    --ok-soft:   156 50% 18%;
+    --warn-soft:  38 58% 18%;
+    --danger-soft: 0 52% 18%;
     --input-bg:  30 8% 12%;
     --nav-bg:    30 9% 6%;
     --cta-ink:   30 8% 8%;

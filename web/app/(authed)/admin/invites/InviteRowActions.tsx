@@ -37,7 +37,7 @@ export function InviteRowActions({ id, code }: { id: string; code: string }) {
         type="button"
         onClick={remove}
         disabled={pending}
-        className="text-xs text-red-400 hover:text-red-300 disabled:opacity-60"
+        className="text-danger hover:text-danger/80 text-xs transition-colors disabled:opacity-60"
       >
         Delete
       </button>

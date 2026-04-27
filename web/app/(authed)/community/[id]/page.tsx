@@ -70,7 +70,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
           <Card><CardSub>Be the first to reply.</CardSub></Card>
         ) : (
           post.replies.map((r) => (
-            <Card key={r.id} className={`p-4 ${r.is_accepted ? "border-emerald-500/40" : ""}`}>
+            <Card key={r.id} className={`p-4 ${r.is_accepted ? "border-ok/40" : ""}`}>
               <div className="flex gap-3">
                 <CommunityVoteControls
                   cohortId={post.cohort_id}

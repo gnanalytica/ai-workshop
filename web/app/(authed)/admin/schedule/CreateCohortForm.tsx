@@ -52,7 +52,7 @@ export function CreateCohortForm() {
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           placeholder="cohort-2026-09"
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 font-mono text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 font-mono text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
       <Field label="Name">
@@ -61,7 +61,7 @@ export function CreateCohortForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Workshop Cohort · Sep 2026"
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
       <Field
@@ -79,14 +79,14 @@ export function CreateCohortForm() {
           type="date"
           value={startsOn}
           onChange={(e) => setStartsOn(e.target.value)}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
       <Field label="Status">
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as "draft" | "live" | "archived")}
-          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         >
           <option value="draft">Draft (hidden from students)</option>
           <option value="live">Live</option>
@@ -97,11 +97,11 @@ export function CreateCohortForm() {
         <button
           type="submit"
           disabled={pending || !!preview?.invalid}
-          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
+          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium transition-all duration-200 disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create cohort"}
         </button>
-        {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
+        {err && <p className="text-danger mt-3 text-sm">{err}</p>}
       </div>
     </form>
   );

@@ -46,7 +46,7 @@ export function DeletePodButton({
       onClick={onClick}
       disabled={pending}
       className={cn(
-        "border-line text-muted hover:border-red-400/60 hover:text-red-400 rounded-md border px-3 py-1.5 text-xs disabled:opacity-60",
+        "border-line text-muted hover:border-danger/60 hover:text-danger rounded-md border px-3 py-1.5 text-xs transition-colors disabled:opacity-60",
         pending && "pointer-events-none opacity-70",
       )}
     >

@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]",
+  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-all duration-200 ease-out disabled:pointer-events-none disabled:opacity-50 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]",
   {
     variants: {
       variant: {
@@ -12,7 +12,7 @@ const buttonVariants = cva(
         secondary: "bg-bg-soft text-ink hover:bg-card border border-line",
         ghost: "text-ink hover:bg-bg-soft",
         outline: "border border-line text-ink hover:bg-bg-soft",
-        danger: "bg-red-600 text-white hover:bg-red-700",
+        danger: "bg-danger text-white hover:opacity-90",
       },
       size: {
         sm: "h-8 px-3 text-xs",

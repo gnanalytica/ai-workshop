@@ -8,9 +8,9 @@ const badgeVariants = cva(
       variant: {
         default: "bg-bg-soft text-muted",
         accent: "bg-accent/15 text-accent",
-        warn: "bg-amber-500/15 text-amber-400",
-        danger: "bg-red-500/15 text-red-400",
-        ok: "bg-emerald-500/15 text-emerald-400",
+        warn: "bg-warn-soft text-warn",
+        danger: "bg-danger-soft text-danger",
+        ok: "bg-ok-soft text-ok",
       },
     },
     defaultVariants: { variant: "default" },

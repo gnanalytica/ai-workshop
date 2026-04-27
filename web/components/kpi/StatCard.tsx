@@ -14,9 +14,9 @@ export interface StatCardProps {
 const TONE_STYLES: Record<NonNullable<StatCardProps["tone"]>, string> = {
   default: "text-ink",
   accent: "text-accent",
-  warn: "text-amber-400",
-  ok: "text-emerald-400",
-  danger: "text-red-400",
+  warn: "text-warn",
+  ok: "text-ok",
+  danger: "text-danger",
 };
 
 export function StatCard({ label, value, delta, hint, tone = "default", href, className }: StatCardProps) {

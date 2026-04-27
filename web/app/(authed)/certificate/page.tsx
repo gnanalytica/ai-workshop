@@ -56,7 +56,7 @@ export default async function CertificatePage() {
 
           {eligible ? (
             <div className="mt-6 space-y-2">
-              <p className="text-emerald-400">You&apos;ve graduated. 🎉</p>
+              <p className="text-ok">You&apos;ve graduated. 🎉</p>
               <Button>Download PDF</Button>
             </div>
           ) : (

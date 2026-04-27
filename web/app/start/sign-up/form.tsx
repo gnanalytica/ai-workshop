@@ -27,7 +27,7 @@ export function SignUpForm({ email }: { email: string }) {
           required
           maxLength={120}
           placeholder="Ada Lovelace"
-          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
       </Field>
 
@@ -44,7 +44,7 @@ export function SignUpForm({ email }: { email: string }) {
               className={`cursor-pointer rounded-md border px-3 py-2 text-center text-sm capitalize ${
                 role === r
                   ? "border-accent bg-accent/10 text-ink"
-                  : "border-line text-muted hover:text-ink"
+                  : "border-line text-muted hover:text-ink transition-colors"
               }`}
             >
               {r}
@@ -60,7 +60,7 @@ export function SignUpForm({ email }: { email: string }) {
             required
             placeholder="e.g. JAN26-XYZ8"
             autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
+            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           />
         </Field>
       )}
@@ -72,14 +72,14 @@ export function SignUpForm({ email }: { email: string }) {
             required
             placeholder="e.g. FAC-A1B2"
             autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
+            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           />
         </Field>
       )}
 
       <SubmitButton />
       {state.message && (
-        <p className={state.ok ? "text-accent text-sm" : "text-sm text-red-400"}>{state.message}</p>
+        <p className={state.ok ? "text-accent text-sm" : "text-danger text-sm"}>{state.message}</p>
       )}
     </form>
     </div>
@@ -120,7 +120,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium disabled:opacity-60"
+      className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all duration-200 disabled:opacity-60"
     >
       {pending ? "Creating account…" : "Create account →"}
     </button>

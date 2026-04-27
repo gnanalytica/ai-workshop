@@ -74,7 +74,7 @@ export function CreatePodForm({
           placeholder="Pod name (e.g. Pod A)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
         <input
           type="text"
@@ -82,17 +82,17 @@ export function CreatePodForm({
           placeholder="Mentor note (optional)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm"
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
         <button
           type="submit"
           disabled={pending || !name.trim()}
-          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
+          className="bg-accent text-cta-ink rounded-md px-4 py-2 text-sm font-medium transition-all duration-200 disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create pod"}
         </button>
         {error && (
-          <p className="text-sm text-red-400 sm:col-span-3" role="alert">
+          <p className="text-danger text-sm sm:col-span-3" role="alert">
             {error}
           </p>
         )}

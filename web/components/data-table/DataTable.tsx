@@ -84,12 +84,12 @@ export function DataTable<T>({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Input
           placeholder={searchPlaceholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         {bulkActions && selectedRows.length > 0 && (
           <div className="text-muted flex items-center gap-2 text-sm">
@@ -134,7 +134,7 @@ export function DataTable<T>({
                               : { id: c.id, dir: "asc" },
                           )
                         }
-                        className="hover:text-ink inline-flex items-center gap-1"
+                    className="hover:text-ink inline-flex items-center gap-1 transition-colors"
                       >
                         {c.header}
                         <span aria-hidden>{sortDir === "asc" ? "▲" : sortDir === "desc" ? "▼" : "↕"}</span>
@@ -165,7 +165,7 @@ export function DataTable<T>({
                   <tr
                     key={k}
                     className={cn(
-                      "border-line border-t",
+                      "border-line border-t transition-colors",
                       isSelected ? "bg-bg-soft" : "hover:bg-bg-soft/40",
                       rowClassName?.(row),
                     )}
