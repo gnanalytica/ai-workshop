@@ -79,7 +79,17 @@ export default async function FacultyPodPage() {
         </div>
       </Card>
       {pods.length === 0 ? (
-        <Card><CardSub>You aren&apos;t assigned to a pod in this cohort yet.</CardSub></Card>
+        <Card>
+          <CardTitle className="mb-2">No pod assigned</CardTitle>
+          <CardSub>
+            You aren&apos;t assigned to a pod in this cohort yet. Ask an admin
+            to add you, or visit the{" "}
+            <Link href="/faculty/cohort" className="text-accent hover:underline">
+              cohort overview
+            </Link>{" "}
+            to see all pods.
+          </CardSub>
+        </Card>
       ) : (
         await Promise.all(pods.map(async (p) => {
           const memberIds = p.members.map((m) => m.user_id);

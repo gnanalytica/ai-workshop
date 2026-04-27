@@ -32,8 +32,9 @@ export async function podEvent(input: z.infer<typeof evSchema>) {
     p_payload: {},
   } as never);
   if (error) return actionFail(error.message);
-  revalidatePath("/pods");
-  revalidatePath(`/pods/${parsed.data.pod_id}`);
+  revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/cohort");
+  revalidatePath(`/faculty/student/${parsed.data.target_user_id}`);
   return actionOk();
 }
 

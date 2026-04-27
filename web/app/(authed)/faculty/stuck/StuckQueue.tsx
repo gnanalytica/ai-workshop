@@ -43,9 +43,6 @@ export function StuckQueue({
   meId: string;
   cohortId: string;
 }) {
-  // meId is currently unused for exact-match filtering — see "mine" filter TODO below.
-  void meId;
-
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [sort, setSort] = useState<SortKey>("oldest");
@@ -55,13 +52,11 @@ export function StuckQueue({
       all: items.length,
       open: items.filter((i) => i.status === "open").length,
       helping: items.filter((i) => i.status === "helping").length,
-      // TODO: wire claimer_id through listFacultyStuck so we can match "mine" exactly
-      // against meId. For now, "mine" surfaces all helping tickets (anyone helping).
-      mine: items.filter((i) => i.status === "helping" && !!i.claimed_by_name).length,
+      mine: items.filter((i) => i.claimed_by === meId).length,
       tech: items.filter((i) => i.kind === "tech").length,
       other: items.filter((i) => i.kind !== "tech").length,
     };
-  }, [items]);
+  }, [items, meId]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -77,7 +72,7 @@ export function StuckQueue({
         case "helping":
           return s.status === "helping";
         case "mine":
-          return s.status === "helping" && !!s.claimed_by_name;
+          return s.claimed_by === meId;
         case "tech":
           return s.kind === "tech";
         case "other":
@@ -107,7 +102,7 @@ export function StuckQueue({
     });
 
     return list;
-  }, [items, query, filter, sort]);
+  }, [items, query, filter, sort, meId]);
 
   const pills: Array<{ key: FilterKey; label: string; count: number }> = [
     { key: "all", label: "All", count: counts.all },

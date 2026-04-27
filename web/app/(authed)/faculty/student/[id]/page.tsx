@@ -78,7 +78,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Recent submissions</h2>
         {s.recentSubmissions.length === 0 ? (
-          <Card><CardSub>None yet.</CardSub></Card>
+          <Card><CardSub>No submissions yet — student hasn&apos;t turned in any assignments.</CardSub></Card>
         ) : (
           <Card>
             <ul className="divide-y divide-line/50">
@@ -104,7 +104,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Help desk (recent)</h2>
         {s.recentStuck.length === 0 ? (
-          <Card><CardSub>None.</CardSub></Card>
+          <Card><CardSub>No help desk activity for this student.</CardSub></Card>
         ) : (
           <Card>
             <ul className="divide-y divide-line/50">
@@ -126,7 +126,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Recent board activity</h2>
         {s.recentPosts.length === 0 ? (
-          <Card><CardSub>No posts.</CardSub></Card>
+          <Card><CardSub>Hasn&apos;t posted on the community board yet.</CardSub></Card>
         ) : (
           <Card>
             <ul className="divide-y divide-line/50">

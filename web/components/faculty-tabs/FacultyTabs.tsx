@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type Tab = "pod" | "cohort";
 
 const TABS: { id: Tab; label: string; href: string }[] = [
-  { id: "pod", label: "My Pod", href: "/faculty" },
+  { id: "pod", label: "My Pod", href: "/faculty/pod" },
   { id: "cohort", label: "Cohort", href: "/faculty/cohort" },
 ];
 

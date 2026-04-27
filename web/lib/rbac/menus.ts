@@ -53,7 +53,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Certificate",    href: "/certificate",  cap: null,           group: "student", icon: "award" },
 
   // ----- Faculty -----
-  { label: "My Pod",      href: "/faculty",             cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
+  { label: "My Pod",      href: "/faculty/pod",         cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
   { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", section: "Daily",     icon: "users-round" },
   { label: "Help desk",   href: "/faculty/stuck",       cap: "support.triage", group: "faculty", section: "Daily",     icon: "life-buoy" },
   { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", section: "Reference", icon: "message-square" },

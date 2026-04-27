@@ -9,6 +9,7 @@ export interface FacultyStuckEntry {
   kind: "content" | "tech" | "team" | "other";
   status: "open" | "helping" | "resolved" | "cancelled";
   message: string | null;
+  claimed_by: string | null;
   claimed_by_name: string | null;
   escalated_at: string | null;
   escalation_note: string | null;
@@ -43,7 +44,7 @@ export const listFacultyStuck = cache(
     const { data } = await sb
       .from("stuck_queue")
       .select(
-        "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, profiles:user_id(full_name), claimer:profiles!stuck_queue_claimed_by_fkey(full_name)",
+        "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, claimed_by, profiles:user_id(full_name), claimer:profiles!stuck_queue_claimed_by_fkey(full_name)",
       )
       .eq("cohort_id", cohortId)
       .in("user_id", studentIds)
@@ -55,6 +56,7 @@ export const listFacultyStuck = cache(
       id: string; user_id: string; kind: FacultyStuckEntry["kind"]; status: FacultyStuckEntry["status"];
       message: string | null; created_at: string;
       escalated_at: string | null; escalation_note: string | null;
+      claimed_by: string | null;
       profiles: { full_name: string | null } | null;
       claimer: { full_name: string | null } | null;
     }>).map((r) => ({
@@ -65,6 +67,7 @@ export const listFacultyStuck = cache(
       kind: r.kind,
       status: r.status,
       message: r.message,
+      claimed_by: r.claimed_by,
       claimed_by_name: r.claimer?.full_name ?? null,
       escalated_at: r.escalated_at,
       escalation_note: r.escalation_note,
