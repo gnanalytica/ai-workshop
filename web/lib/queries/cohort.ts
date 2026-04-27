@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getFacultyCohort } from "@/lib/queries/faculty";
 import { workingDayNumber } from "@/lib/calendar";
 
 export interface ActiveCohort {
@@ -22,8 +23,7 @@ export interface CohortDay {
   capstone_kind: "none" | "spec_review" | "mid_review" | "demo_day";
 }
 
-/** The current user's primary cohort: confirmed registration, most recent. */
-export const getMyCurrentCohort = cache(async (): Promise<ActiveCohort | null> => {
+const getRegistrationCohort = cache(async (): Promise<ActiveCohort | null> => {
   const sb = await getSupabaseServer();
   const { data: reg } = await sb
     .from("registrations")
@@ -32,19 +32,45 @@ export const getMyCurrentCohort = cache(async (): Promise<ActiveCohort | null> =
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (!reg) {
-    // Fallback: any live cohort the user has access to read.
-    const { data } = await sb
-      .from("cohorts")
-      .select("id, slug, name, starts_on, ends_on, status")
-      .eq("status", "live")
-      .order("starts_on", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    return (data ?? null) as ActiveCohort | null;
-  }
+  if (!reg) return null;
   return ((reg as unknown as { cohorts: ActiveCohort }).cohorts ?? null) as ActiveCohort | null;
 });
+
+async function getLiveCohortFallback(): Promise<ActiveCohort | null> {
+  const sb = await getSupabaseServer();
+  const { data } = await sb
+    .from("cohorts")
+    .select("id, slug, name, starts_on, ends_on, status")
+    .eq("status", "live")
+    .order("starts_on", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data ?? null) as ActiveCohort | null;
+}
+
+/** The current user's primary cohort: confirmed registration, most recent. */
+export const getMyCurrentCohort = cache(async (): Promise<ActiveCohort | null> => {
+  const fromReg = await getRegistrationCohort();
+  if (fromReg) return fromReg;
+  return getLiveCohortFallback();
+});
+
+/**
+ * Cohort for lesson/day pages. Confirmed students get full interactivity; faculty
+ * (no registration, assigned in cohort) get read-only curriculum; other users
+ * keep the same fallback as getMyCurrentCohort with full interactivity.
+ */
+export const getLessonCohort = cache(
+  async (): Promise<{ cohort: ActiveCohort; readOnly: boolean } | null> => {
+    const fromReg = await getRegistrationCohort();
+    if (fromReg) return { cohort: fromReg, readOnly: false };
+    const f = await getFacultyCohort();
+    if (f) return { cohort: f.cohort, readOnly: true };
+    const fallback = await getLiveCohortFallback();
+    if (fallback) return { cohort: fallback, readOnly: false };
+    return null;
+  },
+);
 
 export const listCohortDays = cache(async (cohortId: string): Promise<CohortDay[]> => {
   const sb = await getSupabaseServer();
