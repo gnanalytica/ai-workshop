@@ -7,7 +7,7 @@ export interface HandbookModule {
   title: string;
   body_md: string | null;
   ordinal: number;
-  category: "technical" | "non_technical";
+  category: "technical" | "non_technical" | "day_by_day";
   status: "not_started" | "in_progress" | "completed" | null;
 }
 

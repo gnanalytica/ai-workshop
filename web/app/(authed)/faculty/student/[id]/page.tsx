@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
+import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
@@ -8,17 +9,21 @@ import { StudentRow } from "@/components/student-row/StudentRow";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getStudentDrill } from "@/lib/queries/faculty-student";
 import { listCohortPods } from "@/lib/queries/faculty-cohort";
+import { listPodNotesForStudent } from "@/lib/queries/faculty-pod-notes";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { StudentActions } from "./StudentActions";
+import { PodNotesPanel } from "./PodNotesPanel";
 
 export default async function StudentDrillPage({ params }: { params: Promise<{ id: string }> }) {
   await requireCapability("roster.read");
   const f = await getFacultyCohort();
-  if (!f) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
+  const me = await getSession();
+  if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   const { id } = await params;
-  const [s, pods] = await Promise.all([
+  const [s, pods, notes] = await Promise.all([
     getStudentDrill(f.cohort.id, id),
     listCohortPods(f.cohort.id, ""),
+    listPodNotesForStudent(f.cohort.id, id),
   ]);
   if (!s) notFound();
   const podOptions = pods.map((p) => ({ pod_id: p.pod_id, name: p.name }));
@@ -74,6 +79,23 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           </Card>
         </section>
       )}
+
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-tight">Pod notes</h2>
+          {notes.some((n) => n.needs_followup) && (
+            <Badge variant="warn">
+              {notes.filter((n) => n.needs_followup).length} needs follow-up
+            </Badge>
+          )}
+        </div>
+        <PodNotesPanel
+          cohortId={f.cohort.id}
+          studentId={s.user_id}
+          notes={notes}
+          currentUserId={me.id}
+        />
+      </section>
 
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Recent submissions</h2>

@@ -9,7 +9,10 @@ export default async function FacultyHandbookPage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   await requireCapability("schedule.read");
-  const tab = ((await searchParams).tab ?? "non_technical") as "technical" | "non_technical";
+  const tab = ((await searchParams).tab ?? "non_technical") as
+    | "technical"
+    | "non_technical"
+    | "day_by_day";
   const modules = await listFacultyHandbook();
 
   const filtered = modules.filter((m) => m.category === tab);
@@ -25,15 +28,14 @@ export default async function FacultyHandbookPage({
       </header>
 
       <nav className="flex gap-1 border-b border-line/50">
-        <TabLink current={tab} value="non_technical" label="Non-technical" />
-        <TabLink current={tab} value="technical" label="Technical" />
+        <TabLink current={tab} value="non_technical" label="Role & Operations" />
+        <TabLink current={tab} value="technical" label="Setup & Platform" />
+        <TabLink current={tab} value="day_by_day" label="Day-by-day" />
       </nav>
 
       {filtered.length === 0 ? (
         <Card>
-          <CardSub>
-            No {tab === "technical" ? "technical" : "non-technical"} modules published yet.
-          </CardSub>
+          <CardSub>No modules published in this section yet.</CardSub>
         </Card>
       ) : (
         <HandbookView modules={filtered} />

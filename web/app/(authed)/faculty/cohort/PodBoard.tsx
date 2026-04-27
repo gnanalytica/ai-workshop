@@ -85,13 +85,16 @@ export function PodBoard({
   }
 
   function bulkRun(toPodId: string | null) {
-    const ids = [...selected];
-    if (ids.length === 0) return;
+    moveMany(toPodId, [...selected]);
+  }
+
+  function moveMany(targetPodId: string | null, userIds: string[]) {
+    if (userIds.length === 0) return;
     start(async () => {
       const results = await Promise.all(
-        ids.map(async (id) => {
+        userIds.map(async (id) => {
           const located = studentLookup.get(id);
-          if (toPodId === null) {
+          if (targetPodId === null) {
             if (!located?.podId) return { id, ok: true as const };
             const r = await podEvent({
               pod_id: located.podId,
@@ -100,9 +103,9 @@ export function PodBoard({
             });
             return { id, ok: r.ok, error: r.ok ? undefined : r.error };
           }
-          if (located?.podId === toPodId) return { id, ok: true as const };
+          if (located?.podId === targetPodId) return { id, ok: true as const };
           const r = await podEvent({
-            pod_id: toPodId,
+            pod_id: targetPodId,
             kind: "member_added",
             target_user_id: id,
           });
@@ -110,45 +113,16 @@ export function PodBoard({
         }),
       );
       const failures = results.filter((r) => !r.ok);
+      const verb = targetPodId === null ? "Unassigned" : "Moved";
       if (failures.length === 0) {
-        toast.success(
-          `Updated ${ids.length} student${ids.length === 1 ? "" : "s"}`,
-        );
+        toast.success(`${verb} ${userIds.length} student${userIds.length === 1 ? "" : "s"}`);
       } else {
         toast.error(
-          `${failures.length} of ${ids.length} failed: ${failures[0]?.error ?? "unknown"}`,
+          `${failures.length} of ${userIds.length} failed: ${failures[0]?.error ?? "unknown"}`,
         );
       }
-      clearSelection();
+      if (selected.size > 0) clearSelection();
       router.refresh();
-    });
-  }
-
-  function move(targetPodId: string, userId: string) {
-    start(async () => {
-      const r = await podEvent({
-        pod_id: targetPodId,
-        kind: "member_added",
-        target_user_id: userId,
-      });
-      if (r.ok) {
-        toast.success("Moved");
-        router.refresh();
-      } else toast.error(r.error);
-    });
-  }
-
-  function unassign(podId: string, userId: string) {
-    start(async () => {
-      const r = await podEvent({
-        pod_id: podId,
-        kind: "member_removed",
-        target_user_id: userId,
-      });
-      if (r.ok) {
-        toast.success("Unassigned");
-        router.refresh();
-      } else toast.error(r.error);
     });
   }
 
@@ -224,8 +198,9 @@ export function PodBoard({
           title="Unassigned"
           tone="warn"
           subtitle={`${unassigned.length} student${unassigned.length === 1 ? "" : "s"}`}
-          onDrop={(sid, fromPod) => {
-            if (fromPod) unassign(fromPod, sid);
+          onDrop={(ids) => {
+            const toUnassign = ids.filter((id) => studentLookup.get(id)?.podId);
+            moveMany(null, toUnassign);
           }}
         >
           {unassigned.length === 0 ? (
@@ -237,6 +212,7 @@ export function PodBoard({
                 student={s}
                 fromPodId={null}
                 selected={selected.has(s.user_id)}
+                selectedIds={selected}
                 dimmed={matchedIds !== null && !matchedIds.has(s.user_id)}
                 onToggle={() => toggle(s.user_id)}
               />
@@ -256,9 +232,9 @@ export function PodBoard({
                 : ""
             }`}
             faculty={p.faculty_names}
-            onDrop={(sid, fromPod) => {
-              if (fromPod === p.pod_id) return;
-              move(p.pod_id, sid);
+            onDrop={(ids) => {
+              const toMove = ids.filter((id) => studentLookup.get(id)?.podId !== p.pod_id);
+              moveMany(p.pod_id, toMove);
             }}
           >
             {p.members.length === 0 ? (
@@ -270,6 +246,7 @@ export function PodBoard({
                   student={m}
                   fromPodId={p.pod_id}
                   selected={selected.has(m.user_id)}
+                  selectedIds={selected}
                   dimmed={matchedIds !== null && !matchedIds.has(m.user_id)}
                   onToggle={() => toggle(m.user_id)}
                 />
@@ -293,12 +270,14 @@ function StudentChip({
   student,
   fromPodId,
   selected,
+  selectedIds,
   dimmed,
   onToggle,
 }: {
   student: Student;
   fromPodId: string | null;
   selected: boolean;
+  selectedIds: Set<string>;
   dimmed: boolean;
   onToggle: () => void;
 }) {
@@ -306,10 +285,11 @@ function StudentChip({
     <div
       draggable
       onDragStart={(e) => {
-        e.dataTransfer.setData(
-          "text/plain",
-          JSON.stringify({ userId: student.user_id, fromPodId }),
-        );
+        const ids =
+          selected && selectedIds.size > 1
+            ? Array.from(selectedIds)
+            : [student.user_id];
+        e.dataTransfer.setData("text/plain", JSON.stringify({ ids, fromPodId }));
         e.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
@@ -353,7 +333,7 @@ function DropColumn({
   tone?: "default" | "mine" | "warn";
   faculty?: string[];
   children: React.ReactNode;
-  onDrop: (userId: string, fromPodId: string | null) => void;
+  onDrop: (ids: string[]) => void;
 }) {
   return (
     <Card
@@ -364,10 +344,13 @@ function DropColumn({
       onDrop={(e) => {
         e.preventDefault();
         try {
-          const { userId, fromPodId } = JSON.parse(
-            e.dataTransfer.getData("text/plain"),
-          );
-          onDrop(userId, fromPodId);
+          const payload = JSON.parse(e.dataTransfer.getData("text/plain"));
+          const ids: string[] = Array.isArray(payload?.ids)
+            ? payload.ids
+            : payload?.userId
+              ? [payload.userId]
+              : [];
+          if (ids.length > 0) onDrop(ids);
         } catch {
           /* ignore */
         }
