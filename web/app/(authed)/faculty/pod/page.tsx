@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireCapability } from "@/lib/auth/requireCapability";
+import { checkCapability, requireCapability } from "@/lib/auth/requireCapability";
 import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
 import { fmtDateTime } from "@/lib/format";
 import { FacultyTabs } from "@/components/faculty-tabs/FacultyTabs";
+import { Button } from "@/components/ui/button";
 import { PodMembers } from "./PodMembers";
 
 export default async function FacultyPodPage() {
@@ -18,11 +19,12 @@ export default async function FacultyPodPage() {
   const f = await getFacultyCohort();
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
-  const [pods, kpis, days, atRiskAll] = await Promise.all([
+  const [pods, kpis, days, atRiskAll, canManagePods] = await Promise.all([
     getFacultyPods(f.cohort.id, me.id),
     getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
     listAtRiskStudents(f.cohort.id),
+    checkCapability("pods.write", f.cohort.id),
   ]);
   const today = todayDayNumber(f.cohort);
   const todayDay = days.find((d) => d.day_number === today);
@@ -81,13 +83,28 @@ export default async function FacultyPodPage() {
       {pods.length === 0 ? (
         <Card>
           <CardTitle className="mb-2">No pod assigned</CardTitle>
-          <CardSub>
-            You aren&apos;t assigned to a pod in this cohort yet. Ask an admin
-            to add you, or visit the{" "}
-            <Link href="/faculty/cohort" className="text-accent hover:underline">
-              cohort overview
-            </Link>{" "}
-            to see all pods.
+          <CardSub className="space-y-3">
+            <p>
+              Create a pod, add yourself as faculty, then place students — from{" "}
+              <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
+                Cohort → Pods
+              </Link>{" "}
+              (board + create) or the{" "}
+              <Link href={`/pods?cohort=${f.cohort.id}`} className="text-accent hover:underline">
+                Pods
+              </Link>{" "}
+              page.
+            </p>
+            {canManagePods && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button asChild size="sm">
+                  <Link href="/faculty/cohort#pods">Cohort: pods</Link>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/pods?cohort=${f.cohort.id}`}>All pods</Link>
+                </Button>
+              </div>
+            )}
           </CardSub>
         </Card>
       ) : (

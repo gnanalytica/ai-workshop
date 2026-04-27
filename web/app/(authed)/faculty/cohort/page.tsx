@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireCapability } from "@/lib/auth/requireCapability";
+import { checkCapability, requireCapability } from "@/lib/auth/requireCapability";
 import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,7 @@ import {
 } from "@/lib/queries/faculty-cohort";
 import { getCohortPodRoster } from "@/lib/queries/cohort-roster";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
+import { CreatePodForm } from "@/app/(authed)/pods/CreatePodForm";
 import { PodBoard } from "./PodBoard";
 
 const SIGNAL_LABEL: Record<AtRiskSignal, string> = {
@@ -42,11 +43,12 @@ export default async function FacultyCohortPage() {
     );
   const cohortId = f.cohort.id;
 
-  const [kpis, atRisk, roster, trend] = await Promise.all([
+  const [kpis, atRisk, roster, trend, canManagePods] = await Promise.all([
     getCohortKpis(cohortId),
     listAtRiskStudents(cohortId),
     getCohortPodRoster(cohortId, me.id),
     getCohortTrend(cohortId),
+    checkCapability("pods.write", cohortId),
   ]);
 
   return (
@@ -115,13 +117,48 @@ export default async function FacultyCohortPage() {
       </section>
 
       <section id="pods" className="scroll-mt-20">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
-          <CardSub className="text-xs">
-            Search, multi-select, or drag to assign
-          </CardSub>
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
+            <CardSub className="text-xs">
+              Search, multi-select, or drag to assign students. Create pods below or open pod settings
+              to add/remove faculty on a pod.
+            </CardSub>
+          </div>
+          {canManagePods && (
+            <Link
+              href={`/pods?cohort=${cohortId}`}
+              className="text-accent text-sm font-medium hover:underline"
+            >
+              Pod settings &amp; faculty roster →
+            </Link>
+          )}
         </div>
-        <PodBoard pods={roster.pods} unassigned={roster.unassigned} />
+        {canManagePods && (
+          <Card id="create-pod" className="mb-4 scroll-mt-24 border-accent/20">
+            <CardTitle className="mb-1">
+              {roster.pods.length === 0 ? "Create first pod" : "Create a pod"}
+            </CardTitle>
+            <CardSub className="mb-3 text-xs leading-relaxed">
+              Name it, then drag students from Unassigned below—or use{" "}
+              <Link
+                href={`/pods?cohort=${cohortId}#create-pod`}
+                className="text-accent font-medium hover:underline"
+              >
+                all pods
+              </Link>{" "}
+              for faculty roster. Add yourself under Pod settings → Faculty on each pod.
+            </CardSub>
+            <CreatePodForm cohortId={cohortId} afterCreateScrollToId="pods-board" />
+          </Card>
+        )}
+        <div id="pods-board" className="scroll-mt-24">
+          <PodBoard
+            pods={roster.pods}
+            unassigned={roster.unassigned}
+            canManagePods={canManagePods}
+          />
+        </div>
       </section>
 
       <section id="at-risk" className="scroll-mt-20">

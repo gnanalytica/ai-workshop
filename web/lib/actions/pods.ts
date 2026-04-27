@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { actionFail, actionOk } from "./_helpers";
 
@@ -32,6 +31,7 @@ export async function podEvent(input: z.infer<typeof evSchema>) {
     p_payload: {},
   } as never);
   if (error) return actionFail(error.message);
+  revalidatePath("/pods");
   revalidatePath("/faculty/pod");
   revalidatePath("/faculty/cohort");
   revalidatePath("/faculty/help-desk");
@@ -57,6 +57,7 @@ export async function createPod(input: z.infer<typeof createSchema>) {
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
   revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/cohort");
   revalidatePath("/faculty/help-desk");
   return actionOk(data);
 }
@@ -80,6 +81,7 @@ export async function updatePod(input: z.infer<typeof updateSchema>) {
   revalidatePath("/pods");
   revalidatePath(`/pods/${parsed.data.pod_id}`);
   revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/cohort");
   revalidatePath("/faculty/help-desk");
   return actionOk();
 }
@@ -91,7 +93,7 @@ export async function deletePod(podId: string, cohortId?: string) {
   if (error) return actionFail(error.message);
   revalidatePath("/pods");
   revalidatePath("/faculty/pod");
+  revalidatePath("/faculty/cohort");
   revalidatePath("/faculty/help-desk");
-  const q = cohortId && /^[0-9a-f-]{36}$/i.test(cohortId) ? `?cohort=${cohortId}` : "";
-  redirect(`/pods${q}`);
+  return actionOk();
 }

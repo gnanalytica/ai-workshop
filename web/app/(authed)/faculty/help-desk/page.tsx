@@ -5,6 +5,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { listFacultyHelpDesk } from "@/lib/queries/faculty-help-desk";
 import { HelpDeskQueue } from "./HelpDeskQueue";
+import { HelpDeskScopeNotice } from "./HelpDeskScopeNotice";
 
 export default async function FacultyStuckPage() {
   await requireCapability("support.triage");
@@ -35,6 +36,8 @@ export default async function FacultyStuckPage() {
           Escalate (or route to tech) if it needs cohort staff or platform help.
         </p>
       </header>
+
+      <HelpDeskScopeNotice />
 
       <HelpDeskQueue items={open} meId={me.id} cohortId={f.cohort.id} />
     </div>

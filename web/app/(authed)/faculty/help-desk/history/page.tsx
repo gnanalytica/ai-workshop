@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { listFacultyHelpDesk } from "@/lib/queries/faculty-help-desk";
 import { relTime } from "@/lib/format";
+import { HelpDeskScopeNotice } from "../HelpDeskScopeNotice";
 
 const PAGE_SIZE = 20;
 
@@ -54,6 +55,8 @@ export default async function FacultyStuckHistoryPage({
           History of resolved tickets from students in your pod.
         </p>
       </header>
+
+      <HelpDeskScopeNotice />
 
       {total === 0 ? (
         <Card>

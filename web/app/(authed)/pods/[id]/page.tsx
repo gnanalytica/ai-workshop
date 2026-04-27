@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub } from "@/components/ui/card";
+import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getPodDetail, getPodCandidates } from "@/lib/queries/pod-detail";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { FacultyOps, MemberOps } from "./PodOpsClient";
@@ -12,15 +13,24 @@ export default async function PodDetailPage({ params }: { params: Promise<{ id: 
   const pod = await getPodDetail(id);
   if (!pod) notFound();
   await requireCapability("pods.write", pod.cohort_id);
-  const candidates = await getPodCandidates(pod.cohort_id, pod.pod_id);
+  const [candidates, facultyCtx] = await Promise.all([
+    getPodCandidates(pod.cohort_id, pod.pod_id),
+    getFacultyCohort(),
+  ]);
+  const showCohortBoard = facultyCtx?.cohort.id === pod.cohort_id;
 
   return (
     <div className="space-y-6">
-      <p className="text-muted text-xs">
+      <div className="text-muted flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
         <Link href={`/pods?cohort=${pod.cohort_id}`} className="text-accent hover:underline">
-          ← Pods
+          ← All pods
         </Link>
-      </p>
+        {showCohortBoard && (
+          <Link href="/faculty/cohort#pods-board" className="text-accent hover:underline">
+            Cohort board (drag students)
+          </Link>
+        )}
+      </div>
       <header className="flex items-start justify-between gap-4">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">Pod</p>
@@ -29,6 +39,14 @@ export default async function PodDetailPage({ params }: { params: Promise<{ id: 
         </div>
         <DeletePodButton podId={pod.pod_id} podName={pod.name} cohortId={pod.cohort_id} />
       </header>
+
+      <Card className="border-line/80 bg-bg-soft">
+        <CardSub className="text-ink/85 text-sm leading-relaxed">
+          Faculty must already be on the cohort roster. Students under Members are drawn from
+          confirmed enrollments not yet in another pod (or use the cohort board to move many at
+          once).
+        </CardSub>
+      </Card>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Faculty</h2>

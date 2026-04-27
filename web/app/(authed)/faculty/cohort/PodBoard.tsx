@@ -27,9 +27,12 @@ type Located = { student: Student; podId: string | null };
 export function PodBoard({
   pods,
   unassigned,
+  canManagePods = false,
 }: {
   pods: Pod[];
   unassigned: Student[];
+  /** When true, show onboarding CTA to #create-pod on the cohort page. */
+  canManagePods?: boolean;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -131,6 +134,34 @@ export function PodBoard({
 
   return (
     <div className="space-y-3">
+      {pods.length === 0 && (
+        <Card className="border-accent/30 bg-accent/5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <CardTitle className="text-base">No pods yet</CardTitle>
+              <CardSub className="mt-1 text-sm leading-relaxed">
+                {canManagePods ? (
+                  <>
+                    Create your first pod to assign students from the Unassigned column, or use
+                    the same form under{" "}
+                    <span className="text-ink font-medium">Pods</span> in the roster view.
+                  </>
+                ) : (
+                  <>
+                    Pods haven&apos;t been set up yet. Ask your cohort lead to create pods when
+                    you&apos;re ready to place students.
+                  </>
+                )}
+              </CardSub>
+            </div>
+            {canManagePods && (
+              <Button variant="default" asChild className="shrink-0">
+                <a href="#create-pod">Create first pod</a>
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <Input
           value={query}
