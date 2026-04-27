@@ -1,55 +1,77 @@
 @import "tailwindcss";
 
+/*
+ * Editorial / studio-notebook aesthetic.
+ *
+ * Light = warm off-white canvas, ink-black type, single saturated terracotta accent,
+ *   hairline borders, generous negative space.
+ * Dark  = deep ink canvas, bone-paper type, same terracotta dialed back.
+ *
+ * Fonts:
+ *   --font-display   Fraunces (serif, optical sizing) — h1/h2/numerals/folios
+ *   --font-sans      Inter Tight                       — body & UI
+ *   --font-mono      JetBrains Mono                    — day numbers, KPI digits, code
+ *
+ * Color tokens kept on the existing names so existing utilities keep working.
+ */
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans:    var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono:    var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
 
-  --color-bg: hsl(var(--bg));
-  --color-bg-soft: hsl(var(--bg-soft));
-  --color-card: hsl(var(--card));
-  --color-ink: hsl(var(--ink));
-  --color-muted: hsl(var(--muted));
-  --color-line: hsl(var(--line));
-  --color-accent: hsl(var(--accent));
-  --color-accent-2: hsl(var(--accent-2));
-  --color-input-bg: hsl(var(--input-bg));
-  --color-nav-bg: hsl(var(--nav-bg));
-  --color-cta-ink: hsl(var(--cta-ink));
+  --color-bg:        hsl(var(--bg));
+  --color-bg-soft:   hsl(var(--bg-soft));
+  --color-card:      hsl(var(--card));
+  --color-ink:       hsl(var(--ink));
+  --color-muted:     hsl(var(--muted));
+  --color-line:      hsl(var(--line));
+  --color-hairline:  hsl(var(--hairline));
+  --color-accent:    hsl(var(--accent));
+  --color-accent-2:  hsl(var(--accent-2));
+  --color-input-bg:  hsl(var(--input-bg));
+  --color-nav-bg:    hsl(var(--nav-bg));
+  --color-cta-ink:   hsl(var(--cta-ink));
 
-  --shadow-soft: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 3px 0 rgb(0 0 0 / 0.08);
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --shadow-soft:  0 1px 2px 0 hsl(var(--ink) / 0.04), 0 1px 1px 0 hsl(var(--ink) / 0.03);
+  --shadow-lift:  0 8px 24px -8px hsl(var(--ink) / 0.12), 0 2px 6px -2px hsl(var(--ink) / 0.06);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
 }
 
 @layer base {
-  :root {
-    --bg: 220 14% 8%;
-    --bg-soft: 220 14% 11%;
-    --card: 220 14% 13%;
-    --ink: 0 0% 96%;
-    --muted: 220 9% 60%;
-    --line: 220 13% 22%;
-    --accent: 78 100% 60%;
-    --accent-2: 200 95% 56%;
-    --input-bg: 220 14% 14%;
-    --nav-bg: 220 14% 10%;
-    --cta-ink: 220 25% 8%;
+  /* Light = default. Warm paper canvas, ink type, terracotta accent. */
+  :root,
+  [data-theme="light"] {
+    --bg:        38 28% 96%;   /* warm off-white #FAF6F0 feel */
+    --bg-soft:   36 22% 92%;   /* card background, slightly warmer */
+    --card:      40 30% 98%;   /* lifted surfaces */
+    --ink:       30 8% 12%;    /* near-black with warm bias */
+    --muted:     30 6% 42%;
+    --line:      36 14% 80%;
+    --hairline:  36 14% 86%;   /* finer line for editorial dividers */
+    --accent:     12 65% 48%;  /* terracotta */
+    --accent-2:  205 55% 38%;  /* deep ink-blue (rare, for highlights) */
+    --input-bg:  40 30% 96%;
+    --nav-bg:    38 28% 94%;   /* rail slightly darker than canvas */
+    --cta-ink:   40 30% 98%;
   }
 
-  [data-theme="light"] {
-    --bg: 0 0% 100%;
-    --bg-soft: 220 14% 96%;
-    --card: 0 0% 100%;
-    --ink: 220 25% 12%;
-    --muted: 220 9% 38%;
-    --line: 220 13% 86%;
-    --accent: 78 65% 38%;
-    --accent-2: 200 85% 42%;
-    --input-bg: 0 0% 98%;
-    --nav-bg: 0 0% 100%;
-    --cta-ink: 0 0% 100%;
+  [data-theme="dark"] {
+    --bg:        30 8% 8%;     /* deep warm ink */
+    --bg-soft:   30 7% 12%;
+    --card:      30 8% 14%;
+    --ink:       38 28% 92%;   /* bone paper text */
+    --muted:     30 6% 60%;
+    --line:      30 7% 22%;
+    --hairline:  30 7% 18%;
+    --accent:     14 70% 60%;  /* terracotta, brightened for dark */
+    --accent-2:  200 50% 60%;
+    --input-bg:  30 8% 12%;
+    --nav-bg:    30 9% 6%;
+    --cta-ink:   30 8% 8%;
   }
 
   * {
@@ -61,17 +83,65 @@
     background: hsl(var(--bg));
     color: hsl(var(--ink));
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Editorial type defaults — h1/h2/h3 in display serif by default */
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01", "ss02", "ss03";
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+  }
+
+  /* Numbers always tabular for KPIs, leaderboards, day folios */
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Editorial caps small label */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--muted));
+  }
+
   ::selection {
-    background: hsl(var(--accent) / 0.35);
+    background: hsl(var(--accent) / 0.25);
     color: hsl(var(--ink));
   }
 
   :focus-visible {
-    outline: 2px solid hsl(var(--accent));
+    outline: 1.5px solid hsl(var(--accent));
     outline-offset: 2px;
+    border-radius: 2px;
   }
+
+  /* Custom scrollbar — thin, near-invisible until hover */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--ink) / 0.10);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--ink) / 0.22);
+  }
+}
+
+/* Reusable editorial hairline rule */
+.rule {
+  height: 1px;
+  background: hsl(var(--hairline));
+  border: 0;
 }

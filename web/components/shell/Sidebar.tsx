@@ -11,6 +11,8 @@ import {
   Building,
   Calendar,
   CheckSquare,
+  ChevronsLeft,
+  ChevronsRight,
   GraduationCap,
   History,
   Home,
@@ -62,6 +64,8 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   library: Library,
 };
 
+const PINNED_KEY = "shell.sidebar.pinned";
+
 export function Sidebar({
   caps,
   persona,
@@ -70,95 +74,232 @@ export function Sidebar({
   persona: Persona | null;
 }) {
   const activePath = usePathname() ?? "/";
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => setDrawerOpen(false), [activePath]);
 
   useEffect(() => {
-    setOpen(false);
-  }, [activePath]);
+    try {
+      setPinned(window.localStorage.getItem(PINNED_KEY) === "1");
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const togglePin = () => {
+    setPinned((p) => {
+      const next = !p;
+      try {
+        window.localStorage.setItem(PINNED_KEY, next ? "1" : "0");
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   const items = navForPersona(caps, persona);
-
-  // Group by `section` if present (admin), else single bucket.
   const sections = sectionize(items);
-
-  const navContent = (
-    <>
-      <Link href="/dashboard" className="mb-6 flex items-center gap-2">
-        <span className="bg-accent inline-block h-3 w-3 rounded-full" />
-        <span className="font-semibold tracking-tight">AI Workshop</span>
-      </Link>
-
-      {sections.map(({ name, items }) => (
-        <div key={name ?? "_"} className="mb-5">
-          {name && (
-            <p className="text-muted mb-2 px-2 text-[10px] font-medium tracking-widest uppercase">
-              {name}
-            </p>
-          )}
-          <ul className="space-y-0.5">
-            {items.map((it) => {
-              const Icon = it.icon ? ICONS[it.icon] : null;
-              const active =
-                activePath === it.href ||
-                (it.href !== "/dashboard" && activePath.startsWith(it.href + "/"));
-              return (
-                <li key={it.href}>
-                  <Link
-                    href={it.href}
-                    className={cn(
-                      "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors",
-                      active
-                        ? "bg-bg-soft text-ink font-medium"
-                        : "text-muted hover:bg-bg-soft hover:text-ink",
-                    )}
-                  >
-                    {Icon && <Icon size={15} className="shrink-0 opacity-80" />}
-                    <span>{it.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
-    </>
-  );
+  const expanded = pinned || hovered;
 
   return (
     <>
+      {/* Mobile: burger trigger */}
       <Button
         variant="ghost"
         size="icon"
         aria-label="Open navigation"
         className="fixed top-2 left-2 z-50 md:hidden"
-        onClick={() => setOpen(true)}
+        onClick={() => setDrawerOpen(true)}
       >
         <Menu size={18} />
       </Button>
 
-      <nav className="bg-nav-bg border-line hidden h-full w-60 shrink-0 overflow-y-auto border-r p-4 text-sm md:block">
-        {navContent}
-      </nav>
+      {/* Desktop rail — fixed 64px width that owns the layout column.
+          A floating drawer expands ON TOP of content when hovered/pinned, so
+          the page doesn't reflow. Subtle, premium. */}
+      <div className="relative hidden shrink-0 md:block" style={{ width: 64 }}>
+        <nav
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className={cn(
+            "bg-nav-bg border-hairline fixed top-0 bottom-0 left-0 z-40 flex flex-col border-r transition-[width] duration-200 ease-out",
+            expanded ? "shadow-lift" : "",
+          )}
+          style={{ width: expanded ? 248 : 64 }}
+        >
+          {/* Brand mark — terracotta dot, serif wordmark when expanded */}
+          <Link
+            href="/dashboard"
+            className="flex h-14 shrink-0 items-center gap-3 border-b border-hairline px-[22px]"
+            aria-label="AI Workshop home"
+          >
+            <span className="bg-accent inline-block h-2.5 w-2.5 shrink-0 rounded-full" />
+            <span
+              className={cn(
+                "font-display text-[17px] leading-none font-medium tracking-tight whitespace-nowrap transition-opacity",
+                expanded ? "opacity-100" : "pointer-events-none opacity-0",
+              )}
+            >
+              AI Workshop
+            </span>
+          </Link>
 
-      {open && (
-        <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal>
+          <div className="flex-1 overflow-x-hidden overflow-y-auto py-3">
+            {sections.map(({ name, items }, i) => (
+              <div key={name ?? `_${i}`} className={cn("px-3", i > 0 && "mt-4")}>
+                {name && (
+                  <p
+                    className={cn(
+                      "eyebrow mb-2 px-2 transition-opacity",
+                      expanded ? "opacity-100" : "pointer-events-none opacity-0",
+                    )}
+                  >
+                    {name}
+                  </p>
+                )}
+                <ul className="space-y-0.5">
+                  {items.map((it) => {
+                    const Icon = it.icon ? ICONS[it.icon] : null;
+                    const active =
+                      activePath === it.href ||
+                      (it.href !== "/dashboard" && activePath.startsWith(it.href + "/"));
+                    return (
+                      <li key={it.href}>
+                        <Link
+                          href={it.href}
+                          title={!expanded ? it.label : undefined}
+                          className={cn(
+                            "group relative flex h-9 items-center gap-3 rounded-md px-2.5 text-[13px] transition-colors",
+                            active
+                              ? "text-ink"
+                              : "text-muted hover:text-ink hover:bg-bg-soft",
+                          )}
+                        >
+                          {/* Active accent — thin terracotta bar at the left edge */}
+                          {active && (
+                            <span className="bg-accent absolute top-1.5 bottom-1.5 -left-3 w-[3px] rounded-r" />
+                          )}
+                          {Icon && (
+                            <Icon
+                              size={17}
+                              strokeWidth={1.6}
+                              className={cn(
+                                "shrink-0",
+                                active ? "text-accent" : "opacity-80",
+                              )}
+                            />
+                          )}
+                          <span
+                            className={cn(
+                              "whitespace-nowrap transition-opacity",
+                              expanded ? "opacity-100" : "pointer-events-none opacity-0",
+                              active && "font-medium",
+                            )}
+                          >
+                            {it.label}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer: pin toggle (only meaningful when expanded) */}
+          <div className="border-hairline border-t p-2">
+            <button
+              type="button"
+              onClick={togglePin}
+              aria-label={pinned ? "Unpin sidebar" : "Pin sidebar open"}
+              className={cn(
+                "text-muted hover:text-ink hover:bg-bg-soft flex h-8 w-full items-center gap-3 rounded-md px-2.5 text-xs transition-colors",
+              )}
+            >
+              {pinned ? (
+                <ChevronsLeft size={15} strokeWidth={1.6} className="shrink-0" />
+              ) : (
+                <ChevronsRight size={15} strokeWidth={1.6} className="shrink-0" />
+              )}
+              <span
+                className={cn(
+                  "whitespace-nowrap transition-opacity",
+                  expanded ? "opacity-100" : "pointer-events-none opacity-0",
+                )}
+              >
+                {pinned ? "Collapse" : "Pin open"}
+              </span>
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile drawer — full sheet from the left */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal>
           <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setOpen(false)}
+            className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]"
+            onClick={() => setDrawerOpen(false)}
             aria-hidden
           />
-          <nav className="bg-nav-bg border-line absolute top-0 bottom-0 left-0 w-72 overflow-y-auto border-r p-4 text-sm">
-            <div className="mb-3 flex justify-end">
+          <nav className="bg-nav-bg border-hairline absolute top-0 bottom-0 left-0 flex w-[78%] max-w-[300px] flex-col border-r">
+            <div className="border-hairline flex h-14 items-center justify-between border-b px-5">
+              <Link href="/dashboard" className="flex items-center gap-2.5">
+                <span className="bg-accent inline-block h-2.5 w-2.5 rounded-full" />
+                <span className="font-display text-[17px] font-medium tracking-tight">
+                  AI Workshop
+                </span>
+              </Link>
               <Button
                 variant="ghost"
                 size="icon"
                 aria-label="Close navigation"
-                onClick={() => setOpen(false)}
+                onClick={() => setDrawerOpen(false)}
               >
                 <X size={16} />
               </Button>
             </div>
-            {navContent}
+            <div className="flex-1 overflow-y-auto py-3">
+              {sections.map(({ name, items }, i) => (
+                <div key={name ?? `_${i}`} className={cn("px-3", i > 0 && "mt-4")}>
+                  {name && <p className="eyebrow mb-2 px-2">{name}</p>}
+                  <ul className="space-y-0.5">
+                    {items.map((it) => {
+                      const Icon = it.icon ? ICONS[it.icon] : null;
+                      const active =
+                        activePath === it.href ||
+                        (it.href !== "/dashboard" && activePath.startsWith(it.href + "/"));
+                      return (
+                        <li key={it.href}>
+                          <Link
+                            href={it.href}
+                            className={cn(
+                              "flex h-9 items-center gap-3 rounded-md px-2.5 text-sm",
+                              active
+                                ? "text-ink bg-bg-soft font-medium"
+                                : "text-muted hover:text-ink hover:bg-bg-soft",
+                            )}
+                          >
+                            {Icon && (
+                              <Icon
+                                size={17}
+                                strokeWidth={1.6}
+                                className={cn(active ? "text-accent" : "opacity-80")}
+                              />
+                            )}
+                            <span>{it.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </nav>
         </div>
       )}
