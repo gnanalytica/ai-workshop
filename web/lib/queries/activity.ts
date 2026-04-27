@@ -65,7 +65,7 @@ export const listCohortActivity = cache(async (cohortId: string, limit = 40): Pr
       id: `stuck-${r.id}-${r.updated_at}`,
       kind: "stuck",
       user_name: r.profiles?.full_name ?? null,
-      detail: `Stuck ${r.kind} · ${r.status}`,
+      detail: `Help desk ${r.kind} · ${r.status}`,
       at: r.updated_at,
     });
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { reportStuck } from "@/lib/actions/stuck";
@@ -15,7 +16,7 @@ export function StuckButton({ cohortId }: { cohortId: string }) {
 
   function send() {
     if (message.trim().length < 1) {
-      toast.error("Describe what's stuck");
+      toast.error("Describe what you need help with");
       return;
     }
     start(async () => {
@@ -31,7 +32,7 @@ export function StuckButton({ cohortId }: { cohortId: string }) {
   if (!open) {
     return (
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        I&apos;m stuck
+        Get help
       </Button>
     );
   }
@@ -57,13 +58,16 @@ export function StuckButton({ cohortId }: { cohortId: string }) {
         placeholder="What's blocking you?"
         className="border-line bg-input-bg text-ink w-full rounded-md border p-2 text-sm"
       />
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={send} disabled={pending}>
           Send
         </Button>
         <Button size="sm" variant="outline" onClick={() => setOpen(false)} disabled={pending}>
           Cancel
         </Button>
+        <Link href="/help-desk" className="text-muted ml-auto text-xs hover:text-accent">
+          Your tickets
+        </Link>
       </div>
     </div>
   );

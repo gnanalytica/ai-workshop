@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { DayCard } from "@/components/day-card/DayCard";
 import { getMyCurrentCohort, listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDashboardKpis } from "@/lib/queries/dashboard";
-import { fmtDate } from "@/lib/format";
+import { listMyHelpDeskTickets } from "@/lib/queries/student-help-desk";
+import { fmtDate, relTime } from "@/lib/format";
+import { Badge } from "@/components/ui/badge";
 
 export default async function DashboardPage() {
   const cohort = await getMyCurrentCohort();
@@ -22,9 +24,10 @@ export default async function DashboardPage() {
   }
 
   const today = todayDayNumber(cohort);
-  const [kpis, days] = await Promise.all([
+  const [kpis, days, helpDesk] = await Promise.all([
     getDashboardKpis(cohort.id),
     listCohortDays(cohort.id),
+    listMyHelpDeskTickets(cohort.id),
   ]);
 
   const todayDay = days.find((d) => d.day_number === today);
@@ -63,6 +66,42 @@ export default async function DashboardPage() {
           tone={kpis.pendingAssignments > 0 ? "warn" : "default"}
         />
       </KpiGrid>
+
+      {helpDesk.length > 0 && (
+        <section>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">Help desk</h2>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/help-desk">View all</Link>
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {helpDesk.slice(0, 3).map((t) => (
+              <div
+                key={t.id}
+                className="border-line bg-card flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge
+                      variant={t.status === "open" ? "warn" : t.status === "helping" ? "accent" : "default"}
+                    >
+                      {t.status}
+                    </Badge>
+                    {t.status === "open" && t.queue_position != null && t.open_in_cohort > 0 && (
+                      <span className="text-muted text-xs">Queue #{t.queue_position}</span>
+                    )}
+                    <span className="text-muted text-xs">{relTime(t.created_at)}</span>
+                  </div>
+                  {t.message && (
+                    <p className="text-ink/85 mt-1 line-clamp-2">{t.message}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {todayDay && (
         <section>

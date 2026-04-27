@@ -15,26 +15,6 @@ export interface PodMember {
   status: "ok" | "at_risk" | "stuck" | null;
 }
 
-export interface PendingSubmission {
-  id: string;
-  user_id: string;
-  user_name: string | null;
-  assignment_title: string;
-  day_number: number;
-  updated_at: string;
-  body: string | null;
-  attachments: { name: string; url: string }[];
-  score: number | null;
-  ai_graded: boolean;
-  ai_score: number | null;
-  ai_feedback_md: string | null;
-  ai_strengths: string[];
-  ai_weaknesses: string[];
-  ai_graded_at: string | null;
-  human_reviewed_at: string | null;
-  status: string;
-}
-
 /** Faculty's *current* cohort — honors the currentCohort cookie set by the
  *  topbar switcher, falling back to the most recent assignment. */
 export const getFacultyCohort = cache(async () => {
@@ -92,64 +72,6 @@ export const getFacultyTodayKpis = cache(async (cohortId: string, facultyUserId:
     stuckOpen: stuck.count ?? 0,
     podSize: studentIds.length,
   };
-});
-
-export const listPendingSubmissions = cache(async (cohortId: string, facultyUserId?: string): Promise<PendingSubmission[]> => {
-  const sb = await getSupabaseServer();
-  const studentIds = facultyUserId ? await listFacultyPodStudentIds(cohortId, facultyUserId) : null;
-  if (facultyUserId && (!studentIds || studentIds.length === 0)) return [];
-  // Surface (a) AI-graded items not yet human-reviewed and (b) anything still
-  // stuck in 'submitted' (AI grading skipped or failed). Faculty review is now
-  // optional — they're auditing AI's verdict, not generating it.
-  let query = sb
-    .from("submissions")
-    .select(
-      "id, user_id, updated_at, body, attachments, score, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, status, assignments!inner(title, day_number, cohort_id), profiles:user_id(full_name)",
-    )
-    .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)")
-    .eq("assignments.cohort_id", cohortId);
-  if (studentIds) query = query.in("user_id", studentIds);
-  const { data } = await query
-    .order("ai_graded_at", { ascending: false, nullsFirst: false })
-    .order("updated_at", { ascending: false })
-    .limit(50);
-  return ((data ?? []) as unknown as Array<{
-    id: string; user_id: string; updated_at: string;
-    body: string | null;
-    attachments: { name: string; url: string }[] | null;
-    score: number | null;
-    ai_graded: boolean;
-    ai_score: number | null;
-    ai_feedback_md: string | null;
-    ai_strengths: string[] | null;
-    ai_weaknesses: string[] | null;
-    ai_graded_at: string | null;
-    human_reviewed_at: string | null;
-    status: string;
-    assignments: { title: string; day_number: number } | Array<{ title: string; day_number: number }>;
-    profiles: { full_name: string | null } | null;
-  }>).map((r) => {
-    const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
-    return {
-      id: r.id,
-      user_id: r.user_id,
-      user_name: r.profiles?.full_name ?? null,
-      assignment_title: a?.title ?? "",
-      day_number: a?.day_number ?? 0,
-      updated_at: r.updated_at,
-      body: r.body,
-      attachments: r.attachments ?? [],
-      score: r.score,
-      ai_graded: r.ai_graded,
-      ai_score: r.ai_score,
-      ai_feedback_md: r.ai_feedback_md,
-      ai_strengths: r.ai_strengths ?? [],
-      ai_weaknesses: r.ai_weaknesses ?? [],
-      ai_graded_at: r.ai_graded_at,
-      human_reviewed_at: r.human_reviewed_at,
-      status: r.status,
-    };
-  });
 });
 
 export interface StuckEntry {

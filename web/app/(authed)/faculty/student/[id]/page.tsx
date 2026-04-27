@@ -39,7 +39,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           value={s.lastActiveAt ? relTime(s.lastActiveAt) : "—"}
           hint={s.lastActiveAt ? fmtDateTime(s.lastActiveAt) : ""}
         />
-        <StatCard label="Recent stuck" value={s.recentStuck.length} tone={s.recentStuck.length > 0 ? "warn" : "default"} />
+        <StatCard label="Help desk" value={s.recentStuck.length} hint="recent" tone={s.recentStuck.length > 0 ? "warn" : "default"} />
       </KpiGrid>
 
       {s.score && (
@@ -84,7 +84,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
       </section>
 
       <section>
-        <h2 className="mb-2 text-lg font-semibold tracking-tight">Recent stuck</h2>
+        <h2 className="mb-2 text-lg font-semibold tracking-tight">Help desk (recent)</h2>
         {s.recentStuck.length === 0 ? (
           <Card><CardSub>None.</CardSub></Card>
         ) : (

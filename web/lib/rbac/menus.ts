@@ -42,6 +42,7 @@ export type NavIcon =
 export const NAV: readonly NavItem[] = [
   // ----- Student -----
   { label: "Home",           href: "/learn",        cap: null,           group: "student", icon: "home" },
+  { label: "Help desk",     href: "/help-desk",   cap: null,           group: "student", icon: "life-buoy" },
   { label: "Today's Lesson", href: "/day/today",    cap: "content.read", group: "student", icon: "book" },
   { label: "My Pod",         href: "/pod",          cap: null,           group: "student", icon: "users" },
   { label: "Classmates",     href: "/people",       cap: null,           group: "student", icon: "users-round" },
@@ -54,7 +55,7 @@ export const NAV: readonly NavItem[] = [
   // ----- Faculty -----
   { label: "My Pod",      href: "/faculty",             cap: "roster.read",    group: "faculty", icon: "home" },
   { label: "Cohort",      href: "/faculty/cohort",      cap: "roster.read",    group: "faculty", icon: "users-round" },
-  { label: "Stuck Queue", href: "/faculty/stuck",       cap: "support.triage", group: "faculty", icon: "life-buoy" },
+  { label: "Help desk",   href: "/faculty/stuck",     cap: "support.triage", group: "faculty", icon: "life-buoy" },
   { label: "Community Board", href: "/board",           cap: "board.read",     group: "faculty", icon: "message-square" },
   { label: "Leaderboard", href: "/faculty/leaderboard", cap: "roster.read",    group: "faculty", icon: "trophy" },
   { label: "Handbook",    href: "/faculty/handbook",    cap: "schedule.read",  group: "faculty", icon: "library" },
@@ -71,7 +72,7 @@ export const NAV: readonly NavItem[] = [
 
   // ----- Admin · Engagement -----
   { label: "Polls",       href: "/admin/polls",      cap: "content.write",          group: "admin", section: "Engagement", icon: "vote" },
-  { label: "Stuck Queue", href: "/admin/stuck",      cap: "support.triage",         group: "admin", section: "Engagement", icon: "life-buoy" },
+  { label: "Help desk",   href: "/admin/stuck",      cap: "support.triage",         group: "admin", section: "Engagement", icon: "life-buoy" },
   { label: "Community Board", href: "/board",        cap: "board.read",             group: "admin", section: "Engagement", icon: "message-square" },
   { label: "Board (Mod)", href: "/admin/board",      cap: "moderation.write",       group: "admin", section: "Engagement", icon: "shield" },
 

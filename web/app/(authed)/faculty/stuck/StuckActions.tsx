@@ -36,13 +36,13 @@ export function StuckActions({
   }
   function escalate() {
     if (!note.trim()) {
-      toast.error("Add a note for the staff");
+        toast.error("Add a note for trainer, admin, or tech");
       return;
     }
     start(async () => {
       const r = await escalateStuck({ id, cohort_id: cohortId, note });
       if (r.ok) {
-        toast.success("Escalated to staff");
+        toast.success("Sent to help desk (staff)");
         setShowEscalate(false);
         setNote("");
       } else toast.error(r.error);
@@ -71,7 +71,7 @@ export function StuckActions({
             onClick={() => setShowEscalate((v) => !v)}
             disabled={pending}
           >
-            Escalate
+            Escalate to staff
           </Button>
         )}
       </div>
@@ -80,7 +80,7 @@ export function StuckActions({
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Why staff needs to step in…"
+            placeholder="What should trainer, admin, or tech do?"
             className="border-line bg-input-bg text-ink w-72 rounded-md border px-2 py-1 text-sm"
           />
           <Button size="sm" variant="danger" onClick={escalate} disabled={pending}>

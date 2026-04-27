@@ -26,6 +26,14 @@ const STATUS_TONE: Record<StuckEntry["status"], "warn" | "accent" | "ok" | "defa
 
 type Filter = "all" | "content" | "tech" | "team" | "other";
 
+const FILTER_LABEL: Record<Filter, string> = {
+  all: "All",
+  content: "Content",
+  tech: "Tech",
+  team: "Team",
+  other: "Other",
+};
+
 export function StuckQueueClient({
   cohortId,
   items,
@@ -68,7 +76,7 @@ export function StuckQueueClient({
                 : "border-line text-muted hover:text-ink")
             }
           >
-            {f}
+            {FILTER_LABEL[f]}
           </button>
         ))}
         <span className="text-muted ml-auto text-xs">

@@ -22,19 +22,19 @@ export default async function FacultyStuckPage() {
     <div className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
-          {f.cohort.name} · Stuck queue
+          {f.cohort.name} · Help desk · your pod
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Help your pod</h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Help desk</h1>
         <p className="text-muted mt-1 text-sm">
-          Claim items to mark you&apos;re helping. Escalate when staff needs to step in
-          (admin/trainer/tech support).
+          Open tickets from students in your pod. Claim when you&apos;re helping, resolve when it&apos;s fixed.
+          Escalate (or route to tech) if it needs cohort staff or platform help.
         </p>
       </header>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Open</h2>
         {open.length === 0 ? (
-          <Card><CardSub>No one in your pod is stuck right now. Nice.</CardSub></Card>
+          <Card><CardSub>No open tickets for your pod right now.</CardSub></Card>
         ) : (
           <div className="space-y-2">
             {open.map((s) => (

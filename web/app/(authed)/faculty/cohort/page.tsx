@@ -38,7 +38,7 @@ export default async function FacultyCohortPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild><Link href="/faculty/leaderboard">Leaderboard →</Link></Button>
-          <Button variant="outline" asChild><Link href="/faculty/stuck">Stuck queue →</Link></Button>
+          <Button variant="outline" asChild><Link href="/faculty/stuck">Help desk →</Link></Button>
         </div>
       </header>
 
@@ -56,7 +56,7 @@ export default async function FacultyCohortPage() {
           tone={kpis.pendingReview > 0 ? "warn" : "default"}
         />
         <StatCard
-          label="Stuck open"
+          label="Help desk (open)"
           value={kpis.stuckOpen}
           tone={kpis.stuckOpen > 0 ? "danger" : "default"}
         />

@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
+import { getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { Sparkline } from "@/components/sparkline/Sparkline";
-import { getFacultyCohort } from "@/lib/queries/faculty";
+import { getFacultyCohort, getFacultyTodayKpis } from "@/lib/queries/faculty";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
+import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
+import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
+import { fmtDateTime } from "@/lib/format";
 
 function classifyStudent(att: number, labs: number): "ok" | "at_risk" | "stuck" {
   if (att < 3 && labs < 3) return "stuck";
@@ -17,8 +21,18 @@ function classifyStudent(att: number, labs: number): "ok" | "at_risk" | "stuck" 
 export default async function FacultyPodPage() {
   await requireCapability("roster.read");
   const f = await getFacultyCohort();
-  if (!f) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
-  const pods = await getFacultyPods(f.cohort.id);
+  const me = await getSession();
+  if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
+  const [pods, kpis, days, atRiskAll] = await Promise.all([
+    getFacultyPods(f.cohort.id),
+    getFacultyTodayKpis(f.cohort.id, me.id),
+    listCohortDays(f.cohort.id),
+    listAtRiskStudents(f.cohort.id),
+  ]);
+  const today = todayDayNumber(f.cohort);
+  const todayDay = days.find((d) => d.day_number === today);
+  const podStudentIds = new Set(pods.flatMap((p) => p.members.map((m) => m.user_id)));
+  const atRisk = atRiskAll.filter((s) => podStudentIds.has(s.user_id)).length;
 
   return (
     <div className="space-y-6">
@@ -30,6 +44,35 @@ export default async function FacultyPodPage() {
           {pods.reduce((s, p) => s + p.members.length, 0)} students total
         </CardSub>
       </header>
+      <Card className="bg-bg-soft">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-ink text-sm font-medium">
+              Day {today}
+              {todayDay?.title ? ` · ${todayDay.title}` : ""}
+            </p>
+            {todayDay?.live_session_at && (
+              <p className="text-muted text-xs">
+                Live session at {fmtDateTime(todayDay.live_session_at)}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={kpis.stuckOpen > 0 ? "danger" : "default"}>
+              {kpis.stuckOpen} help desk open
+            </Badge>
+            <Badge variant={kpis.pendingReview > 0 ? "warn" : "default"}>
+              {kpis.pendingReview} to review
+            </Badge>
+            <Badge variant={atRisk > 0 ? "warn" : "ok"}>
+              {atRisk} at risk
+            </Badge>
+            <Link href="/day/today" className="text-accent text-sm font-medium hover:underline">
+              Today&apos;s lesson
+            </Link>
+          </div>
+        </div>
+      </Card>
       {pods.length === 0 ? (
         <Card><CardSub>You aren&apos;t assigned to a pod in this cohort yet.</CardSub></Card>
       ) : (

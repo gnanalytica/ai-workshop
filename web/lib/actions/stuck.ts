@@ -29,7 +29,7 @@ export async function reportStuck(input: z.infer<typeof reportSchema>): Promise<
       })
       .select()
       .single();
-  }, "/admin/stuck");
+  }, ["/admin/stuck", "/faculty/stuck", "/faculty/pod", "/help-desk", "/learn"]);
 }
 
 const claimSchema = z.object({ id: z.string().uuid() });
@@ -41,7 +41,10 @@ export async function claimStuck(input: z.infer<typeof claimSchema>): Promise<Ac
   const { error } = await sb.rpc("rpc_claim_stuck", { p_id: parsed.data.id } as never);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/stuck");
-  revalidatePath("/faculty");
+  revalidatePath("/faculty/stuck");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/help-desk");
+  revalidatePath("/learn");
   return actionOk();
 }
 
@@ -63,7 +66,7 @@ export async function resolveStuck(input: z.infer<typeof resolveSchema>): Promis
         .eq("id", parsed.data.id)
         .select()
         .single(),
-    ["/admin/stuck", "/faculty", "/faculty/stuck"],
+    ["/admin/stuck", "/faculty", "/faculty/pod", "/faculty/stuck", "/help-desk", "/learn"],
   );
 }
 
@@ -92,5 +95,8 @@ export async function escalateStuck(input: z.infer<typeof escalateSchema>): Prom
   if (error) return actionFail(error.message);
   revalidatePath("/admin/stuck");
   revalidatePath("/faculty/stuck");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/help-desk");
+  revalidatePath("/learn");
   return actionOk();
 }
