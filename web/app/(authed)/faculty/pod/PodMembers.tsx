@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StudentRow } from "@/components/student-row/StudentRow";
+import {
+  StudentDrawer,
+  type StudentDrawerTarget,
+} from "@/components/student-drawer/StudentDrawer";
 import { cn } from "@/lib/utils";
 
 export interface PodMember {
@@ -33,13 +37,18 @@ type Filter = "all" | Status | "to_review";
 export function PodMembers({
   members,
   totalDays,
+  cohortId,
 }: {
   members: PodMember[];
   totalDays: number;
+  cohortId: string;
 }) {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [drawerTarget, setDrawerTarget] = useState<StudentDrawerTarget | null>(
+    null,
+  );
 
   const counts = useMemo(() => {
     let ok = 0,
@@ -215,7 +224,16 @@ export function PodMembers({
                     className="accent-[hsl(var(--accent))]"
                   />
                 </div>
-                <Link href={`/faculty/student/${m.user_id}`} className="block">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDrawerTarget({
+                      user_id: m.user_id,
+                      full_name: m.full_name,
+                    })
+                  }
+                  className="block w-full text-left"
+                >
                   <StudentRow
                     fullName={m.full_name}
                     email={m.email}
@@ -243,12 +261,17 @@ export function PodMembers({
                       </Badge>
                     </div>
                   )}
-                </Link>
+                </button>
               </Card>
             );
           })}
         </div>
       )}
+      <StudentDrawer
+        cohortId={cohortId}
+        target={drawerTarget}
+        onClose={() => setDrawerTarget(null)}
+      />
     </div>
   );
 }

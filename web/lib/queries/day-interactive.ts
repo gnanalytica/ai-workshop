@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSupabaseService } from "@/lib/supabase/service";
+import { getPreviewUserId } from "@/lib/auth/persona";
 
 export interface DayAssignment {
   id: string;
@@ -59,9 +61,18 @@ export interface DayInteractive {
 
 export const getDayInteractive = cache(
   async (cohortId: string, dayNumber: number): Promise<DayInteractive> => {
-    const sb = await getSupabaseServer();
-    const { data: user } = await sb.auth.getUser();
-    const uid = user.user?.id;
+    const previewUid = await getPreviewUserId();
+    // Read-only impersonation: route through service client when admin is
+    // previewing as a student so the joined submissions/attempts/votes
+    // contain the previewed student's rows.
+    const sb = previewUid ? getSupabaseService() : await getSupabaseServer();
+    let uid: string | undefined;
+    if (previewUid) {
+      uid = previewUid;
+    } else {
+      const { data: user } = await sb.auth.getUser();
+      uid = user.user?.id;
+    }
 
     const [assignmentRes, quizRes, pollRes, attendanceRes] = await Promise.all([
       sb

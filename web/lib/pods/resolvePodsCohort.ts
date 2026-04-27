@@ -7,7 +7,8 @@ const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9
 
 /**
  * Cohort for `/pods` and `/pods/[id]`: optional `?cohort=` (admin deep link),
- * else the faculty member's current cohort, else legacy first-visible cohort.
+ * else the faculty member's current cohort, else fallback: pick the first
+ * cohort the user can see.
  */
 export const resolvePodsPageCohort = cache(
   async (cohortIdParam?: string | null): Promise<CohortContext | null> => {

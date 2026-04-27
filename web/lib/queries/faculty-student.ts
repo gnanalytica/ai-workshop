@@ -1,6 +1,151 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
+export interface StudentDrawerSummary {
+  user_id: string;
+  full_name: string | null;
+  email: string;
+  avatar_url: string | null;
+  pod_id: string | null;
+  pod_name: string | null;
+  mentorNote: string | null;
+  labsDone: number;
+  labsToday: { day_number: number; status: string | null } | null;
+  attendance: { present: number; total: number };
+  recentSubmissions: {
+    id: string;
+    assignment_title: string;
+    day_number: number;
+    status: string;
+    score: number | null;
+    updated_at: string;
+  }[];
+}
+
+export const getStudentDrawerSummary = cache(
+  async (userId: string, cohortId: string): Promise<StudentDrawerSummary | null> => {
+    const sb = await getSupabaseServer();
+    const { data: prof } = await sb
+      .from("profiles")
+      .select("id, email, full_name, avatar_url")
+      .eq("id", userId)
+      .maybeSingle();
+    if (!prof) return null;
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const [
+      { data: pod },
+      { data: subs },
+      { count: labsDone },
+      { data: todayDay },
+      { data: todayLab },
+      { count: attendancePresent },
+      { count: attendanceTotal },
+      { data: note },
+    ] = await Promise.all([
+      sb
+        .from("pod_members")
+        .select("pods!inner(id, name, mentor_note, cohort_id)")
+        .eq("student_user_id", userId)
+        .eq("cohort_id", cohortId)
+        .maybeSingle(),
+      sb
+        .from("submissions")
+        .select(
+          "id, status, score, updated_at, assignments!inner(title, day_number, cohort_id)",
+        )
+        .eq("user_id", userId)
+        .eq("assignments.cohort_id", cohortId)
+        .order("updated_at", { ascending: false })
+        .limit(3),
+      sb
+        .from("lab_progress")
+        .select("user_id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("cohort_id", cohortId)
+        .eq("status", "done"),
+      sb
+        .from("cohort_days")
+        .select("day_number")
+        .eq("cohort_id", cohortId)
+        .lte("session_date", today)
+        .order("day_number", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      sb
+        .from("lab_progress")
+        .select("day_number, status")
+        .eq("user_id", userId)
+        .eq("cohort_id", cohortId)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      sb
+        .from("attendance")
+        .select("user_id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("cohort_id", cohortId)
+        .in("status", ["present", "late"]),
+      sb
+        .from("attendance")
+        .select("user_id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("cohort_id", cohortId),
+      sb
+        .from("faculty_pod_notes")
+        .select("body_md")
+        .eq("student_id", userId)
+        .eq("cohort_id", cohortId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    type Sub = {
+      id: string;
+      status: string;
+      score: number | null;
+      updated_at: string;
+      assignments: { title: string; day_number: number };
+    };
+    const podRow = (pod as unknown) as
+      | { pods: { id: string; name: string; mentor_note: string | null } }
+      | null;
+    const noteRow = (note as unknown) as { body_md: string | null } | null;
+    const todayLabRow = (todayLab as unknown) as
+      | { day_number: number; status: string | null }
+      | null;
+    return {
+      user_id: prof.id,
+      full_name: prof.full_name,
+      email: prof.email,
+      avatar_url: prof.avatar_url,
+      pod_id: podRow?.pods.id ?? null,
+      pod_name: podRow?.pods.name ?? null,
+      mentorNote: noteRow?.body_md ?? podRow?.pods.mentor_note ?? null,
+      labsDone: labsDone ?? 0,
+      labsToday: todayLabRow
+        ? { day_number: todayLabRow.day_number, status: todayLabRow.status }
+        : todayDay
+          ? { day_number: (todayDay as { day_number: number }).day_number, status: null }
+          : null,
+      attendance: {
+        present: attendancePresent ?? 0,
+        total: attendanceTotal ?? 0,
+      },
+      recentSubmissions: ((subs ?? []) as unknown as Sub[]).map((s) => ({
+        id: s.id,
+        assignment_title: s.assignments.title,
+        day_number: s.assignments.day_number,
+        status: s.status,
+        score: s.score,
+        updated_at: s.updated_at,
+      })),
+    };
+  },
+);
+
 export interface StudentDrill {
   user_id: string;
   full_name: string | null;

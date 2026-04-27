@@ -58,7 +58,6 @@ export const NAV: readonly NavItem[] = [
   { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },
   { label: "Full cohort",  href: "/faculty/cohort",     cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "users-round" },
   { label: "My pod",       href: "/faculty/pod",        cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "home" },
-  { label: "Manage pods",  href: "/pods",               cap: "pods.write",     group: "faculty", section: "Setup",     icon: "layers" },
   { label: "Help desk",    href: "/faculty/help-desk",  cap: "support.triage", group: "faculty", section: "Support",   icon: "life-buoy" },
   { label: "Community",    href: "/community",          cap: "community.read", group: "faculty", section: "Reference", icon: "message-square" },
   { label: "Leaderboard",  href: "/leaderboard",        cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },

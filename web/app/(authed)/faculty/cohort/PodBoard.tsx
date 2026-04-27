@@ -7,31 +7,55 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { podEvent } from "@/lib/actions/pods";
+import { podEvent, deletePod } from "@/lib/actions/pods";
+import {
+  StudentDrawer,
+  type StudentDrawerTarget,
+} from "@/components/student-drawer/StudentDrawer";
 import { cn } from "@/lib/utils";
 
 interface Student {
   user_id: string;
   full_name: string | null;
 }
+interface FacultyMember {
+  user_id: string;
+  full_name: string | null;
+  college_role: "support" | "executive";
+  is_primary: boolean;
+}
+interface CohortFacultyMember {
+  user_id: string;
+  full_name: string | null;
+  college_role: "support" | "executive";
+}
 interface Pod {
   pod_id: string;
   name: string;
   faculty_names: string[];
+  faculty: FacultyMember[];
   is_my_pod: boolean;
   members: Student[];
 }
 
 type Located = { student: Student; podId: string | null };
+type FacultyLocated = { faculty: FacultyMember | CohortFacultyMember; podId: string | null };
+
+type DragPayload =
+  | { kind: "student"; ids: string[]; fromPodId: string | null }
+  | { kind: "faculty"; userId: string; fromPodId: string | null };
 
 export function PodBoard({
+  cohortId,
   pods,
   unassigned,
+  cohortFaculty = [],
   canManagePods = false,
 }: {
+  cohortId: string;
   pods: Pod[];
   unassigned: Student[];
-  /** When true, show onboarding CTA to #create-pod on the cohort page. */
+  cohortFaculty?: CohortFacultyMember[];
   canManagePods?: boolean;
 }) {
   const router = useRouter();
@@ -39,6 +63,9 @@ export function PodBoard({
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkTarget, setBulkTarget] = useState<string>("");
+  const [drawerTarget, setDrawerTarget] = useState<StudentDrawerTarget | null>(
+    null,
+  );
 
   const all: Located[] = useMemo(() => {
     const list: Located[] = [];
@@ -54,6 +81,21 @@ export function PodBoard({
     all.forEach((l) => m.set(l.student.user_id, l));
     return m;
   }, [all]);
+
+  const facultyLookup = useMemo(() => {
+    const m = new Map<string, FacultyLocated>();
+    cohortFaculty.forEach((f) => m.set(f.user_id, { faculty: f, podId: null }));
+    pods.forEach((p) =>
+      p.faculty.forEach((f) => m.set(f.user_id, { faculty: f, podId: p.pod_id })),
+    );
+    return m;
+  }, [pods, cohortFaculty]);
+
+  const unassignedFaculty: CohortFacultyMember[] = useMemo(() => {
+    const inAnyPod = new Set<string>();
+    pods.forEach((p) => p.faculty.forEach((f) => inAnyPod.add(f.user_id)));
+    return cohortFaculty.filter((f) => !inAnyPod.has(f.user_id));
+  }, [pods, cohortFaculty]);
 
   const matchedIds = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -118,7 +160,9 @@ export function PodBoard({
       const failures = results.filter((r) => !r.ok);
       const verb = targetPodId === null ? "Unassigned" : "Moved";
       if (failures.length === 0) {
-        toast.success(`${verb} ${userIds.length} student${userIds.length === 1 ? "" : "s"}`);
+        toast.success(
+          `${verb} ${userIds.length} student${userIds.length === 1 ? "" : "s"}`,
+        );
       } else {
         toast.error(
           `${failures.length} of ${userIds.length} failed: ${failures[0]?.error ?? "unknown"}`,
@@ -126,6 +170,64 @@ export function PodBoard({
       }
       if (selected.size > 0) clearSelection();
       router.refresh();
+    });
+  }
+
+  function moveFaculty(targetPodId: string | null, userId: string) {
+    const located = facultyLookup.get(userId);
+    if (!located) return;
+    if (located.podId === targetPodId) return;
+    start(async () => {
+      const ops: Array<Promise<{ ok: boolean; error?: string }>> = [];
+      if (located.podId) {
+        ops.push(
+          podEvent({
+            pod_id: located.podId,
+            kind: "faculty_removed",
+            target_user_id: userId,
+          }),
+        );
+      }
+      if (targetPodId) {
+        ops.push(
+          podEvent({
+            pod_id: targetPodId,
+            kind: "faculty_added",
+            target_user_id: userId,
+          }),
+        );
+      }
+      const results = await Promise.all(ops);
+      const fail = results.find((r) => !r.ok);
+      if (fail) toast.error(fail.error ?? "Faculty move failed");
+      else
+        toast.success(
+          targetPodId === null ? "Faculty unassigned" : "Faculty moved",
+        );
+      router.refresh();
+    });
+  }
+
+  function handleDeletePod(pod: Pod) {
+    if (pod.members.length > 0) {
+      toast.error("Move students out first");
+      return;
+    }
+    if (
+      !confirm(
+        `Delete pod "${pod.name}"? It has ${pod.members.length} member${pod.members.length === 1 ? "" : "s"} and ${pod.faculty.length} faculty.`,
+      )
+    ) {
+      return;
+    }
+    start(async () => {
+      const r = await deletePod(pod.pod_id);
+      if (r.ok) {
+        toast.success(`Pod "${pod.name}" deleted`);
+        router.refresh();
+      } else {
+        toast.error(r.error);
+      }
     });
   }
 
@@ -142,14 +244,13 @@ export function PodBoard({
               <CardSub className="mt-1 text-sm leading-relaxed">
                 {canManagePods ? (
                   <>
-                    Create your first pod to assign students from the Unassigned column, or use
-                    the same form under{" "}
-                    <span className="text-ink font-medium">Pods</span> in the roster view.
+                    Create your first pod to assign students from the
+                    Unassigned column.
                   </>
                 ) : (
                   <>
-                    Pods haven&apos;t been set up yet. Ask your cohort lead to create pods when
-                    you&apos;re ready to place students.
+                    Pods haven&apos;t been set up yet. Ask your cohort lead to
+                    create pods when you&apos;re ready to place students.
                   </>
                 )}
               </CardSub>
@@ -181,7 +282,8 @@ export function PodBoard({
           </Button>
         )}
         <span className="text-muted ml-auto text-xs">
-          Tip: tick students to bulk-assign, or drag a chip onto a pod.
+          Tip: tick students to bulk-assign, drag chips between pods, or click a
+          name to peek.
         </span>
       </div>
 
@@ -224,14 +326,42 @@ export function PodBoard({
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <DropColumn
+          title="Cohort faculty"
+          tone="default"
+          subtitle={`${unassignedFaculty.length} unassigned`}
+          onDrop={(payload) => {
+            if (payload.kind === "faculty") {
+              moveFaculty(null, payload.userId);
+            }
+          }}
+        >
+          {unassignedFaculty.length === 0 ? (
+            <EmptyHint>All cohort faculty are assigned to pods.</EmptyHint>
+          ) : (
+            unassignedFaculty.map((f) => (
+              <FacultyChip
+                key={f.user_id}
+                faculty={{ ...f, is_primary: false }}
+                fromPodId={null}
+                draggable={canManagePods}
+              />
+            ))
+          )}
+        </DropColumn>
+
         <DropColumn
           title="Unassigned"
           tone="warn"
           subtitle={`${unassigned.length} student${unassigned.length === 1 ? "" : "s"}`}
-          onDrop={(ids) => {
-            const toUnassign = ids.filter((id) => studentLookup.get(id)?.podId);
-            moveMany(null, toUnassign);
+          onDrop={(payload) => {
+            if (payload.kind === "student") {
+              const toUnassign = payload.ids.filter(
+                (id) => studentLookup.get(id)?.podId,
+              );
+              moveMany(null, toUnassign);
+            }
           }}
         >
           {unassigned.length === 0 ? (
@@ -246,6 +376,7 @@ export function PodBoard({
                 selectedIds={selected}
                 dimmed={matchedIds !== null && !matchedIds.has(s.user_id)}
                 onToggle={() => toggle(s.user_id)}
+                onOpen={() => setDrawerTarget(s)}
               />
             ))
           )}
@@ -258,16 +389,37 @@ export function PodBoard({
             tone={p.is_my_pod ? "mine" : "default"}
             badge={p.is_my_pod ? "Mine" : undefined}
             subtitle={`${p.members.length} student${p.members.length === 1 ? "" : "s"}${
-              p.faculty_names.length
-                ? ` · ${p.faculty_names.length} faculty`
-                : ""
+              p.faculty.length ? ` · ${p.faculty.length} faculty` : ""
             }`}
-            faculty={p.faculty_names}
-            onDrop={(ids) => {
-              const toMove = ids.filter((id) => studentLookup.get(id)?.podId !== p.pod_id);
-              moveMany(p.pod_id, toMove);
+            onDelete={
+              canManagePods ? () => handleDeletePod(p) : undefined
+            }
+            onDrop={(payload) => {
+              if (payload.kind === "student") {
+                const toMove = payload.ids.filter(
+                  (id) => studentLookup.get(id)?.podId !== p.pod_id,
+                );
+                moveMany(p.pod_id, toMove);
+              } else {
+                moveFaculty(p.pod_id, payload.userId);
+              }
             }}
           >
+            {p.faculty.length > 0 && (
+              <div className="mb-3">
+                <p className="text-muted mb-1 text-[10px] font-medium uppercase tracking-wider">
+                  Faculty
+                </p>
+                {p.faculty.map((f) => (
+                  <FacultyChip
+                    key={f.user_id}
+                    faculty={f}
+                    fromPodId={p.pod_id}
+                    draggable={canManagePods}
+                  />
+                ))}
+              </div>
+            )}
             {p.members.length === 0 ? (
               <EmptyHint>Empty pod — drag students here.</EmptyHint>
             ) : (
@@ -280,6 +432,7 @@ export function PodBoard({
                   selectedIds={selected}
                   dimmed={matchedIds !== null && !matchedIds.has(m.user_id)}
                   onToggle={() => toggle(m.user_id)}
+                  onOpen={() => setDrawerTarget(m)}
                 />
               ))
             )}
@@ -287,6 +440,12 @@ export function PodBoard({
         ))}
       </div>
       {pending && <p className="text-muted text-xs">Saving…</p>}
+
+      <StudentDrawer
+        cohortId={cohortId}
+        target={drawerTarget}
+        onClose={() => setDrawerTarget(null)}
+      />
     </div>
   );
 }
@@ -304,6 +463,7 @@ function StudentChip({
   selectedIds,
   dimmed,
   onToggle,
+  onOpen,
 }: {
   student: Student;
   fromPodId: string | null;
@@ -311,6 +471,7 @@ function StudentChip({
   selectedIds: Set<string>;
   dimmed: boolean;
   onToggle: () => void;
+  onOpen: () => void;
 }) {
   return (
     <div
@@ -320,7 +481,8 @@ function StudentChip({
           selected && selectedIds.size > 1
             ? Array.from(selectedIds)
             : [student.user_id];
-        e.dataTransfer.setData("text/plain", JSON.stringify({ ids, fromPodId }));
+        const payload: DragPayload = { kind: "student", ids, fromPodId };
+        e.dataTransfer.setData("text/plain", JSON.stringify(payload));
         e.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
@@ -340,7 +502,58 @@ function StudentChip({
       <span className="bg-bg-soft border-line flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium">
         {initials(student.full_name)}
       </span>
-      <span className="truncate">{student.full_name ?? "—"}</span>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+        className="hover:text-accent flex-1 truncate text-left"
+      >
+        {student.full_name ?? "—"}
+      </button>
+    </div>
+  );
+}
+
+function FacultyChip({
+  faculty,
+  fromPodId,
+  draggable,
+}: {
+  faculty: FacultyMember;
+  fromPodId: string | null;
+  draggable: boolean;
+}) {
+  return (
+    <div
+      draggable={draggable}
+      onDragStart={
+        draggable
+          ? (e) => {
+              const payload: DragPayload = {
+                kind: "faculty",
+                userId: faculty.user_id,
+                fromPodId,
+              };
+              e.dataTransfer.setData("text/plain", JSON.stringify(payload));
+              e.dataTransfer.effectAllowed = "move";
+            }
+          : undefined
+      }
+      className={cn(
+        "border-accent/40 bg-accent/5 text-ink mb-1.5 flex items-center gap-2 rounded-md border px-2 py-1.5 text-sm",
+        draggable && "cursor-grab active:cursor-grabbing",
+      )}
+    >
+      <span className="bg-accent/15 text-accent border-accent/30 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium">
+        {initials(faculty.full_name)}
+      </span>
+      <span className="truncate">{faculty.full_name ?? "—"}</span>
+      {faculty.is_primary && <Badge variant="accent">Lead</Badge>}
+      {faculty.college_role === "executive" && (
+        <Badge variant="default">Exec</Badge>
+      )}
     </div>
   );
 }
@@ -354,17 +567,17 @@ function DropColumn({
   subtitle,
   badge,
   tone = "default",
-  faculty,
   children,
   onDrop,
+  onDelete,
 }: {
   title: string;
   subtitle?: string;
   badge?: string;
   tone?: "default" | "mine" | "warn";
-  faculty?: string[];
   children: React.ReactNode;
-  onDrop: (ids: string[]) => void;
+  onDrop: (payload: DragPayload) => void;
+  onDelete?: () => void;
 }) {
   return (
     <Card
@@ -375,13 +588,26 @@ function DropColumn({
       onDrop={(e) => {
         e.preventDefault();
         try {
-          const payload = JSON.parse(e.dataTransfer.getData("text/plain"));
-          const ids: string[] = Array.isArray(payload?.ids)
-            ? payload.ids
-            : payload?.userId
-              ? [payload.userId]
-              : [];
-          if (ids.length > 0) onDrop(ids);
+          const raw = JSON.parse(e.dataTransfer.getData("text/plain"));
+          if (raw && raw.kind === "student" && Array.isArray(raw.ids)) {
+            onDrop({
+              kind: "student",
+              ids: raw.ids,
+              fromPodId: raw.fromPodId ?? null,
+            });
+          } else if (raw && raw.kind === "faculty" && raw.userId) {
+            onDrop({
+              kind: "faculty",
+              userId: raw.userId,
+              fromPodId: raw.fromPodId ?? null,
+            });
+          } else if (raw && Array.isArray(raw.ids)) {
+            onDrop({
+              kind: "student",
+              ids: raw.ids,
+              fromPodId: raw.fromPodId ?? null,
+            });
+          }
         } catch {
           /* ignore */
         }
@@ -394,14 +620,22 @@ function DropColumn({
     >
       <div className="mb-1 flex items-start justify-between gap-2">
         <CardTitle className="truncate">{title}</CardTitle>
-        {badge && <Badge variant="accent">{badge}</Badge>}
+        <div className="flex items-center gap-1">
+          {badge && <Badge variant="accent">{badge}</Badge>}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="text-muted hover:text-danger rounded-md px-1.5 py-0.5 text-xs"
+              aria-label={`Delete ${title}`}
+              title="Delete pod"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
       {subtitle && <CardSub className="mb-2 text-xs">{subtitle}</CardSub>}
-      {faculty && faculty.length > 0 && (
-        <p className="text-muted mb-3 truncate text-[11px]">
-          {faculty.join(" · ")}
-        </p>
-      )}
       <div>{children}</div>
     </Card>
   );

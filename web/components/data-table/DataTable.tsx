@@ -30,8 +30,7 @@ export interface DataTableProps<T> {
   mobileCard?: (row: T) => ReactNode;
 }
 
-/** Generic filterable, sortable, optionally bulk-selectable table.
- *  Replaces ~10 inline tables across the legacy admin pages. */
+/** Generic table primitive used across admin/faculty surfaces. */
 export function DataTable<T>({
   columns,
   rows,

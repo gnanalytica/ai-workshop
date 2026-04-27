@@ -104,11 +104,7 @@ export default async function FacultyPodPage() {
                   <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
                     Full cohort
                   </Link>{" "}
-                  /{" "}
-                  <Link href={`/pods?cohort=${f.cohort.id}`} className="text-accent hover:underline">
-                    Manage pods
-                  </Link>
-                  .
+                  to manage pods.
                 </>
               ) : (
                 <>
@@ -124,9 +120,6 @@ export default async function FacultyPodPage() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button asChild size="sm">
                   <Link href="/faculty/cohort#pods">Full cohort</Link>
-                </Button>
-                <Button asChild size="sm" variant="outline">
-                  <Link href={`/pods?cohort=${f.cohort.id}`}>Manage pods</Link>
                 </Button>
               </div>
             )}
@@ -147,7 +140,7 @@ export default async function FacultyPodPage() {
             cohortId={f.cohort.id}
             memberIds={myPod.members.map((m) => m.user_id)}
           />
-          <PodMembers members={myPod.members} totalDays={today} />
+          <PodMembers members={myPod.members} totalDays={today} cohortId={f.cohort.id} />
         </section>
       )}
     </div>

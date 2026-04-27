@@ -1,6 +1,8 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSupabaseService } from "@/lib/supabase/service";
 import { getFacultyCohort } from "@/lib/queries/faculty";
+import { getPreviewUserId } from "@/lib/auth/persona";
 import { workingDayNumber } from "@/lib/calendar";
 
 export interface ActiveCohort {
@@ -24,14 +26,16 @@ export interface CohortDay {
 }
 
 const getRegistrationCohort = cache(async (): Promise<ActiveCohort | null> => {
-  const sb = await getSupabaseServer();
-  const { data: reg } = await sb
+  const previewUid = await getPreviewUserId();
+  const sb = previewUid ? getSupabaseService() : await getSupabaseServer();
+  let q = sb
     .from("registrations")
     .select("cohort_id, status, cohorts(id, slug, name, starts_on, ends_on, status)")
     .eq("status", "confirmed")
     .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
+  if (previewUid) q = q.eq("user_id", previewUid);
+  const { data: reg } = await q.maybeSingle();
   if (!reg) return null;
   return ((reg as unknown as { cohorts: ActiveCohort }).cohorts ?? null) as ActiveCohort | null;
 });

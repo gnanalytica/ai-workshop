@@ -5,6 +5,9 @@ import { CohortSwitcher } from "./CohortSwitcher";
 import { PreviewAsSwitcher } from "./PreviewAsSwitcher";
 import { MentionInbox } from "./MentionInbox";
 import { listUnreadMentions, countUnreadMentions } from "@/lib/queries/notifications";
+import { listAllCohorts } from "@/lib/actions/preview-as";
+import { getPreviewCohortId, getPreviewUserId } from "@/lib/auth/persona";
+import { getSupabaseService } from "@/lib/supabase/service";
 import type { NavItem } from "@/lib/rbac/menus";
 import type { UserProfile } from "@/lib/auth/session";
 import type { Persona } from "@/lib/auth/persona";
@@ -25,6 +28,25 @@ export async function Topbar({
   const isAdminPreviewing =
     truePersona === "admin" && effectivePersona !== null && effectivePersona !== "admin";
   const [unread, mentions] = await Promise.all([countUnreadMentions(), listUnreadMentions(10)]);
+
+  const cohorts = isAdminPreviewing && effectivePersona === "faculty" ? await listAllCohorts() : [];
+  const previewCohortId = isAdminPreviewing ? await getPreviewCohortId() : null;
+  const previewUserId = isAdminPreviewing ? await getPreviewUserId() : null;
+  let previewCohortName: string | null = null;
+  let previewUserName: string | null = null;
+  if (previewCohortId) {
+    previewCohortName = cohorts.find((c) => c.id === previewCohortId)?.name ?? null;
+  }
+  if (previewUserId) {
+    const svc = getSupabaseService();
+    const { data } = await svc
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", previewUserId)
+      .maybeSingle();
+    const p = data as { full_name: string | null; email: string } | null;
+    previewUserName = p ? (p.full_name ?? p.email) : null;
+  }
 
   return (
     <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-3 backdrop-blur-md sm:px-4 md:px-6">
@@ -53,7 +75,14 @@ export async function Topbar({
       <div className="flex items-center gap-1.5 sm:gap-2">
         {truePersona === "admin" && effectivePersona && (
           <div className="hidden xl:block">
-          <PreviewAsSwitcher effective={effectivePersona} />
+          <PreviewAsSwitcher
+            effective={effectivePersona}
+            cohorts={cohorts}
+            previewCohortId={previewCohortId}
+            previewCohortName={previewCohortName}
+            previewUserId={previewUserId}
+            previewUserName={previewUserName}
+          />
           </div>
         )}
         <div className="hidden sm:block">

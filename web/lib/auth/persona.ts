@@ -6,8 +6,12 @@ import { getSupabaseService } from "@/lib/supabase/service";
 export type Persona = "admin" | "faculty" | "student";
 
 export const PREVIEW_COOKIE = "previewAs";
+export const PREVIEW_COHORT_COOKIE = "previewCohortId";
+export const PREVIEW_USER_COOKIE = "previewUserId";
 
 const STAFF_ADMIN_ROLES = new Set(["admin", "trainer", "tech_support"]);
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * The user's *true* persona based on their stored role/assignments.
@@ -58,4 +62,54 @@ export const getEffectivePersona = cache(async (): Promise<Persona | null> => {
   const preview = store.get(PREVIEW_COOKIE)?.value;
   if (preview === "faculty" || preview === "student") return preview;
   return "admin";
+});
+
+/**
+ * UUID of the cohort an admin is previewing faculty UI against. Only honored
+ * when the caller is a true admin AND the effective persona is "faculty".
+ * Returns null otherwise. A non-admin caller cannot bypass anything via this
+ * cookie — fail-closed.
+ */
+export const getPreviewCohortId = cache(async (): Promise<string | null> => {
+  if ((await getTruePersona()) !== "admin") return null;
+  if ((await getEffectivePersona()) !== "faculty") return null;
+  const store = await cookies();
+  const v = store.get(PREVIEW_COHORT_COOKIE)?.value ?? null;
+  if (!v || !UUID_RE.test(v)) return null;
+  // Fail-closed: if the cohort doesn't exist, treat as null.
+  const svc = getSupabaseService();
+  const { data } = await svc.from("cohorts").select("id").eq("id", v).maybeSingle();
+  return data ? v : null;
+});
+
+/**
+ * UUID of the student an admin is previewing student UI as. Only honored
+ * when the caller is a true admin AND the effective persona is "student".
+ */
+export const getPreviewUserId = cache(async (): Promise<string | null> => {
+  if ((await getTruePersona()) !== "admin") return null;
+  if ((await getEffectivePersona()) !== "student") return null;
+  const store = await cookies();
+  const v = store.get(PREVIEW_USER_COOKIE)?.value ?? null;
+  if (!v || !UUID_RE.test(v)) return null;
+  // Fail-closed: if the user doesn't exist, treat as null.
+  const svc = getSupabaseService();
+  const { data } = await svc.from("profiles").select("id").eq("id", v).maybeSingle();
+  return data ? v : null;
+});
+
+/**
+ * The user id that READ-ONLY student-facing queries should resolve against.
+ * When an admin is previewing as a student with a target user set, returns
+ * that target user. Otherwise returns the real session user's id.
+ *
+ * IMPORTANT: NEVER call this from server actions / write paths (submit,
+ * post, vote, etc.). Writes always go as the real user. This is a read-scope
+ * affordance only.
+ */
+export const getEffectiveUserId = cache(async (): Promise<string | null> => {
+  const preview = await getPreviewUserId();
+  if (preview) return preview;
+  const u = await getSession();
+  return u?.id ?? null;
 });

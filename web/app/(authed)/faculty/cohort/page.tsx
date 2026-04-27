@@ -118,18 +118,10 @@ export default async function FacultyCohortPage() {
           <div>
             <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
             <CardSub className="text-xs">
-              Search, multi-select, or drag to assign students. Create pods below or open pod settings
-              to add/remove faculty on a pod.
+              Search, multi-select, or drag to assign students and faculty. Drop
+              faculty chips between pods to reassign mentors.
             </CardSub>
           </div>
-          {canManagePods && (
-            <Link
-              href={`/pods?cohort=${cohortId}`}
-              className="text-accent text-sm font-medium hover:underline"
-            >
-              Pod settings &amp; faculty roster →
-            </Link>
-          )}
         </div>
         {canManagePods && (
           <Card id="create-pod" className="mb-4 scroll-mt-24 border-accent/20">
@@ -137,22 +129,17 @@ export default async function FacultyCohortPage() {
               {roster.pods.length === 0 ? "Create first pod" : "Create a pod"}
             </CardTitle>
             <CardSub className="mb-3 text-xs leading-relaxed">
-              Name it, then drag students from Unassigned below—or use{" "}
-              <Link
-                href={`/pods?cohort=${cohortId}#create-pod`}
-                className="text-accent font-medium hover:underline"
-              >
-                all pods
-              </Link>{" "}
-              for faculty roster. Add yourself under Pod settings → Faculty on each pod.
+              Name it, then drag students and faculty from the columns below.
             </CardSub>
             <CreatePodForm cohortId={cohortId} afterCreateScrollToId="pods-board" />
           </Card>
         )}
         <div id="pods-board" className="scroll-mt-24">
           <PodBoard
+            cohortId={cohortId}
             pods={roster.pods}
             unassigned={roster.unassigned}
+            cohortFaculty={roster.cohortFaculty}
             canManagePods={canManagePods}
           />
         </div>

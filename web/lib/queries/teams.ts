@@ -11,9 +11,8 @@ export interface TeamRow {
 
 export const listTeams = cache(async (cohortId: string): Promise<TeamRow[]> => {
   const sb = await getSupabaseServer();
-  // Teams aren't in the new schema yet — we'll read from the legacy `teams`
-  // table when it gets added. For now this query falls back to empty if the
-  // table doesn't exist.
+  // Reads from the `teams` / `team_members` tables (created in
+  // supabase/migrations/0008_extensions_schema.sql). Returns [] on error.
   const { data, error } = await sb
     .from("teams")
     .select("id, cohort_id, name, team_members(user_id, profiles(full_name))")
