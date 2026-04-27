@@ -87,10 +87,9 @@ const signUpSchema = z
   .object({
     email: z.string().email(),
     full_name: z.string().min(1, "Name is required").max(120),
-    role: z.enum(["student", "faculty", "staff"]),
+    role: z.enum(["student", "faculty"]),
     cohort_code: z.string().trim().optional(),
     faculty_code: z.string().trim().optional(),
-    staff_code: z.string().trim().optional(),
   })
   .superRefine((v, ctx) => {
     if (v.role === "student" && !v.cohort_code) {
@@ -98,9 +97,6 @@ const signUpSchema = z
     }
     if (v.role === "faculty" && !v.faculty_code) {
       ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
-    }
-    if (v.role === "staff" && !v.staff_code) {
-      ctx.addIssue({ code: "custom", path: ["staff_code"], message: "Staff code required" });
     }
   });
 
@@ -113,7 +109,6 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
     role: formData.get("role"),
     cohort_code: formData.get("cohort_code") || undefined,
     faculty_code: formData.get("faculty_code") || undefined,
-    staff_code: formData.get("staff_code") || undefined,
   });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message ?? "Invalid form";
@@ -145,7 +140,7 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   }
 
   // Validate codes up-front so we don't create an auth user we can't redeem against.
-  const codesToValidate = [v.cohort_code, v.faculty_code, v.staff_code].filter(Boolean) as string[];
+  const codesToValidate = [v.cohort_code, v.faculty_code].filter(Boolean) as string[];
   for (const code of codesToValidate) {
     const { error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
     if (error) return { ok: false, message: `Invite code "${code}" is not valid.` };
@@ -184,12 +179,6 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
       p_user: userId,
     } as never);
     if (cErr) return { ok: false, message: cErr.message };
-  } else if (v.role === "staff") {
-    const { error } = await svc.rpc("rpc_redeem_staff_invite", {
-      p_code: v.staff_code!,
-      p_user: userId,
-    } as never);
-    if (error) return { ok: false, message: error.message };
   }
 
   // Generate a one-time magic link server-side and redirect the browser
@@ -242,10 +231,9 @@ export async function signInWithGoogle(formData: FormData) {
 const claimSchema = z
   .object({
     full_name: z.string().trim().min(1, "Name is required").max(120),
-    role: z.enum(["student", "faculty", "staff"]),
+    role: z.enum(["student", "faculty"]),
     cohort_code: z.string().trim().optional(),
     faculty_code: z.string().trim().optional(),
-    staff_code: z.string().trim().optional(),
   })
   .superRefine((v, ctx) => {
     if (v.role === "student" && !v.cohort_code) {
@@ -253,9 +241,6 @@ const claimSchema = z
     }
     if (v.role === "faculty" && !v.faculty_code) {
       ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
-    }
-    if (v.role === "staff" && !v.staff_code) {
-      ctx.addIssue({ code: "custom", path: ["staff_code"], message: "Staff code required" });
     }
   });
 
@@ -272,7 +257,6 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
     role: formData.get("role"),
     cohort_code: formData.get("cohort_code") || undefined,
     faculty_code: formData.get("faculty_code") || undefined,
-    staff_code: formData.get("staff_code") || undefined,
   });
   if (!parsed.success) {
     return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid form" };
@@ -289,7 +273,7 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
   if (nameErr) return { ok: false, message: nameErr.message };
 
   // Validate codes first to avoid half-applied state.
-  const codes = [v.cohort_code, v.faculty_code, v.staff_code].filter(Boolean) as string[];
+  const codes = [v.cohort_code, v.faculty_code].filter(Boolean) as string[];
   for (const code of codes) {
     const { error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
     if (error) return { ok: false, message: `Invite code "${code}" is not valid.` };
@@ -304,12 +288,6 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
   } else if (v.role === "faculty") {
     const { error } = await svc.rpc("rpc_redeem_faculty_invite", {
       p_code: v.faculty_code!,
-      p_user: userId,
-    } as never);
-    if (error) return { ok: false, message: error.message };
-  } else if (v.role === "staff") {
-    const { error } = await svc.rpc("rpc_redeem_staff_invite", {
-      p_code: v.staff_code!,
       p_user: userId,
     } as never);
     if (error) return { ok: false, message: error.message };

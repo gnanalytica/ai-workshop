@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { claimInvite, type SignInState } from "@/lib/auth/actions";
 
-type Role = "student" | "faculty" | "staff";
+type Role = "student" | "faculty";
 const initial: SignInState = {};
 
 export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
@@ -31,8 +31,8 @@ export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
         <legend className="text-muted text-xs font-medium tracking-wide uppercase">
           I&apos;m joining as
         </legend>
-        <div className="grid grid-cols-3 gap-2">
-          {(["student", "faculty", "staff"] as const).map((r) => (
+        <div className="grid grid-cols-2 gap-2">
+          {(["student", "faculty"] as const).map((r) => (
             <button
               key={r}
               type="button"
@@ -67,18 +67,6 @@ export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
             name="faculty_code"
             required
             placeholder="e.g. FAC-SUP2026"
-            autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
-          />
-        </Field>
-      )}
-
-      {role === "staff" && (
-        <Field label="Staff invite code">
-          <input
-            name="staff_code"
-            required
-            placeholder="e.g. ADMIN-BOOT01"
             autoCapitalize="characters"
             className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
           />

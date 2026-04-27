@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 import { signUp, type SignUpState } from "@/lib/auth/actions";
 import { GoogleButton } from "../GoogleButton";
 
-type Role = "student" | "faculty" | "staff";
+type Role = "student" | "faculty";
 const initial: SignUpState = {};
 
 export function SignUpForm({ email }: { email: string }) {
@@ -35,8 +35,8 @@ export function SignUpForm({ email }: { email: string }) {
         <legend className="text-muted text-xs font-medium tracking-wide uppercase">
           I&apos;m signing up as
         </legend>
-        <div className="grid grid-cols-3 gap-2">
-          {(["student", "faculty", "staff"] as const).map((r) => (
+        <div className="grid grid-cols-2 gap-2">
+          {(["student", "faculty"] as const).map((r) => (
             <button
               key={r}
               type="button"
@@ -71,18 +71,6 @@ export function SignUpForm({ email }: { email: string }) {
             name="faculty_code"
             required
             placeholder="e.g. FAC-A1B2"
-            autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
-          />
-        </Field>
-      )}
-
-      {role === "staff" && (
-        <Field label="Staff invite code" hint="Admin / trainer / support — your code decides.">
-          <input
-            name="staff_code"
-            required
-            placeholder="e.g. ADM-9F2C"
             autoCapitalize="characters"
             className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider"
           />
