@@ -2,18 +2,16 @@
 
 **Site:** [https://learn.gnanalytica.com](https://learn.gnanalytica.com)
 
-Use this guide to **sign in**, **enroll with your invite codes**, and **open your faculty dashboard**.
+Use this guide to **sign in**, **enroll with your faculty invite code**, and **open your faculty dashboard**.
 
 ---
 
 ## What you need before you start
 
 - A **Google account** you’ll use for the program (Sign in with Google).
-- The **invite codes** your program admin sent you:
-  - **Cohort invite code** — ties you to the right cohort (from your enrollment confirmation or admin).
-  - **Faculty invite code** — for this cohort, use: **`FAC-YCCUSG`** (encodes faculty role for your cohort).
+- Your **faculty invite code** from your program admin. It already encodes which cohort you belong to and your faculty role (support vs executive). For this cohort, use: **`FAC-YCCUSG`**.
 
-If you only have the faculty code, ask your admin for the **cohort invite code** as well; both are required on the enrollment step.
+You do **not** need a separate student/cohort invite code for faculty registration (those are for learners).
 
 ---
 
@@ -25,9 +23,10 @@ If you only have the faculty code, ask your admin for the **cohort invite code**
 4. On the **claim / enrollment** screen:
    - Enter your **full name**.
    - Choose **Faculty** as your role.
-   - Paste your **cohort invite code**.
    - Paste your **faculty invite code:** `FAC-YCCUSG`.
-5. Submit the form. If something fails, double-check both codes (no extra spaces) and try again, or contact support via your program’s help channel.
+5. Submit the form. If something fails, double-check the code (no extra spaces) and try again, or contact support via your program’s help channel.
+
+**After you’re in:** open **Reference → Handbook** in the sidebar and read the faculty platform guide (*Using the workspace: dashboard, pods, students, help desk & community*). It’s the fastest way to learn where everything lives and how pods, the help desk, and community fit together.
 
 ---
 
@@ -47,9 +46,7 @@ After you’re in:
 - **Dashboard** — Your main hub: schedule, **full cohort** view, and **your pod** (students you’re assigned to work with).
 - **Setup** — **Manage pods** (e.g. assign yourself or organize pods, depending on how your cohort is configured).
 - **Support** — **Help desk** for questions or issues.
-- **Reference** — **Community**, **Leaderboard**, and the **Handbook** (platform guide for faculty).
-
-Spend a few minutes on the **Handbook** under Reference if you want a written tour of the platform.
+- **Reference** — **Community**, **Leaderboard**, and the **Handbook**. **Please take time to read the Handbook** — it walks through the sidebar, pods and students, help desk triage, and community so you’re not guessing during live sessions.
 
 ---
 
@@ -59,9 +56,10 @@ Spend a few minutes on the **Handbook** under Reference if you want a written to
 |------|--------|
 | 1 | Open [learn.gnanalytica.com](https://learn.gnanalytica.com) |
 | 2 | Sign up → Google → claim page |
-| 3 | Role: **Faculty**; cohort code + **`FAC-YCCUSG`** |
+| 3 | Role: **Faculty**; faculty invite **`FAC-YCCUSG`** only |
 | 4 | Later: **Sign in** with the same Google account |
 | 5 | Use **Dashboard** and sidebar sections above |
+| 6 | Open **Reference → Handbook** and read the faculty platform guide |
 
 ---
 
