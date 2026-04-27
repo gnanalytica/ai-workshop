@@ -46,7 +46,7 @@ After you’re in:
 - **Dashboard** — Your main hub: schedule, **full cohort** view, and **your pod** (students you’re assigned to work with).
 - **Setup** — **Manage pods** (e.g. assign yourself or organize pods, depending on how your cohort is configured).
 - **Support** — **Help desk** for questions or issues.
-- **Reference** — **Community**, **Leaderboard**, and the **Handbook**. **Please take time to read the Handbook** — it walks through the sidebar, pods and students, help desk triage, and community so you’re not guessing during live sessions.
+- **Reference** — **Community**, **Leaderboard**, and the **Handbook**. **Please take time to read the Handbook** — it walks through the sidebar, pods and students, help desk triage, and community so you’re not guessing during live sessions. In the Handbook, use **Your role & workflow** for navigation; use **Setup & tools** for lab installs (browser, editor, runtimes, Git, optional local models).
 
 ---
 
