@@ -128,6 +128,30 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
         searchPlaceholder="Search students or pods…"
         emptyMessage="No scores yet."
         rowClassName={rowClassName}
+        mobileCard={(r) => (
+          <div className="space-y-1.5 text-sm">
+            <div className="flex items-baseline justify-between gap-2">
+              <Link
+                href={`/faculty/student/${r.user_id}`}
+                className="text-ink hover:text-accent truncate font-medium"
+              >
+                <span className="text-muted mr-1.5">#{r.rank}</span>
+                {r.full_name ?? "—"}
+              </Link>
+            </div>
+            <div className="text-muted flex items-center justify-between gap-2 text-xs">
+              <span className="truncate">{r.pod_name ?? "—"}</span>
+              <span className="text-accent font-semibold">Total {r.total_score}</span>
+            </div>
+            <div className="text-muted flex flex-wrap gap-x-3 gap-y-0.5 text-xs">
+              <span>Quiz {r.quiz_score}</span>
+              <span>Subs {r.submission_score}</span>
+              <span>Posts {r.posts_score}</span>
+              <span>Comm {r.comments_score}</span>
+              <span>Votes {r.upvotes_score}</span>
+            </div>
+          </div>
+        )}
       />
     </div>
   );

@@ -26,6 +26,8 @@ export interface DataTableProps<T> {
   initialSortId?: string;
   /** Optional per-row className for highlighting. */
   rowClassName?: (row: T) => string | undefined;
+  /** Optional mobile (<md) per-row card renderer. When set, the table is hidden under md and replaced with a card list. */
+  mobileCard?: (row: T) => ReactNode;
 }
 
 /** Generic filterable, sortable, optionally bulk-selectable table.
@@ -39,6 +41,7 @@ export function DataTable<T>({
   bulkActions,
   initialSortId,
   rowClassName,
+  mobileCard,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ id: string; dir: "asc" | "desc" } | null>(
@@ -75,6 +78,10 @@ export function DataTable<T>({
   const allSelected = bulkActions && sorted.length > 0 && sorted.every((r) => selected.has(rowKey(r)));
   const selectedRows = sorted.filter((r) => selected.has(rowKey(r)));
 
+  const tableWrapperClass = mobileCard
+    ? "border-line hidden overflow-hidden rounded-lg border md:block"
+    : "border-line overflow-hidden rounded-lg border";
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
@@ -91,7 +98,7 @@ export function DataTable<T>({
           </div>
         )}
       </div>
-      <div className="border-line overflow-hidden rounded-lg border">
+      <div className={tableWrapperClass}>
         <table className="w-full text-sm">
           <thead className="bg-bg-soft text-muted text-xs uppercase">
             <tr>
@@ -190,6 +197,46 @@ export function DataTable<T>({
           </tbody>
         </table>
       </div>
+      {mobileCard && (
+        <div className="space-y-2 md:hidden">
+          {sorted.length === 0 ? (
+            <div className="border-line bg-card text-muted rounded-lg border p-4 text-center text-sm">
+              {emptyMessage}
+            </div>
+          ) : (
+            sorted.map((row) => {
+              const k = rowKey(row);
+              const isSelected = selected.has(k);
+              return (
+                <div
+                  key={k}
+                  className={cn(
+                    "border-line bg-card flex items-start gap-3 rounded-lg border p-3",
+                    isSelected && "ring-accent/40 ring-2",
+                    rowClassName?.(row),
+                  )}
+                >
+                  {bulkActions && (
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        const next = new Set(selected);
+                        if (e.target.checked) next.add(k);
+                        else next.delete(k);
+                        setSelected(next);
+                      }}
+                      aria-label="Select row"
+                      className="mt-1"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">{mobileCard(row)}</div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
     </div>
   );
 }

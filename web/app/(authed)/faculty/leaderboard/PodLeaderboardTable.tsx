@@ -65,6 +65,19 @@ export function PodLeaderboardTable({ rows }: Props) {
       rowKey={(r) => r.pod_id}
       searchPlaceholder="Search pods…"
       emptyMessage="No pods yet."
+      mobileCard={(r) => (
+        <div className="space-y-1.5 text-sm">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-ink truncate font-semibold">{r.pod_name}</span>
+            <span className="text-muted text-xs">#{r.rank}</span>
+          </div>
+          <div className="text-muted flex items-center justify-between gap-3 text-xs">
+            <span>{r.member_count} members</span>
+            <span>Avg {r.avg_score}</span>
+            <span className="text-accent font-semibold">Total {r.total_score}</span>
+          </div>
+        </div>
+      )}
     />
   );
 }

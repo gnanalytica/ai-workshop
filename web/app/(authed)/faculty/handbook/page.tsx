@@ -1,15 +1,7 @@
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MarkdownView } from "@/components/markdown/MarkdownView";
-import { listFacultyHandbook, type HandbookModule } from "@/lib/queries/handbook";
-import { HandbookProgress } from "./HandbookProgress";
-
-const STATUS_TONE: Record<NonNullable<HandbookModule["status"]>, "default" | "warn" | "ok"> = {
-  not_started: "default",
-  in_progress: "warn",
-  completed: "ok",
-};
+import { Card, CardSub } from "@/components/ui/card";
+import { listFacultyHandbook } from "@/lib/queries/handbook";
+import { HandbookView } from "./HandbookView";
 
 export default async function FacultyHandbookPage({
   searchParams,
@@ -44,29 +36,7 @@ export default async function FacultyHandbookPage({
           </CardSub>
         </Card>
       ) : (
-        filtered.map((m) => (
-          <section key={m.id} className="space-y-3">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <CardTitle>
-                <span className="text-muted mr-2 font-mono text-xs">
-                  {String(m.ordinal).padStart(2, "0")}
-                </span>
-                {m.title}
-              </CardTitle>
-              <div className="flex items-center gap-2">
-                {m.status && <Badge variant={STATUS_TONE[m.status]}>{m.status.replace("_", " ")}</Badge>}
-                <HandbookProgress moduleId={m.id} status={m.status} />
-              </div>
-            </div>
-            <Card className="p-6">
-              {m.body_md ? (
-                <MarkdownView source={m.body_md} />
-              ) : (
-                <CardSub>Module content pending.</CardSub>
-              )}
-            </Card>
-          </section>
-        ))
+        <HandbookView modules={filtered} />
       )}
     </div>
   );
