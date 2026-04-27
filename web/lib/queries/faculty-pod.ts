@@ -20,7 +20,7 @@ export interface FacultyPod {
 }
 
 /**
- * Pods where this user is assigned as faculty (`pod_faculty.faculty_user_id`).
+ * The faculty member's pod in this cohort (at most one row per faculty per cohort).
  * RLS also allows reading other pods in the cohort when you have `roster.read`;
  * we still filter here so the faculty pod view is not cohort-wide.
  */

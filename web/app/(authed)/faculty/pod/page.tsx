@@ -6,30 +6,34 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkline } from "@/components/sparkline/Sparkline";
 import { getFacultyCohort, getFacultyTodayKpis } from "@/lib/queries/faculty";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
+import { listPods } from "@/lib/queries/admin";
 import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
 import { fmtDateTime } from "@/lib/format";
-import { FacultyTabs } from "@/components/faculty-tabs/FacultyTabs";
 import { Button } from "@/components/ui/button";
 import { PodMembers } from "./PodMembers";
+import { FacultySelfAssignPod } from "./FacultySelfAssignPod";
 
 export default async function FacultyPodPage() {
   await requireCapability("roster.read");
   const f = await getFacultyCohort();
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
-  const [pods, kpis, days, atRiskAll, canManagePods] = await Promise.all([
+  const [podRows, kpis, days, atRiskAll, canManagePods, cohortPods] = await Promise.all([
     getFacultyPods(f.cohort.id, me.id),
     getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
     listAtRiskStudents(f.cohort.id),
     checkCapability("pods.write", f.cohort.id),
+    listPods(f.cohort.id),
   ]);
+  const myPod = podRows[0] ?? null;
   const today = todayDayNumber(f.cohort);
   const todayDay = days.find((d) => d.day_number === today);
-  const podStudentIds = new Set(pods.flatMap((p) => p.members.map((m) => m.user_id)));
+  const podStudentIds = new Set((myPod?.members ?? []).map((m) => m.user_id));
   const atRisk = atRiskAll.filter((s) => podStudentIds.has(s.user_id)).length;
+  const cohortPodPick = cohortPods.map((p) => ({ pod_id: p.pod_id, name: p.name }));
 
   return (
     <div className="space-y-6">
@@ -37,13 +41,21 @@ export default async function FacultyPodPage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {f.cohort.name}
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Faculty</h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">My pod</h1>
         <CardSub className="mt-1">
-          {pods.length} {pods.length === 1 ? "pod" : "pods"} ·{" "}
-          {pods.reduce((s, p) => s + p.members.length, 0)} students
+          {myPod
+            ? `${myPod.pod_name} · ${myPod.members.length} student${myPod.members.length === 1 ? "" : "s"}`
+            : "No pod assigned yet"}
         </CardSub>
       </header>
-      <FacultyTabs active="pod" />
+
+      <FacultySelfAssignPod
+        cohortPods={cohortPodPick}
+        currentPodId={myPod?.pod_id ?? null}
+        meId={me.id}
+        canWrite={canManagePods}
+      />
+
       <Card className="bg-bg-soft">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
@@ -80,63 +92,86 @@ export default async function FacultyPodPage() {
           </div>
         </div>
       </Card>
-      {pods.length === 0 ? (
+      {!myPod ? (
         <Card>
           <CardTitle className="mb-2">No pod assigned</CardTitle>
           <CardSub className="space-y-3">
             <p>
-              Create a pod, add yourself as faculty, then place students — from{" "}
-              <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
-                Cohort → Pods
-              </Link>{" "}
-              (board + create) or the{" "}
-              <Link href={`/pods?cohort=${f.cohort.id}`} className="text-accent hover:underline">
-                Pods
-              </Link>{" "}
-              page.
+              {canManagePods ? (
+                <>
+                  Use <span className="text-ink font-medium">Your pod assignment</span> above, or
+                  open{" "}
+                  <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
+                    Full cohort
+                  </Link>{" "}
+                  /{" "}
+                  <Link href={`/pods?cohort=${f.cohort.id}`} className="text-accent hover:underline">
+                    Manage pods
+                  </Link>
+                  .
+                </>
+              ) : (
+                <>
+                  Ask your cohort lead to add you to a pod, or use{" "}
+                  <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
+                    Full cohort
+                  </Link>{" "}
+                  if you have access.
+                </>
+              )}
             </p>
             {canManagePods && (
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button asChild size="sm">
-                  <Link href="/faculty/cohort#pods">Cohort: pods</Link>
+                  <Link href="/faculty/cohort#pods">Full cohort</Link>
                 </Button>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/pods?cohort=${f.cohort.id}`}>All pods</Link>
+                  <Link href={`/pods?cohort=${f.cohort.id}`}>Manage pods</Link>
                 </Button>
               </div>
             )}
           </CardSub>
         </Card>
       ) : (
-        await Promise.all(pods.map(async (p) => {
-          const memberIds = p.members.map((m) => m.user_id);
-          const trend = await getCohortTrend(f.cohort.id, memberIds);
-          return (
-            <section key={p.pod_id}>
-              <div className="mb-3 flex items-center gap-2">
-                <h2 className="text-lg font-semibold tracking-tight">{p.pod_name}</h2>
-                <Badge>{p.members.length} members</Badge>
-              </div>
-              {p.shared_notes && (
-                <Card className="mb-3 bg-bg-soft">
-                  <CardSub>{p.shared_notes}</CardSub>
-                </Card>
-              )}
-              <Card className="mb-3">
-                <p className="text-muted mb-2 text-xs uppercase tracking-wider">
-                  Last 14 days · this pod
-                </p>
-                <div className="grid gap-6 sm:grid-cols-3">
-                  <Sparkline label="Labs" data={trend.labsDone} total={trend.totalLabs} />
-                  <Sparkline label="Submissions" data={trend.submissions} total={trend.totalSubmissions} />
-                  <Sparkline label="Posts" data={trend.posts} total={trend.totalPosts} />
-                </div>
-              </Card>
-              <PodMembers members={p.members} totalDays={today} />
-            </section>
-          );
-        }))
+        <section>
+          <div className="mb-3 flex items-center gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">{myPod.pod_name}</h2>
+            <Badge>{myPod.members.length} members</Badge>
+          </div>
+          {myPod.shared_notes && (
+            <Card className="mb-3 bg-bg-soft">
+              <CardSub>{myPod.shared_notes}</CardSub>
+            </Card>
+          )}
+          <PodTrend
+            cohortId={f.cohort.id}
+            memberIds={myPod.members.map((m) => m.user_id)}
+          />
+          <PodMembers members={myPod.members} totalDays={today} />
+        </section>
       )}
     </div>
+  );
+}
+
+async function PodTrend({
+  cohortId,
+  memberIds,
+}: {
+  cohortId: string;
+  memberIds: string[];
+}) {
+  const trend = await getCohortTrend(cohortId, memberIds);
+  return (
+    <Card className="mb-3">
+      <p className="text-muted mb-2 text-xs uppercase tracking-wider">
+        Last 14 days · this pod
+      </p>
+      <div className="grid gap-6 sm:grid-cols-3">
+        <Sparkline label="Labs" data={trend.labsDone} total={trend.totalLabs} />
+        <Sparkline label="Submissions" data={trend.submissions} total={trend.totalSubmissions} />
+        <Sparkline label="Posts" data={trend.posts} total={trend.totalPosts} />
+      </div>
+    </Card>
   );
 }

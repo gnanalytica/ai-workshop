@@ -55,14 +55,14 @@ export const NAV: readonly NavItem[] = [
   { label: "Certificate", href: "/certificate", cap: null,           group: "student", section: "Reference", icon: "award" },
 
   // ----- Faculty -----
-  { label: "My Pod",      href: "/faculty/pod",      cap: "roster.read",    group: "faculty", section: "Daily",     icon: "home" },
-  { label: "Schedule",    href: "/faculty/schedule", cap: "roster.read",    group: "faculty", section: "Daily",     icon: "calendar" },
-  { label: "Cohort",      href: "/faculty/cohort",   cap: "roster.read",    group: "faculty", section: "Daily",     icon: "users-round" },
-  { label: "Pods",        href: "/pods",             cap: "pods.write",     group: "faculty", section: "Daily",     icon: "layers" },
-  { label: "Help desk",   href: "/faculty/help-desk",    cap: "support.triage", group: "faculty", section: "Daily",     icon: "life-buoy" },
-  { label: "Community",   href: "/community",            cap: "community.read",     group: "faculty", section: "Reference", icon: "message-square" },
-  { label: "Leaderboard", href: "/leaderboard",      cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
-  { label: "Handbook",    href: "/faculty/handbook", cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
+  { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },
+  { label: "Full cohort",  href: "/faculty/cohort",     cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "users-round" },
+  { label: "My pod",       href: "/faculty/pod",        cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "home" },
+  { label: "Manage pods",  href: "/pods",               cap: "pods.write",     group: "faculty", section: "Setup",     icon: "layers" },
+  { label: "Help desk",    href: "/faculty/help-desk",  cap: "support.triage", group: "faculty", section: "Support",   icon: "life-buoy" },
+  { label: "Community",    href: "/community",          cap: "community.read", group: "faculty", section: "Reference", icon: "message-square" },
+  { label: "Leaderboard",  href: "/leaderboard",        cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
+  { label: "Handbook",     href: "/faculty/handbook",   cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
 
   // ----- Admin (no sections — only 4 items) -----
   { label: "Cohorts",       href: "/admin",         cap: "schedule.read", group: "admin",                  icon: "home" },

@@ -1115,20 +1115,20 @@ export type Database = {
       pod_faculty: {
         Row: {
           added_at: string
+          cohort_id: string
           faculty_user_id: string
-          is_primary: boolean
           pod_id: string
         }
         Insert: {
           added_at?: string
+          cohort_id?: string
           faculty_user_id: string
-          is_primary?: boolean
           pod_id: string
         }
         Update: {
           added_at?: string
+          cohort_id?: string
           faculty_user_id?: string
-          is_primary?: boolean
           pod_id?: string
         }
         Relationships: [

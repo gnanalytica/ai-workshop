@@ -5,7 +5,6 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { Sparkline } from "@/components/sparkline/Sparkline";
-import { FacultyTabs } from "@/components/faculty-tabs/FacultyTabs";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import {
   getCohortKpis,
@@ -59,8 +58,6 @@ export default async function FacultyCohortPage() {
         </p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Faculty</h1>
       </header>
-
-      <FacultyTabs active="cohort" />
 
       <KpiGrid>
         <StatCard label="Students" value={kpis.students} />
