@@ -12,7 +12,7 @@ import { expect, test } from "@playwright/test";
  *   2. /admin (or /admin/support) — see triage queue, tech-only tickets.
  *   3. /admin/roster — read-only roster; mutation controls hidden.
  *   4. Cannot edit /admin/schedule/[day] — capability denied.
- *   5. Cannot grade — /faculty/review denied or read-only.
+ *   5. Cannot grade — /admin/grading denied.
  */
 
 test.describe("Tech Support golden path", () => {
@@ -37,8 +37,8 @@ test.describe("Tech Support golden path", () => {
     await page.waitForURL(/\/denied|\/sign-in/, { timeout: 10_000 });
   });
 
-  test("/faculty/review is denied", async ({ page }) => {
-    await page.goto("/faculty/review");
+  test("/admin/grading is denied", async ({ page }) => {
+    await page.goto("/admin/grading");
     await page.waitForURL(/\/denied|\/sign-in/, { timeout: 10_000 });
   });
 });

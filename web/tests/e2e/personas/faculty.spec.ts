@@ -10,15 +10,14 @@ import { expect, test } from "@playwright/test";
  *
  * Golden path (support):
  *   1. Sign in as support faculty assigned to a pod.
- *   2. /faculty/today — see today's pod schedule + attendance roster.
- *   3. /faculty/review — open review queue; can_grade(submission)=true
- *      ONLY for submissions whose student shares_pod_with(faculty).
- *   4. Grade a submission; verify status flips and audit row written.
- *   5. /faculty/pod — view assigned pod; mark attendance for whole pod.
+ *   2. /faculty redirects to /faculty/pod (pod-first default view).
+ *   3. /faculty/pod — view assigned pod members and student activity.
+ *   4. /faculty/student/[id] — inspect submissions, quiz/assignment outcomes,
+ *      progress, and recent stuck history for a pod student.
+ *   5. /faculty/stuck — view/triage only stuck items from assigned pod students.
  *   6. /faculty/handbook — verify MDX renders for content.read.
  *
- * Golden path (executive): same /faculty/review surface but write attempts
- * must fail with capability denied.
+ * Golden path (executive): same pod-scoped read flow without grading actions.
  */
 
 test.describe("Support faculty golden path", () => {
@@ -27,26 +26,25 @@ test.describe("Support faculty golden path", () => {
     "Requires seeded Supabase + auth bypass — see RUNBOOK (tests/e2e/README.md)",
   );
 
-  test("/faculty/today shows pod schedule", async ({ page }) => {
-    await page.goto("/faculty/today");
-    // TODO: expect today's date, pod list, attendance widget.
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  });
-
-  test("/faculty/review queue is scoped to pod members", async ({ page }) => {
-    await page.goto("/faculty/review");
-    // TODO: assert ReviewQueueClient renders only submissions where
-    // shares_pod_with(student, cohort) is true.
-  });
-
-  test("can grade a submission inside the pod", async ({ page }) => {
-    await page.goto("/faculty/review");
-    // TODO: open first submission, set score+feedback, submit, expect status badge.
+  test("/faculty redirects to /faculty/pod", async ({ page }) => {
+    await page.goto("/faculty");
+    await page.waitForURL(/\/faculty\/pod$/, { timeout: 10_000 });
   });
 
   test("/faculty/pod lists assigned pod members", async ({ page }) => {
     await page.goto("/faculty/pod");
     // TODO: assert primary faculty marker, member count == seed.
+  });
+
+  test("/faculty/student/[id] shows student progress details", async ({ page }) => {
+    // TODO: open a student from pod list and assert progress/submission cards.
+    await page.goto("/faculty/pod");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("/faculty/stuck is pod-scoped", async ({ page }) => {
+    await page.goto("/faculty/stuck");
+    // TODO: assert all listed students belong to faculty-assigned pod(s).
   });
 
   test("/admin route is denied for faculty", async ({ page }) => {
@@ -61,13 +59,14 @@ test.describe("Executive faculty (read-only)", () => {
     "Requires seeded Supabase + auth bypass — see RUNBOOK (tests/e2e/README.md)",
   );
 
-  test("/faculty/review opens but grading controls are disabled", async ({ page }) => {
-    await page.goto("/faculty/review");
-    // TODO: assert submission rows visible, "Grade" button disabled / hidden.
+  test("/faculty/stuck opens with pod-scoped read/triage", async ({ page }) => {
+    await page.goto("/faculty/stuck");
+    // TODO: assert pod-scoped items visible and triage actions are available.
   });
 
-  test("attempting to grade returns capability denial", async ({ page }) => {
-    // TODO: POST directly to grading server action; expect /denied?cap=grading.write...
-    await page.goto("/faculty/review");
+  test("/faculty/student/[id] is readable without grading actions", async ({ page }) => {
+    // TODO: open student drill-down and verify no grading publish controls.
+    await page.goto("/faculty/pod");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 });
