@@ -7,8 +7,11 @@ import { GoogleButton } from "./GoogleButton";
 
 const initial: StartState = {};
 
-export function StartForm({ next }: { next: string }) {
+export function StartForm({ next, initialError }: { next: string; initialError?: string }) {
   const [state, action] = useActionState(startFlow, initial);
+  // Show server-side error from /auth/callback (e.g. expired magic link) until
+  // the user submits the form, after which the action state takes over.
+  const showInitial = !state.message && initialError;
   return (
     <div className="flex flex-col gap-4">
       <GoogleButton next={next} />
@@ -28,11 +31,13 @@ export function StartForm({ next }: { next: string }) {
           className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         />
         <SubmitButton />
-        {state.message && (
+        {state.message ? (
           <p className={state.ok ? "text-accent mt-1 text-sm" : "text-danger mt-1 text-sm"}>
             {state.message}
           </p>
-        )}
+        ) : showInitial ? (
+          <p className="text-danger mt-1 text-sm">{initialError}</p>
+        ) : null}
       </form>
     </div>
   );

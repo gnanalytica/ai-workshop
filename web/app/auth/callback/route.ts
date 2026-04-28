@@ -14,7 +14,18 @@ export async function GET(request: NextRequest) {
   const sb = await getSupabaseServer();
   const { error } = await sb.auth.exchangeCodeForSession(code);
   if (error) {
-    return NextResponse.redirect(`${origin}/start?error=${encodeURIComponent(error.message)}`);
+    // Prefetchers (LinkedIn, Outlook safe-link scanners) often hit the link
+    // before the user, burning the one-time code. Surface a friendly message
+    // for that case and let the raw error through for everything else.
+    const msg = error.message.toLowerCase();
+    const friendly =
+      msg.includes("expired") ||
+      msg.includes("already") ||
+      msg.includes("invalid") ||
+      msg.includes("used")
+        ? "This sign-in link has already been used or expired. Request a new one below."
+        : error.message;
+    return NextResponse.redirect(`${origin}/start?error=${encodeURIComponent(friendly)}`);
   }
 
   // /dashboard runs resolveHome() and redirects to /admin, /faculty, /learn,

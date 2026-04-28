@@ -164,7 +164,13 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   if (profileErr) return { ok: false, message: profileErr.message };
 
   const redeemErr = await redeemByKind(svc, resolved.kind, code, userId);
-  if (redeemErr) return { ok: false, message: redeemErr };
+  if (redeemErr) {
+    // Race: code was exhausted between validate and redeem, or a role-invariant
+    // trigger fired. Roll back the just-created auth user so the email is free
+    // to retry with a different code.
+    await svc.auth.admin.deleteUser(userId).catch(() => {});
+    return { ok: false, message: redeemErr };
+  }
 
   // Generate a one-time magic link server-side and redirect the browser
   // straight to it — no email round-trip. The link hits /auth/callback,

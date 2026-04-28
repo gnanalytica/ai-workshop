@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { StartForm } from "./form";
 
-export default function StartPage(props: { searchParams: Promise<{ next?: string }> }) {
+export default function StartPage(props: {
+  searchParams: Promise<{ next?: string; error?: string }>;
+}) {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <Link href="/" className="text-muted mb-8 text-xs tracking-widest uppercase">
@@ -23,7 +25,11 @@ export default function StartPage(props: { searchParams: Promise<{ next?: string
   );
 }
 
-async function StartFormWrapper({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+async function StartFormWrapper({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string; error?: string }>;
+}) {
   const params = await searchParams;
-  return <StartForm next={params.next ?? "/dashboard"} />;
+  return <StartForm next={params.next ?? "/dashboard"} initialError={params.error} />;
 }

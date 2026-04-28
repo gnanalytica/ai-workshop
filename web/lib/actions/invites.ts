@@ -46,28 +46,38 @@ export async function createInvite(input: z.infer<typeof baseSchema>) {
   const v = parsed.data;
   const prefix =
     v.kind === "student" ? "STU" : v.kind === "faculty" ? "FAC" : v.staff_role!.slice(0, 3).toUpperCase();
-  const code = generateCode(prefix);
 
   const sb = await getSupabaseServer();
-  const { data, error } = await sb
-    .from("invites")
-    .insert({
-      code,
-      kind: v.kind,
-      cohort_id: v.kind === "staff" ? null : v.cohort_id ?? null,
-      // Faculty role distinction (support vs executive) collapsed in
-      // 0019_unify_faculty_role; we always store 'support' for new invites.
-      college_role: v.kind === "faculty" ? "support" : null,
-      staff_role: v.kind === "staff" ? v.staff_role ?? null : null,
-      max_uses: v.max_uses,
-      expires_at: v.expires_at || null,
-      note: v.note || null,
-    })
-    .select("id, code")
-    .single();
-  if (error) return actionFail(error.message);
-  revalidatePath("/admin/invites");
-  return actionOk(data);
+  const row = {
+    kind: v.kind,
+    cohort_id: v.kind === "staff" ? null : v.cohort_id ?? null,
+    // Faculty role distinction (support vs executive) collapsed in
+    // 0019_unify_faculty_role; we always store 'support' for new invites.
+    college_role: v.kind === "faculty" ? "support" : null,
+    staff_role: v.kind === "staff" ? v.staff_role ?? null : null,
+    max_uses: v.max_uses,
+    expires_at: v.expires_at || null,
+    note: v.note || null,
+  };
+
+  // Retry on the unique-constraint collision (extremely rare given 32^6 suffix
+  // space, but the cost of a single retry is trivial and the cost of a hard
+  // failure to the admin is real).
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateCode(prefix);
+    const { data, error } = await sb
+      .from("invites")
+      .insert({ ...row, code })
+      .select("id, code")
+      .single();
+    if (!error) {
+      revalidatePath("/admin/invites");
+      return actionOk(data);
+    }
+    // Postgres unique_violation = 23505. Anything else is a real error.
+    if (error.code !== "23505") return actionFail(error.message);
+  }
+  return actionFail("Could not allocate a unique invite code. Please try again.");
 }
 
 export async function deleteInvite(id: string) {
