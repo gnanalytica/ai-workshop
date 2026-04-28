@@ -1,7 +1,28 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
+import { EnterSandboxButton } from "@/components/sandbox/EnterSandboxButton";
 import { tourFor } from "@/lib/tours";
 import type { Persona } from "@/lib/auth/persona";
+import { VideoSlot } from "@/components/handbook/VideoSlot";
+
+export interface HandbookVideoEntry {
+  url: string;
+  caption?: string | null;
+  thumbnailUrl?: string | null;
+}
+
+/**
+ * Map of `"<tab>.<slugified-title>"` → entry (or null when no video yet).
+ * `null` keys are placeholders staff fill in later.
+ */
+export type HandbookVideoManifest = Record<string, HandbookVideoEntry | null>;
+
+function slugifyTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 export interface HandbookSection {
   title: string;
@@ -30,6 +51,8 @@ export interface StaticHandbookProps {
   dashboardExtras?: HandbookSection[];
   /** Active tab from the URL searchParams. Defaults to "your_role". */
   tab: HandbookTab;
+  /** Optional per-section video manifest, scoped to this persona. */
+  videoManifest?: HandbookVideoManifest;
 }
 
 export type HandbookTab = "your_role" | "setup" | "dashboard_nav" | "day_by_day";
@@ -51,7 +74,10 @@ export function StaticHandbook({
   dayByDay,
   dashboardExtras = [],
   tab,
+  videoManifest,
 }: StaticHandbookProps) {
+  const activeSections =
+    tab === "your_role" ? yourRole : tab === "setup" ? setup : dayByDay;
   return (
     <div className="space-y-8">
       <header className="border-hairline bg-card relative overflow-hidden rounded-2xl border p-6 shadow-soft sm:p-8">
@@ -108,16 +134,24 @@ export function StaticHandbook({
         <DashboardNavTab persona={persona} extras={dashboardExtras} />
       ) : (
         <SectionGrid
-          sections={
-            tab === "your_role" ? yourRole : tab === "setup" ? setup : dayByDay
-          }
+          sections={activeSections}
+          tab={tab}
+          videoManifest={videoManifest}
         />
       )}
     </div>
   );
 }
 
-function SectionGrid({ sections }: { sections: HandbookSection[] }) {
+function SectionGrid({
+  sections,
+  tab,
+  videoManifest,
+}: {
+  sections: HandbookSection[];
+  tab?: HandbookTab;
+  videoManifest?: HandbookVideoManifest;
+}) {
   if (sections.length === 0) {
     return (
       <Card className="border-dashed border-hairline p-8 text-center">
@@ -127,14 +161,25 @@ function SectionGrid({ sections }: { sections: HandbookSection[] }) {
   }
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      {sections.map((s) => (
-        <Card key={s.title} className="p-6">
-          <CardTitle className="mb-2 text-base">{s.title}</CardTitle>
-          <div className="text-muted text-sm leading-relaxed [&_p]:mb-2 [&_strong]:text-ink [&_a]:text-accent [&_a]:underline [&_ul]:ml-4 [&_ul]:list-disc [&_ul]:space-y-1 [&_li]:my-0">
-            {s.body}
-          </div>
-        </Card>
-      ))}
+      {sections.map((s) => {
+        const key = tab ? `${tab}.${slugifyTitle(s.title)}` : null;
+        const video = key && videoManifest ? videoManifest[key] : null;
+        return (
+          <Card key={s.title} className="p-6">
+            <CardTitle className="mb-2 text-base">{s.title}</CardTitle>
+            {video ? (
+              <VideoSlot
+                url={video.url}
+                caption={video.caption ?? null}
+                thumbnailUrl={video.thumbnailUrl ?? null}
+              />
+            ) : null}
+            <div className="text-muted text-sm leading-relaxed [&_p]:mb-2 [&_strong]:text-ink [&_a]:text-accent [&_a]:underline [&_ul]:ml-4 [&_ul]:list-disc [&_ul]:space-y-1 [&_li]:my-0">
+              {s.body}
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -155,7 +200,20 @@ function DashboardNavTab({
           A step-by-step tour of every screen you&apos;ll use, anchored to the actual
           sidebar links. Replay it anytime — it doesn&apos;t re-mark you as a new user.
         </CardSub>
-        <StartGuideButton persona={persona} />
+        <div className="flex flex-wrap items-center gap-3">
+          <StartGuideButton persona={persona} />
+          {(persona === "admin" || persona === "faculty") && (
+            <EnterSandboxButton />
+          )}
+        </div>
+        {(persona === "admin" || persona === "faculty") && (
+          <p className="text-muted mt-3 text-xs leading-relaxed">
+            Pro tip: open the sandbox first, then start the guide. You&apos;ll be
+            walking through the platform with realistic dummy students — every
+            drag, grade, or post is real, but scoped to the sandbox cohort. Hit{" "}
+            <span className="text-ink">Exit sandbox</span> any time.
+          </p>
+        )}
         <div className="mt-6">
           <p className="text-muted text-xs font-medium uppercase tracking-wider">
             What the guide covers

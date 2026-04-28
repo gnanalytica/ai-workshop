@@ -14,6 +14,9 @@ export interface HandbookModule {
   body_md: string | null;
   ordinal: number;
   category: HandbookCategory;
+  video_url: string | null;
+  video_caption: string | null;
+  video_thumbnail_url: string | null;
   status: "not_started" | "in_progress" | "completed" | null;
 }
 
@@ -24,7 +27,7 @@ export const listFacultyHandbook = cache(async (): Promise<HandbookModule[]> => 
 
   const { data: modules } = await sb
     .from("faculty_pretraining_modules")
-    .select("id, slug, title, body_md, ordinal, category")
+    .select("id, slug, title, body_md, ordinal, category, video_url, video_caption, video_thumbnail_url")
     .order("ordinal");
   if (!modules) return [];
 
@@ -39,15 +42,26 @@ export const listFacultyHandbook = cache(async (): Promise<HandbookModule[]> => 
     );
   }
 
-  return (modules as Array<{ id: string; slug: string; title: string; body_md: string | null; ordinal: number; category: HandbookCategory }>).map(
-    (m) => ({
-      id: m.id,
-      slug: m.slug,
-      title: m.title,
-      body_md: m.body_md,
-      ordinal: m.ordinal,
-      category: m.category,
-      status: progressMap.get(m.id) ?? null,
-    }),
-  );
+  return (modules as Array<{
+    id: string;
+    slug: string;
+    title: string;
+    body_md: string | null;
+    ordinal: number;
+    category: HandbookCategory;
+    video_url: string | null;
+    video_caption: string | null;
+    video_thumbnail_url: string | null;
+  }>).map((m) => ({
+    id: m.id,
+    slug: m.slug,
+    title: m.title,
+    body_md: m.body_md,
+    ordinal: m.ordinal,
+    category: m.category,
+    video_url: m.video_url,
+    video_caption: m.video_caption,
+    video_thumbnail_url: m.video_thumbnail_url,
+    status: progressMap.get(m.id) ?? null,
+  }));
 });

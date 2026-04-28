@@ -1,0 +1,32 @@
+{
+  "admin": {
+    "your_role.what-admin-owns": null,
+    "your_role.three-personas-no-overlap": null,
+    "your_role.first-admin-bootstrap": null,
+    "your_role.security-checklist": null,
+    "setup.what-you-need-locally": null,
+    "setup.optional-power-tools": null,
+    "setup.accounts-youll-likely-create": null,
+    "day_by_day.cohort-lifecycle": null,
+    "day_by_day.inviting-people": null,
+    "day_by_day.pods-faculty-assignment": null,
+    "day_by_day.roster-at-risk-monitoring": null,
+    "day_by_day.schedule-curriculum": null,
+    "day_by_day.support-escalation": null
+  },
+  "student": {
+    "your_role.what-you-signed-up-for": null,
+    "your_role.your-pod": null,
+    "your_role.submissions-grading": null,
+    "your_role.etiquette": null,
+    "setup.laptop-browser": null,
+    "setup.tools-to-install-before-day-1": null,
+    "setup.accounts-youll-need": null,
+    "setup.profile-timezone": null,
+    "day_by_day.a-typical-day": null,
+    "day_by_day.live-sessions": null,
+    "day_by_day.when-youre-stuck": null,
+    "day_by_day.milestones": null,
+    "day_by_day.certificate-after": null
+  }
+}

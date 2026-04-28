@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
+import { VideoSlot } from "@/components/handbook/VideoSlot";
 import type { HandbookModule } from "@/lib/queries/handbook";
 import { HandbookProgress } from "./HandbookProgress";
 
@@ -233,6 +234,13 @@ export function HandbookView({ modules }: { modules: HandbookModule[] }) {
                     aria-hidden
                   />
                   <div className="p-5 sm:p-7 md:p-8">
+                    {m.video_url ? (
+                      <VideoSlot
+                        url={m.video_url}
+                        caption={m.video_caption}
+                        thumbnailUrl={m.video_thumbnail_url}
+                      />
+                    ) : null}
                     {m.body_md ? (
                       <MarkdownView source={m.body_md} variant="handbook" />
                     ) : (

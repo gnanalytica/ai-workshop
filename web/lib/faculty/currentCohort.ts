@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
 import { getPreviewCohortId, getTruePersona } from "@/lib/auth/persona";
+import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 
 export interface FacultyCohort {
   id: string;
@@ -60,6 +61,22 @@ export const listMyFacultyCohorts = cache(async (): Promise<FacultyCohort[]> => 
  *   - Null if the user is not faculty (and not admin previewing).
  */
 export const getCurrentFacultyCohort = cache(async (): Promise<FacultyCohort | null> => {
+  // Sandbox takes precedence over everything: when active, all faculty pages
+  // operate against the demo cohort. The helper is fail-closed so non-eligible
+  // users never get here.
+  const sandboxId = await getActiveSandboxCohortId();
+  if (sandboxId) {
+    const svc = getSupabaseService();
+    const { data } = await svc
+      .from("cohorts")
+      .select("id, slug, name, status, starts_on, ends_on")
+      .eq("id", sandboxId)
+      .maybeSingle();
+    if (data) {
+      return { ...(data as Omit<FacultyCohort, "college_role">), college_role: "executive" };
+    }
+  }
+
   const previewCohortId = await getPreviewCohortId();
   if (previewCohortId) {
     const svc = getSupabaseService();
