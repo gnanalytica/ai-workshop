@@ -43,7 +43,7 @@ export default async function LeaderboardPage({
   const myPodName = myPods[0]?.pod_name ?? null;
 
   return (
-    <div className="space-y-6">
+    <div data-tour="leaderboard-page" className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {cohort.name} · Leaderboard

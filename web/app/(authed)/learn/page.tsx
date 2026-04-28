@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   const upcoming = days.filter((d) => d.day_number > today && d.day_number <= today + 3);
 
   return (
-    <div className="space-y-8">
+    <div data-tour="learn-page" className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">{cohort.name}</p>

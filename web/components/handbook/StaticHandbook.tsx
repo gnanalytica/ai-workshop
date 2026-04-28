@@ -79,7 +79,7 @@ export function StaticHandbook({
   const activeSections =
     tab === "your_role" ? yourRole : tab === "setup" ? setup : dayByDay;
   return (
-    <div className="space-y-8">
+    <div data-tour="handbook-page" className="space-y-8">
       <header className="border-hairline bg-card relative overflow-hidden rounded-2xl border p-6 shadow-soft sm:p-8">
         <div
           aria-hidden

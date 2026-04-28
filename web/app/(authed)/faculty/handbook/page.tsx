@@ -54,7 +54,7 @@ export default async function FacultyHandbookPage({
   }));
 
   return (
-    <div className="space-y-8">
+    <div data-tour="handbook-page" className="space-y-8">
       <header className="handbook-hero relative overflow-hidden rounded-2xl border border-hairline bg-card p-6 shadow-soft sm:p-8">
         <div
           aria-hidden

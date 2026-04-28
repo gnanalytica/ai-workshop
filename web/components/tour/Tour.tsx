@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { markOnboarded } from "@/lib/actions/profile";
 import { tourFor, type TourStep } from "@/lib/tours";
 import type { Persona } from "@/lib/auth/persona";
@@ -62,35 +63,92 @@ function Tour({
   steps: TourStep[];
   onClose: (completed: boolean) => void;
 }) {
+  const router = useRouter();
+  const pathname = usePathname() ?? "/";
   const [index, setIndex] = useState(0);
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
+  const [navigating, setNavigating] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  // Track the index we last triggered navigation for so server-side redirects
+  // (e.g. /admin/roster → /admin/cohorts/<id>/roster) don't cause infinite
+  // re-pushes when pathname stabilizes on a different URL than step.path.
+  const navigatedForIndexRef = useRef<number>(-1);
 
   const step = steps[index];
   const isFirst = index === 0;
   const isLast = index === steps.length - 1;
 
+  // Resolve the anchor for the current step. Three flavors:
+  //   1. step has a `path` we're not on yet → router.push(); show "loading"
+  //      state. The pathname dep retriggers when navigation completes.
+  //   2. step has a selector → poll for it (handles async-rendered DOM after
+  //      route change) and re-position on resize / scroll.
+  //   3. step has neither → centered card.
   useLayoutEffect(() => {
     if (!step) return;
+
+    // (1) Navigate first if needed. Only push once per step — once we've
+    // started a push for this step we wait for the pathname/DOM to settle and
+    // don't retry. This handles server redirects (e.g. /admin/roster →
+    // /admin/cohorts/<id>/roster) which would otherwise loop.
+    if (step.path && pathname !== step.path) {
+      if (navigatedForIndexRef.current !== index) {
+        navigatedForIndexRef.current = index;
+        setAnchor(null);
+        setNavigating(true);
+        router.push(step.path);
+        return;
+      }
+      // Already pushed for this step — pathname differs because of redirect.
+      // Carry on and search for the selector on whatever page we landed on.
+    }
+
+    setNavigating(false);
+
     if (!step.selector) {
       setAnchor(null);
       return;
     }
-    const el = document.querySelector(step.selector) as HTMLElement | null;
-    if (!el) {
-      setAnchor(null);
-      return;
-    }
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-    const update = () => setAnchor(el.getBoundingClientRect());
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update, true);
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update, true);
+
+    // (2) Poll for the anchor element. Useful right after a route change when
+    // the destination page may stream in. Bail after 4s and center the card.
+    let raf = 0;
+    let canceled = false;
+    const startedAt = performance.now();
+    const update = (el: HTMLElement) => {
+      if (!canceled) setAnchor(el.getBoundingClientRect());
     };
-  }, [step]);
+    const onResize = () => {
+      const el = step.selector
+        ? (document.querySelector(step.selector) as HTMLElement | null)
+        : null;
+      if (el) update(el);
+    };
+    const tick = () => {
+      if (canceled) return;
+      const el = document.querySelector(step.selector!) as HTMLElement | null;
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        update(el);
+        return;
+      }
+      if (performance.now() - startedAt > 4000) {
+        setAnchor(null); // give up; card centers
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onResize, true);
+    return () => {
+      canceled = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onResize, true);
+    };
+  }, [step, pathname, router, index]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -162,6 +220,11 @@ function Tour({
         <div className="text-muted mb-2 flex items-center justify-between text-[10px] uppercase tracking-widest">
           <span>
             Step {index + 1} of {steps.length}
+            {step.path && (
+              <span className="text-accent/80 ml-2 font-mono normal-case tracking-normal">
+                {step.path}
+              </span>
+            )}
           </span>
           <button
             type="button"
@@ -176,6 +239,12 @@ function Tour({
           {step.title}
         </h2>
         <p className="text-muted mt-1.5 text-sm leading-relaxed">{step.body}</p>
+        {navigating && (
+          <p className="text-accent mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em]">
+            <span className="bg-accent inline-block h-1.5 w-1.5 animate-pulse rounded-full" />
+            Loading {step.path}…
+          </p>
+        )}
         <div className="mt-4 flex items-center justify-between gap-2">
           <button
             type="button"
@@ -188,7 +257,8 @@ function Tour({
           <button
             type="button"
             onClick={next}
-            className="bg-accent text-cta-ink rounded-md px-4 py-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+            disabled={navigating}
+            className="bg-accent text-cta-ink rounded-md px-4 py-1.5 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {isLast ? "Done" : "Next →"}
           </button>

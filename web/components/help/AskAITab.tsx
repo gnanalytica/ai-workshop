@@ -10,18 +10,20 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /**
- * Phase 6 — in-product help chat.
+ * Phase 6 — workshop concierge channel.
  *
- * Lightweight custom transport that posts `{messages, route, clientMessageId,
- * conversationId}` to `/api/help-chat`, then streams the response body as raw
- * text deltas (the route uses `streamText().toTextStreamResponse()`). When
- * `@ai-sdk/react` lands, we can swap this for `useChat` without touching the
- * server route.
+ * Dispatch metaphor:
+ *   - User messages are framed as TX (transmit), assistant as RX (receive).
+ *   - Mono throughout for that "console" texture.
+ *   - Citations render as bracket tags `[HBK·slug]` / `[D14]` so they read
+ *     like channel codes, not generic links.
+ *   - Composer is a single-line transmit prompt with a leading `›` glyph.
+ *
+ * Streams `{messages, route, clientMessageId, conversationId}` to
+ * `/api/help-chat`. Token deltas append to the in-flight RX bubble.
  */
 
 interface ChatMessage {
@@ -30,7 +32,8 @@ interface ChatMessage {
   content: string;
 }
 
-const RATE_LIMIT_COPY = "You've hit today's chat limit (30 messages/day). Open the help desk for anything urgent.";
+const RATE_LIMIT_COPY =
+  "Daily transmission limit reached (30/day). Reach the help desk for anything urgent.";
 
 export function AskAITab() {
   const pathname = usePathname() ?? "/";
@@ -42,9 +45,11 @@ export function AskAITab() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  // auto-scroll on new messages / new tokens
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages, streaming]);
 
   const send = useCallback(
@@ -79,7 +84,7 @@ export function AskAITab() {
           return;
         }
         if (!res.ok || !res.body) {
-          setError("Something went wrong. Try again in a moment.");
+          setError("Transmission failed. Try again in a moment.");
           setMessages((curr) => curr.filter((m) => m.id !== assistantId));
           return;
         }
@@ -90,7 +95,6 @@ export function AskAITab() {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let acc = "";
-        // Stream tokens into the placeholder assistant message.
         for (;;) {
           const { value, done } = await reader.read();
           if (done) break;
@@ -101,7 +105,7 @@ export function AskAITab() {
         }
       } catch (err) {
         console.error("[help-chat client]", err);
-        setError("Network error. Check your connection and try again.");
+        setError("Network down — check your connection.");
         setMessages((curr) => curr.filter((m) => m.id !== assistantId));
       } finally {
         setStreaming(false);
@@ -116,77 +120,152 @@ export function AskAITab() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="bg-bg flex h-full min-h-0 flex-col">
       <div
         ref={scrollRef}
-        className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3"
+        className="flex-1 min-h-0 space-y-4 overflow-y-auto px-5 py-4 font-mono text-[12.5px] leading-[1.6]"
       >
-        {messages.length === 0 && !rateLimited && (
-          <EmptyState />
-        )}
+        {messages.length === 0 && !rateLimited && <EmptyState />}
         {rateLimited && (
-          <div className="border-line bg-bg-soft text-ink/85 rounded-md border p-4 text-sm">
-            {RATE_LIMIT_COPY}
+          <div className="border-warn/35 bg-warn/[0.05] text-ink/85 rounded-sm border-l-2 px-3 py-2.5 text-xs">
+            <p className="text-warn font-semibold uppercase tracking-[0.18em] text-[10px] mb-1">
+              ▲ Limit reached
+            </p>
+            <p className="font-sans">{RATE_LIMIT_COPY}</p>
           </div>
         )}
         {messages.map((m) => (
-          <MessageBubble key={m.id} message={m} streaming={streaming} />
+          <Transmission key={m.id} message={m} streaming={streaming} />
         ))}
         {error && (
-          <div className="text-danger text-xs">{error}</div>
+          <div className="text-danger font-mono text-[11px] uppercase tracking-[0.18em]">
+            ✕ {error}
+          </div>
         )}
       </div>
 
       <form
         onSubmit={onSubmit}
-        className="border-line bg-card flex items-center gap-2 border-t p-3"
+        className="border-line bg-card/70 flex items-stretch border-t"
       >
-        <Input
+        <span
+          aria-hidden
+          className="text-accent flex w-10 shrink-0 items-center justify-center font-mono text-base"
+        >
+          ›
+        </span>
+        <input
           value={input}
           onChange={(e) => setInput(e.currentTarget.value)}
-          placeholder={rateLimited ? "Limit reached for today" : "Ask anything about the workshop…"}
+          placeholder={
+            rateLimited ? "Channel locked until tomorrow" : "Transmit a question…"
+          }
           disabled={streaming || rateLimited}
-          aria-label="Ask the help assistant"
+          aria-label="Transmit a question to the workshop concierge"
+          className="
+            flex-1 bg-transparent px-1 py-3.5 outline-none
+            text-ink placeholder:text-muted/65
+            font-mono text-sm
+            disabled:opacity-60
+          "
         />
-        <Button type="submit" disabled={streaming || rateLimited || !input.trim()}>
-          {streaming ? "…" : "Send"}
-        </Button>
+        <button
+          type="submit"
+          disabled={streaming || rateLimited || !input.trim()}
+          className="
+            border-line text-muted hover:text-ink hover:bg-bg-soft
+            border-l flex w-16 shrink-0 items-center justify-center
+            font-mono text-[10px] uppercase tracking-[0.22em]
+            transition-colors
+            disabled:opacity-40 disabled:hover:text-muted disabled:hover:bg-transparent disabled:cursor-not-allowed
+          "
+        >
+          {streaming ? <span className="text-accent animate-pulse">···</span> : "Send"}
+        </button>
       </form>
     </div>
   );
 }
 
 function EmptyState() {
+  const examples = [
+    "How do I grade a submission?",
+    "What's on Day 7?",
+    "Where do I see the at-risk roster?",
+  ];
   return (
-    <div className="text-muted px-1 py-6 text-sm">
-      <p className="text-ink mb-2 font-medium">Ask the help assistant</p>
-      <p>
-        Questions about your pod, today&apos;s lab, grading, or how something on this
-        screen works — start typing below. The answer will cite the handbook section
-        it came from.
+    <div className="font-sans">
+      <p className="text-muted font-mono text-[10px] uppercase tracking-[0.22em] mb-3">
+        ✦ Channel open
       </p>
+      <p className="text-ink mb-1.5 text-sm font-medium">
+        How can I help?
+      </p>
+      <p className="text-muted text-xs leading-relaxed">
+        Pod questions, today&apos;s lab, grading, navigation. Replies cite the handbook
+        section they came from.
+      </p>
+      <ul className="mt-4 space-y-1.5">
+        {examples.map((ex) => (
+          <li
+            key={ex}
+            className="
+              text-ink/75 hover:text-ink hover:border-accent/40
+              border-line flex items-center gap-2 border-l-2 px-3 py-1.5
+              font-mono text-[11.5px]
+              transition-colors
+            "
+          >
+            <span className="text-accent/70 text-[10px]">›</span>
+            <span>{ex}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-function MessageBubble({ message, streaming }: { message: ChatMessage; streaming: boolean }) {
+function Transmission({
+  message,
+  streaming,
+}: {
+  message: ChatMessage;
+  streaming: boolean;
+}) {
   const isUser = message.role === "user";
   const showShimmer = !isUser && streaming && message.content.length === 0;
+  const label = isUser ? "TX" : "RX";
 
   return (
-    <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
+    <div className="flex flex-col gap-1.5">
       <div
         className={cn(
-          "max-w-[88%] rounded-2xl border px-3.5 py-2.5 text-sm leading-6",
+          "flex items-center gap-2 text-[9.5px] uppercase tracking-[0.2em]",
+          isUser ? "text-accent/80" : "text-muted/80",
+        )}
+      >
+        <span
+          className={cn(
+            "h-1 w-1 rounded-full",
+            isUser ? "bg-[hsl(var(--accent))]" : "bg-muted",
+          )}
+        />
+        <span className="font-semibold">{label}</span>
+        <span className="text-muted/40">·</span>
+        <span className="text-muted/60">{isUser ? "you" : "workshop concierge"}</span>
+      </div>
+      <div
+        className={cn(
+          "border-l-2 pl-3 leading-[1.65]",
           isUser
-            ? "bg-accent/10 border-accent/30 text-ink"
-            : "bg-card border-line text-ink/90",
+            ? "text-ink border-accent/55"
+            : "text-ink/90 border-line",
         )}
       >
         {showShimmer ? (
           <ShimmerLine />
         ) : (
-          <RenderedAssistantText text={message.content} isUser={isUser} />
+          <RenderedText text={message.content} isUser={isUser} />
         )}
       </div>
     </div>
@@ -195,21 +274,16 @@ function MessageBubble({ message, streaming }: { message: ChatMessage; streaming
 
 function ShimmerLine() {
   return (
-    <div className="flex items-center gap-1.5 py-1">
-      <span className="bg-muted/60 h-1.5 w-1.5 animate-pulse rounded-full" />
-      <span className="bg-muted/60 h-1.5 w-1.5 animate-pulse rounded-full [animation-delay:120ms]" />
-      <span className="bg-muted/60 h-1.5 w-1.5 animate-pulse rounded-full [animation-delay:240ms]" />
+    <div className="flex items-center gap-1 py-1.5 font-mono text-[11px] tracking-[0.2em] text-muted/70">
+      <span className="animate-pulse">▮</span>
+      <span className="animate-pulse [animation-delay:120ms]">▮</span>
+      <span className="animate-pulse [animation-delay:240ms]">▮</span>
     </div>
   );
 }
 
-/**
- * Render assistant text with [handbook:slug] and [day-N] tags swapped for
- * linkified chips. User text is rendered as plain text. We deliberately keep
- * markdown rendering minimal here — just paragraph splits + citation chips —
- * because the prompt asks for short responses.
- */
-function RenderedAssistantText({ text, isUser }: { text: string; isUser: boolean }) {
+/** Render assistant text with [handbook:slug] / [day-N] swapped to chips. */
+function RenderedText({ text, isUser }: { text: string; isUser: boolean }) {
   const segments = useMemo(() => parseCitations(text), [text]);
   return (
     <div className="whitespace-pre-wrap break-words">
@@ -222,7 +296,13 @@ function RenderedAssistantText({ text, isUser }: { text: string; isUser: boolean
           <Link
             key={i}
             href={seg.href}
-            className="bg-accent/10 text-accent border-accent/30 mx-0.5 inline-flex items-center rounded border px-1.5 py-0 align-baseline text-[0.78em] font-medium hover:bg-accent/20"
+            className="
+              text-accent hover:bg-accent/10 hover:border-accent/55
+              border-accent/35 mx-0.5 inline-flex items-center gap-1
+              border-l border-r px-1.5 align-baseline
+              font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em]
+              transition-colors
+            "
           >
             {seg.label}
           </Link>
@@ -238,7 +318,6 @@ type Segment =
 
 function parseCitations(text: string): Segment[] {
   const out: Segment[] = [];
-  // Match [handbook:some-slug] or [day-12]
   const re = /\[(handbook:[a-z0-9_\-#]+|day-\d+)\]/gi;
   let cursor = 0;
   let m: RegExpExecArray | null;
@@ -251,12 +330,12 @@ function parseCitations(text: string): Segment[] {
       out.push({
         type: "citation",
         raw,
-        label: slug.replace(/[_-]/g, " "),
+        label: `HBK·${slug.replace(/[_-]/g, " ").slice(0, 24)}`,
         href: hrefForHandbookSlug(slug),
       });
     } else {
       const n = tag.replace("day-", "");
-      out.push({ type: "citation", raw, label: `Day ${n}`, href: `/day/${n}` });
+      out.push({ type: "citation", raw, label: `D${n}`, href: `/day/${n}` });
     }
     cursor = m.index + raw.length;
   }
@@ -267,7 +346,6 @@ function parseCitations(text: string): Segment[] {
 function hrefForHandbookSlug(slug: string): string {
   if (slug.startsWith("admin-")) return "/admin/handbook";
   if (slug.startsWith("student-")) return "/handbook";
-  // Faculty handbook modules use their slug as an id-like anchor.
   return `/faculty/handbook#${slug}`;
 }
 

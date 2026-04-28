@@ -10,7 +10,7 @@ export default async function AdminOrgsPage() {
   const [orgs, promos] = await Promise.all([listOrgs(), listPromos()]);
 
   return (
-    <div className="space-y-8">
+    <div data-tour="admin-orgs" className="space-y-8">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Organizations</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Customers &amp; promo codes</h1>

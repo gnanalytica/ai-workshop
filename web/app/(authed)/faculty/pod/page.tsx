@@ -32,7 +32,7 @@ export default async function FacultyPodPage() {
   const atRisk = atRiskAll.filter((s) => podStudentIds.has(s.user_id)).length;
 
   return (
-    <div className="space-y-6">
+    <div data-tour="faculty-pod-page" className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {f.cohort.name}

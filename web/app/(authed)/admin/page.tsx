@@ -33,7 +33,7 @@ export default async function AdminHome() {
   const others = cohorts.filter((c) => c.status !== "live");
 
   return (
-    <div className="space-y-6">
+    <div data-tour="admin-home" className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           Admin

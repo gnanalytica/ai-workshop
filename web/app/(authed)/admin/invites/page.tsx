@@ -9,7 +9,7 @@ export default async function AdminInvitesPage() {
   const [invites, cohorts] = await Promise.all([listInvites(), listCohortsForInvites()]);
 
   return (
-    <div className="space-y-8">
+    <div data-tour="admin-invites" className="space-y-8">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Invites</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Sign-up invite codes</h1>

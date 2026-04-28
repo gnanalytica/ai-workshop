@@ -57,7 +57,7 @@ export default async function BoardPage({
 
   const all = await listCommunityPosts(cohort.id);
   return (
-    <div className="space-y-6">
+    <div data-tour="community-page" className="space-y-6">
       <CommunityLiveRefresh cohortId={cohort.id} />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>

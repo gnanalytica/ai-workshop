@@ -1,8 +1,11 @@
 import type { Persona } from "@/lib/auth/persona";
 
 export interface TourStep {
-  /** CSS selector. The tour finds the first match and anchors the tooltip
-   *  next to it. Falls back to a centered modal if the element is missing. */
+  /** Optional pathname. When set, the controller `router.push()`s here
+   *  before showing the step, then waits for the selector to mount. */
+  path?: string;
+  /** CSS selector for the spotlight anchor on the destination page.
+   *  Falls back to a centered card if the element doesn't appear in 4s. */
   selector?: string;
   title: string;
   body: string;
@@ -11,133 +14,156 @@ export interface TourStep {
 const STUDENT_TOUR: TourStep[] = [
   {
     title: "Welcome to the workshop",
-    body: "30 days, one habit. We'll walk through the seven places you'll spend most of your time. Press → to continue, ← to go back, Esc to skip.",
+    body: "30 days, one habit. We'll walk every screen you'll use. Press → to continue, ← to go back, Esc to skip.",
   },
   {
-    selector: 'a[href="/learn"]',
+    path: "/learn",
+    selector: '[data-tour="day-card"], [data-tour="learn-page"]',
     title: "Daily lesson",
-    body: "Today's content unlocks here every morning. Read, build the lab, submit when you're done. Streaks matter more than perfection.",
+    body: "Today's content unlocks here every morning. Read once, build the lab, submit when you're done. Streaks beat perfection.",
   },
   {
-    selector: 'a[href="/pod"]',
+    path: "/pod",
+    selector: '[data-tour="pod-page"]',
     title: "Your pod",
     body: "A small group of students with assigned faculty. This is where you get accountability, peer review, and live-session breakouts.",
   },
   {
-    selector: 'a[href="/community"]',
+    path: "/community",
+    selector: '[data-tour="community-page"]',
     title: "Community board",
-    body: "Ask questions, share what you built, vote up the best posts. Faster than DMs and helps everyone learn.",
+    body: "Ask questions, share what you built, vote up the best posts. Faster than DMs, public so everyone learns.",
   },
   {
-    selector: 'a[href="/help-desk"]',
+    path: "/help-desk",
+    selector: '[data-tour="help-desk-page"]',
     title: "Stuck?",
-    body: "Open a help-desk ticket — your faculty sees it within the hour during workshop hours. Use this for blockers, not general discussion.",
+    body: "Open a help-desk ticket — your faculty sees it within the hour during workshop hours. Use it for blockers, not chit-chat.",
   },
   {
-    selector: 'a[href="/leaderboard"]',
+    path: "/leaderboard",
+    selector: '[data-tour="leaderboard-page"]',
     title: "Leaderboard",
-    body: "See where you stand on submissions, quiz scores, posts, and upvotes. Friendly competition; not a gate to anything.",
+    body: "Where you stand on submissions, quizzes, posts, and upvotes. Friendly competition; not a gate to anything.",
   },
   {
-    selector: 'a[href="/settings/profile"]',
+    path: "/handbook",
+    selector: '[data-tour="handbook-page"]',
+    title: "Handbook",
+    body: "Your workshop guide. Replay this tour any time from the Dashboard navigation tab.",
+  },
+  {
+    selector: '[data-tour-target="user-menu"]',
     title: "Your profile",
-    body: "Set your full name, college, avatar, and timezone here. You can also change your email if you signed up with the wrong one.",
+    body: "Click your avatar (top-right) to update your name, avatar, college, and email. Sign-out lives here too.",
   },
   {
     title: "You're set",
-    body: "Hit “Done” and head to today's lesson. The handbook (in the sidebar later) has more if you want a deeper dive.",
+    body: "Hit “Done” and head to today's lesson. The handbook keeps everything within reach.",
   },
 ];
 
 const FACULTY_TOUR: TourStep[] = [
   {
     title: "Welcome, faculty",
-    body: "Here's the lay of the land before your first cohort day. Press → to continue, ← to go back, Esc to skip.",
+    body: "Here's the lay of the land before your first cohort day. We'll walk to each page and show what's there. Press → to continue, ← back, Esc to skip.",
   },
   {
-    selector: 'a[href="/faculty"]',
-    title: "Today",
-    body: "Your daily landing page. Live session info, submissions to review, open help-desk tickets — all in one place.",
-  },
-  {
-    selector: 'a[href="/faculty/cohort"]',
-    title: "Cohort kanban",
-    body: "All pods, all students, all faculty in one view. Drag to reassign, or flip to list view for bulk operations and filtering.",
-  },
-  {
-    selector: 'a[href="/faculty/pod"]',
+    path: "/faculty/pod",
+    selector: '[data-tour="faculty-pod-page"]',
     title: "Your pod",
-    body: "A focused view of just the pod you're assigned to — students, their progress, last activity, at-risk signals.",
+    body: "Daily landing surface. Your assigned pod's students, progress, last activity, and at-risk signals at a glance.",
   },
   {
-    selector: 'a[href="/faculty/help-desk"]',
+    path: "/faculty/cohort",
+    selector: '[data-tour="faculty-cohort-board"]',
+    title: "Cohort kanban",
+    body: "All pods, all students, all faculty in one view. Drag to reassign. The view toggle (top right) flips to a flat list for bulk operations.",
+  },
+  {
+    path: "/faculty/schedule",
+    selector: '[data-tour="faculty-schedule"]',
+    title: "Schedule",
+    body: "Day-by-day cadence. Live-session times, what's locked vs unlocked, what students are working on today.",
+  },
+  {
+    path: "/faculty/help-desk",
+    selector: '[data-tour="faculty-help-desk"]',
     title: "Help desk",
-    body: "Triage student questions. Anything pod-scoped lands here; tech-only issues escalate to the staff queue automatically.",
+    body: "Triage student questions. Pod-scoped tickets land here; tech-only issues escalate to staff automatically. Keep this tab open during workshop hours.",
   },
   {
-    selector: 'a[href="/faculty/handbook"]',
+    path: "/faculty/handbook",
+    selector: '[data-tour="handbook-page"]',
     title: "Handbook",
-    body: "Onboarding guide, day-by-day playbook, grading rubric, escalation steps. Bookmark it — that's your daily reference.",
+    body: "Onboarding playbook, day-by-day notes, escalation steps. Bookmark it. The Dashboard navigation tab here replays this tour anytime.",
   },
   {
-    selector: 'a[href="/settings/profile"]',
+    selector: '[data-tour-target="user-menu"]',
     title: "Your profile",
-    body: "Set your name, avatar, and email. Your students see your name on every assignment they get reviewed.",
+    body: "Click your avatar (top-right) to update your name, avatar, and email. Students see your name on every assignment review.",
   },
   {
     title: "You're set",
-    body: "Hit “Done” and open the handbook for the deep dive. The interactive guide button there will replay this anytime.",
+    body: "Hit “Done”. Open the field channel from the handbook to practice in the sandbox cohort — drag students, grade submissions, post on the board, all without touching real data.",
   },
 ];
 
 const ADMIN_TOUR: TourStep[] = [
   {
     title: "Admin overview",
-    body: "You can do everything any persona can, plus the bits below. Press → to continue, ← to go back, Esc to skip.",
+    body: "Everything any persona can do, plus the bits below. We'll walk to each page. Press → to continue, ← back, Esc to skip.",
   },
   {
-    selector: 'a[href="/admin"]',
+    path: "/admin",
+    selector: '[data-tour="admin-home"]',
     title: "Admin home",
-    body: "Cohort health at a glance — registrations, attendance, at-risk students, support load. Start here every morning.",
+    body: "Cohort health at a glance — registrations, attendance, at-risk students, support load. Start your morning here.",
   },
   {
-    selector: 'a[href="/admin/invites"]',
+    path: "/admin/invites",
+    selector: '[data-tour="admin-invites"]',
     title: "Invites",
     body: "Generate one-time codes for students, faculty, or new admins. Each code is scoped to a kind + cohort and tracked through redemption.",
   },
   {
-    selector: 'a[href="/admin/roster"]',
+    path: "/admin/roster",
+    selector: '[data-tour="admin-roster"]',
     title: "Roster",
     body: "Everyone in the cohort with capability badges, progress, and direct actions. Source of truth for who's in.",
   },
   {
-    selector: 'a[href="/admin/pods"]',
-    title: "Pods",
-    body: "Same kanban faculty see, with cross-cohort tooling like bulk-reassign and balance checks.",
+    path: "/admin/cohorts",
+    selector: '[data-tour="admin-cohorts"]',
+    title: "Cohorts",
+    body: "All cohorts you manage — lifecycle status, enrolment counts, capstone progress. Click in to manage pods, schedule, and content.",
   },
   {
-    selector: 'a[href="/admin/faculty"]',
-    title: "Faculty",
-    body: "Assign and manage faculty across pods. View their grading load and student coverage at a glance.",
-  },
-  {
-    selector: 'a[href="/admin/schedule"]',
+    path: "/admin/schedule",
+    selector: '[data-tour="admin-schedule"]',
     title: "Schedule",
     body: "Day unlocks, live-session timings, cohort lifecycle (draft → live → archived). Edit dates and content in one place.",
   },
   {
-    selector: 'a[href="/admin/handbook"]',
-    title: "Admin handbook",
-    body: "Lifecycle playbook, security notes, runbooks for common operations. Open it after the tour for the full reference.",
+    path: "/admin/orgs",
+    selector: '[data-tour="admin-orgs"]',
+    title: "Organizations",
+    body: "Partner colleges and how they map to cohorts. Faculty assignments roll up here.",
   },
   {
-    selector: 'a[href="/settings/profile"]',
+    path: "/admin/handbook",
+    selector: '[data-tour="handbook-page"]',
+    title: "Admin handbook",
+    body: "Lifecycle playbook, security notes, runbooks. The Dashboard navigation tab replays this tour anytime.",
+  },
+  {
+    selector: '[data-tour-target="user-menu"]',
     title: "Your profile",
-    body: "Set your name, avatar, and email. Don't forget to bootstrap a backup admin before launch.",
+    body: "Click your avatar (top-right) to update your name, avatar, and email — and don't forget to bootstrap a backup admin before launch.",
   },
   {
     title: "You're set",
-    body: "Hit “Done” and open the admin handbook. The interactive guide button there will replay this anytime.",
+    body: "Hit “Done”. Open the field channel from the handbook to practice in the sandbox cohort with realistic dummy data.",
   },
 ];
 

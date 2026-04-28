@@ -21,7 +21,7 @@ export default async function MyPodPage() {
     );
   }
   return (
-    <div className="space-y-6">
+    <div data-tour="pod-page" className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">My pod</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">{pod.pod_name}</h1>

@@ -28,7 +28,7 @@ export default async function StudentHelpDeskPage() {
   const openTotal = tickets[0]?.open_in_cohort ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div data-tour="help-desk-page" className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {cohort.name} · Help desk

@@ -30,7 +30,7 @@ export default async function FacultySchedulePage() {
   const dayHref = (n: number) => `/faculty/day/${n}`;
 
   return (
-    <div className="space-y-8">
+    <div data-tour="faculty-schedule" className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-accent font-mono text-xs tracking-widest uppercase">{cohort.name}</p>

@@ -18,6 +18,7 @@ export function UserMenu({
       <DropdownMenu.Trigger asChild>
         <button
           aria-label="User menu"
+          data-tour-target="user-menu"
           className="bg-bg-soft text-ink hover:bg-card hover:border-accent/30 border-line inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
         >
           {initial}
