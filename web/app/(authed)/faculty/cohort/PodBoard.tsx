@@ -65,6 +65,9 @@ export function PodBoard({
   const [drawerTarget, setDrawerTarget] = useState<StudentDrawerTarget | null>(
     null,
   );
+  const [viewMode, setViewMode] = useState<"kanban" | "faculty" | "students">(
+    "kanban",
+  );
 
   const all: Located[] = useMemo(() => {
     const list: Located[] = [];
@@ -263,30 +266,36 @@ export function PodBoard({
         </Card>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search students by name…"
-          aria-label="Search students"
-          className="max-w-xs"
-        />
-        {query && (
+        <ViewToggle mode={viewMode} onChange={setViewMode} />
+        {viewMode !== "faculty" && (
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search students by name…"
+            aria-label="Search students"
+            className="max-w-xs"
+          />
+        )}
+        {viewMode !== "faculty" && query && (
           <span className="text-muted text-xs">
             {matchCount} match{matchCount === 1 ? "" : "es"}
           </span>
         )}
-        {query && matchCount > 0 && (
+        {viewMode !== "faculty" && query && matchCount > 0 && (
           <Button size="sm" variant="ghost" onClick={selectAllMatches}>
             Select all matches
           </Button>
         )}
         <span className="text-muted ml-auto text-xs">
-          Tip: tick students to bulk-assign, drag chips between pods, or click a
-          name to peek.
+          {viewMode === "kanban"
+            ? "Tip: tick students to bulk-assign, drag chips between pods, or click a name to peek."
+            : viewMode === "students"
+              ? "Tick rows to bulk-assign, or use the per-row dropdown."
+              : "Use the per-row dropdown to move a faculty member between pods."}
         </span>
       </div>
 
-      {selectedCount > 0 && (
+      {viewMode !== "faculty" && selectedCount > 0 && (
         <div className="border-accent/40 bg-accent/5 sticky top-2 z-10 flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 backdrop-blur">
           <Badge variant="accent">{selectedCount} selected</Badge>
           <span className="text-muted text-xs">Move to:</span>
@@ -325,6 +334,7 @@ export function PodBoard({
         </div>
       )}
 
+      {viewMode === "kanban" && (
       <div className="grid gap-4 lg:grid-cols-3 xl:grid-cols-4">
         <DropColumn
           title="Cohort faculty"
@@ -451,6 +461,50 @@ export function PodBoard({
           </DropColumn>
         ))}
       </div>
+      )}
+
+      {viewMode === "faculty" && (
+        <FacultyListView
+          pods={pods}
+          allFaculty={[
+            ...pods.flatMap((p) =>
+              p.faculty.map((f) => ({
+                user_id: f.user_id,
+                full_name: f.full_name,
+                college_role: f.college_role,
+                podId: p.pod_id,
+                podName: p.name,
+              })),
+            ),
+            ...unassignedFaculty.map((f) => ({
+              user_id: f.user_id,
+              full_name: f.full_name,
+              college_role: f.college_role,
+              podId: null as string | null,
+              podName: null as string | null,
+            })),
+          ]}
+          canManagePods={canManagePods}
+          pending={pending}
+          onMove={moveFaculty}
+        />
+      )}
+
+      {viewMode === "students" && (
+        <StudentListView
+          pods={pods}
+          allLocated={all}
+          query={query}
+          matchedIds={matchedIds}
+          selected={selected}
+          onToggle={toggle}
+          onOpenDrawer={(s) => setDrawerTarget(s)}
+          canManagePods={canManagePods}
+          pending={pending}
+          onMove={(toPodId, ids) => moveMany(toPodId, ids)}
+        />
+      )}
+
       {pending && <p className="text-muted text-xs">Saving…</p>}
 
       <StudentDrawer
@@ -645,6 +699,244 @@ function DropColumn({
       </div>
       {subtitle && <CardSub className="mb-2 text-xs">{subtitle}</CardSub>}
       <div>{children}</div>
+    </Card>
+  );
+}
+
+function ViewToggle({
+  mode,
+  onChange,
+}: {
+  mode: "kanban" | "faculty" | "students";
+  onChange: (m: "kanban" | "faculty" | "students") => void;
+}) {
+  const opts: Array<{ id: typeof mode; label: string }> = [
+    { id: "kanban", label: "Kanban" },
+    { id: "faculty", label: "Faculty" },
+    { id: "students", label: "Students" },
+  ];
+  return (
+    <div
+      role="tablist"
+      aria-label="Roster view"
+      className="border-line bg-input-bg inline-flex items-center rounded-md border p-0.5 text-xs"
+    >
+      {opts.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="tab"
+          aria-selected={mode === o.id}
+          onClick={() => onChange(o.id)}
+          className={cn(
+            "rounded-[5px] px-3 py-1 transition-colors",
+            mode === o.id
+              ? "bg-accent text-cta-ink font-medium"
+              : "text-muted hover:text-ink",
+          )}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+interface FacultyRow {
+  user_id: string;
+  full_name: string | null;
+  college_role: "support" | "executive";
+  podId: string | null;
+  podName: string | null;
+}
+
+function FacultyListView({
+  pods,
+  allFaculty,
+  canManagePods,
+  pending,
+  onMove,
+}: {
+  pods: Pod[];
+  allFaculty: FacultyRow[];
+  canManagePods: boolean;
+  pending: boolean;
+  onMove: (toPodId: string | null, userId: string) => void;
+}) {
+  const sorted = useMemo(
+    () =>
+      [...allFaculty].sort((a, b) =>
+        (a.full_name ?? "").localeCompare(b.full_name ?? ""),
+      ),
+    [allFaculty],
+  );
+  if (sorted.length === 0) {
+    return (
+      <Card>
+        <CardSub>No faculty assigned to this cohort yet.</CardSub>
+      </Card>
+    );
+  }
+  return (
+    <Card className="p-0">
+      <ul className="divide-line/50 divide-y">
+        <li className="text-muted grid grid-cols-[1fr_1fr_auto] items-center gap-3 px-4 py-2 text-[10px] font-medium uppercase tracking-wider">
+          <span>Name</span>
+          <span>Pod</span>
+          <span className="text-right">Move to</span>
+        </li>
+        {sorted.map((f) => (
+          <li
+            key={f.user_id}
+            className="hover:bg-bg-soft grid grid-cols-[1fr_1fr_auto] items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="bg-accent/15 text-accent border-accent/30 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium">
+                {initials(f.full_name)}
+              </span>
+              <span className="truncate">{f.full_name ?? "—"}</span>
+            </div>
+            <div className="text-muted truncate">
+              {f.podName ?? <span className="text-warn">Unassigned</span>}
+            </div>
+            <div className="flex justify-end">
+              <select
+                value={f.podId ?? ""}
+                disabled={!canManagePods || pending}
+                onChange={(e) =>
+                  onMove(e.target.value === "" ? null : e.target.value, f.user_id)
+                }
+                className="border-line bg-input-bg text-ink h-8 rounded-md border px-2 text-xs disabled:opacity-50"
+                aria-label={`Move ${f.full_name ?? "faculty"} to pod`}
+              >
+                <option value="">— Unassigned —</option>
+                {pods.map((p) => (
+                  <option key={p.pod_id} value={p.pod_id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function StudentListView({
+  pods,
+  allLocated,
+  query,
+  matchedIds,
+  selected,
+  onToggle,
+  onOpenDrawer,
+  canManagePods,
+  pending,
+  onMove,
+}: {
+  pods: Pod[];
+  allLocated: Located[];
+  query: string;
+  matchedIds: Set<string> | null;
+  selected: Set<string>;
+  onToggle: (id: string) => void;
+  onOpenDrawer: (s: Student) => void;
+  canManagePods: boolean;
+  pending: boolean;
+  onMove: (toPodId: string | null, ids: string[]) => void;
+}) {
+  const podName = useMemo(() => {
+    const m = new Map(pods.map((p) => [p.pod_id, p.name] as const));
+    return (id: string | null) => (id ? m.get(id) ?? "—" : null);
+  }, [pods]);
+
+  const rows = useMemo(() => {
+    const visible = matchedIds
+      ? allLocated.filter((l) => matchedIds.has(l.student.user_id))
+      : allLocated;
+    return [...visible].sort((a, b) =>
+      (a.student.full_name ?? "").localeCompare(b.student.full_name ?? ""),
+    );
+  }, [allLocated, matchedIds]);
+
+  if (rows.length === 0) {
+    return (
+      <Card>
+        <CardSub>
+          {query ? "No students match that search." : "No students in this cohort yet."}
+        </CardSub>
+      </Card>
+    );
+  }
+  return (
+    <Card className="p-0">
+      <ul className="divide-line/50 divide-y">
+        <li className="text-muted grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2 text-[10px] font-medium uppercase tracking-wider">
+          <span className="w-4" />
+          <span>Name</span>
+          <span>Pod</span>
+          <span className="text-right">Move to</span>
+        </li>
+        {rows.map(({ student, podId }) => {
+          const checked = selected.has(student.user_id);
+          const name = podName(podId);
+          return (
+            <li
+              key={student.user_id}
+              className={cn(
+                "grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2.5 text-sm transition-colors",
+                checked ? "bg-accent/10" : "hover:bg-bg-soft",
+              )}
+            >
+              <input
+                type="checkbox"
+                className="accent-[hsl(var(--accent))]"
+                checked={checked}
+                onChange={() => onToggle(student.user_id)}
+                aria-label={`Select ${student.full_name ?? "student"}`}
+              />
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="bg-bg-soft border-line flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium">
+                  {initials(student.full_name)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onOpenDrawer(student)}
+                  className="hover:text-accent truncate text-left"
+                >
+                  {student.full_name ?? "—"}
+                </button>
+              </div>
+              <div className="text-muted truncate">
+                {name ?? <span className="text-warn">Unassigned</span>}
+              </div>
+              <div className="flex justify-end">
+                <select
+                  value={podId ?? ""}
+                  disabled={!canManagePods || pending}
+                  onChange={(e) =>
+                    onMove(
+                      e.target.value === "" ? null : e.target.value,
+                      [student.user_id],
+                    )
+                  }
+                  className="border-line bg-input-bg text-ink h-8 rounded-md border px-2 text-xs disabled:opacity-50"
+                  aria-label={`Move ${student.full_name ?? "student"} to pod`}
+                >
+                  <option value="">— Unassigned —</option>
+                  {pods.map((p) => (
+                    <option key={p.pod_id} value={p.pod_id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </Card>
   );
 }
