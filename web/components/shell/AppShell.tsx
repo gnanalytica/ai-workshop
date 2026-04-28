@@ -4,6 +4,8 @@ import { Topbar } from "./Topbar";
 import { getProfile, getAuthCaps } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
+import { Tour } from "@/components/tour/Tour";
+import { tourFor } from "@/lib/tours";
 
 /**
  * Single chrome used by every authenticated route. Resolves session, fetches
@@ -28,6 +30,12 @@ export async function AppShell({
   ]);
   const items = navForPersona(caps, effectivePersona);
 
+  // Show the first-login tour to anyone who hasn't completed it. Driven by
+  // the user's *true* persona (not effective) so admins previewing as a
+  // student don't restart their tour. Empty step list = no tour.
+  const showTour = !profile.onboarded_at;
+  const tourSteps = showTour ? tourFor(truePersona) : [];
+
   return (
     <div className="bg-bg text-ink flex min-h-screen">
       <Sidebar caps={caps} persona={effectivePersona} />
@@ -41,6 +49,7 @@ export async function AppShell({
         />
         <main className="flex-1 overflow-x-hidden p-4 md:p-8">{children}</main>
       </div>
+      {tourSteps.length > 0 && <Tour steps={tourSteps} />}
     </div>
   );
 }

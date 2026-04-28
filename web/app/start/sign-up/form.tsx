@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signUp, type SignUpState } from "@/lib/auth/actions";
 import { GoogleButton } from "../GoogleButton";
+import { InviteCodeField } from "../InviteCodeField";
 
 const initial: SignUpState = {};
 
@@ -28,20 +29,7 @@ export function SignUpForm({ email }: { email: string }) {
           />
         </Field>
 
-        <Field
-          label="Invite code"
-          hint="One code from your admin — we'll set up the right access automatically."
-        >
-          <input
-            name="code"
-            required
-            maxLength={64}
-            placeholder="e.g. STU-A1B2C3"
-            autoCapitalize="characters"
-            spellCheck={false}
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider uppercase transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
-          />
-        </Field>
+        <InviteCodeField name="code" label="Invite code" />
 
         <SubmitButton />
         {state.message && (

@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSupabaseServer } from "@/lib/supabase/server";
@@ -23,6 +24,33 @@ function siteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  // Vercel forwards real client IP in x-forwarded-for. Fall back so dev works.
+  const fwd = h.get("x-forwarded-for");
+  return fwd?.split(",")[0]?.trim() || h.get("x-real-ip") || "unknown";
+}
+
+/**
+ * Postgres-backed rate limit. Returns true if allowed; false if the bucket is
+ * over its quota in the current window. We use the service client because the
+ * caller is anonymous (no session) and the RPC is SECURITY DEFINER but still
+ * requires *some* role to execute.
+ */
+async function rateOk(bucket: string, windowSec: number, max: number): Promise<boolean> {
+  const svc = getSupabaseService();
+  const { data, error } = await svc.rpc("rpc_auth_rate_limit_check", {
+    p_bucket: bucket,
+    p_window_s: windowSec,
+    p_max: max,
+  } as never);
+  if (error) {
+    // Fail-open on transient errors so a DB hiccup doesn't lock everyone out.
+    return true;
+  }
+  return data === true;
+}
+
 export async function sendMagicLink(_prev: SignInState, formData: FormData): Promise<SignInState> {
   const parsed = emailSchema.safeParse({
     email: formData.get("email"),
@@ -30,6 +58,11 @@ export async function sendMagicLink(_prev: SignInState, formData: FormData): Pro
   });
   if (!parsed.success) {
     return { ok: false, message: "Please enter a valid email." };
+  }
+
+  // 5 magic-link requests per IP per 5 minutes.
+  if (!(await rateOk(`magic:${await clientIp()}`, 300, 5))) {
+    return { ok: false, message: "Too many requests. Please wait a minute and try again." };
   }
 
   const sb = await getSupabaseServer();
@@ -61,6 +94,11 @@ export async function startFlow(_prev: StartState, formData: FormData): Promise<
   }
   const email = parsed.data.email.toLowerCase();
   const next = safeNext(parsed.data.next);
+
+  // 10 start attempts per IP per 5 minutes.
+  if (!(await rateOk(`start:${await clientIp()}`, 300, 10))) {
+    return { ok: false, message: "Too many requests. Please wait a minute and try again." };
+  }
 
   const svc = getSupabaseService();
   const { data: existing } = await svc
@@ -105,6 +143,61 @@ async function resolveInviteKind(
   return { kind };
 }
 
+/**
+ * Live preview of an invite code — used by the sign-up form to show
+ * "✓ Valid for cohort X (faculty)" before the user submits. Shape mirrors
+ * rpc_validate_invite output so the UI can show role + cohort.
+ */
+export type InvitePreview =
+  | {
+      ok: true;
+      kind: InviteKind;
+      cohort_name: string | null;
+      college_role: string | null;
+      staff_role: string | null;
+    }
+  | { ok: false; message: string };
+
+export async function previewInvite(code: string): Promise<InvitePreview> {
+  const trimmed = code.trim().toUpperCase();
+  if (!trimmed) return { ok: false, message: "Enter an invite code." };
+  if (trimmed.length > 64) return { ok: false, message: "Code is too long." };
+
+  // 30 previews per IP per minute. Keystroke-debounced from the UI; this is
+  // the brute-force ceiling.
+  if (!(await rateOk(`preview:${await clientIp()}`, 60, 30))) {
+    return { ok: false, message: "Too many checks. Slow down for a moment." };
+  }
+
+  const svc = getSupabaseService();
+  const { data, error } = await svc.rpc("rpc_validate_invite", {
+    p_code: trimmed,
+  } as never);
+  if (error) {
+    const msg = (error.message ?? "").toLowerCase();
+    if (msg.includes("expired")) return { ok: false, message: "This invite code has expired." };
+    if (msg.includes("redeemed"))
+      return { ok: false, message: "This invite code has already been redeemed." };
+    return { ok: false, message: "We couldn't find that invite code." };
+  }
+  const row = (Array.isArray(data) ? data[0] : data) as
+    | {
+        kind: InviteKind;
+        cohort_name: string | null;
+        college_role: string | null;
+        staff_role: string | null;
+      }
+    | null;
+  if (!row) return { ok: false, message: "We couldn't find that invite code." };
+  return {
+    ok: true,
+    kind: row.kind,
+    cohort_name: row.cohort_name,
+    college_role: row.college_role,
+    staff_role: row.staff_role,
+  };
+}
+
 export async function signUp(_prev: SignUpState, formData: FormData): Promise<SignUpState> {
   const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
@@ -118,6 +211,13 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   const v = parsed.data;
   const email = v.email.toLowerCase();
   const code = v.code.toUpperCase();
+
+  // 5 sign-up attempts per IP per 10 minutes — accounts for the rare honest
+  // retry but blocks code-guessing bursts.
+  if (!(await rateOk(`signup:${await clientIp()}`, 600, 5))) {
+    return { ok: false, message: "Too many sign-up attempts. Please wait a few minutes." };
+  }
+
   const svc = getSupabaseService();
 
   // Already-registered guard: someone landed on /start/sign-up via back button or
@@ -145,13 +245,30 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   const resolved = await resolveInviteKind(svc, code);
   if ("error" in resolved) return { ok: false, message: resolved.error };
 
-  // Create the auth user (idempotent guard: if email already exists in auth, error out).
+  // Create the auth user. Edge case: the email already exists in auth.users
+  // (e.g. user Google-auth'd, then bailed before redeeming) but has no profile
+  // role yet. Detect that and send them to /start/claim with a magic link
+  // instead of erroring out cryptically.
   const { data: created, error: createErr } = await svc.auth.admin.createUser({
     email,
     email_confirm: true,
     user_metadata: { full_name: v.full_name },
   });
   if (createErr || !created.user) {
+    const msg = (createErr?.message ?? "").toLowerCase();
+    if (msg.includes("already") || msg.includes("registered") || msg.includes("exist")) {
+      const sb = await getSupabaseServer();
+      const { error: otpErr } = await sb.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: `${siteUrl()}/auth/callback?next=/start/claim` },
+      });
+      if (otpErr) return { ok: false, message: otpErr.message };
+      return {
+        ok: true,
+        message:
+          "An account with this email already exists. We sent you a sign-in link — open it and you can redeem your invite code on the next screen.",
+      };
+    }
     return { ok: false, message: createErr?.message ?? "Could not create account." };
   }
   const userId = created.user.id;

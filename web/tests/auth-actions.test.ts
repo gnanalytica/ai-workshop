@@ -9,6 +9,12 @@ vi.mock("next/navigation", () => ({
     throw e;
   },
 }));
+// next/headers is only valid inside a request scope. Stub it for unit tests.
+vi.mock("next/headers", () => ({
+  headers: async () => ({
+    get: (key: string) => (key === "x-forwarded-for" ? "127.0.0.1" : null),
+  }),
+}));
 
 type Rpc = (name: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
 
@@ -81,9 +87,18 @@ function fd(record: Record<string, string>): FormData {
   return f;
 }
 
+// Common RPC stub: always pass the rate limiter, so individual tests only
+// need to override the validate/redeem behavior.
+const passRate = (name: string) => {
+  if (name === "rpc_auth_rate_limit_check") return { data: true, error: null };
+  return null;
+};
+
 describe("signUp — single-code dispatch", () => {
   it("rejects an unknown invite code without creating an auth user", async () => {
     svc.rpc = vi.fn(async (name: string) => {
+      const r = passRate(name);
+      if (r) return r;
       if (name === "rpc_validate_invite") return { data: null, error: { message: "invite not found" } };
       return { data: null, error: null };
     }) as unknown as MockSvc["rpc"];
@@ -100,6 +115,8 @@ describe("signUp — single-code dispatch", () => {
     const calls: string[] = [];
     svc.rpc = vi.fn(async (name: string) => {
       calls.push(name);
+      const r = passRate(name);
+      if (r) return r;
       if (name === "rpc_validate_invite") return { data: [{ kind: "staff" }], error: null };
       return { data: null, error: null };
     }) as unknown as MockSvc["rpc"];
@@ -125,6 +142,8 @@ describe("signUp — single-code dispatch", () => {
 
   it("rolls back the auth user when redeem fails (race condition)", async () => {
     svc.rpc = vi.fn(async (name: string) => {
+      const r = passRate(name);
+      if (r) return r;
       if (name === "rpc_validate_invite") return { data: [{ kind: "student" }], error: null };
       if (name === "rpc_redeem_student_invite")
         return { data: null, error: { message: "invite invalid or already redeemed" } };
@@ -145,6 +164,8 @@ describe("claimInvite — single-code dispatch", () => {
     const calls: string[] = [];
     svc.rpc = vi.fn(async (name: string) => {
       calls.push(name);
+      const r = passRate(name);
+      if (r) return r;
       if (name === "rpc_validate_invite") return { data: [{ kind: "faculty" }], error: null };
       return { data: null, error: null };
     }) as unknown as MockSvc["rpc"];

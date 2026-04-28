@@ -9,6 +9,7 @@ export interface UserProfile {
   avatar_url: string | null;
   college: string | null;
   staff_roles: string[];
+  onboarded_at: string | null;
 }
 
 /** Current user's auth session, or null. Cached per request. */
@@ -26,7 +27,7 @@ export const getProfile = cache(async (): Promise<UserProfile | null> => {
   if (!user) return null;
   const { data, error } = await sb
     .from("profiles")
-    .select("id, email, full_name, avatar_url, college, staff_roles")
+    .select("id, email, full_name, avatar_url, college, staff_roles, onboarded_at")
     .eq("id", user.id)
     .single();
   if (error) return null;
