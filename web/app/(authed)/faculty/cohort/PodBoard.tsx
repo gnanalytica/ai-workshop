@@ -419,7 +419,7 @@ export function PodBoard({
             <div className="border-accent/20 bg-accent/[0.04] -mx-4 -mt-1 mb-3 border-y px-4 py-2">
               <div className="mb-1.5 flex items-center justify-between">
                 <p className="text-accent/80 text-[10px] font-semibold uppercase tracking-wider">
-                  Mentors
+                  Faculty
                 </p>
                 <span className="text-muted text-[10px]">
                   {p.faculty.length === 0 ? "none" : `${p.faculty.length} assigned`}
@@ -427,7 +427,7 @@ export function PodBoard({
               </div>
               {p.faculty.length === 0 ? (
                 <p className="text-muted py-1 text-xs italic">
-                  Drag a mentor chip from “Cohort faculty” onto this pod.
+                  Drag a faculty chip from “Cohort faculty” onto this pod.
                 </p>
               ) : (
                 <div className="flex flex-wrap gap-1.5">

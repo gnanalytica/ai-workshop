@@ -67,7 +67,7 @@ export default async function PodsPage({
         <CardTitle>{pods.length === 0 ? "Create first pod" : "New pod"}</CardTitle>
         <CardSub className="mt-1 mb-3">
           {pods.length === 0
-            ? "Add a name and optional mentor note, then open the pod from the grid to attach faculty and students."
+            ? "Add a name and optional faculty note, then open the pod from the grid to attach faculty and students."
             : "Create another pod for this cohort. Then open it to attach faculty and students."}
         </CardSub>
         <CreatePodForm cohortId={cohort.id} />

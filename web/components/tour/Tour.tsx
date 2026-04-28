@@ -2,10 +2,66 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { markOnboarded } from "@/lib/actions/profile";
-import type { TourStep } from "@/lib/tours";
+import { tourFor, type TourStep } from "@/lib/tours";
+import type { Persona } from "@/lib/auth/persona";
 
-export function Tour({ steps }: { steps: TourStep[] }) {
-  const [open, setOpen] = useState(true);
+export const TOUR_EVENT = "tour:start";
+
+/**
+ * Mount-once tour controller. Runs automatically the first time
+ * (initialOpen=true), and can be re-launched from anywhere by dispatching:
+ *
+ *   window.dispatchEvent(new CustomEvent("tour:start", { detail: { persona: "admin" } }))
+ *
+ * Replay does NOT clear onboarded_at — the first-time auto-launch is gated by
+ * the server-side check; manual replay just opens the overlay.
+ */
+export function TourMount({
+  persona,
+  initialOpen,
+}: {
+  persona: Persona | null;
+  initialOpen: boolean;
+}) {
+  const [open, setOpen] = useState(initialOpen);
+  const [activePersona, setActivePersona] = useState<Persona | null>(persona);
+
+  useEffect(() => {
+    function onStart(e: Event) {
+      const detail = (e as CustomEvent).detail as
+        | { persona?: Persona | null }
+        | undefined;
+      setActivePersona(detail?.persona ?? persona);
+      setOpen(true);
+    }
+    window.addEventListener(TOUR_EVENT, onStart);
+    return () => window.removeEventListener(TOUR_EVENT, onStart);
+  }, [persona]);
+
+  if (!open) return null;
+  const steps = tourFor(activePersona);
+  if (steps.length === 0) return null;
+  return (
+    <Tour
+      steps={steps}
+      onClose={(completed) => {
+        setOpen(false);
+        // Only persist completion the first time so manual replays don't
+        // re-write the timestamp (already non-null is a no-op anyway since
+        // markOnboarded uses .is("onboarded_at", null), but skip the round-trip).
+        if (completed && initialOpen) void markOnboarded();
+      }}
+    />
+  );
+}
+
+function Tour({
+  steps,
+  onClose,
+}: {
+  steps: TourStep[];
+  onClose: (completed: boolean) => void;
+}) {
   const [index, setIndex] = useState(0);
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -15,7 +71,7 @@ export function Tour({ steps }: { steps: TourStep[] }) {
   const isLast = index === steps.length - 1;
 
   useLayoutEffect(() => {
-    if (!open || !step) return;
+    if (!step) return;
     if (!step.selector) {
       setAnchor(null);
       return;
@@ -34,10 +90,9 @@ export function Tour({ steps }: { steps: TourStep[] }) {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [open, step]);
+  }, [step]);
 
   useEffect(() => {
-    if (!open) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "ArrowRight" || e.key === "Enter") {
         e.preventDefault();
@@ -47,15 +102,15 @@ export function Tour({ steps }: { steps: TourStep[] }) {
         back();
       } else if (e.key === "Escape") {
         e.preventDefault();
-        finish();
+        skip();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, index]);
+  }, [index]);
 
-  if (!open || !step) return null;
+  if (!step) return null;
 
   function next() {
     if (isLast) finish();
@@ -64,9 +119,11 @@ export function Tour({ steps }: { steps: TourStep[] }) {
   function back() {
     setIndex((i) => Math.max(i - 1, 0));
   }
-  async function finish() {
-    setOpen(false);
-    await markOnboarded();
+  function finish() {
+    onClose(true);
+  }
+  function skip() {
+    onClose(false);
   }
 
   // Position the card next to the anchor; otherwise center it.
@@ -82,7 +139,7 @@ export function Tour({ steps }: { steps: TourStep[] }) {
       {/* Backdrop with a cutout around the anchor for a spotlight effect. */}
       <div
         className="pointer-events-auto absolute inset-0 bg-black/55 backdrop-blur-[1px] transition-opacity"
-        onClick={finish}
+        onClick={skip}
       />
       {anchor && (
         <div
@@ -108,7 +165,7 @@ export function Tour({ steps }: { steps: TourStep[] }) {
           </span>
           <button
             type="button"
-            onClick={finish}
+            onClick={skip}
             className="hover:text-ink transition-colors"
             aria-label="Skip tour"
           >

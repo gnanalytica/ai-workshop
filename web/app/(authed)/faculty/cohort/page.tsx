@@ -119,7 +119,7 @@ export default async function FacultyCohortPage() {
             <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
             <CardSub className="text-xs">
               Search, multi-select, or drag to assign students and faculty. Drop
-              faculty chips between pods to reassign mentors.
+              faculty chips between pods to reassign them.
             </CardSub>
           </div>
         </div>

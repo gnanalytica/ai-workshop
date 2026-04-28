@@ -53,6 +53,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Leaderboard", href: "/leaderboard", cap: null,           group: "student", section: "Reference", icon: "trophy" },
   { label: "Showcase",    href: "/showcase",    cap: null,           group: "student", section: "Reference", icon: "trophy" },
   { label: "Certificate", href: "/certificate", cap: null,           group: "student", section: "Reference", icon: "award" },
+  { label: "Handbook",    href: "/handbook",    cap: null,           group: "student", section: "Reference", icon: "library" },
 
   // ----- Faculty -----
   { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },
@@ -68,6 +69,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Community",     href: "/community",         cap: "community.read",    group: "admin",                  icon: "message-square" },
   { label: "Invites",       href: "/admin/invites", cap: "orgs.write",    group: "system",                 icon: "ticket" },
   { label: "Organizations", href: "/admin/orgs",    cap: "orgs.write",    group: "system",                 icon: "building" },
+  { label: "Handbook",      href: "/admin/handbook",cap: "orgs.write",    group: "system",                 icon: "library" },
 ];
 
 export function navForCaps(caps: readonly string[]): NavItem[] {

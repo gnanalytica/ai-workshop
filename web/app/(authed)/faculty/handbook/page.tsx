@@ -1,21 +1,30 @@
-import { BookOpen, CalendarDays, Wrench } from "lucide-react";
+import { BookOpen, CalendarDays, Compass, Wrench } from "lucide-react";
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub } from "@/components/ui/card";
+import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { listFacultyHandbook } from "@/lib/queries/handbook";
 import { HandbookView } from "./HandbookView";
+import { StartGuideButton } from "@/components/tour/StartGuideButton";
+import { tourFor } from "@/lib/tours";
 
-type Tab = "technical" | "non_technical" | "day_by_day";
+type Tab = "non_technical" | "technical" | "dashboard_nav" | "day_by_day";
 
-/** DB enum `handbook_category`: `non_technical` = day-to-day role, `technical` = tools/setup, `day_by_day` = session cadence. */
+/**
+ * DB enum `handbook_category`:
+ *   non_technical → "Your role"
+ *   technical     → "Setup & tools" (local system, accounts, credentials)
+ *   dashboard_nav → "Dashboard navigation" (interactive guide launcher + reference)
+ *   day_by_day    → "Day-by-day operation"
+ */
 const TABS: Array<{
   value: Tab;
   label: string;
   short: string;
   icon: typeof BookOpen;
 }> = [
-  { value: "non_technical", label: "Your role & workflow", short: "Role", icon: BookOpen },
+  { value: "non_technical", label: "Your role", short: "Role", icon: BookOpen },
   { value: "technical", label: "Setup & tools", short: "Setup", icon: Wrench },
-  { value: "day_by_day", label: "Workshop days", short: "Days", icon: CalendarDays },
+  { value: "dashboard_nav", label: "Dashboard navigation", short: "Nav", icon: Compass },
+  { value: "day_by_day", label: "Day-by-day operation", short: "Days", icon: CalendarDays },
 ];
 
 export default async function FacultyHandbookPage({
@@ -27,7 +36,7 @@ export default async function FacultyHandbookPage({
   const sp = await searchParams;
   const tabRaw = sp.tab;
   const tab: Tab = (
-    ["non_technical", "technical", "day_by_day"] as const
+    ["non_technical", "technical", "dashboard_nav", "day_by_day"] as const
   ).includes(tabRaw as Tab)
     ? (tabRaw as Tab)
     : "non_technical";
@@ -65,6 +74,9 @@ export default async function FacultyHandbookPage({
             Onboarding, navigation, and how to run sessions—organized by area so you can skim or
             go deep.
           </CardSub>
+          <div className="mt-4">
+            <StartGuideButton persona="faculty" />
+          </div>
 
           {total > 0 && (
             <div className="mt-6 max-w-sm">
@@ -141,12 +153,61 @@ export default async function FacultyHandbookPage({
         </nav>
       </div>
 
-      {filtered.length === 0 ? (
+      {tab === "dashboard_nav" ? (
+        <DashboardNavTab supplementary={filtered} />
+      ) : filtered.length === 0 ? (
         <Card className="border-dashed border-hairline p-8 text-center">
           <CardSub>No modules published in this section yet.</CardSub>
         </Card>
       ) : (
         <HandbookView modules={filtered} />
+      )}
+    </div>
+  );
+}
+
+function DashboardNavTab({
+  supplementary,
+}: {
+  supplementary: Awaited<ReturnType<typeof listFacultyHandbook>>;
+}) {
+  const tourSteps = tourFor("faculty");
+  return (
+    <div className="space-y-6">
+      <Card className="border-accent/30 bg-accent/[0.04] p-6 sm:p-8">
+        <CardTitle className="mb-2 text-lg">Take the interactive guide</CardTitle>
+        <CardSub className="mb-4 max-w-2xl text-sm leading-relaxed">
+          A step-by-step tour of every screen you&apos;ll use, anchored to the actual
+          sidebar links. Takes about two minutes. Replay it anytime — it doesn&apos;t
+          re-mark you as a new user.
+        </CardSub>
+        <StartGuideButton persona="faculty" />
+        <div className="mt-6">
+          <p className="text-muted text-xs font-medium uppercase tracking-wider">
+            What the guide covers
+          </p>
+          <ul className="text-muted mt-2 grid gap-1.5 text-sm sm:grid-cols-2">
+            {tourSteps
+              .filter((s) => s.selector)
+              .map((s) => (
+                <li key={s.title} className="flex items-start gap-2">
+                  <span className="text-accent mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                  <span>
+                    <span className="text-ink font-medium">{s.title}</span> — {s.body}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      </Card>
+
+      {supplementary.length > 0 && (
+        <div>
+          <p className="text-muted mb-3 font-mono text-[10px] tracking-[0.18em] uppercase">
+            Reference reading
+          </p>
+          <HandbookView modules={supplementary} />
+        </div>
       )}
     </div>
   );

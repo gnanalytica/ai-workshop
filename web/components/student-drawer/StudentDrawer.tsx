@@ -171,7 +171,7 @@ export function StudentDrawer({
               </Section>
 
               {data.mentorNote && (
-                <Section title="Mentor note">
+                <Section title="Faculty note">
                   <CardSub className="text-sm whitespace-pre-wrap">
                     {data.mentorNote}
                   </CardSub>

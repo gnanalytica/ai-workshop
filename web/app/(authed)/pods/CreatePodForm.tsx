@@ -79,7 +79,7 @@ export function CreatePodForm({
         <input
           type="text"
           maxLength={2000}
-          placeholder="Mentor note (optional)"
+          placeholder="Faculty note (optional)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"

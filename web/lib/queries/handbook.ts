@@ -1,13 +1,19 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
+export type HandbookCategory =
+  | "technical"
+  | "non_technical"
+  | "dashboard_nav"
+  | "day_by_day";
+
 export interface HandbookModule {
   id: string;
   slug: string;
   title: string;
   body_md: string | null;
   ordinal: number;
-  category: "technical" | "non_technical" | "day_by_day";
+  category: HandbookCategory;
   status: "not_started" | "in_progress" | "completed" | null;
 }
 
@@ -33,7 +39,7 @@ export const listFacultyHandbook = cache(async (): Promise<HandbookModule[]> => 
     );
   }
 
-  return (modules as Array<{ id: string; slug: string; title: string; body_md: string | null; ordinal: number; category: "technical" | "non_technical" }>).map(
+  return (modules as Array<{ id: string; slug: string; title: string; body_md: string | null; ordinal: number; category: HandbookCategory }>).map(
     (m) => ({
       id: m.id,
       slug: m.slug,
