@@ -6,34 +6,30 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkline } from "@/components/sparkline/Sparkline";
 import { getFacultyCohort, getFacultyTodayKpis } from "@/lib/queries/faculty";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
-import { listPods } from "@/lib/queries/admin";
 import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
 import { fmtDateTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { PodMembers } from "./PodMembers";
-import { FacultySelfAssignPod } from "./FacultySelfAssignPod";
 
 export default async function FacultyPodPage() {
   await requireCapability("roster.read");
   const f = await getFacultyCohort();
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
-  const [podRows, kpis, days, atRiskAll, canManagePods, cohortPods] = await Promise.all([
+  const [podRows, kpis, days, atRiskAll, canManagePods] = await Promise.all([
     getFacultyPods(f.cohort.id, me.id),
     getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
     listAtRiskStudents(f.cohort.id),
     checkCapability("pods.write", f.cohort.id),
-    listPods(f.cohort.id),
   ]);
   const myPod = podRows[0] ?? null;
   const today = todayDayNumber(f.cohort);
   const todayDay = days.find((d) => d.day_number === today);
   const podStudentIds = new Set((myPod?.members ?? []).map((m) => m.user_id));
   const atRisk = atRiskAll.filter((s) => podStudentIds.has(s.user_id)).length;
-  const cohortPodPick = cohortPods.map((p) => ({ pod_id: p.pod_id, name: p.name }));
 
   return (
     <div className="space-y-6">
@@ -48,13 +44,6 @@ export default async function FacultyPodPage() {
             : "No pod assigned yet"}
         </CardSub>
       </header>
-
-      <FacultySelfAssignPod
-        cohortPods={cohortPodPick}
-        currentPodId={myPod?.pod_id ?? null}
-        meId={me.id}
-        canWrite={canManagePods}
-      />
 
       <Card className="bg-bg-soft">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -94,35 +83,22 @@ export default async function FacultyPodPage() {
       </Card>
       {!myPod ? (
         <Card>
-          <CardTitle className="mb-2">No pod assigned</CardTitle>
+          <CardTitle className="mb-2">No pod assigned yet</CardTitle>
           <CardSub className="space-y-3">
             <p>
-              {canManagePods ? (
-                <>
-                  Use <span className="text-ink font-medium">Your pod assignment</span> above, or
-                  open{" "}
-                  <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
-                    Full cohort
-                  </Link>{" "}
-                  to manage pods.
-                </>
-              ) : (
-                <>
-                  Ask your cohort lead to add you to a pod, or use{" "}
-                  <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
-                    Full cohort
-                  </Link>{" "}
-                  if you have access.
-                </>
-              )}
+              All pod assignments happen in the{" "}
+              <Link href="/faculty/cohort#pods" className="text-accent hover:underline">
+                cohort kanban
+              </Link>
+              . {canManagePods
+                ? "Drag your name from the “Cohort faculty” column onto a pod, or ask another lead to assign you."
+                : "Ask your cohort lead to drag your name onto a pod."}
             </p>
-            {canManagePods && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                <Button asChild size="sm">
-                  <Link href="/faculty/cohort#pods">Full cohort</Link>
-                </Button>
-              </div>
-            )}
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button asChild size="sm">
+                <Link href="/faculty/cohort#pods">Open cohort kanban</Link>
+              </Button>
+            </div>
           </CardSub>
         </Card>
       ) : (

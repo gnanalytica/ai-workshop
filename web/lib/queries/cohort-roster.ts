@@ -5,7 +5,6 @@ export interface PodFacultyMember {
   user_id: string;
   full_name: string | null;
   college_role: "support" | "executive";
-  is_primary: boolean;
 }
 
 export interface CohortFacultyMember {
@@ -42,7 +41,7 @@ export const getCohortPodRoster = cache(
       sb
         .from("pods")
         .select(
-          "id, name, pod_faculty(faculty_user_id, is_primary, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name))",
+          "id, name, pod_faculty(faculty_user_id, profiles:faculty_user_id(full_name)), pod_members(student_user_id, profiles:student_user_id(full_name))",
         )
         .eq("cohort_id", cohortId)
         .order("name"),
@@ -78,7 +77,6 @@ export const getCohortPodRoster = cache(
       name: string;
       pod_faculty: Array<{
         faculty_user_id: string;
-        is_primary: boolean;
         profiles: { full_name: string | null } | null;
       }>;
       pod_members: Array<{
@@ -93,7 +91,6 @@ export const getCohortPodRoster = cache(
           user_id: f.faculty_user_id,
           full_name: f.profiles?.full_name ?? cf?.full_name ?? null,
           college_role: cf?.college_role ?? "support",
-          is_primary: !!f.is_primary,
         };
       });
       return {

@@ -22,7 +22,6 @@ interface FacultyMember {
   user_id: string;
   full_name: string | null;
   college_role: "support" | "executive";
-  is_primary: boolean;
 }
 interface CohortFacultyMember {
   user_id: string;
@@ -340,14 +339,16 @@ export function PodBoard({
           {unassignedFaculty.length === 0 ? (
             <EmptyHint>All cohort faculty are assigned to pods.</EmptyHint>
           ) : (
-            unassignedFaculty.map((f) => (
-              <FacultyChip
-                key={f.user_id}
-                faculty={{ ...f, is_primary: false }}
-                fromPodId={null}
-                draggable={canManagePods}
-              />
-            ))
+            <div className="flex flex-wrap gap-1.5">
+              {unassignedFaculty.map((f) => (
+                <FacultyChip
+                  key={f.user_id}
+                  faculty={f}
+                  fromPodId={null}
+                  draggable={canManagePods}
+                />
+              ))}
+            </div>
           )}
         </DropColumn>
 
@@ -405,21 +406,32 @@ export function PodBoard({
               }
             }}
           >
-            {p.faculty.length > 0 && (
-              <div className="mb-3">
-                <p className="text-muted mb-1 text-[10px] font-medium uppercase tracking-wider">
-                  Faculty
+            <div className="border-accent/20 bg-accent/[0.04] -mx-4 -mt-1 mb-3 border-y px-4 py-2">
+              <div className="mb-1.5 flex items-center justify-between">
+                <p className="text-accent/80 text-[10px] font-semibold uppercase tracking-wider">
+                  Mentors
                 </p>
-                {p.faculty.map((f) => (
-                  <FacultyChip
-                    key={f.user_id}
-                    faculty={f}
-                    fromPodId={p.pod_id}
-                    draggable={canManagePods}
-                  />
-                ))}
+                <span className="text-muted text-[10px]">
+                  {p.faculty.length === 0 ? "none" : `${p.faculty.length} assigned`}
+                </span>
               </div>
-            )}
+              {p.faculty.length === 0 ? (
+                <p className="text-muted py-1 text-xs italic">
+                  Drag a mentor chip from “Cohort faculty” onto this pod.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-1.5">
+                  {p.faculty.map((f) => (
+                    <FacultyChip
+                      key={f.user_id}
+                      faculty={f}
+                      fromPodId={p.pod_id}
+                      draggable={canManagePods}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
             {p.members.length === 0 ? (
               <EmptyHint>Empty pod — drag students here.</EmptyHint>
             ) : (
@@ -542,18 +554,14 @@ function FacultyChip({
           : undefined
       }
       className={cn(
-        "border-accent/40 bg-accent/5 text-ink mb-1.5 flex items-center gap-2 rounded-md border px-2 py-1.5 text-sm",
+        "border-accent/40 bg-accent/10 text-ink inline-flex max-w-full items-center gap-1.5 rounded-full border px-2 py-1 text-xs",
         draggable && "cursor-grab active:cursor-grabbing",
       )}
     >
-      <span className="bg-accent/15 text-accent border-accent/30 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium">
+      <span className="bg-accent/20 text-accent border-accent/30 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[9px] font-medium">
         {initials(faculty.full_name)}
       </span>
       <span className="truncate">{faculty.full_name ?? "—"}</span>
-      {faculty.is_primary && <Badge variant="accent">Lead</Badge>}
-      {faculty.college_role === "executive" && (
-        <Badge variant="default">Exec</Badge>
-      )}
     </div>
   );
 }
