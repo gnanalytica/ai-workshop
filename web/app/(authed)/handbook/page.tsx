@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import {
   StaticHandbook,
   parseHandbookTab,
   type HandbookSection,
 } from "@/components/handbook/StaticHandbook";
+import { HandbookAction } from "@/components/handbook/HandbookAction";
+import { ROUTES } from "@/lib/routes";
 
 export default async function StudentHandbookPage({
   searchParams,
@@ -34,7 +35,7 @@ const YOUR_ROLE: HandbookSection[] = [
       <>
         <p>30 days, one daily habit. The workshop only works if you show up daily.</p>
         <ul>
-          <li>Open today&apos;s lesson on <Link href="/learn">/learn</Link>.</li>
+          <li>Open today&apos;s lesson from your dashboard.</li>
           <li>Build the lab. Submit your output.</li>
           <li>Engage with your pod and the community board.</li>
         </ul>
@@ -42,6 +43,7 @@ const YOUR_ROLE: HandbookSection[] = [
           Streaks matter more than perfection. A half-finished lab logged on time keeps
           your streak alive.
         </p>
+        <HandbookAction href={ROUTES.learn}>Open today&apos;s lesson</HandbookAction>
       </>
     ),
   },
@@ -49,10 +51,7 @@ const YOUR_ROLE: HandbookSection[] = [
     title: "Your pod",
     body: (
       <>
-        <p>
-          Your <Link href="/pod">pod</Link> is a small group of students plus assigned
-          faculty.
-        </p>
+        <p>Your pod is a small group of students plus assigned faculty.</p>
         <ul>
           <li>Live-session breakouts happen here.</li>
           <li>Peer review of milestones is organised through the pod.</li>
@@ -62,6 +61,7 @@ const YOUR_ROLE: HandbookSection[] = [
           If you&apos;re not in a pod yet, an admin will assign you within 24 hours of
           enrolment.
         </p>
+        <HandbookAction href={ROUTES.pod}>Open my pod</HandbookAction>
       </>
     ),
   },
@@ -88,6 +88,8 @@ const YOUR_ROLE: HandbookSection[] = [
           <li>Real names + photos. Your pod knows you by them.</li>
           <li>Be kind. Workshop runs on goodwill.</li>
         </ul>
+        <HandbookAction href={ROUTES.community}>Community board</HandbookAction>
+        <HandbookAction href={ROUTES.helpDesk}>Help desk</HandbookAction>
       </>
     ),
   },
@@ -186,9 +188,7 @@ const SETUP: HandbookSection[] = [
     title: "Profile & timezone",
     body: (
       <>
-        <p>
-          Visit <Link href="/settings/profile">/settings/profile</Link> on day 0:
-        </p>
+        <p>Update your profile on Day 0:</p>
         <ul>
           <li>Set your full name as you&apos;d like to appear on the certificate.</li>
           <li>Upload an avatar — your pod and faculty know you by it.</li>
@@ -197,6 +197,7 @@ const SETUP: HandbookSection[] = [
             showcase.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.profileSettings}>Edit profile</HandbookAction>
       </>
     ),
   },
@@ -209,8 +210,8 @@ const DAY_BY_DAY: HandbookSection[] = [
       <>
         <ul>
           <li>
-            <strong>Morning:</strong> open <Link href="/learn">today&apos;s lesson</Link>.
-            Read once, then start the lab.
+            <strong>Morning:</strong> open today&apos;s lesson. Read once, then start the
+            lab.
           </li>
           <li>
             <strong>Mid-day:</strong> live session (if scheduled). Pod breakouts happen
@@ -223,6 +224,7 @@ const DAY_BY_DAY: HandbookSection[] = [
             <strong>Evening:</strong> answer one community-board question. Reflect briefly.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.learn}>Open today&apos;s lesson</HandbookAction>
       </>
     ),
   },
@@ -256,6 +258,8 @@ const DAY_BY_DAY: HandbookSection[] = [
             pod page).
           </li>
         </ul>
+        <HandbookAction href={ROUTES.helpDesk}>Open help desk</HandbookAction>
+        <HandbookAction href={ROUTES.community}>Community board</HandbookAction>
       </>
     ),
   },
@@ -282,17 +286,15 @@ const DAY_BY_DAY: HandbookSection[] = [
         <ul>
           <li>
             Certificate is auto-generated on Day 30 if you hit the streak + capstone bar.
-            Available at <Link href="/certificate">/certificate</Link>.
           </li>
-          <li>
-            Your capstone publishes to the <Link href="/showcase">showcase</Link> if you
-            opt in.
-          </li>
+          <li>Your capstone publishes to the showcase if you opt in.</li>
           <li>
             Alumni office hours open four weeks later — sign up to mentor a Day-1 student
             in the next cohort.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.certificate}>My certificate</HandbookAction>
+        <HandbookAction href={ROUTES.showcase}>Showcase</HandbookAction>
       </>
     ),
   },

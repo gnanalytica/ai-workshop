@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import {
   StaticHandbook,
   parseHandbookTab,
   type HandbookSection,
 } from "@/components/handbook/StaticHandbook";
+import { HandbookAction } from "@/components/handbook/HandbookAction";
+import { ROUTES } from "@/lib/routes";
 
 export default async function AdminHandbookPage({
   searchParams,
@@ -203,10 +204,7 @@ const DAY_BY_DAY: HandbookSection[] = [
         </p>
         <ul>
           <li>Create the cohort row, set start/end dates, seed days.</li>
-          <li>
-            Issue invite codes from{" "}
-            <Link href="/admin/invites">/admin/invites</Link>.
-          </li>
+          <li>Issue invite codes — see the action below.</li>
           <li>
             Once enrolment hits target, flip status to <code>live</code>; the daily-digest
             cron starts firing.
@@ -216,6 +214,8 @@ const DAY_BY_DAY: HandbookSection[] = [
             access.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.adminCohorts}>Manage cohorts</HandbookAction>
+        <HandbookAction href={ROUTES.adminInvites}>Issue invites</HandbookAction>
       </>
     ),
   },
@@ -235,10 +235,11 @@ const DAY_BY_DAY: HandbookSection[] = [
           </li>
         </ul>
         <p>
-          Recipients paste the code on <Link href="/start/sign-up">/start/sign-up</Link>{" "}
-          and the system auto-detects role from kind. Code validation runs live as they
-          type.
+          Recipients paste the code on the public sign-up page; the system auto-detects
+          role from kind. Code validation runs live as they type.
         </p>
+        <HandbookAction href={ROUTES.adminInvites}>Open invites</HandbookAction>
+        <HandbookAction href={ROUTES.signUp}>Public sign-up</HandbookAction>
       </>
     ),
   },
@@ -247,8 +248,8 @@ const DAY_BY_DAY: HandbookSection[] = [
     body: (
       <>
         <p>
-          Pods are the unit of student-faculty interaction. Manage on{" "}
-          <Link href="/admin/pods">/admin/pods</Link> or the cohort kanban.
+          Pods are the unit of student-faculty interaction. Manage them on the pods page
+          or via the cohort kanban.
         </p>
         <ul>
           <li>Recommended: 5–8 students per pod, 1–2 faculty per pod.</li>
@@ -262,6 +263,7 @@ const DAY_BY_DAY: HandbookSection[] = [
             the cohort.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.adminPods}>Manage pods</HandbookAction>
       </>
     ),
   },
@@ -270,8 +272,8 @@ const DAY_BY_DAY: HandbookSection[] = [
     body: (
       <>
         <p>
-          The <Link href="/admin/roster">/admin/roster</Link> view shows every student
-          with progress, last activity, and signal badges.
+          The roster view shows every student with progress, last activity, and signal
+          badges.
         </p>
         <ul>
           <li>
@@ -287,6 +289,7 @@ const DAY_BY_DAY: HandbookSection[] = [
             sees. Read-only.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.adminRoster}>Open roster</HandbookAction>
       </>
     ),
   },
@@ -299,15 +302,13 @@ const DAY_BY_DAY: HandbookSection[] = [
             Edit copy by editing <code>web/content/day-XX.mdx</code> and pushing — Vercel
             rebuilds, no migration needed.
           </li>
-          <li>
-            Edit dates / live-session times on{" "}
-            <Link href="/admin/schedule">/admin/schedule</Link>.
-          </li>
+          <li>Edit dates / live-session times in the schedule view.</li>
           <li>
             Days unlock automatically at start-of-day in the cohort timezone. Force-unlock
             for review by toggling <code>cohort_days.is_unlocked</code>.
           </li>
         </ul>
+        <HandbookAction href={ROUTES.adminSchedule}>Open schedule</HandbookAction>
       </>
     ),
   },

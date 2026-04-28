@@ -1,7 +1,6 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
 import { EnterSandboxButton } from "@/components/sandbox/EnterSandboxButton";
-import { tourFor } from "@/lib/tours";
 import type { Persona } from "@/lib/auth/persona";
 import { VideoSlot } from "@/components/handbook/VideoSlot";
 
@@ -191,7 +190,6 @@ function DashboardNavTab({
   persona: Persona;
   extras: HandbookSection[];
 }) {
-  const tourSteps = tourFor(persona);
   return (
     <div className="space-y-6">
       <Card className="border-accent/30 bg-accent/[0.04] p-6 sm:p-8">
@@ -214,23 +212,6 @@ function DashboardNavTab({
             <span className="text-ink">Exit sandbox</span> any time.
           </p>
         )}
-        <div className="mt-6">
-          <p className="text-muted text-xs font-medium uppercase tracking-wider">
-            What the guide covers
-          </p>
-          <ul className="text-muted mt-2 grid gap-1.5 text-sm sm:grid-cols-2">
-            {tourSteps
-              .filter((s) => s.selector)
-              .map((s) => (
-                <li key={s.title} className="flex items-start gap-2">
-                  <span className="text-accent mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-                  <span>
-                    <span className="text-ink font-medium">{s.title}</span> — {s.body}
-                  </span>
-                </li>
-              ))}
-          </ul>
-        </div>
       </Card>
 
       {extras.length > 0 && <SectionGrid sections={extras} />}
