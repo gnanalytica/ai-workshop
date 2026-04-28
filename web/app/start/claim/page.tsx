@@ -24,7 +24,8 @@ export default async function ClaimInvitePage() {
       <h1 className="text-3xl font-semibold tracking-tight">Tell us about you</h1>
       <p className="text-muted mt-2 mb-8 text-sm">
         You&apos;re signed in as <span className="text-ink">{user.email}</span>. Confirm your
-        name, pick your role, and paste the invite code your admin shared with you.
+        name and paste the invite code your admin shared — we&apos;ll set up the right access
+        automatically.
       </p>
       <Suspense fallback={null}>
         <ClaimForm defaultName={suggested} />

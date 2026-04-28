@@ -4,6 +4,8 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const nextParam = searchParams.get("next");
+  const next = nextParam && nextParam.startsWith("/") ? nextParam : "/dashboard";
 
   if (!code) {
     return NextResponse.redirect(`${origin}/start`);
@@ -15,7 +17,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/start?error=${encodeURIComponent(error.message)}`);
   }
 
-  // Hand off to the resolver — it computes the right home (/admin, /faculty,
-  // /learn) or routes to /start/claim if the user has no role yet.
-  return NextResponse.redirect(`${origin}/dashboard`);
+  // /dashboard runs resolveHome() and redirects to /admin, /faculty, /learn,
+  // or /start/claim depending on the user's role.
+  return NextResponse.redirect(`${origin}${next}`);
 }

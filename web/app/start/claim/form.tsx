@@ -1,20 +1,16 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { claimInvite, type SignInState } from "@/lib/auth/actions";
 
-type Role = "student" | "faculty";
 const initial: SignInState = {};
 
 export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
   const [state, action] = useActionState(claimInvite, initial);
-  const [role, setRole] = useState<Role>("student");
 
   return (
     <form action={action} className="flex flex-col gap-4">
-      <input type="hidden" name="role" value={role} />
-
       <Field label="Full name">
         <input
           name="full_name"
@@ -27,51 +23,17 @@ export function ClaimForm({ defaultName = "" }: { defaultName?: string }) {
         />
       </Field>
 
-      <fieldset className="flex flex-col gap-2">
-        <legend className="text-muted text-xs font-medium tracking-wide uppercase">
-          I&apos;m joining as
-        </legend>
-        <div className="grid grid-cols-2 gap-2">
-          {(["student", "faculty"] as const).map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRole(r)}
-              className={`cursor-pointer rounded-md border px-3 py-2 text-center text-sm capitalize ${
-                role === r
-                  ? "border-accent bg-accent/10 text-ink"
-                  : "border-line text-muted hover:text-ink transition-colors"
-              }`}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      {role === "student" && (
-        <Field label="Cohort invite code">
-          <input
-            name="cohort_code"
-            required
-            placeholder="e.g. STU-APR2026"
-            autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
-          />
-        </Field>
-      )}
-
-      {role === "faculty" && (
-        <Field label="Faculty invite code">
-          <input
-            name="faculty_code"
-            required
-            placeholder="e.g. FAC-SUP2026"
-            autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
-          />
-        </Field>
-      )}
+      <Field label="Invite code">
+        <input
+          name="code"
+          required
+          maxLength={64}
+          placeholder="e.g. STU-A1B2C3"
+          autoCapitalize="characters"
+          spellCheck={false}
+          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider uppercase transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
+        />
+      </Field>
 
       <SubmitButton />
       {state.message && (

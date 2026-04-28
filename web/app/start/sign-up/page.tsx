@@ -20,8 +20,8 @@ export default async function SignUpPage(props: {
       <p className="text-accent mb-3 font-mono text-xs tracking-widest uppercase">Sign up</p>
       <h1 className="text-3xl font-semibold tracking-tight">Create your account</h1>
       <p className="text-muted mt-2 mb-8 text-sm">
-        Signing up as <span className="text-ink">{email}</span>. Pick your role and enter the
-        invite code your admin shared with you.
+        Signing up as <span className="text-ink">{email}</span>. Paste the invite code your
+        admin shared — we&apos;ll set up the right access automatically.
       </p>
       <Suspense fallback={null}>
         <SignUpForm email={email} />

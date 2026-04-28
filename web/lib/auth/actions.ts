@@ -83,32 +83,33 @@ export async function startFlow(_prev: StartState, formData: FormData): Promise<
   redirect(`/start/sign-up?email=${encodeURIComponent(email)}`);
 }
 
-const signUpSchema = z
-  .object({
-    email: z.string().email(),
-    full_name: z.string().min(1, "Name is required").max(120),
-    role: z.enum(["student", "faculty"]),
-    cohort_code: z.string().trim().optional(),
-    faculty_code: z.string().trim().optional(),
-  })
-  .superRefine((v, ctx) => {
-    if (v.role === "student" && !v.cohort_code) {
-      ctx.addIssue({ code: "custom", path: ["cohort_code"], message: "Cohort code required" });
-    }
-    if (v.role === "faculty" && !v.faculty_code) {
-      ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
-    }
-  });
+const signUpSchema = z.object({
+  email: z.string().email(),
+  full_name: z.string().min(1, "Name is required").max(120),
+  code: z.string().trim().min(1, "Invite code required").max(64),
+});
 
 export type SignUpState = SignInState;
+
+type InviteKind = "student" | "faculty" | "staff";
+
+async function resolveInviteKind(
+  svc: ReturnType<typeof getSupabaseService>,
+  code: string,
+): Promise<{ kind: InviteKind } | { error: string }> {
+  const { data, error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
+  if (error) return { error: `Invite code "${code}" is not valid.` };
+  const row = Array.isArray(data) ? data[0] : data;
+  const kind = (row as { kind?: InviteKind } | null)?.kind;
+  if (!kind) return { error: `Invite code "${code}" is not valid.` };
+  return { kind };
+}
 
 export async function signUp(_prev: SignUpState, formData: FormData): Promise<SignUpState> {
   const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
     full_name: formData.get("full_name"),
-    role: formData.get("role"),
-    cohort_code: formData.get("cohort_code") || undefined,
-    faculty_code: formData.get("faculty_code") || undefined,
+    code: formData.get("code"),
   });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message ?? "Invalid form";
@@ -116,6 +117,7 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
   }
   const v = parsed.data;
   const email = v.email.toLowerCase();
+  const code = v.code.toUpperCase();
   const svc = getSupabaseService();
 
   // Already-registered guard: someone landed on /start/sign-up via back button or
@@ -139,12 +141,9 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
     };
   }
 
-  // Validate codes up-front so we don't create an auth user we can't redeem against.
-  const codesToValidate = [v.cohort_code, v.faculty_code].filter(Boolean) as string[];
-  for (const code of codesToValidate) {
-    const { error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
-    if (error) return { ok: false, message: `Invite code "${code}" is not valid.` };
-  }
+  // Validate the code up-front so we don't create an auth user we can't redeem against.
+  const resolved = await resolveInviteKind(svc, code);
+  if ("error" in resolved) return { ok: false, message: resolved.error };
 
   // Create the auth user (idempotent guard: if email already exists in auth, error out).
   const { data: created, error: createErr } = await svc.auth.admin.createUser({
@@ -164,22 +163,8 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
     .upsert({ id: userId, email, full_name: v.full_name }, { onConflict: "id" });
   if (profileErr) return { ok: false, message: profileErr.message };
 
-  // Redeem code(s) via SECURITY DEFINER RPCs.
-  if (v.role === "student") {
-    const { error } = await svc.rpc("rpc_redeem_student_invite", {
-      p_code: v.cohort_code!,
-      p_user: userId,
-    } as never);
-    if (error) return { ok: false, message: error.message };
-  } else if (v.role === "faculty") {
-    // Cohort code grants the cohort assignment; faculty code is a second factor
-    // that must be of kind=faculty for this cohort.
-    const { error: cErr } = await svc.rpc("rpc_redeem_faculty_invite", {
-      p_code: v.faculty_code!,
-      p_user: userId,
-    } as never);
-    if (cErr) return { ok: false, message: cErr.message };
-  }
+  const redeemErr = await redeemByKind(svc, resolved.kind, code, userId);
+  if (redeemErr) return { ok: false, message: redeemErr };
 
   // Generate a one-time magic link server-side and redirect the browser
   // straight to it — no email round-trip. The link hits /auth/callback,
@@ -193,6 +178,22 @@ export async function signUp(_prev: SignUpState, formData: FormData): Promise<Si
     return { ok: false, message: linkErr?.message ?? "Could not generate sign-in link." };
   }
   redirect(linkData.properties.action_link);
+}
+
+async function redeemByKind(
+  svc: ReturnType<typeof getSupabaseService>,
+  kind: InviteKind,
+  code: string,
+  userId: string,
+): Promise<string | null> {
+  const rpc =
+    kind === "student"
+      ? "rpc_redeem_student_invite"
+      : kind === "faculty"
+        ? "rpc_redeem_faculty_invite"
+        : "rpc_redeem_staff_invite";
+  const { error } = await svc.rpc(rpc, { p_code: code, p_user: userId } as never);
+  return error?.message ?? null;
 }
 
 export async function signOut() {
@@ -228,21 +229,10 @@ export async function signInWithGoogle(formData: FormData) {
  * but they have no registration / cohort_faculty / staff_roles. They land
  * here from /auth/callback after OAuth, redeem an invite, and go to /dashboard.
  */
-const claimSchema = z
-  .object({
-    full_name: z.string().trim().min(1, "Name is required").max(120),
-    role: z.enum(["student", "faculty"]),
-    cohort_code: z.string().trim().optional(),
-    faculty_code: z.string().trim().optional(),
-  })
-  .superRefine((v, ctx) => {
-    if (v.role === "student" && !v.cohort_code) {
-      ctx.addIssue({ code: "custom", path: ["cohort_code"], message: "Cohort code required" });
-    }
-    if (v.role === "faculty" && !v.faculty_code) {
-      ctx.addIssue({ code: "custom", path: ["faculty_code"], message: "Faculty code required" });
-    }
-  });
+const claimSchema = z.object({
+  full_name: z.string().trim().min(1, "Name is required").max(120),
+  code: z.string().trim().min(1, "Invite code required").max(64),
+});
 
 export async function claimInvite(_prev: SignInState, formData: FormData): Promise<SignInState> {
   const sb = await getSupabaseServer();
@@ -254,14 +244,13 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
 
   const parsed = claimSchema.safeParse({
     full_name: formData.get("full_name"),
-    role: formData.get("role"),
-    cohort_code: formData.get("cohort_code") || undefined,
-    faculty_code: formData.get("faculty_code") || undefined,
+    code: formData.get("code"),
   });
   if (!parsed.success) {
     return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid form" };
   }
   const v = parsed.data;
+  const code = v.code.toUpperCase();
   const svc = getSupabaseService();
 
   // Persist confirmed name on the profile (auto-created by handle_new_auth_user
@@ -272,26 +261,11 @@ export async function claimInvite(_prev: SignInState, formData: FormData): Promi
     .eq("id", userId);
   if (nameErr) return { ok: false, message: nameErr.message };
 
-  // Validate codes first to avoid half-applied state.
-  const codes = [v.cohort_code, v.faculty_code].filter(Boolean) as string[];
-  for (const code of codes) {
-    const { error } = await svc.rpc("rpc_validate_invite", { p_code: code } as never);
-    if (error) return { ok: false, message: `Invite code "${code}" is not valid.` };
-  }
+  const resolved = await resolveInviteKind(svc, code);
+  if ("error" in resolved) return { ok: false, message: resolved.error };
 
-  if (v.role === "student") {
-    const { error } = await svc.rpc("rpc_redeem_student_invite", {
-      p_code: v.cohort_code!,
-      p_user: userId,
-    } as never);
-    if (error) return { ok: false, message: error.message };
-  } else if (v.role === "faculty") {
-    const { error } = await svc.rpc("rpc_redeem_faculty_invite", {
-      p_code: v.faculty_code!,
-      p_user: userId,
-    } as never);
-    if (error) return { ok: false, message: error.message };
-  }
+  const redeemErr = await redeemByKind(svc, resolved.kind, code, userId);
+  if (redeemErr) return { ok: false, message: redeemErr };
 
   redirect("/dashboard");
 }

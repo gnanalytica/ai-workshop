@@ -1,87 +1,55 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signUp, type SignUpState } from "@/lib/auth/actions";
 import { GoogleButton } from "../GoogleButton";
 
-type Role = "student" | "faculty";
 const initial: SignUpState = {};
 
 export function SignUpForm({ email }: { email: string }) {
   const [state, action] = useActionState(signUp, initial);
-  const [role, setRole] = useState<Role>("student");
 
   return (
     <div className="flex flex-col gap-4">
       <GoogleButton next="/start/claim" />
       <Divider />
-    <form action={action} className="flex flex-col gap-4">
-      <input type="hidden" name="email" value={email} />
-      <input type="hidden" name="role" value={role} />
+      <form action={action} className="flex flex-col gap-4">
+        <input type="hidden" name="email" value={email} />
 
-      <Field label="Full name">
-        <input
-          name="full_name"
-          type="text"
-          required
-          maxLength={120}
-          placeholder="Ada Lovelace"
-          className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
-        />
-      </Field>
-
-      <fieldset className="flex flex-col gap-2">
-        <legend className="text-muted text-xs font-medium tracking-wide uppercase">
-          I&apos;m signing up as
-        </legend>
-        <div className="grid grid-cols-2 gap-2">
-          {(["student", "faculty"] as const).map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRole(r)}
-              className={`cursor-pointer rounded-md border px-3 py-2 text-center text-sm capitalize ${
-                role === r
-                  ? "border-accent bg-accent/10 text-ink"
-                  : "border-line text-muted hover:text-ink transition-colors"
-              }`}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      {role === "student" && (
-        <Field label="Cohort invite code" hint="From your enrollment confirmation.">
+        <Field label="Full name">
           <input
-            name="cohort_code"
+            name="full_name"
+            type="text"
             required
-            placeholder="e.g. JAN26-XYZ8"
-            autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
+            maxLength={120}
+            placeholder="Ada Lovelace"
+            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           />
         </Field>
-      )}
 
-      {role === "faculty" && (
-        <Field label="Faculty invite code" hint="Encodes your cohort and support / executive role.">
+        <Field
+          label="Invite code"
+          hint="One code from your admin — we'll set up the right access automatically."
+        >
           <input
-            name="faculty_code"
+            name="code"
             required
-            placeholder="e.g. FAC-A1B2"
+            maxLength={64}
+            placeholder="e.g. STU-A1B2C3"
             autoCapitalize="characters"
-            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
+            spellCheck={false}
+            className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider uppercase transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
           />
         </Field>
-      )}
 
-      <SubmitButton />
-      {state.message && (
-        <p className={state.ok ? "text-accent text-sm" : "text-danger text-sm"}>{state.message}</p>
-      )}
-    </form>
+        <SubmitButton />
+        {state.message && (
+          <p className={state.ok ? "text-accent text-sm" : "text-danger text-sm"}>
+            {state.message}
+          </p>
+        )}
+      </form>
     </div>
   );
 }
