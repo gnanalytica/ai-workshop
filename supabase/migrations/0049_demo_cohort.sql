@@ -8,29 +8,22 @@
 --   - Schema: cohorts.is_demo + a unique index so we never have more than one.
 --   - Seed: deterministic UUIDs (idempotent re-application).
 --   - Auto-join: trigger + one-time backfill so any existing/future faculty
---     can drop straight into the sandbox.
---
--- Subsequent missions / banners / cookie override live in app code; this
--- migration only owns the data shape.
+--     can drop straight into the sandbox. Admins/staff are intentionally
+--     excluded — the role-invariant trigger from 0015 forbids it; admins
+--     reach the sandbox via the cookie + their global caps.
 -- =============================================================================
-
--- ---------- 1. Schema --------------------------------------------------------
 
 alter table cohorts add column if not exists is_demo boolean not null default false;
 
--- Single demo cohort guard. Partial unique index on a constant so any row
--- with is_demo=true conflicts with any other.
 create unique index if not exists cohorts_one_demo_idx
   on cohorts ((true)) where is_demo;
 
--- ---------- 2. Demo cohort ---------------------------------------------------
-
 insert into cohorts (id, slug, name, starts_on, ends_on, status, is_demo)
 values (
-  '99999999-9999-9999-9999-999999999999',
+  '99999999-9999-9999-9999-999999999999'::uuid,
   'demo-sandbox',
   'Sandbox Cohort (DEMO)',
-  current_date - 13,    -- today renders as "Day 14 of 30" in the app
+  current_date - 13,    -- today renders as "Day 14 of 30"
   current_date + 16,
   'live',
   true
@@ -42,20 +35,14 @@ on conflict (id) do update
       starts_on = excluded.starts_on,
       ends_on   = excluded.ends_on;
 
--- Curriculum / day_unlocks for the demo cohort (idempotent helper).
-select seed_curriculum_for('99999999-9999-9999-9999-999999999999');
+select seed_curriculum_for('99999999-9999-9999-9999-999999999999'::uuid);
 
--- Unlock the first 14 days so the demo "feels" mid-cohort.
 update cohort_days
    set is_unlocked = true
- where cohort_id = '99999999-9999-9999-9999-999999999999'
+ where cohort_id = '99999999-9999-9999-9999-999999999999'::uuid
    and day_number <= 14;
 
--- ---------- 3. Demo students -------------------------------------------------
--- 10 stable users in the auth.users / profiles space. We insert into
--- auth.users directly (service-role privileges of migration runner); the
--- handle_new_auth_user trigger from 0005 mirrors them into profiles.
-
+-- ---------- Demo students ----------------------------------------------------
 do $demo_users$
 declare
   rec record;
@@ -78,31 +65,24 @@ begin
       insert into auth.users (id, email, raw_user_meta_data)
         values (rec.id, rec.email, jsonb_build_object('full_name', rec.full_name));
     end if;
-    -- Profile is created by handle_new_auth_user trigger. Force-update
-    -- full_name in case the trigger already inserted a stub from a previous
-    -- run with a different name.
     update public.profiles set full_name = rec.full_name where id = rec.id;
   end loop;
 end
 $demo_users$;
 
--- ---------- 4. Registrations (confirmed) -------------------------------------
-
+-- ---------- Registrations + pods + members -----------------------------------
 insert into registrations (user_id, cohort_id, status, source)
-  select id, '99999999-9999-9999-9999-999999999999', 'confirmed', 'demo'
+  select id, '99999999-9999-9999-9999-999999999999'::uuid, 'confirmed', 'demo'
     from public.profiles
    where email like 'demo-student-%@demo.local'
 on conflict (user_id, cohort_id) do update set status = 'confirmed';
 
--- ---------- 5. Pods + members ------------------------------------------------
-
 insert into pods (id, cohort_id, name)
 values
-  ('99999998-0000-0000-0000-000000000001', '99999999-9999-9999-9999-999999999999', 'Pod Aurora'),
-  ('99999998-0000-0000-0000-000000000002', '99999999-9999-9999-9999-999999999999', 'Pod Borealis')
+  ('99999998-0000-0000-0000-000000000001'::uuid, '99999999-9999-9999-9999-999999999999'::uuid, 'Pod Aurora'),
+  ('99999998-0000-0000-0000-000000000002'::uuid, '99999999-9999-9999-9999-999999999999'::uuid, 'Pod Borealis')
 on conflict (id) do update set name = excluded.name;
 
--- Aurora: students 1..5; Borealis: students 6..10.
 do $demo_pods$
 declare
   uid uuid;
@@ -116,44 +96,44 @@ begin
            then '99999998-0000-0000-0000-000000000001'::uuid
            else '99999998-0000-0000-0000-000000000002'::uuid end,
       uid,
-      '99999999-9999-9999-9999-999999999999'
+      '99999999-9999-9999-9999-999999999999'::uuid
     )
     on conflict (cohort_id, student_user_id) do nothing;
   end loop;
 end
 $demo_pods$;
 
--- ---------- 6. Faculty auto-join ---------------------------------------------
--- Every existing faculty user (any cohort) becomes a member of the demo
--- cohort_faculty so the sandbox is reachable. New faculty get auto-joined
--- via the trigger below.
-
+-- ---------- Faculty auto-join ------------------------------------------------
+-- Every existing non-staff faculty user (any cohort) becomes a member of the
+-- demo cohort_faculty so the sandbox is reachable.
 insert into cohort_faculty (user_id, cohort_id, college_role)
   select distinct cf.user_id,
-         '99999999-9999-9999-9999-999999999999',
-         'support'
+         '99999999-9999-9999-9999-999999999999'::uuid,
+         'support'::college_role
     from cohort_faculty cf
-   where cf.cohort_id <> '99999999-9999-9999-9999-999999999999'
+    join profiles p on p.id = cf.user_id
+   where cf.cohort_id <> '99999999-9999-9999-9999-999999999999'::uuid
+     and not (p.staff_roles && array['admin','trainer','tech_support']::text[])
 on conflict (user_id, cohort_id) do nothing;
 
--- Same for admins / trainers / tech_support — staff also benefits from the
--- sandbox. (They already have global caps; this just makes the demo show up
--- in their cohort lists if they want to switch into it.)
-insert into cohort_faculty (user_id, cohort_id, college_role)
-  select id, '99999999-9999-9999-9999-999999999999', 'support'
-    from public.profiles
-   where staff_roles && array['admin','trainer','tech_support']::text[]
-on conflict (user_id, cohort_id) do nothing;
-
--- Trigger: on insert into any cohort_faculty (other than the demo cohort),
--- ensure the user is also a member of the demo cohort. Idempotent.
+-- Trigger: when a non-staff user is added to any cohort_faculty (other than
+-- the demo cohort), ensure they're also in the demo cohort. Skips staff to
+-- respect the role-invariant from 0015.
 create or replace function ensure_demo_cohort_faculty()
 returns trigger language plpgsql security definer set search_path = public, auth
 as $$
+declare
+  is_staff boolean;
 begin
-  if new.cohort_id <> '99999999-9999-9999-9999-999999999999' then
+  if new.cohort_id = '99999999-9999-9999-9999-999999999999'::uuid then
+    return new;
+  end if;
+  select coalesce(staff_roles && array['admin','trainer','tech_support']::text[], false)
+    into is_staff
+    from profiles where id = new.user_id;
+  if not is_staff then
     insert into cohort_faculty (user_id, cohort_id, college_role)
-      values (new.user_id, '99999999-9999-9999-9999-999999999999', 'support')
+      values (new.user_id, '99999999-9999-9999-9999-999999999999'::uuid, 'support'::college_role)
     on conflict (user_id, cohort_id) do nothing;
   end if;
   return new;
@@ -164,23 +144,3 @@ drop trigger if exists trg_ensure_demo_cohort_faculty on cohort_faculty;
 create trigger trg_ensure_demo_cohort_faculty
   after insert on cohort_faculty
   for each row execute function ensure_demo_cohort_faculty();
-
--- Same idea for staff role grants on profiles.
-create or replace function ensure_demo_cohort_for_staff()
-returns trigger language plpgsql security definer set search_path = public, auth
-as $$
-begin
-  if new.staff_roles && array['admin','trainer','tech_support']::text[] then
-    insert into cohort_faculty (user_id, cohort_id, college_role)
-      values (new.id, '99999999-9999-9999-9999-999999999999', 'support')
-    on conflict (user_id, cohort_id) do nothing;
-  end if;
-  return new;
-end
-$$;
-
-drop trigger if exists trg_ensure_demo_cohort_for_staff on profiles;
-create trigger trg_ensure_demo_cohort_for_staff
-  after update of staff_roles on profiles
-  for each row when (new.staff_roles is distinct from old.staff_roles)
-  execute function ensure_demo_cohort_for_staff();
