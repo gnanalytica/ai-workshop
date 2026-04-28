@@ -1,19 +1,18 @@
 /**
  * Help-chat model + system-prompt builder.
  *
- * Mirrors `lib/ai/grade.ts` — uses the Vercel AI Gateway via `gateway()` from
- * the `ai` package. The model id `google/gemini-1.5-flash` is the gateway's
- * canonical name for Gemini 1.5 Flash; if Vercel ever renames it, change only
- * this constant.
+ * Calls Google directly via `@ai-sdk/google` so we can use a project-owned
+ * Gemini API key (set `GOOGLE_GENERATIVE_AI_API_KEY` in env). AI grading
+ * still goes through the Vercel AI Gateway — see `lib/ai/grade.ts`.
  */
 
-import { gateway } from "ai";
+import { google } from "@ai-sdk/google";
 import type { RetrievedChunk } from "./help-retrieval";
 import type { Persona } from "@/lib/auth/persona";
 
-export const HELP_CHAT_MODEL_ID = "google/gemini-1.5-flash";
+export const HELP_CHAT_MODEL_ID = "gemini-2.5-flash";
 
-export const helpChatModel = () => gateway(HELP_CHAT_MODEL_ID);
+export const helpChatModel = () => google(HELP_CHAT_MODEL_ID);
 
 export interface BuildSystemPromptInput {
   persona: Persona;

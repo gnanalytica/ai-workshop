@@ -31,7 +31,7 @@ export const STATIC_HANDBOOK_CORPUS: StaticCorpusEntry[] = [
     slug: "student-what-you-signed-up-for",
     persona: "student",
     title: "What you signed up for",
-    text: "30 days, one daily habit. Open today's lesson on /learn, build the lab, submit your output, and engage with your pod. Streaks matter more than perfection — a half-finished lab logged on time keeps your streak alive.",
+    text: "30 days, one daily habit. Open today's lesson, build the lab, submit your output, and engage with your pod. Streaks matter more than perfection — a half-finished lab logged on time keeps your streak alive.",
     href: "/handbook?tab=your_role",
   },
   {
