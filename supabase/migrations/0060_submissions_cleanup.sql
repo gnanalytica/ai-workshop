@@ -21,9 +21,11 @@ drop type if exists peer_review_status;
 -- ----- 2/3. rebuild assignment_kind (drop 'quiz') and submission_status -----
 
 -- assignment_kind: 'lab' | 'capstone' | 'reflection'
--- The leaderboard view depends on submissions.status, so drop it first.
+-- v_student_score and v_student_progress both reference submissions.status,
+-- so they must be dropped before the type swap; recreated below.
 
 drop view if exists v_student_score;
+drop view if exists v_student_progress;
 
 -- safety: defensively delete any orphan kind='quiz' rows. Seeds don't create
 -- them, but production data may.
@@ -38,6 +40,10 @@ drop type assignment_kind_old;
 -- submission_status: 'draft' | 'submitted' | 'graded'
 delete from submissions where status = 'returned';
 
+-- subs_self_update policy references the status enum; drop + recreate around
+-- the type swap.
+drop policy if exists subs_self_update on submissions;
+
 alter type submission_status rename to submission_status_old;
 create type submission_status as enum ('draft', 'submitted', 'graded');
 alter table submissions
@@ -47,6 +53,30 @@ alter table submissions
 alter table submissions
   alter column status set default 'draft';
 drop type submission_status_old;
+
+create policy subs_self_update on submissions
+  for update
+  using ((user_id = auth.uid()) and (status = any (array['draft'::submission_status, 'submitted'::submission_status])))
+  with check ((user_id = auth.uid()) and (status = any (array['draft'::submission_status, 'submitted'::submission_status])));
+
+-- recreate v_student_progress (mirrors the original definition).
+create view v_student_progress with (security_invoker = on) as
+  select r.cohort_id,
+         r.user_id,
+         prof.full_name,
+         prof.email,
+         (select count(*) from lab_progress lp
+           where lp.user_id = r.user_id and lp.cohort_id = r.cohort_id and lp.status = 'done'::lab_status) as labs_done,
+         (select count(*) from submissions s
+           join assignments a on a.id = s.assignment_id
+           where s.user_id = r.user_id and a.cohort_id = r.cohort_id and s.status = 'graded'::submission_status) as graded_subs,
+         (select count(*) from attendance a
+           where a.user_id = r.user_id and a.cohort_id = r.cohort_id and a.status = 'present'::attendance_status) as days_present
+    from registrations r
+    join profiles prof on prof.id = r.user_id
+   where r.status = 'confirmed'::registration_status;
+
+grant select on v_student_progress to authenticated;
 
 -- ----- 4. rename attachments -> links ----------------------------------------
 
@@ -129,7 +159,7 @@ grant select, insert, update on capstone_projects to authenticated;
 
 -- ----- 7. v_student_score: weighted submission_score, exclude reflections ----
 
-create or replace view v_student_score as
+create view v_student_score with (security_invoker = on) as
 with
   q as (
     select qz.cohort_id, qa.user_id, sum(coalesce(qa.score, 0)) as score
