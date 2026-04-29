@@ -23,7 +23,6 @@ export const getFacultyCohort = cache(async () => {
   if (!c) return null;
   return {
     cohort: { id: c.id, slug: c.slug, name: c.name, status: c.status, starts_on: c.starts_on, ends_on: c.ends_on },
-    college_role: c.college_role,
   };
 });
 

@@ -39,7 +39,7 @@ export function HelpDeskActions({
   }
   function escalate() {
     if (!note.trim()) {
-        toast.error("Add a note for trainer, admin, or tech");
+        toast.error("Add a note for the admin");
       return;
     }
     start(async () => {
@@ -93,7 +93,7 @@ export function HelpDeskActions({
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="What should trainer, admin, or tech do?"
+            placeholder="What should the admin do?"
             className="border-line bg-input-bg text-ink w-72 rounded-md border px-2 py-1 text-sm"
           />
           <Button size="sm" variant="danger" onClick={escalate} disabled={pending}>

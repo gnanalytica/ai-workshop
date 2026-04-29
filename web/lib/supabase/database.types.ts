@@ -569,19 +569,16 @@ export type Database = {
       cohort_faculty: {
         Row: {
           cohort_id: string
-          college_role: Database["public"]["Enums"]["college_role"]
           created_at: string
           user_id: string
         }
         Insert: {
           cohort_id: string
-          college_role: Database["public"]["Enums"]["college_role"]
           created_at?: string
           user_id: string
         }
         Update: {
           cohort_id?: string
-          college_role?: Database["public"]["Enums"]["college_role"]
           created_at?: string
           user_id?: string
         }
@@ -2031,9 +2028,7 @@ export type Database = {
     Functions: {
       auth_caps: { Args: { p_cohort?: string }; Returns: string[] }
       can_grade: { Args: { p_submission: string }; Returns: boolean }
-      college_role_in: { Args: { p_cohort: string }; Returns: string }
       current_user_id: { Args: never; Returns: string }
-      executive_cohort_ids: { Args: never; Returns: string[] }
       faculty_cohort_ids: { Args: never; Returns: string[] }
       has_cap: { Args: { p_cap: string; p_cohort?: string }; Returns: boolean }
       has_staff_role: { Args: { role: string }; Returns: boolean }
@@ -2193,7 +2188,6 @@ export type Database = {
       buddy_checkin_kind: "day_open" | "day_close" | "weekly"
       capstone_phase: "idea" | "spec" | "mid" | "demo" | "shipped"
       cohort_status: "draft" | "live" | "archived"
-      college_role: "support" | "executive"
       day_capstone_kind: "none" | "spec_review" | "mid_review" | "demo_day"
       lab_status: "not_started" | "in_progress" | "done"
       notification_kind:
@@ -2349,7 +2343,6 @@ export const Constants = {
       buddy_checkin_kind: ["day_open", "day_close", "weekly"],
       capstone_phase: ["idea", "spec", "mid", "demo", "shipped"],
       cohort_status: ["draft", "live", "archived"],
-      college_role: ["support", "executive"],
       day_capstone_kind: ["none", "spec_review", "mid_review", "demo_day"],
       lab_status: ["not_started", "in_progress", "done"],
       notification_kind: [

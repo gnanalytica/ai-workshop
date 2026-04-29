@@ -44,23 +44,22 @@ docs/                  specs, plans, design notes
 
 ## RBAC model (single source of truth)
 
-Six personas:
+Three personas:
 
-| Persona            | Stored in                                 | Scope        |
-|--------------------|-------------------------------------------|--------------|
-| Admin              | `profiles.staff_roles ⊇ {'admin'}`        | global       |
-| Trainer            | `profiles.staff_roles ⊇ {'trainer'}`      | global       |
-| Tech Support       | `profiles.staff_roles ⊇ {'tech_support'}` | global       |
-| Support Faculty    | `cohort_faculty.college_role='support'`   | per cohort   |
-| Executive Faculty  | `cohort_faculty.college_role='executive'` | per cohort   |
-| Student            | `registrations.status='confirmed'`        | per cohort   |
+| Persona  | Stored in                                | Scope        |
+|----------|------------------------------------------|--------------|
+| Admin    | `profiles.staff_roles ⊇ {'admin'}`       | global       |
+| Faculty  | `cohort_faculty` row                     | per cohort   |
+| Student  | `registrations.status='confirmed'`       | per cohort   |
 
 Capabilities (UI checks against these, **never** role names):
-`content.{read,write}`, `schedule.{read,write}`, `roster.{read,write}`, `pods.write`, `faculty.write`, `grading.read`, `grading.write:{cohort,pod}`, `attendance.mark:{cohort,pod}`, `attendance.self`, `analytics.read:{cohort,program}`, `announcements.{read,write}:cohort`, `moderation.write`, `support.{triage,tech_only}`, `orgs.write`, `self.{read,write}`, `board.{read,write}`.
+`content.{read,write}`, `schedule.{read,write}`, `roster.{read,write}`, `pods.write`, `faculty.write`, `grading.read`, `grading.write:cohort`, `attendance.self`, `analytics.read:{cohort,program}`, `moderation.write`, `support.{triage,escalate}`, `orgs.write`, `self.{read,write}`, `community.{read,write}`.
+
+Faculty are **review-only** on submissions: they get `grading.read` but never `grading.write`. Only admins write grades (`grading.write:cohort`).
 
 The Postgres `auth_caps(cohort uuid)` SECURITY DEFINER function is the canonical capability resolver. `lib/rbac/capabilities.ts` mirrors it for UI hints. Every RLS policy routes through `has_cap()` / `can_grade()`. **No policy hand-rolls role math.**
 
-Server-side gate: `await requireCapability("grading.write:pod", cohortId)` in any RSC, server action, or route handler. Soft check: `await checkCapability(...)`.
+Server-side gate: `await requireCapability("grading.write:cohort", cohortId)` in any RSC, server action, or route handler. Soft check: `await checkCapability(...)`.
 
 ## Architecture notes that aren't obvious
 
@@ -68,7 +67,7 @@ Server-side gate: `await requireCapability("grading.write:pod", cohortId)` in an
 - **Enrolled students** = `registrations.status='confirmed'`. There is no `enrollments` table.
 - **Per-day progress**: `lab_progress`; day metadata: `cohort_days`.
 - **Pods**: `pods` → `pod_faculty` (many, exactly one `is_primary` per pod via partial unique index) → `pod_members` (one pod per student per cohort, enforced by unique index). Atomic mutations go through the `rpc_pod_faculty_event` RPC; `pod_events` is the audit log. Students fetch their pod via `rpc_my_pod(cohort)`.
-- **Submissions grading** authorization: `can_grade(submission)` — true for admin/trainer cohort-wide, true for support faculty when `shares_pod_with(student, cohort)`, false for executive faculty.
+- **Submissions grading** authorization: `can_grade(submission)` — true for admin only. Faculty are review-only.
 - **Curriculum**: `web/content/day-XX.mdx` is the source. Frontmatter validated by `lib/content/schema.ts` (zod). Body is rendered server-side via `next-mdx-remote/rsc`.
 - **Theme**: tokens are HSL CSS variables in `app/globals.css`, exposed to Tailwind via `@theme`. Persona is `data-theme="light"|"dark"` on `<html>`, switched by `next-themes`.
 

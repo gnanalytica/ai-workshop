@@ -153,7 +153,6 @@ export type InvitePreview =
       ok: true;
       kind: InviteKind;
       cohort_name: string | null;
-      college_role: string | null;
       staff_role: string | null;
     }
   | { ok: false; message: string };
@@ -184,7 +183,6 @@ export async function previewInvite(code: string): Promise<InvitePreview> {
     | {
         kind: InviteKind;
         cohort_name: string | null;
-        college_role: string | null;
         staff_role: string | null;
       }
     | null;
@@ -193,7 +191,6 @@ export async function previewInvite(code: string): Promise<InvitePreview> {
     ok: true,
     kind: row.kind,
     cohort_name: row.cohort_name,
-    college_role: row.college_role,
     staff_role: row.staff_role,
   };
 }

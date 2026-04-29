@@ -32,7 +32,6 @@ export interface FacultyRow {
   user_id: string;
   full_name: string | null;
   email: string;
-  college_role: "support" | "executive";
   pods: number;
 }
 
@@ -106,16 +105,15 @@ export const listFaculty = cache(async (cohortId: string): Promise<FacultyRow[]>
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("cohort_faculty")
-    .select("user_id, college_role, profiles!inner(full_name, email)")
+    .select("user_id, profiles!inner(full_name, email)")
     .eq("cohort_id", cohortId);
   return ((data ?? []) as unknown as Array<{
-    user_id: string; college_role: "support" | "executive";
+    user_id: string;
     profiles: { full_name: string | null; email: string };
   }>).map((r) => ({
     user_id: r.user_id,
     full_name: r.profiles.full_name,
     email: r.profiles.email,
-    college_role: r.college_role,
     pods: 0, // can be filled via second query if needed
   }));
 });

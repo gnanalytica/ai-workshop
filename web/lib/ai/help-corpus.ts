@@ -74,7 +74,7 @@ export const STATIC_HANDBOOK_CORPUS: StaticCorpusEntry[] = [
     slug: "admin-three-personas",
     persona: "admin",
     title: "Three personas, no overlap",
-    text: "The system enforces persona separation in the database. Admin is a global staff role (admin, trainer, or tech_support). Faculty are assigned to one or more cohorts. Students have a confirmed registration in a single cohort.",
+    text: "The system enforces persona separation in the database. Admin is a global staff role. Faculty are assigned to one or more cohorts. Students have a confirmed registration in a single cohort.",
     href: "/admin/handbook?tab=your_role",
   },
   {

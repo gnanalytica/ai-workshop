@@ -57,7 +57,7 @@ const YOUR_ROLE: HandbookSection[] = [
         </p>
         <ul>
           <li>
-            <strong>Admin</strong> — global staff role (admin, trainer, or tech_support).
+            <strong>Admin</strong> — global staff role.
           </li>
           <li>
             <strong>Faculty</strong> — assigned to one or more cohorts.
@@ -318,14 +318,10 @@ const DAY_BY_DAY: HandbookSection[] = [
       <>
         <p>
           Pod faculty triage help-desk tickets first. If they hit{" "}
-          <code>support.escalate</code>, the ticket lands in the staff queue (admins,
-          trainers, tech_support).
+          <code>support.escalate</code>, the ticket lands in the admin queue.
         </p>
         <ul>
-          <li>
-            Tech-only issues (auth, accounts, infrastructure) skip pod triage and go
-            straight to <code>tech_support</code>.
-          </li>
+          <li>Tech-tagged tickets are admin-only end-to-end.</li>
           <li>
             See live load on the admin home dashboard — drill in via the &quot;help desk
             open&quot; tile.

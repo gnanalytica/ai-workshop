@@ -4,13 +4,11 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 export interface PodFacultyMember {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
 }
 
 export interface CohortFacultyMember {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
 }
 
 export interface PodWithRoster {
@@ -52,13 +50,12 @@ export const getCohortPodRoster = cache(
         .eq("status", "confirmed"),
       sb
         .from("cohort_faculty")
-        .select("user_id, college_role, profiles!inner(full_name)")
+        .select("user_id, profiles!inner(full_name)")
         .eq("cohort_id", cohortId),
     ]);
 
     type CohortFacRow = {
       user_id: string;
-      college_role: "support" | "executive";
       profiles: { full_name: string | null };
     };
     const cohortFacultyList: CohortFacultyMember[] = (
@@ -66,7 +63,6 @@ export const getCohortPodRoster = cache(
     ).map((r) => ({
       user_id: r.user_id,
       full_name: r.profiles.full_name,
-      college_role: r.college_role,
     }));
     const cohortFacIndex = new Map(
       cohortFacultyList.map((f) => [f.user_id, f]),
@@ -90,7 +86,6 @@ export const getCohortPodRoster = cache(
         return {
           user_id: f.faculty_user_id,
           full_name: f.profiles?.full_name ?? cf?.full_name ?? null,
-          college_role: cf?.college_role ?? "support",
         };
       });
       return {

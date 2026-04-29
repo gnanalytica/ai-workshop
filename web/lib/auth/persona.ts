@@ -9,7 +9,7 @@ export const PREVIEW_COOKIE = "previewAs";
 export const PREVIEW_COHORT_COOKIE = "previewCohortId";
 export const PREVIEW_USER_COOKIE = "previewUserId";
 
-const STAFF_ADMIN_ROLES = new Set(["admin", "trainer", "tech_support"]);
+const STAFF_ADMIN_ROLES = new Set(["admin"]);
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

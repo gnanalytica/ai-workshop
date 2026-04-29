@@ -12,7 +12,6 @@ export interface FacultyCohort {
   status: "draft" | "live" | "archived";
   starts_on: string;
   ends_on: string;
-  college_role: "support" | "executive";
 }
 
 const COOKIE = "currentCohort";
@@ -22,8 +21,7 @@ const COOKIE = "currentCohort";
  * a non-faculty user gets [].
  *
  * Special case: when an admin is previewing as faculty, returns ALL cohorts
- * (every cohort with `executive` role) since admins already have full caps
- * cohort-wide and the picker should let them preview any cohort.
+ * since admins already have full caps cohort-wide.
  */
 export const listMyFacultyCohorts = cache(async (): Promise<FacultyCohort[]> => {
   const truePersona = await getTruePersona();
@@ -33,37 +31,31 @@ export const listMyFacultyCohorts = cache(async (): Promise<FacultyCohort[]> => 
       .from("cohorts")
       .select("id, slug, name, status, starts_on, ends_on")
       .order("starts_on", { ascending: false });
-    return ((data ?? []) as Array<Omit<FacultyCohort, "college_role">>).map((c) => ({
-      ...c,
-      college_role: "executive" as const,
-    }));
+    return (data ?? []) as FacultyCohort[];
   }
 
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("cohort_faculty")
-    .select("college_role, cohorts(id, slug, name, status, starts_on, ends_on)")
+    .select("cohorts(id, slug, name, status, starts_on, ends_on)")
     .order("created_at", { ascending: false });
   const seen = new Set<string>();
   return (data ?? []).flatMap((row) => {
     const c = (row as unknown as { cohorts: FacultyCohort | null }).cohorts;
     if (!c || seen.has(c.id)) return [];
     seen.add(c.id);
-    return [{ ...c, college_role: (row as { college_role: "support" | "executive" }).college_role }];
+    return [c];
   });
 });
 
 /**
  * The faculty user's *current* cohort.
  *   - If admin previewing faculty with a `previewCohortId` set, returns that
- *     cohort with synthetic `executive` role (admins see everything).
+ *     cohort.
  *   - Otherwise, cookie-pinned assignment → most recent assignment.
  *   - Null if the user is not faculty (and not admin previewing).
  */
 export const getCurrentFacultyCohort = cache(async (): Promise<FacultyCohort | null> => {
-  // Sandbox takes precedence over everything: when active, all faculty pages
-  // operate against the demo cohort. The helper is fail-closed so non-eligible
-  // users never get here.
   const sandboxId = await getActiveSandboxCohortId();
   if (sandboxId) {
     const svc = getSupabaseService();
@@ -72,9 +64,7 @@ export const getCurrentFacultyCohort = cache(async (): Promise<FacultyCohort | n
       .select("id, slug, name, status, starts_on, ends_on")
       .eq("id", sandboxId)
       .maybeSingle();
-    if (data) {
-      return { ...(data as Omit<FacultyCohort, "college_role">), college_role: "executive" };
-    }
+    if (data) return data as FacultyCohort;
   }
 
   const previewCohortId = await getPreviewCohortId();
@@ -85,9 +75,7 @@ export const getCurrentFacultyCohort = cache(async (): Promise<FacultyCohort | n
       .select("id, slug, name, status, starts_on, ends_on")
       .eq("id", previewCohortId)
       .maybeSingle();
-    if (data) {
-      return { ...(data as Omit<FacultyCohort, "college_role">), college_role: "executive" };
-    }
+    if (data) return data as FacultyCohort;
   }
 
   const all = await listMyFacultyCohorts();

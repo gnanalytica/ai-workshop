@@ -49,7 +49,7 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
         <Card className="bg-bg-soft">
           <CardSub className="text-accent font-mono text-xs uppercase">Submitted</CardSub>
           <p className="text-ink/85 mt-2 text-sm">
-            Your submission is in. Feedback will appear once a trainer has reviewed it.
+            Your submission is in. Feedback will appear once an admin has reviewed it.
           </p>
           {assignment.submission?.body && (
             <p className="text-muted mt-3 text-xs whitespace-pre-line">{assignment.submission.body.slice(0, 240)}{(assignment.submission.body.length ?? 0) > 240 ? "…" : ""}</p>

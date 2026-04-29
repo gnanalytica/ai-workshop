@@ -58,8 +58,8 @@ export async function revalidateDayPage(day: number) {
 }
 
 // -----------------------------------------------------------------------------
-// Staff grading actions (admin / trainer / tech_support, gated by
-// grading.write:cohort). Faculty are read-only.
+// Staff grading actions (admin only, gated by grading.write:cohort).
+// Faculty are review-only.
 // -----------------------------------------------------------------------------
 
 const batchSchema = z.object({ assignment_id: z.string().uuid() });

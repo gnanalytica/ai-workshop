@@ -12,7 +12,6 @@ export function CreateInviteForm({
 }) {
   const [kind, setKind] = useState<Kind>("student");
   const [cohortId, setCohortId] = useState<string>(cohorts[0]?.id ?? "");
-  const [staffRole, setStaffRole] = useState<"admin" | "trainer" | "tech_support">("admin");
   const [maxUses, setMaxUses] = useState<number>(1);
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [note, setNote] = useState<string>("");
@@ -26,7 +25,7 @@ export function CreateInviteForm({
       const out = await createInvite({
         kind,
         cohort_id: kind === "staff" ? null : cohortId || null,
-        staff_role: kind === "staff" ? staffRole : null,
+        staff_role: kind === "staff" ? "admin" : null,
         max_uses: maxUses,
         expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
         note: note || null,
@@ -50,7 +49,7 @@ export function CreateInviteForm({
         >
           <option value="student">Student</option>
           <option value="faculty">Faculty</option>
-          <option value="staff">Staff (admin / trainer / support)</option>
+          <option value="staff">Admin</option>
         </select>
       </Field>
 
@@ -67,22 +66,6 @@ export function CreateInviteForm({
                 {c.name} ({c.status})
               </option>
             ))}
-          </select>
-        </Field>
-      )}
-
-      {kind === "staff" && (
-        <Field label="Staff role">
-          <select
-            value={staffRole}
-            onChange={(e) =>
-              setStaffRole(e.target.value as "admin" | "trainer" | "tech_support")
-            }
-            className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
-          >
-            <option value="admin">Admin</option>
-            <option value="trainer">Trainer</option>
-            <option value="tech_support">Tech support</option>
           </select>
         </Field>
       )}

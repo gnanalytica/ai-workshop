@@ -21,12 +21,10 @@ interface Student {
 interface FacultyMember {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
 }
 interface CohortFacultyMember {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
 }
 interface Pod {
   pod_id: string;
@@ -471,7 +469,6 @@ export function PodBoard({
               p.faculty.map((f) => ({
                 user_id: f.user_id,
                 full_name: f.full_name,
-                college_role: f.college_role,
                 podId: p.pod_id,
                 podName: p.name,
               })),
@@ -479,7 +476,6 @@ export function PodBoard({
             ...unassignedFaculty.map((f) => ({
               user_id: f.user_id,
               full_name: f.full_name,
-              college_role: f.college_role,
               podId: null as string | null,
               podName: null as string | null,
             })),
@@ -745,7 +741,6 @@ function ViewToggle({
 interface FacultyRow {
   user_id: string;
   full_name: string | null;
-  college_role: "support" | "executive";
   podId: string | null;
   podName: string | null;
 }

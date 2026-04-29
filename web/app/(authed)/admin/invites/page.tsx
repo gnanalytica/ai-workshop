@@ -14,8 +14,7 @@ export default async function AdminInvitesPage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Invites</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Sign-up invite codes</h1>
         <p className="text-muted mt-1 text-sm">
-          Issue codes for students (per cohort), faculty (per cohort + role), and staff (admin /
-          trainer / tech_support).
+          Issue codes for students (per cohort), faculty (per cohort), and admins.
         </p>
       </header>
 

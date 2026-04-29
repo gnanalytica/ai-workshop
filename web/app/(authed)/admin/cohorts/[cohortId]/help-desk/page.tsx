@@ -22,7 +22,7 @@ export default async function CohortStuckPage({
       <CohortShell cohort={cohort} active="help-desk" />
       <CardSub className="max-w-2xl">
         {items.length} open · cohort-wide. Students open tickets from their lessons; pod faculty triage first.
-        Escalations and tech-tagged items appear here for trainers, admins, and tech support.
+        Escalations and tech-tagged items appear here for admins.
       </CardSub>
       <HelpDeskQueueClient cohortId={cohort.id} items={items} />
     </>

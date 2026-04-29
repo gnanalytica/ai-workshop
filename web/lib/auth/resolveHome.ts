@@ -2,13 +2,12 @@ import { getSession } from "@/lib/auth/session";
 import { getSupabaseService } from "@/lib/supabase/service";
 
 /**
- * Resolve the post-auth landing path. Invariants enforced in DB
- * (see migration 0015_role_invariants):
- *   - admin/trainer/tech_support is global; cannot also be student/faculty
+ * Resolve the post-auth landing path. Invariants enforced in DB:
+ *   - admin is global; cannot also be student/faculty
  *   - student has at most one confirmed registration
  *   - faculty may be assigned to multiple cohorts (cookie picks current)
  *
- *   /admin        — has any of admin / trainer / tech_support staff_role
+ *   /admin        — has admin staff_role
  *   /faculty      — has any cohort_faculty assignment
  *   /learn        — has a confirmed registration
  *   /start/claim  — authenticated but no role yet
@@ -16,8 +15,6 @@ import { getSupabaseService } from "@/lib/supabase/service";
  */
 const STAFF_HOMES: Record<string, string> = {
   admin: "/admin",
-  trainer: "/admin",
-  tech_support: "/admin",
 };
 
 export async function resolveHome(): Promise<string> {

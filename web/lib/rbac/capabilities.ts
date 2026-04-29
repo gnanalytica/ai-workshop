@@ -25,7 +25,6 @@ export const CAPABILITIES = [
   "analytics.read:program",
   "moderation.write",
   "support.triage",
-  "support.tech_only",
   "support.escalate",
   "orgs.write",
   "self.read",
@@ -37,13 +36,7 @@ export const CAPABILITIES = [
 export type Capability = (typeof CAPABILITIES)[number];
 
 /** Role identifiers. */
-export const ROLES = [
-  "admin",
-  "trainer",
-  "tech_support",
-  "faculty",
-  "student",
-] as const;
+export const ROLES = ["admin", "faculty", "student"] as const;
 export type Role = (typeof ROLES)[number];
 
 /**
@@ -67,38 +60,8 @@ export const ROLE_CAPABILITIES: Record<Role, readonly Capability[]> = {
     "analytics.read:program",
     "moderation.write",
     "support.triage",
-    "support.tech_only",
     "support.escalate",
     "orgs.write",
-    "community.read",
-    "community.write",
-  ],
-  trainer: [
-    "content.read",
-    "content.write",
-    "schedule.read",
-    "schedule.write",
-    "roster.read",
-    "pods.write",
-    "faculty.write",
-    "grading.read",
-    "grading.write:cohort",
-    "analytics.read:cohort",
-    "support.triage",
-    "support.escalate",
-    "community.read",
-    "community.write",
-  ],
-  tech_support: [
-    "content.read",
-    "schedule.read",
-    "roster.read",
-    "grading.read",
-    "grading.write:cohort",
-    "support.triage",
-    "support.tech_only",
-    "support.escalate",
-    "moderation.write",
     "community.read",
     "community.write",
   ],

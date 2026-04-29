@@ -9,8 +9,7 @@ import { actionFail, actionOk } from "./_helpers";
 const baseSchema = z.object({
   kind: z.enum(["student", "faculty", "staff"]),
   cohort_id: z.string().uuid().nullable().optional(),
-  college_role: z.enum(["support", "executive"]).nullable().optional(),
-  staff_role: z.enum(["admin", "trainer", "tech_support"]).nullable().optional(),
+  staff_role: z.enum(["admin"]).nullable().optional(),
   max_uses: z.coerce.number().int().min(1).max(1000).default(1),
   expires_at: z.string().nullable().optional(),
   note: z.string().max(500).nullable().optional(),
@@ -45,16 +44,13 @@ export async function createInvite(input: z.infer<typeof baseSchema>) {
   }
   const v = parsed.data;
   const prefix =
-    v.kind === "student" ? "STU" : v.kind === "faculty" ? "FAC" : v.staff_role!.slice(0, 3).toUpperCase();
+    v.kind === "student" ? "STU" : v.kind === "faculty" ? "FAC" : "ADM";
 
   const sb = await getSupabaseServer();
   const row = {
     kind: v.kind,
     cohort_id: v.kind === "staff" ? null : v.cohort_id ?? null,
-    // Faculty role distinction (support vs executive) collapsed in
-    // 0019_unify_faculty_role; we always store 'support' for new invites.
-    college_role: v.kind === "faculty" ? "support" : null,
-    staff_role: v.kind === "staff" ? v.staff_role ?? null : null,
+    staff_role: v.kind === "staff" ? v.staff_role ?? "admin" : null,
     max_uses: v.max_uses,
     expires_at: v.expires_at || null,
     note: v.note || null,

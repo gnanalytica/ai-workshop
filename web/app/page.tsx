@@ -100,7 +100,7 @@ function Features() {
     },
     {
       title: "Grading + analytics",
-      body: "Server-enforced grading roles. Cohort and pod analytics at a glance for trainers and admins.",
+      body: "Server-enforced grading roles. Cohort and pod analytics at a glance for admins.",
     },
   ];
   return (

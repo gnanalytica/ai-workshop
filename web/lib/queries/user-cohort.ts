@@ -11,8 +11,8 @@ export interface CohortContext {
 /**
  * Cohort context for routes that span admin + faculty (e.g. /pods). Resolves in
  * this order:
- *   1. Most recent live cohort the caller can see (admins/trainers will see all
- *      cohorts; faculty/students see only their own through RLS).
+ *   1. Most recent live cohort the caller can see (admins see all cohorts;
+ *      faculty/students see only their own through RLS).
  *   2. Most recent draft/archived cohort otherwise.
  * Returns null if the caller has access to no cohort.
  */
