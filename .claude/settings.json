@@ -2,5 +2,36 @@
   "enabledPlugins": {
     "supabase@claude-plugins-official": true,
     "vercel@claude-plugins-official": true
+  },
+  "permissions": {
+    "deny": [
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(web/.env)",
+      "Edit(web/.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Write(web/.env)",
+      "Write(web/.env.*)",
+      "Edit(supabase/migrations/000*_*.sql)",
+      "Edit(supabase/migrations/001*_*.sql)",
+      "Edit(supabase/migrations/002*_*.sql)",
+      "Edit(supabase/migrations/003*_*.sql)",
+      "Edit(supabase/migrations/004*_*.sql)",
+      "Edit(supabase/migrations/005*_*.sql)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/verify-web.sh"
+          }
+        ]
+      }
+    ]
   }
 }
