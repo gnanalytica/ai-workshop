@@ -80,7 +80,7 @@ export async function sendMagicLink(_prev: SignInState, formData: FormData): Pro
 /**
  * Single-entry "Enroll / Sign in" flow. Looks up the email; if a profile
  * exists, sends a magic link (sign-in). Otherwise redirects to /start/sign-up
- * so the user can pick a role and redeem an invite code.
+ * where the user redeems an invite code — role is derived from the code's kind.
  */
 export type StartState = SignInState & { mode?: "signin" | "signup" };
 

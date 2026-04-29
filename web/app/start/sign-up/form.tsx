@@ -31,6 +31,10 @@ export function SignUpForm({ email }: { email: string }) {
 
         <InviteCodeField name="code" label="Invite code" />
 
+        <p className="text-muted -mt-1 text-xs">
+          Don&apos;t have a code? Ask your cohort admin or the person who invited you.
+        </p>
+
         <SubmitButton />
         {state.message && (
           <p className={state.ok ? "text-accent text-sm" : "text-danger text-sm"}>

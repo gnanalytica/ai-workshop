@@ -12,7 +12,7 @@ type Status =
 const KIND_LABEL: Record<"student" | "faculty" | "staff", string> = {
   student: "Student",
   faculty: "Faculty",
-  staff: "Staff",
+  staff: "Admin",
 };
 
 export function InviteCodeField({
@@ -59,6 +59,7 @@ export function InviteCodeField({
         autoComplete="off"
         spellCheck={false}
         aria-describedby={`${name}-status`}
+        aria-invalid={status.state === "bad"}
         className="border-line bg-input-bg text-ink placeholder:text-muted rounded-md border px-3 py-2 font-mono text-sm tracking-wider uppercase transition-[border-color,box-shadow] duration-200 focus-visible:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]"
       />
       <Status id={`${name}-status`} status={status} />
@@ -67,31 +68,32 @@ export function InviteCodeField({
 }
 
 function Status({ id, status }: { id: string; status: Status }) {
+  const live = status.state === "ok" || status.state === "bad" ? "polite" : "off";
   if (status.state === "idle") {
     return (
-      <span id={id} className="text-muted text-xs">
+      <span id={id} aria-live={live} className="text-muted text-xs">
         We&apos;ll set up the right access based on your code.
       </span>
     );
   }
   if (status.state === "checking") {
     return (
-      <span id={id} className="text-muted text-xs">
+      <span id={id} aria-live={live} className="text-muted text-xs">
         Checking…
       </span>
     );
   }
   if (status.state === "bad") {
     return (
-      <span id={id} className="text-danger text-xs">
+      <span id={id} aria-live={live} role="alert" className="text-danger text-xs">
         {status.message}
       </span>
     );
   }
-  const { kind, cohort_name, staff_role } = status.preview;
-  const role = kind === "staff" && staff_role ? staff_role.replace("_", " ") : KIND_LABEL[kind];
+  const { kind, cohort_name } = status.preview;
+  const role = KIND_LABEL[kind];
   return (
-    <span id={id} className="text-accent text-xs">
+    <span id={id} aria-live={live} className="text-accent text-xs">
       ✓ Valid · {role}
       {cohort_name ? ` · ${cohort_name}` : ""}
     </span>
