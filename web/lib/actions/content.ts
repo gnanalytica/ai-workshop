@@ -7,7 +7,7 @@ import { withSupabase, actionFail } from "./_helpers";
 const newAssignmentSchema = z.object({
   cohort_id: z.string().uuid(),
   day_number: z.number().int().min(1).max(60),
-  kind: z.enum(["lab", "capstone", "reflection", "quiz"]),
+  kind: z.enum(["lab", "capstone", "reflection"]),
   title: z.string().min(2).max(200),
   body_md: z.string().max(20_000).optional(),
   due_at: z.string().nullable().optional(),

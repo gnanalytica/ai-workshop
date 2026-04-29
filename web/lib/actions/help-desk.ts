@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { actionFail, actionOk, withSupabase, type ActionResult } from "./_helpers";
+import { actionFail, actionOk, type ActionResult } from "./_helpers";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 
 const reportSchema = z.object({
@@ -16,21 +16,29 @@ const reportSchema = z.object({
 export async function reportTicket(input: z.infer<typeof reportSchema>): Promise<ActionResult> {
   const parsed = reportSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
-  return withSupabase(async (sb) => {
-    const { data: user } = await sb.auth.getUser();
-    if (!user.user) return { data: null, error: { message: "Not signed in" } };
-    return sb
-      .from("help_desk_queue")
-      .insert({
-        cohort_id: parsed.data.cohort_id,
-        user_id: user.user.id,
-        kind: parsed.data.kind,
-        message: parsed.data.message,
-        status: "open",
-      })
-      .select()
-      .single();
-  }, ["/admin/help-desk", "/faculty/help-desk", "/faculty/pod", "/help-desk", "/learn"]);
+  // Caller must be enrolled in this cohort. Without this, a signed-in user
+  // could file tickets into a cohort they have no relationship with.
+  await requireCapability("self.read", parsed.data.cohort_id);
+  const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+  const { error } = await sb
+    .from("help_desk_queue")
+    .insert({
+      cohort_id: parsed.data.cohort_id,
+      user_id: user.user.id,
+      kind: parsed.data.kind,
+      message: parsed.data.message,
+      status: "open",
+    });
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/cohorts", "layout");
+  revalidatePath("/admin/help-desk");
+  revalidatePath("/faculty/help-desk");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/help-desk");
+  revalidatePath("/learn");
+  return actionOk();
 }
 
 const facultyTechSchema = z.object({
@@ -40,7 +48,8 @@ const facultyTechSchema = z.object({
 
 /**
  * Faculty opens a help-desk ticket to platform / tech staff, same lane as a tech
- * escalation (kind `tech`, pre-marked escalated) so `support.tech_only` can triage.
+ * escalation (kind `tech`, pre-marked escalated). Only admins can triage these
+ * since the author isn't in any pod_members row.
  */
 export async function reportFacultyTechTicket(
   input: z.infer<typeof facultyTechSchema>,
@@ -53,25 +62,30 @@ export async function reportFacultyTechTicket(
   if (!f || f.cohort.id !== cohortId) {
     return actionFail("Cohort does not match your active faculty assignment");
   }
-  return withSupabase(async (sb) => {
-    const { data: user } = await sb.auth.getUser();
-    if (!user.user) return { data: null, error: { message: "Not signed in" } };
-    const now = new Date().toISOString();
-    return sb
-      .from("help_desk_queue")
-      .insert({
-        cohort_id: cohortId,
-        user_id: user.user.id,
-        kind: "tech",
-        message: parsed.data.message.trim(),
-        status: "open",
-        escalated_at: now,
-        escalated_by: user.user.id,
-        escalation_note: "Faculty request — routed to platform / tech (direct).",
-      })
-      .select()
-      .single();
-  }, ["/admin/cohorts", "/admin/help-desk", "/faculty/help-desk", "/faculty/pod", "/help-desk", "/learn"]);
+  const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+  const now = new Date().toISOString();
+  const { error } = await sb
+    .from("help_desk_queue")
+    .insert({
+      cohort_id: cohortId,
+      user_id: user.user.id,
+      kind: "tech",
+      message: parsed.data.message.trim(),
+      status: "open",
+      escalated_at: now,
+      escalated_by: user.user.id,
+      escalation_note: "Faculty request — routed to platform / tech (direct).",
+    });
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/cohorts", "layout");
+  revalidatePath("/admin/help-desk");
+  revalidatePath("/faculty/help-desk");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/help-desk");
+  revalidatePath("/learn");
+  return actionOk();
 }
 
 const claimSchema = z.object({ id: z.string().uuid() });
@@ -100,16 +114,19 @@ export async function resolveTicket(input: z.infer<typeof resolveSchema>): Promi
   const parsed = resolveSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("support.triage", parsed.data.cohort_id);
-  return withSupabase(
-    (sb) =>
-      sb
-        .from("help_desk_queue")
-        .update({ status: "resolved", resolution: parsed.data.resolution ?? null })
-        .eq("id", parsed.data.id)
-        .select()
-        .single(),
-    ["/admin/help-desk", "/faculty", "/faculty/pod", "/faculty/help-desk", "/help-desk", "/learn"],
-  );
+  const sb = await getSupabaseServer();
+  const { error } = await sb
+    .from("help_desk_queue")
+    .update({ status: "resolved", resolution: parsed.data.resolution ?? null })
+    .eq("id", parsed.data.id);
+  if (error) return actionFail(error.message);
+  revalidatePath("/admin/cohorts", "layout");
+  revalidatePath("/admin/help-desk");
+  revalidatePath("/faculty/help-desk");
+  revalidatePath("/faculty/pod");
+  revalidatePath("/help-desk");
+  revalidatePath("/learn");
+  return actionOk();
 }
 
 const escalateSchema = z.object({

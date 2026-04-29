@@ -7,10 +7,15 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 import { gradeWithAI } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 
+const linkSchema = z.object({
+  label: z.string().min(1).max(120),
+  url: z.string().url(),
+});
+
 const submitSchema = z.object({
   assignment_id: z.string().uuid(),
   body: z.string().min(1).max(50_000),
-  attachments: z.array(z.object({ name: z.string(), url: z.string().url() })).max(10).default([]),
+  links: z.array(linkSchema).max(10).default([]),
 });
 
 export async function submitAssignment(input: z.infer<typeof submitSchema>) {
@@ -25,7 +30,7 @@ export async function submitAssignment(input: z.infer<typeof submitSchema>) {
         assignment_id: parsed.data.assignment_id,
         user_id: user.user.id,
         body: parsed.data.body,
-        attachments: parsed.data.attachments,
+        links: parsed.data.links,
         status: "submitted",
       })
       .select()
@@ -45,7 +50,7 @@ export async function saveDraft(input: z.infer<typeof submitSchema>) {
         assignment_id: parsed.data.assignment_id,
         user_id: user.user.id,
         body: parsed.data.body,
-        attachments: parsed.data.attachments,
+        links: parsed.data.links,
         status: "draft",
       })
       .select()
@@ -81,10 +86,16 @@ export async function batchGradeAssignment(
   const sb = await getSupabaseServer();
   const { data: assignment } = await sb
     .from("assignments")
-    .select("title, body_md, rubric_id, rubric_templates(criteria)")
+    .select("title, body_md, rubric_id, kind, auto_grade, rubric_templates(criteria)")
     .eq("id", parsed.data.assignment_id)
     .maybeSingle();
   if (!assignment) return { ok: false, error: "Assignment not found" };
+
+  // Capstones (and any other auto_grade=false assignments) are admin-only
+  // manual review — never AI graded.
+  if ((assignment as { auto_grade?: boolean }).auto_grade === false) {
+    return { ok: false, error: "This assignment is manual-grade only" };
+  }
 
   type RubricCriteria = { name: string; weight?: number; description?: string };
   const rubricRaw = ((assignment as unknown) as { rubric_templates: { criteria: unknown } | null })
@@ -95,19 +106,19 @@ export async function batchGradeAssignment(
   // OR ai_graded but not human_reviewed). Skip already-published rows.
   const { data: subs } = await sb
     .from("submissions")
-    .select("id, body, attachments, ai_graded, human_reviewed_at, status")
+    .select("id, body, links, ai_graded, human_reviewed_at, status")
     .eq("assignment_id", parsed.data.assignment_id)
     .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)");
 
   let graded = 0, failed = 0, skipped = 0;
-  for (const s of (subs ?? []) as Array<{ id: string; body: string | null; attachments: { name: string; url: string }[] | null }>) {
+  for (const s of (subs ?? []) as Array<{ id: string; body: string | null; links: { label: string; url: string }[] | null }>) {
     if (!s.body) { skipped++; continue; }
     const result = await gradeWithAI({
       assignmentTitle: (assignment as { title: string }).title,
       assignmentBody: (assignment as { body_md: string | null }).body_md,
       rubricCriteria: criteria,
       studentBody: s.body,
-      attachments: s.attachments ?? null,
+      links: s.links ?? null,
     });
     if (!result) { failed++; continue; }
     const { error } = await sb

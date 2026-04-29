@@ -1,13 +1,18 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
+export interface SubmissionLink {
+  label: string;
+  url: string;
+}
+
 export interface GradingSubmission {
   id: string;
   user_id: string;
   user_name: string | null;
-  status: "draft" | "submitted" | "graded" | "returned";
+  status: "draft" | "submitted" | "graded";
   body: string | null;
-  attachments: { name: string; url: string }[];
+  links: SubmissionLink[];
   score: number | null;
   feedback_md: string | null;
   ai_graded: boolean;
@@ -26,14 +31,14 @@ export const listAssignmentSubmissions = cache(
     const { data } = await sb
       .from("submissions")
       .select(
-        "id, user_id, status, body, attachments, score, feedback_md, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, updated_at, profiles:user_id(full_name)",
+        "id, user_id, status, body, links, score, feedback_md, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, updated_at, profiles:user_id(full_name)",
       )
       .eq("assignment_id", assignmentId)
       .order("updated_at", { ascending: false });
     return ((data ?? []) as unknown as Array<{
       id: string; user_id: string; status: GradingSubmission["status"];
       body: string | null;
-      attachments: { name: string; url: string }[] | null;
+      links: SubmissionLink[] | null;
       score: number | null; feedback_md: string | null;
       ai_graded: boolean; ai_score: number | null; ai_feedback_md: string | null;
       ai_strengths: string[] | null; ai_weaknesses: string[] | null;
@@ -46,7 +51,7 @@ export const listAssignmentSubmissions = cache(
       user_name: r.profiles?.full_name ?? null,
       status: r.status,
       body: r.body,
-      attachments: r.attachments ?? [],
+      links: r.links ?? [],
       score: r.score,
       feedback_md: r.feedback_md,
       ai_graded: r.ai_graded,

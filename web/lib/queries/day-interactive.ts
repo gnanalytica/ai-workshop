@@ -7,12 +7,13 @@ export interface DayAssignment {
   id: string;
   title: string;
   body_md: string | null;
-  kind: "lab" | "capstone" | "reflection" | "quiz";
+  kind: "lab" | "capstone" | "reflection";
   due_at: string | null;
   submission?: {
     id: string;
     body: string | null;
-    status: "draft" | "submitted" | "graded" | "returned";
+    links: { label: string; url: string }[];
+    status: "draft" | "submitted" | "graded";
     score: number | null;
     feedback_md: string | null;
     published: boolean;
@@ -78,7 +79,7 @@ export const getDayInteractive = cache(
       sb
         .from("assignments")
         .select(
-          "id, title, body_md, kind, due_at, submissions(id, body, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
+          "id, title, body_md, kind, due_at, submissions(id, body, links, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
@@ -119,7 +120,9 @@ export const getDayInteractive = cache(
       const a = assignmentRes.data as unknown as {
         id: string; title: string; body_md: string | null; kind: DayAssignment["kind"]; due_at: string | null;
         submissions: Array<{
-          id: string; body: string | null; status: DayAssignment["submission"] extends { status: infer S } ? S : never;
+          id: string; body: string | null;
+          links: { label: string; url: string }[] | null;
+          status: DayAssignment["submission"] extends { status: infer S } ? S : never;
           score: number | null; feedback_md: string | null;
           ai_graded: boolean | null; ai_strengths: string[] | null; ai_weaknesses: string[] | null;
           human_reviewed_at: string | null;
@@ -137,6 +140,7 @@ export const getDayInteractive = cache(
           ? {
               id: mine.id,
               body: mine.body,
+              links: mine.links ?? [],
               status: mine.status,
               score: mine.human_reviewed_at ? mine.score : null,
               feedback_md: mine.human_reviewed_at ? mine.feedback_md : null,

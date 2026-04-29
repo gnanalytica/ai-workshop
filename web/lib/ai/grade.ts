@@ -6,7 +6,7 @@ export interface AIGradeInput {
   assignmentBody: string | null;
   rubricCriteria?: { name: string; weight?: number; description?: string }[] | null;
   studentBody: string;
-  attachments?: { name: string; url: string }[] | null;
+  links?: { label: string; url: string }[] | null;
 }
 
 export interface AIGradeResult {
@@ -55,11 +55,11 @@ function buildPrompt(i: AIGradeInput): string {
         .map((c) => `- ${c.name}${c.weight ? ` (weight ${c.weight})` : ""}${c.description ? `: ${c.description}` : ""}`)
         .join("\n")}`
     : "";
-  const attachments = i.attachments?.length
-    ? `\n\nAttachments referenced: ${i.attachments.map((a) => a.name).join(", ")}`
+  const links = i.links?.length
+    ? `\n\nLinks the student attached:\n${i.links.map((l) => `- ${l.label}: ${l.url}`).join("\n")}`
     : "";
   const promptBody = i.assignmentBody ? `\n\nAssignment description:\n${i.assignmentBody}` : "";
-  return `Assignment: ${i.assignmentTitle}${promptBody}${rubric}${attachments}
+  return `Assignment: ${i.assignmentTitle}${promptBody}${rubric}${links}
 
 ---
 

@@ -111,15 +111,8 @@ begin
   end loop;
 end $$;
 
--- ----- a couple of announcements + a help desk queue entry -----------------------
-insert into announcements (cohort_id, title, body_md, audience)
-  values
-    ('11111111-1111-1111-1111-111111111111', 'Welcome!',
-     'We start tomorrow at 7pm IST. Complete the day-1 prep on your dashboard.', 'all'),
-    ('11111111-1111-1111-1111-111111111111', 'Pod assignments are live',
-     'Check your dashboard for your pod and primary mentor.', 'students')
-on conflict do nothing;
-
+-- ----- one help desk queue entry (announcements / community posts / teams are
+-- created by admins from the app, not seeded) ----------------------------------
 insert into help_desk_queue (user_id, cohort_id, kind, status, message)
   select p.id, '11111111-1111-1111-1111-111111111111', 'content', 'open',
          'Confused on the day-2 LLM exercise — getting auth errors.'

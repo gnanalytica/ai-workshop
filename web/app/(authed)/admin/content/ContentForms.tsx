@@ -54,7 +54,6 @@ export function NewAssignmentForm({ cohortId }: { cohortId: string }) {
           <option value="lab">Lab</option>
           <option value="capstone">Capstone</option>
           <option value="reflection">Reflection</option>
-          <option value="quiz">Quiz</option>
         </select>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="flex-1" />
       </div>

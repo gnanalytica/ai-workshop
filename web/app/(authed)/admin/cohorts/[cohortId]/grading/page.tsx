@@ -22,9 +22,8 @@ export default async function AdminCohortGradingPage({
   if (!cohort) notFound();
 
   const assignments = await listAssignments(cohort.id);
-  const writtenAssignments = assignments.filter((a) => a.kind !== "quiz");
   const sp = await searchParams;
-  const activeId = sp.a ?? writtenAssignments[0]?.id ?? null;
+  const activeId = sp.a ?? assignments[0]?.id ?? null;
   const subs = activeId ? await listAssignmentSubmissions(activeId) : [];
 
   return (
@@ -39,11 +38,11 @@ export default async function AdminCohortGradingPage({
 
       <section>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Assignments</h2>
-        {writtenAssignments.length === 0 ? (
+        {assignments.length === 0 ? (
           <Card><CardSub>No assignments yet.</CardSub></Card>
         ) : (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {writtenAssignments.map((a) => (
+            {assignments.map((a) => (
               <Link key={a.id} href={`/admin/cohorts/${cohort.id}/grading?a=${a.id}`}>
                 <Card
                   className={

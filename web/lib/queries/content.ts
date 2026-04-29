@@ -5,7 +5,7 @@ export interface AssignmentRow {
   id: string;
   cohort_id: string;
   day_number: number;
-  kind: "lab" | "capstone" | "reflection" | "quiz";
+  kind: "lab" | "capstone" | "reflection";
   title: string;
   due_at: string | null;
   rubric_id: string | null;

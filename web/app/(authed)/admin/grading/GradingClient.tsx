@@ -154,11 +154,11 @@ export function GradingClient({
             <div className="bg-bg-soft border-line max-h-72 overflow-y-auto rounded-md border p-4 text-sm whitespace-pre-line">
               {active.body || <span className="text-muted italic">— empty —</span>}
             </div>
-            {active.attachments.length > 0 && (
+            {active.links.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {active.attachments.map((a) => (
-                  <a key={a.url} href={a.url} target="_blank" rel="noreferrer" className="border-line bg-card hover:border-accent/40 rounded-md border px-3 py-1.5 text-xs">
-                    {a.name} ↗
+                {active.links.map((l) => (
+                  <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="border-line bg-card hover:border-accent/40 rounded-md border px-3 py-1.5 text-xs">
+                    {l.label} ↗
                   </a>
                 ))}
               </div>

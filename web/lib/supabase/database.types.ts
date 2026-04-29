@@ -74,6 +74,7 @@ export type Database = {
       }
       assignments: {
         Row: {
+          auto_grade: boolean
           body_md: string | null
           cohort_id: string
           created_at: string
@@ -83,8 +84,10 @@ export type Database = {
           kind: Database["public"]["Enums"]["assignment_kind"]
           rubric_id: string | null
           title: string
+          weight: number
         }
         Insert: {
+          auto_grade?: boolean
           body_md?: string | null
           cohort_id: string
           created_at?: string
@@ -94,8 +97,10 @@ export type Database = {
           kind: Database["public"]["Enums"]["assignment_kind"]
           rubric_id?: string | null
           title: string
+          weight?: number
         }
         Update: {
+          auto_grade?: boolean
           body_md?: string | null
           cohort_id?: string
           created_at?: string
@@ -105,6 +110,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["assignment_kind"]
           rubric_id?: string | null
           title?: string
+          weight?: number
         }
         Relationships: [
           {
@@ -1015,47 +1021,59 @@ export type Database = {
         }
         Relationships: []
       }
-      peer_reviews: {
+      capstone_projects: {
         Row: {
-          body: string | null
+          cohort_id: string
           created_at: string
-          reviewer_id: string
-          score: number | null
-          status: Database["public"]["Enums"]["peer_review_status"]
-          submission_id: string
+          demo_url: string | null
+          id: string
+          problem_statement: string | null
+          repo_url: string | null
+          status: string
+          target_user: string | null
+          title: string | null
           updated_at: string
+          user_id: string
         }
         Insert: {
-          body?: string | null
+          cohort_id: string
           created_at?: string
-          reviewer_id: string
-          score?: number | null
-          status?: Database["public"]["Enums"]["peer_review_status"]
-          submission_id: string
+          demo_url?: string | null
+          id?: string
+          problem_statement?: string | null
+          repo_url?: string | null
+          status?: string
+          target_user?: string | null
+          title?: string | null
           updated_at?: string
+          user_id: string
         }
         Update: {
-          body?: string | null
+          cohort_id?: string
           created_at?: string
-          reviewer_id?: string
-          score?: number | null
-          status?: Database["public"]["Enums"]["peer_review_status"]
-          submission_id?: string
+          demo_url?: string | null
+          id?: string
+          problem_statement?: string | null
+          repo_url?: string | null
+          status?: string
+          target_user?: string | null
+          title?: string | null
           updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "peer_reviews_reviewer_id_fkey"
-            columns: ["reviewer_id"]
+            foreignKeyName: "capstone_projects_cohort_id_fkey"
+            columns: ["cohort_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "cohorts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "peer_reviews_submission_id_fkey"
-            columns: ["submission_id"]
+            foreignKeyName: "capstone_projects_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "submissions"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1732,13 +1750,13 @@ export type Database = {
       submissions: {
         Row: {
           assignment_id: string
-          attachments: Json
           body: string | null
           created_at: string
           feedback_md: string | null
           graded_at: string | null
           graded_by: string | null
           id: string
+          links: Json
           score: number | null
           status: Database["public"]["Enums"]["submission_status"]
           updated_at: string
@@ -1746,13 +1764,13 @@ export type Database = {
         }
         Insert: {
           assignment_id: string
-          attachments?: Json
           body?: string | null
           created_at?: string
           feedback_md?: string | null
           graded_at?: string | null
           graded_by?: string | null
           id?: string
+          links?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           updated_at?: string
@@ -1760,13 +1778,13 @@ export type Database = {
         }
         Update: {
           assignment_id?: string
-          attachments?: Json
           body?: string | null
           created_at?: string
           feedback_md?: string | null
           graded_at?: string | null
           graded_by?: string | null
           id?: string
+          links?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           updated_at?: string
@@ -2085,13 +2103,13 @@ export type Database = {
         Args: { p_feedback?: string; p_score: number; p_submission: string }
         Returns: {
           assignment_id: string
-          attachments: Json
           body: string | null
           created_at: string
           feedback_md: string | null
           graded_at: string | null
           graded_by: string | null
           id: string
+          links: Json
           score: number | null
           status: Database["public"]["Enums"]["submission_status"]
           updated_at: string
@@ -2183,7 +2201,7 @@ export type Database = {
     }
     Enums: {
       announcement_audience: "all" | "students" | "faculty" | "staff"
-      assignment_kind: "lab" | "capstone" | "reflection" | "quiz"
+      assignment_kind: "lab" | "capstone" | "reflection"
       attendance_status: "present" | "absent" | "late" | "excused"
       buddy_checkin_kind: "day_open" | "day_close" | "weekly"
       capstone_phase: "idea" | "spec" | "mid" | "demo" | "shipped"
@@ -2196,7 +2214,6 @@ export type Database = {
         | "announcement"
         | "grade_returned"
       notification_status: "queued" | "sent" | "failed"
-      peer_review_status: "assigned" | "completed" | "skipped"
       pod_event_kind:
         | "member_added"
         | "member_removed"
@@ -2209,7 +2226,7 @@ export type Database = {
       registration_status: "pending" | "confirmed" | "waitlist" | "cancelled"
       help_desk_kind: "content" | "tech" | "team" | "other"
       help_desk_status: "open" | "helping" | "resolved" | "cancelled"
-      submission_status: "draft" | "submitted" | "graded" | "returned"
+      submission_status: "draft" | "submitted" | "graded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2338,7 +2355,7 @@ export const Constants = {
   public: {
     Enums: {
       announcement_audience: ["all", "students", "faculty", "staff"],
-      assignment_kind: ["lab", "capstone", "reflection", "quiz"],
+      assignment_kind: ["lab", "capstone", "reflection"],
       attendance_status: ["present", "absent", "late", "excused"],
       buddy_checkin_kind: ["day_open", "day_close", "weekly"],
       capstone_phase: ["idea", "spec", "mid", "demo", "shipped"],
@@ -2352,7 +2369,6 @@ export const Constants = {
         "grade_returned",
       ],
       notification_status: ["queued", "sent", "failed"],
-      peer_review_status: ["assigned", "completed", "skipped"],
       pod_event_kind: [
         "member_added",
         "member_removed",
@@ -2366,7 +2382,7 @@ export const Constants = {
       registration_status: ["pending", "confirmed", "waitlist", "cancelled"],
       help_desk_kind: ["content", "tech", "team", "other"],
       help_desk_status: ["open", "helping", "resolved", "cancelled"],
-      submission_status: ["draft", "submitted", "graded", "returned"],
+      submission_status: ["draft", "submitted", "graded"],
     },
   },
 } as const
