@@ -45,12 +45,13 @@ export function TourMount({
   return (
     <Tour
       steps={steps}
-      onClose={(completed) => {
+      onClose={(_completed) => {
         setOpen(false);
-        // Only persist completion the first time so manual replays don't
-        // re-write the timestamp (already non-null is a no-op anyway since
-        // markOnboarded uses .is("onboarded_at", null), but skip the round-trip).
-        if (completed && initialOpen) void markOnboarded();
+        // Persist on any close (finish OR skip) the first time the tour ran,
+        // so it doesn't re-launch on every refresh. Manual replays via
+        // StartGuideButton are no-ops because markOnboarded filters on
+        // onboarded_at IS NULL.
+        if (initialOpen) void markOnboarded();
       }}
     />
   );

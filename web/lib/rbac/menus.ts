@@ -42,7 +42,7 @@ export type NavIcon =
 export const NAV: readonly NavItem[] = [
   // ----- Student -----
   { label: "Home",        href: "/learn",       cap: null,           group: "student",                       icon: "home" },
-  { label: "Today",       href: "/day/today",   cap: "content.read", group: "student",                       icon: "book" },
+  { label: "Lessons",     href: "/day/today",   cap: "content.read", group: "student",                       icon: "book" },
   { label: "Capstone",    href: "/capstone",    cap: null,           group: "student",                       icon: "milestone" },
   { label: "Help desk",   href: "/help-desk",   cap: null,           group: "student",                       icon: "life-buoy" },
   { label: "Community",   href: "/community",       cap: "community.read",   group: "student",                       icon: "message-square" },

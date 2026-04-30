@@ -34,44 +34,69 @@ export function PhaseTabs({
 
   return (
     <div>
-      <nav
-        role="tablist"
-        aria-label="Lesson phase"
-        className="border-line/60 sticky top-0 z-10 -mx-6 mb-6 flex gap-1 overflow-x-auto border-b bg-bg/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-bg/70 md:-mx-10 md:px-10"
-      >
-        {tabs.map((t) => {
-          const isActive = t.id === active;
-          return (
-            <button
-              key={t.id}
-              role="tab"
-              type="button"
-              aria-selected={isActive}
-              aria-controls={`phase-panel-${t.id}`}
-              id={`phase-tab-${t.id}`}
-              onClick={() => select(t.id)}
-              className={cn(
-                "-mb-px relative flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-sm font-medium transition-colors",
-                isActive
-                  ? "border-accent text-ink"
-                  : "text-muted hover:text-ink border-transparent",
-              )}
-            >
-              <span>{t.label}</span>
-              {t.hint && (
-                <span className="text-muted/70 hidden text-[11px] font-normal sm:inline">
-                  · {t.hint}
+      <div className="sticky top-0 z-10 -mx-6 mb-6 bg-bg/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/80 md:-mx-10 md:px-10">
+        <nav
+          role="tablist"
+          aria-label="Lesson phase"
+          className="border-line bg-card flex gap-1 overflow-x-auto rounded-lg border p-1 shadow-sm"
+        >
+          {tabs.map((t, i) => {
+            const isActive = t.id === active;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                type="button"
+                aria-selected={isActive}
+                aria-controls={`phase-panel-${t.id}`}
+                id={`phase-tab-${t.id}`}
+                onClick={() => select(t.id)}
+                className={cn(
+                  "relative flex flex-1 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-all",
+                  isActive
+                    ? "bg-accent text-cta-ink shadow-sm"
+                    : "text-muted hover:text-ink hover:bg-bg/60",
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-flex h-5 w-5 items-center justify-center rounded-full font-mono text-[11px] tabular-nums",
+                    isActive
+                      ? "bg-cta-ink/15 text-cta-ink"
+                      : "bg-line/60 text-muted",
+                  )}
+                  aria-hidden
+                >
+                  {i + 1}
                 </span>
-              )}
-              {t.badge ? (
-                <span className="bg-accent text-bg ml-0.5 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 font-mono text-[10px] tabular-nums">
-                  {t.badge}
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
-      </nav>
+                <span>{t.label}</span>
+                {t.hint && (
+                  <span
+                    className={cn(
+                      "hidden text-[11px] font-normal lg:inline",
+                      isActive ? "text-cta-ink/75" : "text-muted/70",
+                    )}
+                  >
+                    · {t.hint}
+                  </span>
+                )}
+                {t.badge ? (
+                  <span
+                    className={cn(
+                      "ml-0.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-mono text-[10px] font-bold tabular-nums",
+                      isActive
+                        ? "bg-cta-ink/20 text-cta-ink"
+                        : "bg-accent text-bg",
+                    )}
+                  >
+                    {t.badge}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
 
       {(Object.keys(panels) as Phase[]).map((id) => (
         <section
