@@ -17,6 +17,13 @@
       "input_tokens": 0,
       "output_tokens": 45199,
       "files": 273
+    },
+    {
+      "date": "2026-04-30T07:05:28.857989+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 121,
+      "note": "partial: chunk 5/6 hit rate limit"
     }
   ],
   "total_input_tokens": 0,

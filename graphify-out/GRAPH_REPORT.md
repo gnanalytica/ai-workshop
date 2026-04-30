@@ -1,287 +1,626 @@
-# Graph Report - .  (2026-04-27)
+# Graph Report - .  (2026-04-30)
 
 ## Corpus Check
-- 273 files · ~88,216 words
-- Verdict: corpus is large enough that graph structure adds value.
+- Large corpus: 308 files · ~108,440 words. Semantic extraction will be expensive (many Claude tokens). Consider running on a subfolder, or use --no-semantic to run AST-only.
 
 ## Summary
-- 551 nodes · 875 edges · 45 communities detected
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.74)
-- Token cost: 0 input · 45,199 output
+- 843 nodes · 1070 edges · 106 communities detected
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 46 edges (avg confidence: 0.83)
+- Token cost: 0 input · 0 output
 
 ## God Nodes (most connected - your core abstractions)
-1. `Plan 1 — Pods Migrations & RLS` - 11 edges
-2. `Spec — Faculty Pods Design` - 11 edges
-3. `Spec — Role Reorganization + Faculty Guides` - 9 edges
-4. `Plan 3 — Faculty Landing: Today + Handbook` - 8 edges
-5. `Plan 1 — Role Foundations (Schema + Auth)` - 7 edges
-6. `Plan 4 — Faculty My pod + Whole cohort` - 7 edges
-7. `RBAC Model (single source of truth)` - 7 edges
-8. `Plan 2 — Admin Pods UI` - 6 edges
-9. `siteUrl()` - 5 edges
-10. `parseScalarOrInline()` - 5 edges
+1. `Role Reorganization + Faculty Guides — Design (5 roles)` - 14 edges
+2. `Faculty pods, mentor assignment, faculty experience — design spec` - 12 edges
+3. `requireCapability/checkCapability` - 7 edges
+4. `signUp()` - 6 edges
+5. `Pre-Next.js static-HTML era (faculty.html, admin-faculty.html, vanilla ES modules) — ARCHIVED, no longer in tree` - 6 edges
+6. `Plan 1 — Pods: Migrations, RPCs, RLS` - 6 edges
+7. `parseScalarOrInline()` - 5 edges
+8. `siteUrl()` - 5 edges
+9. `clientIp()` - 5 edges
+10. `rateOk()` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Rebuild profiles from auth.users` --shares_data_with--> `RBAC Model (single source of truth)`  [INFERRED]
-  RUNBOOK.md → CLAUDE.md
-- `RBAC Model (single source of truth)` --rationale_for--> `Personas + RBAC`  [INFERRED]
-  CLAUDE.md → README.md
-- `Faculty Onboarding Guide` --conceptually_related_to--> `RBAC Model (single source of truth)`  [INFERRED]
-  docs/faculty-onboarding.md → CLAUDE.md
-- `Environment Variables` --shares_data_with--> `Edge Functions Deploy`  [INFERRED]
-  README.md → RUNBOOK.md
+- `LessonDayView` --semantically_similar_to--> `TourMount/Tour`  [AMBIGUOUS] [semantically similar]
+  web/components/lesson-day/LessonDayView.tsx → web/components/tour/Tour.tsx
+- `Edge Functions Deploy` --shares_data_with--> `Environment Variables`  [INFERRED]
+  RUNBOOK.md → README.md
 - `Rotating Service Role Key` --references--> `Environment Variables`  [INFERRED]
   RUNBOOK.md → README.md
+- `Next.js 15 App Router (single SPA under web/)` --superseded_by--> `Pre-Next.js static-HTML era (faculty.html, admin-faculty.html, vanilla ES modules) — ARCHIVED, no longer in tree`  [EXTRACTED]
+  CLAUDE.md → docs/superpowers/archive/README.md
+- `RBAC three personas: Admin / Faculty / Student` --superseded_by--> `ARCHIVED 5-role model: Admin / Trainer / Tech Support / Support Faculty / Executive Faculty (later collapsed to 3 personas)`  [INFERRED]
+  CLAUDE.md → docs/superpowers/archive/2026-04-24-role-reorg-and-faculty-guides-design.md
 
 ## Hyperedges (group relationships)
-- **Pods data substrate (tables + RPC + RLS)** — cohort_pods_table, pod_faculty_table, pod_members_table, pod_faculty_events_table, rpc_pod_faculty_event, pods_rls_policies [EXTRACTED 0.95]
-- **Five-plan faculty pods rollout** — plan_pods_migrations_rls, plan_admin_pods_ui, plan_faculty_landing, plan_my_pod_cohort, plan_analytics_mentor_card [EXTRACTED 1.00]
-- **RBAC Capability Resolution Pattern** — claudemd_auth_caps, claudemd_has_cap, claudemd_require_capability, runbook_rbac_events [EXTRACTED 0.90]
-- **Deploy / Schema-Change Pipeline** — runbook_migrations, runbook_rbac_spec_verify, runbook_edge_functions_deploy, runbook_cutover [EXTRACTED 0.85]
-- **Daily Digest Cron Flow** — runbook_send_daily_digest, runbook_pg_cron, runbook_cron_schedules [EXTRACTED 0.90]
+- **Invite-code onboarding (preview → signup → claim)** —  [EXTRACTED 1.00]
+- **Pod membership mutation flow (drag-drop → podEvent RPC)** —  [EXTRACTED 1.00]
+- **Help desk triage (claim/resolve/escalate)** —  [EXTRACTED 1.00]
+- **** — comp:GradingClient, action:batchGradeAssignment, action:publishGrade, action:manualGrade, page:admin/cohort/grading [INFERRED 0.90]
+- **** — page:capstone, comp:CapstoneEditor, action:upsertMyCapstone, q:getMyCapstone [INFERRED 0.90]
+- **** — route:api/help-chat, util:helpChatModel, util:retrieveHelp, q:getMyCurrentCohort [INFERRED 0.90]
+- **Tour launch flow** —  [EXTRACTED 1.00]
+- **Sandbox cohort UX** —  [EXTRACTED 0.95]
+- **Handbook video composition** —  [EXTRACTED 1.00]
+- **** — getTruePersona, getEffectivePersona, Persona [EXTRACTED 1.00]
+- **** — sendMagicLink, startFlow, signUp [INFERRED 0.85]
+- **** — STUDENT_TOUR, FACULTY_TOUR, ADMIN_TOUR [EXTRACTED 1.00]
+- **** — concept:pods_structure, concept:pod_faculty_table, concept:pod_members_table [EXTRACTED 1.00]
+- **** — concept:five_roles_archived, concept:profiles_staff_roles, concept:cohort_faculty_college_role [EXTRACTED 1.00]
+- **** — doc:plan1_pods_migrations, doc:plan2_admin_pods_ui, doc:plan3_faculty_landing [INFERRED 0.80]
 
 ## Communities
 
-### Community 25 - "Community 25"
-Cohesion: 1.0
-Nodes (0): 
+### Community 0 - "App pages & routes"
+Cohesion: 0.02
+Nodes (4): dotClass(), statusKey(), getSupabaseServer(), requiredEnv()
 
-### Community 0 - "App Routes & Auth Pages"
+### Community 1 - "UI primitives"
 Cohesion: 0.04
-Nodes (2): getSupabaseServer(), requiredEnv()
-
-### Community 26 - "Community 26"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 27 - "Community 27"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 28 - "Community 28"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 11 - "Layouts & Cohort Switcher"
-Cohesion: 0.13
-Nodes (0): 
-
-### Community 10 - "Sign-up & Auth Forms"
-Cohesion: 0.15
-Nodes (6): safeNext(), siteUrl(), sendMagicLink(), startFlow(), signUp(), signInWithGoogle()
-
-### Community 2 - "Handbook & Markdown UI"
-Cohesion: 0.06
-Nodes (6): handleChange(), detect(), pick(), onKeyDown(), statusKey(), dotClass()
-
-### Community 7 - "Pod Management UI"
-Cohesion: 0.07
-Nodes (2): bulkRun(), moveMany()
-
-### Community 5 - "Profile & Browser Supabase"
-Cohesion: 0.07
-Nodes (0): 
-
-### Community 20 - "Loading Skeletons"
-Cohesion: 0.5
-Nodes (0): 
-
-### Community 13 - "Cohort Calendar Math"
-Cohesion: 0.19
-Nodes (6): parseDateUTC(), toISODate(), isWeekend(), isWeekdayISO(), addWorkingDays(), workingDayNumber()
-
-### Community 1 - "Admin Schedule/Roster/Polls"
-Cohesion: 0.06
 Nodes (2): ageMs(), priorityBorder()
 
-### Community 12 - "AI Grading Pipeline"
+### Community 2 - "Shell, help & sandbox"
+Cohesion: 0.06
+Nodes (7): buildIndex(), getIndex(), retrieveHelp(), splitParagraphs(), stripFrontmatter(), tokenize(), trimSnippet()
+
+### Community 3 - "RBAC archive (concepts)"
+Cohesion: 0.05
+Nodes (52): admin-pods.html admin UI for pods — ARCHIVED static-HTML page, Pre-Next.js static-HTML era (faculty.html, admin-faculty.html, vanilla ES modules) — ARCHIVED, no longer in tree, auth_caps(cohort uuid) Postgres SECURITY DEFINER function, Community board: board_posts/board_replies/board_votes tables, can_grade(submission) helper — admin-only authorization, can_grade_submission helper — trainer/admin always; support faculty pod-gated, Capabilities are the single source of truth (UI never checks role names), cohort_faculty.college_role ('support'/'executive') (+44 more)
+
+### Community 4 - "Faculty pod & engagement actions"
+Cohesion: 0.05
+Nodes (4): actionFail(), withSupabase(), currentPath(), requireCapability()
+
+### Community 5 - "Assignment submission flow"
+Cohesion: 0.07
+Nodes (2): classify(), splitDayPhases()
+
+### Community 6 - "Community Q&A"
+Cohesion: 0.08
+Nodes (4): detect(), handleChange(), onKeyDown(), pick()
+
+### Community 7 - "Capabilities + invites"
+Cohesion: 0.09
+Nodes (27): createInvite, /api/help-chat streaming endpoint, capability:orgs.write, capability:self.read, AppShell, AskAITab, CreateInviteForm, EnterSandboxButton (+19 more)
+
+### Community 8 - "Invite actions"
+Cohesion: 0.14
+Nodes (12): claimInvite(), clientIp(), previewInvite(), rateOk(), redeemByKind(), resolveInviteKind(), safeNext(), sendMagicLink() (+4 more)
+
+### Community 9 - "Persona & cookies"
+Cohesion: 0.09
+Nodes (23): FACULTY_COHORT_COOKIE, PREVIEW_COHORT_COOKIE, PREVIEW_COOKIE, PREVIEW_USER_COOKIE, UserProfile, getCurrentFacultyCohort, getDashboardKpis, getDayInteractive (+15 more)
+
+### Community 10 - "Tours & navigation"
+Cohesion: 0.1
+Nodes (22): ADMIN_TOUR, CAPABILITIES, Capability, FACULTY_TOUR, NAV, NavGroup, NavItem, Persona (+14 more)
+
+### Community 11 - "Faculty cohort board"
+Cohesion: 0.11
+Nodes (2): bulkRun(), moveMany()
+
+### Community 12 - "Community 12"
+Cohesion: 0.15
+Nodes (8): back(), finish(), next(), onKey(), onResize(), skip(), tick(), update()
+
+### Community 13 - "Community 13"
 Cohesion: 0.12
-Nodes (4): gradeWithAI(), buildPrompt(), publishGrade(), manualGrade()
+Nodes (4): buildPrompt(), gradeWithAI(), manualGrade(), publishGrade()
 
-### Community 14 - "Quiz Editor"
+### Community 14 - "Community 14"
+Cohesion: 0.19
+Nodes (6): addWorkingDays(), isWeekdayISO(), isWeekend(), parseDateUTC(), toISODate(), workingDayNumber()
+
+### Community 15 - "Community 15"
+Cohesion: 0.12
+Nodes (16): Environment Variables, Quickstart, Cron Schedules, Cutover Steps, Edge Functions Deploy, Initial Setup Procedure, Migrations 0001-0009, pg_cron Scheduler (+8 more)
+
+### Community 16 - "Community 16"
+Cohesion: 0.17
+Nodes (16): deletePod server action, podEvent server action, At-risk student classification, Pod drag-drop assignment pattern, FacultyCohortPage, FacultyDayPage, PodMembers (faculty pod view), FacultyPodPage (+8 more)
+
+### Community 17 - "Community 17"
 Cohesion: 0.13
-Nodes (2): makeKey(), emptyDraft()
+Nodes (0): 
 
-### Community 8 - "Orgs/Teams/Kudos/CheckIn"
-Cohesion: 0.08
-Nodes (2): actionFail(), withSupabase()
+### Community 18 - "Community 18"
+Cohesion: 0.16
+Nodes (15): claimInvite server action, previewInvite server action, signUp server action, startFlow server action, ClaimForm, ClaimInvitePage, Invite-code onboarding flow, HomePage (marketing landing) (+7 more)
 
-### Community 9 - "Invites & RBAC Gate"
-Cohesion: 0.08
-Nodes (4): requireCapability(), currentPath(), generateCode(), createInvite()
+### Community 19 - "Community 19"
+Cohesion: 0.3
+Nodes (9): listDays(), loadDay(), parseBlock(), parseInlineArray(), parseInlineArrayLike(), parseInlineObject(), parseScalarOrInline(), parseYamlSubset() (+1 more)
 
-### Community 17 - "Format Helpers (date/esc)"
+### Community 20 - "Community 20"
+Cohesion: 0.2
+Nodes (12): capability:support.triage, Help desk system, CohortStuckPage, StudentHelpDeskPage, LeaderboardPage, DashboardPage (learn), getMyCurrentCohort, listHelpDeskOpen (+4 more)
+
+### Community 21 - "Community 21"
+Cohesion: 0.22
+Nodes (2): emptyDraft(), makeKey()
+
+### Community 22 - "Community 22"
+Cohesion: 0.2
+Nodes (0): 
+
+### Community 23 - "Community 23"
+Cohesion: 0.22
+Nodes (10): claimInvite, previewInvite, rateOk, redeemByKind, resolveInviteKind, rpc_auth_rate_limit_check RPC, rpc_validate_invite RPC, sendMagicLink (+2 more)
+
+### Community 24 - "Community 24"
+Cohesion: 0.22
+Nodes (0): 
+
+### Community 25 - "Community 25"
+Cohesion: 0.25
+Nodes (9): batchGradeAssignment, manualGrade, publishGrade, capability:grading.write:cohort, GradingClient, AI grading workflow, AdminCohortGradingPage, listAssignmentSubmissions (+1 more)
+
+### Community 26 - "Community 26"
+Cohesion: 0.29
+Nodes (8): upsertMyCapstone, capability:roster.read, CapstoneEditor, Capstone project, AdminCohortCapstonesPage, CapstonePage, getMyCapstone, listCohortCapstones
+
+### Community 27 - "Community 27"
 Cohesion: 0.29
 Nodes (0): 
 
-### Community 29 - "Community 29"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 16 - "Curriculum MDX Loader"
-Cohesion: 0.3
-Nodes (9): splitFrontmatter(), parseYamlSubset(), parseBlock(), parseScalarOrInline(), parseInlineArray(), parseInlineObject(), parseInlineArrayLike(), loadDay() (+1 more)
-
-### Community 30 - "Community 30"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 31 - "Community 31"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 32 - "Community 32"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 33 - "Community 33"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 34 - "Community 34"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 35 - "Community 35"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 36 - "Community 36"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 37 - "Community 37"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 4 - "App Shell & Search"
-Cohesion: 0.09
-Nodes (0): 
-
-### Community 38 - "Community 38"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 39 - "Community 39"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 24 - "Relative Time"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 19 - "CSV Export"
-Cohesion: 0.6
-Nodes (3): toCsv(), downloadCsv(), exportCsv()
-
-### Community 21 - "Daily Digest Template"
-Cohesion: 0.5
-Nodes (0): 
-
-### Community 18 - "Email Edge Function"
+### Community 28 - "Community 28"
 Cohesion: 0.4
 Nodes (2): adminClient(), logNotification()
 
-### Community 3 - "Legacy Static-HTML Plans"
-Cohesion: 0.08
-Nodes (35): Plan 3 — Faculty Landing: Today + Handbook, faculty.html with hash-routed tabs, assets/faculty-tabs.js router, Today tab module, Handbook tab module, routeAfterSignIn helper, Plan 5 — Analytics + Student Mentor Card, loadPodAnalytics (+27 more)
+### Community 29 - "Community 29"
+Cohesion: 0.4
+Nodes (2): createInvite(), generateCode()
 
-### Community 15 - "RBAC Role Foundations"
-Cohesion: 0.13
-Nodes (16): Plan 1 — Role Foundations (Schema + Auth), profiles.staff_roles column (admin/trainer/tech_support), cohort_faculty.college_role column (support/executive), announcements.deleted_at soft-delete, SQL role helpers (has_staff_role, college_role_in, can_grade_submission), resolveRoles() + capability map, Rationale: additive-only migrations isolate risk from RLS rewrite, Spec — Role Reorganization + Faculty Guides (+8 more)
+### Community 30 - "Community 30"
+Cohesion: 0.33
+Nodes (6): AssignmentBlock, CohortShell, CohortTabs, LessonDayView, PhaseTabs, DayPage
 
-### Community 23 - "Top-Level Docs"
-Cohesion: 1.0
-Nodes (3): RUNBOOK, README, CLAUDE.md Agent Guide
+### Community 31 - "Community 31"
+Cohesion: 0.6
+Nodes (3): downloadCsv(), exportCsv(), toCsv()
 
-### Community 6 - "Ops Runbook Procedures"
-Cohesion: 0.08
-Nodes (29): Initial Setup Procedure, Migrations 0001-0009, RBAC Spec Verification, Edge Functions Deploy, Deploying Schema Changes, Rotating Service Role Key, Viewing Logs, Cron Schedules (+21 more)
+### Community 32 - "Community 32"
+Cohesion: 0.4
+Nodes (5): createPod, capability:pods.write, CreatePodForm, PodsPage, listPods
+
+### Community 33 - "Community 33"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 34 - "Community 34"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 35 - "Community 35"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 36 - "Community 36"
+Cohesion: 0.5
+Nodes (4): Faculty Dashboard Sections, Faculty Handbook (Reference), Faculty Invite Code FAC-YCCUSG, Faculty Registration Flow
+
+### Community 37 - "Community 37"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 38 - "Community 38"
+Cohesion: 0.5
+Nodes (4): claimTicket, escalateTicket, resolveTicket, HelpDeskActions
+
+### Community 39 - "Community 39"
+Cohesion: 0.67
+Nodes (3): capability:schedule.read, AdminHome, requireCapability
 
 ### Community 40 - "Community 40"
-Cohesion: 1.0
-Nodes (1): Restoring From Backup
+Cohesion: 0.67
+Nodes (3): capability:community.read, capability:moderation.write, BoardPage (community)
 
 ### Community 41 - "Community 41"
-Cohesion: 1.0
-Nodes (1): Repository Layout
+Cohesion: 0.67
+Nodes (2): claimInvite server action, signUp server action
 
 ### Community 42 - "Community 42"
-Cohesion: 1.0
-Nodes (1): Tests
+Cohesion: 0.67
+Nodes (3): ColumnDef<T>, DataTable<T>, DataTableProps<T>
 
 ### Community 43 - "Community 43"
-Cohesion: 1.0
-Nodes (1): Conventions
+Cohesion: 0.67
+Nodes (3): getFacultyTodayKpis, listFacultyPodStudentIds, listHelpDeskOpen
 
 ### Community 44 - "Community 44"
 Cohesion: 1.0
-Nodes (1): Deployment Workflow
+Nodes (0): 
 
-### Community 22 - "Faculty Onboarding"
-Cohesion: 0.5
-Nodes (4): Faculty Invite Code FAC-YCCUSG, Faculty Registration Flow, Faculty Dashboard Sections, Faculty Handbook (Reference)
+### Community 45 - "Community 45"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 46 - "Community 46"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 47 - "Community 47"
+Cohesion: 1.0
+Nodes (2): README, RUNBOOK
+
+### Community 48 - "Community 48"
+Cohesion: 1.0
+Nodes (2): Faculty Onboarding Guide, learn.gnanalytica.com
+
+### Community 49 - "Community 49"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 50 - "Community 50"
+Cohesion: 1.0
+Nodes (2): updateMyEmail, ChangeEmailForm
+
+### Community 51 - "Community 51"
+Cohesion: 1.0
+Nodes (2): createAssignment, NewAssignmentForm
+
+### Community 52 - "Community 52"
+Cohesion: 1.0
+Nodes (2): deleteAssignment, AssignmentsTable
+
+### Community 53 - "Community 53"
+Cohesion: 1.0
+Nodes (2): createQuiz, NewQuizForm
+
+### Community 54 - "Community 54"
+Cohesion: 1.0
+Nodes (2): HelpFab, HelpPanel
+
+### Community 55 - "Community 55"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 56 - "Community 56"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 57 - "Community 57"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 58 - "Community 58"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 59 - "Community 59"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 60 - "Community 60"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 61 - "Community 61"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 62 - "Community 62"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 63 - "Community 63"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 64 - "Community 64"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 65 - "Community 65"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 66 - "Community 66"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 67 - "Community 67"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 68 - "Community 68"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 69 - "Community 69"
+Cohesion: 1.0
+Nodes (1): Restoring From Backup
+
+### Community 70 - "Community 70"
+Cohesion: 1.0
+Nodes (1): Reset Cohort Data (staging)
+
+### Community 71 - "Community 71"
+Cohesion: 1.0
+Nodes (1): Rebuild profiles from auth.users
+
+### Community 72 - "Community 72"
+Cohesion: 1.0
+Nodes (1): Architecture Overview
+
+### Community 73 - "Community 73"
+Cohesion: 1.0
+Nodes (1): Repository Layout
+
+### Community 74 - "Community 74"
+Cohesion: 1.0
+Nodes (1): Tests
+
+### Community 75 - "Community 75"
+Cohesion: 1.0
+Nodes (1): Personas + RBAC
+
+### Community 76 - "Community 76"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 77 - "Community 77"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 78 - "Community 78"
+Cohesion: 1.0
+Nodes (1): SettingsProfilePage
+
+### Community 79 - "Community 79"
+Cohesion: 1.0
+Nodes (1): QuizzesTable
+
+### Community 80 - "Community 80"
+Cohesion: 1.0
+Nodes (1): HandbookAction
+
+### Community 81 - "Community 81"
+Cohesion: 1.0
+Nodes (1): StudentDrawer
+
+### Community 82 - "Community 82"
+Cohesion: 1.0
+Nodes (1): Tab navigation pattern
+
+### Community 83 - "Community 83"
+Cohesion: 1.0
+Nodes (1): FacultyCohort
+
+### Community 84 - "Community 84"
+Cohesion: 1.0
+Nodes (1): signOut
+
+### Community 85 - "Community 85"
+Cohesion: 1.0
+Nodes (1): signInWithGoogle
+
+### Community 86 - "Community 86"
+Cohesion: 1.0
+Nodes (1): getAdminCohortKpis
+
+### Community 87 - "Community 87"
+Cohesion: 1.0
+Nodes (1): listRoster
+
+### Community 88 - "Community 88"
+Cohesion: 1.0
+Nodes (1): listPods
+
+### Community 89 - "Community 89"
+Cohesion: 1.0
+Nodes (1): listFaculty
+
+### Community 90 - "Community 90"
+Cohesion: 1.0
+Nodes (1): listAssignments
+
+### Community 91 - "Community 91"
+Cohesion: 1.0
+Nodes (1): listQuizzes
+
+### Community 92 - "Community 92"
+Cohesion: 1.0
+Nodes (1): listTeams
+
+### Community 93 - "Community 93"
+Cohesion: 1.0
+Nodes (1): getCohortPodRoster
+
+### Community 94 - "Community 94"
+Cohesion: 1.0
+Nodes (1): listCohortDays
+
+### Community 95 - "Community 95"
+Cohesion: 1.0
+Nodes (1): getCohortDay
+
+### Community 96 - "Community 96"
+Cohesion: 1.0
+Nodes (1): todayDayNumber
+
+### Community 97 - "Community 97"
+Cohesion: 1.0
+Nodes (1): listAssignmentSubmissions
+
+### Community 98 - "Community 98"
+Cohesion: 1.0
+Nodes (1): submissions has no direct cohort_id; filter via assignments!inner(cohort_id)
+
+### Community 99 - "Community 99"
+Cohesion: 1.0
+Nodes (1): Enrolled = registrations.status='confirmed' (no enrollments table)
+
+### Community 100 - "Community 100"
+Cohesion: 1.0
+Nodes (1): Curriculum: web/content/day-XX.mdx with zod-validated frontmatter
+
+### Community 101 - "Community 101"
+Cohesion: 1.0
+Nodes (1): Theme: HSL CSS variables in globals.css, persona via data-theme
+
+### Community 102 - "Community 102"
+Cohesion: 1.0
+Nodes (1): Convention: data access in lib/queries; no from('…') in components
+
+### Community 103 - "Community 103"
+Cohesion: 1.0
+Nodes (1): Convention: NNNN_description.sql migrations, drop+create policies
+
+### Community 104 - "Community 104"
+Cohesion: 1.0
+Nodes (1): Deploy via GitHub push only — no Vercel CLI
+
+### Community 105 - "Community 105"
+Cohesion: 1.0
+Nodes (1): Vercel project build-with-ai under team gnanalytica, Root web/
+
+## Ambiguous Edges - Review These
+- `LessonDayView` → `TourMount/Tour`  [AMBIGUOUS]
+  None · relation: semantically_similar_to
 
 ## Knowledge Gaps
-- **45 isolated node(s):** `faculty.html with hash-routed tabs`, `assets/faculty-tabs.js router`, `Today tab module`, `Handbook tab module`, `routeAfterSignIn helper` (+40 more)
+- **141 isolated node(s):** `RUNBOOK`, `Deploying Schema Changes`, `Rotating Service Role Key`, `Viewing Logs`, `Restoring From Backup` (+136 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 25`** (1 nodes): `next-env.d.ts`
+- **Thin community `Community 44`** (2 nodes): `NavSearch.tsx`, `onKey()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `playwright.config.ts`
+- **Thin community `Community 45`** (2 nodes): `service.ts`, `getSupabaseService()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `vitest.config.ts`
+- **Thin community `Community 46`** (2 nodes): `relTime.ts`, `relTime()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `next.config.ts`
+- **Thin community `Community 47`** (2 nodes): `README`, `RUNBOOK`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `setup.ts`
+- **Thin community `Community 48`** (2 nodes): `Faculty Onboarding Guide`, `learn.gnanalytica.com`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `smoke.spec.ts`
+- **Thin community `Community 49`** (2 nodes): `VideoPlayer.tsx`, `VideoPlayer()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `landing.spec.ts`
+- **Thin community `Community 50`** (2 nodes): `updateMyEmail`, `ChangeEmailForm`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `public.spec.ts`
+- **Thin community `Community 51`** (2 nodes): `createAssignment`, `NewAssignmentForm`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `trainer.spec.ts`
+- **Thin community `Community 52`** (2 nodes): `deleteAssignment`, `AssignmentsTable`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `student.spec.ts`
+- **Thin community `Community 53`** (2 nodes): `createQuiz`, `NewQuizForm`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `admin.spec.ts`
+- **Thin community `Community 54`** (2 nodes): `HelpFab`, `HelpPanel`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `faculty.spec.ts`
+- **Thin community `Community 55`** (1 nodes): `next-env.d.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `tech-support.spec.ts`
+- **Thin community `Community 56`** (1 nodes): `playwright.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `types.ts`
+- **Thin community `Community 57`** (1 nodes): `vitest.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `database.types.ts`
+- **Thin community `Community 58`** (1 nodes): `next.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Relative Time`** (2 nodes): `relTime.ts`, `relTime()`
+- **Thin community `Community 59`** (1 nodes): `setup.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Restoring From Backup`
+- **Thin community `Community 60`** (1 nodes): `smoke.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Repository Layout`
+- **Thin community `Community 61`** (1 nodes): `landing.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Tests`
+- **Thin community `Community 62`** (1 nodes): `public.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Conventions`
+- **Thin community `Community 63`** (1 nodes): `trainer.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `Deployment Workflow`
+- **Thin community `Community 64`** (1 nodes): `student.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 65`** (1 nodes): `admin.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 66`** (1 nodes): `faculty.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 67`** (1 nodes): `tech-support.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 68`** (1 nodes): `types.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 69`** (1 nodes): `Restoring From Backup`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 70`** (1 nodes): `Reset Cohort Data (staging)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 71`** (1 nodes): `Rebuild profiles from auth.users`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 72`** (1 nodes): `Architecture Overview`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 73`** (1 nodes): `Repository Layout`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 74`** (1 nodes): `Tests`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 75`** (1 nodes): `Personas + RBAC`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 76`** (1 nodes): `DataTable.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 77`** (1 nodes): `database.types.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 78`** (1 nodes): `SettingsProfilePage`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 79`** (1 nodes): `QuizzesTable`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 80`** (1 nodes): `HandbookAction`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 81`** (1 nodes): `StudentDrawer`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 82`** (1 nodes): `Tab navigation pattern`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 83`** (1 nodes): `FacultyCohort`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 84`** (1 nodes): `signOut`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 85`** (1 nodes): `signInWithGoogle`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 86`** (1 nodes): `getAdminCohortKpis`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 87`** (1 nodes): `listRoster`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 88`** (1 nodes): `listPods`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 89`** (1 nodes): `listFaculty`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 90`** (1 nodes): `listAssignments`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 91`** (1 nodes): `listQuizzes`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 92`** (1 nodes): `listTeams`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 93`** (1 nodes): `getCohortPodRoster`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 94`** (1 nodes): `listCohortDays`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 95`** (1 nodes): `getCohortDay`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 96`** (1 nodes): `todayDayNumber`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 97`** (1 nodes): `listAssignmentSubmissions`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 98`** (1 nodes): `submissions has no direct cohort_id; filter via assignments!inner(cohort_id)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 99`** (1 nodes): `Enrolled = registrations.status='confirmed' (no enrollments table)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 100`** (1 nodes): `Curriculum: web/content/day-XX.mdx with zod-validated frontmatter`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 101`** (1 nodes): `Theme: HSL CSS variables in globals.css, persona via data-theme`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 102`** (1 nodes): `Convention: data access in lib/queries; no from('…') in components`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 103`** (1 nodes): `Convention: NNNN_description.sql migrations, drop+create policies`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 104`** (1 nodes): `Deploy via GitHub push only — no Vercel CLI`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 105`** (1 nodes): `Vercel project build-with-ai under team gnanalytica, Root web/`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Spec — Faculty Pods Design` connect `Legacy Static-HTML Plans` to `RBAC Role Foundations`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `Spec — Role Reorganization + Faculty Guides` connect `RBAC Role Foundations` to `Legacy Static-HTML Plans`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **What connects `faculty.html with hash-routed tabs`, `assets/faculty-tabs.js router`, `Today tab module` to the rest of the system?**
-  _45 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `App Routes & Auth Pages` be split into smaller, more focused modules?**
+- **What is the exact relationship between `LessonDayView` and `TourMount/Tour`?**
+  _Edge tagged AMBIGUOUS (relation: semantically_similar_to) - confidence is low._
+- **What connects `RUNBOOK`, `Deploying Schema Changes`, `Rotating Service Role Key` to the rest of the system?**
+  _141 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `App pages & routes` be split into smaller, more focused modules?**
+  _Cohesion score 0.02 - nodes in this community are weakly interconnected._
+- **Should `UI primitives` be split into smaller, more focused modules?**
   _Cohesion score 0.04 - nodes in this community are weakly interconnected._
-- **Should `Layouts & Cohort Switcher` be split into smaller, more focused modules?**
-  _Cohesion score 0.13 - nodes in this community are weakly interconnected._
-- **Should `Handbook & Markdown UI` be split into smaller, more focused modules?**
+- **Should `Shell, help & sandbox` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `Pod Management UI` be split into smaller, more focused modules?**
-  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
+- **Should `RBAC archive (concepts)` be split into smaller, more focused modules?**
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+- **Should `Faculty pod & engagement actions` be split into smaller, more focused modules?**
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
