@@ -84,9 +84,9 @@ on conflict (id) do nothing;
 -- A1 graded (10 rows)
 insert into submissions (id, assignment_id, user_id, body, status, score, graded_at, graded_by, feedback_md)
 select
-  ('99999996-1000-0001-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-1000-0001-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0001-0000-0000-000000000001',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   'Reflection draft — student #' || n,
   'graded'::submission_status,
   3 + ((n * 7) % 3),
@@ -103,9 +103,9 @@ on conflict (assignment_id, user_id) do nothing;
 -- A2 submitted (8 rows, students 1-8)
 insert into submissions (id, assignment_id, user_id, body, status)
 select
-  ('99999996-1000-0002-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-1000-0002-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0001-0000-0000-000000000002',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   'Three CREATE prompts — student #' || n,
   'submitted'::submission_status
 from generate_series(1, 8) n
@@ -114,9 +114,9 @@ on conflict (assignment_id, user_id) do nothing;
 -- A3 mix: 6 submitted (1-6) + 2 draft (7-8)
 insert into submissions (id, assignment_id, user_id, body, status)
 select
-  ('99999996-1000-0003-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-1000-0003-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0001-0000-0000-000000000003',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   case when n <= 6 then 'Research plan — submitted #' || n
        else 'Research plan — draft #' || n end,
   case when n <= 6 then 'submitted'::submission_status
@@ -127,9 +127,9 @@ on conflict (assignment_id, user_id) do nothing;
 -- A4 mix: 4 submitted (1-4) + 1 draft (5)
 insert into submissions (id, assignment_id, user_id, body, status)
 select
-  ('99999996-1000-0004-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-1000-0004-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0001-0000-0000-000000000004',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   case when n <= 4 then 'Heilmeier worksheet — submitted #' || n
        else 'Heilmeier worksheet — draft #' || n end,
   case when n <= 4 then 'submitted'::submission_status
@@ -140,9 +140,9 @@ on conflict (assignment_id, user_id) do nothing;
 -- A5 early submissions (2 rows)
 insert into submissions (id, assignment_id, user_id, body, status)
 select
-  ('99999996-1000-0005-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-1000-0005-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0001-0000-0000-000000000005',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   'Interview notes — student #' || n,
   'submitted'::submission_status
 from generate_series(1, 2) n
@@ -161,9 +161,9 @@ on conflict (id) do nothing;
 -- Quiz 1: 8 attempts (students 1-8), varied scores 60-100
 insert into quiz_attempts (id, quiz_id, user_id, score, answers, completed_at)
 select
-  ('99999996-2000-0001-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-2000-0001-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0002-0000-0000-000000000001',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   60 + ((n * 13) % 41),
   jsonb_build_object('q1', 'a', 'q2', 'b', 'q3', 'c'),
   now() - interval '17 days'
@@ -173,9 +173,9 @@ on conflict (quiz_id, user_id) do nothing;
 -- Quiz 2: 4 attempts (students 1-4)
 insert into quiz_attempts (id, quiz_id, user_id, score, answers, completed_at)
 select
-  ('99999996-2000-0002-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999996-2000-0002-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0002-0000-0000-000000000002',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   70 + ((n * 11) % 25),
   jsonb_build_object('q1', 'b', 'q2', 'd'),
   now() - interval '5 days'
@@ -202,7 +202,7 @@ on conflict (id) do nothing;
 insert into poll_votes (poll_id, user_id, choice, voted_at)
 select
   '99999996-0003-0000-0000-000000000001',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   (array['agree','neutral','disagree'])[((n - 1) % 3) + 1],
   now() - interval '11 days'
 from generate_series(1, 9) n
@@ -212,7 +212,7 @@ on conflict do nothing;
 insert into poll_votes (poll_id, user_id, choice, voted_at)
 select
   '99999996-0003-0000-0000-000000000002',
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   (array['mom_test','jtbd','open_ended'])[((n - 1) % 3) + 1],
   now() - interval '2 days'
 from generate_series(1, 6) n
@@ -306,7 +306,7 @@ on conflict (id) do nothing;
 -- Post-level upvotes from students 2..6 on post 1; mix on others.
 insert into community_votes (user_id, post_id, reply_id, value, voted_at)
 select
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0005-0000-0000-000000000001'::uuid,
   null::uuid,
   1::smallint,
@@ -316,7 +316,7 @@ on conflict do nothing;
 
 insert into community_votes (user_id, post_id, reply_id, value, voted_at)
 select
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0005-0000-0000-000000000002'::uuid,
   null::uuid,
   1::smallint,
@@ -327,7 +327,7 @@ on conflict do nothing;
 
 insert into community_votes (user_id, post_id, reply_id, value, voted_at)
 select
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999996-0005-0000-0000-000000000004'::uuid,
   null::uuid,
   1::smallint,
@@ -390,7 +390,7 @@ insert into attendance (cohort_id, day_number, user_id, status, marked_by, marke
 select
   '99999999-9999-9999-9999-999999999999',
   d,
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   case
     when (s + d) % 11 = 0 then 'absent'::attendance_status
     when (s + d) % 7  = 0 then 'late'::attendance_status
@@ -406,7 +406,7 @@ on conflict do nothing;
 -- ---------- 10. Lab progress (scattered) ------------------------------------
 insert into lab_progress (user_id, cohort_id, day_number, lab_id, status, updated_at)
 select
-  ('99999999-0000-0000-0000-' || lpad(\1::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   '99999999-9999-9999-9999-999999999999',
   d,
   'day-' || d || '-lab-1',
