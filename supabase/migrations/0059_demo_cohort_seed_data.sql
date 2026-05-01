@@ -406,7 +406,7 @@ insert into attendance (cohort_id, day_number, user_id, status, marked_by, marke
 select
   '99999999-9999-9999-9999-999999999999',
   d,
-  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(s::text, 12, '0'))::uuid,
   case
     when (s + d) % 11 = 0 then 'absent'::attendance_status
     when (s + d) % 7  = 0 then 'late'::attendance_status
@@ -422,7 +422,7 @@ on conflict do nothing;
 -- ---------- 10. Lab progress (scattered) ------------------------------------
 insert into lab_progress (user_id, cohort_id, day_number, lab_id, status, updated_at)
 select
-  ('99999999-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  ('99999999-0000-0000-0000-' || lpad(s::text, 12, '0'))::uuid,
   '99999999-9999-9999-9999-999999999999',
   d,
   'day-' || d || '-lab-1',
