@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { cn } from "@/lib/utils";
+import { exportCsv } from "@/lib/format/csv";
+import { fmtDate } from "@/lib/format";
 import { RosterTable } from "@/app/(authed)/admin/roster/RosterTable";
 import type { RosterRow, FacultyRow } from "@/lib/queries/admin";
 import type { TeamRow } from "@/lib/queries/teams";
@@ -22,15 +26,39 @@ export function RosterTabs({
   faculty,
   teams,
   cohortId,
+  cohortSlug,
   initialTab,
 }: {
   students: RosterRow[];
   faculty: FacultyRow[];
   teams: TeamRow[];
   cohortId: string;
+  cohortSlug: string;
   initialTab: Tab;
 }) {
   const active: Tab = TABS.some((t) => t.id === initialTab) ? initialTab : "students";
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  function downloadStudents() {
+    exportCsv(`${cohortSlug}-students-${today}.csv`, students, [
+      { header: "Full name", value: (r) => r.full_name ?? "" },
+      { header: "Email", value: (r) => r.email },
+      { header: "College", value: (r) => r.college ?? "" },
+      { header: "Status", value: (r) => r.status },
+      { header: "Source", value: (r) => r.source ?? "" },
+      { header: "Pod", value: (r) => r.pod_name ?? "" },
+      { header: "Registered at", value: (r) => fmtDate(r.created_at) },
+    ]);
+  }
+
+  function downloadFaculty() {
+    exportCsv(`${cohortSlug}-faculty-${today}.csv`, faculty, [
+      { header: "Full name", value: (r) => r.full_name ?? "" },
+      { header: "Email", value: (r) => r.email },
+      { header: "Pods", value: (r) => r.pods },
+    ]);
+  }
 
   return (
     <div className="space-y-6">
@@ -62,10 +90,24 @@ export function RosterTabs({
               {students.filter((r) => r.status === "confirmed").length} confirmed ·{" "}
               {students.filter((r) => r.status === "pending").length} pending
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="ok">Confirmed</Badge>
               <Badge variant="warn">Pending</Badge>
               <Badge>Waitlist</Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadStudents}
+                disabled={students.length === 0}
+                title={
+                  students.length === 0
+                    ? "No students to export"
+                    : `Export all ${students.length} student${students.length === 1 ? "" : "s"} to CSV (opens in Excel)`
+                }
+              >
+                <Download size={14} strokeWidth={2.1} className="mr-1.5" />
+                Export CSV
+              </Button>
             </div>
           </header>
           <RosterTable rows={students} cohortId={cohortId} />
@@ -74,9 +116,25 @@ export function RosterTabs({
 
       {active === "faculty" && (
         <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold tracking-tight">Faculty</h2>
-            <Badge>pod-scoped grading + moderation</Badge>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold tracking-tight">Faculty</h2>
+              <Badge>pod-scoped grading + moderation</Badge>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={downloadFaculty}
+              disabled={faculty.length === 0}
+              title={
+                faculty.length === 0
+                  ? "No faculty to export"
+                  : `Export all ${faculty.length} faculty to CSV (opens in Excel)`
+              }
+            >
+              <Download size={14} strokeWidth={2.1} className="mr-1.5" />
+              Export CSV
+            </Button>
           </div>
           <p className="text-muted text-sm">{faculty.length} assigned</p>
           {faculty.length === 0 ? (

@@ -37,6 +37,7 @@ export default async function AdminCohortRosterPage({
         faculty={faculty}
         teams={teams}
         cohortId={cohort.id}
+        cohortSlug={cohort.slug}
         initialTab={tab}
       />
     </>
