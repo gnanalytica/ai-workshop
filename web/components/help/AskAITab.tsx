@@ -244,7 +244,7 @@ function EmptyState({
 
   return (
     <div>
-      <p className="text-ink mb-1 text-[15px] font-medium">Hello, I'm Buddy.</p>
+      <p className="text-ink mb-1 text-[15px] font-medium">Hello, I&apos;m Buddy.</p>
       <p className="text-muted mb-5 text-[12.5px] leading-relaxed">
         {greeting} Replies cite the handbook section they came from.
       </p>

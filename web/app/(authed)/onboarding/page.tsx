@@ -12,7 +12,6 @@ import {
   Milestone,
   PenLine,
   Send,
-  Settings,
   Sparkles,
   Trophy,
   UserCircle,
