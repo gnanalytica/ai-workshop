@@ -9,6 +9,8 @@ import { QuizBlock } from "@/components/day-interactive/QuizBlock";
 import { PollBlock } from "@/components/day-interactive/PollBlock";
 import { PhaseTabs } from "@/components/lesson-day/PhaseTabs";
 import { DayTasksPanel, type TaskItem } from "@/components/lesson-day/DayTasksPanel";
+import { LessonReader } from "@/components/lesson-day/LessonReader";
+import { splitByH2 } from "@/lib/content/splitSections";
 import { loadDay, listDays } from "@/lib/content/loader";
 import type { ActiveCohort } from "@/lib/queries/cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
@@ -176,16 +178,27 @@ export async function LessonDayView({
     <p className="text-muted py-12 text-center text-sm">No {label} content for this day yet.</p>
   );
 
-  const prePanel = (
-    <>
-      {phases.pre ? <MarkdownView source={phases.pre} /> : emptyState("pre-class")}
-    </>
+  // Split each phase's markdown into one-section-at-a-time chunks. The
+  // LessonReader client component receives the rendered <MarkdownView>
+  // children + their titles and shows a single section at a time with
+  // Prev / Next controls, dot progress, and keyboard arrow nav.
+  const preSections = splitByH2(phases.pre ?? "");
+  const liveSections = splitByH2(phases.live ?? "");
+  const postSections = splitByH2(phases.post ?? "");
+  const extraSections = splitByH2(phases.extra ?? "");
+
+  const prePanel = phases.pre ? (
+    <LessonReader titles={preSections.map((s) => s.title)}>
+      {preSections.map((s, i) => (
+        <MarkdownView key={i} source={s.body} />
+      ))}
+    </LessonReader>
+  ) : (
+    emptyState("pre-class")
   );
 
-  const livePanel = (
+  const liveTrailing = (
     <>
-      {promptCard}
-      {phases.live ? <MarkdownView source={phases.live} /> : emptyState("in-class")}
       {!readOnly && interactive.poll && (
         <div className="mt-8">
           <PollBlock poll={interactive.poll} />
@@ -194,10 +207,26 @@ export async function LessonDayView({
       {toolsList}
     </>
   );
-
-  const postPanel = (
+  const livePanel = (
     <>
-      {phases.post ? <MarkdownView source={phases.post} /> : emptyState("post-class")}
+      {promptCard}
+      {phases.live ? (
+        <LessonReader titles={liveSections.map((s) => s.title)} trailing={liveTrailing}>
+          {liveSections.map((s, i) => (
+            <MarkdownView key={i} source={s.body} />
+          ))}
+        </LessonReader>
+      ) : (
+        <>
+          {emptyState("in-class")}
+          {liveTrailing}
+        </>
+      )}
+    </>
+  );
+
+  const postTrailing = (
+    <>
       {!readOnly && (interactive.assignment || interactive.quiz) && (
         <div className="mt-8 space-y-4">
           {interactive.assignment && <AssignmentBlock assignment={interactive.assignment} />}
@@ -207,13 +236,30 @@ export async function LessonDayView({
       {endGoalCard}
     </>
   );
-
-  const extraPanel = (
+  const postPanel = phases.post ? (
+    <LessonReader titles={postSections.map((s) => s.title)} trailing={postTrailing}>
+      {postSections.map((s, i) => (
+        <MarkdownView key={i} source={s.body} />
+      ))}
+    </LessonReader>
+  ) : (
     <>
-      {phases.extra ? <MarkdownView source={phases.extra} /> : null}
-      {resourcesList}
-      {!phases.extra && !resourcesList && emptyState("additional")}
+      {emptyState("post-class")}
+      {postTrailing}
     </>
+  );
+
+  const extraTrailing = <>{resourcesList}</>;
+  const extraPanel = phases.extra ? (
+    <LessonReader titles={extraSections.map((s) => s.title)} trailing={extraTrailing}>
+      {extraSections.map((s, i) => (
+        <MarkdownView key={i} source={s.body} />
+      ))}
+    </LessonReader>
+  ) : resourcesList ? (
+    extraTrailing
+  ) : (
+    emptyState("additional")
   );
 
   return (
