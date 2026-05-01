@@ -10,11 +10,13 @@ import { setCohortDayMeetLink } from "@/lib/actions/schedule";
 
 export function JoinSessionClient({
   cohortId,
+  cohortName,
   dayNumber,
   meetLink,
   canEdit,
 }: {
   cohortId: string;
+  cohortName: string | null;
   dayNumber: number;
   meetLink: string | null;
   canEdit: boolean;
@@ -23,6 +25,16 @@ export function JoinSessionClient({
   const [value, setValue] = useState(meetLink ?? "");
   const [pending, start] = useTransition();
   const popoverRef = useRef<HTMLDivElement | null>(null);
+
+  // The label every persona sees on the affordance and in confirmations. If
+  // admin and faculty land on different cohorts (different defaults, cookie
+  // pin, multiple live cohorts) the difference is now visible instead of
+  // silent.
+  const cohortLabel = cohortName?.trim() || "this cohort";
+  const dayLabel = `Day ${dayNumber}`;
+  const titleAttr = meetLink
+    ? `Join live · ${dayLabel} — ${cohortLabel}`
+    : `Add live link · ${dayLabel} — ${cohortLabel}`;
 
   useEffect(() => {
     setValue(meetLink ?? "");
@@ -55,7 +67,11 @@ export function JoinSessionClient({
         meet_link: clean === "" ? null : clean,
       });
       if (r.ok) {
-        toast.success(clean === "" ? "Meet link cleared" : "Meet link updated");
+        toast.success(
+          clean === ""
+            ? `Cleared link · ${dayLabel} — ${cohortLabel}`
+            : `Updated link · ${dayLabel} — ${cohortLabel}`,
+        );
         setOpen(false);
       } else {
         toast.error(r.error);
@@ -73,8 +89,8 @@ export function JoinSessionClient({
           className={cn(
             "bg-accent text-cta-ink hover:opacity-90 inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-opacity",
           )}
-          aria-label="Join live session"
-          title="Join live session"
+          aria-label={titleAttr}
+          title={titleAttr}
         >
           <Video size={14} strokeWidth={2} />
           <span className="hidden sm:inline">Join live</span>
@@ -85,8 +101,8 @@ export function JoinSessionClient({
           variant="outline"
           size="sm"
           onClick={() => setOpen((o) => !o)}
-          aria-label="Add live session link"
-          title="Add live session link"
+          aria-label={titleAttr}
+          title={titleAttr}
         >
           <Video size={14} strokeWidth={2} />
           <span className="hidden sm:inline">Add link</span>
@@ -99,8 +115,8 @@ export function JoinSessionClient({
           size="icon"
           className="h-8 w-8"
           onClick={() => setOpen((o) => !o)}
-          aria-label="Update live session link"
-          title="Update live session link"
+          aria-label={`Update live link for ${dayLabel} — ${cohortLabel}`}
+          title={`Update live link · ${dayLabel} — ${cohortLabel}`}
         >
           <Pencil size={14} strokeWidth={1.8} />
         </Button>
@@ -109,11 +125,11 @@ export function JoinSessionClient({
       {open && canEdit && (
         <div
           role="dialog"
-          aria-label="Update live session link"
+          aria-label={`Update live link for ${dayLabel} — ${cohortLabel}`}
           className="border-line bg-card absolute right-0 top-full z-40 mt-2 w-[320px] rounded-md border p-3 shadow-lift"
         >
           <p className="text-muted mb-2 text-[11px] uppercase tracking-widest">
-            Day {dayNumber} · Live session link
+            {dayLabel} · {cohortLabel}
           </p>
           <Input
             autoFocus

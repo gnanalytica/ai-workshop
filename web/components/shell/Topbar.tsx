@@ -19,12 +19,16 @@ export async function Topbar({
   cohortName,
   truePersona,
   effectivePersona,
+  activeCohortId,
+  activeDayNumber,
 }: {
   profile: UserProfile;
   navItems: NavItem[];
   cohortName?: string | null;
   truePersona: Persona | null;
   effectivePersona: Persona | null;
+  activeCohortId: string | null;
+  activeDayNumber: number | null;
 }) {
   const isAdminPreviewing =
     truePersona === "admin" && effectivePersona !== null && effectivePersona !== "admin";
@@ -86,7 +90,11 @@ export async function Topbar({
           />
           </div>
         )}
-        <JoinSession />
+        <JoinSession
+          cohortId={activeCohortId}
+          cohortName={cohortName ?? null}
+          dayNumber={activeDayNumber}
+        />
         <div className="hidden sm:block">
           <NavSearch items={navItems} />
         </div>

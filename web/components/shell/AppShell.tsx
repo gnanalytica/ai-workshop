@@ -8,7 +8,9 @@ import { navForPersona } from "@/lib/rbac/menus";
 import { TourMount } from "@/components/tour/Tour";
 import { HelpFab } from "@/components/help/HelpFab";
 import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
+import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
+import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
 
 /**
  * Single chrome used by every authenticated route. Resolves session, fetches
@@ -26,8 +28,50 @@ export async function AppShell({
   const profile = await getProfile();
   if (!profile) redirect("/sign-in");
 
+  // Single source of truth for "the cohort this user is currently working in".
+  // Faculty/admin paths inject cohortId via the route layout; for students the
+  // shell layout doesn't know it, so fall back to their registration (or the
+  // most-recent live cohort under RLS). This same id flows into the topbar's
+  // Join button so admin/faculty/student all read+write the same cohort_days
+  // row when they're on the same cohort.
+  let activeCohortId = cohortId ?? null;
+  let activeCohortName = cohortName ?? null;
+  let activeCohortStart: string | null = null;
+  if (!activeCohortId) {
+    const fallback = await getMyCurrentCohort();
+    if (fallback) {
+      activeCohortId = fallback.id;
+      activeCohortName = fallback.name;
+      activeCohortStart = fallback.starts_on;
+    }
+  } else {
+    // We have an injected cohortId but need starts_on for the day-number calc.
+    // Stay on the RLS-respecting client — the injecting layout already proved
+    // the user can see this cohort.
+    const sb = await getSupabaseServer();
+    const { data } = await sb
+      .from("cohorts")
+      .select("starts_on, name")
+      .eq("id", activeCohortId)
+      .maybeSingle();
+    activeCohortStart = (data?.starts_on as string | undefined) ?? null;
+    if (!activeCohortName) activeCohortName = (data?.name as string | undefined) ?? null;
+  }
+
+  const activeDayNumber =
+    activeCohortStart != null
+      ? todayDayNumber({
+          id: activeCohortId!,
+          slug: "",
+          name: activeCohortName ?? "",
+          starts_on: activeCohortStart,
+          ends_on: activeCohortStart,
+          status: "live",
+        })
+      : null;
+
   const [caps, truePersona, effectivePersona] = await Promise.all([
-    getAuthCaps(cohortId ?? null),
+    getAuthCaps(activeCohortId),
     getTruePersona(),
     getEffectivePersona(),
   ]);
@@ -62,9 +106,11 @@ export async function AppShell({
           <Topbar
             profile={profile}
             navItems={items}
-            cohortName={cohortName}
+            cohortName={activeCohortName}
             truePersona={truePersona}
             effectivePersona={effectivePersona}
+            activeCohortId={activeCohortId}
+            activeDayNumber={activeDayNumber}
           />
           <main className="flex-1 overflow-x-hidden p-4 md:p-8">{children}</main>
         </div>

@@ -1,40 +1,33 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSession, getProfile } from "@/lib/auth/session";
-import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
-import { getFacultyCohort } from "@/lib/queries/faculty";
 import { JoinSessionClient } from "./JoinSessionClient";
 
 /**
- * Live-session "Join" affordance for the topbar. Resolves the user's active
- * cohort + today's working day and reads its meet_link. Faculty + admin also
- * get the inline edit affordance, posting through the narrow
- * set_cohort_day_meet_link RPC (faculty deliberately do not hold
- * schedule.write).
+ * Live-session "Join" affordance for the topbar. Reads the meet_link off the
+ * cohort_days row that AppShell already resolved for this user, so admin /
+ * faculty / student all share a single source of truth: when they're on the
+ * same cohort they see the same link, and when they edit it everyone on that
+ * cohort sees the update on next request.
  */
-export async function JoinSession() {
+export async function JoinSession({
+  cohortId,
+  cohortName,
+  dayNumber,
+}: {
+  cohortId: string | null;
+  cohortName: string | null;
+  dayNumber: number | null;
+}) {
+  if (!cohortId || dayNumber == null) return null;
+
   const profile = await getProfile();
   if (!profile) return null;
-
-  // Faculty's teaching cohort wins over a registration-derived one (admins
-  // may also hold a cohort_faculty row in the demo cohort).
-  const fac = await getFacultyCohort();
-  const cohort = fac?.cohort ?? (await getMyCurrentCohort());
-  if (!cohort) return null;
-
-  const dayNumber = todayDayNumber({
-    id: cohort.id,
-    slug: cohort.slug,
-    name: cohort.name,
-    starts_on: cohort.starts_on,
-    ends_on: cohort.ends_on,
-    status: cohort.status,
-  });
 
   const sb = await getSupabaseServer();
   const { data: dayRow } = await sb
     .from("cohort_days")
     .select("meet_link")
-    .eq("cohort_id", cohort.id)
+    .eq("cohort_id", cohortId)
     .eq("day_number", dayNumber)
     .maybeSingle();
   const meetLink = (dayRow?.meet_link as string | null) ?? null;
@@ -47,7 +40,7 @@ export async function JoinSession() {
       const { data: facRow } = await sb
         .from("cohort_faculty")
         .select("user_id")
-        .eq("cohort_id", cohort.id)
+        .eq("cohort_id", cohortId)
         .eq("user_id", session.id)
         .maybeSingle();
       canEdit = !!facRow;
@@ -59,7 +52,8 @@ export async function JoinSession() {
 
   return (
     <JoinSessionClient
-      cohortId={cohort.id}
+      cohortId={cohortId}
+      cohortName={cohortName}
       dayNumber={dayNumber}
       meetLink={meetLink}
       canEdit={canEdit}
