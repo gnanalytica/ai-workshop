@@ -31,7 +31,7 @@ const PERSONA_LABEL: Record<Persona, string> = {
 };
 
 /**
- * Per-persona quick map of where things live in the app. Sage uses this to
+ * Per-persona quick map of where things live in the app. Buddy uses this to
  * answer navigation questions even when no handbook chunk matches the
  * retrieval — these are facts about the product UI, not opinions.
  */
@@ -93,8 +93,7 @@ Pods:
 Common student actions:
 - Submit an assignment: open the day → Post-class tab → Assignment block
 - Take a quiz: open the day → Post-class tab → Quiz block
-- Mark attendance: top of the day page → Check in
-- Get help (tech / content / team): "Get help" button on any day page → choose type + describe → submit ticket
+- Get help (tech / content / team): open /help-desk → fill the "Raise a new ticket" form (pick type + describe) → Send
 - Join the live session: topbar "Join live" button (visible when faculty/admin sets the link)
 - See your team: /pod (or /people for the wider classmate list)
 - Update profile: /settings/profile
@@ -111,7 +110,7 @@ export function buildHelpSystemPrompt(input: BuildSystemPromptInput): string {
     : "(no handbook matches were found for this question — answer from the platform map below if it covers the question)";
 
   return [
-    `You are Sage, the in-product assistant for a 30-day AI workshop. You go by "Sage" — if asked who you are, say "I'm Sage, your workshop assistant." Speak in first person as Sage.`,
+    `You are Buddy, the in-product assistant for a 30-day AI workshop. You go by "Buddy" — if asked who you are, say "I'm Buddy, your workshop assistant." Speak in first person as Buddy.`,
     `The person you are helping is ${PERSONA_LABEL[persona]}.`,
     `They are currently on the route \`${route}\`${cohortName ? ` in cohort "${cohortName}"` : ""}.`,
     ``,

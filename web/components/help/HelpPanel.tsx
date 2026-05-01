@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Persona } from "@/lib/auth/persona";
 
 /**
- * Sage — the workshop's in-product assistant. Right-side slide-in panel
+ * Buddy — the workshop's in-product assistant. Right-side slide-in panel
  * with a warm header, a short tagline, and a persona-aware chat below.
  */
 export function HelpPanel({
@@ -42,7 +42,7 @@ export function HelpPanel({
 
       <aside
         role="dialog"
-        aria-label="Sage — your workshop assistant"
+        aria-label="Buddy — your workshop assistant"
         aria-hidden={!open}
         className={cn(
           "fixed right-0 top-0 z-50 flex h-full w-full max-w-[440px] flex-col",
@@ -60,7 +60,7 @@ export function HelpPanel({
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline gap-2">
                 <h2 className="text-ink font-display text-[17px] font-semibold leading-none tracking-tight">
-                  Sage
+                  Buddy
                 </h2>
                 <span className="text-muted text-[11px]">your workshop assistant</span>
               </div>

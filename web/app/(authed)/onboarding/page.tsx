@@ -275,9 +275,9 @@ export default async function OnboardingPage() {
         <CardSub className="text-accent font-mono text-[10px] tracking-widest uppercase">
           Tip
         </CardSub>
-        <CardTitle className="mt-1 text-base">Ask Sage anything</CardTitle>
+        <CardTitle className="mt-1 text-base">Ask Buddy anything</CardTitle>
         <p className="text-ink/85 mt-2 text-sm leading-6">
-          Click <span className="font-medium">Ask Sage</span> at the bottom-right of any page. Sage knows
+          Click <span className="font-medium">Ask Buddy</span> at the bottom-right of any page. Buddy knows
           where things live, how to do common actions, and points you to the handbook section that backs
           its answer.
         </p>

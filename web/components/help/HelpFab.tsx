@@ -6,9 +6,9 @@ import { HelpPanel } from "./HelpPanel";
 import type { Persona } from "@/lib/auth/persona";
 
 /**
- * Bottom-right "Ask Sage" pill. Sage is the workshop's in-product assistant —
- * one consistent name students and faculty can refer to ("ask Sage",
- * "Sage says…") instead of an anonymous "channel" or "?" widget.
+ * Bottom-right "Ask Buddy" pill. Buddy is the workshop's in-product assistant —
+ * one consistent name students and faculty can refer to ("ask Buddy",
+ * "Buddy says…") instead of an anonymous "channel" or "?" widget.
  */
 export function HelpFab({ persona }: { persona: Persona | null }) {
   const [open, setOpen] = useState(false);
@@ -18,7 +18,7 @@ export function HelpFab({ persona }: { persona: Persona | null }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Ask Sage — your workshop assistant"
+        aria-label="Ask Buddy — your workshop assistant"
         className="
           fixed bottom-5 right-5 z-30 group
           inline-flex h-11 items-center gap-2 pl-3 pr-4
@@ -36,7 +36,7 @@ export function HelpFab({ persona }: { persona: Persona | null }) {
           <span className="absolute inset-0 rounded-full bg-[hsl(var(--accent))]/15" />
           <Sparkles size={13} strokeWidth={2.2} className="text-accent relative" />
         </span>
-        <span>Ask Sage</span>
+        <span>Ask Buddy</span>
       </button>
       <HelpPanel open={open} onClose={() => setOpen(false)} persona={persona} />
     </>

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import type { Persona } from "@/lib/auth/persona";
 
 /**
- * Sage chat surface. Persona-aware starter prompts, warm labels, citations
+ * Buddy chat surface. Persona-aware starter prompts, warm labels, citations
  * rendered as inline chips that link into the handbook / day pages.
  *
  * Streams `{messages, route, clientMessageId, conversationId}` to
@@ -29,7 +29,7 @@ interface ChatMessage {
 }
 
 const RATE_LIMIT_COPY =
-  "You've used today's 30 questions. Reach the help desk for anything urgent — Sage is back tomorrow.";
+  "You've used today's 30 questions. Reach the help desk for anything urgent — Buddy is back tomorrow.";
 
 interface StarterPrompt {
   label: string;
@@ -116,7 +116,7 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
           return;
         }
         if (!res.ok || !res.body) {
-          setError("Couldn't reach Sage just now. Try again in a moment.");
+          setError("Couldn't reach Buddy just now. Try again in a moment.");
           setMessages((curr) => curr.filter((m) => m.id !== assistantId));
           return;
         }
@@ -191,10 +191,10 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
           value={input}
           onChange={(e) => setInput(e.currentTarget.value)}
           placeholder={
-            rateLimited ? "Sage is back tomorrow" : "Ask Sage anything…"
+            rateLimited ? "Buddy is back tomorrow" : "Ask Buddy anything…"
           }
           disabled={streaming || rateLimited}
-          aria-label="Ask Sage a question"
+          aria-label="Ask Buddy a question"
           className="
             flex-1 bg-transparent px-4 py-3.5 outline-none
             text-ink placeholder:text-muted/65
@@ -244,7 +244,7 @@ function EmptyState({
 
   return (
     <div>
-      <p className="text-ink mb-1 text-[15px] font-medium">Hello, I'm Sage.</p>
+      <p className="text-ink mb-1 text-[15px] font-medium">Hello, I'm Buddy.</p>
       <p className="text-muted mb-5 text-[12.5px] leading-relaxed">
         {greeting} Replies cite the handbook section they came from.
       </p>
@@ -291,7 +291,7 @@ function Bubble({
 }) {
   const isUser = message.role === "user";
   const showShimmer = !isUser && streaming && message.content.length === 0;
-  const label = isUser ? "You" : "Sage";
+  const label = isUser ? "You" : "Buddy";
 
   return (
     <div className="flex flex-col gap-1.5">
