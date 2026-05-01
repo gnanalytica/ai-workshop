@@ -53,14 +53,19 @@ export async function LessonDayView({
   if (!content) notFound();
 
   const cohortDay = cohortDays.find((d) => d.day_number === dayNumber);
-  const railItems = allDays.map((d) => {
-    const cd = cohortDays.find((c) => c.day_number === d.day);
-    return {
-      day: d.day,
-      title: d.topic,
-      unlocked: cd?.is_unlocked ?? false,
-    };
-  });
+  const railItems = [
+    // Day 0 · Welcome — special-cased entry that points at /onboarding
+    // instead of /day/0 (cohort_days schema only allows day_number 1-60).
+    { day: 0, title: "Welcome", unlocked: true, href: "/onboarding" },
+    ...allDays.map((d) => {
+      const cd = cohortDays.find((c) => c.day_number === d.day);
+      return {
+        day: d.day,
+        title: d.topic,
+        unlocked: cd?.is_unlocked ?? false,
+      };
+    }),
+  ];
 
   const meta = content.meta;
   const phases = splitDayPhases(content.body);

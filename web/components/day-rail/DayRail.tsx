@@ -6,6 +6,8 @@ export interface DayRailItem {
   title: string;
   unlocked: boolean;
   done?: boolean;
+  /** Override the default `${basePath}/${day}` link. Used for Day 0 → /onboarding. */
+  href?: string;
 }
 
 export function DayRail({
@@ -44,7 +46,7 @@ export function DayRail({
             <li key={it.day}>
               {it.unlocked ? (
                 <Link
-                  href={`${basePath}/${it.day}`}
+                  href={it.href ?? `${basePath}/${it.day}`}
                   className={cn(
                     cls,
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--accent))]",
