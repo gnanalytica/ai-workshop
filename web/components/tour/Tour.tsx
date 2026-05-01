@@ -29,8 +29,13 @@ export function TourMount({
   initialOpen: boolean;
 }) {
   // Seed lazily so we can read localStorage on the client only.
+  // Students never auto-open — they get the Day 0 banner + /onboarding tour
+  // instead, which is a less interruptive flow. Faculty/admin still see the
+  // first-time auto-launch (it points them at handbook/admin pages they need
+  // to know exist). Manual replay via StartGuideButton works for everyone.
   const [open, setOpen] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
+    if (persona === "student") return false;
     try {
       if (window.localStorage.getItem(DISMISS_KEY) === "1") return false;
     } catch {

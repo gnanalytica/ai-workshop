@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
 import { EnterSandboxButton } from "@/components/sandbox/EnterSandboxButton";
 import type { Persona } from "@/lib/auth/persona";
@@ -193,13 +195,25 @@ function DashboardNavTab({
   return (
     <div className="space-y-6">
       <Card className="border-accent/30 bg-accent/[0.04] p-6 sm:p-8">
-        <CardTitle className="mb-2 text-lg">Take the interactive guide</CardTitle>
+        <CardTitle className="mb-2 text-lg">
+          {persona === "student" ? "Take the Day 0 walkthrough" : "Take the interactive guide"}
+        </CardTitle>
         <CardSub className="mb-4 max-w-2xl text-sm leading-relaxed">
-          A step-by-step tour of every screen you&apos;ll use, anchored to the actual
-          sidebar links. Replay it anytime — it doesn&apos;t re-mark you as a new user.
+          {persona === "student" ? (
+            <>A friendlier tile-by-tile tour of your pod, classmates, lessons, and where to get help. Open it any time.</>
+          ) : (
+            <>A step-by-step tour of every screen you&apos;ll use, anchored to the actual
+            sidebar links. Replay it anytime — it doesn&apos;t re-mark you as a new user.</>
+          )}
         </CardSub>
         <div className="flex flex-wrap items-center gap-3">
-          <StartGuideButton persona={persona} />
+          {persona === "student" ? (
+            <Button asChild>
+              <Link href="/onboarding">Open Day 0</Link>
+            </Button>
+          ) : (
+            <StartGuideButton persona={persona} />
+          )}
           {(persona === "admin" || persona === "faculty") && (
             <EnterSandboxButton />
           )}
