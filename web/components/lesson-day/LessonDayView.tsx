@@ -10,6 +10,7 @@ import { AssignmentBlock } from "@/components/day-interactive/AssignmentBlock";
 import { QuizBlock } from "@/components/day-interactive/QuizBlock";
 import { PollBlock } from "@/components/day-interactive/PollBlock";
 import { PhaseTabs } from "@/components/lesson-day/PhaseTabs";
+import { DayTasksPanel, type TaskItem } from "@/components/lesson-day/DayTasksPanel";
 import { loadDay, listDays } from "@/lib/content/loader";
 import type { ActiveCohort } from "@/lib/queries/cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
@@ -74,6 +75,45 @@ export async function LessonDayView({
       : 0;
   const quizPending = interactive.quiz && !interactive.quiz.attempt?.completed_at ? 1 : 0;
   const postPending = assignmentPending + quizPending;
+
+  const tasks: TaskItem[] = [];
+  if (!readOnly) {
+    tasks.push({
+      id: "checkin",
+      label: "Check in",
+      hint: "Mark yourself present for today",
+      done: interactive.attendance.status === "present",
+      phase: "pre",
+    });
+    if (interactive.poll) {
+      tasks.push({
+        id: "poll",
+        label: "Vote in the poll",
+        hint: "Quick pulse during the live session",
+        done: !!interactive.poll.my_choice,
+        phase: "live",
+      });
+    }
+    if (interactive.assignment) {
+      const status = interactive.assignment.submission?.status ?? "draft";
+      tasks.push({
+        id: "assignment",
+        label: "Submit assignment",
+        hint: "Post-class — write up and submit",
+        done: status === "submitted" || status === "graded",
+        phase: "post",
+      });
+    }
+    if (interactive.quiz) {
+      tasks.push({
+        id: "quiz",
+        label: "Take quiz",
+        hint: "Post-class — locks in your score",
+        done: !!interactive.quiz.attempt?.completed_at,
+        phase: "post",
+      });
+    }
+  }
 
   const promptCard = meta.prompt_of_the_day ? (
     <Card className="border-accent/40 bg-accent/5 mb-6">
@@ -183,7 +223,7 @@ export async function LessonDayView({
   return (
     <div className="-m-6 flex md:-m-8">
       <DayRail items={railItems} activeDay={dayNumber} basePath={railBasePath} />
-      <article className="mx-auto max-w-3xl flex-1 px-6 py-8 md:px-10">
+      <article className="min-w-0 flex-1 px-6 py-8 md:px-10 mx-auto max-w-3xl">
         <header className="mb-6">
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
             Day {dayNumber} · Week {meta.week ?? "?"}
@@ -250,6 +290,11 @@ export async function LessonDayView({
           }}
         />
       </article>
+      {!readOnly && tasks.length > 0 && (
+        <div className="hidden lg:block px-6 py-8 md:px-8">
+          <DayTasksPanel tasks={tasks} dayNumber={dayNumber} />
+        </div>
+      )}
     </div>
   );
 }

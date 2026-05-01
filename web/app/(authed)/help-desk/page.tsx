@@ -5,6 +5,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { HelpDeskButton } from "@/components/day-interactive/HelpDeskButton";
 
 const STATUS: Record<string, { label: string; variant: "default" | "warn" | "accent" | "ok" }> = {
   open: { label: "Open", variant: "warn" },
@@ -39,7 +40,8 @@ export default async function StudentHelpDeskPage() {
           pod first, and staff or tech can take over if it&apos;s escalated.
           {openTotal > 0 && ` ${openTotal} open ticket${openTotal === 1 ? "" : "s"} in this cohort right now.`}
         </p>
-        <div className="mt-3">
+        <div className="mt-4 flex flex-wrap items-start gap-3">
+          <HelpDeskButton cohortId={cohort.id} />
           <Button variant="outline" size="sm" asChild>
             <Link href="/day/today">Back to today&apos;s lesson</Link>
           </Button>

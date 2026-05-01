@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { checkCapability, requireCapability } from "@/lib/auth/requireCapability";
-import { getSession } from "@/lib/auth/session";
+import { getProfile, getSession } from "@/lib/auth/session";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkline } from "@/components/sparkline/Sparkline";
@@ -18,13 +19,15 @@ export default async function FacultyPodPage() {
   const f = await getFacultyCohort();
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
-  const [podRows, kpis, days, atRiskAll, canManagePods] = await Promise.all([
+  const [podRows, kpis, days, atRiskAll, canManagePods, profile] = await Promise.all([
     getFacultyPods(f.cohort.id, me.id),
     getFacultyTodayKpis(f.cohort.id, me.id),
     listCohortDays(f.cohort.id),
     listAtRiskStudents(f.cohort.id),
     checkCapability("pods.write", f.cohort.id),
+    getProfile(),
   ]);
+  const showOnboardingBanner = !profile?.onboarded_at;
   const myPod = podRows[0] ?? null;
   const today = todayDayNumber(f.cohort);
   const todayDay = days.find((d) => d.day_number === today);
@@ -33,6 +36,30 @@ export default async function FacultyPodPage() {
 
   return (
     <div data-tour="faculty-pod-page" className="space-y-6">
+      {showOnboardingBanner && (
+        <Link
+          href="/onboarding"
+          className="
+            border-accent/45 bg-accent/[0.06] hover:border-accent hover:bg-accent/10
+            group flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3
+            transition-colors
+          "
+        >
+          <span className="bg-accent/15 text-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
+            <Sparkles size={15} strokeWidth={2.1} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-ink text-sm font-medium">Day 0 · Welcome — start here</p>
+            <p className="text-muted text-xs">
+              Quick tour of pods, the cohort roster, the live link, grading, and the help-desk queue.
+            </p>
+          </div>
+          <span className="text-accent shrink-0 text-xs font-semibold uppercase tracking-[0.16em]">
+            Open →
+          </span>
+        </Link>
+      )}
+
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {f.cohort.name}

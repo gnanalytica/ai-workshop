@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,11 +7,13 @@ import { DayCard } from "@/components/day-card/DayCard";
 import { getMyCurrentCohort, listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDashboardKpis } from "@/lib/queries/dashboard";
 import { listMyHelpDeskTickets } from "@/lib/queries/student-help-desk";
+import { getProfile } from "@/lib/auth/session";
 import { fmtDate, relTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { HelpDeskButton } from "@/components/day-interactive/HelpDeskButton";
 
 export default async function DashboardPage() {
-  const cohort = await getMyCurrentCohort();
+  const [cohort, profile] = await Promise.all([getMyCurrentCohort(), getProfile()]);
   if (!cohort) {
     return (
       <Card>
@@ -29,6 +32,8 @@ export default async function DashboardPage() {
     listCohortDays(cohort.id),
     listMyHelpDeskTickets(cohort.id),
   ]);
+
+  const showOnboardingBanner = !profile?.onboarded_at;
 
   const todayDay = days.find((d) => d.day_number === today);
   const upcoming = days.filter((d) => d.day_number > today && d.day_number <= today + 3);
@@ -52,6 +57,30 @@ export default async function DashboardPage() {
         )}
       </header>
 
+      {showOnboardingBanner && (
+        <Link
+          href="/onboarding"
+          className="
+            border-accent/45 bg-accent/[0.06] hover:border-accent hover:bg-accent/10
+            group flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3
+            transition-colors
+          "
+        >
+          <span className="bg-accent/15 text-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
+            <Sparkles size={15} strokeWidth={2.1} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-ink text-sm font-medium">Day 0 · Welcome — start here</p>
+            <p className="text-muted text-xs">
+              Five-minute tour of your pod, classmates, lessons, leaderboard, and where to get help.
+            </p>
+          </div>
+          <span className="text-accent shrink-0 text-xs font-semibold uppercase tracking-[0.16em]">
+            Open →
+          </span>
+        </Link>
+      )}
+
       <KpiGrid>
         <StatCard
           label="Days complete"
@@ -66,6 +95,17 @@ export default async function DashboardPage() {
           tone={kpis.pendingAssignments > 0 ? "warn" : "default"}
         />
       </KpiGrid>
+
+      <section className="border-line bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+        <div className="min-w-0">
+          <p className="text-ink text-sm font-medium">Stuck on something?</p>
+          <p className="text-muted text-xs leading-relaxed">
+            Raise a tech, content, or team request — your faculty / pod sees it first, and tech support takes
+            over if it&apos;s escalated.
+          </p>
+        </div>
+        <HelpDeskButton cohortId={cohort.id} />
+      </section>
 
       {helpDesk.length > 0 && (
         <section>

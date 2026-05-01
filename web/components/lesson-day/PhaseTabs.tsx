@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { Phase } from "@/lib/content/phases";
+
+const VALID_PHASES: ReadonlySet<Phase> = new Set(["pre", "live", "post", "extra"]);
 
 interface TabDef {
   id: Phase;
@@ -31,6 +33,21 @@ export function PhaseTabs({
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, []);
+
+  // Listen for cross-component nav requests (e.g. from DayTasksPanel's
+  // "What's next" button). Decoupled to avoid lifting tab state up.
+  useEffect(() => {
+    function onGoto(e: Event) {
+      const ce = e as CustomEvent<Phase | string>;
+      const next = ce.detail as Phase;
+      if (typeof next === "string" && VALID_PHASES.has(next)) {
+        select(next);
+      }
+    }
+    window.addEventListener("lesson-day:goto-phase", onGoto as EventListener);
+    return () =>
+      window.removeEventListener("lesson-day:goto-phase", onGoto as EventListener);
+  }, [select]);
 
   return (
     <div>

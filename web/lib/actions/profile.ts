@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import { getSupabaseServer } from "@/lib/supabase/server";
 
@@ -49,6 +50,9 @@ export async function markOnboarded() {
     .eq("id", u.user.id)
     .is("onboarded_at", null);
   if (error) return actionFail(error.message);
+  revalidatePath("/onboarding");
+  revalidatePath("/learn");
+  revalidatePath("/", "layout");
   return actionOk();
 }
 
