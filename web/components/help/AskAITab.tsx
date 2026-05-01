@@ -10,20 +10,16 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { Persona } from "@/lib/auth/persona";
 
 /**
- * Phase 6 — workshop concierge channel.
- *
- * Dispatch metaphor:
- *   - User messages are framed as TX (transmit), assistant as RX (receive).
- *   - Mono throughout for that "console" texture.
- *   - Citations render as bracket tags `[HBK·slug]` / `[D14]` so they read
- *     like channel codes, not generic links.
- *   - Composer is a single-line transmit prompt with a leading `›` glyph.
+ * Sage chat surface. Persona-aware starter prompts, warm labels, citations
+ * rendered as inline chips that link into the handbook / day pages.
  *
  * Streams `{messages, route, clientMessageId, conversationId}` to
- * `/api/help-chat`. Token deltas append to the in-flight RX bubble.
+ * `/api/help-chat`; token deltas append to the in-flight assistant bubble.
  */
 
 interface ChatMessage {
@@ -33,9 +29,45 @@ interface ChatMessage {
 }
 
 const RATE_LIMIT_COPY =
-  "Daily transmission limit reached (30/day). Reach the help desk for anything urgent.";
+  "You've used today's 30 questions. Reach the help desk for anything urgent — Sage is back tomorrow.";
 
-export function AskAITab() {
+interface StarterPrompt {
+  label: string;
+  prompt: string;
+}
+
+const STARTERS_BY_PERSONA: Record<"student" | "faculty" | "admin", StarterPrompt[]> = {
+  student: [
+    { label: "What's today's lesson?", prompt: "What's on today's lesson? Walk me through it." },
+    { label: "Where do I submit my assignment?", prompt: "Where do I find and submit today's assignment?" },
+    { label: "How do I find my pod?", prompt: "How do I find my pod and see who else is in it?" },
+    { label: "Where do I see my team?", prompt: "Where do I see my team and chat with them?" },
+    { label: "How is my score calculated?", prompt: "How is my score / leaderboard rank calculated?" },
+    { label: "I'm stuck — how do I get help?", prompt: "I'm stuck on a lab. What's the fastest way to get help?" },
+    { label: "How do I join the live session?", prompt: "How do I join today's live session?" },
+    { label: "Where is the handbook?", prompt: "Where can I find the student handbook for the platform?" },
+  ],
+  faculty: [
+    { label: "What is a pod?", prompt: "What is a pod, and what's expected of me as the primary faculty?" },
+    { label: "How do I create a pod?", prompt: "How do I create a pod and assign students to it?" },
+    { label: "How do I review a submission?", prompt: "How do I review a student submission as faculty?" },
+    { label: "How do I update the live link?", prompt: "How do I update today's live-session link for my cohort?" },
+    { label: "Where is my pod's roster?", prompt: "Where do I see my pod's roster, attendance, and at-risk students?" },
+    { label: "How do I escalate a help-desk ticket?", prompt: "How do I escalate a help-desk ticket to admin?" },
+    { label: "How do I leave pod notes?", prompt: "How do I leave private pod notes about a student?" },
+    { label: "What can I do in the demo cohort?", prompt: "What can I safely try in the sandbox / demo cohort?" },
+  ],
+  admin: [
+    { label: "How do I create a cohort?", prompt: "How do I create a new cohort and seed the 30-day curriculum?" },
+    { label: "How do I invite faculty?", prompt: "How do I invite a faculty member to a specific cohort?" },
+    { label: "How do I unlock a day?", prompt: "How do I unlock or lock a specific day for a cohort?" },
+    { label: "Where are cohort analytics?", prompt: "Where do I find cohort analytics and at-risk students?" },
+    { label: "How do I assign pod faculty?", prompt: "How do I assign faculty to pods in a cohort?" },
+    { label: "How do I run the help-desk queue?", prompt: "How do I triage the help-desk queue across cohorts?" },
+  ],
+};
+
+export function AskAITab({ persona }: { persona: Persona | null }) {
   const pathname = usePathname() ?? "/";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -84,7 +116,7 @@ export function AskAITab() {
           return;
         }
         if (!res.ok || !res.body) {
-          setError("Transmission failed. Try again in a moment.");
+          setError("Couldn't reach Sage just now. Try again in a moment.");
           setMessages((curr) => curr.filter((m) => m.id !== assistantId));
           return;
         }
@@ -105,7 +137,7 @@ export function AskAITab() {
         }
       } catch (err) {
         console.error("[help-chat client]", err);
-        setError("Network down — check your connection.");
+        setError("Network's down — check your connection.");
         setMessages((curr) => curr.filter((m) => m.id !== assistantId));
       } finally {
         setStreaming(false);
@@ -119,105 +151,130 @@ export function AskAITab() {
     void send(input);
   };
 
+  const starters = STARTERS_BY_PERSONA[(persona ?? "student") as keyof typeof STARTERS_BY_PERSONA];
+
   return (
     <div className="bg-bg flex h-full min-h-0 flex-col">
       <div
         ref={scrollRef}
-        className="flex-1 min-h-0 space-y-4 overflow-y-auto px-5 py-4 font-mono text-[12.5px] leading-[1.6]"
+        className="flex-1 min-h-0 space-y-5 overflow-y-auto px-5 py-5 text-[13.5px] leading-[1.6]"
       >
-        {messages.length === 0 && !rateLimited && <EmptyState />}
+        {messages.length === 0 && !rateLimited && (
+          <EmptyState
+            persona={persona}
+            starters={starters}
+            onPick={(p) => void send(p)}
+            disabled={streaming}
+          />
+        )}
         {rateLimited && (
-          <div className="border-warn/35 bg-warn/[0.05] text-ink/85 rounded-sm border-l-2 px-3 py-2.5 text-xs">
-            <p className="text-warn font-semibold uppercase tracking-[0.18em] text-[10px] mb-1">
-              ▲ Limit reached
+          <div className="border-warn/35 bg-warn/[0.05] text-ink/85 rounded-md border-l-2 px-3 py-2.5 text-[12.5px]">
+            <p className="text-warn font-semibold uppercase tracking-[0.16em] text-[10px] mb-1">
+              Daily limit reached
             </p>
-            <p className="font-sans">{RATE_LIMIT_COPY}</p>
+            <p>{RATE_LIMIT_COPY}</p>
           </div>
         )}
         {messages.map((m) => (
-          <Transmission key={m.id} message={m} streaming={streaming} />
+          <Bubble key={m.id} message={m} streaming={streaming} />
         ))}
         {error && (
-          <div className="text-danger font-mono text-[11px] uppercase tracking-[0.18em]">
-            ✕ {error}
-          </div>
+          <div className="text-danger text-[12px]">✕ {error}</div>
         )}
       </div>
 
       <form
         onSubmit={onSubmit}
-        className="border-line bg-card/70 flex items-stretch border-t"
+        className="border-line bg-card/60 flex items-stretch border-t"
       >
-        <span
-          aria-hidden
-          className="text-accent flex w-10 shrink-0 items-center justify-center font-mono text-base"
-        >
-          ›
-        </span>
         <input
           value={input}
           onChange={(e) => setInput(e.currentTarget.value)}
           placeholder={
-            rateLimited ? "Channel locked until tomorrow" : "Transmit a question…"
+            rateLimited ? "Sage is back tomorrow" : "Ask Sage anything…"
           }
           disabled={streaming || rateLimited}
-          aria-label="Transmit a question to the workshop concierge"
+          aria-label="Ask Sage a question"
           className="
-            flex-1 bg-transparent px-1 py-3.5 outline-none
+            flex-1 bg-transparent px-4 py-3.5 outline-none
             text-ink placeholder:text-muted/65
-            font-mono text-sm
+            text-[14px]
             disabled:opacity-60
           "
         />
         <button
           type="submit"
           disabled={streaming || rateLimited || !input.trim()}
+          aria-label="Send"
           className="
             border-line text-muted hover:text-ink hover:bg-bg-soft
-            border-l flex w-16 shrink-0 items-center justify-center
-            font-mono text-[10px] uppercase tracking-[0.22em]
+            border-l flex w-14 shrink-0 items-center justify-center
             transition-colors
             disabled:opacity-40 disabled:hover:text-muted disabled:hover:bg-transparent disabled:cursor-not-allowed
           "
         >
-          {streaming ? <span className="text-accent animate-pulse">···</span> : "Send"}
+          {streaming ? (
+            <span className="text-accent animate-pulse text-base">···</span>
+          ) : (
+            <ArrowRight size={16} strokeWidth={2.2} />
+          )}
         </button>
       </form>
     </div>
   );
 }
 
-function EmptyState() {
-  const examples = [
-    "How do I grade a submission?",
-    "What's on Day 7?",
-    "Where do I see the at-risk roster?",
-  ];
+function EmptyState({
+  persona,
+  starters,
+  onPick,
+  disabled,
+}: {
+  persona: Persona | null;
+  starters: StarterPrompt[];
+  onPick: (prompt: string) => void;
+  disabled: boolean;
+}) {
+  const greeting =
+    persona === "faculty"
+      ? "Hi — I help with pods, grading, and platform how-tos."
+      : persona === "admin"
+        ? "Hi — I help with cohorts, invites, and analytics."
+        : "Hi — I help with lessons, assignments, your pod, and getting around.";
+
   return (
-    <div className="font-sans">
-      <p className="text-muted font-mono text-[10px] uppercase tracking-[0.22em] mb-3">
-        ✦ Channel open
+    <div>
+      <p className="text-ink mb-1 text-[15px] font-medium">Hello, I'm Sage.</p>
+      <p className="text-muted mb-5 text-[12.5px] leading-relaxed">
+        {greeting} Replies cite the handbook section they came from.
       </p>
-      <p className="text-ink mb-1.5 text-sm font-medium">
-        How can I help?
+      <p className="text-muted/85 mb-2 text-[10.5px] uppercase tracking-[0.18em]">
+        Try one of these
       </p>
-      <p className="text-muted text-xs leading-relaxed">
-        Pod questions, today&apos;s lab, grading, navigation. Replies cite the handbook
-        section they came from.
-      </p>
-      <ul className="mt-4 space-y-1.5">
-        {examples.map((ex) => (
-          <li
-            key={ex}
-            className="
-              text-ink/75 hover:text-ink hover:border-accent/40
-              border-line flex items-center gap-2 border-l-2 px-3 py-1.5
-              font-mono text-[11.5px]
-              transition-colors
-            "
-          >
-            <span className="text-accent/70 text-[10px]">›</span>
-            <span>{ex}</span>
+      <ul className="space-y-1.5">
+        {starters.map((s) => (
+          <li key={s.label}>
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => onPick(s.prompt)}
+              className="
+                group w-full text-left
+                border-line hover:border-accent/55 hover:bg-accent/5
+                text-ink/85 hover:text-ink
+                flex items-center justify-between gap-3
+                rounded-md border px-3 py-2 text-[12.5px]
+                transition-colors
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-line
+              "
+            >
+              <span>{s.label}</span>
+              <ArrowRight
+                size={13}
+                strokeWidth={2}
+                className="text-muted/50 group-hover:text-accent shrink-0 transition-colors"
+              />
+            </button>
           </li>
         ))}
       </ul>
@@ -225,7 +282,7 @@ function EmptyState() {
   );
 }
 
-function Transmission({
+function Bubble({
   message,
   streaming,
 }: {
@@ -234,32 +291,28 @@ function Transmission({
 }) {
   const isUser = message.role === "user";
   const showShimmer = !isUser && streaming && message.content.length === 0;
-  const label = isUser ? "TX" : "RX";
+  const label = isUser ? "You" : "Sage";
 
   return (
     <div className="flex flex-col gap-1.5">
       <div
         className={cn(
-          "flex items-center gap-2 text-[9.5px] uppercase tracking-[0.2em]",
-          isUser ? "text-accent/80" : "text-muted/80",
+          "flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em]",
+          isUser ? "text-accent/90" : "text-muted/85",
         )}
       >
         <span
           className={cn(
-            "h-1 w-1 rounded-full",
+            "h-1.5 w-1.5 rounded-full",
             isUser ? "bg-[hsl(var(--accent))]" : "bg-muted",
           )}
         />
         <span className="font-semibold">{label}</span>
-        <span className="text-muted/40">·</span>
-        <span className="text-muted/60">{isUser ? "you" : "workshop concierge"}</span>
       </div>
       <div
         className={cn(
           "border-l-2 pl-3 leading-[1.65]",
-          isUser
-            ? "text-ink border-accent/55"
-            : "text-ink/90 border-line",
+          isUser ? "text-ink border-accent/55" : "text-ink/90 border-line",
         )}
       >
         {showShimmer ? (
@@ -274,10 +327,10 @@ function Transmission({
 
 function ShimmerLine() {
   return (
-    <div className="flex items-center gap-1 py-1.5 font-mono text-[11px] tracking-[0.2em] text-muted/70">
-      <span className="animate-pulse">▮</span>
-      <span className="animate-pulse [animation-delay:120ms]">▮</span>
-      <span className="animate-pulse [animation-delay:240ms]">▮</span>
+    <div className="flex items-center gap-1 py-1.5 text-muted/70 text-[13px]">
+      <span className="animate-pulse">●</span>
+      <span className="animate-pulse [animation-delay:140ms]">●</span>
+      <span className="animate-pulse [animation-delay:280ms]">●</span>
     </div>
   );
 }
@@ -300,7 +353,7 @@ function RenderedText({ text, isUser }: { text: string; isUser: boolean }) {
               text-accent hover:bg-accent/10 hover:border-accent/55
               border-accent/35 mx-0.5 inline-flex items-center gap-1
               border-l border-r px-1.5 align-baseline
-              font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em]
+              text-[11px] font-semibold uppercase tracking-[0.06em]
               transition-colors
             "
           >
@@ -330,12 +383,12 @@ function parseCitations(text: string): Segment[] {
       out.push({
         type: "citation",
         raw,
-        label: `HBK·${slug.replace(/[_-]/g, " ").slice(0, 24)}`,
+        label: `Handbook · ${slug.replace(/[_-]/g, " ").slice(0, 24)}`,
         href: hrefForHandbookSlug(slug),
       });
     } else {
       const n = tag.replace("day-", "");
-      out.push({ type: "citation", raw, label: `D${n}`, href: `/day/${n}` });
+      out.push({ type: "citation", raw, label: `Day ${n}`, href: `/day/${n}` });
     }
     cursor = m.index + raw.length;
   }

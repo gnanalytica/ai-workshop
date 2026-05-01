@@ -116,7 +116,7 @@ export async function AppShell({
         </div>
       </div>
       <TourMount persona={truePersona} initialOpen={initialOpen} />
-      <HelpFab />
+      <HelpFab persona={effectivePersona} />
     </div>
   );
 }
