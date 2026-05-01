@@ -179,3 +179,29 @@
 .handbook-section-in {
   animation: handbook-in 0.5s ease-out both;
 }
+
+/*
+ * Pointer cursor on every clickable surface. Tailwind v4's preflight
+ * removes the browser default `cursor: pointer` from <button>, so without
+ * this rule users get the text-arrow on most CTAs in the app. Industry
+ * standard is the hand cursor — restore it for buttons, links, and any
+ * element with role="button" / role="tab" / role="menuitem", except
+ * disabled ones (which get the not-allowed cursor).
+ */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]),
+  [role="menuitem"]:not([aria-disabled="true"]),
+  [role="option"]:not([aria-disabled="true"]),
+  summary,
+  label[for],
+  a[href] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
