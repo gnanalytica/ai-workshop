@@ -12,6 +12,22 @@
 --   99999996-…          — demo content (assignments, posts, tickets, etc.)
 -- =============================================================================
 
+-- ---------- 0. Demo admin (used as graded_by / created_by below) ------------
+-- The on_auth_user_created trigger from 0005 auto-creates the profile; we
+-- promote it to admin via UPDATE. trg_block_admin_promotion (0015) allows it
+-- because this user has no registrations or cohort_faculty rows.
+
+insert into auth.users (id, email, raw_user_meta_data)
+values
+  ('00000000-0000-0000-0000-000000000001', 'demo-admin@demo.local',
+   '{"full_name":"Demo Admin"}'::jsonb)
+on conflict (id) do nothing;
+
+update profiles
+   set staff_roles = array['admin']::text[]
+ where id = '00000000-0000-0000-0000-000000000001'
+   and not (staff_roles && array['admin']::text[]);
+
 -- ---------- 1. Demo faculty accounts ----------------------------------------
 
 insert into auth.users (id, email, raw_user_meta_data)
