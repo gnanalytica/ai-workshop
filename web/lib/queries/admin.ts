@@ -53,25 +53,58 @@ export const getAdminCohortKpis = cache(async (cohortId: string): Promise<AdminC
 
 export const listRoster = cache(async (cohortId: string): Promise<RosterRow[]> => {
   const sb = await getSupabaseServer();
-  const { data } = await sb
+  // Two separate queries instead of one embed: pod_members has no FK to
+  // registrations (only to profiles + cohorts), so PostgREST sometimes
+  // can't infer the join and silently returns nothing. We split + stitch
+  // to keep the roster reliable. Drop `profiles!inner` defensively too —
+  // a left-style embed surfaces orphan registrations rather than hiding
+  // them, and logs any error instead of silently swallowing it.
+  const { data: regData, error: regErr } = await sb
     .from("registrations")
-    .select(
-      "user_id, status, source, created_at, profiles!inner(full_name, email, college), pod_members(pods(name))",
-    )
+    .select("user_id, status, source, created_at, profiles(full_name, email, college)")
     .eq("cohort_id", cohortId)
     .order("created_at", { ascending: false });
-  return ((data ?? []) as unknown as Array<{
-    user_id: string; status: RosterRow["status"]; source: string | null; created_at: string;
-    profiles: { full_name: string | null; email: string; college: string | null };
-    pod_members: Array<{ pods: { name: string } | null }> | null;
-  }>).map((r) => ({
+  if (regErr) {
+    console.error("[listRoster] registrations query failed", regErr);
+    return [];
+  }
+  const regs = (regData ?? []) as unknown as Array<{
+    user_id: string;
+    status: RosterRow["status"];
+    source: string | null;
+    created_at: string;
+    profiles: { full_name: string | null; email: string; college: string | null } | null;
+  }>;
+
+  // Pod assignments — fetch once for this cohort, index by user_id.
+  let podByUser = new Map<string, string>();
+  if (regs.length > 0) {
+    const userIds = regs.map((r) => r.user_id);
+    const { data: pmData, error: pmErr } = await sb
+      .from("pod_members")
+      .select("student_user_id, pods!inner(name)")
+      .eq("cohort_id", cohortId)
+      .in("student_user_id", userIds);
+    if (pmErr) {
+      console.warn("[listRoster] pod_members lookup failed; pods will be blank", pmErr);
+    } else {
+      podByUser = new Map(
+        ((pmData ?? []) as unknown as Array<{
+          student_user_id: string;
+          pods: { name: string };
+        }>).map((p) => [p.student_user_id, p.pods.name]),
+      );
+    }
+  }
+
+  return regs.map((r) => ({
     user_id: r.user_id,
-    full_name: r.profiles.full_name,
-    email: r.profiles.email,
-    college: r.profiles.college,
+    full_name: r.profiles?.full_name ?? null,
+    email: r.profiles?.email ?? "",
+    college: r.profiles?.college ?? null,
     status: r.status,
     source: r.source,
-    pod_name: r.pod_members?.[0]?.pods?.name ?? null,
+    pod_name: podByUser.get(r.user_id) ?? null,
     created_at: r.created_at,
   }));
 });
