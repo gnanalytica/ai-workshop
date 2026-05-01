@@ -10,7 +10,6 @@ import { listMyHelpDeskTickets } from "@/lib/queries/student-help-desk";
 import { getProfile } from "@/lib/auth/session";
 import { fmtDate, relTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
-import { HelpDeskButton } from "@/components/day-interactive/HelpDeskButton";
 
 export default async function DashboardPage() {
   const [cohort, profile] = await Promise.all([getMyCurrentCohort(), getProfile()]);
@@ -104,7 +103,9 @@ export default async function DashboardPage() {
             over if it&apos;s escalated.
           </p>
         </div>
-        <HelpDeskButton cohortId={cohort.id} />
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/help-desk">Open help desk →</Link>
+        </Button>
       </section>
 
       {helpDesk.length > 0 && (

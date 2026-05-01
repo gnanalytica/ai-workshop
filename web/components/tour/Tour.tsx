@@ -7,15 +7,19 @@ import { tourFor, type TourStep } from "@/lib/tours";
 import type { Persona } from "@/lib/auth/persona";
 
 export const TOUR_EVENT = "tour:start";
+const DISMISS_KEY = "tour.dismissed";
 
 /**
- * Mount-once tour controller. Runs automatically the first time
- * (initialOpen=true), and can be re-launched from anywhere by dispatching:
+ * Mount-once tour controller. Auto-runs the first time per user (when the
+ * server says `onboarded_at` is null AND we haven't dismissed it locally
+ * already). Can be re-launched anywhere by dispatching:
  *
  *   window.dispatchEvent(new CustomEvent("tour:start", { detail: { persona: "admin" } }))
  *
- * Replay does NOT clear onboarded_at — the first-time auto-launch is gated by
- * the server-side check; manual replay just opens the overlay.
+ * The localStorage `tour.dismissed=1` guard prevents the tour from
+ * re-opening on the next navigation/refresh while the markOnboarded
+ * server action is still in flight (its revalidatePath race-window was
+ * causing the tour to reopen unexpectedly).
  */
 export function TourMount({
   persona,
@@ -24,7 +28,16 @@ export function TourMount({
   persona: Persona | null;
   initialOpen: boolean;
 }) {
-  const [open, setOpen] = useState(initialOpen);
+  // Seed lazily so we can read localStorage on the client only.
+  const [open, setOpen] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      if (window.localStorage.getItem(DISMISS_KEY) === "1") return false;
+    } catch {
+      // ignore
+    }
+    return initialOpen;
+  });
   const [activePersona, setActivePersona] = useState<Persona | null>(persona);
 
   useEffect(() => {
@@ -47,10 +60,13 @@ export function TourMount({
       steps={steps}
       onClose={(_completed) => {
         setOpen(false);
-        // Persist on any close (finish OR skip) the first time the tour ran,
-        // so it doesn't re-launch on every refresh. Manual replays via
-        // StartGuideButton are no-ops because markOnboarded filters on
-        // onboarded_at IS NULL.
+        try {
+          window.localStorage.setItem(DISMISS_KEY, "1");
+        } catch {
+          // ignore
+        }
+        // Persist server-side too so a future device / browser doesn't
+        // re-trigger. markOnboarded is idempotent (filters onboarded_at IS NULL).
         if (initialOpen) void markOnboarded();
       }}
     />

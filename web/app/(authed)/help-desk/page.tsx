@@ -5,7 +5,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { HelpDeskButton } from "@/components/day-interactive/HelpDeskButton";
+import { NewTicketCard } from "@/components/help-desk/NewTicketCard";
 
 const STATUS: Record<string, { label: string; variant: "default" | "warn" | "accent" | "ok" }> = {
   open: { label: "Open", variant: "warn" },
@@ -36,21 +36,22 @@ export default async function StudentHelpDeskPage() {
         </p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your tickets</h1>
         <p className="text-muted mt-1 text-sm max-w-2xl">
-          You opened these from a lesson (Get help). Open tickets are handled in order; faculty see your
-          pod first, and staff or tech can take over if it&apos;s escalated.
+          Raise a ticket below. Your pod faculty sees it first; staff or tech can take over if it&apos;s
+          escalated.
           {openTotal > 0 && ` ${openTotal} open ticket${openTotal === 1 ? "" : "s"} in this cohort right now.`}
         </p>
-        <div className="mt-4 flex flex-wrap items-start gap-3">
-          <HelpDeskButton cohortId={cohort.id} />
+        <div className="mt-4">
           <Button variant="outline" size="sm" asChild>
             <Link href="/day/today">Back to today&apos;s lesson</Link>
           </Button>
         </div>
       </header>
 
+      <NewTicketCard cohortId={cohort.id} />
+
       {tickets.length === 0 ? (
         <Card>
-          <CardSub>No tickets yet. Use Get help on a day page if something blocks you.</CardSub>
+          <CardSub>No tickets yet — use the form above when something blocks you.</CardSub>
         </Card>
       ) : (
         <div className="space-y-2">

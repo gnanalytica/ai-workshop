@@ -4,8 +4,6 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownView } from "@/components/markdown/MarkdownView";
 import { DayRail } from "@/components/day-rail/DayRail";
-import { CheckIn } from "@/components/day-interactive/CheckIn";
-import { HelpDeskButton } from "@/components/day-interactive/HelpDeskButton";
 import { AssignmentBlock } from "@/components/day-interactive/AssignmentBlock";
 import { QuizBlock } from "@/components/day-interactive/QuizBlock";
 import { PollBlock } from "@/components/day-interactive/PollBlock";
@@ -83,13 +81,6 @@ export async function LessonDayView({
 
   const tasks: TaskItem[] = [];
   if (!readOnly) {
-    tasks.push({
-      id: "checkin",
-      label: "Check in",
-      hint: "Mark yourself present for today",
-      done: interactive.attendance.status === "present",
-      phase: "pre",
-    });
     if (interactive.poll) {
       tasks.push({
         id: "poll",
@@ -245,20 +236,9 @@ export async function LessonDayView({
               <Badge key={t}>{t}</Badge>
             ))}
           </div>
-          {!readOnly && (
-            <div className="mt-4 flex flex-wrap items-start gap-3">
-              <CheckIn
-                cohortId={cohort.id}
-                dayNumber={dayNumber}
-                initialStatus={interactive.attendance.status}
-              />
-              <HelpDeskButton cohortId={cohort.id} />
-            </div>
-          )}
           {readOnly && (
             <p className="text-muted mt-4 text-sm">
-              You&apos;re viewing the cohort curriculum in read-only mode (no check-in, help desk, or
-              assignments).
+              You&apos;re viewing the cohort curriculum in read-only mode (no assignments).
             </p>
           )}
         </header>
