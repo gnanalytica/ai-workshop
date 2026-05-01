@@ -10,6 +10,7 @@ import { listMyHelpDeskTickets } from "@/lib/queries/student-help-desk";
 import { getProfile } from "@/lib/auth/session";
 import { fmtDate, relTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { StartGuideButton } from "@/components/tour/StartGuideButton";
 
 export default async function DashboardPage() {
   const [cohort, profile] = await Promise.all([getMyCurrentCohort(), getProfile()]);
@@ -49,11 +50,19 @@ export default async function DashboardPage() {
             {fmtDate(cohort.starts_on)} → {fmtDate(cohort.ends_on)}
           </p>
         </div>
-        {todayDay && (
-          <Button asChild>
-            <Link href={`/day/${today}`}>Open today&apos;s lesson →</Link>
-          </Button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <StartGuideButton
+            persona="student"
+            variant="ghost"
+            size="sm"
+            label="Replay tour"
+          />
+          {todayDay && (
+            <Button asChild>
+              <Link href={`/day/${today}`}>Open today&apos;s lesson →</Link>
+            </Button>
+          )}
+        </div>
       </header>
 
       {showOnboardingBanner && (
