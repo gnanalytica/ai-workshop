@@ -40,21 +40,20 @@ export type NavIcon =
   | "library";
 
 export const NAV: readonly NavItem[] = [
-  // ----- Student -----
-  { label: "Home",        href: "/learn",       cap: null,           group: "student",                       icon: "home" },
-  { label: "Lessons",     href: "/day/today",   cap: "content.read", group: "student",                       icon: "book" },
-  { label: "Capstone",    href: "/capstone",    cap: null,           group: "student",                       icon: "milestone" },
-  { label: "Help desk",   href: "/help-desk",   cap: null,           group: "student",                       icon: "life-buoy" },
-  { label: "Community",   href: "/community",       cap: "community.read",   group: "student",                       icon: "message-square" },
+  // ----- Student — kept lean: core daily flow on top, one People entry,
+  //                 two reference links. Showcase/Certificate/Teams remain
+  //                 reachable via direct URL but aren't surfaced in the rail.
+  { label: "Home",        href: "/learn",       cap: null,             group: "student",                       icon: "home" },
+  { label: "Lessons",     href: "/day/today",   cap: "content.read",   group: "student",                       icon: "book" },
+  { label: "Capstone",    href: "/capstone",    cap: null,             group: "student",                       icon: "milestone" },
+  { label: "Help desk",   href: "/help-desk",   cap: null,             group: "student",                       icon: "life-buoy" },
+  { label: "Community",   href: "/community",   cap: "community.read", group: "student",                       icon: "message-square" },
 
-  { label: "My Pod",      href: "/pod",         cap: null,           group: "student", section: "People",    icon: "users" },
-  { label: "Teams",       href: "/teams",       cap: null,           group: "student", section: "People",    icon: "users" },
-  { label: "Classmates",  href: "/people",      cap: null,           group: "student", section: "People",    icon: "users-round" },
+  { label: "My Pod",      href: "/pod",         cap: null,             group: "student", section: "People",    icon: "users" },
+  { label: "Classmates",  href: "/people",      cap: null,             group: "student", section: "People",    icon: "users-round" },
 
-  { label: "Leaderboard", href: "/leaderboard", cap: null,           group: "student", section: "Reference", icon: "trophy" },
-  { label: "Showcase",    href: "/showcase",    cap: null,           group: "student", section: "Reference", icon: "trophy" },
-  { label: "Certificate", href: "/certificate", cap: null,           group: "student", section: "Reference", icon: "award" },
-  { label: "Handbook",    href: "/handbook",    cap: null,           group: "student", section: "Reference", icon: "library" },
+  { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
+  { label: "Handbook",    href: "/handbook",    cap: null,             group: "student", section: "Reference", icon: "library" },
 
   // ----- Faculty -----
   { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },

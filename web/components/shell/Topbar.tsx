@@ -4,6 +4,7 @@ import { NavSearch } from "./NavSearch";
 import { CohortSwitcher } from "./CohortSwitcher";
 import { PreviewAsSwitcher } from "./PreviewAsSwitcher";
 import { MentionInbox } from "./MentionInbox";
+import { JoinSession } from "./JoinSession";
 import { listUnreadMentions, countUnreadMentions } from "@/lib/queries/notifications";
 import { listAllCohorts } from "@/lib/actions/preview-as";
 import { getPreviewCohortId, getPreviewUserId } from "@/lib/auth/persona";
@@ -85,6 +86,7 @@ export async function Topbar({
           />
           </div>
         )}
+        <JoinSession />
         <div className="hidden sm:block">
           <NavSearch items={navItems} />
         </div>

@@ -15,6 +15,28 @@ fi
 
 cd web || exit 0
 
+# Ensure `node` is on PATH. WSL sessions often have pnpm.cmd on PATH but no
+# unix-style `node`, which makes pnpm's shim fail with "node: not found".
+if ! command -v node >/dev/null 2>&1; then
+  for cand in \
+    "/mnt/c/Program Files/nodejs" \
+    "/mnt/c/Program Files (x86)/nodejs" \
+    "$HOME/.nvm/versions/node"/*/bin; do
+    if [ -x "$cand/node" ] || [ -x "$cand/node.exe" ]; then
+      PATH="$cand:$PATH"
+      export PATH
+      break
+    fi
+  done
+fi
+if ! command -v node >/dev/null 2>&1; then
+  echo "[verify-web] skipped — no unix-style \`node\` on PATH." >&2
+  echo "  pnpm's shim execs \"node\" (not node.exe), so a Windows-only install isn't enough." >&2
+  echo "  Fix once: install Node in WSL (\`sudo apt install nodejs\` or nvm), or symlink:" >&2
+  echo "    sudo ln -s '/mnt/c/Program Files/nodejs/node.exe' /usr/local/bin/node" >&2
+  exit 0
+fi
+
 tc_out=$(pnpm -s typecheck 2>&1)
 tc_status=$?
 lint_out=$(pnpm -s lint 2>&1)
