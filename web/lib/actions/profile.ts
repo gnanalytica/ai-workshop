@@ -56,6 +56,16 @@ export async function markOnboarded() {
   return actionOk();
 }
 
+/**
+ * Form-action wrapper. `<form action={...}>` requires a `(formData) => void`
+ * signature; `markOnboarded` returns an ActionResult so consumers can react.
+ * This thin wrapper drops the result and accepts a FormData arg so it can
+ * be used directly as `action={markOnboardedFromForm}`.
+ */
+export async function markOnboardedFromForm(_formData: FormData): Promise<void> {
+  await markOnboarded();
+}
+
 export async function updateMyProfile(input: z.infer<typeof profileSchema>) {
   const parsed = profileSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");

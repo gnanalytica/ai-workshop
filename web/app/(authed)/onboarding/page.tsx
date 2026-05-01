@@ -24,7 +24,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getProfile } from "@/lib/auth/session";
 import { getEffectivePersona } from "@/lib/auth/persona";
-import { markOnboarded } from "@/lib/actions/profile";
+import { markOnboardedFromForm } from "@/lib/actions/profile";
 
 interface ExploreCard {
   title: string;
@@ -250,7 +250,7 @@ export default async function OnboardingPage() {
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-7">{intro}</p>
         {profile && !profile.onboarded_at && (
-          <form action={markOnboarded} className="mt-5">
+          <form action={markOnboardedFromForm} className="mt-5">
             <Button type="submit" variant="outline" size="sm">
               <CheckCircle2 size={14} strokeWidth={2.2} className="mr-1.5" />
               Mark onboarding complete
