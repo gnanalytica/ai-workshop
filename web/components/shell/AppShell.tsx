@@ -8,7 +8,6 @@ import { navForPersona } from "@/lib/rbac/menus";
 import { TourMount } from "@/components/tour/Tour";
 import { HelpFab } from "@/components/help/HelpFab";
 import { PollPopup } from "@/components/polls/PollPopup";
-import { QuizPopup } from "@/components/quizzes/QuizPopup";
 import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
@@ -122,10 +121,7 @@ export async function AppShell({
       <TourMount persona={truePersona} initialOpen={initialOpen} />
       <HelpFab persona={effectivePersona} />
       {activeCohortId && caps.includes("attendance.self") && (
-        <>
-          <PollPopup cohortId={activeCohortId} />
-          <QuizPopup cohortId={activeCohortId} />
-        </>
+        <PollPopup cohortId={activeCohortId} />
       )}
     </div>
   );
