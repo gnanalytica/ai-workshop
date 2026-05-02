@@ -8,6 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createPoll, closePoll } from "@/lib/actions/polls";
+import { setBanner, dismissBanner } from "@/lib/actions/banners";
+
+interface ActiveBanner {
+  id: string;
+  kind: "timer" | "announcement";
+  label: string;
+  ends_at: string | null;
+  created_at: string;
+}
 
 interface ActivePoll {
   id: string;
@@ -41,10 +50,12 @@ export function LiveClient({
   cohortId,
   active,
   hasActive,
+  activeBanner,
 }: {
   cohortId: string;
   active: ActivePoll[];
   hasActive: boolean;
+  activeBanner: ActiveBanner | null;
 }) {
   const router = useRouter();
   const [question, setQuestion] = useState("");
@@ -53,15 +64,67 @@ export function LiveClient({
   const [pending, start] = useTransition();
   const [, force] = useState(0);
 
+  const [bannerKind, setBannerKind] = useState<"timer" | "announcement">("timer");
+  const [bannerLabel, setBannerLabel] = useState("");
+  const [bannerMinutes, setBannerMinutes] = useState(10);
+
+  function fireBanner() {
+    const label = bannerLabel.trim();
+    if (!label) {
+      toast.error("Need a label");
+      return;
+    }
+    start(async () => {
+      const r = await setBanner({
+        cohort_id: cohortId,
+        kind: bannerKind,
+        label,
+        duration_minutes: bannerKind === "timer" ? bannerMinutes : undefined,
+      });
+      if (r.ok) {
+        toast.success("Banner set");
+        setBannerLabel("");
+        router.refresh();
+      } else toast.error(r.error);
+    });
+  }
+
+  function fireDismiss(bannerId: string) {
+    start(async () => {
+      const r = await dismissBanner({ cohort_id: cohortId, banner_id: bannerId });
+      if (r.ok) {
+        toast.success("Banner dismissed");
+        router.refresh();
+      } else toast.error(r.error);
+    });
+  }
+
+  const hasBannerTimer = activeBanner?.kind === "timer" && !!activeBanner.ends_at;
   useEffect(() => {
-    if (!hasActive) return;
+    if (!hasActive && !hasBannerTimer) return;
     const tick = setInterval(() => force((n) => n + 1), 1000);
     const refresh = setInterval(() => router.refresh(), 5000);
     return () => {
       clearInterval(tick);
       clearInterval(refresh);
     };
-  }, [hasActive, router]);
+  }, [hasActive, hasBannerTimer, router]);
+
+  function firePulse() {
+    start(async () => {
+      const r = await createPoll({
+        cohort_id: cohortId,
+        question: "Quick pulse",
+        options: ["👍 Got it", "🤔 Fuzzy", "😅 Lost me"],
+        duration_minutes: 1,
+        kind: "pulse",
+      });
+      if (r.ok) {
+        toast.success("Pulse sent");
+        router.refresh();
+      } else toast.error(r.error);
+    });
+  }
 
   function fire() {
     const options = optionsRaw.split("\n").map((s) => s.trim()).filter(Boolean);
@@ -97,6 +160,91 @@ export function LiveClient({
 
   return (
     <div className="space-y-4">
+      <Card
+        className={
+          (hasActive ? "p-5" : "mx-auto max-w-xl p-6") +
+          " border-warn/40"
+        }
+      >
+        <div className="flex items-center gap-2">
+          <CardTitle>Quick pulse</CardTitle>
+          <Badge variant="warn">Pulse</Badge>
+        </div>
+        <CardSub className="mt-1">
+          3 emoji buttons go to the room: 👍 got it · 🤔 fuzzy · 😅 lost me
+        </CardSub>
+        <div className="mt-4">
+          <Button onClick={firePulse} disabled={pending}>
+            {pending ? "Sending…" : "Send pulse"}
+          </Button>
+        </div>
+      </Card>
+
+      <Card className={hasActive ? "p-5" : "mx-auto max-w-xl p-6"}>
+        <CardTitle>Banner</CardTitle>
+        <CardSub className="mt-1">
+          Sticky strip at the top of the cohort. One at a time.
+        </CardSub>
+        <div className="mt-4 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={bannerKind}
+              onChange={(e) => setBannerKind(e.target.value as "timer" | "announcement")}
+              className="border-line bg-input-bg text-ink rounded-md border px-3 py-2 text-sm"
+            >
+              <option value="timer">Timer</option>
+              <option value="announcement">Announcement</option>
+            </select>
+            {bannerKind === "timer" && (
+              <Input
+                type="number"
+                min={1}
+                max={240}
+                value={bannerMinutes}
+                onChange={(e) => setBannerMinutes(Number(e.target.value) || 1)}
+                className="w-24"
+              />
+            )}
+          </div>
+          <Input
+            placeholder={
+              bannerKind === "timer" ? "10-min exercise" : "We restart at 2:00"
+            }
+            value={bannerLabel}
+            onChange={(e) => setBannerLabel(e.target.value)}
+            maxLength={120}
+          />
+          <div className="flex justify-end">
+            <Button onClick={fireBanner} disabled={pending}>
+              {pending ? "Setting…" : "Set banner"}
+            </Button>
+          </div>
+          {activeBanner && (
+            <div className="border-line bg-bg-elev mt-3 flex flex-wrap items-center gap-2 rounded-md border p-3">
+              <Badge variant="accent">
+                {activeBanner.kind === "timer" ? "Timer" : "Announcement"}
+              </Badge>
+              <span className="text-ink min-w-0 flex-1 truncate text-sm">
+                {activeBanner.label}
+              </span>
+              {activeBanner.kind === "timer" && activeBanner.ends_at && (
+                <span className="text-muted font-mono text-xs tabular-nums">
+                  {fmtRemaining(activeBanner.ends_at)}
+                </span>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => fireDismiss(activeBanner.id)}
+                disabled={pending}
+              >
+                Dismiss
+              </Button>
+            </div>
+          )}
+        </div>
+      </Card>
+
       <Card className={hasActive ? "p-5" : "mx-auto max-w-xl p-6"}>
         <CardTitle>Fire a poll</CardTitle>
         <CardSub className="mt-1">

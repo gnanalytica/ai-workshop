@@ -70,6 +70,7 @@ export interface ActivePoll {
   my_choice: string | null;
   phase: "open" | "results";
   results: PollResultRow[] | null;
+  kind: "poll" | "pulse";
 }
 
 export async function getActivePoll(cohortId: string): Promise<ActivePoll | null> {
@@ -84,12 +85,14 @@ export async function getActivePoll(cohortId: string): Promise<ActivePoll | null
           opened_at: string; closes_at: string | null; closed_at: string | null;
           my_choice: string | null; phase: "open" | "results";
           results: PollResultRow[] | null;
+          kind: "poll" | "pulse";
         }
       | Array<{
           id: string; question: string; options: PollOption[];
           opened_at: string; closes_at: string | null; closed_at: string | null;
           my_choice: string | null; phase: "open" | "results";
           results: PollResultRow[] | null;
+          kind: "poll" | "pulse";
         }>
       | null;
   }>)("rpc_active_poll", { p_cohort: cohortId });
@@ -108,5 +111,6 @@ export async function getActivePoll(cohortId: string): Promise<ActivePoll | null
     results: row.results
       ? row.results.map((r) => ({ choice: r.choice, label: r.label, votes: Number(r.votes ?? 0) }))
       : null,
+    kind: (row.kind ?? "poll") as "poll" | "pulse",
   };
 }

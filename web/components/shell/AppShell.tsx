@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { SandboxBanner } from "./SandboxBanner";
+import { BannerStrip } from "./BannerStrip";
 import { getProfile, getAuthCaps } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
@@ -100,6 +101,7 @@ export async function AppShell({
 
   return (
     <div className="bg-bg text-ink flex min-h-screen flex-col">
+      {activeCohortId && <BannerStrip cohortId={activeCohortId} />}
       {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       <div className="flex flex-1">
         <Sidebar caps={caps} persona={effectivePersona} bannerOffset={!!sandboxName} />

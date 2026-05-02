@@ -16,6 +16,7 @@ interface ActivePollPayload {
   my_choice: string | null;
   phase: "open" | "results";
   results: PollResultRow[] | null;
+  kind: "poll" | "pulse";
 }
 
 function formatRemaining(ms: number): string {
@@ -123,6 +124,17 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
   const showVotingUI = poll.phase === "open" && !poll.my_choice;
   const showThanks = poll.phase === "open" && poll.my_choice != null && !transitioned;
   const showResults = transitioned && poll.results;
+  const isPulse = poll.kind === "pulse";
+  const eyebrow = showResults
+    ? isPulse
+      ? "Pulse closed · results"
+      : "Poll closed · results"
+    : isPulse
+      ? "Quick pulse"
+      : "Live poll";
+  const questionText = isPulse
+    ? (poll.question?.trim() ? poll.question : "How are we doing?")
+    : poll.question;
 
   return (
     <div
@@ -140,7 +152,7 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
     >
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-accent text-[10px] font-semibold uppercase tracking-wider">
-          {showResults ? "Poll closed · results" : "Live poll"}
+          {eyebrow}
         </span>
         {remaining != null && (
           <span className="text-muted tabular-nums text-xs">closes in {remaining}</span>
@@ -156,9 +168,9 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
           </button>
         )}
       </div>
-      <p className="text-ink mt-1 text-sm font-medium leading-snug">{poll.question}</p>
+      <p className="text-ink mt-1 text-sm font-medium leading-snug">{questionText}</p>
 
-      {showVotingUI && (
+      {showVotingUI && !isPulse && (
         <div className="mt-3 space-y-1.5">
           {poll.options.map((opt) => (
             <button
@@ -178,7 +190,29 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
         </div>
       )}
 
-      {showThanks && (
+      {showVotingUI && isPulse && (
+        <div className="mt-3 grid grid-cols-3 gap-2 max-[20rem]:grid-cols-2">
+          {poll.options.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              disabled={pending}
+              onClick={() => vote(opt.id)}
+              className="
+                border-line text-ink hover:border-accent/55 hover:bg-accent/5
+                aspect-square rounded-md border px-2 py-3 text-center
+                text-base leading-tight
+                transition-colors disabled:opacity-60
+                flex items-center justify-center
+              "
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {showThanks && !isPulse && (
         <p className="text-muted mt-3 text-xs">
           ✓ Voted. Results appear when the poll closes.
         </p>
