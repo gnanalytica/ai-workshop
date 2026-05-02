@@ -10,9 +10,10 @@ const createSchema = z.object({
   question: z.string().min(3).max(280),
   options: z.array(z.string().min(1).max(80)).min(2).max(8),
   duration_minutes: z.number().int().min(1).max(60 * 24 * 7).optional(),
+  kind: z.enum(["poll", "pulse"]).default("poll"),
 });
 
-export async function createPoll(input: z.infer<typeof createSchema>) {
+export async function createPoll(input: z.input<typeof createSchema>) {
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("content.write", parsed.data.cohort_id);
@@ -31,6 +32,7 @@ export async function createPoll(input: z.infer<typeof createSchema>) {
         options: parsed.data.options.map((label, i) => ({ id: String(i + 1), label })),
         created_by: user.user?.id ?? null,
         closes_at,
+        kind: parsed.data.kind,
       } as never)
       .select()
       .single();
