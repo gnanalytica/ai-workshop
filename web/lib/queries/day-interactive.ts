@@ -46,7 +46,9 @@ export interface DayPoll {
   question: string;
   options: { id: string; label: string }[];
   closed_at: string | null;
+  closes_at: string | null;
   my_choice: string | null;
+  results: { choice: string; label: string; votes: number }[] | null;
 }
 
 export interface DayAttendance {
@@ -98,7 +100,7 @@ export const getDayInteractive = cache(
         .maybeSingle(),
       sb
         .from("polls")
-        .select("id, question, options, closed_at, poll_votes(choice, user_id)")
+        .select("id, question, options, closed_at, closes_at, poll_votes(choice, user_id)")
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
         .order("opened_at", { ascending: false })
@@ -175,15 +177,34 @@ export const getDayInteractive = cache(
     if (pollRes.data) {
       const p = pollRes.data as unknown as {
         id: string; question: string; options: { id: string; label: string }[];
-        closed_at: string | null; poll_votes: Array<{ choice: string; user_id: string }>;
+        closed_at: string | null; closes_at: string | null;
+        poll_votes: Array<{ choice: string; user_id: string }>;
       };
       const my = p.poll_votes?.find((v) => v.user_id === uid) ?? null;
+      const isClosed = !!p.closed_at || (p.closes_at != null && new Date(p.closes_at).getTime() <= Date.now());
+      let results: DayPoll["results"] = null;
+      if (isClosed) {
+        const { data: rows } = await (sb.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: Array<{ choice: string; label: string; votes: number }> | null }>)(
+          "rpc_poll_results",
+          { p_poll: p.id },
+        );
+        results = (rows ?? []).map((r) => ({
+          choice: r.choice,
+          label: r.label,
+          votes: Number(r.votes ?? 0),
+        }));
+      }
       poll = {
         id: p.id,
         question: p.question,
         options: p.options ?? [],
         closed_at: p.closed_at,
+        closes_at: p.closes_at,
         my_choice: my?.choice ?? null,
+        results,
       };
     }
 

@@ -66,7 +66,10 @@ export interface ActivePoll {
   options: PollOption[];
   opened_at: string;
   closes_at: string | null;
+  closed_at: string | null;
   my_choice: string | null;
+  phase: "open" | "results";
+  results: PollResultRow[] | null;
 }
 
 export async function getActivePoll(cohortId: string): Promise<ActivePoll | null> {
@@ -74,9 +77,22 @@ export async function getActivePoll(cohortId: string): Promise<ActivePoll | null
   const { data } = await (sb.rpc as unknown as (
     fn: string,
     args: Record<string, unknown>,
-  ) => Promise<{ data: ActivePoll | ActivePoll[] | null }>)("rpc_active_poll", {
-    p_cohort: cohortId,
-  });
+  ) => Promise<{
+    data:
+      | {
+          id: string; question: string; options: PollOption[];
+          opened_at: string; closes_at: string | null; closed_at: string | null;
+          my_choice: string | null; phase: "open" | "results";
+          results: PollResultRow[] | null;
+        }
+      | Array<{
+          id: string; question: string; options: PollOption[];
+          opened_at: string; closes_at: string | null; closed_at: string | null;
+          my_choice: string | null; phase: "open" | "results";
+          results: PollResultRow[] | null;
+        }>
+      | null;
+  }>)("rpc_active_poll", { p_cohort: cohortId });
   if (!data) return null;
   const row = Array.isArray(data) ? data[0] ?? null : data;
   if (!row) return null;
@@ -86,6 +102,11 @@ export async function getActivePoll(cohortId: string): Promise<ActivePoll | null
     options: row.options ?? [],
     opened_at: row.opened_at,
     closes_at: row.closes_at,
+    closed_at: row.closed_at,
     my_choice: row.my_choice ?? null,
+    phase: row.phase,
+    results: row.results
+      ? row.results.map((r) => ({ choice: r.choice, label: r.label, votes: Number(r.votes ?? 0) }))
+      : null,
   };
 }
