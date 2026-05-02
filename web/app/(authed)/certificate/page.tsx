@@ -1,5 +1,4 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getProfile } from "@/lib/auth/session";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
@@ -57,7 +56,9 @@ export default async function CertificatePage() {
           {eligible ? (
             <div className="mt-6 space-y-2">
               <p className="text-ok">You&apos;ve graduated. 🎉</p>
-              <Button>Download PDF</Button>
+              <p className="text-muted text-xs">
+                A signed PDF will be emailed once admin verification is complete.
+              </p>
             </div>
           ) : (
             <CardSub className="mt-6">

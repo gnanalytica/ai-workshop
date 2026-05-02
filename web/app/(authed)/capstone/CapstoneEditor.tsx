@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,6 +32,17 @@ export function CapstoneEditor({
   const [demo, setDemo] = useState(initial?.demo_url ?? "");
   const [status, setStatus] = useState<CapstoneStatus>(initial?.status ?? "exploring");
   const [pending, start] = useTransition();
+
+  // Resync local state if the prop changes (e.g. after a server action /
+  // revalidatePath, or when admin previews as a different student).
+  useEffect(() => {
+    setTitle(initial?.title ?? "");
+    setProblem(initial?.problem_statement ?? "");
+    setTarget(initial?.target_user ?? "");
+    setRepo(initial?.repo_url ?? "");
+    setDemo(initial?.demo_url ?? "");
+    setStatus(initial?.status ?? "exploring");
+  }, [initial]);
 
   function save() {
     start(async () => {

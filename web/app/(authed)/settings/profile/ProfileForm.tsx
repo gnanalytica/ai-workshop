@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,14 @@ export function ProfileForm({
   const [college, setCollege] = useState(initial.college);
   const [avatar, setAvatar] = useState(initial.avatar_url);
   const [uploading, setUploading] = useState(false);
+
+  // Resync local state if the prop changes (e.g. after a server action /
+  // revalidatePath, or when admin previews as a different student).
+  useEffect(() => {
+    setFullName(initial.full_name);
+    setCollege(initial.college);
+    setAvatar(initial.avatar_url);
+  }, [initial]);
   const [pending, start] = useTransition();
   const fileRef = useRef<HTMLInputElement | null>(null);
 
