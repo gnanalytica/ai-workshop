@@ -24,12 +24,15 @@ declare
 begin
   if not exists (select 1 from auth.users where email = 'admin@seed.local') then
     insert into auth.users (id, email, raw_user_meta_data) values
-      ('00000000-0000-0000-0000-000000000001','admin@seed.local','{"full_name":"Admin Seed"}'),
-      ('00000000-0000-0000-0000-000000000002','trainer@seed.local','{"full_name":"Trainer Seed"}'),
-      ('00000000-0000-0000-0000-000000000003','tech@seed.local','{"full_name":"Tech Support Seed"}'),
-      ('00000000-0000-0000-0000-000000000004','support1@seed.local','{"full_name":"Support 1"}'),
-      ('00000000-0000-0000-0000-000000000005','support2@seed.local','{"full_name":"Support 2"}'),
-      ('00000000-0000-0000-0000-000000000006','exec@seed.local','{"full_name":"Exec Seed"}');
+      -- IDs shifted out of the 00000000-* range that migration 0059
+      -- (demo cohort) reserves for demo-admin@demo.local — applying both
+      -- migration 0059 and this seed against the same DB used to PK-collide.
+      ('aaaaaaaa-0000-0000-0000-000000000001','admin@seed.local','{"full_name":"Admin Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000002','trainer@seed.local','{"full_name":"Trainer Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000003','tech@seed.local','{"full_name":"Tech Support Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000004','support1@seed.local','{"full_name":"Support 1"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000005','support2@seed.local','{"full_name":"Support 2"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000006','exec@seed.local','{"full_name":"Exec Seed"}');
     for i in 1..50 loop
       insert into auth.users (id, email, raw_user_meta_data)
         values (gen_random_uuid(),
