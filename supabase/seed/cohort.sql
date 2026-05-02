@@ -66,14 +66,13 @@ insert into registrations (user_id, cohort_id, status)
 on conflict do nothing;
 
 -- ----- faculty + pods ---------------------------------------------------------
-insert into cohort_faculty (user_id, cohort_id, college_role)
-  select id, '11111111-1111-1111-1111-111111111111', 'support'
-    from profiles where email in ('support1@seed.local','support2@seed.local')
-on conflict do nothing;
-
-insert into cohort_faculty (user_id, cohort_id, college_role)
-  select id, '11111111-1111-1111-1111-111111111111', 'executive'
-    from profiles where email = 'exec@seed.local'
+-- Migration 0057 dropped cohort_faculty.college_role + the college_role enum
+-- as part of role simplification — the seed no longer distinguishes support
+-- vs. executive; every cohort_faculty row is just "faculty".
+insert into cohort_faculty (user_id, cohort_id)
+  select id, '11111111-1111-1111-1111-111111111111'
+    from profiles
+    where email in ('support1@seed.local','support2@seed.local','exec@seed.local')
 on conflict do nothing;
 
 -- 5 pods, distribute students round-robin
