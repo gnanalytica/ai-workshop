@@ -93,7 +93,7 @@ export function JoinSessionClient({
           title={titleAttr}
         >
           <Video size={14} strokeWidth={2} />
-          <span className="hidden sm:inline">Join live</span>
+          <span className="hidden whitespace-nowrap sm:inline">Join live</span>
           <ExternalLink size={11} className="hidden sm:inline opacity-80" />
         </a>
       ) : canEdit ? (
@@ -105,7 +105,7 @@ export function JoinSessionClient({
           title={titleAttr}
         >
           <Video size={14} strokeWidth={2} />
-          <span className="hidden sm:inline">Add link</span>
+          <span className="hidden whitespace-nowrap sm:inline">Add link</span>
         </Button>
       ) : null}
 

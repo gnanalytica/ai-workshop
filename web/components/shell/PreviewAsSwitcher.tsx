@@ -9,7 +9,6 @@ interface Props {
   effective: Persona;
   cohorts: PreviewCohortOption[];
   previewCohortId: string | null;
-  previewCohortName: string | null;
   previewUserId: string | null;
   previewUserName: string | null;
 }
@@ -21,7 +20,6 @@ export function PreviewAsSwitcher({
   effective,
   cohorts,
   previewCohortId,
-  previewCohortName,
   previewUserId,
   previewUserName,
 }: Props) {
@@ -53,19 +51,17 @@ export function PreviewAsSwitcher({
   return (
     <div className="flex flex-col items-end gap-1">
       <form ref={formRef} action={setPreviewAs} className="flex items-center gap-2">
-        <label htmlFor="persona" className="text-muted text-xs tracking-wide uppercase">
-          View as
-        </label>
         <select
           id="persona"
           name="persona"
+          aria-label="View as"
           defaultValue={effective}
           onChange={() => formRef.current?.requestSubmit()}
           className={selectCls}
         >
-          <option value="admin">Admin</option>
-          <option value="faculty">Faculty (preview)</option>
-          <option value="student">Student (preview)</option>
+          <option value="admin">View as · Admin</option>
+          <option value="faculty">View as · Faculty</option>
+          <option value="student">View as · Student</option>
         </select>
 
         {effective === "faculty" && (
@@ -76,7 +72,7 @@ export function PreviewAsSwitcher({
             className={selectCls}
             aria-label="Preview cohort"
           >
-            <option value="">— pick cohort —</option>
+            <option value="">Pick cohort…</option>
             {cohorts.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -121,11 +117,9 @@ export function PreviewAsSwitcher({
           </>
         )}
       </form>
-      {effective === "faculty" && previewCohortName && (
-        <span className="text-muted text-[10px] tracking-wide uppercase">
-          Preview cohort: {previewCohortName}
-        </span>
-      )}
+      {/* Faculty preview cohort name is already shown inside the cohort
+          select; only re-display in the student case where the picker is a
+          search box that empties after a pick. */}
       {effective === "student" && previewUserName && (
         <span className="text-muted text-[10px] tracking-wide uppercase">
           Preview user: {previewUserName}
