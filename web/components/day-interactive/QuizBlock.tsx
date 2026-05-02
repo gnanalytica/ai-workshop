@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,10 @@ export function QuizBlock({ quiz, dayNumber }: { quiz: DayQuiz; dayNumber: numbe
   const completed = !!quiz.attempt?.completed_at;
   const [answers, setAnswers] = useState<Record<string, unknown>>(quiz.attempt?.answers ?? {});
   const [pending, start] = useTransition();
+
+  useEffect(() => {
+    setAnswers((quiz.attempt?.answers as Record<string, unknown> | undefined) ?? {});
+  }, [quiz.attempt?.answers]);
 
   function setAnswer(qOrdinal: number, value: unknown) {
     setAnswers((a) => ({ ...a, [String(qOrdinal)]: value }));
