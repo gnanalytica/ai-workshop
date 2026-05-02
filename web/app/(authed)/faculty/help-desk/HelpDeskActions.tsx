@@ -56,7 +56,7 @@ export function HelpDeskActions({
 
   if (isSelfToTechRequest) {
     return (
-      <p className="text-muted max-w-[14rem] text-right text-xs leading-snug">
+      <p className="text-muted text-xs leading-snug sm:max-w-[14rem] sm:text-right">
         {status === "helping"
           ? "Platform or tech is handling this."
           : "Queued with platform / tech staff. They’ll pick it up from the tech queue."}
@@ -65,8 +65,8 @@ export function HelpDeskActions({
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <div className="flex gap-2">
+    <div className="flex flex-col items-stretch gap-2 sm:items-end">
+      <div className="flex flex-wrap gap-2 sm:justify-end">
         {status === "open" && (
           <Button size="sm" variant="outline" onClick={claim} disabled={pending}>
             Claim
@@ -89,12 +89,12 @@ export function HelpDeskActions({
         )}
       </div>
       {showEscalate && (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="What should the admin do?"
-            className="border-line bg-input-bg text-ink w-72 rounded-md border px-2 py-1 text-sm"
+            className="border-line bg-input-bg text-ink w-full min-w-0 flex-1 rounded-md border px-2 py-1 text-sm sm:w-72 sm:flex-none"
           />
           <Button size="sm" variant="danger" onClick={escalate} disabled={pending}>
             Send

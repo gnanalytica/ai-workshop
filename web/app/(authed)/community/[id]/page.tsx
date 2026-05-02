@@ -34,7 +34,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
           />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight break-words sm:text-3xl">{post.title}</h1>
               <div className="flex items-center gap-2">
                 {post.is_canonical && <Badge variant="ok">FAQ</Badge>}
                 {post.pinned_at && <Badge variant="accent">Pinned</Badge>}
@@ -58,7 +58,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
         )}
       </header>
 
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <MarkdownView source={post.body_md} />
       </Card>
 

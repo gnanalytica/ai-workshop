@@ -121,6 +121,26 @@ export function RosterTable({ rows, cohortId }: { rows: RosterRow[]; cohortId: s
       rowKey={(r) => r.user_id}
       searchPlaceholder="Search by name, email, college, pod…"
       initialSortId="created_at"
+      mobileCard={(r) => (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <StudentRow
+                fullName={r.full_name}
+                email={r.email}
+                pod={r.pod_name}
+                hint={r.college ?? undefined}
+              />
+            </div>
+            <Badge variant={STATUS_VARIANT[r.status]}>{r.status}</Badge>
+          </div>
+          <div className="text-muted flex items-center justify-between text-xs">
+            <span>{r.source ?? "—"}</span>
+            <span>{fmtDate(r.created_at)}</span>
+          </div>
+          <RowStatus row={r} cohortId={cohortId} disabled={pending} onChange={(s) => rowChange(r, s)} />
+        </div>
+      )}
       bulkActions={(selected) => (
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" disabled={pending} onClick={() => bulk("confirmed")(selected)}>

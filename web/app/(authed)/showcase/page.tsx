@@ -10,7 +10,7 @@ export default async function ShowcasePage() {
     <div className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Showcase</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Capstones, on display</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Capstones, on display</h1>
         <CardSub className="mt-1">{capstones.length} public capstones</CardSub>
       </header>
 
@@ -25,8 +25,8 @@ export default async function ShowcasePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {capstones.map((c) => (
             <Card key={c.id} className="p-5">
-              <div className="flex items-baseline justify-between">
-                <CardTitle>{c.title}</CardTitle>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <CardTitle className="break-words">{c.title}</CardTitle>
                 <Badge variant="accent">{c.phase}</Badge>
               </div>
               <p className="text-muted mt-1 text-sm">By {c.owner_name ?? "—"}</p>

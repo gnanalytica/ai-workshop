@@ -44,7 +44,7 @@ export function NewAssignmentForm({ cohortId }: { cohortId: string }) {
   return (
     <Card className="space-y-3 p-5">
       <CardTitle>New assignment</CardTitle>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Input value={day} onChange={(e) => setDay(e.target.value)} placeholder="Day" inputMode="numeric" className="w-20" />
         <select
           value={kind}
@@ -55,7 +55,7 @@ export function NewAssignmentForm({ cohortId }: { cohortId: string }) {
           <option value="capstone">Capstone</option>
           <option value="reflection">Reflection</option>
         </select>
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="flex-1" />
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="min-w-[180px] flex-1" />
       </div>
       <Input type="date" value={due} onChange={(e) => setDue(e.target.value)} />
       <Button onClick={submit} disabled={pending || !title || !day}>
@@ -97,8 +97,8 @@ export function AssignmentsTable({
 }) {
   if (rows.length === 0) return <Card><CardSub>No assignments yet.</CardSub></Card>;
   return (
-    <div className="border-line overflow-hidden rounded-lg border">
-      <table className="w-full text-sm">
+    <div className="border-line overflow-x-auto rounded-lg border">
+      <table className="w-full min-w-[640px] text-sm">
         <thead className="bg-bg-soft text-muted text-xs uppercase">
           <tr>
             <th className="w-16 px-3 py-2 text-left">Day</th>
@@ -150,9 +150,9 @@ export function NewQuizForm({ cohortId }: { cohortId: string }) {
   return (
     <Card className="space-y-3 p-5">
       <CardTitle>New quiz</CardTitle>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Input value={day} onChange={(e) => setDay(e.target.value)} placeholder="Day" inputMode="numeric" className="w-20" />
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="flex-1" />
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="min-w-[180px] flex-1" />
       </div>
       <Button onClick={submit} disabled={pending || !title || !day}>
         {pending ? "Creating…" : "Create"}
@@ -164,8 +164,8 @@ export function NewQuizForm({ cohortId }: { cohortId: string }) {
 export function QuizzesTable({ rows, cohortId }: { rows: QuizRow[]; cohortId: string }) {
   if (rows.length === 0) return <Card><CardSub>No quizzes yet.</CardSub></Card>;
   return (
-    <div className="border-line overflow-hidden rounded-lg border">
-      <table className="w-full text-sm">
+    <div className="border-line overflow-x-auto rounded-lg border">
+      <table className="w-full min-w-[560px] text-sm">
         <thead className="bg-bg-soft text-muted text-xs uppercase">
           <tr>
             <th className="w-16 px-3 py-2 text-left">Day</th>

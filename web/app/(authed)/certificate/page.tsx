@@ -24,15 +24,15 @@ export default async function CertificatePage() {
     <div className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Certificate</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your completion certificate</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your completion certificate</h1>
       </header>
 
-      <Card className="p-8">
+      <Card className="p-5 sm:p-8">
         <div className="text-center">
           <p className="text-muted font-mono text-xs tracking-widest uppercase">
             Gnanalytica · 30-Day AI Workshop
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight">
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight break-words sm:text-3xl">
             {profile?.full_name ?? "—"}
           </h2>
           <p className="text-muted mt-2 text-sm">{cohort.name}</p>
@@ -41,7 +41,7 @@ export default async function CertificatePage() {
           </p>
 
           <div className="mx-auto mt-6 max-w-md">
-            <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="flex flex-wrap justify-center gap-2 text-xs">
               <Badge variant={kpis.daysComplete >= REQUIRED_DAYS ? "ok" : "default"}>
                 Days {kpis.daysComplete}/{REQUIRED_DAYS}
               </Badge>

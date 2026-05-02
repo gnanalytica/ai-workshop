@@ -37,7 +37,7 @@ export default async function BoardPage({
             <p className="text-accent font-mono text-xs tracking-widest uppercase">
               Community · moderation
             </p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
               Community
             </h1>
             <CardSub className="mt-1">
@@ -64,9 +64,9 @@ export default async function BoardPage({
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
             Community
           </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Community</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Community</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {canModerate && (
             <Button variant="outline" asChild>
               <Link href="/community?mod=1">Moderate</Link>

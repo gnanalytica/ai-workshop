@@ -48,7 +48,7 @@ export default async function LeaderboardPage({
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {cohort.name} · Leaderboard
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Standings</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Standings</h1>
         <p className="text-muted mt-1 text-sm">
           Cumulative score = quizzes + graded assignments + 5×posts + 2×comments
           + net upvotes received.

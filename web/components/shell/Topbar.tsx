@@ -54,7 +54,7 @@ export async function Topbar({
   }
 
   return (
-    <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-3 backdrop-blur-md sm:px-4 md:px-6">
+    <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b pr-3 pl-12 backdrop-blur-md sm:pr-4 md:px-6">
       <div className="flex min-w-0 items-center gap-2 sm:gap-4">
         {cohortName ? (
           <div className="flex min-w-0 items-baseline gap-3">

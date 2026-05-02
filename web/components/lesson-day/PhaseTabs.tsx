@@ -51,7 +51,7 @@ export function PhaseTabs({
 
   return (
     <div>
-      <div className="sticky top-0 z-10 -mx-6 mb-6 bg-bg/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/80 md:-mx-10 md:px-10">
+      <div className="sticky top-0 z-10 -mx-4 mb-6 bg-bg/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/80 sm:-mx-6 sm:px-6 md:-mx-10 md:px-10">
         <nav
           role="tablist"
           aria-label="Lesson phase"
@@ -69,7 +69,7 @@ export function PhaseTabs({
                 id={`phase-tab-${t.id}`}
                 onClick={() => select(t.id)}
                 className={cn(
-                  "relative flex flex-1 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-all",
+                  "relative flex flex-1 shrink-0 items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-semibold transition-all sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm",
                   isActive
                     ? "bg-accent text-cta-ink shadow-sm"
                     : "text-muted hover:text-ink hover:bg-bg/60",

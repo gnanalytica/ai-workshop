@@ -29,7 +29,7 @@ export default async function CapstonePage() {
     <div className="space-y-8">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">{cohort.name}</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your capstone</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your capstone</h1>
         <p className="text-muted mt-1 text-sm">
           One project across the 30 days. Lock it in, build it, ship it.
         </p>
@@ -46,9 +46,9 @@ export default async function CapstonePage() {
             {milestones.map((m) => (
               <Card key={m.assignment_id} className="space-y-2 p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-muted font-mono text-xs">D{String(m.day_number).padStart(2, "0")}</p>
-                    <CardTitle className="mt-0.5 text-base">{m.assignment_title}</CardTitle>
+                    <CardTitle className="mt-0.5 break-words text-base">{m.assignment_title}</CardTitle>
                   </div>
                   <div className="flex items-center gap-2">
                     {m.human_reviewed_at ? (

@@ -97,11 +97,11 @@ export function StudentActions({
         </Button>
       )}
       {showMove && (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <select
             value={target}
             onChange={(e) => setTarget(e.target.value)}
-            className="border-line bg-input-bg text-ink h-8 rounded-md border px-2 text-sm"
+            className="border-line bg-input-bg text-ink h-8 min-w-0 flex-1 rounded-md border px-2 text-sm sm:flex-none"
             aria-label="Target pod"
           >
             <option value="">Choose pod…</option>

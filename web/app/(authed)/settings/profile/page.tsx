@@ -12,10 +12,10 @@ export default async function SettingsProfilePage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Settings</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your profile</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your profile</h1>
         <CardSub className="mt-1">{profile.email}</CardSub>
       </header>
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <ProfileForm
           initial={{
             full_name: profile.full_name ?? "",
@@ -24,7 +24,7 @@ export default async function SettingsProfilePage() {
           }}
         />
       </Card>
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <CardTitle className="mb-1 text-base">Email address</CardTitle>
         <CardSub className="mb-4 text-xs">
           Changing your email sends a confirmation link to the new address. Your old

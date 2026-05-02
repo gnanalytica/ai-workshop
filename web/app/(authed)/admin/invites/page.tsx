@@ -32,7 +32,7 @@ export default async function AdminInvitesPage() {
           <CardSub className="mt-2">No invites yet.</CardSub>
         ) : (
           <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead className="text-muted text-left text-xs tracking-wide uppercase">
                 <tr>
                   <th className="pb-2">Code</th>

@@ -67,8 +67,8 @@ export function TeamsClient({ cohortId, teams }: { cohortId: string; teams: Team
             <p className="text-muted text-sm">No teams yet — be first.</p>
           ) : (
             teams.map((t) => (
-              <div key={t.id} className="border-line flex items-center justify-between rounded-md border px-3 py-2">
-                <div className="text-sm">
+              <div key={t.id} className="border-line flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2">
+                <div className="min-w-0 flex-1 truncate text-sm">
                   {t.name}
                   <span className="text-muted ml-2 text-xs">({t.member_count})</span>
                 </div>
