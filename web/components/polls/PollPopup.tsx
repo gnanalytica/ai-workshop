@@ -4,13 +4,18 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { castVote } from "@/lib/actions/polls";
 
+interface PollResultRow { choice: string; label: string; votes: number }
+
 interface ActivePollPayload {
   id: string;
   question: string;
   options: { id: string; label: string }[];
   opened_at: string;
   closes_at: string | null;
+  closed_at: string | null;
   my_choice: string | null;
+  phase: "open" | "results";
+  results: PollResultRow[] | null;
 }
 
 function formatRemaining(ms: number): string {
@@ -21,9 +26,36 @@ function formatRemaining(ms: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+function ResultsBars({ results }: { results: PollResultRow[] }) {
+  const total = results.reduce((s, r) => s + r.votes, 0);
+  return (
+    <div className="space-y-1.5">
+      {results.map((r) => {
+        const pct = total === 0 ? 0 : Math.round((r.votes / total) * 100);
+        return (
+          <div key={r.choice} className="space-y-0.5">
+            <div className="flex items-baseline justify-between gap-2 text-xs">
+              <span className="text-ink truncate">{r.label}</span>
+              <span className="text-muted tabular-nums">
+                {r.votes} <span className="opacity-60">· {pct}%</span>
+              </span>
+            </div>
+            <div className="bg-bg-soft h-1.5 w-full overflow-hidden rounded-sm">
+              <div className="bg-accent h-full" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+        );
+      })}
+      <p className="text-muted pt-1 text-[10px] uppercase tracking-wider">
+        {total} {total === 1 ? "vote" : "votes"} total
+      </p>
+    </div>
+  );
+}
+
 export function PollPopup({ cohortId }: { cohortId: string }) {
   const [poll, setPoll] = useState<ActivePollPayload | null>(null);
-  const [dismissedId, setDismissedId] = useState<string | null>(null);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
   const [now, setNow] = useState<number>(() => Date.now());
   const [pending, start] = useTransition();
   const abortRef = useRef<AbortController | null>(null);
@@ -60,10 +92,16 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
   }, []);
 
   if (!poll) return null;
-  if (poll.my_choice) return null;
-  if (dismissedId === poll.id) return null;
+  if (dismissedIds.has(poll.id)) return null;
+
   const closesAtMs = poll.closes_at ? new Date(poll.closes_at).getTime() : null;
-  if (closesAtMs != null && closesAtMs <= now) return null;
+  // Local clock may differ from server — treat poll as transitioned to results
+  // if either the server says so OR our timer has expired and we already voted.
+  const transitioned =
+    poll.phase === "results" ||
+    (poll.phase === "open" && poll.my_choice != null && closesAtMs != null && closesAtMs <= now);
+  // If still open and not voted, hide on local-clock expiry (server will catch up).
+  if (poll.phase === "open" && !poll.my_choice && closesAtMs != null && closesAtMs <= now) return null;
 
   function vote(c: string) {
     const current = poll;
@@ -72,14 +110,19 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
       const r = await castVote({ poll_id: current.id, choice: c });
       if (r.ok) {
         toast.success("Voted");
-        setDismissedId(current.id);
+        // Optimistically reflect the vote — popup transitions to "voted ✓"
+        // until the server returns phase='results'.
+        setPoll((p) => (p && p.id === current.id ? { ...p, my_choice: c } : p));
       } else {
         toast.error(r.error);
       }
     });
   }
 
-  const remaining = closesAtMs != null ? formatRemaining(closesAtMs - now) : null;
+  const remaining = closesAtMs != null && !transitioned ? formatRemaining(closesAtMs - now) : null;
+  const showVotingUI = poll.phase === "open" && !poll.my_choice;
+  const showThanks = poll.phase === "open" && poll.my_choice != null && !transitioned;
+  const showResults = transitioned && poll.results;
 
   return (
     <div
@@ -97,30 +140,55 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
     >
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-accent text-[10px] font-semibold uppercase tracking-wider">
-          Live poll
+          {showResults ? "Poll closed · results" : "Live poll"}
         </span>
         {remaining != null && (
           <span className="text-muted tabular-nums text-xs">closes in {remaining}</span>
         )}
+        {showResults && (
+          <button
+            type="button"
+            aria-label="Dismiss results"
+            onClick={() => setDismissedIds((s) => new Set(s).add(poll.id))}
+            className="text-muted hover:text-ink text-xs leading-none"
+          >
+            ✕
+          </button>
+        )}
       </div>
       <p className="text-ink mt-1 text-sm font-medium leading-snug">{poll.question}</p>
-      <div className="mt-3 space-y-1.5">
-        {poll.options.map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            disabled={pending}
-            onClick={() => vote(opt.id)}
-            className="
-              border-line text-ink hover:border-accent/55 hover:bg-accent/5
-              w-full rounded-md border px-3 py-2 text-left text-sm
-              transition-colors disabled:opacity-60
-            "
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
+
+      {showVotingUI && (
+        <div className="mt-3 space-y-1.5">
+          {poll.options.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              disabled={pending}
+              onClick={() => vote(opt.id)}
+              className="
+                border-line text-ink hover:border-accent/55 hover:bg-accent/5
+                w-full rounded-md border px-3 py-2 text-left text-sm
+                transition-colors disabled:opacity-60
+              "
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {showThanks && (
+        <p className="text-muted mt-3 text-xs">
+          ✓ Voted. Results appear when the poll closes.
+        </p>
+      )}
+
+      {showResults && (
+        <div className="mt-3">
+          <ResultsBars results={poll.results!} />
+        </div>
+      )}
     </div>
   );
 }
