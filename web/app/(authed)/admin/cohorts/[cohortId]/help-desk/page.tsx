@@ -16,13 +16,14 @@ export default async function CohortStuckPage({
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
   const items = await listHelpDeskOpen(cohort.id);
+  const escalatedCount = items.filter((i) => i.escalated_at != null).length;
+  const openCount = items.length - escalatedCount;
 
   return (
     <>
       <CohortShell cohort={cohort} active="help-desk" />
       <CardSub className="max-w-2xl">
-        {items.length} open · cohort-wide. Students open tickets from their lessons; pod faculty triage first.
-        Escalations and tech-tagged items appear here for admins.
+        {escalatedCount} escalated · {openCount} other open. Escalated tickets jump the queue and need admin attention.
       </CardSub>
       <HelpDeskQueueClient cohortId={cohort.id} items={items} />
     </>

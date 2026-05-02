@@ -11,6 +11,7 @@ export function PollsClient({ cohortId }: { cohortId: string }) {
   const [question, setQuestion] = useState("");
   const [optionsRaw, setOptionsRaw] = useState("Yes\nNo");
   const [day, setDay] = useState<string>("");
+  const [duration, setDuration] = useState<string>("");
   const [pending, start] = useTransition();
 
   function submit() {
@@ -25,12 +26,14 @@ export function PollsClient({ cohortId }: { cohortId: string }) {
         question,
         options,
         day_number: day ? Number(day) : undefined,
+        duration_minutes: duration ? Number(duration) : undefined,
       });
       if (r.ok) {
         toast.success("Poll created");
         setQuestion("");
         setOptionsRaw("Yes\nNo");
         setDay("");
+        setDuration("");
       } else toast.error(r.error);
     });
   }
@@ -60,6 +63,14 @@ export function PollsClient({ cohortId }: { cohortId: string }) {
             value={day}
             onChange={(e) => setDay(e.target.value)}
             className="max-w-[160px]"
+          />
+          <Input
+            type="number"
+            min={1}
+            placeholder="Duration (minutes)"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="max-w-[200px]"
           />
           <div className="flex-1" />
           <Button onClick={submit} disabled={pending}>

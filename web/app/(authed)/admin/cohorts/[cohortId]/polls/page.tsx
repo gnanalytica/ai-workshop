@@ -6,6 +6,7 @@ import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { listPolls } from "@/lib/queries/polls";
 import { PollsClient } from "@/app/(authed)/admin/polls/PollsClient";
 import { PollRow } from "@/app/(authed)/admin/polls/PollRow";
+import { PollResultsChart } from "@/app/(authed)/admin/polls/PollResultsChart";
 
 export default async function AdminCohortPollsPage({
   params,
@@ -33,7 +34,12 @@ export default async function AdminCohortPollsPage({
       ) : (
         <div className="space-y-3">
           {polls.map((p) => (
-            <PollRow key={p.id} poll={p} cohortId={cohort.id} />
+            <PollRow
+              key={p.id}
+              poll={p}
+              cohortId={cohort.id}
+              results={<PollResultsChart pollId={p.id} />}
+            />
           ))}
         </div>
       )}

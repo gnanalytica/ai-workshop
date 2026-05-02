@@ -82,6 +82,9 @@ export interface HelpDeskEntry {
   message: string | null;
   claimed_by_name: string | null;
   created_at: string;
+  escalated_at: string | null;
+  escalator_name: string | null;
+  escalation_note: string | null;
 }
 
 export const listHelpDeskOpen = cache(async (cohortId: string, facultyUserId?: string): Promise<HelpDeskEntry[]> => {
@@ -91,18 +94,21 @@ export const listHelpDeskOpen = cache(async (cohortId: string, facultyUserId?: s
   let query = sb
     .from("help_desk_queue")
     .select(
-      "id, user_id, kind, status, message, created_at, profiles:user_id(full_name), claimer:profiles!help_desk_queue_claimed_by_fkey(full_name)",
+      "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, profiles:user_id(full_name), claimer:profiles!help_desk_queue_claimed_by_fkey(full_name), escalator:profiles!help_desk_queue_escalated_by_fkey(full_name)",
     )
     .eq("cohort_id", cohortId)
     .in("status", ["open", "helping"])
+    .order("escalated_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
   if (studentIds) query = query.in("user_id", studentIds);
   const { data } = await query;
   return ((data ?? []) as unknown as Array<{
     id: string; user_id: string; kind: HelpDeskEntry["kind"]; status: HelpDeskEntry["status"];
     message: string | null; created_at: string;
+    escalated_at: string | null; escalation_note: string | null;
     profiles: { full_name: string | null } | null;
     claimer: { full_name: string | null } | null;
+    escalator: { full_name: string | null } | null;
   }>).map((r) => ({
     id: r.id,
     user_id: r.user_id,
@@ -112,5 +118,8 @@ export const listHelpDeskOpen = cache(async (cohortId: string, facultyUserId?: s
     message: r.message,
     claimed_by_name: r.claimer?.full_name ?? null,
     created_at: r.created_at,
+    escalated_at: r.escalated_at,
+    escalator_name: r.escalator?.full_name ?? null,
+    escalation_note: r.escalation_note,
   }));
 });
