@@ -4,6 +4,7 @@ import { getSupabaseService } from "@/lib/supabase/service";
 import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getPreviewUserId } from "@/lib/auth/persona";
 import { workingDayNumber } from "@/lib/calendar";
+import { listCohortDaysCached, getCohortDayCached } from "@/lib/cache/cohort";
 
 export interface ActiveCohort {
   id: string;
@@ -76,27 +77,16 @@ export const getLessonCohort = cache(
   },
 );
 
-export const listCohortDays = cache(async (cohortId: string): Promise<CohortDay[]> => {
-  const sb = await getSupabaseServer();
-  const { data } = await sb
-    .from("cohort_days")
-    .select("cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind")
-    .eq("cohort_id", cohortId)
-    .order("day_number");
-  return (data ?? []) as CohortDay[];
-});
+// Delegated to cross-request cache (5-min TTL, invalidated by schedule writes).
+// React `cache` still wraps the call so repeat hits within one render are free.
+export const listCohortDays = cache(
+  (cohortId: string): Promise<CohortDay[]> =>
+    listCohortDaysCached(cohortId) as Promise<CohortDay[]>,
+);
 
 export const getCohortDay = cache(
-  async (cohortId: string, dayNumber: number): Promise<CohortDay | null> => {
-    const sb = await getSupabaseServer();
-    const { data } = await sb
-      .from("cohort_days")
-      .select("cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind")
-      .eq("cohort_id", cohortId)
-      .eq("day_number", dayNumber)
-      .maybeSingle();
-    return (data ?? null) as CohortDay | null;
-  },
+  (cohortId: string, dayNumber: number): Promise<CohortDay | null> =>
+    getCohortDayCached(cohortId, dayNumber) as Promise<CohortDay | null>,
 );
 
 /**

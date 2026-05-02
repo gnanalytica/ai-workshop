@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import { getSupabaseServer } from "@/lib/supabase/server";
@@ -46,6 +46,8 @@ export async function createCohort(input: z.infer<typeof createCohortSchema>) {
   const { error: seedErr } = await sb.rpc("seed_curriculum_for", { p_cohort: cohortId } as never);
   if (seedErr) return actionFail(`Created but seed failed: ${seedErr.message}`);
 
+  updateTag("cohorts");
+  updateTag("cohort-days");
   revalidatePath("/admin", "layout");
   revalidatePath("/admin/cohorts", "layout");
   return actionOk(data);
@@ -83,6 +85,8 @@ export async function deleteCohort(input: z.infer<typeof deleteCohortSchema>) {
   const { error } = await sb.from("cohorts").delete().eq("id", parsed.data.cohort_id);
   if (error) return actionFail(error.message);
 
+  updateTag("cohorts");
+  updateTag("cohort-days");
   revalidatePath("/admin", "layout");
   revalidatePath("/admin/cohorts", "layout");
   return actionOk();
@@ -103,7 +107,7 @@ export async function updateCohortDay(input: z.infer<typeof updateDaySchema>) {
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("schedule.write", parsed.data.cohort_id);
   const { cohort_id, day_number, ...patch } = parsed.data;
-  return withSupabase(
+  const result = await withSupabase(
     (sb) =>
       sb
         .from("cohort_days")
@@ -114,6 +118,8 @@ export async function updateCohortDay(input: z.infer<typeof updateDaySchema>) {
         .single(),
     ["/admin/schedule", "/dashboard"],
   );
+  updateTag("cohort-days");
+  return result;
 }
 
 const meetLinkSchema = z.object({
@@ -146,6 +152,7 @@ export async function setCohortDayMeetLink(input: z.infer<typeof meetLinkSchema>
     p_link: parsed.data.meet_link ?? "",
   } as never);
   if (error) return actionFail(error.message);
+  updateTag("cohort-days");
   revalidatePath("/", "layout");
   return actionOk();
 }
@@ -160,7 +167,7 @@ export async function setDayUnlocked(input: z.infer<typeof toggleSchema>) {
   const parsed = toggleSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("schedule.write", parsed.data.cohort_id);
-  return withSupabase(
+  const result = await withSupabase(
     (sb) =>
       sb
         .from("cohort_days")
@@ -171,4 +178,6 @@ export async function setDayUnlocked(input: z.infer<typeof toggleSchema>) {
         .single(),
     ["/admin/schedule", "/dashboard"],
   );
+  updateTag("cohort-days");
+  return result;
 }

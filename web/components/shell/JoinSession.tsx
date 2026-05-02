@@ -1,5 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSession, getProfile } from "@/lib/auth/session";
+import { getCohortDayCached } from "@/lib/cache/cohort";
 import { JoinSessionClient } from "./JoinSessionClient";
 
 /**
@@ -23,14 +24,10 @@ export async function JoinSession({
   const profile = await getProfile();
   if (!profile) return null;
 
+  // Cross-request cached: cohort_days changes rarely, runs on every authed page.
+  const dayRow = await getCohortDayCached(cohortId, dayNumber);
+  const meetLink = dayRow?.meet_link ?? null;
   const sb = await getSupabaseServer();
-  const { data: dayRow } = await sb
-    .from("cohort_days")
-    .select("meet_link")
-    .eq("cohort_id", cohortId)
-    .eq("day_number", dayNumber)
-    .maybeSingle();
-  const meetLink = (dayRow?.meet_link as string | null) ?? null;
 
   const isAdmin = profile.staff_roles?.includes("admin") ?? false;
   let canEdit = isAdmin;
