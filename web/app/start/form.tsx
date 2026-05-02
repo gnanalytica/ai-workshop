@@ -47,7 +47,7 @@ function Divider() {
   return (
     <div className="flex items-center gap-3 text-xs">
       <span className="border-line/60 h-px flex-1 border-t" />
-      <span className="text-muted tracking-widest uppercase">or email</span>
+      <span className="text-muted tracking-widest uppercase">or use email</span>
       <span className="border-line/60 h-px flex-1 border-t" />
     </div>
   );
@@ -59,9 +59,9 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="bg-accent text-cta-ink mt-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all duration-200 disabled:opacity-60"
+      className="border-line bg-card text-ink hover:border-accent/40 mt-2 rounded-md border px-4 py-2.5 text-sm font-medium transition-all duration-200 disabled:opacity-60"
     >
-      {pending ? "Checking…" : "Continue →"}
+      {pending ? "Checking…" : "Continue with email"}
     </button>
   );
 }

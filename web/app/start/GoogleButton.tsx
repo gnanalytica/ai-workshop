@@ -18,7 +18,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="border-line bg-card text-ink hover:border-accent/40 flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium disabled:opacity-60"
+      className="bg-accent text-cta-ink hover:opacity-95 flex items-center justify-center gap-2 rounded-md px-4 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-60"
     >
       <GoogleIcon />
       {pending ? "Redirecting…" : "Continue with Google"}

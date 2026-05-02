@@ -51,32 +51,6 @@ async function rateOk(bucket: string, windowSec: number, max: number): Promise<b
   return data === true;
 }
 
-export async function sendMagicLink(_prev: SignInState, formData: FormData): Promise<SignInState> {
-  const parsed = emailSchema.safeParse({
-    email: formData.get("email"),
-    next: formData.get("next") ?? undefined,
-  });
-  if (!parsed.success) {
-    return { ok: false, message: "Please enter a valid email." };
-  }
-
-  // 5 magic-link requests per IP per 5 minutes.
-  if (!(await rateOk(`magic:${await clientIp()}`, 300, 5))) {
-    return { ok: false, message: "Too many requests. Please wait a minute and try again." };
-  }
-
-  const sb = await getSupabaseServer();
-  const next = safeNext(parsed.data.next);
-
-  const { error } = await sb.auth.signInWithOtp({
-    email: parsed.data.email,
-    options: { emailRedirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent(next)}` },
-  });
-  if (error) return { ok: false, message: error.message };
-
-  return { ok: true, message: "Check your email for the sign-in link." };
-}
-
 /**
  * Single-entry "Enroll / Sign in" flow. Looks up the email; if a profile
  * exists, sends a magic link (sign-in). Otherwise redirects to /start/sign-up
