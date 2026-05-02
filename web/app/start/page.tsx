@@ -15,9 +15,9 @@ export default function StartPage(props: {
       </p>
       <h1 className="text-3xl font-semibold tracking-tight">Get started</h1>
       <p className="text-muted mt-2 mb-8 text-sm">
-        Sign in with Google for the fastest, most reliable access. New here?
-        You&apos;ll need an invite code from your cohort admin — use the email
-        option below to start sign-up.
+        Sign in with Google. New here? Use the same Google account whose
+        email your invite was sent to — you&apos;ll redeem your code on the
+        next screen.
       </p>
       <Suspense fallback={null}>
         <StartFormWrapper searchParams={props.searchParams} />
