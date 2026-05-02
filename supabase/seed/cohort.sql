@@ -24,12 +24,15 @@ declare
 begin
   if not exists (select 1 from auth.users where email = 'admin@seed.local') then
     insert into auth.users (id, email, raw_user_meta_data) values
-      ('00000000-0000-0000-0000-000000000001','admin@seed.local','{"full_name":"Admin Seed"}'),
-      ('00000000-0000-0000-0000-000000000002','trainer@seed.local','{"full_name":"Trainer Seed"}'),
-      ('00000000-0000-0000-0000-000000000003','tech@seed.local','{"full_name":"Tech Support Seed"}'),
-      ('00000000-0000-0000-0000-000000000004','support1@seed.local','{"full_name":"Support 1"}'),
-      ('00000000-0000-0000-0000-000000000005','support2@seed.local','{"full_name":"Support 2"}'),
-      ('00000000-0000-0000-0000-000000000006','exec@seed.local','{"full_name":"Exec Seed"}');
+      -- IDs shifted out of the 00000000-* range that migration 0059
+      -- (demo cohort) reserves for demo-admin@demo.local — applying both
+      -- migration 0059 and this seed against the same DB used to PK-collide.
+      ('aaaaaaaa-0000-0000-0000-000000000001','admin@seed.local','{"full_name":"Admin Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000002','trainer@seed.local','{"full_name":"Trainer Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000003','tech@seed.local','{"full_name":"Tech Support Seed"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000004','support1@seed.local','{"full_name":"Support 1"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000005','support2@seed.local','{"full_name":"Support 2"}'),
+      ('aaaaaaaa-0000-0000-0000-000000000006','exec@seed.local','{"full_name":"Exec Seed"}');
     for i in 1..50 loop
       insert into auth.users (id, email, raw_user_meta_data)
         values (gen_random_uuid(),
@@ -63,14 +66,13 @@ insert into registrations (user_id, cohort_id, status)
 on conflict do nothing;
 
 -- ----- faculty + pods ---------------------------------------------------------
-insert into cohort_faculty (user_id, cohort_id, college_role)
-  select id, '11111111-1111-1111-1111-111111111111', 'support'
-    from profiles where email in ('support1@seed.local','support2@seed.local')
-on conflict do nothing;
-
-insert into cohort_faculty (user_id, cohort_id, college_role)
-  select id, '11111111-1111-1111-1111-111111111111', 'executive'
-    from profiles where email = 'exec@seed.local'
+-- Migration 0057 dropped cohort_faculty.college_role + the college_role enum
+-- as part of role simplification — the seed no longer distinguishes support
+-- vs. executive; every cohort_faculty row is just "faculty".
+insert into cohort_faculty (user_id, cohort_id)
+  select id, '11111111-1111-1111-1111-111111111111'
+    from profiles
+    where email in ('support1@seed.local','support2@seed.local','exec@seed.local')
 on conflict do nothing;
 
 -- 5 pods, distribute students round-robin

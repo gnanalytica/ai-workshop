@@ -32,39 +32,29 @@ select _expect('admin has analytics.read:program', has_cap('analytics.read:progr
 select _expect('admin has grading.write:cohort', has_cap('grading.write:cohort', '11111111-1111-1111-1111-111111111111'), true);
 select _expect('admin has orgs.write', has_cap('orgs.write'), true);
 
-\echo '--- trainer caps: no analytics:program, has grading.write:cohort ---'
-select _set_uid('trainer@seed.local');
-select _expect('trainer lacks analytics:program', has_cap('analytics.read:program'), false);
-select _expect('trainer has grading.write:cohort', has_cap('grading.write:cohort', '11111111-1111-1111-1111-111111111111'), true);
-
-\echo '--- tech_support: triage tech-only, no grading ---'
-select _set_uid('tech@seed.local');
-select _expect('tech has support.tech_only', has_cap('support.tech_only'), true);
-select _expect('tech lacks grading.write', has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
-
--- Faculty are unified post-0019 (the support/executive split was collapsed),
--- and per 0021 they get their global-safe cap bundle even when auth_caps is
--- called with no cohort. 0022 dropped attendance.mark:pod and announcements.*
--- from the faculty bundle; 0037 added community.read/write and moderation.write.
--- support1 and exec users now resolve to the same capability set — assert
--- against both to catch any drift in the unification.
-\echo '--- faculty (unified): pod-scoped grading, community + moderation ---'
+-- Migration 0057 collapsed trainer / tech_support staff roles into admin and
+-- dropped the support / executive college_role split, so the only personas
+-- under test now are admin (above), faculty (below), and student. Faculty
+-- are review-only on submissions: they get grading.read but never
+-- grading.write — admins are the only writers. support1 + exec resolve to
+-- the same capability set; assert against both to catch any drift.
+\echo '--- faculty (unified): grading.read, pods.write, community + moderation ---'
 select _set_uid('support1@seed.local');
-select _expect('support has grading.write:pod',     has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), true);
+select _expect('support has grading.read',          has_cap('grading.read','11111111-1111-1111-1111-111111111111'), true);
+select _expect('support lacks grading.write:pod',   has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), false);
 select _expect('support lacks grading.write:cohort',has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
 select _expect('support has pods.write in cohort',  has_cap('pods.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('support has pods.write globally',   has_cap('pods.write'), true);
 select _expect('support has community.write',       has_cap('community.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('support has moderation.write',      has_cap('moderation.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('support lacks analytics.read:cohort', has_cap('analytics.read:cohort','11111111-1111-1111-1111-111111111111'), false);
-select _expect('support lacks attendance.mark:pod', has_cap('attendance.mark:pod','11111111-1111-1111-1111-111111111111'), false);
 
 select _set_uid('exec@seed.local');
-select _expect('exec has grading.write:pod',           has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), true);
+select _expect('exec has grading.read',                has_cap('grading.read','11111111-1111-1111-1111-111111111111'), true);
+select _expect('exec lacks grading.write:pod',         has_cap('grading.write:pod','11111111-1111-1111-1111-111111111111'), false);
 select _expect('exec lacks grading.write:cohort',      has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
 select _expect('exec has pods.write in cohort',        has_cap('pods.write','11111111-1111-1111-1111-111111111111'), true);
 select _expect('exec lacks analytics.read:cohort',     has_cap('analytics.read:cohort','11111111-1111-1111-1111-111111111111'), false);
-select _expect('exec lacks announcements.write:cohort',has_cap('announcements.write:cohort','11111111-1111-1111-1111-111111111111'), false);
 
 \echo '--- student: self + content read + community, no grading ---'
 select _set_uid('student01@seed.local');
