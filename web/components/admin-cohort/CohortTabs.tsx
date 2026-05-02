@@ -10,12 +10,14 @@ type Tab =
   | "grading"
   | "capstones"
   | "polls"
+  | "live"
   | "help-desk"
   | "analytics"
   | "milestones";
 
 const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "home", label: "Home", href: (c) => `/admin/cohorts/${c}` },
+  { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
   { id: "roster", label: "Roster", href: (c) => `/admin/cohorts/${c}/roster` },
   { id: "pods", label: "Pods", href: (c) => `/admin/cohorts/${c}/pods` },
   { id: "schedule", label: "Schedule", href: (c) => `/admin/cohorts/${c}/schedule` },

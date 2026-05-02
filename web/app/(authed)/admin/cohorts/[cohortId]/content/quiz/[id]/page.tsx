@@ -6,7 +6,6 @@ import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getQuizDetail } from "@/lib/queries/quiz-detail";
 import { QuestionsEditor } from "@/app/(authed)/admin/content/quiz/[id]/QuestionsEditor";
-import { LiveSessionControls } from "@/app/(authed)/admin/content/quiz/[id]/LiveSessionControls";
 import { QuizResultsChart } from "@/app/(authed)/admin/content/quiz/[id]/QuizResultsChart";
 
 export default async function QuizEditorPage({
@@ -41,8 +40,6 @@ export default async function QuizEditorPage({
           </Link>
         </CardSub>
       </header>
-
-      <LiveSessionControls quizId={quiz.id} closesAt={quiz.closes_at} />
 
       <Card className="p-6">
         <QuestionsEditor

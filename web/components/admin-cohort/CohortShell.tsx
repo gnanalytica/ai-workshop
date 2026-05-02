@@ -18,6 +18,7 @@ export async function CohortShell({
     | "grading"
     | "capstones"
     | "polls"
+    | "live"
     | "help-desk"
     | "analytics"
     | "milestones";

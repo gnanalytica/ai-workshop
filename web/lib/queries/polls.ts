@@ -10,6 +10,7 @@ export interface PollSummary {
   options: PollOption[];
   opened_at: string;
   closed_at: string | null;
+  closes_at: string | null;
   vote_count: number;
 }
 
@@ -17,13 +18,14 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("polls")
-    .select("id, cohort_id, day_number, question, options, opened_at, closed_at, poll_votes(count)")
+    .select("id, cohort_id, day_number, question, options, opened_at, closed_at, closes_at, poll_votes(count)")
     .eq("cohort_id", cohortId)
     .order("opened_at", { ascending: false });
   return ((data ?? []) as unknown as Array<{
     id: string; cohort_id: string; day_number: number | null;
     question: string; options: PollOption[];
     opened_at: string; closed_at: string | null;
+    closes_at: string | null;
     poll_votes: Array<{ count: number }>;
   }>).map((p) => ({
     id: p.id,
@@ -33,6 +35,7 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
     options: p.options ?? [],
     opened_at: p.opened_at,
     closed_at: p.closed_at,
+    closes_at: p.closes_at,
     vote_count: p.poll_votes?.[0]?.count ?? 0,
   }));
 });

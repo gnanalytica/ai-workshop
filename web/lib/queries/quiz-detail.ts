@@ -17,38 +17,7 @@ export interface QuizDetail {
   day_number: number;
   title: string;
   version: number;
-  closes_at: string | null;
   questions: QuizQuestionRow[];
-}
-
-export interface ActiveQuiz {
-  id: string;
-  title: string;
-  day_number: number | null;
-  closes_at: string;
-  question_count: number;
-  attempted: boolean;
-}
-
-export async function getActiveQuiz(cohortId: string): Promise<ActiveQuiz | null> {
-  const sb = await getSupabaseServer();
-  const { data } = await (sb.rpc as unknown as (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => Promise<{ data: ActiveQuiz | ActiveQuiz[] | null }>)("rpc_active_quiz", {
-    p_cohort: cohortId,
-  });
-  if (!data) return null;
-  const row = Array.isArray(data) ? data[0] ?? null : data;
-  if (!row) return null;
-  return {
-    id: row.id,
-    title: row.title,
-    day_number: row.day_number ?? null,
-    closes_at: row.closes_at,
-    question_count: Number(row.question_count ?? 0),
-    attempted: !!row.attempted,
-  };
 }
 
 export interface QuizQuestionResult {
@@ -105,13 +74,12 @@ export const getQuizDetail = cache(async (quizId: string): Promise<QuizDetail | 
   const sb = await getSupabaseServer();
   const { data, error } = await sb
     .from("quizzes")
-    .select("id, cohort_id, day_number, title, version, closes_at, quiz_questions(ordinal, prompt, kind, options, answer)")
+    .select("id, cohort_id, day_number, title, version, quiz_questions(ordinal, prompt, kind, options, answer)")
     .eq("id", quizId)
     .maybeSingle();
   if (error || !data) return null;
   const d = data as unknown as {
     id: string; cohort_id: string; day_number: number; title: string; version: number;
-    closes_at: string | null;
     quiz_questions: Array<{ ordinal: number; prompt: string; kind: QuizKind; options: unknown; answer: unknown }>;
   };
   return {
@@ -120,7 +88,6 @@ export const getQuizDetail = cache(async (quizId: string): Promise<QuizDetail | 
     day_number: d.day_number,
     title: d.title,
     version: d.version,
-    closes_at: d.closes_at ?? null,
     questions: (d.quiz_questions ?? [])
       .map((q) => ({
         ordinal: q.ordinal,
