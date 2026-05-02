@@ -63,7 +63,7 @@ export function CreatePodForm({
         onSubmit={submit}
         aria-busy={pending}
         className={cn(
-          "grid gap-3 sm:grid-cols-[1fr_2fr_auto]",
+          "grid gap-3 md:grid-cols-[1fr_2fr_auto]",
           pending && "pointer-events-none opacity-80",
         )}
       >

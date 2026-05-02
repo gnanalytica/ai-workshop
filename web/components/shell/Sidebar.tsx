@@ -69,9 +69,11 @@ const PINNED_KEY = "shell.sidebar.pinned";
 export function Sidebar({
   caps,
   persona,
+  bannerOffset = false,
 }: {
   caps: readonly string[];
   persona: Persona | null;
+  bannerOffset?: boolean;
 }) {
   const activePath = usePathname() ?? "/";
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -113,7 +115,10 @@ export function Sidebar({
         variant="ghost"
         size="icon"
         aria-label="Open navigation"
-        className="fixed top-1.5 left-1.5 z-50 h-11 w-11 md:hidden"
+        className={cn(
+          "fixed left-1.5 z-50 h-11 w-11 md:hidden",
+          bannerOffset ? "top-[calc(2.75rem+0.375rem)]" : "top-1.5",
+        )}
         onClick={() => setDrawerOpen(true)}
       >
         <Menu size={20} />
