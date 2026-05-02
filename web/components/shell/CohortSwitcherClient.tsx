@@ -12,7 +12,14 @@ export function CohortSwitcherClient({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   return (
-    <form ref={formRef} action={setCurrentFacultyCohort} className="flex items-center gap-2">
+    // Remount whenever the server-resolved cohort changes so the
+    // uncontrolled <select> picks up the new defaultValue.
+    <form
+      key={currentId}
+      ref={formRef}
+      action={setCurrentFacultyCohort}
+      className="flex items-center gap-2"
+    >
       <label htmlFor="cohort_id" className="text-muted text-xs tracking-wide uppercase">
         Cohort
       </label>

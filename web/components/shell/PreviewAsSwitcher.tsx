@@ -50,7 +50,16 @@ export function PreviewAsSwitcher({
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <form ref={formRef} action={setPreviewAs} className="flex items-center gap-2">
+      {/* Remount the form whenever the server-resolved selection changes so
+          the uncontrolled <select>s pick up the new defaultValue. Without
+          this, picking a new persona/cohort updates the route but the
+          dropdowns stay on their previous DOM value. */}
+      <form
+        key={`${effective}|${previewCohortId ?? ""}`}
+        ref={formRef}
+        action={setPreviewAs}
+        className="flex items-center gap-2"
+      >
         <select
           id="persona"
           name="persona"
