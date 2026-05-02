@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub } from "@/components/ui/card";
+import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getQuizDetail } from "@/lib/queries/quiz-detail";
 import { QuestionsEditor } from "@/app/(authed)/admin/content/quiz/[id]/QuestionsEditor";
+import { LiveSessionControls } from "@/app/(authed)/admin/content/quiz/[id]/LiveSessionControls";
+import { QuizResultsChart } from "@/app/(authed)/admin/content/quiz/[id]/QuizResultsChart";
 
 export default async function QuizEditorPage({
   params,
@@ -40,12 +42,19 @@ export default async function QuizEditorPage({
         </CardSub>
       </header>
 
+      <LiveSessionControls quizId={quiz.id} closesAt={quiz.closes_at} />
+
       <Card className="p-6">
         <QuestionsEditor
           cohortId={quiz.cohort_id}
           quizId={quiz.id}
           initial={quiz.questions}
         />
+      </Card>
+
+      <Card className="space-y-4 p-6">
+        <CardTitle>Results</CardTitle>
+        <QuizResultsChart quizId={quiz.id} />
       </Card>
     </>
   );
