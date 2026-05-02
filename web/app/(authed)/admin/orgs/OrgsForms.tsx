@@ -81,7 +81,7 @@ export function NewPromoForm({ orgs }: { orgs: { id: string; name: string }[] })
           <option key={o.id} value={o.id}>{o.name}</option>
         ))}
       </select>
-      <div className="flex gap-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         <Input value={maxUses} onChange={(e) => setMaxUses(e.target.value)} placeholder="Max uses (blank = ∞)" inputMode="numeric" />
         <Input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} />
       </div>

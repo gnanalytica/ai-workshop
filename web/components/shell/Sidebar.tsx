@@ -69,9 +69,11 @@ const PINNED_KEY = "shell.sidebar.pinned";
 export function Sidebar({
   caps,
   persona,
+  bannerOffset = false,
 }: {
   caps: readonly string[];
   persona: Persona | null;
+  bannerOffset?: boolean;
 }) {
   const activePath = usePathname() ?? "/";
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -106,15 +108,20 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile: burger trigger */}
+      {/* Mobile: burger trigger — sits inside the Topbar's reserved left slot
+          (Topbar adds pl-12 on <md). Fixed so it stays accessible when the
+          page scrolls under the sticky topbar. 44px hit target. */}
       <Button
         variant="ghost"
         size="icon"
         aria-label="Open navigation"
-        className="fixed top-2 left-2 z-50 md:hidden"
+        className={cn(
+          "fixed left-1.5 z-50 h-11 w-11 md:hidden",
+          bannerOffset ? "top-[calc(2.75rem+0.375rem)]" : "top-1.5",
+        )}
         onClick={() => setDrawerOpen(true)}
       >
-        <Menu size={18} />
+        <Menu size={20} />
       </Button>
 
       {/* Desktop rail — fixed 64px width that owns the layout column.

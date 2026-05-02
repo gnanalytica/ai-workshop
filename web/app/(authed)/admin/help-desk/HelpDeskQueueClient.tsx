@@ -91,7 +91,7 @@ export function HelpDeskQueueClient({
             <Card key={s.id} className="p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-ink text-sm font-medium">{s.user_name ?? "—"}</span>
                     <Badge variant={KIND_TONE[s.kind]}>{s.kind}</Badge>
                     <Badge variant={STATUS_TONE[s.status]}>{s.status}</Badge>

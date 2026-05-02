@@ -774,7 +774,8 @@ function FacultyListView({
   }
   return (
     <Card className="p-0">
-      <ul className="divide-line/50 divide-y">
+      <div className="overflow-x-auto">
+      <ul className="divide-line/50 min-w-[480px] divide-y">
         <li className="text-muted grid grid-cols-[1fr_1fr_auto] items-center gap-3 px-4 py-2 text-[10px] font-medium uppercase tracking-wider">
           <span>Name</span>
           <span>Pod</span>
@@ -815,6 +816,7 @@ function FacultyListView({
           </li>
         ))}
       </ul>
+      </div>
     </Card>
   );
 }
@@ -867,7 +869,8 @@ function StudentListView({
   }
   return (
     <Card className="p-0">
-      <ul className="divide-line/50 divide-y">
+      <div className="overflow-x-auto">
+      <ul className="divide-line/50 min-w-[520px] divide-y">
         <li className="text-muted grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2 text-[10px] font-medium uppercase tracking-wider">
           <span className="w-4" />
           <span>Name</span>
@@ -932,6 +935,7 @@ function StudentListView({
           );
         })}
       </ul>
+      </div>
     </Card>
   );
 }

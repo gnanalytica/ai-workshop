@@ -204,4 +204,14 @@
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+
+  /* iOS Safari auto-zooms when a form control's font-size is < 16px on focus.
+     Force 16px minimum on narrow viewports without disturbing desktop sizing. */
+  @media (max-width: 640px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
 }

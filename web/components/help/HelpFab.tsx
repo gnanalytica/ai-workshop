@@ -20,7 +20,8 @@ export function HelpFab({ persona }: { persona: Persona | null }) {
         onClick={() => setOpen(true)}
         aria-label="Ask Buddy — your workshop assistant"
         className="
-          fixed bottom-5 right-5 z-30 group
+          fixed right-5 z-30 group
+          bottom-[max(1.25rem,env(safe-area-inset-bottom))]
           inline-flex h-11 items-center gap-2 pl-3 pr-4
           text-sm font-semibold tracking-tight
           text-ink/90 hover:text-ink

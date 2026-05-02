@@ -244,7 +244,7 @@ export default async function OnboardingPage() {
           <Sparkles size={12} strokeWidth={2.4} />
           Day 0 · Welcome
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight break-words sm:text-3xl md:text-4xl">
           Hi {firstName(profile?.full_name)} — let&apos;s get you set up
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-7">{intro}</p>

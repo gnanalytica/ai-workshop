@@ -123,12 +123,12 @@ export function HelpDeskQueue({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name, message, or “you” for your tech request…"
-          className="w-72"
+          className="w-full sm:w-72"
         />
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="border-line bg-input-bg text-ink rounded-md border px-2 py-1.5 text-sm"
+          className="border-line bg-input-bg text-ink w-full rounded-md border px-2 py-1.5 text-sm sm:w-auto"
           aria-label="Sort tickets"
         >
           <option value="oldest">Oldest first</option>
@@ -161,7 +161,7 @@ export function HelpDeskQueue({
             <Card
               key={s.id}
               className={cn(
-                "flex items-start justify-between gap-3 p-4",
+                "flex flex-col items-stretch gap-3 p-4 sm:flex-row sm:items-start sm:justify-between",
                 priorityBorder(s),
               )}
             >

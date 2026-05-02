@@ -161,7 +161,7 @@ export default async function FacultyCohortPage() {
               {atRisk.map((s) => (
                 <li
                   key={s.user_id}
-                  className="hover:bg-bg-soft flex items-center justify-between gap-3 px-5 py-3 text-sm transition-colors"
+                  className="hover:bg-bg-soft flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm transition-colors"
                 >
                   <div className="min-w-0 flex-1">
                     <Link

@@ -71,7 +71,7 @@ export function ProfileForm({
       </label>
       <div className="space-y-2">
         <span className="text-muted text-xs">Avatar</span>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

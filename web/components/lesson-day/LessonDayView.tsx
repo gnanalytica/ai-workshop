@@ -263,14 +263,14 @@ export async function LessonDayView({
   );
 
   return (
-    <div className="-m-6 flex md:-m-8">
+    <div className="-mx-4 -mt-4 flex md:-m-8">
       <DayRail items={railItems} activeDay={dayNumber} basePath={railBasePath} />
-      <article className="min-w-0 flex-1 px-6 py-8 md:px-10 mx-auto max-w-3xl">
+      <article className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8 md:px-10 mx-auto max-w-3xl">
         <header className="mb-6">
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
             Day {dayNumber} · Week {meta.week ?? "?"}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">{meta.topic}</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight break-words sm:text-3xl md:text-4xl">{meta.topic}</h1>
           {meta.tldr && <p className="text-muted mt-3 text-base leading-7">{meta.tldr}</p>}
           <div className="text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
             {cohortDay?.live_session_at && (

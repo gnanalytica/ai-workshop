@@ -53,8 +53,8 @@ export default async function AdminCohortCapstonesPage({
         {rows.length === 0 ? (
           <Card><CardSub>No confirmed students in this cohort yet.</CardSub></Card>
         ) : (
-          <div className="border-line overflow-hidden rounded-lg border">
-            <table className="w-full text-sm">
+          <div className="border-line overflow-x-auto rounded-lg border">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-bg-soft text-muted text-xs uppercase">
                 <tr>
                   <th className="px-3 py-2 text-left">Student</th>

@@ -146,7 +146,7 @@ export function CommunityList({ posts }: { posts: BoardPostSummary[] }) {
           {filtered.map((p) => (
             <Card key={p.id} className="hover:border-accent/40 transition-colors">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <Link href={`/community/${p.id}`} className="hover:text-accent">
+                <Link href={`/community/${p.id}`} className="hover:text-accent min-w-0 break-words">
                   <CardTitle>{p.title}</CardTitle>
                 </Link>
                 <div className="flex items-center gap-1.5">

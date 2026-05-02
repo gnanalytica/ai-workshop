@@ -78,13 +78,13 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
           className="border-line bg-input-bg text-ink w-full rounded-md border p-3 text-sm"
         />
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Badge variant={unlocked ? "ok" : "default"}>{unlocked ? "Unlocked" : "Locked"}</Badge>
         <Button variant="outline" disabled={pending} onClick={toggle}>
           {unlocked ? "Lock day" : "Unlock day"}
         </Button>
-        <div className="flex-1" />
-        <Button disabled={pending} onClick={save}>
+        <div className="hidden flex-1 sm:block" />
+        <Button disabled={pending} onClick={save} className="sm:ml-auto">
           {pending ? "Saving…" : "Save"}
         </Button>
       </div>

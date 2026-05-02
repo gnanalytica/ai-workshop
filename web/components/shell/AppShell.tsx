@@ -101,7 +101,7 @@ export async function AppShell({
     <div className="bg-bg text-ink flex min-h-screen flex-col">
       {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       <div className="flex flex-1">
-        <Sidebar caps={caps} persona={effectivePersona} />
+        <Sidebar caps={caps} persona={effectivePersona} bannerOffset={!!sandboxName} />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar
             profile={profile}
@@ -112,7 +112,9 @@ export async function AppShell({
             activeCohortId={activeCohortId}
             activeDayNumber={activeDayNumber}
           />
-          <main className="flex-1 overflow-x-hidden p-4 md:p-8">{children}</main>
+          <main className="min-w-0 flex-1 overflow-x-hidden px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8">
+            {children}
+          </main>
         </div>
       </div>
       <TourMount persona={truePersona} initialOpen={initialOpen} />

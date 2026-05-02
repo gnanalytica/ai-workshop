@@ -47,7 +47,7 @@ export function FacultyOps({
     <div className="space-y-2">
       {current.map((f) => (
         <div key={f.user_id} className="flex items-center gap-2">
-          <span className="flex-1 text-sm">{f.full_name ?? "—"}</span>
+          <span className="min-w-0 flex-1 truncate text-sm">{f.full_name ?? "—"}</span>
           <Button size="sm" variant="danger" onClick={() => call("faculty_removed", f.user_id)} disabled={pending}>
             Remove
           </Button>
@@ -111,7 +111,7 @@ export function MemberOps({
     <div className="space-y-2">
       {current.map((m) => (
         <div key={m.user_id} className="flex items-center gap-2">
-          <span className="flex-1 text-sm">
+          <span className="min-w-0 flex-1 truncate text-sm">
             {m.full_name ?? "—"} <span className="text-muted">· {m.email}</span>
           </span>
           <Button size="sm" variant="danger" onClick={() => remove(m.user_id)} disabled={pending}>

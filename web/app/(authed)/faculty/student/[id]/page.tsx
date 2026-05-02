@@ -105,11 +105,11 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           <Card>
             <ul className="divide-y divide-line/50">
               {s.recentSubmissions.map((r) => (
-                <li key={r.id} className="flex items-center justify-between py-2 text-sm">
-                  <div>
-                    <span className="text-ink font-medium">Day {r.day_number} · {r.assignment_title}</span>
+                <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+                  <div className="min-w-0">
+                    <span className="text-ink font-medium break-words">Day {r.day_number} · {r.assignment_title}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={r.status === "graded" ? "ok" : r.status === "submitted" ? "warn" : "default"}>
                       {r.status}
                     </Badge>
@@ -132,7 +132,7 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
             <ul className="divide-y divide-line/50">
               {s.recentHelpDesk.map((r) => (
                 <li key={r.id} className="py-2 text-sm">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={r.kind === "tech" ? "danger" : "warn"}>{r.kind}</Badge>
                     <Badge>{r.status}</Badge>
                     <span className="text-muted text-xs">{relTime(r.created_at)}</span>
@@ -153,8 +153,8 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
           <Card>
             <ul className="divide-y divide-line/50">
               {s.recentPosts.map((p) => (
-                <li key={p.id} className="flex items-center justify-between py-2 text-sm">
-                  <Link href={`/community/${p.id}`} className="hover:text-accent text-ink">
+                <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+                  <Link href={`/community/${p.id}`} className="hover:text-accent text-ink min-w-0 break-words">
                     {p.title}
                   </Link>
                   <span className="text-muted text-xs">{relTime(p.created_at)}</span>

@@ -34,7 +34,7 @@ export default async function StudentHelpDeskPage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {cohort.name} · Help desk
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Your tickets</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your tickets</h1>
         <p className="text-muted mt-1 text-sm max-w-2xl">
           Raise a ticket below. Your pod faculty sees it first; staff or tech can take over if it&apos;s
           escalated.

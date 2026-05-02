@@ -20,7 +20,7 @@ export function DayRail({
   basePath?: string;
 }) {
   return (
-    <aside className="bg-nav-bg border-line h-full w-56 shrink-0 overflow-y-auto border-r p-3 text-sm">
+    <aside className="bg-nav-bg border-line hidden h-full w-56 shrink-0 overflow-y-auto border-r p-3 text-sm md:block">
       <p className="text-muted mb-2 px-2 text-xs font-medium tracking-widest uppercase">
         Curriculum
       </p>

@@ -13,7 +13,7 @@ export default async function TeamsPage() {
     <div className="space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Teams</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Find your capstone team</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Find your capstone team</h1>
         <CardSub className="mt-1">
           {teams.length} teams formed · join one or start a new team
         </CardSub>
@@ -27,8 +27,8 @@ export default async function TeamsPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {teams.map((t) => (
               <Card key={t.id} className="p-4">
-                <div className="flex items-baseline justify-between">
-                  <CardTitle>{t.name}</CardTitle>
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <CardTitle className="break-words">{t.name}</CardTitle>
                   <Badge>{t.member_count}</Badge>
                 </div>
                 <ul className="text-muted mt-2 space-y-1 text-sm">
