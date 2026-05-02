@@ -1,5 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSession, getProfile } from "@/lib/auth/session";
+import { getEffectivePersona } from "@/lib/auth/persona";
 import { getCohortDayCached } from "@/lib/cache/cohort";
 import { JoinSessionClient } from "./JoinSessionClient";
 
@@ -29,9 +30,15 @@ export async function JoinSession({
   const meetLink = dayRow?.meet_link ?? null;
   const sb = await getSupabaseServer();
 
-  const isAdmin = profile.staff_roles?.includes("admin") ?? false;
+  // Honor preview-as: when an admin previews as student we want the edit
+  // affordance hidden so the chrome reflects what a real student would see.
+  // The underlying server action still re-checks real perms, so this is
+  // visual-only — no security implication.
+  const effective = await getEffectivePersona();
+  const isAdmin =
+    (profile.staff_roles?.includes("admin") ?? false) && effective !== "student";
   let canEdit = isAdmin;
-  if (!canEdit) {
+  if (!canEdit && effective !== "student") {
     const session = await getSession();
     if (session) {
       const { data: facRow } = await sb

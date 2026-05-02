@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,16 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
   const [liveAt, setLiveAt] = useState<string>(day.live_session_at?.slice(0, 16) ?? "");
   const [unlocked, setUnlocked] = useState(day.is_unlocked);
   const [pending, start] = useTransition();
+
+  // Resync local state if the prop changes (e.g. after a server action /
+  // revalidatePath, or when admin navigates between days).
+  useEffect(() => {
+    setTitle(day.title);
+    setMeetLink(day.meet_link ?? "");
+    setNotes(day.notes ?? "");
+    setLiveAt(day.live_session_at?.slice(0, 16) ?? "");
+    setUnlocked(day.is_unlocked);
+  }, [day]);
 
   function save() {
     start(async () => {

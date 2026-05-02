@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,13 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
   const [body, setBody] = useState(assignment.submission?.body ?? "");
   const [links, setLinks] = useState<LinkRow[]>(assignment.submission?.links ?? []);
   const [pending, start] = useTransition();
+
+  // Resync local state if the prop changes (e.g. after a server action /
+  // revalidatePath, or when admin previews as a different student).
+  useEffect(() => {
+    setBody(assignment.submission?.body ?? "");
+    setLinks(assignment.submission?.links ?? []);
+  }, [assignment.submission]);
   const status = assignment.submission?.status ?? "draft";
   const submitted = status === "submitted";
   const published = !!assignment.submission?.published;

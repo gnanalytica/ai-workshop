@@ -55,7 +55,7 @@ export function PreviewAsSwitcher({
           this, picking a new persona/cohort updates the route but the
           dropdowns stay on their previous DOM value. */}
       <form
-        key={`${effective}|${previewCohortId ?? ""}`}
+        key={`${effective}|${previewCohortId ?? ""}|${previewUserId ?? ""}`}
         ref={formRef}
         action={setPreviewAs}
         className="flex items-center gap-2"

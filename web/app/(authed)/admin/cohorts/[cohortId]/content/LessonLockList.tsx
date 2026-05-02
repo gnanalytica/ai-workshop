@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setDayUnlocked } from "@/lib/actions/schedule";
 import { cn } from "@/lib/utils";
@@ -37,6 +37,12 @@ function LessonLockRow({
   const router = useRouter();
   const [pending, start] = useTransition();
   const [unlocked, setUnlocked] = useState(day.is_unlocked);
+
+  // Resync local state if the prop changes (e.g. after revalidatePath
+  // refreshes the day list with a server-authoritative value).
+  useEffect(() => {
+    setUnlocked(day.is_unlocked);
+  }, [day.is_unlocked]);
 
   function toggle() {
     const next = !unlocked;
