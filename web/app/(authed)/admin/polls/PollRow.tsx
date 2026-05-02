@@ -9,7 +9,15 @@ import type { PollSummary } from "@/lib/queries/polls";
 import { closePoll } from "@/lib/actions/polls";
 import { fmtDateTime } from "@/lib/format";
 
-export function PollRow({ poll, cohortId }: { poll: PollSummary; cohortId: string }) {
+export function PollRow({
+  poll,
+  cohortId,
+  results,
+}: {
+  poll: PollSummary;
+  cohortId: string;
+  results?: React.ReactNode;
+}) {
   const [pending, start] = useTransition();
   function close() {
     start(async () => {
@@ -35,11 +43,13 @@ export function PollRow({ poll, cohortId }: { poll: PollSummary; cohortId: strin
           )}
         </div>
       </div>
-      <ul className="text-muted mt-3 space-y-1 text-sm">
-        {poll.options.map((o) => (
-          <li key={o.id}>· {o.label}</li>
-        ))}
-      </ul>
+      {results ?? (
+        <ul className="text-muted mt-3 space-y-1 text-sm">
+          {poll.options.map((o) => (
+            <li key={o.id}>· {o.label}</li>
+          ))}
+        </ul>
+      )}
       <p className="text-muted mt-3 text-xs">
         Opened {fmtDateTime(poll.opened_at)}
         {poll.closed_at && ` · closed ${fmtDateTime(poll.closed_at)}`}

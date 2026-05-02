@@ -84,6 +84,17 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
     });
   }, [messages, streaming]);
 
+  // Reset conversation when the effective persona changes (e.g. admin
+  // toggling preview-as). The /api/help-chat backend resolves persona
+  // server-side, so prior turns would otherwise mix two personas' answers.
+  useEffect(() => {
+    setMessages([]);
+    setConversationId(null);
+    setInput("");
+    setError(null);
+    setRateLimited(false);
+  }, [persona]);
+
   const send = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
@@ -159,6 +170,9 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
         ref={scrollRef}
         className="flex-1 min-h-0 space-y-5 overflow-y-auto px-5 py-5 text-[13.5px] leading-[1.6]"
       >
+        <p className="text-muted text-xs -mt-1">
+          Conversation resets when switching personas.
+        </p>
         {messages.length === 0 && !rateLimited && (
           <EmptyState
             persona={persona}

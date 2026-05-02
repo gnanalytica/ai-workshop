@@ -37,14 +37,52 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
   }));
 });
 
+export interface PollResultRow { choice: string; label: string; votes: number }
+
 export const getPollResults = cache(
-  async (pollId: string): Promise<Record<string, number>> => {
+  async (pollId: string): Promise<PollResultRow[]> => {
     const sb = await getSupabaseServer();
-    const { data } = await sb.from("poll_votes").select("choice").eq("poll_id", pollId);
-    const counts: Record<string, number> = {};
-    for (const v of (data ?? []) as Array<{ choice: string }>) {
-      counts[v.choice] = (counts[v.choice] ?? 0) + 1;
-    }
-    return counts;
+    const { data } = await (sb.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ data: Array<{ choice: string; label: string; votes: number }> | null }>)(
+      "rpc_poll_results",
+      { p_poll: pollId },
+    );
+    return ((data ?? []) as Array<{ choice: string; label: string; votes: number }>).map((r) => ({
+      choice: r.choice,
+      label: r.label,
+      votes: Number(r.votes ?? 0),
+    }));
   },
 );
+
+export interface ActivePoll {
+  id: string;
+  question: string;
+  options: PollOption[];
+  opened_at: string;
+  closes_at: string | null;
+  my_choice: string | null;
+}
+
+export async function getActivePoll(cohortId: string): Promise<ActivePoll | null> {
+  const sb = await getSupabaseServer();
+  const { data } = await (sb.rpc as unknown as (
+    fn: string,
+    args: Record<string, unknown>,
+  ) => Promise<{ data: ActivePoll | ActivePoll[] | null }>)("rpc_active_poll", {
+    p_cohort: cohortId,
+  });
+  if (!data) return null;
+  const row = Array.isArray(data) ? data[0] ?? null : data;
+  if (!row) return null;
+  return {
+    id: row.id,
+    question: row.question,
+    options: row.options ?? [],
+    opened_at: row.opened_at,
+    closes_at: row.closes_at,
+    my_choice: row.my_choice ?? null,
+  };
+}

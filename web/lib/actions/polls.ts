@@ -9,6 +9,7 @@ const createSchema = z.object({
   day_number: z.number().int().min(1).max(60).optional(),
   question: z.string().min(3).max(280),
   options: z.array(z.string().min(1).max(80)).min(2).max(8),
+  duration_minutes: z.number().int().min(1).max(60 * 24 * 7).optional(),
 });
 
 export async function createPoll(input: z.infer<typeof createSchema>) {
@@ -17,6 +18,10 @@ export async function createPoll(input: z.infer<typeof createSchema>) {
   await requireCapability("content.write", parsed.data.cohort_id);
   return withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
+    const closes_at =
+      parsed.data.duration_minutes != null
+        ? new Date(Date.now() + parsed.data.duration_minutes * 60_000).toISOString()
+        : null;
     return sb
       .from("polls")
       .insert({
@@ -25,7 +30,8 @@ export async function createPoll(input: z.infer<typeof createSchema>) {
         question: parsed.data.question,
         options: parsed.data.options.map((label, i) => ({ id: String(i + 1), label })),
         created_by: user.user?.id ?? null,
-      })
+        closes_at,
+      } as never)
       .select()
       .single();
   }, "/admin/polls");
