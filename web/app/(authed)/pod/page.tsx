@@ -14,7 +14,7 @@ export default async function MyPodPage() {
         <Card>
           <CardTitle>You aren&apos;t in a pod yet</CardTitle>
           <CardSub className="mt-2">
-            An admin will assign you shortly. Pods are how you get day-to-day faculty support.
+            An admin will assign you to a pod soon. Your pod is how you receive day-to-day faculty support.
           </CardSub>
         </Card>
       </div>

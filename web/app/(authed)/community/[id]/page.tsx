@@ -67,7 +67,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
           {post.replies.length} {post.replies.length === 1 ? "reply" : "replies"}
         </h2>
         {post.replies.length === 0 ? (
-          <Card><CardSub>Be the first to reply.</CardSub></Card>
+          <Card><CardSub>No replies yet. Write the first reply.</CardSub></Card>
         ) : (
           post.replies.map((r) => (
             <Card key={r.id} className={`p-4 ${r.is_accepted ? "border-ok/40" : ""}`}>
@@ -111,7 +111,7 @@ export default async function BoardPostPage({ params }: { params: Promise<{ id: 
       {canWriteCommunity ? (
         <ReplyForm postId={post.id} roster={roster} />
       ) : (
-        <p className="text-muted text-sm">You can read this thread; posting requires community access for this cohort.</p>
+        <p className="text-muted text-sm">You can read this thread. To reply, you need community access for this cohort.</p>
       )}
     </article>
   );

@@ -44,7 +44,7 @@ export function FeedbackPanel({
       </div>
       {summaries.length === 0 ? (
         <Card>
-          <CardSub>No feedback yet for the most recent days.</CardSub>
+          <CardSub>No feedback yet for recent days.</CardSub>
         </Card>
       ) : (
         <Card className="p-0">

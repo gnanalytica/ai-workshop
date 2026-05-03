@@ -30,7 +30,7 @@ export function ReplyForm({ postId, roster }: { postId: string; roster: RosterMe
         onChange={setBody}
         roster={roster}
         rows={4}
-        placeholder="Your reply (markdown supported). Type @ to mention."
+        placeholder="Write your reply (markdown supported). Type @ to mention someone."
       />
       <div className="mt-3 flex justify-end">
         <Button onClick={submit} disabled={pending}>

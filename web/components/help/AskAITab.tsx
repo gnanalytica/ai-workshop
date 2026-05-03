@@ -29,7 +29,7 @@ interface ChatMessage {
 }
 
 const RATE_LIMIT_COPY =
-  "You've used today's 30 questions. Reach the help desk for anything urgent — Buddy is back tomorrow.";
+  "You have used today's 30 questions. Please contact the help desk for anything urgent. Buddy will return tomorrow.";
 
 interface StarterPrompt {
   label: string;
@@ -38,24 +38,24 @@ interface StarterPrompt {
 
 const STARTERS_BY_PERSONA: Record<"student" | "faculty" | "admin", StarterPrompt[]> = {
   student: [
-    { label: "What's today's lesson?", prompt: "What's on today's lesson? Walk me through it." },
+    { label: "What is today's lesson?", prompt: "What is today's lesson about? Please explain it to me." },
     { label: "Where do I submit my assignment?", prompt: "Where do I find and submit today's assignment?" },
     { label: "How do I find my pod?", prompt: "How do I find my pod and see who else is in it?" },
     { label: "Where do I see my team?", prompt: "Where do I see my team and chat with them?" },
     { label: "How is my score calculated?", prompt: "How is my score / leaderboard rank calculated?" },
-    { label: "I'm stuck — how do I get help?", prompt: "I'm stuck on a lab. What's the fastest way to get help?" },
+    { label: "How do I get help with a lab?", prompt: "I need help with a lab. What is the quickest way to get help?" },
     { label: "How do I join the live session?", prompt: "How do I join today's live session?" },
     { label: "Where is the handbook?", prompt: "Where can I find the student handbook for the platform?" },
   ],
   faculty: [
-    { label: "What is a pod?", prompt: "What is a pod, and what's expected of me as the primary faculty?" },
+    { label: "What is a pod?", prompt: "What is a pod, and what is expected of me as the primary faculty?" },
     { label: "How do I create a pod?", prompt: "How do I create a pod and assign students to it?" },
     { label: "How do I review a submission?", prompt: "How do I review a student submission as faculty?" },
     { label: "How do I update the live link?", prompt: "How do I update today's live-session link for my cohort?" },
     { label: "Where is my pod's roster?", prompt: "Where do I see my pod's roster, attendance, and at-risk students?" },
     { label: "How do I escalate a help-desk ticket?", prompt: "How do I escalate a help-desk ticket to admin?" },
     { label: "How do I leave pod notes?", prompt: "How do I leave private pod notes about a student?" },
-    { label: "What can I do in the demo cohort?", prompt: "What can I safely try in the sandbox / demo cohort?" },
+    { label: "What can I do in the demo cohort?", prompt: "What can I safely try in the sandbox or demo cohort?" },
   ],
   admin: [
     { label: "How do I create a cohort?", prompt: "How do I create a new cohort and seed the 30-day curriculum?" },
@@ -127,7 +127,7 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
           return;
         }
         if (!res.ok || !res.body) {
-          setError("Couldn't reach Buddy just now. Try again in a moment.");
+          setError("Could not reach Buddy right now. Please try again in a moment.");
           setMessages((curr) => curr.filter((m) => m.id !== assistantId));
           return;
         }
@@ -148,7 +148,7 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
         }
       } catch (err) {
         console.error("[help-chat client]", err);
-        setError("Network's down — check your connection.");
+        setError("Network error. Please check your connection.");
         setMessages((curr) => curr.filter((m) => m.id !== assistantId));
       } finally {
         setStreaming(false);
@@ -205,7 +205,7 @@ export function AskAITab({ persona }: { persona: Persona | null }) {
           value={input}
           onChange={(e) => setInput(e.currentTarget.value)}
           placeholder={
-            rateLimited ? "Buddy is back tomorrow" : "Ask Buddy anything…"
+            rateLimited ? "Buddy will return tomorrow" : "Ask Buddy anything…"
           }
           disabled={streaming || rateLimited}
           aria-label="Ask Buddy a question"
@@ -251,16 +251,16 @@ function EmptyState({
 }) {
   const greeting =
     persona === "faculty"
-      ? "Hi — I help with pods, grading, and platform how-tos."
+      ? "Hi. I help with pods, grading, and how to use the platform."
       : persona === "admin"
-        ? "Hi — I help with cohorts, invites, and analytics."
-        : "Hi — I help with lessons, assignments, your pod, and getting around.";
+        ? "Hi. I help with cohorts, invites, and analytics."
+        : "Hi. I help with lessons, assignments, your pod, and finding your way around.";
 
   return (
     <div>
       <p className="text-ink mb-1 text-[15px] font-medium">Hello, I&apos;m Buddy.</p>
       <p className="text-muted mb-5 text-[12.5px] leading-relaxed">
-        {greeting} Replies cite the handbook section they came from.
+        {greeting} Replies link to the handbook section they came from.
       </p>
       <p className="text-muted/85 mb-2 text-[10.5px] uppercase tracking-[0.18em]">
         Try one of these

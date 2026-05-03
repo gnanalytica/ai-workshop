@@ -16,7 +16,7 @@ export function HelpDeskButton({ cohortId }: { cohortId: string }) {
 
   function send() {
     if (message.trim().length < 1) {
-      toast.error("Describe what you need help with");
+      toast.error("Please describe what you need help with");
       return;
     }
     start(async () => {
@@ -66,7 +66,7 @@ export function HelpDeskButton({ cohortId }: { cohortId: string }) {
           Cancel
         </Button>
         <Link href="/help-desk" className="text-muted ml-auto text-xs hover:text-accent">
-          Your tickets
+          View your tickets
         </Link>
       </div>
     </div>

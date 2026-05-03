@@ -47,7 +47,7 @@ export function NewPostForm({ cohortId, roster }: { cohortId: string; roster: Ro
         onChange={setBody}
         roster={roster}
         rows={10}
-        placeholder="Body (markdown). Type @ to mention someone."
+        placeholder="Write your post (markdown supported). Type @ to mention someone."
         className="font-mono"
       />
       <Input

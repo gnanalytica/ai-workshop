@@ -97,7 +97,7 @@ export async function LessonDayView({
       tasks.push({
         id: "assignment",
         label: "Submit assignment",
-        hint: "Post-class — write up and submit",
+        hint: "Post-class — write your answer and submit it",
         done: status === "submitted" || status === "graded",
         phase: "post",
       });
@@ -106,7 +106,7 @@ export async function LessonDayView({
       tasks.push({
         id: "quiz",
         label: "Take quiz",
-        hint: "Post-class — locks in your score",
+        hint: "Post-class — saves your final score",
         done: !!interactive.quiz.attempt?.completed_at,
         phase: "post",
       });
@@ -284,7 +284,7 @@ export async function LessonDayView({
           </div>
           {readOnly && (
             <p className="text-muted mt-4 text-sm">
-              You&apos;re viewing the cohort curriculum in read-only mode (no assignments).
+              You are viewing the cohort curriculum in read-only mode (no assignments).
             </p>
           )}
         </header>

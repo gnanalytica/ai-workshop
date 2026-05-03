@@ -15,7 +15,7 @@ export default async function TeamsPage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">Teams</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Find your capstone team</h1>
         <CardSub className="mt-1">
-          {teams.length} teams formed · join one or start a new team
+          {teams.length} teams formed. Join one, or start a new team.
         </CardSub>
       </header>
 

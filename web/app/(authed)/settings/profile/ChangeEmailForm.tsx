@@ -52,8 +52,8 @@ export function ChangeEmailForm({ currentEmail }: { currentEmail: string }) {
       {confirmSent && (
         <p className="text-accent text-xs">
           Check <span className="font-medium">{confirmSent}</span> for a confirmation
-          link. You&apos;ll keep using <span className="font-medium">{currentEmail}</span>{" "}
-          until you click it.
+          link. You will continue to use <span className="font-medium">{currentEmail}</span>{" "}
+          until you click the link.
         </p>
       )}
     </div>

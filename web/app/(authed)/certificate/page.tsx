@@ -62,7 +62,7 @@ export default async function CertificatePage() {
             </div>
           ) : (
             <CardSub className="mt-6">
-              Certificate unlocks once the cohort ends and you&apos;ve hit the milestone thresholds above.
+              The certificate unlocks once the cohort ends and you have reached the milestones above.
             </CardSub>
           )}
         </div>

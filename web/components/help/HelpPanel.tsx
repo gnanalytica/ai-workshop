@@ -94,12 +94,12 @@ export function HelpPanel({
 function tagline(persona: Persona | null): string {
   switch (persona) {
     case "student":
-      return "Ask about today's lesson, your pod, assignments, or anything you can't find.";
+      return "Ask about today's lesson, your pod, assignments, or anything you cannot find.";
     case "faculty":
-      return "Ask about your pod, grading, the help-desk queue, or platform how-tos.";
+      return "Ask about your pod, grading, the help-desk queue, or how to use the platform.";
     case "admin":
       return "Ask about cohorts, invites, analytics, or anything in the platform.";
     default:
-      return "Ask anything about the workshop. Replies cite the handbook.";
+      return "Ask anything about the workshop. Replies link to the handbook.";
   }
 }

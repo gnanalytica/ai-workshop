@@ -54,7 +54,7 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
       .filter((l) => l.label && l.url);
     const bad = cleanLinks.find((l) => !isValidUrl(l.url));
     if (bad) {
-      toast.error(`"${bad.label}" needs a valid http(s) URL`);
+      toast.error(`"${bad.label}" needs a valid http or https URL`);
       return;
     }
     start(async () => {
@@ -88,7 +88,7 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
         <Card className="bg-bg-soft space-y-3">
           <CardSub className="text-accent font-mono text-xs uppercase">Submitted</CardSub>
           <p className="text-ink/85 text-sm">
-            Your submission is in. Feedback will appear once an admin has reviewed it.
+            Your submission has been received. Feedback will appear after an admin reviews it.
           </p>
           {assignment.submission?.body && (
             <p className="text-muted text-xs whitespace-pre-line">{assignment.submission.body.slice(0, 240)}{(assignment.submission.body.length ?? 0) > 240 ? "…" : ""}</p>

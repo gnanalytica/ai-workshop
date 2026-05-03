@@ -37,7 +37,7 @@ export default async function PodsPage({
           <p className="text-accent font-mono text-xs tracking-widest uppercase">Pods</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight break-words sm:text-3xl">{cohort.name}</h1>
           <p className="text-muted mt-1 text-sm">
-            {pods.length} pods · {pods.reduce((s, p) => s + p.member_count, 0)} students placed
+            {pods.length} pods · {pods.reduce((s, p) => s + p.member_count, 0)} students assigned
           </p>
         </div>
         {facultyOwnCohort && (
@@ -58,7 +58,7 @@ export default async function PodsPage({
             <Link href="/faculty/cohort#pods-board" className="text-accent font-medium hover:underline">
               cohort board
             </Link>{" "}
-            to move students between pods in bulk.
+            to move several students between pods at the same time.
           </CardSub>
         </Card>
       )}
@@ -67,8 +67,8 @@ export default async function PodsPage({
         <CardTitle>{pods.length === 0 ? "Create first pod" : "New pod"}</CardTitle>
         <CardSub className="mt-1 mb-3">
           {pods.length === 0
-            ? "Add a name and optional faculty note, then open the pod from the grid to attach faculty and students."
-            : "Create another pod for this cohort. Then open it to attach faculty and students."}
+            ? "Enter a name and an optional faculty note. Then open the pod from the grid to add faculty and students."
+            : "Create another pod for this cohort. Then open it to add faculty and students."}
         </CardSub>
         <CreatePodForm cohortId={cohort.id} />
       </Card>
@@ -77,7 +77,7 @@ export default async function PodsPage({
         <Card>
           <CardTitle>No pods in the grid yet</CardTitle>
           <CardSub className="mt-2 space-y-2">
-            <p>Use the form above to create your first pod, then open it from the grid to assign people.</p>
+            <p>Use the form above to create your first pod. Then open it from the grid to assign people.</p>
             {facultyOwnCohort && (
               <p>
                 Tip: you can also create pods from{" "}

@@ -55,7 +55,7 @@ const STUDENT_CARDS: ExploreCard[] = [
   {
     title: "Meet your classmates",
     description:
-      "Browse the whole cohort, send kudos, and discover who's in other pods.",
+      "Browse the whole cohort, send kudos, and find out who is in other pods.",
     href: "/people",
     cta: "Open classmates",
     icon: UsersRound,
@@ -71,7 +71,7 @@ const STUDENT_CARDS: ExploreCard[] = [
   {
     title: "Try the community",
     description:
-      "Ask questions, share wins, and answer classmates. Mentions notify the right people.",
+      "Ask questions, share your progress, and answer classmates. Mentions notify the right people.",
     href: "/community",
     cta: "Open community",
     icon: MessageSquare,
@@ -87,7 +87,7 @@ const STUDENT_CARDS: ExploreCard[] = [
   {
     title: "How to get help",
     description:
-      "Stuck? Raise a tech, content, or team request — your pod faculty sees it first, with escalation to staff if needed.",
+      "Stuck? Raise a technical, content, or team request — your pod faculty sees it first, and it can be passed to staff if needed.",
     href: "/help-desk",
     cta: "Open help desk",
     icon: LifeBuoy,
@@ -95,7 +95,7 @@ const STUDENT_CARDS: ExploreCard[] = [
   {
     title: "Read the student handbook",
     description:
-      "How attendance works, how grading works, what your capstone is. Bookmark it.",
+      "How attendance works, how grading works, and what your capstone is. Save it for later.",
     href: "/handbook",
     cta: "Open handbook",
     icon: Library,
@@ -106,7 +106,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "What is a pod?",
     description:
-      "A pod is a small group of students under one primary faculty. You see your pod's submissions, attendance, and at-risk signals.",
+      "A pod is a small group of students under one primary faculty. You can see your pod's submissions, attendance, and at-risk signals.",
     href: "/faculty/handbook",
     cta: "Read in handbook",
     icon: Compass,
@@ -122,7 +122,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "Full cohort roster",
     description:
-      "Everyone in your cohort, grouped by pod. Useful for context, but your pod is your home base.",
+      "Everyone in your cohort, grouped by pod. Useful for context, but your pod is your main place to focus.",
     href: "/faculty/cohort",
     cta: "Open cohort",
     icon: UsersRound,
@@ -130,7 +130,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "Update today's live link",
     description:
-      "Use the Join live button in the topbar — click the pencil to set or replace the link. Students see your update next refresh.",
+      "Use the Join live button in the topbar — click the pencil to set or replace the link. Students will see your update on the next refresh.",
     href: "/faculty/schedule",
     cta: "Open schedule",
     icon: Video,
@@ -138,7 +138,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "How to review submissions",
     description:
-      "Faculty are review-only on grades — admins write the final grade. Your read helps spot at-risk students early.",
+      "Faculty can only review grades — admins write the final grade. Your review helps identify at-risk students early.",
     href: "/faculty/handbook",
     cta: "Read in handbook",
     icon: PenLine,
@@ -146,7 +146,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "Help-desk queue",
     description:
-      "Tickets from your pod show first. Claim, reply, or escalate to staff if it's beyond your scope.",
+      "Tickets from your pod appear first. Claim, reply, or pass to staff if it is beyond your scope.",
     href: "/faculty/help-desk",
     cta: "Open help desk",
     icon: LifeBuoy,
@@ -154,7 +154,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "Pod notes",
     description:
-      "Private observations on a student — only you and other faculty for your pod see them. Open any student page from your pod roster.",
+      "Private notes on a student — only you and other faculty for your pod can see them. Open any student page from your pod roster.",
     href: "/faculty/pod",
     cta: "Open my pod",
     icon: Send,
@@ -162,7 +162,7 @@ const FACULTY_CARDS: ExploreCard[] = [
   {
     title: "Try the demo cohort",
     description:
-      "A sandbox cohort with fake students. Try anything — grading, pod ops, ticket triage — without affecting real students.",
+      "A practice cohort with sample students. Try anything — grading, pod actions, ticket sorting — without affecting real students.",
     href: "/faculty/handbook",
     cta: "Read in handbook",
     icon: GraduationCap,
@@ -173,21 +173,21 @@ const ADMIN_CARDS: ExploreCard[] = [
   {
     title: "Create a new cohort",
     description:
-      "Click New cohort on the admin home, fill slug + name + start date. The 30-day curriculum auto-seeds.",
+      "Click New cohort on the admin home, then fill in slug, name, and start date. The 30-day curriculum is added automatically.",
     href: "/admin",
     cta: "Open admin home",
     icon: Milestone,
   },
   {
-    title: "Invite faculty / staff",
+    title: "Invite faculty or staff",
     description:
-      "Generate scoped invite codes. Faculty invites are pinned to a cohort; staff invites are global.",
+      "Generate scoped invite codes. Faculty invites are tied to a cohort; staff invites work across all cohorts.",
     href: "/admin/invites",
     cta: "Open invites",
     icon: Award,
   },
   {
-    title: "Manage pods + primary faculty",
+    title: "Manage pods and primary faculty",
     description:
       "Create pods, assign exactly one primary faculty per pod, and move students between pods.",
     href: "/admin",
@@ -197,7 +197,7 @@ const ADMIN_CARDS: ExploreCard[] = [
   {
     title: "Help-desk queue (all cohorts)",
     description:
-      "Triage across cohorts. Faculty handle pod-scoped tickets first; staff and tech pick up escalations.",
+      "Sort tickets across cohorts. Faculty handle pod-level tickets first; staff and tech pick up the ones that are passed up.",
     href: "/admin/help-desk",
     cta: "Open help desk",
     icon: LifeBuoy,
@@ -205,15 +205,15 @@ const ADMIN_CARDS: ExploreCard[] = [
   {
     title: "Cohort analytics",
     description:
-      "At-risk students, attendance trends, submission rates. Open a cohort to drill in.",
+      "At-risk students, attendance trends, and submission rates. Open a cohort to see more detail.",
     href: "/admin",
     cta: "Open analytics",
     icon: Trophy,
   },
   {
-    title: "Lesson content + lock state",
+    title: "Lesson content and lock state",
     description:
-      "Each cohort has its own day-by-day lock. Unlock days as the cohort progresses.",
+      "Each cohort has its own day-by-day lock. Unlock days as the cohort moves forward.",
     href: "/admin",
     cta: "Open content",
     icon: BookOpen,
@@ -232,10 +232,10 @@ export default async function OnboardingPage() {
 
   const intro =
     persona === "admin"
-      ? "You're running the workshop. Here are the controls you'll touch most."
+      ? "You are running the workshop. Here are the controls you will use most often."
       : persona === "faculty"
-        ? "You're mentoring a pod. Here's how the platform supports you day-to-day."
-        : "Welcome to the workshop. Take five minutes to look around — you'll move faster all month.";
+        ? "You are mentoring a pod. Here is how the platform supports you each day."
+        : "Welcome to the workshop. Take five minutes to look around — it will help you work faster all month.";
 
   return (
     <div className="space-y-8">
@@ -245,7 +245,7 @@ export default async function OnboardingPage() {
           Day 0 · Welcome
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight break-words sm:text-3xl md:text-4xl">
-          Hi {firstName(profile?.full_name)} — let&apos;s get you set up
+          Hi {firstName(profile?.full_name)} — let&apos;s help you get set up
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-7">{intro}</p>
         {profile && !profile.onboarded_at && (
@@ -259,7 +259,7 @@ export default async function OnboardingPage() {
         {profile?.onboarded_at && (
           <div className="border-ok/40 bg-ok/5 mt-5 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs">
             <CheckCircle2 size={13} strokeWidth={2.2} className="text-ok" />
-            <span className="text-ink/85">Onboarding complete — revisit any time.</span>
+            <span className="text-ink/85">Onboarding complete — you can return any time.</span>
           </div>
         )}
       </header>
@@ -277,7 +277,7 @@ export default async function OnboardingPage() {
         <CardTitle className="mt-1 text-base">Ask Buddy anything</CardTitle>
         <p className="text-ink/85 mt-2 text-sm leading-6">
           Click <span className="font-medium">Ask Buddy</span> at the bottom-right of any page. Buddy knows
-          where things live, how to do common actions, and points you to the handbook section that backs
+          where things are, how to do common actions, and points you to the handbook section that supports
           its answer.
         </p>
       </Card>

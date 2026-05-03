@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { submitDayFeedback } from "@/lib/actions/day-feedback";
 
 const EMOJI: Array<{ value: 1 | 2 | 3 | 4 | 5; emoji: string; label: string }> = [
-  { value: 1, emoji: "😞", label: "Rough" },
-  { value: 2, emoji: "😕", label: "Meh" },
+  { value: 1, emoji: "😞", label: "Difficult" },
+  { value: 2, emoji: "😕", label: "Not great" },
   { value: 3, emoji: "😐", label: "OK" },
   { value: 4, emoji: "🙂", label: "Good" },
-  { value: 5, emoji: "🤩", label: "Loved it" },
+  { value: 5, emoji: "🤩", label: "Excellent" },
 ];
 
 export interface DayFeedbackCardProps {
@@ -41,7 +41,7 @@ export function DayFeedbackCard({
 
   function send() {
     if (rating == null) {
-      toast.error("Pick a rating");
+      toast.error("Please choose a rating");
       return;
     }
     start(async () => {
@@ -54,7 +54,7 @@ export function DayFeedbackCard({
         anonymous,
       });
       if (r.ok) {
-        toast.success(submitted ? "Feedback updated" : "Thanks for the feedback");
+        toast.success(submitted ? "Feedback updated" : "Thank you for your feedback");
         setSubmitted(true);
       } else {
         toast.error(r.error);
@@ -76,7 +76,7 @@ export function DayFeedbackCard({
           )}
         </div>
         {submitted && (
-          <span className="text-muted text-[11px]">Submitted · you can edit</span>
+          <span className="text-muted text-[11px]">Submitted · you can edit it</span>
         )}
       </header>
 
@@ -108,7 +108,7 @@ export function DayFeedbackCard({
           htmlFor={`fuzzy-${dayNumber}`}
           className="text-muted mb-1 block text-[10.5px] font-semibold uppercase tracking-[0.18em]"
         >
-          What was fuzzy?
+          What was unclear?
         </label>
         <input
           id={`fuzzy-${dayNumber}`}
@@ -116,7 +116,7 @@ export function DayFeedbackCard({
           onChange={(e) => setFuzzy(e.target.value)}
           disabled={pending}
           maxLength={280}
-          placeholder="Optional — one short topic that didn't click"
+          placeholder="Optional — one short topic you did not understand"
           className="border-line bg-input-bg text-ink focus:border-accent focus:ring-accent/15 w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 disabled:opacity-50"
         />
       </div>

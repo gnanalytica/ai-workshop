@@ -156,7 +156,7 @@ function SectionGrid({
   if (sections.length === 0) {
     return (
       <Card className="border-dashed border-hairline p-8 text-center">
-        <CardSub>Nothing in this section yet.</CardSub>
+        <CardSub>This section is empty for now.</CardSub>
       </Card>
     );
   }
@@ -197,8 +197,8 @@ function DashboardNavTab({
       <Card className="border-accent/30 bg-accent/[0.04] p-6 sm:p-8">
         <CardTitle className="mb-2 text-lg">Take the interactive guide</CardTitle>
         <CardSub className="mb-4 max-w-2xl text-sm leading-relaxed">
-          A step-by-step tour of every screen you&apos;ll use, anchored to the actual
-          sidebar links. Replay it anytime — it doesn&apos;t re-mark you as a new user.
+          A step-by-step tour of every screen you will use, linked to the actual
+          sidebar items. You can replay it any time — it will not mark you as a new user again.
         </CardSub>
         <div className="flex flex-wrap items-center gap-3">
           <StartGuideButton persona={persona} />
@@ -213,10 +213,10 @@ function DashboardNavTab({
         </div>
         {(persona === "admin" || persona === "faculty") && (
           <p className="text-muted mt-3 text-xs leading-relaxed">
-            Pro tip: open the sandbox first, then start the guide. You&apos;ll be
-            walking through the platform with realistic dummy students — every
-            drag, grade, or post is real, but scoped to the sandbox cohort. Hit{" "}
-            <span className="text-ink">Exit sandbox</span> any time.
+            Tip: open the sandbox first, then start the guide. You will explore
+            the platform with realistic sample students — every action, grade,
+            or post is real, but limited to the sandbox cohort. Click{" "}
+            <span className="text-ink">Exit sandbox</span> at any time to leave.
           </p>
         )}
       </Card>

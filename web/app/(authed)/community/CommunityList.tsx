@@ -56,7 +56,7 @@ export function CommunityList({ posts }: { posts: BoardPostSummary[] }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search posts by title, body, tag, or author…"
+            placeholder="Search posts by title, content, tag, or author…"
             aria-label="Search community"
           />
         </div>
@@ -139,7 +139,7 @@ export function CommunityList({ posts }: { posts: BoardPostSummary[] }) {
       {filtered.length === 0 ? (
         <Card>
           <CardTitle>No posts match your filters.</CardTitle>
-          <CardSub className="mt-2">Try clearing filters or be the first to post.</CardSub>
+          <CardSub className="mt-2">Try clearing filters, or write the first post.</CardSub>
         </Card>
       ) : (
         <div className="space-y-3">

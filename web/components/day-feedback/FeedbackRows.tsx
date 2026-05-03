@@ -70,7 +70,7 @@ export function FeedbackRows({ summary }: { summary: DayFeedbackSummary }) {
               {r.fuzzy_topic && (
                 <p className="text-ink/85 mt-1.5">
                   <span className="text-muted text-[10.5px] font-semibold uppercase tracking-[0.18em]">
-                    Fuzzy ·{" "}
+                    Unclear ·{" "}
                   </span>
                   {r.fuzzy_topic}
                 </p>

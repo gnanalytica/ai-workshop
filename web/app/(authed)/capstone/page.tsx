@@ -31,7 +31,7 @@ export default async function CapstonePage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">{cohort.name}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your capstone</h1>
         <p className="text-muted mt-1 text-sm">
-          One project across the 30 days. Lock it in, build it, ship it.
+          One project across the 30 days. Choose it, build it, and publish it.
         </p>
       </header>
 

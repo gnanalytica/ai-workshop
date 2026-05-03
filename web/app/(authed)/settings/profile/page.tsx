@@ -28,7 +28,7 @@ export default async function SettingsProfilePage() {
         <CardTitle className="mb-1 text-base">Email address</CardTitle>
         <CardSub className="mb-4 text-xs">
           Changing your email sends a confirmation link to the new address. Your old
-          address keeps working until you click that link.
+          address continues to work until you click that link.
         </CardSub>
         <ChangeEmailForm currentEmail={profile.email ?? ""} />
       </Card>

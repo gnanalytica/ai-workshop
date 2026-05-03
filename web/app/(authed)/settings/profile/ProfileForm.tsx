@@ -49,7 +49,7 @@ export function ProfileForm({
       }
       const { data } = sb.storage.from("avatars").getPublicUrl(path);
       setAvatar(data.publicUrl);
-      toast.success("Avatar uploaded — remember to save");
+      toast.success("Avatar uploaded. Remember to save your changes.");
     } finally {
       setUploading(false);
     }

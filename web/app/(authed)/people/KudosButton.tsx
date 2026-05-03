@@ -12,13 +12,13 @@ export function KudosButton({ toUserId, cohortId }: { toUserId: string; cohortId
 
   function send() {
     if (note.trim().length < 3) {
-      toast.error("Add a short note");
+      toast.error("Please add a short note");
       return;
     }
     start(async () => {
       const r = await giveKudos({ to_user_id: toUserId, cohort_id: cohortId, note: note.trim() });
       if (r.ok) {
-        toast.success("Kudos sent");
+        toast.success("Appreciation sent");
         setNote("");
         setOpen(false);
       } else toast.error(r.error);
@@ -28,7 +28,7 @@ export function KudosButton({ toUserId, cohortId }: { toUserId: string; cohortId
   if (!open) {
     return (
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        Give kudos
+        Send appreciation
       </Button>
     );
   }

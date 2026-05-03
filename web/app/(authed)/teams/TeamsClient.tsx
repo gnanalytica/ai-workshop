@@ -64,7 +64,7 @@ export function TeamsClient({ cohortId, teams }: { cohortId: string; teams: Team
         <CardTitle>Join an existing team</CardTitle>
         <div className="mt-3 space-y-2">
           {teams.length === 0 ? (
-            <p className="text-muted text-sm">No teams yet — be first.</p>
+            <p className="text-muted text-sm">No teams yet. Start the first one.</p>
           ) : (
             teams.map((t) => (
               <div key={t.id} className="border-line flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2">

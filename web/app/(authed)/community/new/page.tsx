@@ -14,7 +14,7 @@ export default async function NewPostPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <header>
         <p className="text-accent font-mono text-xs tracking-widest uppercase">New post</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Ask the cohort</h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Ask your cohort a question</h1>
         <p className="text-muted mt-1 text-sm">
           Markdown supported. Type <code>@</code> to mention students or faculty.
         </p>

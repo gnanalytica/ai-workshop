@@ -42,9 +42,9 @@ export default async function PodDetailPage({ params }: { params: Promise<{ id: 
 
       <Card className="border-line/80 bg-bg-soft">
         <CardSub className="text-ink/85 text-sm leading-relaxed">
-          Faculty must already be on the cohort roster. Students under Members are drawn from
-          confirmed enrollments not yet in another pod (or use the cohort board to move many at
-          once).
+          Faculty must already be on the cohort roster. The students shown under Members are
+          confirmed students who are not yet in another pod. You can also use the cohort board
+          to move several students at the same time.
         </CardSub>
       </Card>
 

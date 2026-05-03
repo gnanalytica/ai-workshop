@@ -65,7 +65,7 @@ export default async function DashboardPage() {
             persona="student"
             variant="ghost"
             size="sm"
-            label="Replay tour"
+            label="Replay the tour"
           />
           {todayDay && (
             <Button asChild>
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
         />
         <StatCard label="Attendance" value={kpis.attendanceCount} hint="days present" />
         <StatCard
-          label="Drafts in flight"
+          label="Drafts in progress"
           value={kpis.pendingAssignments}
           tone={kpis.pendingAssignments > 0 ? "warn" : "default"}
         />
@@ -116,10 +116,10 @@ export default async function DashboardPage() {
 
       <section className="border-line bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
         <div className="min-w-0">
-          <p className="text-ink text-sm font-medium">Stuck on something?</p>
+          <p className="text-ink text-sm font-medium">Need help with something?</p>
           <p className="text-muted text-xs leading-relaxed">
-            Raise a tech, content, or team request — your faculty / pod sees it first, and tech support takes
-            over if it&apos;s escalated.
+            Send a technical, content, or team request. Your faculty and pod see it first, and tech support
+            takes over if it is escalated.
           </p>
         </div>
         <Button variant="outline" size="sm" asChild>
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
               Tell us about yesterday
             </h2>
             <p className="text-muted text-xs">
-              Quick rating helps faculty calibrate pacing
+              A quick rating helps faculty adjust the pace.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

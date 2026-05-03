@@ -18,7 +18,7 @@ export default async function ShowcasePage() {
         <Card>
           <CardTitle>Nothing public yet</CardTitle>
           <CardSub className="mt-2">
-            Once cohorts ship demos, the public ones appear here.
+            Once cohorts publish their demos, the public ones will appear here.
           </CardSub>
         </Card>
       ) : (
