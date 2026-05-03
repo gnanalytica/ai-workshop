@@ -11,7 +11,11 @@ import { getFacultyCohort } from "@/lib/queries/faculty";
 export default async function AuthedLayout({ children }: { children: React.ReactNode }) {
   const f = await getFacultyCohort();
   return (
-    <AppShell cohortId={f?.cohort.id ?? null} cohortName={f?.cohort.name ?? null}>
+    <AppShell
+      cohortId={f?.cohort.id ?? null}
+      cohortName={f?.cohort.name ?? null}
+      cohortStartsOn={f?.cohort.starts_on ?? null}
+    >
       {children}
     </AppShell>
   );

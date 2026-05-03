@@ -1,6 +1,5 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { getSupabaseService } from "@/lib/supabase/service";
 import { getPreviewUserId } from "@/lib/auth/persona";
 
 export interface DashboardKpis {
@@ -9,46 +8,28 @@ export interface DashboardKpis {
   pendingAssignments: number;
 }
 
+/**
+ * Single-RPC dashboard counts (rpc_dashboard_kpis, migration 0076). The
+ * RPC enforces "only admins may target a different user" internally, so
+ * we no longer need a service-role escape hatch for previewing.
+ */
 export const getDashboardKpis = cache(async (cohortId: string): Promise<DashboardKpis> => {
   const previewUid = await getPreviewUserId();
-  // When admin is previewing a student, RLS on the server client wouldn't
-  // scope to that student — switch to the service role and filter explicitly.
-  const sb = previewUid ? getSupabaseService() : await getSupabaseServer();
-
-  const [labs, attendance, subs] = await Promise.all([
-    (() => {
-      let q = sb
-        .from("lab_progress")
-        .select("day_number", { count: "exact", head: false })
-        .eq("cohort_id", cohortId)
-        .eq("status", "done");
-      if (previewUid) q = q.eq("user_id", previewUid);
-      return q;
-    })(),
-    (() => {
-      let q = sb
-        .from("attendance")
-        .select("day_number", { count: "exact", head: false })
-        .eq("cohort_id", cohortId)
-        .eq("status", "present");
-      if (previewUid) q = q.eq("user_id", previewUid);
-      return q;
-    })(),
-    (() => {
-      let q = sb
-        .from("submissions")
-        .select("id, assignments!inner(cohort_id)", { count: "exact", head: false })
-        .eq("status", "draft");
-      if (previewUid) {
-        q = q.eq("user_id", previewUid).eq("assignments.cohort_id", cohortId);
-      }
-      return q;
-    })(),
-  ]);
-  const daysComplete = new Set((labs.data ?? []).map((r: { day_number: number }) => r.day_number)).size;
+  const sb = await getSupabaseServer();
+  const { data, error } = await (sb.rpc as unknown as (
+    fn: string,
+    args: Record<string, unknown>,
+  ) => Promise<{
+    data:
+      | Array<{ days_complete: number; attendance_count: number; pending_assignments: number }>
+      | null;
+    error: { message: string } | null;
+  }>)("rpc_dashboard_kpis", { p_cohort: cohortId, p_user: previewUid ?? null });
+  const row = error || !data ? undefined : data[0];
+  if (!row) return { daysComplete: 0, attendanceCount: 0, pendingAssignments: 0 };
   return {
-    daysComplete,
-    attendanceCount: attendance.count ?? 0,
-    pendingAssignments: subs.count ?? 0,
+    daysComplete: row.days_complete ?? 0,
+    attendanceCount: row.attendance_count ?? 0,
+    pendingAssignments: row.pending_assignments ?? 0,
   };
 });

@@ -13,3 +13,7 @@ graphify-out/
 # editor
 .vscode/
 .idea/
+
+# k6 load-test artifacts (session cookies must never land in git)
+web/tests/load/cookies.txt
+web/tests/load/*.json

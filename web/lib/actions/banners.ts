@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { requireCapability } from "@/lib/auth/requireCapability";
+import { broadcastToCohort } from "@/lib/realtime/broadcast";
 import { withSupabase, actionFail } from "./_helpers";
 
 const setSchema = z
@@ -22,7 +23,7 @@ export async function setBanner(input: z.infer<typeof setSchema>) {
   const parsed = setSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("content.write", parsed.data.cohort_id);
-  return withSupabase(async (sb) => {
+  const result = await withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
     const ends_at =
       parsed.data.kind === "timer" && parsed.data.duration_minutes != null
@@ -40,6 +41,8 @@ export async function setBanner(input: z.infer<typeof setSchema>) {
       .select("id")
       .single();
   }, `/admin/cohorts/${parsed.data.cohort_id}/live`);
+  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "banner");
+  return result;
 }
 
 const dismissSchema = z.object({
@@ -51,7 +54,7 @@ export async function dismissBanner(input: z.infer<typeof dismissSchema>) {
   const parsed = dismissSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("content.write", parsed.data.cohort_id);
-  return withSupabase(
+  const result = await withSupabase(
     (sb) =>
       sb
         .from("cohort_banners")
@@ -62,4 +65,6 @@ export async function dismissBanner(input: z.infer<typeof dismissSchema>) {
         .single(),
     `/admin/cohorts/${parsed.data.cohort_id}/live`,
   );
+  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "banner");
+  return result;
 }

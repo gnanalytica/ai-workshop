@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 interface ActiveBanner {
   id: string;
@@ -48,10 +49,23 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
       }
     }
     load();
-    const poll = setInterval(load, 10_000);
+    function onVisibility() {
+      if (document.visibilityState === "visible") load();
+    }
+    document.addEventListener("visibilitychange", onVisibility);
+    // Slow fallback poll — visible tabs only. Realtime broadcast
+    // (setBanner/dismissBanner) drives the fast path.
+    const fallback = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 60_000);
+    const sb = getSupabaseBrowser();
+    const ch = sb.channel(`cohort:${cohortId}`);
+    ch.on("broadcast", { event: "banner" }, () => load()).subscribe();
     return () => {
       cancelled = true;
-      clearInterval(poll);
+      clearInterval(fallback);
+      document.removeEventListener("visibilitychange", onVisibility);
+      sb.removeChannel(ch);
     };
   }, [cohortId]);
 

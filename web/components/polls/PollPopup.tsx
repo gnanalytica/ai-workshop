@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { castVote } from "@/lib/actions/polls";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 interface PollResultRow { choice: string; label: string; votes: number }
 
@@ -78,11 +79,28 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
       } catch {
       }
     }
+    // Initial fetch on mount.
     fetchPoll();
-    const id = setInterval(fetchPoll, 15_000);
+    // Refetch on visibility return (covers backgrounded tabs catching up).
+    function onVisibility() {
+      if (document.visibilityState === "visible") fetchPoll();
+    }
+    document.addEventListener("visibilitychange", onVisibility);
+    // Slow fallback poll — only when visible. Down from 15s. Realtime
+    // broadcast handles the fast path; this catches dropped events and
+    // cron-driven auto-close.
+    const fallback = setInterval(() => {
+      if (document.visibilityState === "visible") fetchPoll();
+    }, 60_000);
+    // Realtime broadcast — emitted by createPoll/closePoll server actions.
+    const sb = getSupabaseBrowser();
+    const ch = sb.channel(`cohort:${cohortId}`);
+    ch.on("broadcast", { event: "poll" }, () => fetchPoll()).subscribe();
     return () => {
       cancelled = true;
-      clearInterval(id);
+      clearInterval(fallback);
+      document.removeEventListener("visibilitychange", onVisibility);
+      sb.removeChannel(ch);
       abortRef.current?.abort();
     };
   }, [cohortId]);

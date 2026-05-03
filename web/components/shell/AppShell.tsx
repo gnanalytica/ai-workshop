@@ -22,10 +22,12 @@ export async function AppShell({
   children,
   cohortId,
   cohortName,
+  cohortStartsOn,
 }: {
   children: React.ReactNode;
   cohortId?: string | null;
   cohortName?: string | null;
+  cohortStartsOn?: string | null;
 }) {
   const profile = await getProfile();
   if (!profile) redirect("/sign-in");
@@ -38,7 +40,7 @@ export async function AppShell({
   // row when they're on the same cohort.
   let activeCohortId = cohortId ?? null;
   let activeCohortName = cohortName ?? null;
-  let activeCohortStart: string | null = null;
+  let activeCohortStart: string | null = cohortStartsOn ?? null;
   if (!activeCohortId) {
     const fallback = await getMyCurrentCohort();
     if (fallback) {
@@ -46,10 +48,9 @@ export async function AppShell({
       activeCohortName = fallback.name;
       activeCohortStart = fallback.starts_on;
     }
-  } else {
-    // We have an injected cohortId but need starts_on for the day-number calc.
-    // Stay on the RLS-respecting client — the injecting layout already proved
-    // the user can see this cohort.
+  } else if (activeCohortStart == null) {
+    // The injecting layout didn't have starts_on (e.g., student route where
+    // we only have id/name from props). Fetch just that one column.
     const sb = await getSupabaseServer();
     const { data } = await sb
       .from("cohorts")

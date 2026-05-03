@@ -16,9 +16,11 @@ export interface PollSummary {
 
 export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> => {
   const sb = await getSupabaseServer();
+  // vote_count is denormalized via trigger (migration 0077); avoids the
+  // per-row poll_votes(count) correlated subquery for every poll.
   const { data } = await sb
     .from("polls")
-    .select("id, cohort_id, day_number, question, options, opened_at, closed_at, closes_at, poll_votes(count)")
+    .select("id, cohort_id, day_number, question, options, opened_at, closed_at, closes_at, vote_count")
     .eq("cohort_id", cohortId)
     .order("opened_at", { ascending: false });
   return ((data ?? []) as unknown as Array<{
@@ -26,7 +28,7 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
     question: string; options: PollOption[];
     opened_at: string; closed_at: string | null;
     closes_at: string | null;
-    poll_votes: Array<{ count: number }>;
+    vote_count: number | null;
   }>).map((p) => ({
     id: p.id,
     cohort_id: p.cohort_id,
@@ -36,7 +38,7 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
     opened_at: p.opened_at,
     closed_at: p.closed_at,
     closes_at: p.closes_at,
-    vote_count: p.poll_votes?.[0]?.count ?? 0,
+    vote_count: p.vote_count ?? 0,
   }));
 });
 
