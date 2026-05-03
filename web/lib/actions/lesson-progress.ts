@@ -5,39 +5,6 @@ import { revalidatePath } from "next/cache";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { actionFail, actionOk } from "./_helpers";
 
-const phaseEnum = z.enum(["pre", "live", "post", "extra"]);
-
-const markSchema = z.object({
-  cohort_id: z.string().uuid(),
-  day_number: z.number().int().min(1).max(60),
-  phase: phaseEnum,
-  section_index: z.number().int().min(0).max(50),
-});
-
-export async function markSectionComplete(input: z.infer<typeof markSchema>) {
-  const parsed = markSchema.safeParse(input);
-  if (!parsed.success) return actionFail("Invalid input");
-  const sb = await getSupabaseServer();
-  const { data: u } = await sb.auth.getUser();
-  if (!u.user) return actionFail("Not authenticated");
-
-  const { error } = await sb
-    .from("lesson_section_progress")
-    .upsert(
-      {
-        user_id: u.user.id,
-        cohort_id: parsed.data.cohort_id,
-        day_number: parsed.data.day_number,
-        phase: parsed.data.phase,
-        section_index: parsed.data.section_index,
-      },
-      { onConflict: "user_id,cohort_id,day_number,phase,section_index" },
-    );
-  if (error) return actionFail(error.message);
-  revalidatePath(`/day/${parsed.data.day_number}`);
-  return actionOk(null);
-}
-
 const feedbackSchema = z.object({
   cohort_id: z.string().uuid(),
   day_number: z.number().int().min(1).max(60),

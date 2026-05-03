@@ -51,10 +51,7 @@ export async function LessonDayView({
     listCohortDays(cohort.id),
     readOnly ? Promise.resolve(readOnlyInteractive) : getDayInteractive(cohort.id, dayNumber),
     readOnly
-      ? Promise.resolve({
-          completedSections: { pre: [], live: [], post: [], extra: [] },
-          dayFeedbackSubmitted: false,
-        })
+      ? Promise.resolve({ dayFeedbackSubmitted: false })
       : getDayProgress(cohort.id, dayNumber),
   ]);
   if (!content) notFound();
@@ -194,19 +191,14 @@ export async function LessonDayView({
   const postSections = splitByH2(phases.post ?? "");
   const extraSections = splitByH2(phases.extra ?? "");
 
-  // Persist per-section completion only for real students viewing their own
-  // cohort (skip in read-only / faculty preview mode).
+  // Pass cohort/day only for real students; faculty preview stays read-only
+  // and never sees the day-feedback button.
   const persistProps = readOnly
     ? {}
     : { cohortId: cohort.id, dayNumber, dayFeedbackSubmitted: progress.dayFeedbackSubmitted };
 
   const prePanel = phases.pre ? (
-    <LessonReader
-      titles={preSections.map((s) => s.title)}
-      {...persistProps}
-      phase="pre"
-      initialCompleted={progress.completedSections.pre}
-    >
+    <LessonReader titles={preSections.map((s) => s.title)} {...persistProps}>
       {preSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
       ))}
@@ -233,8 +225,6 @@ export async function LessonDayView({
           titles={liveSections.map((s) => s.title)}
           trailing={liveTrailing}
           {...persistProps}
-          phase="live"
-          initialCompleted={progress.completedSections.live}
         >
           {liveSections.map((s, i) => (
             <MarkdownView key={i} source={s.body} />
@@ -296,8 +286,6 @@ export async function LessonDayView({
       trailing={postTrailing}
       sectionAddons={postSectionAddons}
       {...persistProps}
-      phase="post"
-      initialCompleted={progress.completedSections.post}
       triggerFeedbackOnLast={!readOnly}
     >
       {postSections.map((s, i) => (
@@ -317,8 +305,6 @@ export async function LessonDayView({
       titles={extraSections.map((s) => s.title)}
       trailing={extraTrailing}
       {...persistProps}
-      phase="extra"
-      initialCompleted={progress.completedSections.extra}
     >
       {extraSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />

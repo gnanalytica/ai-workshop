@@ -91,7 +91,7 @@ export function DayFeedbackModal({
 
         <div>
           <p className="text-ink mb-2 text-xs font-semibold uppercase tracking-wider">
-            Today's rating <span className="text-danger">*</span>
+            Today&apos;s rating <span className="text-danger">*</span>
           </p>
           <div className="flex items-center gap-1.5">
             {[1, 2, 3, 4, 5].map((n) => {
@@ -132,7 +132,7 @@ export function DayFeedbackModal({
 
         <label className="block">
           <span className="text-ink mb-1 block text-xs font-semibold uppercase tracking-wider">
-            Anything you'd flag <span className="text-muted text-[11px] normal-case">(optional)</span>
+            Anything you&apos;d flag <span className="text-muted text-[11px] normal-case">(optional)</span>
           </span>
           <textarea
             rows={3}
