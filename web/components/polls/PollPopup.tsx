@@ -157,9 +157,10 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
   return (
     <div
       className="
-        fixed z-30
+        fixed z-40
         bottom-[max(1.25rem,env(safe-area-inset-bottom))]
         left-4 right-4 sm:left-5 sm:right-auto
+        md:left-[5rem]
         sm:w-[22rem]
         bg-card border border-line rounded-lg
         shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35),0_2px_6px_-2px_rgba(0,0,0,0.18)]
