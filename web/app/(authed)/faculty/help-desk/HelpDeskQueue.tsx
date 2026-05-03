@@ -9,6 +9,7 @@ import { relTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { HelpDeskActions } from "./HelpDeskActions";
 import type { FacultyHelpDeskEntry } from "@/lib/queries/faculty-help-desk";
+import { useTableRefresh } from "@/lib/realtime/useTableRefresh";
 
 type FilterKey = "all" | "open" | "helping" | "mine" | "tech" | "other";
 type SortKey = "oldest" | "newest" | "stalled";
@@ -43,6 +44,7 @@ export function HelpDeskQueue({
   meId: string;
   cohortId: string;
 }) {
+  useTableRefresh("help_desk_queue", { column: "cohort_id", value: cohortId });
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [sort, setSort] = useState<SortKey>("oldest");

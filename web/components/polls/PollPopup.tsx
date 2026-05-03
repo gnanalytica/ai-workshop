@@ -110,6 +110,18 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
     return () => clearInterval(id);
   }, []);
 
+  const isVisible = !!poll && !dismissedIds.has(poll.id);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (!isVisible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isVisible]);
+
   if (!poll) return null;
   if (dismissedIds.has(poll.id)) return null;
 
@@ -154,20 +166,23 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
     ? (poll.question?.trim() ? poll.question : "How are we doing?")
     : poll.question;
 
+  const canDismiss = showResults || transitioned || poll.my_choice != null;
+
   return (
     <div
-      className="
-        fixed z-50
-        bottom-[max(1.25rem,env(safe-area-inset-bottom))]
-        left-4 right-4 sm:left-auto sm:right-5
-        sm:w-[22rem]
-        bg-card border border-line rounded-lg
-        shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35),0_2px_6px_-2px_rgba(0,0,0,0.18)]
-        p-4
-      "
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm"
       role="dialog"
+      aria-modal="true"
       aria-label="Active poll"
     >
+      <div
+        className="
+          relative w-full max-w-md
+          bg-card border border-line rounded-lg
+          shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35),0_2px_6px_-2px_rgba(0,0,0,0.18)]
+          p-5
+        "
+      >
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-accent text-[10px] font-semibold uppercase tracking-wider">
           {eyebrow}
@@ -175,10 +190,10 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
         {remaining != null && (
           <span className="text-muted tabular-nums text-xs">closes in {remaining}</span>
         )}
-        {showResults && (
+        {canDismiss && (
           <button
             type="button"
-            aria-label="Dismiss results"
+            aria-label="Dismiss poll"
             onClick={() => setDismissedIds((s) => new Set(s).add(poll.id))}
             className="text-muted hover:text-ink text-xs leading-none"
           >
@@ -241,6 +256,7 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
           <ResultsBars results={poll.results!} />
         </div>
       )}
+      </div>
     </div>
   );
 }

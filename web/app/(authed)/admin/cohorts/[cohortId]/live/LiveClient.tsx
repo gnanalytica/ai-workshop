@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createPoll, closePoll } from "@/lib/actions/polls";
 import { setBanner, dismissBanner } from "@/lib/actions/banners";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 interface ActiveBanner {
   id: string;
@@ -103,12 +104,19 @@ export function LiveClient({
   useEffect(() => {
     if (!hasActive && !hasBannerTimer) return;
     const tick = setInterval(() => force((n) => n + 1), 1000);
-    const refresh = setInterval(() => router.refresh(), 5000);
+    const slowRefresh = setInterval(() => router.refresh(), 60_000);
+    const sb = getSupabaseBrowser();
+    const ch = sb
+      .channel(`cohort:${cohortId}`)
+      .on("broadcast", { event: "poll" }, () => router.refresh())
+      .on("broadcast", { event: "banner" }, () => router.refresh())
+      .subscribe();
     return () => {
       clearInterval(tick);
-      clearInterval(refresh);
+      clearInterval(slowRefresh);
+      sb.removeChannel(ch);
     };
-  }, [hasActive, hasBannerTimer, router]);
+  }, [hasActive, hasBannerTimer, router, cohortId]);
 
   function firePulse() {
     start(async () => {

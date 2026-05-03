@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
@@ -48,7 +49,15 @@ export default async function LivePage({
 
       {recent.length > 0 && (
         <Card className="space-y-3 p-5">
-          <CardTitle>Recent</CardTitle>
+          <div className="flex items-baseline justify-between gap-2">
+            <CardTitle>Recent</CardTitle>
+            <Link
+              href={`/admin/cohorts/${cohort.id}/polls`}
+              className="text-accent text-xs"
+            >
+              Full poll history →
+            </Link>
+          </div>
           <ul className="divide-line/40 divide-y">
             {recent.map((p) => (
               <li key={p.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2 text-sm">

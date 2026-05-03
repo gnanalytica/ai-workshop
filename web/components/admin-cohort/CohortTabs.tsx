@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 type Tab =
   | "home"
   | "roster"
+  | "curriculum"
   | "schedule"
   | "content"
   | "pods"
@@ -16,18 +17,20 @@ type Tab =
   | "health"
   | "milestones";
 
-// Visible tab nav — kept lean. Capstones / Milestones / Polls / Analytics /
-// Health remain reachable via direct URL but aren't in the rail; the `Tab`
-// union still names them so deep pages can highlight a parent tab.
+// Visible tab nav — kept lean. Help desk lives in the sidebar (canonical
+// admin help-desk view) alongside Capstones / Milestones / Polls / Analytics /
+// Health, which also remain reachable via direct URL but aren't in the rail.
+// The `Tab` union still names them so deep pages can highlight a parent tab.
+// Schedule + Content are merged under "Curriculum" but both legacy ids stay
+// in the union so the per-day editor (`/schedule/[day]`) still highlights
+// properly.
 const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "home", label: "Home", href: (c) => `/admin/cohorts/${c}` },
   { id: "roster", label: "Roster", href: (c) => `/admin/cohorts/${c}/roster` },
   { id: "pods", label: "Pods", href: (c) => `/admin/cohorts/${c}/pods` },
-  { id: "schedule", label: "Schedule", href: (c) => `/admin/cohorts/${c}/schedule` },
-  { id: "content", label: "Content", href: (c) => `/admin/cohorts/${c}/content` },
+  { id: "curriculum", label: "Curriculum", href: (c) => `/admin/cohorts/${c}/curriculum` },
   { id: "grading", label: "Submissions", href: (c) => `/admin/cohorts/${c}/grading` },
   { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
-  { id: "help-desk", label: "Help desk", href: (c) => `/admin/cohorts/${c}/help-desk` },
 ];
 
 export function CohortTabs({
@@ -40,7 +43,11 @@ export function CohortTabs({
   return (
     <nav className="border-line/50 -mx-4 flex gap-1 overflow-x-auto border-b px-4">
       {TABS.map((t) => {
-        const isActive = t.id === active;
+        // Treat the merged Curriculum tab as active when the underlying
+        // legacy schedule/content routes are shown (deep day editor etc.).
+        const isActive =
+          t.id === active ||
+          (t.id === "curriculum" && (active === "schedule" || active === "content"));
         return (
           <Link
             key={t.id}

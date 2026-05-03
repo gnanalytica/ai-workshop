@@ -55,7 +55,7 @@ const PLATFORM_MAP: Record<Persona, string> = {
 Common admin actions:
 - New cohort: /admin → "New cohort" button → fill slug/name/start date → it auto-seeds the 30-day curriculum
 - New invite: /admin/invites → "New invite" → pick kind=faculty + cohort → share the code with the faculty
-- Unlock a day: /admin/cohorts/[id]/schedule → click the day → toggle "Unlock day"
+- Unlock a day: /admin/cohorts/[id]/curriculum → click the day → toggle "Unlock day"
 - Update meet link: topbar Join button → pencil icon (or /admin/cohorts/[id]/schedule/[day])
 `,
   faculty: `Faculty platform map (use to answer "where is X" / "how do I X"):

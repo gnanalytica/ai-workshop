@@ -49,23 +49,21 @@ export async function Topbar({
     previewUserName = p ? (p.full_name ?? p.email) : null;
   }
 
+  const roleLabel =
+    effectivePersona === "admin"
+      ? "Admin Dashboard"
+      : effectivePersona === "faculty"
+        ? "Faculty Dashboard"
+        : effectivePersona === "student"
+          ? "Student Dashboard"
+          : "Dashboard";
+
   return (
     <header className="border-hairline bg-bg/80 sticky top-0 z-30 flex h-14 items-center justify-between border-b pr-3 pl-12 backdrop-blur-md sm:pr-4 md:px-6">
       <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-        {cohortName ? (
-          // Static cohort label is hidden once CohortSwitcher takes over (lg+)
-          // — the switcher already shows the same name and is interactive.
-          <div className="flex min-w-0 items-baseline gap-3 lg:hidden">
-            <span className="eyebrow">Cohort</span>
-            <span className="font-display text-ink truncate text-[17px] leading-none font-medium tracking-tight">
-              {cohortName}
-            </span>
-          </div>
-        ) : (
-          <span className="font-display text-ink text-[17px] leading-none font-medium tracking-tight lg:hidden">
-            Dashboard
-          </span>
-        )}
+        <span className="font-display text-ink truncate text-[17px] leading-none font-medium tracking-tight">
+          {roleLabel}
+        </span>
         {isAdminPreviewing && (
           // Hidden once PreviewAsSwitcher is on screen (xl+); the switcher's
           // selected option already reads "Faculty (preview)" / "Student (preview)".
@@ -74,7 +72,7 @@ export async function Topbar({
           </span>
         )}
         <div className="hidden lg:block">
-          <CohortSwitcher />
+          <CohortSwitcher persona={effectivePersona} />
         </div>
       </div>
       <div className="flex items-center gap-1.5 sm:gap-2">

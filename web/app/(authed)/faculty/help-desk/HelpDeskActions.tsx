@@ -72,7 +72,7 @@ export function HelpDeskActions({
             Claim
           </Button>
         )}
-        {status === "helping" && (
+        {(status === "open" || status === "helping") && (
           <Button size="sm" onClick={resolve} disabled={pending}>
             Resolve
           </Button>

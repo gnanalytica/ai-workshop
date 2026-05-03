@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { CohortSwitcher } from "./CohortSwitcher";
 import { CohortTabs } from "./CohortTabs";
-import { listAdminCohorts, type AdminCohortRef } from "@/lib/queries/admin-context";
+import { type AdminCohortRef } from "@/lib/queries/admin-context";
 import { fmtDate } from "@/lib/format";
 
 export async function CohortShell({
@@ -12,6 +10,7 @@ export async function CohortShell({
   active:
     | "home"
     | "roster"
+    | "curriculum"
     | "schedule"
     | "content"
     | "pods"
@@ -24,7 +23,6 @@ export async function CohortShell({
     | "health"
     | "milestones";
 }) {
-  const cohorts = await listAdminCohorts();
   return (
     <div className="space-y-4">
       <header className="border-line/50 flex flex-wrap items-end justify-between gap-3 border-b pb-4">
@@ -39,15 +37,6 @@ export async function CohortShell({
             {fmtDate(cohort.starts_on)} → {fmtDate(cohort.ends_on)} ·{" "}
             {cohort.status}
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <CohortSwitcher current={cohort} cohorts={cohorts} />
-          <Link
-            href="/admin"
-            className="text-muted hover:text-ink text-xs"
-          >
-            All cohorts
-          </Link>
         </div>
       </header>
       <CohortTabs cohortId={cohort.id} active={active} />

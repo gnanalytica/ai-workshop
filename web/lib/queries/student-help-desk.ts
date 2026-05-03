@@ -6,6 +6,7 @@ export interface MyHelpDeskRow {
   kind: "content" | "tech" | "team" | "other";
   status: "open" | "helping" | "resolved" | "cancelled";
   message: string | null;
+  resolution: string | null;
   created_at: string;
   updated_at: string;
   escalated_at: string | null;

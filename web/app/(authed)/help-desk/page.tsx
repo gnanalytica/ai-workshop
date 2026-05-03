@@ -81,6 +81,14 @@ export default async function StudentHelpDeskPage() {
                       <p className="text-muted mt-1 text-xs">Sent to staff / tech for extra help</p>
                     )}
                     {t.message && <p className="text-ink/85 mt-2 text-sm whitespace-pre-wrap">{t.message}</p>}
+                    {t.status === "resolved" && t.resolution && t.resolution.trim() !== "" && (
+                      <div className="mt-3">
+                        <p className="text-muted text-[10.5px] uppercase tracking-[0.18em] font-semibold">
+                          Resolution
+                        </p>
+                        <p className="text-ink/85 text-sm whitespace-pre-wrap mt-1">{t.resolution}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card>

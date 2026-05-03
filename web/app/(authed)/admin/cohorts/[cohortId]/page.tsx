@@ -171,7 +171,7 @@ export default async function AdminCohortHome({
           <div className="flex items-baseline justify-between gap-2">
             <h2 className="text-lg font-semibold tracking-tight">Content</h2>
             <Link
-              href={`/admin/cohorts/${cohort.id}/content`}
+              href={`/admin/cohorts/${cohort.id}/curriculum`}
               className="text-accent text-xs"
             >
               Manage →
@@ -201,21 +201,14 @@ export default async function AdminCohortHome({
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Quick links</h2>
+        <h2 className="mb-3 text-lg font-semibold tracking-tight">More views</h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/grading`}
-          >
-            <div className="text-ink font-medium">Grading queue</div>
-            <div className="text-muted text-xs">Review submissions</div>
-          </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
             href={`/admin/cohorts/${cohort.id}/help-desk`}
           >
-            <div className="text-ink font-medium">Escalations</div>
-            <div className="text-muted text-xs">Tech + cohort-wide tickets</div>
+            <div className="text-ink font-medium">Help desk</div>
+            <div className="text-muted text-xs">Tickets in this cohort</div>
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
@@ -223,6 +216,34 @@ export default async function AdminCohortHome({
           >
             <div className="text-ink font-medium">Analytics</div>
             <div className="text-muted text-xs">Attendance + at-risk</div>
+          </Link>
+          <Link
+            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
+            href={`/admin/cohorts/${cohort.id}/health`}
+          >
+            <div className="text-ink font-medium">Health</div>
+            <div className="text-muted text-xs">Pulses + day feedback</div>
+          </Link>
+          <Link
+            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
+            href={`/admin/cohorts/${cohort.id}/capstones`}
+          >
+            <div className="text-ink font-medium">Capstones</div>
+            <div className="text-muted text-xs">Per-student status</div>
+          </Link>
+          <Link
+            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
+            href={`/admin/cohorts/${cohort.id}/milestones`}
+          >
+            <div className="text-ink font-medium">Milestones</div>
+            <div className="text-muted text-xs">Capstone phase board</div>
+          </Link>
+          <Link
+            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
+            href={`/admin/cohorts/${cohort.id}/polls`}
+          >
+            <div className="text-ink font-medium">Poll history</div>
+            <div className="text-muted text-xs">Past polls + results</div>
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"

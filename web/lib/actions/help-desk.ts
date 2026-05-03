@@ -115,9 +115,24 @@ export async function resolveTicket(input: z.infer<typeof resolveSchema>): Promi
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("support.triage", parsed.data.cohort_id);
   const sb = await getSupabaseServer();
+  const { data: user } = await sb.auth.getUser();
+  if (!user.user) return actionFail("Not signed in");
+  const { data: existing } = await sb
+    .from("help_desk_queue")
+    .select("claimed_by")
+    .eq("id", parsed.data.id)
+    .maybeSingle();
+  const update: Record<string, unknown> = {
+    status: "resolved",
+    resolution: parsed.data.resolution ?? null,
+  };
+  if (existing && existing.claimed_by == null) {
+    update.claimed_by = user.user.id;
+    update.claimed_at = new Date().toISOString();
+  }
   const { error } = await sb
     .from("help_desk_queue")
-    .update({ status: "resolved", resolution: parsed.data.resolution ?? null })
+    .update(update)
     .eq("id", parsed.data.id);
   if (error) return actionFail(error.message);
   revalidatePath("/admin/cohorts", "layout");
