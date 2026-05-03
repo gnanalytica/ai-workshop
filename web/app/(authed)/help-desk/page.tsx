@@ -36,8 +36,8 @@ export default async function StudentHelpDeskPage() {
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your tickets</h1>
         <p className="text-muted mt-1 text-sm max-w-2xl">
-          Raise a ticket below. Your pod faculty sees it first; staff or tech can take over if it&apos;s
-          escalated.
+          Open a ticket below. Your pod faculty will see it first. Staff or the tech team
+          can take over if it needs more help.
           {openTotal > 0 && ` ${openTotal} open ticket${openTotal === 1 ? "" : "s"} in this cohort right now.`}
         </p>
         <div className="mt-4">
@@ -51,7 +51,7 @@ export default async function StudentHelpDeskPage() {
 
       {tickets.length === 0 ? (
         <Card>
-          <CardSub>No tickets yet — use the form above when something blocks you.</CardSub>
+          <CardSub>No tickets yet — use the form above whenever you have a problem.</CardSub>
         </Card>
       ) : (
         <div className="space-y-2">
@@ -78,7 +78,7 @@ export default async function StudentHelpDeskPage() {
                       <p className="text-ink/90 mt-2 text-sm">Someone is working on this.</p>
                     )}
                     {t.escalated_at && (
-                      <p className="text-muted mt-1 text-xs">Sent to staff / tech for extra help</p>
+                      <p className="text-muted mt-1 text-xs">Sent to staff or the tech team for extra help</p>
                     )}
                     {t.message && <p className="text-ink/85 mt-2 text-sm whitespace-pre-wrap">{t.message}</p>}
                     {t.status === "resolved" && t.resolution && t.resolution.trim() !== "" && (

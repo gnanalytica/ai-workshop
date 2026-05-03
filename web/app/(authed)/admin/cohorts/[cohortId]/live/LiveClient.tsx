@@ -120,8 +120,8 @@ export function LiveClient({
     start(async () => {
       const r = await createPoll({
         cohort_id: cohortId,
-        question: "Quick pulse",
-        options: ["👍 Got it", "🤔 Fuzzy", "😅 Lost me"],
+        question: "How are you following along?",
+        options: ["✅ I understand", "🤔 Some parts unclear", "🙋 I need help"],
         duration_minutes: 1,
         kind: "pulse",
       });
@@ -177,7 +177,7 @@ export function LiveClient({
           <Badge variant="warn">Pulse</Badge>
         </div>
         <CardSub className="mt-1">
-          3 emoji buttons go to the room: 👍 got it · 🤔 fuzzy · 😅 lost me
+          3 buttons go to the room: ✅ I understand · 🤔 Some parts unclear · 🙋 I need help
         </CardSub>
         <div className="mt-4">
           <Button onClick={firePulse} disabled={pending}>

@@ -9,9 +9,9 @@ import { reportTicket } from "@/lib/actions/help-desk";
 type Kind = "content" | "tech" | "team" | "other";
 
 const KINDS: { value: Kind; label: string; hint: string }[] = [
-  { value: "tech", label: "Tech", hint: "Login, audio/video, the platform itself" },
+  { value: "tech", label: "Tech", hint: "Login, audio or video, or the platform itself" },
   { value: "content", label: "Content", hint: "A lesson, assignment, or quiz question" },
-  { value: "team", label: "Team", hint: "Pod or teammate issue" },
+  { value: "team", label: "Team", hint: "A problem with your pod or a teammate" },
   { value: "other", label: "Other", hint: "Anything else" },
 ];
 
@@ -28,7 +28,7 @@ export function NewTicketCard({ cohortId }: { cohortId: string }) {
   function send() {
     const trimmed = message.trim();
     if (trimmed.length < 5) {
-      toast.error("Add a sentence or two so we know what's blocking you");
+      toast.error("Add a sentence or two so we understand the problem");
       return;
     }
     start(async () => {
@@ -38,7 +38,7 @@ export function NewTicketCard({ cohortId }: { cohortId: string }) {
         message: trimmed,
       });
       if (r.ok) {
-        toast.success("Ticket created — your faculty / pod will see it first");
+        toast.success("Ticket created — your faculty and pod will see it first");
         setMessage("");
         setKind("tech");
       } else {
@@ -59,8 +59,8 @@ export function NewTicketCard({ cohortId }: { cohortId: string }) {
         Raise a new ticket
       </h2>
       <p className="text-muted mt-1 text-xs leading-relaxed">
-        Pick a type, write what&apos;s blocking you. Your pod faculty sees it first; tech / staff
-        pick up escalations.
+        Pick a type and describe your problem. Your pod faculty will see it first; the
+        tech team or staff will help if it needs to be passed on.
       </p>
 
       <div className="mt-4">
@@ -98,14 +98,14 @@ export function NewTicketCard({ cohortId }: { cohortId: string }) {
           htmlFor="ticket-message"
           className="text-muted mb-2 block text-[10.5px] font-semibold uppercase tracking-[0.18em]"
         >
-          What&apos;s blocking you?
+          Describe your problem
         </label>
         <textarea
           id="ticket-message"
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="e.g. Zoom audio cuts out every couple of minutes. Tried headphones, same thing."
+          placeholder="e.g. The Zoom audio cuts out every few minutes. I tried headphones — same problem."
           disabled={pending}
           className="border-line bg-input-bg text-ink focus:border-accent focus:ring-accent/15 w-full rounded-md border p-3 text-sm leading-relaxed transition-colors focus:outline-none focus:ring-2 disabled:opacity-50"
         />
@@ -115,7 +115,7 @@ export function NewTicketCard({ cohortId }: { cohortId: string }) {
         <p className="text-muted text-[11px]">
           {message.trim().length === 0
             ? "Be specific — even one extra sentence helps."
-            : `${message.trim().length} chars · ready to send`}
+            : `${message.trim().length} characters · ready to send`}
         </p>
         <Button
           onClick={send}

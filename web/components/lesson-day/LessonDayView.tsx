@@ -87,7 +87,7 @@ export async function LessonDayView({
       tasks.push({
         id: "poll",
         label: "Vote in the poll",
-        hint: "Quick pulse during the live session",
+        hint: "Quick check-in during the live session",
         done: !!interactive.poll.my_choice,
         phase: "live",
       });

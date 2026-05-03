@@ -151,13 +151,13 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
   const isPulse = poll.kind === "pulse";
   const eyebrow = showResults
     ? isPulse
-      ? "Pulse closed · results"
-      : "Poll closed · results"
+      ? "Check-in closed — results"
+      : "Poll closed — results"
     : isPulse
-      ? "Quick pulse"
+      ? "Quick check-in"
       : "Live poll";
   const questionText = isPulse
-    ? (poll.question?.trim() ? poll.question : "How are we doing?")
+    ? (poll.question?.trim() ? poll.question : "How are you following along?")
     : poll.question;
 
   const canDismiss = showResults || transitioned || poll.my_choice != null;
@@ -167,7 +167,7 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-label="Active poll"
+      aria-label={isPulse ? "Check-in" : "Active poll"}
     >
       <div
         className="
@@ -187,7 +187,7 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
         {canDismiss && (
           <button
             type="button"
-            aria-label="Dismiss poll"
+            aria-label="Close"
             onClick={() => setDismissedIds((s) => new Set(s).add(poll.id))}
             className="text-muted hover:text-ink text-xs leading-none"
           >
@@ -241,7 +241,7 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
 
       {showThanks && !isPulse && (
         <p className="text-muted mt-3 text-xs">
-          ✓ Voted. Results appear when the poll closes.
+          ✓ Your vote is in. Results will show when the poll closes.
         </p>
       )}
 

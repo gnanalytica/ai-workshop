@@ -22,7 +22,7 @@ export function HelpDeskButton({ cohortId }: { cohortId: string }) {
     start(async () => {
       const r = await reportTicket({ cohort_id: cohortId, kind, message: message.trim() });
       if (r.ok) {
-        toast.success("Help is on the way");
+        toast.success("Ticket sent — your faculty will respond soon");
         setMessage("");
         setOpen(false);
       } else toast.error(r.error);
@@ -55,7 +55,7 @@ export function HelpDeskButton({ cohortId }: { cohortId: string }) {
         rows={3}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="What's blocking you?"
+        placeholder="What problem are you having?"
         className="border-line bg-input-bg text-ink w-full rounded-md border p-2 text-sm"
       />
       <div className="flex flex-wrap items-center gap-2">

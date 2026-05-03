@@ -24,14 +24,14 @@ export default async function PollsHistoryPage() {
       <header className="space-y-1">
         <h1 className="text-ink text-xl font-semibold">Polls</h1>
         <p className="text-muted text-sm">
-          Results from past polls and pulses for {cohort.name}.
+          Results from past polls and check-ins for {cohort.name}.
         </p>
       </header>
 
       {past.length === 0 ? (
         <Card className="p-5">
           <CardTitle>No past polls yet</CardTitle>
-          <CardSub>Once a poll closes you&rsquo;ll see its results here.</CardSub>
+          <CardSub>When a poll or check-in closes, the results will appear here.</CardSub>
         </Card>
       ) : (
         <Card className="p-5">
