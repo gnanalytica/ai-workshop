@@ -13,6 +13,7 @@ type Tab =
   | "live"
   | "help-desk"
   | "analytics"
+  | "health"
   | "milestones";
 
 const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
@@ -27,6 +28,7 @@ const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "help-desk", label: "Help desk", href: (c) => `/admin/cohorts/${c}/help-desk` },
   { id: "polls", label: "Polls", href: (c) => `/admin/cohorts/${c}/polls` },
   { id: "analytics", label: "Analytics", href: (c) => `/admin/cohorts/${c}/analytics` },
+  { id: "health", label: "Health", href: (c) => `/admin/cohorts/${c}/health` },
   { id: "milestones", label: "Milestones", href: (c) => `/admin/cohorts/${c}/milestones` },
 ];
 

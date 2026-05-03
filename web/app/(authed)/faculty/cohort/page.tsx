@@ -13,6 +13,12 @@ import {
 } from "@/lib/queries/faculty-cohort";
 import { getCohortPodRoster } from "@/lib/queries/cohort-roster";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
+import { todayDayNumber } from "@/lib/queries/cohort";
+import {
+  getFacultyPrimaryPodId,
+  listRecentDaySummaries,
+} from "@/lib/queries/day-feedback";
+import { FeedbackPanel } from "@/components/day-feedback/FeedbackPanel";
 import { CreatePodForm } from "@/app/(authed)/pods/CreatePodForm";
 import { PodBoard } from "./PodBoard";
 
@@ -42,13 +48,19 @@ export default async function FacultyCohortPage() {
     );
   const cohortId = f.cohort.id;
 
-  const [kpis, atRisk, roster, trend, canManagePods] = await Promise.all([
-    getCohortKpis(cohortId),
-    listAtRiskStudents(cohortId),
-    getCohortPodRoster(cohortId, me.id),
-    getCohortTrend(cohortId),
-    checkCapability("pods.write", cohortId),
-  ]);
+  const [kpis, atRisk, roster, trend, canManagePods, myPodId] =
+    await Promise.all([
+      getCohortKpis(cohortId),
+      listAtRiskStudents(cohortId),
+      getCohortPodRoster(cohortId, me.id),
+      getCohortTrend(cohortId),
+      checkCapability("pods.write", cohortId),
+      getFacultyPrimaryPodId(cohortId, me.id),
+    ]);
+  const today = todayDayNumber(f.cohort);
+  const feedbackSummaries = myPodId
+    ? await listRecentDaySummaries(cohortId, today, 5, myPodId)
+    : [];
 
   return (
     <div data-tour="faculty-cohort-board" className="space-y-6">
@@ -144,6 +156,16 @@ export default async function FacultyCohortPage() {
           />
         </div>
       </section>
+
+      {myPodId && (
+        <FeedbackPanel
+          title="Pod feedback"
+          subtitle="Last 5 days · click into a day to see individual responses"
+          scope="your pod"
+          hrefBase="/faculty/cohort/feedback"
+          summaries={feedbackSummaries}
+        />
+      )}
 
       <section id="at-risk" className="scroll-mt-20">
         <h2 className="mb-3 text-lg font-semibold tracking-tight">

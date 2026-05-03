@@ -64,12 +64,24 @@ export default async function FacultyPodPage() {
         <p className="text-accent font-mono text-xs tracking-widest uppercase">
           {f.cohort.name}
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">My pod</h1>
-        <CardSub className="mt-1">
-          {myPod
-            ? `${myPod.pod_name} · ${myPod.members.length} student${myPod.members.length === 1 ? "" : "s"}`
-            : "No pod assigned yet"}
-        </CardSub>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight">My pod</h1>
+            <CardSub className="mt-1">
+              {myPod
+                ? `${myPod.pod_name} · ${myPod.members.length} student${myPod.members.length === 1 ? "" : "s"}`
+                : "No pod assigned yet"}
+            </CardSub>
+          </div>
+          {myPod && (
+            <Link
+              href="/faculty/pod/health"
+              className="text-accent text-sm font-medium hover:underline"
+            >
+              Pod health →
+            </Link>
+          )}
+        </div>
       </header>
 
       <Card className="bg-bg-soft">

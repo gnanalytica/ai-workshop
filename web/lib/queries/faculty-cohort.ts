@@ -173,6 +173,304 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
     .slice(0, 25);
 });
 
+export interface PodKpis {
+  members: number;
+  attendancePct: number;
+  submissionPct: number;
+  helpDeskOpen: number;
+  avgFeedbackRating: number | null;
+  feedbackResponses: number;
+  pulseGotItPct: number | null;
+}
+
+export const getPodKpis = cache(
+  async (cohortId: string, podId: string): Promise<PodKpis> => {
+    const sb = await getSupabaseServer();
+    const { data: memberRows } = await sb
+      .from("pod_members")
+      .select("student_user_id")
+      .eq("pod_id", podId)
+      .eq("cohort_id", cohortId);
+    const memberIds = ((memberRows ?? []) as Array<{ student_user_id: string }>).map(
+      (m) => m.student_user_id,
+    );
+    const members = memberIds.length;
+
+    if (members === 0) {
+      return {
+        members: 0,
+        attendancePct: 0,
+        submissionPct: 0,
+        helpDeskOpen: 0,
+        avgFeedbackRating: null,
+        feedbackResponses: 0,
+        pulseGotItPct: null,
+      };
+    }
+
+    const [daysRes, attRes, asgnRes, subsRes, helpRes, fbRes, pulseRes] =
+      await Promise.all([
+        sb
+          .from("cohort_days")
+          .select("day_number", { count: "exact", head: true })
+          .eq("cohort_id", cohortId)
+          .eq("is_unlocked", true),
+        sb
+          .from("attendance")
+          .select("user_id", { count: "exact", head: true })
+          .eq("cohort_id", cohortId)
+          .eq("status", "present")
+          .in("user_id", memberIds),
+        sb
+          .from("assignments")
+          .select("id", { count: "exact", head: true })
+          .eq("cohort_id", cohortId),
+        sb
+          .from("submissions")
+          .select("user_id, assignments!inner(cohort_id)", {
+            count: "exact",
+            head: true,
+          })
+          .eq("assignments.cohort_id", cohortId)
+          .in("user_id", memberIds),
+        sb
+          .from("help_desk_queue")
+          .select("id", { count: "exact", head: true })
+          .eq("cohort_id", cohortId)
+          .in("status", ["open", "helping"])
+          .in("user_id", memberIds),
+        sb
+          .from("day_feedback")
+          .select("rating, day_number")
+          .eq("cohort_id", cohortId)
+          .in("user_id", memberIds)
+          .order("day_number", { ascending: false })
+          .limit(200),
+        sb
+          .from("polls")
+          .select("id, kind, opened_at")
+          .eq("cohort_id", cohortId)
+          .eq("kind", "pulse")
+          .order("opened_at", { ascending: false })
+          .limit(5),
+      ]);
+
+    const unlockedDays = daysRes.count ?? 0;
+    const attendanceDen = members * Math.max(1, unlockedDays);
+    const attendancePct =
+      attendanceDen > 0
+        ? Math.round(((attRes.count ?? 0) / attendanceDen) * 100)
+        : 0;
+
+    const totalAssignments = asgnRes.count ?? 0;
+    const submissionDen = members * Math.max(1, totalAssignments);
+    const submissionPct =
+      submissionDen > 0
+        ? Math.round(((subsRes.count ?? 0) / submissionDen) * 100)
+        : 0;
+
+    const fbRows = (fbRes.data ?? []) as Array<{
+      rating: number;
+      day_number: number;
+    }>;
+    const last3Days = Array.from(new Set(fbRows.map((r) => r.day_number)))
+      .slice(0, 3);
+    const last3 = fbRows.filter((r) => last3Days.includes(r.day_number));
+    const avgFeedbackRating =
+      last3.length > 0
+        ? Math.round((last3.reduce((s, r) => s + r.rating, 0) / last3.length) * 10) /
+          10
+        : null;
+
+    const pulses = (pulseRes.data ?? []) as Array<{ id: string; kind: string }>;
+    let pulseGotItPct: number | null = null;
+    if (pulses.length > 0) {
+      const results = await Promise.all(
+        pulses.map(
+          (p) =>
+            (sb.rpc as unknown as (
+              fn: string,
+              args: Record<string, unknown>,
+            ) => Promise<{
+              data: Array<{ choice: string; label: string; votes: number }> | null;
+            }>)("rpc_poll_results", { p_poll: p.id }),
+        ),
+      );
+      let got = 0;
+      let total = 0;
+      for (const r of results) {
+        for (const row of r.data ?? []) {
+          const votes = Number(row.votes ?? 0);
+          total += votes;
+          const c = String(row.choice ?? "").toLowerCase();
+          const l = String(row.label ?? "").toLowerCase();
+          if (
+            c === "got_it" ||
+            c === "got" ||
+            l.includes("got") ||
+            l.includes("clear")
+          ) {
+            got += votes;
+          }
+        }
+      }
+      pulseGotItPct = total > 0 ? Math.round((got / total) * 100) : null;
+    }
+
+    return {
+      members,
+      attendancePct,
+      submissionPct,
+      helpDeskOpen: helpRes.count ?? 0,
+      avgFeedbackRating,
+      feedbackResponses: last3.length,
+      pulseGotItPct,
+    };
+  },
+);
+
+export const listAtRiskInPod = cache(
+  async (cohortId: string, podId: string): Promise<AtRiskStudent[]> => {
+    const sb = await getSupabaseServer();
+    const { data: memberRows } = await sb
+      .from("pod_members")
+      .select("student_user_id")
+      .eq("pod_id", podId)
+      .eq("cohort_id", cohortId);
+    const ids = new Set(
+      ((memberRows ?? []) as Array<{ student_user_id: string }>).map(
+        (m) => m.student_user_id,
+      ),
+    );
+    if (ids.size === 0) return [];
+    const all = await listAtRiskStudents(cohortId);
+    return all.filter((s) => ids.has(s.user_id));
+  },
+);
+
+export interface DayFeedbackSummary {
+  day_number: number;
+  total_responses: number;
+  avg_rating: number | null;
+  rating_1: number;
+  rating_2: number;
+  rating_3: number;
+  rating_4: number;
+  rating_5: number;
+}
+
+export const listRecentDayFeedback = cache(
+  async (
+    cohortId: string,
+    dayNumbers: number[],
+    podId?: string | null,
+  ): Promise<DayFeedbackSummary[]> => {
+    if (dayNumbers.length === 0) return [];
+    const sb = await getSupabaseServer();
+    const summaries = await Promise.all(
+      dayNumbers.map(async (day) => {
+        const { data } = await (sb.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{
+          data: Array<{
+            total_responses: number;
+            avg_rating: number | null;
+            rating_1: number;
+            rating_2: number;
+            rating_3: number;
+            rating_4: number;
+            rating_5: number;
+          }> | null;
+        }>)("rpc_day_feedback_summary", {
+          p_cohort: cohortId,
+          p_day: day,
+          p_pod: podId ?? null,
+        });
+        const row = (data ?? [])[0];
+        if (!row) {
+          return {
+            day_number: day,
+            total_responses: 0,
+            avg_rating: null,
+            rating_1: 0,
+            rating_2: 0,
+            rating_3: 0,
+            rating_4: 0,
+            rating_5: 0,
+          } as DayFeedbackSummary;
+        }
+        return {
+          day_number: day,
+          total_responses: Number(row.total_responses ?? 0),
+          avg_rating: row.avg_rating === null ? null : Number(row.avg_rating),
+          rating_1: Number(row.rating_1 ?? 0),
+          rating_2: Number(row.rating_2 ?? 0),
+          rating_3: Number(row.rating_3 ?? 0),
+          rating_4: Number(row.rating_4 ?? 0),
+          rating_5: Number(row.rating_5 ?? 0),
+        };
+      }),
+    );
+    return summaries;
+  },
+);
+
+export interface RecentPulse {
+  id: string;
+  question: string;
+  opened_at: string;
+  closed_at: string | null;
+  results: Array<{ choice: string; label: string; votes: number }>;
+  total_votes: number;
+}
+
+export const listRecentPulses = cache(
+  async (cohortId: string, limit = 3): Promise<RecentPulse[]> => {
+    const sb = await getSupabaseServer();
+    const { data } = await sb
+      .from("polls")
+      .select("id, question, opened_at, closed_at")
+      .eq("cohort_id", cohortId)
+      .eq("kind", "pulse")
+      .order("opened_at", { ascending: false })
+      .limit(limit);
+    const rows = (data ?? []) as Array<{
+      id: string;
+      question: string;
+      opened_at: string;
+      closed_at: string | null;
+    }>;
+    if (rows.length === 0) return [];
+    const results = await Promise.all(
+      rows.map(
+        (r) =>
+          (sb.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Promise<{
+            data: Array<{ choice: string; label: string; votes: number }> | null;
+          }>)("rpc_poll_results", { p_poll: r.id }),
+      ),
+    );
+    return rows.map((r, i) => {
+      const rs = (results[i]?.data ?? []).map((x) => ({
+        choice: x.choice,
+        label: x.label,
+        votes: Number(x.votes ?? 0),
+      }));
+      return {
+        id: r.id,
+        question: r.question,
+        opened_at: r.opened_at,
+        closed_at: r.closed_at,
+        results: rs,
+        total_votes: rs.reduce((s, x) => s + x.votes, 0),
+      };
+    });
+  },
+);
+
 export interface ScoreRow {
   user_id: string;
   full_name: string | null;
