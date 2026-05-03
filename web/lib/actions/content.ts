@@ -35,6 +35,41 @@ export async function createAssignment(input: z.infer<typeof newAssignmentSchema
   );
 }
 
+const updateAssignmentSchema = z.object({
+  id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+  title: z.string().min(2).max(200),
+  body_md: z.string().max(20_000).nullable(),
+  kind: z.enum(["lab", "capstone", "reflection"]),
+  due_at: z.string().nullable(),
+  weight: z.number().min(0).max(100),
+  auto_grade: z.boolean(),
+});
+
+export async function updateAssignment(input: z.infer<typeof updateAssignmentSchema>) {
+  const parsed = updateAssignmentSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("content.write", parsed.data.cohort_id);
+  return withSupabase(
+    (sb) =>
+      sb
+        .from("assignments")
+        .update({
+          title: parsed.data.title,
+          body_md: parsed.data.body_md,
+          kind: parsed.data.kind,
+          due_at: parsed.data.due_at,
+          weight: parsed.data.weight,
+          auto_grade: parsed.data.auto_grade,
+        })
+        .eq("id", parsed.data.id)
+        .eq("cohort_id", parsed.data.cohort_id)
+        .select()
+        .single(),
+    `/admin/cohorts/${parsed.data.cohort_id}/curriculum`,
+  );
+}
+
 const deleteSchema = z.object({ id: z.string().uuid(), cohort_id: z.string().uuid() });
 
 export async function deleteAssignment(input: z.infer<typeof deleteSchema>) {

@@ -113,7 +113,14 @@ export function AssignmentsTable({
           {rows.map((a) => (
             <tr key={a.id} className="border-line border-t">
               <td className="px-3 py-2 font-mono text-xs">D{String(a.day_number).padStart(2, "0")}</td>
-              <td className="px-3 py-2">{a.title}</td>
+              <td className="px-3 py-2">
+                <Link
+                  href={`/admin/cohorts/${cohortId}/content/assignment/${a.id}`}
+                  className="text-accent hover:underline"
+                >
+                  {a.title}
+                </Link>
+              </td>
               <td className="px-3 py-2"><Badge>{a.kind}</Badge></td>
               <td className="text-muted px-3 py-2 text-xs">{a.due_at ? fmtDate(a.due_at) : "—"}</td>
               <td className="px-3 py-2 text-right tabular-nums">{a.submission_count}</td>
