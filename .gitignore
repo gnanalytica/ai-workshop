@@ -18,3 +18,4 @@ graphify-out/
 web/tests/load/cookies.txt
 web/tests/load/*.json
 .local-seed/
+.claude/scheduled_tasks.lock
