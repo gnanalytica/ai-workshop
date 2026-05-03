@@ -75,12 +75,23 @@ export function LessonReader({
 
   const persistEnabled = !!(cohortId && dayNumber && phase);
 
+  // Furthest section the user is allowed to view: section 0 + every section
+  // immediately following a contiguous run of completed sections. So if 0,1,2
+  // are done they can view through 3 ("the next thing to do") but not 4+.
+  // When persistence is off (read-only / faculty preview), nothing is locked.
+  const maxUnlocked = useMemo(() => {
+    if (!persistEnabled) return total - 1;
+    let n = 0;
+    while (n < total - 1 && completed.has(n)) n += 1;
+    return n;
+  }, [persistEnabled, total, completed]);
+
   const goto = useCallback(
     (next: number) => {
-      const clamped = Math.max(0, Math.min(total - 1, next));
+      const clamped = Math.max(0, Math.min(maxUnlocked, next));
       setIdx(clamped);
     },
-    [total],
+    [maxUnlocked],
   );
 
   const advance = useCallback(() => {
@@ -136,7 +147,8 @@ export function LessonReader({
         goto(0);
       } else if (e.key === "End") {
         e.preventDefault();
-        goto(total - 1);
+        // End jumps to the furthest unlocked section, never past the gate.
+        goto(maxUnlocked);
       }
     }
     window.addEventListener("keydown", onKey);
@@ -244,7 +256,13 @@ export function LessonReader({
               </p>
             )}
           </div>
-          <DotStrip total={total} idx={idx} completed={completed} onPick={goto} />
+          <DotStrip
+            total={total}
+            idx={idx}
+            completed={completed}
+            maxUnlocked={maxUnlocked}
+            onPick={goto}
+          />
         </div>
 
         {/* Section content — only the active child is rendered */}
@@ -321,11 +339,14 @@ function DotStrip({
   total,
   idx,
   completed,
+  maxUnlocked,
   onPick,
 }: {
   total: number;
   idx: number;
   completed?: Set<number>;
+  /** Highest section index the user is allowed to view; later dots show as locked. */
+  maxUnlocked?: number;
   onPick: (i: number) => void;
 }) {
   return (
@@ -333,21 +354,25 @@ function DotStrip({
       {Array.from({ length: total }).map((_, i) => {
         const active = i === idx;
         const done = completed?.has(i) ?? i < idx;
+        const locked = maxUnlocked != null && i > maxUnlocked;
         return (
           <button
             key={i}
             type="button"
             role="tab"
             aria-selected={active}
-            aria-label={`Section ${i + 1}${done ? " (complete)" : ""}`}
-            onClick={() => onPick(i)}
+            aria-label={`Section ${i + 1}${done ? " (complete)" : locked ? " (locked)" : ""}`}
+            disabled={locked}
+            onClick={() => !locked && onPick(i)}
             className={cn(
               "h-1.5 rounded-full transition-all duration-200",
               active
                 ? "bg-accent w-6"
                 : done
                   ? "bg-ok w-3"
-                  : "bg-line w-3 hover:bg-muted/50",
+                  : locked
+                    ? "bg-line/40 w-3 cursor-not-allowed"
+                    : "bg-line w-3 hover:bg-muted/50",
             )}
           />
         );
