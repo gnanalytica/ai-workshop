@@ -225,19 +225,53 @@ export async function LessonDayView({
     </>
   );
 
+  // Inline interactive blocks at the section whose H2 title mentions them, so
+  // students see the submit form on the same page as the narrative. Anything
+  // that doesn't match a section falls back to trailing (rendered after the
+  // last section) — keeps backward compatibility for days with no matching H2.
+  const assignmentSectionIdx = postSections.findIndex(
+    (s) => /assignment/i.test(s.title ?? ""),
+  );
+  const quizSectionIdx = postSections.findIndex((s) => /quiz/i.test(s.title ?? ""));
+
+  const postSectionAddons: Record<number, React.ReactNode> = {};
+  if (!readOnly && interactive.assignment && assignmentSectionIdx >= 0) {
+    postSectionAddons[assignmentSectionIdx] = (
+      <AssignmentBlock assignment={interactive.assignment} />
+    );
+  }
+  if (!readOnly && interactive.quiz && quizSectionIdx >= 0) {
+    postSectionAddons[quizSectionIdx] = (
+      <QuizBlock quiz={interactive.quiz} dayNumber={dayNumber} />
+    );
+  }
+
+  const trailingAssignment =
+    !readOnly && interactive.assignment && assignmentSectionIdx < 0 ? (
+      <AssignmentBlock assignment={interactive.assignment} />
+    ) : null;
+  const trailingQuiz =
+    !readOnly && interactive.quiz && quizSectionIdx < 0 ? (
+      <QuizBlock quiz={interactive.quiz} dayNumber={dayNumber} />
+    ) : null;
+
   const postTrailing = (
     <>
-      {!readOnly && (interactive.assignment || interactive.quiz) && (
+      {(trailingAssignment || trailingQuiz) && (
         <div className="mt-8 space-y-4">
-          {interactive.assignment && <AssignmentBlock assignment={interactive.assignment} />}
-          {interactive.quiz && <QuizBlock quiz={interactive.quiz} dayNumber={dayNumber} />}
+          {trailingAssignment}
+          {trailingQuiz}
         </div>
       )}
       {endGoalCard}
     </>
   );
   const postPanel = phases.post ? (
-    <LessonReader titles={postSections.map((s) => s.title)} trailing={postTrailing}>
+    <LessonReader
+      titles={postSections.map((s) => s.title)}
+      trailing={postTrailing}
+      sectionAddons={postSectionAddons}
+    >
       {postSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
       ))}

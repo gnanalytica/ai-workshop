@@ -35,10 +35,13 @@ export function LessonReader({
   children,
   /** Optional extra content to render after the last section (poll, tools, etc). */
   trailing,
+  /** Optional inline content keyed by section index — renders right under that section's body. */
+  sectionAddons,
 }: {
   titles: (string | null)[];
   children: ReactNode;
   trailing?: ReactNode;
+  sectionAddons?: Record<number, ReactNode>;
 }) {
   const items = Children.toArray(children).filter(isValidElement);
   const total = items.length;
@@ -98,6 +101,7 @@ export function LessonReader({
     return (
       <div ref={rootRef}>
         {items[0]}
+        {sectionAddons?.[0] && <div className="mt-6">{sectionAddons[0]}</div>}
         {trailing}
       </div>
     );
@@ -126,6 +130,11 @@ export function LessonReader({
 
       {/* Section content — only the active child is rendered */}
       <div>{items[idx]}</div>
+
+      {/* Inline addon for this specific section (e.g., AssignmentBlock under the
+          "Assignment" H2). Renders directly below the section body so the
+          submit form is on the same page as the narrative. */}
+      {sectionAddons?.[idx] && <div className="mt-6">{sectionAddons[idx]}</div>}
 
       {/* Trailing widgets only on the last section */}
       {isLast && trailing}
