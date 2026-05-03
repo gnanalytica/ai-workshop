@@ -95,6 +95,7 @@ export const getDayInteractive = cache(
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
+        .eq("is_published", true)
         .order("version", { ascending: false })
         .limit(1)
         .maybeSingle(),

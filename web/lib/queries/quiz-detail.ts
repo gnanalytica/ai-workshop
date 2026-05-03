@@ -17,6 +17,7 @@ export interface QuizDetail {
   day_number: number;
   title: string;
   version: number;
+  is_published: boolean;
   questions: QuizQuestionRow[];
 }
 
@@ -74,12 +75,12 @@ export const getQuizDetail = cache(async (quizId: string): Promise<QuizDetail | 
   const sb = await getSupabaseServer();
   const { data, error } = await sb
     .from("quizzes")
-    .select("id, cohort_id, day_number, title, version, quiz_questions(ordinal, prompt, kind, options, answer)")
+    .select("id, cohort_id, day_number, title, version, is_published, quiz_questions(ordinal, prompt, kind, options, answer)")
     .eq("id", quizId)
     .maybeSingle();
   if (error || !data) return null;
   const d = data as unknown as {
-    id: string; cohort_id: string; day_number: number; title: string; version: number;
+    id: string; cohort_id: string; day_number: number; title: string; version: number; is_published: boolean;
     quiz_questions: Array<{ ordinal: number; prompt: string; kind: QuizKind; options: unknown; answer: unknown }>;
   };
   return {
@@ -88,6 +89,7 @@ export const getQuizDetail = cache(async (quizId: string): Promise<QuizDetail | 
     day_number: d.day_number,
     title: d.title,
     version: d.version,
+    is_published: d.is_published ?? false,
     questions: (d.quiz_questions ?? [])
       .map((q) => ({
         ordinal: q.ordinal,

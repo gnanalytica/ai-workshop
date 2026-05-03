@@ -7,6 +7,7 @@ import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getQuizDetail } from "@/lib/queries/quiz-detail";
 import { QuestionsEditor } from "@/app/(authed)/admin/content/quiz/[id]/QuestionsEditor";
 import { QuizResultsChart } from "@/app/(authed)/admin/content/quiz/[id]/QuizResultsChart";
+import { PublishToggle } from "./PublishToggle";
 
 export default async function QuizEditorPage({
   params,
@@ -40,6 +41,15 @@ export default async function QuizEditorPage({
           </Link>
         </CardSub>
       </header>
+
+      <Card className="p-5">
+        <PublishToggle
+          cohortId={quiz.cohort_id}
+          quizId={quiz.id}
+          initial={quiz.is_published}
+          questionCount={quiz.questions.length}
+        />
+      </Card>
 
       <Card className="p-6">
         <QuestionsEditor

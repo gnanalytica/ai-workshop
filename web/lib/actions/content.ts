@@ -126,3 +126,26 @@ export async function deleteQuizQuestion(input: z.infer<typeof deleteQSchema>) {
     "/admin/content",
   );
 }
+
+const setPublishedSchema = z.object({
+  cohort_id: z.string().uuid(),
+  quiz_id: z.string().uuid(),
+  is_published: z.boolean(),
+});
+
+export async function setQuizPublished(input: z.infer<typeof setPublishedSchema>) {
+  const parsed = setPublishedSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("content.write", parsed.data.cohort_id);
+  return withSupabase(
+    (sb) =>
+      sb
+        .from("quizzes")
+        .update({ is_published: parsed.data.is_published })
+        .eq("id", parsed.data.quiz_id)
+        .eq("cohort_id", parsed.data.cohort_id)
+        .select()
+        .single(),
+    "/admin/content",
+  );
+}
