@@ -11,6 +11,11 @@ import { getProfile } from "@/lib/auth/session";
 import { fmtDate, relTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
+import { DayFeedbackCard } from "@/components/day-feedback/DayFeedbackCard";
+import {
+  getPendingFeedbackDays,
+  getMyDayFeedback,
+} from "@/lib/queries/day-feedback";
 
 export default async function DashboardPage() {
   const [cohort, profile] = await Promise.all([getMyCurrentCohort(), getProfile()]);
@@ -27,11 +32,16 @@ export default async function DashboardPage() {
   }
 
   const today = todayDayNumber(cohort);
-  const [kpis, days, helpDesk] = await Promise.all([
+  const [kpis, days, helpDesk, pendingFeedback] = await Promise.all([
     getDashboardKpis(cohort.id),
     listCohortDays(cohort.id),
     listMyHelpDeskTickets(cohort.id),
+    getPendingFeedbackDays(cohort.id, today, 3),
   ]);
+  const myFeedback = await getMyDayFeedback(
+    cohort.id,
+    pendingFeedback.map((d) => d.day_number),
+  );
 
   const showOnboardingBanner = !profile?.onboarded_at;
 
@@ -149,6 +159,42 @@ export default async function DashboardPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {pendingFeedback.length > 0 && (
+        <section>
+          <div className="mb-3 flex items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">
+              Tell us about yesterday
+            </h2>
+            <p className="text-muted text-xs">
+              Quick rating helps faculty calibrate pacing
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {pendingFeedback.map((d) => {
+              const existing = myFeedback.get(d.day_number);
+              return (
+                <DayFeedbackCard
+                  key={d.day_number}
+                  cohortId={cohort.id}
+                  dayNumber={d.day_number}
+                  dayTitle={d.title}
+                  existing={
+                    existing
+                      ? {
+                          rating: existing.rating,
+                          fuzzy_topic: existing.fuzzy_topic,
+                          notes: existing.notes,
+                          anonymous: existing.anonymous,
+                        }
+                      : undefined
+                  }
+                />
+              );
+            })}
           </div>
         </section>
       )}

@@ -2,16 +2,21 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
+import { getMyPod } from "@/lib/queries/pod";
+import {
+  getCohortPodLeaderboard,
+  getMyPodMembers,
+} from "@/lib/queries/pod-leaderboard";
 import { checkCapability } from "@/lib/auth/requireCapability";
 import { getSession } from "@/lib/auth/session";
 import {
   listStudentLeaderboard,
-  listPodLeaderboard,
   listTeamLeaderboard,
 } from "@/lib/queries/faculty-cohort";
 import { StudentLeaderboardTable } from "@/app/(authed)/faculty/leaderboard/StudentLeaderboardTable";
-import { PodLeaderboardTable } from "@/app/(authed)/faculty/leaderboard/PodLeaderboardTable";
 import { TeamLeaderboardTable } from "@/app/(authed)/faculty/leaderboard/TeamLeaderboardTable";
+import { StudentPodLeaderboardTable } from "./StudentPodLeaderboardTable";
+import { MyPodMembersTable } from "./MyPodMembersTable";
 
 export default async function LeaderboardPage({
   searchParams,
@@ -33,14 +38,20 @@ export default async function LeaderboardPage({
 
   const isFaculty = await checkCapability("roster.read", cohortId);
   const me = await getSession();
-  const [students, pods, teams, myPods] = await Promise.all([
+  const [students, pods, teams, facultyPods, myPod] = await Promise.all([
     listStudentLeaderboard(cohortId),
-    listPodLeaderboard(cohortId),
+    getCohortPodLeaderboard(cohortId),
     listTeamLeaderboard(cohortId),
     isFaculty && me ? getFacultyPods(cohortId, me.id) : Promise.resolve([]),
+    getMyPod(cohortId),
   ]);
 
-  const myPodName = myPods[0]?.pod_name ?? null;
+  // For faculty: highlight the pod they coach. For students: highlight their
+  // own pod resolved via rpc_my_pod.
+  const myPodName = facultyPods[0]?.pod_name ?? myPod?.pod_name ?? null;
+  const myPodId = facultyPods[0]?.pod_id ?? myPod?.pod_id ?? null;
+  const myPodMembers =
+    tab === "pod" && myPod ? await getMyPodMembers(cohortId, myPod.pod_id) : [];
 
   return (
     <div data-tour="leaderboard-page" className="space-y-6">
@@ -67,9 +78,32 @@ export default async function LeaderboardPage({
         </Card>
       )}
       {tab === "pod" && (
-        <Card>
-          <PodLeaderboardTable rows={pods} />
-        </Card>
+        <div className="space-y-6">
+          <Card>
+            <div className="mb-3">
+              <h2 className="text-ink text-lg font-semibold tracking-tight">
+                Cohort pod ranking
+              </h2>
+              <p className="text-muted mt-0.5 text-sm">
+                All pods in this cohort by total score.
+              </p>
+            </div>
+            <StudentPodLeaderboardTable rows={pods} myPodId={myPodId} />
+          </Card>
+          {myPod && (
+            <Card>
+              <div className="mb-3">
+                <h2 className="text-ink text-lg font-semibold tracking-tight">
+                  My pod · {myPod.pod_name}
+                </h2>
+                <p className="text-muted mt-0.5 text-sm">
+                  Internal ranking inside your pod.
+                </p>
+              </div>
+              <MyPodMembersTable rows={myPodMembers} myUserId={me?.id ?? null} />
+            </Card>
+          )}
+        </div>
       )}
       {tab === "team" && (
         <Card>

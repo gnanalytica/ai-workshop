@@ -8,6 +8,9 @@ import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getAdminCohortKpis } from "@/lib/queries/admin";
 import { listCohortActivity, type ActivityKind } from "@/lib/queries/activity";
 import { fmtDateTime, relTime } from "@/lib/format";
+import { workingDayNumber } from "@/lib/calendar";
+import { listRecentDaySummaries } from "@/lib/queries/day-feedback";
+import { FeedbackPanel } from "@/components/day-feedback/FeedbackPanel";
 
 const KIND_TONE: Record<ActivityKind, "default" | "ok" | "warn" | "accent" | "danger"> = {
   registration: "accent",
@@ -27,9 +30,11 @@ export default async function AdminCohortHome({
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
 
-  const [kpis, activity] = await Promise.all([
+  const today = Math.min(30, workingDayNumber(cohort.starts_on, new Date()));
+  const [kpis, activity, feedbackSummaries] = await Promise.all([
     getAdminCohortKpis(cohort.id),
     listCohortActivity(cohort.id, 25),
+    listRecentDaySummaries(cohort.id, today, 5),
   ]);
 
   return (
@@ -99,6 +104,14 @@ export default async function AdminCohortHome({
           </Card>
         )}
       </section>
+
+      <FeedbackPanel
+        title="Day feedback"
+        subtitle="Last 5 days · cohort-wide · click into a day for individual responses"
+        scope="cohort-wide"
+        hrefBase={`/admin/cohorts/${cohort.id}/feedback`}
+        summaries={feedbackSummaries}
+      />
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Quick links</h2>

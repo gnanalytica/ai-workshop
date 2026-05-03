@@ -21,6 +21,7 @@ export async function CohortShell({
     | "live"
     | "help-desk"
     | "analytics"
+    | "health"
     | "milestones";
 }) {
   const cohorts = await listAdminCohorts();
