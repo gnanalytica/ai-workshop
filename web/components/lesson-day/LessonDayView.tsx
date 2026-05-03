@@ -15,6 +15,7 @@ import { loadDay, listDays } from "@/lib/content/loader";
 import type { ActiveCohort } from "@/lib/queries/cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDayInteractive, type DayInteractive } from "@/lib/queries/day-interactive";
+import { getDayProgress } from "@/lib/queries/lesson-progress";
 import { fmtDateTime } from "@/lib/format";
 import { defaultPhase, splitDayPhases, type Phase } from "@/lib/content/phases";
 
@@ -44,11 +45,17 @@ export async function LessonDayView({
   const dayNumber = dayParam === "today" ? today : Number(dayParam);
   if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 30) notFound();
 
-  const [content, allDays, cohortDays, interactive] = await Promise.all([
+  const [content, allDays, cohortDays, interactive, progress] = await Promise.all([
     loadDay(dayNumber),
     listDays(),
     listCohortDays(cohort.id),
     readOnly ? Promise.resolve(readOnlyInteractive) : getDayInteractive(cohort.id, dayNumber),
+    readOnly
+      ? Promise.resolve({
+          completedSections: { pre: [], live: [], post: [], extra: [] },
+          dayFeedbackSubmitted: false,
+        })
+      : getDayProgress(cohort.id, dayNumber),
   ]);
   if (!content) notFound();
 
@@ -187,8 +194,19 @@ export async function LessonDayView({
   const postSections = splitByH2(phases.post ?? "");
   const extraSections = splitByH2(phases.extra ?? "");
 
+  // Persist per-section completion only for real students viewing their own
+  // cohort (skip in read-only / faculty preview mode).
+  const persistProps = readOnly
+    ? {}
+    : { cohortId: cohort.id, dayNumber, dayFeedbackSubmitted: progress.dayFeedbackSubmitted };
+
   const prePanel = phases.pre ? (
-    <LessonReader titles={preSections.map((s) => s.title)}>
+    <LessonReader
+      titles={preSections.map((s) => s.title)}
+      {...persistProps}
+      phase="pre"
+      initialCompleted={progress.completedSections.pre}
+    >
       {preSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
       ))}
@@ -211,7 +229,13 @@ export async function LessonDayView({
     <>
       {promptCard}
       {phases.live ? (
-        <LessonReader titles={liveSections.map((s) => s.title)} trailing={liveTrailing}>
+        <LessonReader
+          titles={liveSections.map((s) => s.title)}
+          trailing={liveTrailing}
+          {...persistProps}
+          phase="live"
+          initialCompleted={progress.completedSections.live}
+        >
           {liveSections.map((s, i) => (
             <MarkdownView key={i} source={s.body} />
           ))}
@@ -271,6 +295,10 @@ export async function LessonDayView({
       titles={postSections.map((s) => s.title)}
       trailing={postTrailing}
       sectionAddons={postSectionAddons}
+      {...persistProps}
+      phase="post"
+      initialCompleted={progress.completedSections.post}
+      triggerFeedbackOnLast={!readOnly}
     >
       {postSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
@@ -285,7 +313,13 @@ export async function LessonDayView({
 
   const extraTrailing = <>{resourcesList}</>;
   const extraPanel = phases.extra ? (
-    <LessonReader titles={extraSections.map((s) => s.title)} trailing={extraTrailing}>
+    <LessonReader
+      titles={extraSections.map((s) => s.title)}
+      trailing={extraTrailing}
+      {...persistProps}
+      phase="extra"
+      initialCompleted={progress.completedSections.extra}
+    >
       {extraSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
       ))}
