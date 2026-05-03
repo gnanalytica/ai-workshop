@@ -65,13 +65,19 @@ const voteSchema = z.object({ poll_id: z.string().uuid(), choice: z.string().min
 export async function castVote(input: z.infer<typeof voteSchema>) {
   const parsed = voteSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
-  return withSupabase(async (sb) => {
+  const result = await withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
     return sb
       .from("poll_votes")
       .upsert({ poll_id: parsed.data.poll_id, user_id: user.user.id, choice: parsed.data.choice })
-      .select()
+      .select("poll_id, polls!inner(cohort_id)")
       .single();
   }, "/dashboard");
+  if (result.ok) {
+    const row = result.data as unknown as { polls?: { cohort_id?: string } | null } | null;
+    const cohortId = row?.polls?.cohort_id ?? null;
+    if (cohortId) await broadcastToCohort(cohortId, "poll");
+  }
+  return result;
 }

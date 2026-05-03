@@ -53,6 +53,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Classmates",  href: "/people",      cap: null,             group: "student", section: "People",    icon: "users-round" },
 
   { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
+  { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
   { label: "Handbook",    href: "/handbook",    cap: null,             group: "student", section: "Reference", icon: "library" },
 
   // ----- Faculty -----

@@ -7,6 +7,7 @@ import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { listPolls } from "@/lib/queries/polls";
 import { getActiveBanner } from "@/lib/queries/banners";
 import { PollResultsChart } from "@/app/(authed)/admin/polls/PollResultsChart";
+import { LazyPollResults } from "@/components/polls/LazyPollResults";
 import { LiveClient } from "./LiveClient";
 
 export default async function LivePage({
@@ -60,9 +61,14 @@ export default async function LivePage({
           </div>
           <ul className="divide-line/40 divide-y">
             {recent.map((p) => (
-              <li key={p.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2 text-sm">
-                <span className="text-ink min-w-0 break-words">{p.question}</span>
-                <span className="text-muted tabular-nums text-xs">{p.vote_count} votes</span>
+              <li key={p.id} className="py-2 text-sm">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="text-ink min-w-0 break-words">{p.question}</span>
+                  <span className="flex items-baseline gap-3">
+                    <span className="text-muted tabular-nums text-xs">{p.vote_count} votes</span>
+                    <LazyPollResults pollId={p.id} cohortId={cohort.id} />
+                  </span>
+                </div>
               </li>
             ))}
           </ul>

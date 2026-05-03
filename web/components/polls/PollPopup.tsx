@@ -86,19 +86,13 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
       if (document.visibilityState === "visible") fetchPoll();
     }
     document.addEventListener("visibilitychange", onVisibility);
-    // Slow fallback poll — only when visible. Down from 15s. Realtime
-    // broadcast handles the fast path; this catches dropped events and
-    // cron-driven auto-close.
-    const fallback = setInterval(() => {
-      if (document.visibilityState === "visible") fetchPoll();
-    }, 60_000);
-    // Realtime broadcast — emitted by createPoll/closePoll server actions.
+    // Realtime broadcast — emitted by createPoll/closePoll/castVote server
+    // actions and by the auto-close-polls Edge Function on cron close.
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
     ch.on("broadcast", { event: "poll" }, () => fetchPoll()).subscribe();
     return () => {
       cancelled = true;
-      clearInterval(fallback);
       document.removeEventListener("visibilitychange", onVisibility);
       sb.removeChannel(ch);
       abortRef.current?.abort();

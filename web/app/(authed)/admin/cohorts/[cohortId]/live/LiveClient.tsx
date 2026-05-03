@@ -104,7 +104,6 @@ export function LiveClient({
   useEffect(() => {
     if (!hasActive && !hasBannerTimer) return;
     const tick = setInterval(() => force((n) => n + 1), 1000);
-    const slowRefresh = setInterval(() => router.refresh(), 60_000);
     const sb = getSupabaseBrowser();
     const ch = sb
       .channel(`cohort:${cohortId}`)
@@ -113,7 +112,6 @@ export function LiveClient({
       .subscribe();
     return () => {
       clearInterval(tick);
-      clearInterval(slowRefresh);
       sb.removeChannel(ch);
     };
   }, [hasActive, hasBannerTimer, router, cohortId]);
