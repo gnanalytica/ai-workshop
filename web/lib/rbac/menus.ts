@@ -64,12 +64,13 @@ export const NAV: readonly NavItem[] = [
   { label: "Leaderboard",  href: "/leaderboard",        cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
   { label: "Handbook",     href: "/faculty/handbook",   cap: "schedule.read",  group: "faculty", section: "Reference", icon: "library" },
 
-  // ----- Admin (no sections — only 4 items) -----
-  { label: "Cohorts",       href: "/admin",         cap: "schedule.read", group: "admin",                  icon: "home" },
-  { label: "Community",     href: "/community",         cap: "community.read",    group: "admin",                  icon: "message-square" },
-  { label: "Invites",       href: "/admin/invites", cap: "orgs.write",    group: "system",                 icon: "ticket" },
-  { label: "Organizations", href: "/admin/orgs",    cap: "orgs.write",    group: "system",                 icon: "building" },
-  { label: "Handbook",      href: "/admin/handbook",cap: "orgs.write",    group: "system",                 icon: "library" },
+  // ----- Admin -----
+  { label: "Cohorts",       href: "/admin",           cap: "schedule.read",  group: "admin",                  icon: "home" },
+  { label: "Help desk",     href: "/admin/help-desk", cap: "support.triage", group: "admin",                  icon: "life-buoy" },
+  { label: "Community",     href: "/community",       cap: "community.read", group: "admin",                  icon: "message-square" },
+  { label: "Invites",       href: "/admin/invites",   cap: "orgs.write",     group: "system",                 icon: "ticket" },
+  { label: "Organizations", href: "/admin/orgs",      cap: "orgs.write",     group: "system",                 icon: "building" },
+  { label: "Handbook",      href: "/admin/handbook",  cap: "orgs.write",     group: "system",                 icon: "library" },
 ];
 
 export function navForCaps(caps: readonly string[]): NavItem[] {

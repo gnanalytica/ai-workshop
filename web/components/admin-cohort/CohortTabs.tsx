@@ -16,20 +16,18 @@ type Tab =
   | "health"
   | "milestones";
 
+// Visible tab nav — kept lean. Capstones / Milestones / Polls / Analytics /
+// Health remain reachable via direct URL but aren't in the rail; the `Tab`
+// union still names them so deep pages can highlight a parent tab.
 const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "home", label: "Home", href: (c) => `/admin/cohorts/${c}` },
-  { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
   { id: "roster", label: "Roster", href: (c) => `/admin/cohorts/${c}/roster` },
   { id: "pods", label: "Pods", href: (c) => `/admin/cohorts/${c}/pods` },
   { id: "schedule", label: "Schedule", href: (c) => `/admin/cohorts/${c}/schedule` },
   { id: "content", label: "Content", href: (c) => `/admin/cohorts/${c}/content` },
-  { id: "grading", label: "Grading", href: (c) => `/admin/cohorts/${c}/grading` },
-  { id: "capstones", label: "Capstones", href: (c) => `/admin/cohorts/${c}/capstones` },
+  { id: "grading", label: "Submissions", href: (c) => `/admin/cohorts/${c}/grading` },
+  { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
   { id: "help-desk", label: "Help desk", href: (c) => `/admin/cohorts/${c}/help-desk` },
-  { id: "polls", label: "Polls", href: (c) => `/admin/cohorts/${c}/polls` },
-  { id: "analytics", label: "Analytics", href: (c) => `/admin/cohorts/${c}/analytics` },
-  { id: "health", label: "Health", href: (c) => `/admin/cohorts/${c}/health` },
-  { id: "milestones", label: "Milestones", href: (c) => `/admin/cohorts/${c}/milestones` },
 ];
 
 export function CohortTabs({

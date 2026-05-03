@@ -83,7 +83,7 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
     if (remaining <= 0) return null;
     return (
       <div className="bg-accent/10 border-line/60 text-ink relative z-30 w-full border-b">
-        <div className="flex min-w-0 items-center gap-3 px-3 py-2 md:px-6 md:py-2.5">
+        <div className="flex min-w-0 items-center gap-3 py-2 pl-12 pr-3 md:py-2.5 md:pl-[5rem] md:pr-6">
           <span className="bg-accent inline-block h-2 w-2 flex-none rounded-full" aria-hidden />
           <span className="min-w-0 flex-1 truncate text-sm">{banner.label}</span>
           <span className="text-accent flex-none font-mono text-sm tabular-nums">
@@ -96,7 +96,7 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
 
   return (
     <div className="bg-accent/10 border-line/60 text-ink relative z-30 w-full border-b">
-      <div className="flex min-w-0 items-center gap-3 px-3 py-2 md:px-6 md:py-2.5">
+      <div className="flex min-w-0 items-center gap-3 py-2 pl-12 pr-3 md:py-2.5 md:pl-[5rem] md:pr-6">
         <span aria-hidden>📣</span>
         <span className="min-w-0 flex-1 truncate text-sm">{banner.label}</span>
         <span className="text-muted flex-none text-xs">{fmtRel(banner.created_at)}</span>

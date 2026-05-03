@@ -45,8 +45,19 @@ export function HelpDeskQueueClient({
   const [pending, start] = useTransition();
   useTableRefresh("help_desk_queue", { column: "cohort_id", value: cohortId });
   const filtered = filter === "all" ? items : items.filter((i) => i.kind === filter);
-  const escalated = filtered.filter((i) => i.escalated_at != null);
-  const open = filtered.filter((i) => i.escalated_at == null);
+  // Priority: escalated first (oldest escalation = most urgent), then by
+  // submission time so the longest-waiting ticket is served next (FIFO).
+  const sorted = [...filtered].sort((a, b) => {
+    const aEsc = a.escalated_at != null;
+    const bEsc = b.escalated_at != null;
+    if (aEsc !== bEsc) return aEsc ? -1 : 1;
+    if (aEsc && bEsc) {
+      return new Date(a.escalated_at!).getTime() - new Date(b.escalated_at!).getTime();
+    }
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
+  const escalatedCount = sorted.filter((i) => i.escalated_at != null).length;
+  const openCount = sorted.length - escalatedCount;
 
   function onClaim(id: string) {
     start(async () => {
@@ -85,44 +96,22 @@ export function HelpDeskQueueClient({
           {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
         </span>
       </div>
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <Card><CardSub>Inbox zero. Nice.</CardSub></Card>
       ) : (
-        <div className="space-y-6">
-          <section className="space-y-2">
-            <div className="flex items-center gap-2">
-              <h3 className="text-ink text-sm font-medium">Escalated</h3>
-              <span className="text-muted text-xs">
-                {escalated.length} escalated · {open.length} open
-              </span>
-            </div>
-            {escalated.map((s) => (
-              <HelpDeskRow
-                key={s.id}
-                s={s}
-                pending={pending}
-                onClaim={onClaim}
-                onResolve={onResolve}
-              />
-            ))}
-          </section>
-          {open.length > 0 && (
-            <section className="space-y-2">
-              <div className="flex items-center gap-2">
-                <h3 className="text-ink text-sm font-medium">Open</h3>
-                <span className="text-muted text-xs">{open.length} open</span>
-              </div>
-              {open.map((s) => (
-                <HelpDeskRow
-                  key={s.id}
-                  s={s}
-                  pending={pending}
-                  onClaim={onClaim}
-                  onResolve={onResolve}
-                />
-              ))}
-            </section>
-          )}
+        <div className="space-y-2">
+          <div className="text-muted text-xs">
+            {escalatedCount} escalated · {openCount} open · sorted by priority
+          </div>
+          {sorted.map((s) => (
+            <HelpDeskRow
+              key={s.id}
+              s={s}
+              pending={pending}
+              onClaim={onClaim}
+              onResolve={onResolve}
+            />
+          ))}
         </div>
       )}
     </div>

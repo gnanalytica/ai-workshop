@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
-import { getAdminCohortKpis } from "@/lib/queries/admin";
+import { getAdminCohortKpis, listPods } from "@/lib/queries/admin";
+import { listCohortDays } from "@/lib/queries/cohort";
 import { listCohortActivity, type ActivityKind } from "@/lib/queries/activity";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { workingDayNumber } from "@/lib/calendar";
@@ -31,11 +32,19 @@ export default async function AdminCohortHome({
   if (!cohort) notFound();
 
   const today = Math.min(30, workingDayNumber(cohort.starts_on, new Date()));
-  const [kpis, activity, feedbackSummaries] = await Promise.all([
+  const [kpis, activity, feedbackSummaries, pods, days] = await Promise.all([
     getAdminCohortKpis(cohort.id),
     listCohortActivity(cohort.id, 25),
     listRecentDaySummaries(cohort.id, today, 5),
+    listPods(cohort.id),
+    listCohortDays(cohort.id),
   ]);
+  const unlockedDays = days.filter((d) => d.is_unlocked).length;
+  const upcomingDays = days
+    .filter((d) => !d.is_unlocked && d.day_number >= today)
+    .slice(0, 3);
+  const podsWithoutFaculty = pods.filter((p) => p.faculty_count === 0).length;
+  const podsBelowMin = pods.filter((p) => p.member_count < 3).length;
 
   return (
     <>
@@ -112,6 +121,84 @@ export default async function AdminCohortHome({
         hrefBase={`/admin/cohorts/${cohort.id}/feedback`}
         summaries={feedbackSummaries}
       />
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <div className="flex items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">Pods</h2>
+            <Link
+              href={`/admin/cohorts/${cohort.id}/pods`}
+              className="text-accent text-xs"
+            >
+              Manage →
+            </Link>
+          </div>
+          <CardSub className="mt-1">
+            {pods.length} {pods.length === 1 ? "pod" : "pods"}
+            {podsWithoutFaculty > 0 && ` · ${podsWithoutFaculty} without faculty`}
+            {podsBelowMin > 0 && ` · ${podsBelowMin} below min size`}
+          </CardSub>
+          {pods.length === 0 ? (
+            <CardSub className="mt-3">No pods yet.</CardSub>
+          ) : (
+            <ul className="divide-line/50 mt-3 divide-y text-sm">
+              {pods.slice(0, 6).map((p) => (
+                <li
+                  key={p.pod_id}
+                  className="flex items-baseline justify-between gap-2 py-1.5"
+                >
+                  <span className="text-ink truncate">{p.name}</span>
+                  <span className="text-muted shrink-0 text-xs">
+                    {p.member_count} student{p.member_count === 1 ? "" : "s"}
+                    {p.faculty_count === 0 ? (
+                      <Badge variant="warn" className="ml-2">no faculty</Badge>
+                    ) : (
+                      ` · ${p.faculty_names[0] ?? `${p.faculty_count} faculty`}`
+                    )}
+                  </span>
+                </li>
+              ))}
+              {pods.length > 6 && (
+                <li className="text-muted py-1.5 text-xs">
+                  + {pods.length - 6} more
+                </li>
+              )}
+            </ul>
+          )}
+        </Card>
+
+        <Card>
+          <div className="flex items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">Content</h2>
+            <Link
+              href={`/admin/cohorts/${cohort.id}/content`}
+              className="text-accent text-xs"
+            >
+              Manage →
+            </Link>
+          </div>
+          <CardSub className="mt-1">
+            Day {today} of 30 · {unlockedDays} unlocked
+          </CardSub>
+          {upcomingDays.length === 0 ? (
+            <CardSub className="mt-3">All days are unlocked.</CardSub>
+          ) : (
+            <ul className="divide-line/50 mt-3 divide-y text-sm">
+              {upcomingDays.map((d) => (
+                <li
+                  key={d.day_number}
+                  className="flex items-baseline justify-between gap-2 py-1.5"
+                >
+                  <span className="text-ink truncate">
+                    Day {d.day_number} {d.title ? `· ${d.title}` : ""}
+                  </span>
+                  <Badge variant="default">locked</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </section>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Quick links</h2>
