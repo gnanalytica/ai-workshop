@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setDayUnlocked } from "@/lib/actions/schedule";
@@ -63,12 +64,17 @@ function LessonLockRow({
 
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
-      <div className="flex min-w-0 items-center gap-3">
+      <Link
+        href={`/admin/cohorts/${cohortId}/day/${day.day_number}`}
+        className="group flex min-w-0 flex-1 items-center gap-3"
+      >
         <span className="text-muted bg-line/40 inline-flex h-6 w-12 shrink-0 items-center justify-center rounded font-mono text-[11px] tabular-nums">
           Day {day.day_number}
         </span>
-        <span className="text-ink truncate">{day.title}</span>
-      </div>
+        <span className="text-ink group-hover:text-accent truncate transition-colors">
+          {day.title}
+        </span>
+      </Link>
       <button
         type="button"
         role="switch"
