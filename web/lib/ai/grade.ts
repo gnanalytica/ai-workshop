@@ -1,5 +1,13 @@
-import { generateText, Output, gateway } from "ai";
+import { generateText, Output } from "ai";
+import { google } from "@ai-sdk/google";
 import { z } from "zod";
+
+// Model id is centralized so a future swap (or per-assignment override)
+// only needs to touch one place. Gemini 2.5 Flash via the project-owned
+// GOOGLE_GENERATIVE_AI_API_KEY — same key already used for help chat.
+// Cheaper than Sonnet by ~10× and well within Flash's competence band
+// for rubric-based reflection grading.
+const GRADING_MODEL_ID = "gemini-2.5-flash";
 
 export interface AIGradeInput {
   assignmentTitle: string;
@@ -37,7 +45,7 @@ export async function gradeWithAI(input: AIGradeInput): Promise<AIGradeResult | 
   try {
     const prompt = buildPrompt(input);
     const { experimental_output } = await generateText({
-      model: gateway("anthropic/claude-sonnet-4.6"),
+      model: google(GRADING_MODEL_ID),
       system: SYSTEM,
       prompt,
       experimental_output: Output.object({ schema: GradeSchema }),
