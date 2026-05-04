@@ -7,7 +7,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { createPoll, closePoll } from "@/lib/actions/polls";
+import { createPoll, closePoll, launchPoll } from "@/lib/actions/polls";
 import { setBanner, dismissBanner } from "@/lib/actions/banners";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
@@ -47,21 +47,32 @@ function fmtRemaining(closesAt: string | null): string | null {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+interface DraftPollSummary {
+  id: string;
+  question: string;
+  options: { id: string; label: string }[];
+  kind: "poll" | "pulse";
+  day_number: number | null;
+}
+
 export function LiveClient({
   cohortId,
   active,
   hasActive,
   activeBanner,
+  drafts,
 }: {
   cohortId: string;
   active: ActivePoll[];
   hasActive: boolean;
   activeBanner: ActiveBanner | null;
+  drafts: DraftPollSummary[];
 }) {
   const router = useRouter();
   const [question, setQuestion] = useState("");
   const [optionsRaw, setOptionsRaw] = useState("Yes\nNo");
   const [duration, setDuration] = useState<number | null>(1);
+  const [saveAsDraft, setSaveAsDraft] = useState(false);
   const [pending, start] = useTransition();
   const [, force] = useState(0);
 
@@ -144,11 +155,26 @@ export function LiveClient({
         question,
         options,
         duration_minutes: duration ?? undefined,
+        as_draft: saveAsDraft,
       });
       if (r.ok) {
-        toast.success("Poll fired");
+        toast.success(saveAsDraft ? "Draft saved" : "Poll fired");
         setQuestion("");
         setOptionsRaw("Yes\nNo");
+        router.refresh();
+      } else toast.error(r.error);
+    });
+  }
+
+  function launch(pollId: string, durationMin: number | null) {
+    start(async () => {
+      const r = await launchPoll({
+        poll_id: pollId,
+        cohort_id: cohortId,
+        duration_minutes: durationMin ?? undefined,
+      });
+      if (r.ok) {
+        toast.success("Poll launched");
         router.refresh();
       } else toast.error(r.error);
     });
@@ -285,13 +311,78 @@ export function LiveClient({
                 {d.label}
               </button>
             ))}
+            <label className="text-muted ml-2 inline-flex items-center gap-1.5 text-xs">
+              <input
+                type="checkbox"
+                checked={saveAsDraft}
+                onChange={(e) => setSaveAsDraft(e.target.checked)}
+                className="h-3.5 w-3.5"
+              />
+              Save as draft
+            </label>
             <div className="flex-1" />
             <Button onClick={fire} disabled={pending}>
-              {pending ? "Firing…" : "Fire poll"}
+              {pending ? (saveAsDraft ? "Saving…" : "Firing…") : saveAsDraft ? "Save draft" : "Fire poll"}
             </Button>
           </div>
         </div>
       </Card>
+
+      {drafts.length > 0 && (
+        <Card className={hasActive ? "p-5" : "mx-auto max-w-xl p-6"}>
+          <div className="flex items-center gap-2">
+            <CardTitle>Ready to launch</CardTitle>
+            <Badge>{drafts.length}</Badge>
+          </div>
+          <CardSub className="mt-1">
+            Pre-built polls. Click Launch to send to the room.
+          </CardSub>
+          <div className="mt-4 space-y-2">
+            {drafts.map((d) => (
+              <div
+                key={d.id}
+                className="border-line bg-bg-elev flex flex-wrap items-center gap-3 rounded-md border p-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    {d.kind === "pulse" && <Badge variant="warn">Pulse</Badge>}
+                    {d.day_number != null && (
+                      <span className="text-muted font-mono text-[10px] uppercase tracking-wider">
+                        Day {d.day_number}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-ink mt-1 truncate text-sm">{d.question}</p>
+                  <p className="text-muted truncate text-xs">
+                    {d.options.map((o) => o.label).join(" · ")}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" onClick={() => launch(d.id, 1)} disabled={pending}>
+                    Launch · 1m
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => launch(d.id, 5)}
+                    disabled={pending}
+                  >
+                    5m
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => launch(d.id, null)}
+                    disabled={pending}
+                  >
+                    Open
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {active.length > 0 && (
         <div className="space-y-3">

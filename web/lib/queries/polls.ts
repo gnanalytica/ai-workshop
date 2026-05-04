@@ -18,10 +18,12 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
   const sb = await getSupabaseServer();
   // vote_count is denormalized via trigger (migration 0077); avoids the
   // per-row poll_votes(count) correlated subquery for every poll.
+  // Drafts (opened_at IS NULL) are excluded — see listDraftPolls below.
   const { data } = await sb
     .from("polls")
     .select("id, cohort_id, day_number, question, options, opened_at, closed_at, closes_at, vote_count")
     .eq("cohort_id", cohortId)
+    .not("opened_at", "is", null)
     .order("opened_at", { ascending: false });
   return ((data ?? []) as unknown as Array<{
     id: string; cohort_id: string; day_number: number | null;
@@ -41,6 +43,44 @@ export const listPolls = cache(async (cohortId: string): Promise<PollSummary[]> 
     vote_count: p.vote_count ?? 0,
   }));
 });
+
+export interface DraftPoll {
+  id: string;
+  cohort_id: string;
+  day_number: number | null;
+  question: string;
+  options: PollOption[];
+  kind: "poll" | "pulse";
+}
+
+/**
+ * Polls saved as drafts (opened_at IS NULL) — pre-built by admin to be
+ * launched live during class via launchPoll. Ordered by day_number then
+ * id so drafts grouped by day appear together.
+ */
+export const listDraftPolls = cache(
+  async (cohortId: string): Promise<DraftPoll[]> => {
+    const sb = await getSupabaseServer();
+    const { data } = await sb
+      .from("polls")
+      .select("id, cohort_id, day_number, question, options, kind")
+      .eq("cohort_id", cohortId)
+      .is("opened_at", null)
+      .order("day_number", { ascending: true, nullsFirst: false })
+      .order("id", { ascending: true });
+    return ((data ?? []) as unknown as Array<{
+      id: string; cohort_id: string; day_number: number | null;
+      question: string; options: unknown; kind: string;
+    }>).map((p) => ({
+      id: p.id,
+      cohort_id: p.cohort_id,
+      day_number: p.day_number,
+      question: p.question,
+      options: normalizeOptions(p.options),
+      kind: (p.kind === "pulse" ? "pulse" : "poll") as "poll" | "pulse",
+    }));
+  },
+);
 
 export interface PollResultRow { choice: string; label: string; votes: number }
 

@@ -36,16 +36,21 @@ const createSchema = z.object({
   options: z.array(z.string().min(1).max(80)).min(2).max(8),
   duration_minutes: z.number().int().min(1).max(60 * 24 * 7).optional(),
   kind: z.enum(["poll", "pulse"]).default("poll"),
+  /** When true, save as a draft (opened_at = null). Admin launches later
+   *  via launchPoll. Defaults to false = create-and-fire as before. */
+  as_draft: z.boolean().optional().default(false),
 });
 
 export async function createPoll(input: z.input<typeof createSchema>) {
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
   await requireCapability("content.write", parsed.data.cohort_id);
+  const isDraft = parsed.data.as_draft;
   const result = await withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
+    // Drafts have no opened_at / closes_at — set on launch.
     const closes_at =
-      parsed.data.duration_minutes != null
+      !isDraft && parsed.data.duration_minutes != null
         ? new Date(Date.now() + parsed.data.duration_minutes * 60_000).toISOString()
         : null;
     return sb
@@ -56,9 +61,46 @@ export async function createPoll(input: z.input<typeof createSchema>) {
         question: parsed.data.question,
         options: parsed.data.options.map((label, i) => ({ id: String(i + 1), label })),
         created_by: user.user?.id ?? null,
+        opened_at: isDraft ? null : new Date().toISOString(),
         closes_at,
         kind: parsed.data.kind,
       } as never)
+      .select()
+      .single();
+  }, "/admin/polls");
+  // Drafts don't broadcast (no client should display them).
+  if (result.ok && !isDraft) await broadcastPollUpdate(parsed.data.cohort_id);
+  return result;
+}
+
+const launchSchema = z.object({
+  poll_id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+  duration_minutes: z.number().int().min(1).max(60 * 24).optional(),
+});
+
+/**
+ * Flip a draft poll to live. Sets opened_at = now() and closes_at if a
+ * duration is provided. Broadcasts the cohort-shared payload so connected
+ * clients render the popup immediately, no fetch needed.
+ */
+export async function launchPoll(input: z.input<typeof launchSchema>) {
+  const parsed = launchSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("content.write", parsed.data.cohort_id);
+  const result = await withSupabase(async (sb) => {
+    const opened_at = new Date().toISOString();
+    const closes_at =
+      parsed.data.duration_minutes != null
+        ? new Date(Date.now() + parsed.data.duration_minutes * 60_000).toISOString()
+        : null;
+    return sb
+      .from("polls")
+      .update({ opened_at, closes_at, closed_at: null } as never)
+      .eq("id", parsed.data.poll_id)
+      .eq("cohort_id", parsed.data.cohort_id)
+      // Only flip true drafts; refuse to "re-launch" an already-live poll.
+      .is("opened_at", null)
       .select()
       .single();
   }, "/admin/polls");

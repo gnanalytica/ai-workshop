@@ -4,7 +4,7 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
-import { listPolls } from "@/lib/queries/polls";
+import { listPolls, listDraftPolls } from "@/lib/queries/polls";
 import { getActiveBanner } from "@/lib/queries/banners";
 import { PollResultsChart } from "@/app/(authed)/admin/polls/PollResultsChart";
 import { LazyPollResults } from "@/components/polls/LazyPollResults";
@@ -20,8 +20,11 @@ export default async function LivePage({
   if (!cohort) notFound();
   await requireCapability("content.write", cohort.id);
 
-  const polls = await listPolls(cohort.id);
-  const activeBanner = await getActiveBanner(cohort.id);
+  const [polls, drafts, activeBanner] = await Promise.all([
+    listPolls(cohort.id),
+    listDraftPolls(cohort.id),
+    getActiveBanner(cohort.id),
+  ]);
   const now = Date.now();
   const isActive = (p: (typeof polls)[number]) =>
     p.closed_at === null && (p.closes_at === null || new Date(p.closes_at).getTime() > now);
@@ -46,6 +49,13 @@ export default async function LivePage({
         }))}
         hasActive={active.length > 0}
         activeBanner={activeBanner}
+        drafts={drafts.map((d) => ({
+          id: d.id,
+          question: d.question,
+          options: d.options,
+          kind: d.kind,
+          day_number: d.day_number,
+        }))}
       />
 
       {recent.length > 0 && (
