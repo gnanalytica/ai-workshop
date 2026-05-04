@@ -66,7 +66,7 @@ Server-side gate: `await requireCapability("grading.write:cohort", cohortId)` in
 - **`submissions` has no direct `cohort_id`** — filter via `assignments!inner(cohort_id)`.
 - **Enrolled students** = `registrations.status='confirmed'`. There is no `enrollments` table.
 - **Per-day progress**: `lab_progress`; day metadata: `cohort_days`.
-- **Pods**: `pods` → `pod_faculty` (many, exactly one `is_primary` per pod via partial unique index) → `pod_members` (one pod per student per cohort, enforced by unique index). Atomic mutations go through the `rpc_pod_faculty_event` RPC; `pod_events` is the audit log. Students fetch their pod via `rpc_my_pod(cohort)`.
+- **Pods**: `pods` → `pod_faculty` (many) → `pod_members` (one pod per student per cohort, enforced by unique index). There is no primary-faculty flag — code that needs "the" faculty for a pod just picks the first row. Atomic mutations go through the `rpc_pod_faculty_event` RPC; `pod_events` is the audit log. Students fetch their pod via `rpc_my_pod(cohort)`.
 - **Submissions grading** authorization: `can_grade(submission)` — true for admin only. Faculty are review-only.
 - **Curriculum**: `web/content/day-XX.mdx` is the source. Frontmatter validated by `lib/content/schema.ts` (zod). Body is rendered server-side via `next-mdx-remote/rsc`.
 - **Theme**: tokens are HSL CSS variables in `app/globals.css`, exposed to Tailwind via `@theme`. Persona is `data-theme="light"|"dark"` on `<html>`, switched by `next-themes`.
