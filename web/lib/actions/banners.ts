@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { broadcastToCohort } from "@/lib/realtime/broadcast";
+import { getActiveBanner } from "@/lib/queries/banners";
 import { withSupabase, actionFail } from "./_helpers";
 
 const setSchema = z
@@ -41,7 +42,13 @@ export async function setBanner(input: z.infer<typeof setSchema>) {
       .select("id")
       .single();
   }, `/admin/cohorts/${parsed.data.cohort_id}/live`);
-  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "banner");
+  if (result.ok) {
+    // Broadcast the full active banner row so subscribers can update directly
+    // without firing an /api/active-banner refetch. Falls back to tickle if
+    // the read fails — clients still re-fetch when payload is empty.
+    const banner = await getActiveBanner(parsed.data.cohort_id).catch(() => null);
+    await broadcastToCohort(parsed.data.cohort_id, "banner", { banner });
+  }
   return result;
 }
 
@@ -65,6 +72,10 @@ export async function dismissBanner(input: z.infer<typeof dismissSchema>) {
         .single(),
     `/admin/cohorts/${parsed.data.cohort_id}/live`,
   );
-  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "banner");
+  if (result.ok) {
+    // Dismissal nulls the active banner — broadcast that explicitly so
+    // subscribers can clear state without an extra fetch.
+    await broadcastToCohort(parsed.data.cohort_id, "banner", { banner: null });
+  }
   return result;
 }

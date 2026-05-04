@@ -3,7 +3,7 @@ import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { SandboxBanner } from "./SandboxBanner";
 import { BannerStrip } from "./BannerStrip";
-import { getProfile, getAuthCaps } from "@/lib/auth/session";
+import { getProfile } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
 import { TourMount } from "@/components/tour/Tour";
@@ -13,8 +13,7 @@ import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
-import { getActiveBanner } from "@/lib/queries/banners";
-import { getActivePoll } from "@/lib/queries/polls";
+import { getShellState } from "@/lib/queries/shell";
 
 /**
  * Single chrome used by every authenticated route. Resolves session, fetches
@@ -50,60 +49,44 @@ export async function AppShell({
   let activeCohortStart: string | null =
     cohortStartsOn ?? fallbackCohort?.starts_on ?? null;
 
-  // Phase 2: now that activeCohortId is resolved, fan out the dependent reads.
-  // - caps: scoped to the active cohort
-  // - cohortMeta: only when an injected cohortId arrived without starts_on
-  //   (student route where the injecting layout doesn't have it)
-  // - sandboxName: only when the sandbox cookie is set
+  // Phase 2: one combined RPC for caps + active banner + active poll (see
+  // migration 0085_rpc_shell_state). Cuts three parallel round-trips down to
+  // one — material on free-tier shared compute during a class-start burst.
+  // Cohort-meta and sandbox-name selects fan out alongside it.
   const sandboxId = await sandboxIdP;
   const needsCohortMeta = !!activeCohortId && activeCohortStart == null;
-  // Pre-fetch the active banner and active poll server-side so the BannerStrip
-  // / PollPopup client components mount with state already populated — no
-  // initial /api/active-banner or /api/active-poll round-trip on first render.
-  // Realtime broadcasts continue to drive subsequent updates client-side.
-  const initialBannerP = activeCohortId
-    ? getActiveBanner(activeCohortId).catch(() => null)
-    : Promise.resolve(null);
-  const initialPollP = activeCohortId
-    ? getActivePoll(activeCohortId).catch(() => null)
-    : Promise.resolve(null);
 
-  const [
-    caps,
-    cohortMeta,
-    sandboxName,
-    truePersona,
-    effectivePersona,
-    initialBanner,
-    initialPoll,
-  ] = await Promise.all([
-    getAuthCaps(activeCohortId),
-    needsCohortMeta
-      ? getSupabaseServer().then((sb) =>
-          sb
-            .from("cohorts")
-            .select("starts_on, name")
-            .eq("id", activeCohortId!)
-            .maybeSingle()
-            .then((r) => r.data as { starts_on?: string; name?: string } | null),
-        )
-      : Promise.resolve(null),
-    sandboxId
-      ? getSupabaseService()
-          .from("cohorts")
-          .select("name")
-          .eq("id", sandboxId)
-          .maybeSingle()
-          .then(
-            (r) =>
-              (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
+  const [shellState, cohortMeta, sandboxName, truePersona, effectivePersona] =
+    await Promise.all([
+      getShellState(activeCohortId).catch(
+        () => ({ caps: [], banner: null, poll: null }) as Awaited<ReturnType<typeof getShellState>>,
+      ),
+      needsCohortMeta
+        ? getSupabaseServer().then((sb) =>
+            sb
+              .from("cohorts")
+              .select("starts_on, name")
+              .eq("id", activeCohortId!)
+              .maybeSingle()
+              .then((r) => r.data as { starts_on?: string; name?: string } | null),
           )
-      : Promise.resolve(null),
-    truePersonaP,
-    effectivePersonaP,
-    initialBannerP,
-    initialPollP,
-  ]);
+        : Promise.resolve(null),
+      sandboxId
+        ? getSupabaseService()
+            .from("cohorts")
+            .select("name")
+            .eq("id", sandboxId)
+            .maybeSingle()
+            .then(
+              (r) =>
+                (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
+            )
+        : Promise.resolve(null),
+      truePersonaP,
+      effectivePersonaP,
+    ]);
+
+  const { caps, banner: initialBanner, poll: initialPoll } = shellState;
 
   if (cohortMeta) {
     activeCohortStart = cohortMeta.starts_on ?? null;

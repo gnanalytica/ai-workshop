@@ -70,8 +70,17 @@ export function BannerStrip({
     }, 300_000);
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
-    ch.on("broadcast", { event: "banner" }, () => {
-      setTimeout(() => load(), Math.random() * 2000);
+    ch.on("broadcast", { event: "banner" }, ({ payload }) => {
+      // Server actions broadcast the new active banner row directly. Use the
+      // payload and skip the API refetch entirely. Empty/missing payload →
+      // legacy tickle: jitter the fallback fetch to avoid a thundering herd
+      // when many clients receive the broadcast simultaneously.
+      const p = payload as { banner?: ActiveBanner | null } | undefined;
+      if (p && Object.prototype.hasOwnProperty.call(p, "banner")) {
+        if (!cancelled) setBanner(p.banner ?? null);
+      } else {
+        setTimeout(() => load(), Math.random() * 2000);
+      }
     }).subscribe();
     return () => {
       cancelled = true;
