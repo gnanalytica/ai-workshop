@@ -53,11 +53,12 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
       if (document.visibilityState === "visible") load();
     }
     document.addEventListener("visibilitychange", onVisibility);
-    // Slow fallback poll — visible tabs only. Realtime broadcast
-    // (setBanner/dismissBanner) drives the fast path.
+    // Safety net only — realtime broadcasts (setBanner/dismissBanner) and
+    // the visibilitychange refresh drive every normal update. 5 min is enough
+    // to recover if a realtime channel quietly drops.
     const fallback = setInterval(() => {
       if (document.visibilityState === "visible") load();
-    }, 60_000);
+    }, 300_000);
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
     ch.on("broadcast", { event: "banner" }, () => load()).subscribe();
