@@ -28,6 +28,7 @@ export interface CohortDayRow {
   is_unlocked: boolean;
   live_session_at: string | null;
   meet_link: string | null;
+  slides_url: string | null;
   notes: string | null;
   capstone_kind: "none" | "spec_review" | "mid_review" | "demo_day";
 }
@@ -47,7 +48,7 @@ export const listCohortDaysCached = unstable_cache(
     const { data } = await svc
       .from("cohort_days")
       .select(
-        "cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind",
+        "cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, slides_url, notes, capstone_kind",
       )
       .eq("cohort_id", cohortId)
       .order("day_number");
@@ -63,7 +64,7 @@ export const getCohortDayCached = unstable_cache(
     const { data } = await svc
       .from("cohort_days")
       .select(
-        "cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, notes, capstone_kind",
+        "cohort_id, day_number, title, is_unlocked, live_session_at, meet_link, slides_url, notes, capstone_kind",
       )
       .eq("cohort_id", cohortId)
       .eq("day_number", dayNumber)

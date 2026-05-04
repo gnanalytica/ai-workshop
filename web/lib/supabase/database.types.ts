@@ -527,6 +527,7 @@ export type Database = {
           is_unlocked: boolean
           live_session_at: string | null
           meet_link: string | null
+          slides_url: string | null
           notes: string | null
           title: string
           updated_at: string
@@ -539,6 +540,7 @@ export type Database = {
           is_unlocked?: boolean
           live_session_at?: string | null
           meet_link?: string | null
+          slides_url?: string | null
           notes?: string | null
           title: string
           updated_at?: string
@@ -551,6 +553,7 @@ export type Database = {
           is_unlocked?: boolean
           live_session_at?: string | null
           meet_link?: string | null
+          slides_url?: string | null
           notes?: string | null
           title?: string
           updated_at?: string

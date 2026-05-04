@@ -22,6 +22,7 @@ export interface CohortDay {
   is_unlocked: boolean;
   live_session_at: string | null;
   meet_link: string | null;
+  slides_url: string | null;
   notes: string | null;
   capstone_kind: "none" | "spec_review" | "mid_review" | "demo_day";
 }

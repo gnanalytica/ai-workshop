@@ -10,6 +10,7 @@ import { PollBlock } from "@/components/day-interactive/PollBlock";
 import { PhaseTabs } from "@/components/lesson-day/PhaseTabs";
 import { DayTasksPanel, type TaskItem } from "@/components/lesson-day/DayTasksPanel";
 import { LessonReader } from "@/components/lesson-day/LessonReader";
+import { SlidesEmbed } from "@/components/lesson-day/SlidesEmbed";
 import { splitByH2 } from "@/lib/content/splitSections";
 import { loadDay, listDays } from "@/lib/content/loader";
 import type { ActiveCohort } from "@/lib/queries/cohort";
@@ -207,6 +208,16 @@ export async function LessonDayView({
     emptyState("pre-class")
   );
 
+  const slidesPanel =
+    cohortDay?.slides_url || (cohortDay && readOnly && cohortDay.slides_url) ? (
+      <div className="mb-6">
+        <SlidesEmbed
+          url={cohortDay?.slides_url ?? null}
+          unlocked={(cohortDay?.is_unlocked ?? false) || readOnly}
+        />
+      </div>
+    ) : null;
+
   const liveTrailing = (
     <>
       {!readOnly && interactive.poll && (
@@ -219,6 +230,7 @@ export async function LessonDayView({
   );
   const livePanel = (
     <>
+      {slidesPanel}
       {promptCard}
       {phases.live ? (
         <LessonReader

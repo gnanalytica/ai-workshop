@@ -98,6 +98,7 @@ const updateDaySchema = z.object({
   is_unlocked: z.boolean().optional(),
   live_session_at: z.string().datetime().nullable().optional(),
   meet_link: z.string().url().nullable().optional(),
+  slides_url: z.string().url().nullable().optional(),
   notes: z.string().max(2000).nullable().optional(),
   title: z.string().max(200).optional(),
 });
