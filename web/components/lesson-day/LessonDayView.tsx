@@ -208,15 +208,14 @@ export async function LessonDayView({
     emptyState("pre-class")
   );
 
-  const slidesPanel =
-    cohortDay?.slides_url || (cohortDay && readOnly && cohortDay.slides_url) ? (
-      <div className="mb-6">
-        <SlidesEmbed
-          url={cohortDay?.slides_url ?? null}
-          unlocked={(cohortDay?.is_unlocked ?? false) || readOnly}
-        />
-      </div>
-    ) : null;
+  const slidesPanel = cohortDay?.slides_url ? (
+    <div className="mb-6">
+      <SlidesEmbed
+        url={cohortDay.slides_url}
+        unlocked={(cohortDay.is_unlocked ?? false) || readOnly}
+      />
+    </div>
+  ) : null;
 
   const liveTrailing = (
     <>
@@ -230,7 +229,6 @@ export async function LessonDayView({
   );
   const livePanel = (
     <>
-      {slidesPanel}
       {promptCard}
       {phases.live ? (
         <LessonReader
@@ -360,6 +358,8 @@ export async function LessonDayView({
             <MarkdownView source={phases.intro} />
           </div>
         )}
+
+        {slidesPanel}
 
         <PhaseTabs
           initial={initialPhase}
