@@ -2,6 +2,10 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  // Make the current pathname readable from RSCs via headers().get("x-pathname").
+  // Layouts don't get URL params, so this is the cleanest way for the auth shell
+  // to know which admin-cohort page the user is on.
+  request.headers.set("x-pathname", request.nextUrl.pathname);
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
