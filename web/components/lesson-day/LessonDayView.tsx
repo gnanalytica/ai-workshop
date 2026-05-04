@@ -245,15 +245,43 @@ export async function LessonDayView({
     );
   }
 
-  const unmatchedAssignments = interactive.assignments.slice(assignmentSectionIdxs.length);
-  const trailingAssignment =
-    !readOnly && unmatchedAssignments.length > 0 ? (
-      <>
-        {unmatchedAssignments.map((a) => (
-          <AssignmentBlock key={a.id} assignment={a} />
-        ))}
-      </>
-    ) : null;
+  // Inject unmatched assignments as their own navigable sections before "Prep for next class"
+  const unmatchedAssignments = !readOnly
+    ? interactive.assignments.slice(assignmentSectionIdxs.length)
+    : [];
+
+  const prepSectionIdx = postSections.findIndex((s) =>
+    /prep for next/i.test(s.title ?? ""),
+  );
+
+  const finalPostSections = [...postSections];
+  const finalAddons: Record<number, React.ReactNode> = {};
+
+  // Copy existing addons
+  for (const [k, v] of Object.entries(postSectionAddons)) {
+    finalAddons[Number(k)] = v;
+  }
+
+  if (unmatchedAssignments.length > 0) {
+    const insertAt = prepSectionIdx >= 0 ? prepSectionIdx : finalPostSections.length;
+
+    // Shift existing addons at/after insertAt
+    const shiftedAddons: Record<number, React.ReactNode> = {};
+    for (const [k, v] of Object.entries(finalAddons)) {
+      const idx = Number(k);
+      shiftedAddons[idx >= insertAt ? idx + unmatchedAssignments.length : idx] = v;
+    }
+    // Replace with shifted values
+    for (const k of Object.keys(finalAddons)) delete finalAddons[Number(k)];
+    Object.assign(finalAddons, shiftedAddons);
+
+    // Insert synthetic sections + addons
+    unmatchedAssignments.forEach((a, i) => {
+      finalPostSections.splice(insertAt + i, 0, { title: a.title, body: "" });
+      finalAddons[insertAt + i] = <AssignmentBlock key={a.id} assignment={a} />;
+    });
+  }
+
   const trailingQuiz =
     !readOnly && interactive.quiz && quizSectionIdx < 0 ? (
       <QuizBlock quiz={interactive.quiz} dayNumber={dayNumber} />
@@ -261,9 +289,8 @@ export async function LessonDayView({
 
   const postTrailing = (
     <>
-      {(trailingAssignment || trailingQuiz) && (
+      {trailingQuiz && (
         <div className="mt-8 space-y-4">
-          {trailingAssignment}
           {trailingQuiz}
         </div>
       )}
@@ -272,13 +299,13 @@ export async function LessonDayView({
   );
   const postPanel = phases.post ? (
     <LessonReader
-      titles={postSections.map((s) => s.title)}
+      titles={finalPostSections.map((s) => s.title)}
       trailing={postTrailing}
-      sectionAddons={postSectionAddons}
+      sectionAddons={finalAddons}
       {...persistProps}
       triggerFeedbackOnLast={!readOnly}
     >
-      {postSections.map((s, i) => (
+      {finalPostSections.map((s, i) => (
         <MarkdownView key={i} source={s.body} />
       ))}
     </LessonReader>
