@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { castVote } from "@/lib/actions/polls";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
@@ -63,6 +63,14 @@ export function PollPopup({
   initialPoll?: ActivePollPayload | null;
 }) {
   const [poll, setPoll] = useState<ActivePollPayload | null>(initialPoll);
+  // useOptimistic lets the UI flip to "voted ✓" instantly during the
+  // server-action transition. If the action fails (toast.error), React
+  // auto-reverts to `poll` since we don't update real state.
+  const [optimisticPoll, applyOptimisticVote] = useOptimistic(
+    poll,
+    (current, choice: string): ActivePollPayload | null =>
+      current ? { ...current, my_choice: choice } : current,
+  );
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
   const [now, setNow] = useState<number>(() => Date.now());
   const [pending, start] = useTransition();
@@ -97,8 +105,27 @@ export function PollPopup({
     // actions and by the auto-close-polls Edge Function on cron close.
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
-    ch.on("broadcast", { event: "poll" }, () => {
-      setTimeout(() => fetchPoll(), Math.random() * 2000);
+    ch.on("broadcast", { event: "poll" }, ({ payload }) => {
+      // Server actions broadcast the cohort-shared poll (no my_choice).
+      // Merge with locally-known my_choice: preserve it across same poll id,
+      // reset it when the poll id changes (new poll → no prior vote).
+      const p = payload as
+        | { poll?: Omit<ActivePollPayload, "my_choice"> | null }
+        | undefined;
+      if (p && Object.prototype.hasOwnProperty.call(p, "poll")) {
+        const cohortShared = p.poll ?? null;
+        if (cancelled) return;
+        setPoll((prev) => {
+          if (!cohortShared) return null;
+          const myChoice =
+            prev?.id === cohortShared.id ? prev.my_choice ?? null : null;
+          return { ...cohortShared, my_choice: myChoice };
+        });
+      } else {
+        // Legacy tickle (no payload) — jitter the fallback fetch to spread
+        // simultaneous receivers across ~2s instead of all at once.
+        setTimeout(() => fetchPoll(), Math.random() * 2000);
+      }
     }).subscribe();
     return () => {
       cancelled = true;
@@ -113,7 +140,10 @@ export function PollPopup({
     return () => clearInterval(id);
   }, []);
 
-  const isVisible = !!poll && !dismissedIds.has(poll.id);
+  // Render-side state uses optimisticPoll so a vote flips the UI instantly.
+  // Real state mutations still go through setPoll (broadcast / fetch path).
+  const renderPoll = optimisticPoll;
+  const isVisible = !!renderPoll && !dismissedIds.has(renderPoll.id);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -125,27 +155,41 @@ export function PollPopup({
     };
   }, [isVisible]);
 
-  if (!poll) return null;
-  if (dismissedIds.has(poll.id)) return null;
+  if (!renderPoll) return null;
+  if (dismissedIds.has(renderPoll.id)) return null;
 
-  const closesAtMs = poll.closes_at ? new Date(poll.closes_at).getTime() : null;
+  const closesAtMs = renderPoll.closes_at
+    ? new Date(renderPoll.closes_at).getTime()
+    : null;
   // Local clock may differ from server — treat poll as transitioned to results
   // if either the server says so OR our timer has expired and we already voted.
   const transitioned =
-    poll.phase === "results" ||
-    (poll.phase === "open" && poll.my_choice != null && closesAtMs != null && closesAtMs <= now);
+    renderPoll.phase === "results" ||
+    (renderPoll.phase === "open" &&
+      renderPoll.my_choice != null &&
+      closesAtMs != null &&
+      closesAtMs <= now);
   // If still open and not voted, hide on local-clock expiry (server will catch up).
-  if (poll.phase === "open" && !poll.my_choice && closesAtMs != null && closesAtMs <= now) return null;
+  if (
+    renderPoll.phase === "open" &&
+    !renderPoll.my_choice &&
+    closesAtMs != null &&
+    closesAtMs <= now
+  )
+    return null;
 
   function vote(c: string) {
-    const current = poll;
+    const current = renderPoll;
     if (!current) return;
     start(async () => {
+      // Apply optimistic update immediately — UI flips to "voted ✓" before
+      // the round-trip completes. React reverts automatically if the
+      // transition errors out without a matching setPoll.
+      applyOptimisticVote(c);
       const r = await castVote({ poll_id: current.id, choice: c });
       if (r.ok) {
         toast.success("Voted");
-        // Optimistically reflect the vote — popup transitions to "voted ✓"
-        // until the server returns phase='results'.
+        // Settle real state so the optimistic value sticks past the transition.
         setPoll((p) => (p && p.id === current.id ? { ...p, my_choice: c } : p));
       } else {
         toast.error(r.error);
@@ -154,10 +198,11 @@ export function PollPopup({
   }
 
   const remaining = closesAtMs != null && !transitioned ? formatRemaining(closesAtMs - now) : null;
-  const showVotingUI = poll.phase === "open" && !poll.my_choice;
-  const showThanks = poll.phase === "open" && poll.my_choice != null && !transitioned;
-  const showResults = transitioned && poll.results;
-  const isPulse = poll.kind === "pulse";
+  const showVotingUI = renderPoll.phase === "open" && !renderPoll.my_choice;
+  const showThanks =
+    renderPoll.phase === "open" && renderPoll.my_choice != null && !transitioned;
+  const showResults = transitioned && renderPoll.results;
+  const isPulse = renderPoll.kind === "pulse";
   const eyebrow = showResults
     ? isPulse
       ? "Check-in closed — results"
@@ -166,10 +211,12 @@ export function PollPopup({
       ? "Quick check-in"
       : "Live poll";
   const questionText = isPulse
-    ? (poll.question?.trim() ? poll.question : "How are you following along?")
-    : poll.question;
+    ? renderPoll.question?.trim()
+      ? renderPoll.question
+      : "How are you following along?"
+    : renderPoll.question;
 
-  const canDismiss = showResults || transitioned || poll.my_choice != null;
+  const canDismiss = showResults || transitioned || renderPoll.my_choice != null;
 
   return (
     <div
@@ -197,7 +244,7 @@ export function PollPopup({
           <button
             type="button"
             aria-label="Close"
-            onClick={() => setDismissedIds((s) => new Set(s).add(poll.id))}
+            onClick={() => setDismissedIds((s) => new Set(s).add(renderPoll.id))}
             className="text-muted hover:text-ink text-xs leading-none"
           >
             ✕
@@ -208,7 +255,7 @@ export function PollPopup({
 
       {showVotingUI && !isPulse && (
         <div className="mt-3 space-y-1.5">
-          {poll.options.map((opt) => (
+          {renderPoll.options.map((opt) => (
             <button
               key={opt.id}
               type="button"
@@ -228,7 +275,7 @@ export function PollPopup({
 
       {showVotingUI && isPulse && (
         <div className="mt-3 grid grid-cols-3 gap-2 max-[20rem]:grid-cols-2">
-          {poll.options.map((opt) => (
+          {renderPoll.options.map((opt) => (
             <button
               key={opt.id}
               type="button"
@@ -256,7 +303,7 @@ export function PollPopup({
 
       {showResults && (
         <div className="mt-3">
-          <ResultsBars results={poll.results!} />
+          <ResultsBars results={renderPoll.results!} />
         </div>
       )}
       </div>

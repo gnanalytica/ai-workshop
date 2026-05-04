@@ -3,7 +3,31 @@
 import { z } from "zod";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { broadcastToCohort } from "@/lib/realtime/broadcast";
+import { getActivePoll } from "@/lib/queries/polls";
 import { withSupabase, actionFail } from "./_helpers";
+
+/**
+ * Broadcast the cohort-shared view of the active poll so 150 connected clients
+ * can update from the payload instead of each refetching /api/active-poll on
+ * a tickle. `my_choice` is intentionally stripped — it's per-user, and clients
+ * merge it from their local state (preserved across the same poll id, reset
+ * when the poll id changes). See PollPopup for the merge logic.
+ */
+async function broadcastPollUpdate(cohortId: string): Promise<void> {
+  let payload: { poll: unknown } = { poll: null };
+  try {
+    const fresh = await getActivePoll(cohortId);
+    if (fresh) {
+      const { my_choice: _stripped, ...cohortShared } = fresh;
+      void _stripped;
+      payload = { poll: cohortShared };
+    }
+  } catch {
+    // Fall back to empty payload — clients will tickle-refetch with jitter.
+    payload = {} as { poll: unknown };
+  }
+  await broadcastToCohort(cohortId, "poll", payload);
+}
 
 const createSchema = z.object({
   cohort_id: z.string().uuid(),
@@ -38,7 +62,7 @@ export async function createPoll(input: z.input<typeof createSchema>) {
       .select()
       .single();
   }, "/admin/polls");
-  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "poll");
+  if (result.ok) await broadcastPollUpdate(parsed.data.cohort_id);
   return result;
 }
 
@@ -57,7 +81,7 @@ export async function closePoll(input: z.infer<typeof closeSchema>) {
         .single(),
     "/admin/polls",
   );
-  if (result.ok) await broadcastToCohort(parsed.data.cohort_id, "poll");
+  if (result.ok) await broadcastPollUpdate(parsed.data.cohort_id);
   return result;
 }
 
@@ -77,7 +101,7 @@ export async function castVote(input: z.infer<typeof voteSchema>) {
   if (result.ok) {
     const row = result.data as unknown as { polls?: { cohort_id?: string } | null } | null;
     const cohortId = row?.polls?.cohort_id ?? null;
-    if (cohortId) await broadcastToCohort(cohortId, "poll");
+    if (cohortId) await broadcastPollUpdate(cohortId);
   }
   return result;
 }
