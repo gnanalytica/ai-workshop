@@ -24,6 +24,7 @@ export default async function AdminCohortGradingPage({
   const assignments = await listAssignments(cohort.id);
   const sp = await searchParams;
   const activeId = sp.a ?? assignments[0]?.id ?? null;
+  const activeAssignment = assignments.find((a) => a.id === activeId) ?? null;
   const subs = activeId ? await listAssignmentSubmissions(activeId) : [];
 
   return (
@@ -43,7 +44,7 @@ export default async function AdminCohortGradingPage({
         ) : (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {assignments.map((a) => (
-              <Link key={a.id} href={`/admin/cohorts/${cohort.id}/grading?a=${a.id}`}>
+              <Link key={a.id} prefetch={false} href={`/admin/cohorts/${cohort.id}/grading?a=${a.id}`}>
                 <Card
                   className={
                     "transition-colors " +
@@ -69,7 +70,11 @@ export default async function AdminCohortGradingPage({
             <Badge variant="warn">{subs.filter((s) => s.ai_graded && !s.human_reviewed_at).length} AI · pending review</Badge>
             <Badge variant="danger">{subs.filter((s) => !s.ai_graded && s.status === "submitted").length} ungraded</Badge>
           </h2>
-          <GradingClient assignmentId={activeId} initial={subs} />
+          <GradingClient
+            assignmentId={activeId}
+            autoGrade={activeAssignment?.auto_grade ?? true}
+            initial={subs}
+          />
         </section>
       )}
     </>

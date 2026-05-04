@@ -9,6 +9,7 @@ export interface AssignmentRow {
   title: string;
   due_at: string | null;
   rubric_id: string | null;
+  auto_grade: boolean;
   submission_count: number;
 }
 
@@ -26,7 +27,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("assignments")
-    .select("id, cohort_id, day_number, kind, title, due_at, rubric_id, submissions(count)")
+    .select("id, cohort_id, day_number, kind, title, due_at, rubric_id, auto_grade, submissions(count)")
     .eq("cohort_id", cohortId)
     .order("day_number");
   return ((data ?? []) as unknown as Array<{
@@ -37,6 +38,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
     title: string;
     due_at: string | null;
     rubric_id: string | null;
+    auto_grade: boolean;
     submissions: Array<{ count: number }>;
   }>).map((r) => ({
     id: r.id,
@@ -46,6 +48,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
     title: r.title,
     due_at: r.due_at,
     rubric_id: r.rubric_id,
+    auto_grade: !!r.auto_grade,
     submission_count: r.submissions?.[0]?.count ?? 0,
   }));
 });

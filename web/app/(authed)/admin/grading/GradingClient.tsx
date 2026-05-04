@@ -17,9 +17,11 @@ import { fmtDateTime, relTime } from "@/lib/format";
 
 export function GradingClient({
   assignmentId,
+  autoGrade,
   initial,
 }: {
   assignmentId: string;
+  autoGrade: boolean;
   initial: GradingSubmission[];
 }) {
   const router = useRouter();
@@ -100,14 +102,20 @@ export function GradingClient({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button onClick={runBatch} disabled={pending}>
-          {pending ? "Running…" : "Run AI batch"}
-        </Button>
-        <span className="text-muted text-xs">
-          Re-grades anything not yet published. Existing AI drafts are overwritten.
-        </span>
-      </div>
+      {autoGrade ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={runBatch} disabled={pending}>
+            {pending ? "Running…" : "Run AI batch"}
+          </Button>
+          <span className="text-muted text-xs">
+            Re-grades anything not yet published. Existing AI drafts are overwritten.
+          </span>
+        </div>
+      ) : (
+        <p className="text-muted text-xs">
+          Manual-grade only — score each submission below. Toggle <em>Auto-grade</em> in the assignment editor to enable AI batch grading.
+        </p>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
         <aside className="space-y-1.5">
