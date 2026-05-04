@@ -149,31 +149,6 @@ export function LessonReader({
   return (
     <>
       <div ref={rootRef} className="relative space-y-6 scroll-mt-20">
-        {/* Floating side arrows — visible on lg+ where there's room outside
-            the article column. Sticky so they follow the reader as they
-            scroll. Hidden at the boundaries. The bottom Prev/Next stays for
-            mobile and small screens. */}
-        {!isFirst && (
-          <button
-            type="button"
-            aria-label="Previous section"
-            onClick={() => goto(idx - 1)}
-            className="hidden lg:flex fixed left-[max(1rem,calc(50vw-26rem))] top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full border border-line bg-card/95 text-ink shadow-md backdrop-blur transition-colors hover:bg-bg-soft hover:border-accent/55"
-          >
-            <ArrowLeft size={18} strokeWidth={2.2} />
-          </button>
-        )}
-        {!isLast && (
-          <button
-            type="button"
-            aria-label="Next section"
-            onClick={() => goto(idx + 1)}
-            className="hidden lg:flex fixed right-[max(1rem,calc(50vw-26rem))] top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full border border-line bg-accent text-cta-ink shadow-md backdrop-blur transition-opacity hover:opacity-90"
-          >
-            <ArrowRight size={18} strokeWidth={2.2} />
-          </button>
-        )}
-
         {/* Section header */}
         <div className="border-line bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
           <div className="min-w-0">
@@ -197,37 +172,33 @@ export function LessonReader({
         {isLast && dayCompleteButton}
 
         <div className="border-line flex items-center justify-between gap-3 border-t pt-4">
-          <button
-            type="button"
-            onClick={() => goto(idx - 1)}
-            disabled={isFirst}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-[13px] font-medium transition-colors",
-              isFirst
-                ? "text-muted/50 cursor-not-allowed"
-                : "text-ink hover:bg-bg-soft",
-            )}
-          >
-            <ArrowLeft size={14} strokeWidth={2.1} />
-            Previous
-          </button>
+          {!isFirst ? (
+            <button
+              type="button"
+              onClick={() => goto(idx - 1)}
+              className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-[13px] font-medium text-ink hover:bg-bg-soft transition-colors"
+            >
+              <ArrowLeft size={14} strokeWidth={2.1} />
+              Previous
+            </button>
+          ) : (
+            <span />
+          )}
           <span className="text-muted/70 hidden text-[10.5px] uppercase tracking-[0.18em] md:inline">
             ← / → keys
           </span>
-          <button
-            type="button"
-            onClick={() => goto(idx + 1)}
-            disabled={isLast}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity",
-              isLast
-                ? "text-muted/50 cursor-not-allowed"
-                : "bg-accent text-cta-ink hover:opacity-90",
-            )}
-          >
-            Next
-            <ArrowRight size={14} strokeWidth={2.2} />
-          </button>
+          {!isLast ? (
+            <button
+              type="button"
+              onClick={() => goto(idx + 1)}
+              className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-semibold text-cta-ink hover:opacity-90 transition-opacity"
+            >
+              Next
+              <ArrowRight size={14} strokeWidth={2.2} />
+            </button>
+          ) : (
+            <span />
+          )}
         </div>
       </div>
 
