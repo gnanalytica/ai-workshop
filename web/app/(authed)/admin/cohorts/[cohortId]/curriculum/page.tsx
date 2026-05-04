@@ -5,12 +5,6 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { listAssignments, listQuizzes } from "@/lib/queries/content";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
-import {
-  NewAssignmentForm,
-  AssignmentsTable,
-  NewQuizForm,
-  QuizzesTable,
-} from "@/app/(authed)/admin/content/ContentForms";
 import { LessonLockList } from "../content/LessonLockList";
 
 export default async function AdminCohortCurriculumPage({
@@ -48,24 +42,15 @@ export default async function AdminCohortCurriculumPage({
         <p className="text-muted mb-3 text-sm">
           Click a day to view the full lesson as students see it. Toggle to
           lock or unlock for students — locked days are hidden from the
-          student lesson view.
+          student lesson view. Add labs, capstones, reflections and quizzes
+          inline under each day.
         </p>
-        <LessonLockList cohortId={cohort.id} days={days} />
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-2">
-        <NewAssignmentForm cohortId={cohort.id} />
-        <NewQuizForm cohortId={cohort.id} />
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Assignments</h2>
-        <AssignmentsTable rows={assignments} cohortId={cohort.id} />
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Quizzes</h2>
-        <QuizzesTable rows={quizzes} cohortId={cohort.id} />
+        <LessonLockList
+          cohortId={cohort.id}
+          days={days}
+          assignments={assignments}
+          quizzes={quizzes}
+        />
       </section>
     </>
   );
