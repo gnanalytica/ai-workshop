@@ -129,7 +129,7 @@ function LessonLockRow({
         <input
           type="url"
           inputMode="url"
-          placeholder="https://docs.google.com/presentation/…"
+          placeholder="Google Slides, Figma, Gamma or Canva share link"
           value={slidesUrl}
           onChange={(e) => {
             setSlidesUrl(e.target.value);

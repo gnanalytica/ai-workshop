@@ -85,7 +85,7 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
       <div>
         <label className="text-muted text-xs uppercase tracking-widest">Slides URL</label>
         <Input
-          placeholder="https://docs.google.com/presentation/… or Gamma/Canva share link"
+          placeholder="Google Slides, Figma, Gamma or Canva share link"
           value={slidesUrl}
           onChange={(e) => setSlidesUrl(e.target.value)}
         />

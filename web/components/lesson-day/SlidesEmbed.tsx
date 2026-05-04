@@ -8,6 +8,10 @@ function toEmbedUrl(raw: string): string {
       const tail = u.pathname.replace(/\/(edit|preview|view|pub)$/i, "");
       return `https://docs.google.com/${tail.replace(/^\//, "")}/embed?start=false&loop=false`;
     }
+    // Figma (file / design / proto / slides / board): wrap in the embed host.
+    if (u.hostname === "figma.com" || u.hostname.endsWith(".figma.com")) {
+      return `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(raw)}`;
+    }
     return raw;
   } catch {
     return raw;
