@@ -8,7 +8,6 @@ import { AssignmentBlock } from "@/components/day-interactive/AssignmentBlock";
 import { QuizBlock } from "@/components/day-interactive/QuizBlock";
 import { PollBlock } from "@/components/day-interactive/PollBlock";
 import { PhaseTabs } from "@/components/lesson-day/PhaseTabs";
-import { DayTasksPanel, type TaskItem } from "@/components/lesson-day/DayTasksPanel";
 import { LessonReader } from "@/components/lesson-day/LessonReader";
 import { SlidesEmbed } from "@/components/lesson-day/SlidesEmbed";
 import { splitByH2 } from "@/lib/content/splitSections";
@@ -85,38 +84,6 @@ export async function LessonDayView({
       : 0;
   const quizPending = interactive.quiz && !interactive.quiz.attempt?.completed_at ? 1 : 0;
   const postPending = assignmentPending + quizPending;
-
-  const tasks: TaskItem[] = [];
-  if (!readOnly) {
-    if (interactive.poll) {
-      tasks.push({
-        id: "poll",
-        label: "Vote in the poll",
-        hint: "Quick check-in during the live session",
-        done: !!interactive.poll.my_choice,
-        phase: "live",
-      });
-    }
-    if (interactive.assignment) {
-      const status = interactive.assignment.submission?.status ?? "draft";
-      tasks.push({
-        id: "assignment",
-        label: "Submit assignment",
-        hint: "Post-class — write your answer and submit it",
-        done: status === "submitted" || status === "graded",
-        phase: "post",
-      });
-    }
-    if (interactive.quiz) {
-      tasks.push({
-        id: "quiz",
-        label: "Take quiz",
-        hint: "Post-class — saves your final score",
-        done: !!interactive.quiz.attempt?.completed_at,
-        phase: "post",
-      });
-    }
-  }
 
   const promptCard = meta.prompt_of_the_day ? (
     <Card className="border-accent/40 bg-accent/5 mb-6">
@@ -395,11 +362,6 @@ export async function LessonDayView({
           }}
         />
       </article>
-      {!readOnly && tasks.length > 0 && (
-        <div className="hidden lg:block px-6 py-8 md:px-8">
-          <DayTasksPanel tasks={tasks} dayNumber={dayNumber} />
-        </div>
-      )}
     </div>
   );
 }
