@@ -17,19 +17,14 @@ type Tab =
   | "health"
   | "milestones";
 
-// Visible tab nav — kept lean. Help desk lives in the sidebar (canonical
-// admin help-desk view) alongside Capstones / Milestones / Polls / Analytics /
-// Health, which also remain reachable via direct URL but aren't in the rail.
-// The `Tab` union still names them so deep pages can highlight a parent tab.
-// Schedule + Content are merged under "Curriculum" but both legacy ids stay
-// in the union so the per-day editor (`/schedule/[day]`) still highlights
-// properly.
 const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "home", label: "Home", href: (c) => `/admin/cohorts/${c}` },
   { id: "roster", label: "Roster", href: (c) => `/admin/cohorts/${c}/roster` },
   { id: "pods", label: "Pods", href: (c) => `/admin/cohorts/${c}/pods` },
   { id: "curriculum", label: "Curriculum", href: (c) => `/admin/cohorts/${c}/curriculum` },
   { id: "grading", label: "Submissions", href: (c) => `/admin/cohorts/${c}/grading` },
+  { id: "analytics", label: "Analytics", href: (c) => `/admin/cohorts/${c}/analytics` },
+  { id: "health", label: "Health", href: (c) => `/admin/cohorts/${c}/health` },
   { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
 ];
 

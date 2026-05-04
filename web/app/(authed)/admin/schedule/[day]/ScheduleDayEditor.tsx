@@ -11,7 +11,6 @@ import { updateCohortDay, setDayUnlocked } from "@/lib/actions/schedule";
 
 export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: CohortDay }) {
   const [title, setTitle] = useState(day.title);
-  const [meetLink, setMeetLink] = useState(day.meet_link ?? "");
   const [slidesUrl, setSlidesUrl] = useState(day.slides_url ?? "");
   const [notes, setNotes] = useState(day.notes ?? "");
   const [liveAt, setLiveAt] = useState<string>(day.live_session_at?.slice(0, 16) ?? "");
@@ -22,7 +21,6 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
   // revalidatePath, or when admin navigates between days).
   useEffect(() => {
     setTitle(day.title);
-    setMeetLink(day.meet_link ?? "");
     setSlidesUrl(day.slides_url ?? "");
     setNotes(day.notes ?? "");
     setLiveAt(day.live_session_at?.slice(0, 16) ?? "");
@@ -36,7 +34,6 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
         day_number: day.day_number,
         title,
         live_session_at: liveAt ? new Date(liveAt).toISOString() : null,
-        meet_link: meetLink || null,
         slides_url: slidesUrl || null,
         notes: notes || null,
       });
@@ -72,14 +69,6 @@ export function ScheduleDayEditor({ cohortId, day }: { cohortId: string; day: Co
           type="datetime-local"
           value={liveAt}
           onChange={(e) => setLiveAt(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="text-muted text-xs uppercase tracking-widest">Meet link</label>
-        <Input
-          placeholder="https://meet…"
-          value={meetLink}
-          onChange={(e) => setMeetLink(e.target.value)}
         />
       </div>
       <div>

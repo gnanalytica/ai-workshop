@@ -1,34 +1,33 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSession, getProfile } from "@/lib/auth/session";
 import { getEffectivePersona } from "@/lib/auth/persona";
-import { getCohortDayCached } from "@/lib/cache/cohort";
 import { JoinSessionClient } from "./JoinSessionClient";
 
 /**
  * Live-session "Join" affordance for the topbar. Reads the meet_link off the
- * cohort_days row that AppShell already resolved for this user, so admin /
- * faculty / student all share a single source of truth: when they're on the
- * same cohort they see the same link, and when they edit it everyone on that
- * cohort sees the update on next request.
+ * cohort row (workshops use one recurring room — see migration 0088), so
+ * admin / faculty / student all share a single source of truth across every
+ * day of the cohort.
  */
 export async function JoinSession({
   cohortId,
   cohortName,
-  dayNumber,
 }: {
   cohortId: string | null;
   cohortName: string | null;
-  dayNumber: number | null;
 }) {
-  if (!cohortId || dayNumber == null) return null;
+  if (!cohortId) return null;
 
   const profile = await getProfile();
   if (!profile) return null;
 
-  // Cross-request cached: cohort_days changes rarely, runs on every authed page.
-  const dayRow = await getCohortDayCached(cohortId, dayNumber);
-  const meetLink = dayRow?.meet_link ?? null;
   const sb = await getSupabaseServer();
+  const { data: cohortRow } = await sb
+    .from("cohorts")
+    .select("meet_link")
+    .eq("id", cohortId)
+    .maybeSingle();
+  const meetLink = (cohortRow?.meet_link as string | null) ?? null;
 
   // Honor preview-as: when an admin previews as student we want the edit
   // affordance hidden so the chrome reflects what a real student would see.
@@ -58,7 +57,6 @@ export async function JoinSession({
     <JoinSessionClient
       cohortId={cohortId}
       cohortName={cohortName}
-      dayNumber={dayNumber}
       meetLink={meetLink}
       canEdit={canEdit}
     />

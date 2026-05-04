@@ -90,7 +90,6 @@ export async function Topbar({
         <JoinSession
           cohortId={activeCohortId}
           cohortName={cohortName ?? null}
-          dayNumber={activeDayNumber}
         />
         <div className="hidden sm:block">
           <NavSearch items={navItems} />

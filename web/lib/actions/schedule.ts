@@ -125,7 +125,6 @@ export async function updateCohortDay(input: z.infer<typeof updateDaySchema>) {
 
 const meetLinkSchema = z.object({
   cohort_id: z.string().uuid(),
-  day_number: z.number().int().min(1).max(60),
   meet_link: z
     .string()
     .trim()
@@ -136,23 +135,23 @@ const meetLinkSchema = z.object({
 });
 
 /**
- * Set or clear the meet link on a single cohort_day. Authorized to admin
- * (schedule.write) AND faculty assigned to the cohort, via the
- * set_cohort_day_meet_link SECURITY DEFINER RPC. Faculty intentionally do not
- * hold schedule.write — this is a narrow, audited path.
+ * Set or clear the cohort's live-session link. Workshops use one recurring
+ * room across the full schedule, so a per-day link is unnecessary friction.
+ * Authorized to admin AND faculty assigned to the cohort, via the
+ * set_cohort_meet_link SECURITY DEFINER RPC.
  */
-export async function setCohortDayMeetLink(input: z.infer<typeof meetLinkSchema>) {
+export async function setCohortMeetLink(input: z.infer<typeof meetLinkSchema>) {
   const parsed = meetLinkSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(parsed.error.issues[0]?.message ?? "Invalid input");
   }
   const sb = await getSupabaseServer();
-  const { error } = await sb.rpc("set_cohort_day_meet_link", {
+  const { error } = await sb.rpc("set_cohort_meet_link", {
     p_cohort: parsed.data.cohort_id,
-    p_day: parsed.data.day_number,
     p_link: parsed.data.meet_link ?? "",
   } as never);
   if (error) return actionFail(error.message);
+  updateTag("cohorts");
   updateTag("cohort-days");
   revalidatePath("/", "layout");
   return actionOk();

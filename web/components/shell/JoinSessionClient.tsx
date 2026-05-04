@@ -6,18 +6,16 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { setCohortDayMeetLink } from "@/lib/actions/schedule";
+import { setCohortMeetLink } from "@/lib/actions/schedule";
 
 export function JoinSessionClient({
   cohortId,
   cohortName,
-  dayNumber,
   meetLink,
   canEdit,
 }: {
   cohortId: string;
   cohortName: string | null;
-  dayNumber: number;
   meetLink: string | null;
   canEdit: boolean;
 }) {
@@ -26,15 +24,13 @@ export function JoinSessionClient({
   const [pending, start] = useTransition();
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
-  // The label every persona sees on the affordance and in confirmations. If
-  // admin and faculty land on different cohorts (different defaults, cookie
-  // pin, multiple live cohorts) the difference is now visible instead of
-  // silent.
+  // The label every persona sees on the affordance. The live link is now
+  // cohort-wide (one recurring room across all 30 days) so the cohort name
+  // is the only piece of context we need in copy.
   const cohortLabel = cohortName?.trim() || "this cohort";
-  const dayLabel = `Day ${dayNumber}`;
   const titleAttr = meetLink
-    ? `Join live · ${dayLabel} — ${cohortLabel}`
-    : `Add live link · ${dayLabel} — ${cohortLabel}`;
+    ? `Join live · ${cohortLabel}`
+    : `Add live link · ${cohortLabel}`;
 
   useEffect(() => {
     setValue(meetLink ?? "");
@@ -61,16 +57,15 @@ export function JoinSessionClient({
   function save(next: string) {
     const clean = next.trim();
     start(async () => {
-      const r = await setCohortDayMeetLink({
+      const r = await setCohortMeetLink({
         cohort_id: cohortId,
-        day_number: dayNumber,
         meet_link: clean === "" ? null : clean,
       });
       if (r.ok) {
         toast.success(
           clean === ""
-            ? `Cleared link · ${dayLabel} — ${cohortLabel}`
-            : `Updated link · ${dayLabel} — ${cohortLabel}`,
+            ? `Cleared link · ${cohortLabel}`
+            : `Updated link · ${cohortLabel}`,
         );
         setOpen(false);
       } else {
@@ -115,8 +110,8 @@ export function JoinSessionClient({
           size="icon"
           className="h-8 w-8"
           onClick={() => setOpen((o) => !o)}
-          aria-label={`Update live link for ${dayLabel} — ${cohortLabel}`}
-          title={`Update live link · ${dayLabel} — ${cohortLabel}`}
+          aria-label={`Update live link for ${cohortLabel}`}
+          title={`Update live link · ${cohortLabel}`}
         >
           <Pencil size={14} strokeWidth={1.8} />
         </Button>
@@ -125,11 +120,11 @@ export function JoinSessionClient({
       {open && canEdit && (
         <div
           role="dialog"
-          aria-label={`Update live link for ${dayLabel} — ${cohortLabel}`}
+          aria-label={`Update live link for ${cohortLabel}`}
           className="border-line bg-card absolute right-0 top-full z-40 mt-2 w-[320px] rounded-md border p-3 shadow-lift"
         >
           <p className="text-muted mb-2 text-[11px] uppercase tracking-widest">
-            {dayLabel} · {cohortLabel}
+            Live link · {cohortLabel}
           </p>
           <Input
             autoFocus
