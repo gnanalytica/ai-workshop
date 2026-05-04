@@ -41,8 +41,13 @@ export function ProfileForm({
         return;
       }
       const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      // Path includes Date.now() so each upload is unique — upsert mode is
+      // redundant AND breaks because the avatars bucket has no SELECT
+      // policy: supabase-js's upsert flow does an internal exists-check
+      // SELECT, RLS blocks it, and the upload surfaces as "new row
+      // violates row-level security policy". A plain insert avoids it.
       const path = `${u.user.id}/avatar-${Date.now()}.${ext}`;
-      const up = await sb.storage.from("avatars").upload(path, file, { upsert: true });
+      const up = await sb.storage.from("avatars").upload(path, file);
       if (up.error) {
         toast.error(up.error.message);
         return;
