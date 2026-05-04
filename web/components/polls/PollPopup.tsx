@@ -90,7 +90,9 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
     // actions and by the auto-close-polls Edge Function on cron close.
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
-    ch.on("broadcast", { event: "poll" }, () => fetchPoll()).subscribe();
+    ch.on("broadcast", { event: "poll" }, () => {
+      setTimeout(() => fetchPoll(), Math.random() * 2000);
+    }).subscribe();
     return () => {
       cancelled = true;
       document.removeEventListener("visibilitychange", onVisibility);

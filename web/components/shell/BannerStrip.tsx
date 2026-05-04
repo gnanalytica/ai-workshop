@@ -60,7 +60,9 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
     }, 60_000);
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
-    ch.on("broadcast", { event: "banner" }, () => load()).subscribe();
+    ch.on("broadcast", { event: "banner" }, () => {
+      setTimeout(() => load(), Math.random() * 2000);
+    }).subscribe();
     return () => {
       cancelled = true;
       clearInterval(fallback);
