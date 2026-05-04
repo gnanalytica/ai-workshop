@@ -13,6 +13,8 @@ import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
+import { getActiveBanner } from "@/lib/queries/banners";
+import { getActivePoll } from "@/lib/queries/polls";
 
 /**
  * Single chrome used by every authenticated route. Resolves session, fetches
@@ -55,33 +57,53 @@ export async function AppShell({
   // - sandboxName: only when the sandbox cookie is set
   const sandboxId = await sandboxIdP;
   const needsCohortMeta = !!activeCohortId && activeCohortStart == null;
-  const [caps, cohortMeta, sandboxName, truePersona, effectivePersona] =
-    await Promise.all([
-      getAuthCaps(activeCohortId),
-      needsCohortMeta
-        ? getSupabaseServer().then((sb) =>
-            sb
-              .from("cohorts")
-              .select("starts_on, name")
-              .eq("id", activeCohortId!)
-              .maybeSingle()
-              .then((r) => r.data as { starts_on?: string; name?: string } | null),
-          )
-        : Promise.resolve(null),
-      sandboxId
-        ? getSupabaseService()
+  // Pre-fetch the active banner and active poll server-side so the BannerStrip
+  // / PollPopup client components mount with state already populated — no
+  // initial /api/active-banner or /api/active-poll round-trip on first render.
+  // Realtime broadcasts continue to drive subsequent updates client-side.
+  const initialBannerP = activeCohortId
+    ? getActiveBanner(activeCohortId).catch(() => null)
+    : Promise.resolve(null);
+  const initialPollP = activeCohortId
+    ? getActivePoll(activeCohortId).catch(() => null)
+    : Promise.resolve(null);
+
+  const [
+    caps,
+    cohortMeta,
+    sandboxName,
+    truePersona,
+    effectivePersona,
+    initialBanner,
+    initialPoll,
+  ] = await Promise.all([
+    getAuthCaps(activeCohortId),
+    needsCohortMeta
+      ? getSupabaseServer().then((sb) =>
+          sb
             .from("cohorts")
-            .select("name")
-            .eq("id", sandboxId)
+            .select("starts_on, name")
+            .eq("id", activeCohortId!)
             .maybeSingle()
-            .then(
-              (r) =>
-                (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
-            )
-        : Promise.resolve(null),
-      truePersonaP,
-      effectivePersonaP,
-    ]);
+            .then((r) => r.data as { starts_on?: string; name?: string } | null),
+        )
+      : Promise.resolve(null),
+    sandboxId
+      ? getSupabaseService()
+          .from("cohorts")
+          .select("name")
+          .eq("id", sandboxId)
+          .maybeSingle()
+          .then(
+            (r) =>
+              (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
+          )
+      : Promise.resolve(null),
+    truePersonaP,
+    effectivePersonaP,
+    initialBannerP,
+    initialPollP,
+  ]);
 
   if (cohortMeta) {
     activeCohortStart = cohortMeta.starts_on ?? null;
@@ -110,7 +132,9 @@ export async function AppShell({
 
   return (
     <div className="bg-bg text-ink flex min-h-screen flex-col">
-      {activeCohortId && <BannerStrip cohortId={activeCohortId} />}
+      {activeCohortId && (
+        <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
+      )}
       {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       <div className="flex flex-1">
         <Sidebar caps={caps} persona={effectivePersona} bannerOffset={!!sandboxName} />
@@ -132,7 +156,7 @@ export async function AppShell({
       <TourMount persona={truePersona} initialOpen={initialOpen} />
       <HelpFab persona={effectivePersona} />
       {activeCohortId && caps.includes("attendance.self") && (
-        <PollPopup cohortId={activeCohortId} />
+        <PollPopup cohortId={activeCohortId} initialPoll={initialPoll} />
       )}
     </div>
   );

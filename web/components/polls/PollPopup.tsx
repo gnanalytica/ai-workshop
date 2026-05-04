@@ -55,8 +55,14 @@ function ResultsBars({ results }: { results: PollResultRow[] }) {
   );
 }
 
-export function PollPopup({ cohortId }: { cohortId: string }) {
-  const [poll, setPoll] = useState<ActivePollPayload | null>(null);
+export function PollPopup({
+  cohortId,
+  initialPoll = null,
+}: {
+  cohortId: string;
+  initialPoll?: ActivePollPayload | null;
+}) {
+  const [poll, setPoll] = useState<ActivePollPayload | null>(initialPoll);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
   const [now, setNow] = useState<number>(() => Date.now());
   const [pending, start] = useTransition();
@@ -64,23 +70,24 @@ export function PollPopup({ cohortId }: { cohortId: string }) {
 
   useEffect(() => {
     let cancelled = false;
+    // Initial state already came from the server render. Subsequent fetches
+    // (realtime tickle, visibility return, post-vote) bypass the browser
+    // cache so any actual change is picked up immediately.
     async function fetchPoll() {
       abortRef.current?.abort();
       const ac = new AbortController();
       abortRef.current = ac;
       try {
-        const res = await fetch(`/api/active-poll?cohortId=${encodeURIComponent(cohortId)}`, {
-          signal: ac.signal,
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/active-poll?cohortId=${encodeURIComponent(cohortId)}`,
+          { signal: ac.signal, cache: "reload" },
+        );
         if (!res.ok) return;
         const json = (await res.json()) as { poll: ActivePollPayload | null };
         if (!cancelled) setPoll(json.poll);
       } catch {
       }
     }
-    // Initial fetch on mount.
-    fetchPoll();
     // Refetch on visibility return (covers backgrounded tabs catching up).
     function onVisibility() {
       if (document.visibilityState === "visible") fetchPoll();
