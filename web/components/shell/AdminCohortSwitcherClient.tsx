@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { useTransition } from "react";
 import type { AdminCohortRef } from "@/lib/queries/admin-context";
+import { pinActiveCohort } from "@/lib/actions/faculty-cohort";
 
 export function AdminCohortSwitcherClient({
   cohorts,
@@ -10,6 +12,7 @@ export function AdminCohortSwitcherClient({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [, start] = useTransition();
 
   // Detect a /admin/cohorts/<uuid>... prefix; if present we treat the first
   // captured uuid as the "current" cohort and rewrite that segment on switch.
@@ -22,6 +25,13 @@ export function AdminCohortSwitcherClient({
 
   function go(nextId: string) {
     if (!nextId || nextId === currentId) return;
+    // Pin the chrome's active cohort cookie so the topbar (Add link, Day
+    // counter) still reflects the selection on routes that aren't under
+    // /admin/cohorts/<id>/…. The route push below also works on its own —
+    // pin is purely for "after navigating away" continuity.
+    start(async () => {
+      await pinActiveCohort(nextId);
+    });
     if (match) {
       const suffix = match[2] ?? "";
       router.push(`/admin/cohorts/${nextId}${suffix}`);
