@@ -20,7 +20,6 @@ export async function Topbar({
   truePersona,
   effectivePersona,
   activeCohortId,
-  activeDayNumber,
 }: {
   profile: UserProfile;
   navItems: NavItem[];
@@ -28,7 +27,6 @@ export async function Topbar({
   truePersona: Persona | null;
   effectivePersona: Persona | null;
   activeCohortId: string | null;
-  activeDayNumber: number | null;
 }) {
   const isAdminPreviewing =
     truePersona === "admin" && effectivePersona !== null && effectivePersona !== "admin";

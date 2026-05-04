@@ -12,7 +12,7 @@ import { PollPopup } from "@/components/polls/PollPopup";
 import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
-import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
+import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getShellState } from "@/lib/queries/shell";
 
 /**
@@ -93,18 +93,6 @@ export async function AppShell({
     if (!activeCohortName) activeCohortName = cohortMeta.name ?? null;
   }
 
-  const activeDayNumber =
-    activeCohortStart != null
-      ? todayDayNumber({
-          id: activeCohortId!,
-          slug: "",
-          name: activeCohortName ?? "",
-          starts_on: activeCohortStart,
-          ends_on: activeCohortStart,
-          status: "live",
-        })
-      : null;
-
   const items = navForPersona(caps, effectivePersona);
 
   // Show the first-login tour to anyone who hasn't completed it. Driven by
@@ -134,7 +122,6 @@ export async function AppShell({
             truePersona={truePersona}
             effectivePersona={effectivePersona}
             activeCohortId={activeCohortId}
-            activeDayNumber={activeDayNumber}
           />
           <main className="min-w-0 flex-1 overflow-x-clip px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8">
             {children}
