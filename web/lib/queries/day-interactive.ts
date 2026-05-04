@@ -56,7 +56,7 @@ export interface DayAttendance {
 }
 
 export interface DayInteractive {
-  assignment: DayAssignment | null;
+  assignments: DayAssignment[];
   quiz: DayQuiz | null;
   poll: DayPoll | null;
   attendance: DayAttendance;
@@ -85,9 +85,7 @@ export const getDayInteractive = cache(
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
-        .order("created_at")
-        .limit(1)
-        .maybeSingle(),
+        .order("created_at"),
       sb
         .from("quizzes")
         .select(
@@ -118,9 +116,9 @@ export const getDayInteractive = cache(
         : Promise.resolve({ data: null }),
     ]);
 
-    let assignment: DayAssignment | null = null;
+    const assignments: DayAssignment[] = [];
     if (assignmentRes.data) {
-      const a = assignmentRes.data as unknown as {
+      type AssignmentRow = {
         id: string; title: string; body_md: string | null; kind: DayAssignment["kind"]; due_at: string | null;
         submissions: Array<{
           id: string; body: string | null;
@@ -132,28 +130,30 @@ export const getDayInteractive = cache(
           updated_at: string; user_id: string;
         }>;
       };
-      const mine = a.submissions?.find((s) => s.user_id === uid) ?? null;
-      assignment = {
-        id: a.id,
-        title: a.title,
-        body_md: a.body_md,
-        kind: a.kind,
-        due_at: a.due_at,
-        submission: mine
-          ? {
-              id: mine.id,
-              body: mine.body,
-              links: mine.links ?? [],
-              status: mine.status,
-              score: mine.human_reviewed_at ? mine.score : null,
-              feedback_md: mine.human_reviewed_at ? mine.feedback_md : null,
-              published: !!mine.human_reviewed_at,
-              ai_strengths: mine.human_reviewed_at ? (mine.ai_strengths ?? []) : [],
-              ai_weaknesses: mine.human_reviewed_at ? (mine.ai_weaknesses ?? []) : [],
-              updated_at: mine.updated_at,
-            }
-          : null,
-      };
+      for (const row of assignmentRes.data as unknown as AssignmentRow[]) {
+        const mine = row.submissions?.find((s) => s.user_id === uid) ?? null;
+        assignments.push({
+          id: row.id,
+          title: row.title,
+          body_md: row.body_md,
+          kind: row.kind,
+          due_at: row.due_at,
+          submission: mine
+            ? {
+                id: mine.id,
+                body: mine.body,
+                links: mine.links ?? [],
+                status: mine.status,
+                score: mine.human_reviewed_at ? mine.score : null,
+                feedback_md: mine.human_reviewed_at ? mine.feedback_md : null,
+                published: !!mine.human_reviewed_at,
+                ai_strengths: mine.human_reviewed_at ? (mine.ai_strengths ?? []) : [],
+                ai_weaknesses: mine.human_reviewed_at ? (mine.ai_weaknesses ?? []) : [],
+                updated_at: mine.updated_at,
+              }
+            : null,
+        });
+      }
     }
 
     let quiz: DayQuiz | null = null;
@@ -210,7 +210,7 @@ export const getDayInteractive = cache(
     }
 
     return {
-      assignment,
+      assignments,
       quiz,
       poll,
       attendance: {

@@ -168,19 +168,15 @@ export async function POST(req: Request) {
                   .map((f) => f.full_name)
                   .filter((n): n is string => !!n)
                   .join(", ") || null;
-              const assignmentStatus =
-                interactive?.assignment?.submission?.status ?? null;
               return {
                 cohortName: cohort.name,
                 dayNumber,
                 podName: pod?.pod_name ?? null,
                 podFaculty: facultyNames,
-                todaysAssignment: interactive?.assignment
-                  ? {
-                      title: interactive.assignment.title,
-                      status: assignmentStatus ?? "not started",
-                    }
-                  : null,
+                todaysAssignments: (interactive?.assignments ?? []).map((a) => ({
+                  title: a.title,
+                  status: a.submission?.status ?? "not started",
+                })),
                 todaysQuiz: interactive?.quiz
                   ? {
                       title: interactive.quiz.title,

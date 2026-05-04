@@ -20,7 +20,7 @@ import { fmtDateTime } from "@/lib/format";
 import { defaultPhase, splitDayPhases, type Phase } from "@/lib/content/phases";
 
 const readOnlyInteractive: DayInteractive = {
-  assignment: null,
+  assignments: [],
   quiz: null,
   poll: null,
   attendance: { status: null },
@@ -76,12 +76,10 @@ export async function LessonDayView({
   const initialPhase: Phase = phaseParam ?? defaultPhase(cohortDay?.live_session_at);
 
   const livePending = interactive.poll && !interactive.poll.my_choice ? 1 : 0;
-  const assignmentPending =
-    interactive.assignment &&
-    (interactive.assignment.submission?.status ?? "draft") !== "submitted" &&
-    (interactive.assignment.submission?.status ?? "draft") !== "graded"
-      ? 1
-      : 0;
+  const assignmentPending = interactive.assignments.filter((a) => {
+    const s = a.submission?.status ?? "draft";
+    return s !== "submitted" && s !== "graded";
+  }).length;
   const quizPending = interactive.quiz && !interactive.quiz.attempt?.completed_at ? 1 : 0;
   const postPending = assignmentPending + quizPending;
 
@@ -232,12 +230,14 @@ export async function LessonDayView({
   const quizSectionIdx = postSections.findIndex((s) => /quiz/i.test(s.title ?? ""));
 
   const postSectionAddons: Record<number, React.ReactNode> = {};
-  if (!readOnly && interactive.assignment && assignmentSectionIdxs.length > 0) {
-    for (const i of assignmentSectionIdxs) {
-      postSectionAddons[i] = (
-        <AssignmentBlock assignment={interactive.assignment} />
-      );
-    }
+  if (!readOnly && interactive.assignments.length > 0 && assignmentSectionIdxs.length > 0) {
+    interactive.assignments.forEach((a, i) => {
+      if (i < assignmentSectionIdxs.length) {
+        postSectionAddons[assignmentSectionIdxs[i]!] = (
+          <AssignmentBlock key={a.id} assignment={a} />
+        );
+      }
+    });
   }
   if (!readOnly && interactive.quiz && quizSectionIdx >= 0) {
     postSectionAddons[quizSectionIdx] = (
@@ -245,9 +245,14 @@ export async function LessonDayView({
     );
   }
 
+  const unmatchedAssignments = interactive.assignments.slice(assignmentSectionIdxs.length);
   const trailingAssignment =
-    !readOnly && interactive.assignment && assignmentSectionIdxs.length === 0 ? (
-      <AssignmentBlock assignment={interactive.assignment} />
+    !readOnly && unmatchedAssignments.length > 0 ? (
+      <>
+        {unmatchedAssignments.map((a) => (
+          <AssignmentBlock key={a.id} assignment={a} />
+        ))}
+      </>
     ) : null;
   const trailingQuiz =
     !readOnly && interactive.quiz && quizSectionIdx < 0 ? (
