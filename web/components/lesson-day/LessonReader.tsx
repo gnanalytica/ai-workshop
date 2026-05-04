@@ -172,33 +172,37 @@ export function LessonReader({
         {isLast && dayCompleteButton}
 
         <div className="border-line flex items-center justify-between gap-3 border-t pt-4">
-          {!isFirst ? (
-            <button
-              type="button"
-              onClick={() => goto(idx - 1)}
-              className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-[13px] font-medium text-ink hover:bg-bg-soft transition-colors"
-            >
-              <ArrowLeft size={14} strokeWidth={2.1} />
-              Previous
-            </button>
-          ) : (
-            <span />
-          )}
+          <button
+            type="button"
+            onClick={() => goto(idx - 1)}
+            disabled={isFirst}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-[13px] font-medium transition-colors",
+              isFirst
+                ? "border-line/60 text-muted/60 cursor-not-allowed"
+                : "border-line text-ink hover:bg-bg-soft hover:border-accent/40",
+            )}
+          >
+            <ArrowLeft size={14} strokeWidth={2.1} />
+            Previous
+          </button>
           <span className="text-muted/70 hidden text-[10.5px] uppercase tracking-[0.18em] md:inline">
             ← / → keys
           </span>
-          {!isLast ? (
-            <button
-              type="button"
-              onClick={() => goto(idx + 1)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-semibold text-cta-ink hover:opacity-90 transition-opacity"
-            >
-              Next
-              <ArrowRight size={14} strokeWidth={2.2} />
-            </button>
-          ) : (
-            <span />
-          )}
+          <button
+            type="button"
+            onClick={() => goto(idx + 1)}
+            disabled={isLast}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-semibold transition-opacity",
+              isLast
+                ? "bg-line/40 text-muted/60 cursor-not-allowed"
+                : "bg-accent text-cta-ink hover:opacity-90",
+            )}
+          >
+            Next
+            <ArrowRight size={14} strokeWidth={2.2} />
+          </button>
         </div>
       </div>
 
