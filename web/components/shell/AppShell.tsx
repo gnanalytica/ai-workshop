@@ -120,7 +120,12 @@ export async function AppShell({
       )}
       {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       <div className="flex flex-1">
-        <Sidebar caps={caps} persona={effectivePersona} bannerOffset={!!sandboxName} />
+        <Sidebar
+          caps={caps}
+          persona={effectivePersona}
+          bannerOffset={!!sandboxName}
+          activeCohortId={activeCohortId}
+        />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar
             profile={profile}

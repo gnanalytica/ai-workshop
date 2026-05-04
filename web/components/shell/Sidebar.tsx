@@ -70,10 +70,12 @@ export function Sidebar({
   caps,
   persona,
   bannerOffset = false,
+  activeCohortId = null,
 }: {
   caps: readonly string[];
   persona: Persona | null;
   bannerOffset?: boolean;
+  activeCohortId?: string | null;
 }) {
   const activePath = usePathname() ?? "/";
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -102,7 +104,17 @@ export function Sidebar({
     });
   };
 
-  const items = navForPersona(caps, persona);
+  const rawItems = navForPersona(caps, persona);
+  // Send the admin "Cohorts" entry directly to the active cohort's home so a
+  // selection made in the topbar switcher survives a sidebar click. Falls
+  // back to /admin (the cohort list) when no cohort is active yet.
+  const items = activeCohortId
+    ? rawItems.map((it) =>
+        it.href === "/admin" && it.group === "admin"
+          ? { ...it, href: `/admin/cohorts/${activeCohortId}` as NavItem["href"] }
+          : it,
+      )
+    : rawItems;
   const sections = sectionize(items);
   const expanded = pinned || hovered;
 
