@@ -1,4 +1,4 @@
-export type Phase = "pre" | "live" | "post" | "extra";
+export type Phase = "intro" | "pre" | "live" | "post" | "extra";
 
 export interface DayPhases {
   pre: string;
@@ -69,7 +69,13 @@ export function splitDayPhases(body: string): DayPhases {
 }
 
 export function isPhase(value: string | undefined): value is Phase {
-  return value === "pre" || value === "live" || value === "post" || value === "extra";
+  return (
+    value === "intro" ||
+    value === "pre" ||
+    value === "live" ||
+    value === "post" ||
+    value === "extra"
+  );
 }
 
 /**

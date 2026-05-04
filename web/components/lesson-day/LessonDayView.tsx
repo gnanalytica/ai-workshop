@@ -253,9 +253,18 @@ export async function LessonDayView({
   // students see the submit form on the same page as the narrative. Anything
   // that doesn't match a section falls back to trailing (rendered after the
   // last section) — keeps backward compatibility for days with no matching H2.
-  const assignmentSectionIdx = postSections.findIndex(
-    (s) => /assignment/i.test(s.title ?? ""),
-  );
+  // Find the LAST "## Assignment" section so the AssignmentBlock submit
+  // form attaches to the final assignment narrative (e.g. Day 1 has two:
+  // "Day-0 baseline reflection" then "Score-your-own prompt" — students
+  // should see submit at the end of the assignments, not buried in the
+  // middle). Manual reverse loop because findLastIndex needs ES2023.
+  let assignmentSectionIdx = -1;
+  for (let i = postSections.length - 1; i >= 0; i--) {
+    if (/assignment/i.test(postSections[i]?.title ?? "")) {
+      assignmentSectionIdx = i;
+      break;
+    }
+  }
   const quizSectionIdx = postSections.findIndex((s) => /quiz/i.test(s.title ?? ""));
 
   const postSectionAddons: Record<number, React.ReactNode> = {};
@@ -353,17 +362,10 @@ export async function LessonDayView({
           )}
         </header>
 
-        {phases.intro && (
-          <div className="mb-2">
-            <MarkdownView source={phases.intro} />
-          </div>
-        )}
-
-        {slidesPanel}
-
         <PhaseTabs
           initial={initialPhase}
           tabs={[
+            { id: "intro", label: "Intro", hint: "slides + overview" },
             { id: "pre", label: "Pre-class", hint: "before session" },
             {
               id: "live",
@@ -380,6 +382,12 @@ export async function LessonDayView({
             { id: "extra", label: "References" },
           ]}
           panels={{
+            intro: (
+              <>
+                {slidesPanel}
+                {phases.intro && <MarkdownView source={phases.intro} />}
+              </>
+            ),
             pre: prePanel,
             live: livePanel,
             post: postPanel,

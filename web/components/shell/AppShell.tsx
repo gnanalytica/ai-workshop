@@ -131,7 +131,7 @@ export async function AppShell({
             activeCohortId={activeCohortId}
             activeDayNumber={activeDayNumber}
           />
-          <main className="min-w-0 flex-1 overflow-x-hidden px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8">
+          <main className="min-w-0 flex-1 overflow-x-clip px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8">
             {children}
           </main>
         </div>

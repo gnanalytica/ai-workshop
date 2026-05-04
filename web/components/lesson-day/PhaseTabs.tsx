@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { Phase } from "@/lib/content/phases";
 
-const VALID_PHASES: ReadonlySet<Phase> = new Set(["pre", "live", "post", "extra"]);
+const VALID_PHASES: ReadonlySet<Phase> = new Set([
+  "intro",
+  "pre",
+  "live",
+  "post",
+  "extra",
+]);
 
 interface TabDef {
   id: Phase;
@@ -51,7 +57,7 @@ export function PhaseTabs({
 
   return (
     <div>
-      <div className="sticky top-0 z-10 -mx-4 mb-6 bg-bg/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/80 sm:-mx-6 sm:px-6 md:-mx-10 md:px-10">
+      <div className="sticky top-14 z-20 -mx-4 mb-6 bg-bg/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/80 sm:-mx-6 sm:px-6 md:-mx-10 md:px-10">
         <nav
           role="tablist"
           aria-label="Lesson phase"

@@ -148,7 +148,32 @@ export function LessonReader({
 
   return (
     <>
-      <div ref={rootRef} className="space-y-6 scroll-mt-20">
+      <div ref={rootRef} className="relative space-y-6 scroll-mt-20">
+        {/* Floating side arrows — visible on lg+ where there's room outside
+            the article column. Sticky so they follow the reader as they
+            scroll. Hidden at the boundaries. The bottom Prev/Next stays for
+            mobile and small screens. */}
+        {!isFirst && (
+          <button
+            type="button"
+            aria-label="Previous section"
+            onClick={() => goto(idx - 1)}
+            className="hidden lg:flex fixed left-[max(1rem,calc(50vw-26rem))] top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full border border-line bg-card/95 text-ink shadow-md backdrop-blur transition-colors hover:bg-bg-soft hover:border-accent/55"
+          >
+            <ArrowLeft size={18} strokeWidth={2.2} />
+          </button>
+        )}
+        {!isLast && (
+          <button
+            type="button"
+            aria-label="Next section"
+            onClick={() => goto(idx + 1)}
+            className="hidden lg:flex fixed right-[max(1rem,calc(50vw-26rem))] top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full border border-line bg-accent text-cta-ink shadow-md backdrop-blur transition-opacity hover:opacity-90"
+          >
+            <ArrowRight size={18} strokeWidth={2.2} />
+          </button>
+        )}
+
         {/* Section header */}
         <div className="border-line bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
           <div className="min-w-0">
