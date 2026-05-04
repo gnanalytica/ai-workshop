@@ -32,7 +32,7 @@ export const getStudentDrawerSummary = cache(
       .maybeSingle();
     if (!prof) return null;
 
-    const today = new Date().toISOString().slice(0, 10);
+    const nowIso = new Date().toISOString();
 
     const [
       { data: pod },
@@ -46,7 +46,7 @@ export const getStudentDrawerSummary = cache(
     ] = await Promise.all([
       sb
         .from("pod_members")
-        .select("pods!inner(id, name, mentor_note, cohort_id)")
+        .select("pods!inner(id, name, shared_notes, cohort_id)")
         .eq("student_user_id", userId)
         .eq("cohort_id", cohortId)
         .maybeSingle(),
@@ -65,11 +65,15 @@ export const getStudentDrawerSummary = cache(
         .eq("user_id", userId)
         .eq("cohort_id", cohortId)
         .eq("status", "done"),
+      // cohort_days has no `session_date` column — schedule is anchored by
+      // `live_session_at` (timestamptz). Pick the most recent day whose
+      // live session is at or before now. For days without a live session
+      // (rare on the 30-day schedule) this falls back to the latest scheduled.
       sb
         .from("cohort_days")
         .select("day_number")
         .eq("cohort_id", cohortId)
-        .lte("session_date", today)
+        .lte("live_session_at", nowIso)
         .order("day_number", { ascending: false })
         .limit(1)
         .maybeSingle(),
@@ -110,7 +114,7 @@ export const getStudentDrawerSummary = cache(
       assignments: { title: string; day_number: number };
     };
     const podRow = (pod as unknown) as
-      | { pods: { id: string; name: string; mentor_note: string | null } }
+      | { pods: { id: string; name: string; shared_notes: string | null } }
       | null;
     const noteRow = (note as unknown) as { body_md: string | null } | null;
     const todayLabRow = (todayLab as unknown) as
@@ -123,7 +127,7 @@ export const getStudentDrawerSummary = cache(
       avatar_url: prof.avatar_url,
       pod_id: podRow?.pods.id ?? null,
       pod_name: podRow?.pods.name ?? null,
-      mentorNote: noteRow?.body_md ?? podRow?.pods.mentor_note ?? null,
+      mentorNote: noteRow?.body_md ?? podRow?.pods.shared_notes ?? null,
       labsDone: labsDone ?? 0,
       labsToday: todayLabRow
         ? { day_number: todayLabRow.day_number, status: todayLabRow.status }

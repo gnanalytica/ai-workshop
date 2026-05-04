@@ -26,13 +26,20 @@ export async function submitAssignment(input: z.infer<typeof submitSchema>) {
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
     return sb
       .from("submissions")
-      .upsert({
-        assignment_id: parsed.data.assignment_id,
-        user_id: user.user.id,
-        body: parsed.data.body,
-        links: parsed.data.links,
-        status: "submitted",
-      })
+      .upsert(
+        {
+          assignment_id: parsed.data.assignment_id,
+          user_id: user.user.id,
+          body: parsed.data.body,
+          links: parsed.data.links,
+          status: "submitted",
+        },
+        // PK is `id` (uuid); the dedup key is the unique constraint on
+        // (assignment_id, user_id). Without onConflict, supabase-js falls
+        // back to PK-conflict and the second submit by the same user fails
+        // with `submissions_assignment_id_user_id_key` duplicate-key error.
+        { onConflict: "assignment_id,user_id" },
+      )
       .select()
       .single();
   });
@@ -46,13 +53,16 @@ export async function saveDraft(input: z.infer<typeof submitSchema>) {
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
     return sb
       .from("submissions")
-      .upsert({
-        assignment_id: parsed.data.assignment_id,
-        user_id: user.user.id,
-        body: parsed.data.body,
-        links: parsed.data.links,
-        status: "draft",
-      })
+      .upsert(
+        {
+          assignment_id: parsed.data.assignment_id,
+          user_id: user.user.id,
+          body: parsed.data.body,
+          links: parsed.data.links,
+          status: "draft",
+        },
+        { onConflict: "assignment_id,user_id" },
+      )
       .select()
       .single();
   });

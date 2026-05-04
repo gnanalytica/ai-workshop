@@ -161,16 +161,17 @@ export async function getFacultyPrimaryPodId(
   facultyUserId: string,
 ): Promise<string | null> {
   const sb = await getSupabaseServer();
+  // pod_faculty has no is_primary column anymore — schema simplified to one
+  // row per faculty per pod. If multiple, picking the first is consistent
+  // with the unique-pod-faculty model the app actually enforces.
   const { data } = await sb
     .from("pod_faculty")
-    .select("pod_id, is_primary, pods!inner(cohort_id)")
+    .select("pod_id, pods!inner(cohort_id)")
     .eq("faculty_user_id", facultyUserId)
-    .eq("pods.cohort_id", cohortId);
-  const rows = (data ?? []) as Array<{ pod_id: string; is_primary: boolean }>;
-  if (rows.length === 0) return null;
-  const primary = rows.find((r) => r.is_primary);
-  const pick = primary ?? rows[0];
-  return pick ? pick.pod_id : null;
+    .eq("pods.cohort_id", cohortId)
+    .limit(1);
+  const rows = (data ?? []) as Array<{ pod_id: string }>;
+  return rows[0]?.pod_id ?? null;
 }
 
 export async function getDayFeedbackSummary(
