@@ -13,6 +13,8 @@ import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
+import { getActiveBanner } from "@/lib/queries/banners";
+import { getActivePoll } from "@/lib/queries/polls";
 
 /**
  * Single chrome used by every authenticated route. Resolves session, fetches
@@ -29,36 +31,83 @@ export async function AppShell({
   cohortName?: string | null;
   cohortStartsOn?: string | null;
 }) {
-  const profile = await getProfile();
+  // Phase 1: fan out everything that doesn't depend on activeCohortId.
+  // getMyCurrentCohort is only needed when no cohortId came in via props
+  // (i.e. student routes). All five helpers are React-cache wrapped, so any
+  // re-call from a child component is free.
+  const sandboxIdP = getActiveSandboxCohortId();
+  const profileP = getProfile();
+  const truePersonaP = getTruePersona();
+  const effectivePersonaP = getEffectivePersona();
+  const fallbackCohortP = cohortId ? Promise.resolve(null) : getMyCurrentCohort();
+
+  const profile = await profileP;
   if (!profile) redirect("/sign-in");
 
-  // Single source of truth for "the cohort this user is currently working in".
-  // Faculty/admin paths inject cohortId via the route layout; for students the
-  // shell layout doesn't know it, so fall back to their registration (or the
-  // most-recent live cohort under RLS). This same id flows into the topbar's
-  // Join button so admin/faculty/student all read+write the same cohort_days
-  // row when they're on the same cohort.
-  let activeCohortId = cohortId ?? null;
-  let activeCohortName = cohortName ?? null;
-  let activeCohortStart: string | null = cohortStartsOn ?? null;
-  if (!activeCohortId) {
-    const fallback = await getMyCurrentCohort();
-    if (fallback) {
-      activeCohortId = fallback.id;
-      activeCohortName = fallback.name;
-      activeCohortStart = fallback.starts_on;
-    }
-  } else if (activeCohortStart == null) {
-    // The injecting layout didn't have starts_on (e.g., student route where
-    // we only have id/name from props). Fetch just that one column.
-    const sb = await getSupabaseServer();
-    const { data } = await sb
-      .from("cohorts")
-      .select("starts_on, name")
-      .eq("id", activeCohortId)
-      .maybeSingle();
-    activeCohortStart = (data?.starts_on as string | undefined) ?? null;
-    if (!activeCohortName) activeCohortName = (data?.name as string | undefined) ?? null;
+  const fallbackCohort = await fallbackCohortP;
+  const activeCohortId = cohortId ?? fallbackCohort?.id ?? null;
+  let activeCohortName = cohortName ?? fallbackCohort?.name ?? null;
+  let activeCohortStart: string | null =
+    cohortStartsOn ?? fallbackCohort?.starts_on ?? null;
+
+  // Phase 2: now that activeCohortId is resolved, fan out the dependent reads.
+  // - caps: scoped to the active cohort
+  // - cohortMeta: only when an injected cohortId arrived without starts_on
+  //   (student route where the injecting layout doesn't have it)
+  // - sandboxName: only when the sandbox cookie is set
+  const sandboxId = await sandboxIdP;
+  const needsCohortMeta = !!activeCohortId && activeCohortStart == null;
+  // Pre-fetch the active banner and active poll server-side so the BannerStrip
+  // / PollPopup client components mount with state already populated — no
+  // initial /api/active-banner or /api/active-poll round-trip on first render.
+  // Realtime broadcasts continue to drive subsequent updates client-side.
+  const initialBannerP = activeCohortId
+    ? getActiveBanner(activeCohortId).catch(() => null)
+    : Promise.resolve(null);
+  const initialPollP = activeCohortId
+    ? getActivePoll(activeCohortId).catch(() => null)
+    : Promise.resolve(null);
+
+  const [
+    caps,
+    cohortMeta,
+    sandboxName,
+    truePersona,
+    effectivePersona,
+    initialBanner,
+    initialPoll,
+  ] = await Promise.all([
+    getAuthCaps(activeCohortId),
+    needsCohortMeta
+      ? getSupabaseServer().then((sb) =>
+          sb
+            .from("cohorts")
+            .select("starts_on, name")
+            .eq("id", activeCohortId!)
+            .maybeSingle()
+            .then((r) => r.data as { starts_on?: string; name?: string } | null),
+        )
+      : Promise.resolve(null),
+    sandboxId
+      ? getSupabaseService()
+          .from("cohorts")
+          .select("name")
+          .eq("id", sandboxId)
+          .maybeSingle()
+          .then(
+            (r) =>
+              (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
+          )
+      : Promise.resolve(null),
+    truePersonaP,
+    effectivePersonaP,
+    initialBannerP,
+    initialPollP,
+  ]);
+
+  if (cohortMeta) {
+    activeCohortStart = cohortMeta.starts_on ?? null;
+    if (!activeCohortName) activeCohortName = cohortMeta.name ?? null;
   }
 
   const activeDayNumber =
@@ -73,11 +122,6 @@ export async function AppShell({
         })
       : null;
 
-  const [caps, truePersona, effectivePersona] = await Promise.all([
-    getAuthCaps(activeCohortId),
-    getTruePersona(),
-    getEffectivePersona(),
-  ]);
   const items = navForPersona(caps, effectivePersona);
 
   // Show the first-login tour to anyone who hasn't completed it. Driven by
@@ -86,23 +130,11 @@ export async function AppShell({
   // re-launch events fired by <StartGuideButton>.
   const initialOpen = !profile.onboarded_at;
 
-  // Sandbox banner — only when the cookie is present AND the user is allowed
-  // to enter (admins always; faculty if they have the demo cohort_faculty row).
-  const sandboxId = await getActiveSandboxCohortId();
-  let sandboxName: string | null = null;
-  if (sandboxId) {
-    const svc = getSupabaseService();
-    const { data } = await svc
-      .from("cohorts")
-      .select("name")
-      .eq("id", sandboxId)
-      .maybeSingle();
-    sandboxName = (data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)";
-  }
-
   return (
     <div className="bg-bg text-ink flex min-h-screen flex-col">
-      {activeCohortId && <BannerStrip cohortId={activeCohortId} />}
+      {activeCohortId && (
+        <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
+      )}
       {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       <div className="flex flex-1">
         <Sidebar caps={caps} persona={effectivePersona} bannerOffset={!!sandboxName} />
@@ -124,7 +156,7 @@ export async function AppShell({
       <TourMount persona={truePersona} initialOpen={initialOpen} />
       <HelpFab persona={effectivePersona} />
       {activeCohortId && caps.includes("attendance.self") && (
-        <PollPopup cohortId={activeCohortId} />
+        <PollPopup cohortId={activeCohortId} initialPoll={initialPoll} />
       )}
     </div>
   );

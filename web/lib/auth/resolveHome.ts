@@ -22,19 +22,10 @@ export async function resolveHome(): Promise<string> {
   if (!user) return "/start";
 
   const svc = getSupabaseService();
-  const { data: profile } = await svc
-    .from("profiles")
-    .select("staff_roles")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const roles = (profile?.staff_roles ?? []) as string[];
-  for (const r of roles) {
-    if (STAFF_HOMES[r]) return STAFF_HOMES[r];
-  }
-
-  // Not staff — check faculty / student in parallel.
-  const [fac, reg] = await Promise.all([
+  // Fire all three role checks in parallel — staff is rare, so sequencing it
+  // first cost a round-trip on every student/faculty redirect.
+  const [profileRes, facRes, regRes] = await Promise.all([
+    svc.from("profiles").select("staff_roles").eq("id", user.id).maybeSingle(),
     svc.from("cohort_faculty").select("user_id").eq("user_id", user.id).limit(1).maybeSingle(),
     svc
       .from("registrations")
@@ -45,7 +36,12 @@ export async function resolveHome(): Promise<string> {
       .maybeSingle(),
   ]);
 
-  if (fac.data) return "/faculty";
-  if (reg.data) return "/learn";
+  const roles = (profileRes.data?.staff_roles ?? []) as string[];
+  for (const r of roles) {
+    if (STAFF_HOMES[r]) return STAFF_HOMES[r];
+  }
+
+  if (facRes.data) return "/faculty";
+  if (regRes.data) return "/learn";
   return "/start/claim";
 }

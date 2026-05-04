@@ -30,17 +30,27 @@ function fmtRel(createdAt: string): string {
   return `set ${h}h ago`;
 }
 
-export function BannerStrip({ cohortId }: { cohortId: string }) {
-  const [banner, setBanner] = useState<ActiveBanner | null>(null);
+export function BannerStrip({
+  cohortId,
+  initialBanner = null,
+}: {
+  cohortId: string;
+  initialBanner?: ActiveBanner | null;
+}) {
+  const [banner, setBanner] = useState<ActiveBanner | null>(initialBanner);
   const [, force] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    // Initial state already came from the server render. Subsequent fetches
+    // (realtime tickle, visibility return, safety-net interval) bypass the
+    // browser cache so any actual change is picked up immediately.
     async function load() {
       try {
-        const r = await fetch(`/api/active-banner?cohortId=${encodeURIComponent(cohortId)}`, {
-          cache: "no-store",
-        });
+        const r = await fetch(
+          `/api/active-banner?cohortId=${encodeURIComponent(cohortId)}`,
+          { cache: "reload" },
+        );
         if (!r.ok) return;
         const json = (await r.json()) as { banner: ActiveBanner | null };
         if (!cancelled) setBanner(json.banner);
@@ -48,16 +58,16 @@ export function BannerStrip({ cohortId }: { cohortId: string }) {
         // network blip — keep prior state
       }
     }
-    load();
     function onVisibility() {
       if (document.visibilityState === "visible") load();
     }
     document.addEventListener("visibilitychange", onVisibility);
-    // Slow fallback poll — visible tabs only. Realtime broadcast
-    // (setBanner/dismissBanner) drives the fast path.
+    // Safety net only — realtime broadcasts (setBanner/dismissBanner) and
+    // the visibilitychange refresh drive every normal update. 5 min is enough
+    // to recover if a realtime channel quietly drops.
     const fallback = setInterval(() => {
       if (document.visibilityState === "visible") load();
-    }, 60_000);
+    }, 300_000);
     const sb = getSupabaseBrowser();
     const ch = sb.channel(`cohort:${cohortId}`);
     ch.on("broadcast", { event: "banner" }, () => {

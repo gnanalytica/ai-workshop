@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Sparkles } from "lucide-react";
 import { checkCapability, requireCapability } from "@/lib/auth/requireCapability";
 import { getProfile, getSession } from "@/lib/auth/session";
@@ -151,14 +152,27 @@ export default async function FacultyPodPage() {
               <CardSub>{myPod.shared_notes}</CardSub>
             </Card>
           )}
-          <PodTrend
-            cohortId={f.cohort.id}
-            memberIds={myPod.members.map((m) => m.user_id)}
-          />
+          <Suspense fallback={<PodTrendSkeleton />}>
+            <PodTrend
+              cohortId={f.cohort.id}
+              memberIds={myPod.members.map((m) => m.user_id)}
+            />
+          </Suspense>
           <PodMembers members={myPod.members} totalDays={today} cohortId={f.cohort.id} />
         </section>
       )}
     </div>
+  );
+}
+
+function PodTrendSkeleton() {
+  return (
+    <Card className="mb-3">
+      <p className="text-muted mb-2 text-xs uppercase tracking-wider">
+        Last 14 days · this pod
+      </p>
+      <div className="grid h-[60px] gap-6 sm:grid-cols-3" aria-hidden />
+    </Card>
   );
 }
 
