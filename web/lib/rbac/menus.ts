@@ -47,13 +47,15 @@ export const NAV: readonly NavItem[] = [
   { label: "Lessons",     href: "/day/today",   cap: "content.read",   group: "student",                       icon: "book" },
   { label: "Capstone",    href: "/capstone",    cap: null,             group: "student",                       icon: "milestone" },
   { label: "Help desk",   href: "/help-desk",   cap: null,             group: "student",                       icon: "life-buoy" },
-  { label: "Community",   href: "/community",   cap: "community.read", group: "student",                       icon: "message-square" },
+  // Temporarily hidden from student nav — uncomment to restore:
+  // { label: "Community",   href: "/community",   cap: "community.read", group: "student",                       icon: "message-square" },
 
   { label: "My Pod",      href: "/pod",         cap: null,             group: "student", section: "People",    icon: "users" },
   { label: "Classmates",  href: "/people",      cap: null,             group: "student", section: "People",    icon: "users-round" },
 
-  { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
-  { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
+  // Temporarily hidden from student nav — uncomment to restore:
+  // { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
+  // { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
   { label: "Handbook",    href: "/handbook",    cap: null,             group: "student", section: "Reference", icon: "library" },
 
   // ----- Faculty -----
