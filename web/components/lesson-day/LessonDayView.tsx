@@ -220,25 +220,24 @@ export async function LessonDayView({
   // students see the submit form on the same page as the narrative. Anything
   // that doesn't match a section falls back to trailing (rendered after the
   // last section) — keeps backward compatibility for days with no matching H2.
-  // Find the LAST "## Assignment" section so the AssignmentBlock submit
-  // form attaches to the final assignment narrative (e.g. Day 1 has two:
-  // "Day-0 baseline reflection" then "Score-your-own prompt" — students
-  // should see submit at the end of the assignments, not buried in the
-  // middle). Manual reverse loop because findLastIndex needs ES2023.
-  let assignmentSectionIdx = -1;
-  for (let i = postSections.length - 1; i >= 0; i--) {
-    if (/assignment/i.test(postSections[i]?.title ?? "")) {
-      assignmentSectionIdx = i;
-      break;
-    }
-  }
+  // Render the AssignmentBlock submit form on EVERY post-class section
+  // whose H2 mentions "assignment". A day can have multiple assignment
+  // narratives (e.g. Day 1: "Day-0 baseline reflection" then "Score-your-own
+  // prompt") — both should show submit. Same DB submission row backs each
+  // form, so submitting from any of them upserts the same record.
+  const assignmentSectionIdxs: number[] = [];
+  postSections.forEach((s, i) => {
+    if (/assignment/i.test(s?.title ?? "")) assignmentSectionIdxs.push(i);
+  });
   const quizSectionIdx = postSections.findIndex((s) => /quiz/i.test(s.title ?? ""));
 
   const postSectionAddons: Record<number, React.ReactNode> = {};
-  if (!readOnly && interactive.assignment && assignmentSectionIdx >= 0) {
-    postSectionAddons[assignmentSectionIdx] = (
-      <AssignmentBlock assignment={interactive.assignment} />
-    );
+  if (!readOnly && interactive.assignment && assignmentSectionIdxs.length > 0) {
+    for (const i of assignmentSectionIdxs) {
+      postSectionAddons[i] = (
+        <AssignmentBlock assignment={interactive.assignment} />
+      );
+    }
   }
   if (!readOnly && interactive.quiz && quizSectionIdx >= 0) {
     postSectionAddons[quizSectionIdx] = (
@@ -247,7 +246,7 @@ export async function LessonDayView({
   }
 
   const trailingAssignment =
-    !readOnly && interactive.assignment && assignmentSectionIdx < 0 ? (
+    !readOnly && interactive.assignment && assignmentSectionIdxs.length === 0 ? (
       <AssignmentBlock assignment={interactive.assignment} />
     ) : null;
   const trailingQuiz =
