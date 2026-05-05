@@ -160,26 +160,50 @@ function parseInlineArrayLike(text: string): string[] {
   return parts;
 }
 
+// MDX curriculum is static at runtime — bundled with the deployment and never
+// edited after server start. Memoize at module scope so each Node worker reads
+// each file once for the lifetime of the process. Keys store Promises so
+// concurrent requests during cold start don't trigger duplicate fs reads.
+const dayCache = new Map<number, Promise<LoadedDay | null>>();
+let listDaysPromise: Promise<DayFrontmatter[]> | null = null;
+
 export async function loadDay(dayNumber: number): Promise<LoadedDay | null> {
-  const file = path.join(CONTENT_DIR, `day-${String(dayNumber).padStart(2, "0")}.mdx`);
-  let raw: string;
-  try {
-    raw = await fs.readFile(file, "utf8");
-  } catch {
-    return null;
-  }
-  const { meta, body } = splitFrontmatter(raw);
-  const parsed = dayFrontmatterSchema.parse(meta);
-  return { meta: parsed, body, raw };
+  const cached = dayCache.get(dayNumber);
+  if (cached) return cached;
+  const p = (async () => {
+    const file = path.join(CONTENT_DIR, `day-${String(dayNumber).padStart(2, "0")}.mdx`);
+    let raw: string;
+    try {
+      raw = await fs.readFile(file, "utf8");
+    } catch {
+      return null;
+    }
+    const { meta, body } = splitFrontmatter(raw);
+    const parsed = dayFrontmatterSchema.parse(meta);
+    return { meta: parsed, body, raw };
+  })();
+  dayCache.set(dayNumber, p);
+  // Drop the cache entry on failure so transient errors aren't sticky.
+  p.catch(() => dayCache.delete(dayNumber));
+  return p;
 }
 
 export async function listDays(): Promise<DayFrontmatter[]> {
-  const entries = await fs.readdir(CONTENT_DIR);
-  const out: DayFrontmatter[] = [];
-  for (const name of entries.filter((n) => n.endsWith(".mdx"))) {
-    const raw = await fs.readFile(path.join(CONTENT_DIR, name), "utf8");
-    const { meta } = splitFrontmatter(raw);
-    out.push(dayFrontmatterSchema.parse(meta));
-  }
-  return out.sort((a, b) => a.day - b.day);
+  if (listDaysPromise) return listDaysPromise;
+  listDaysPromise = (async () => {
+    const entries = await fs.readdir(CONTENT_DIR);
+    const files = entries.filter((n) => n.endsWith(".mdx"));
+    const out = await Promise.all(
+      files.map(async (name) => {
+        const raw = await fs.readFile(path.join(CONTENT_DIR, name), "utf8");
+        const { meta } = splitFrontmatter(raw);
+        return dayFrontmatterSchema.parse(meta);
+      }),
+    );
+    return out.sort((a, b) => a.day - b.day);
+  })();
+  listDaysPromise.catch(() => {
+    listDaysPromise = null;
+  });
+  return listDaysPromise;
 }

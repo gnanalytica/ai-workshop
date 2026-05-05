@@ -2,6 +2,7 @@ import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseService } from "@/lib/supabase/service";
 import { getPreviewUserId } from "@/lib/auth/persona";
+import { getSession } from "@/lib/auth/session";
 
 export interface DayAssignment {
   id: string;
@@ -60,6 +61,7 @@ export interface DayInteractive {
   quiz: DayQuiz | null;
   poll: DayPoll | null;
   attendance: DayAttendance;
+  dayFeedbackSubmitted: boolean;
 }
 
 export const getDayInteractive = cache(
@@ -69,15 +71,49 @@ export const getDayInteractive = cache(
     // previewing as a student so the joined submissions/attempts/votes
     // contain the previewed student's rows.
     const sb = previewUid ? getSupabaseService() : await getSupabaseServer();
-    let uid: string | undefined;
-    if (previewUid) {
-      uid = previewUid;
-    } else {
-      const { data: user } = await sb.auth.getUser();
-      uid = user.user?.id;
-    }
+    // Reuse the per-request cached session lookup instead of calling
+    // sb.auth.getUser() directly — every other server query on this render
+    // already shares this Promise.
+    const uid = previewUid ?? (await getSession())?.id;
 
-    const [assignmentRes, quizRes, pollRes, attendanceRes] = await Promise.all([
+    // Filter the embedded user-scoped resources to just `uid` so we don't
+    // drag every cohort student's submissions/attempts/votes across the wire.
+    // PostgREST embed filters keep the parent row even when the embed array
+    // is empty, which is exactly what we want for "no submission yet" cases.
+    const userScope = uid ?? "00000000-0000-0000-0000-000000000000";
+
+    // Kick off the polls query first so we can chain rpc_poll_results off it
+    // without serializing against the rest of the batch — when the poll is
+    // closed, the RPC overlaps with whatever assignment/quiz queries are still
+    // in flight instead of waiting for the whole Promise.all to resolve.
+    const pollResPromise = sb
+      .from("polls")
+      .select("id, question, options, closed_at, closes_at, poll_votes(choice, user_id)")
+      .eq("cohort_id", cohortId)
+      .eq("day_number", dayNumber)
+      .eq("poll_votes.user_id", userScope)
+      .order("opened_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const pollResultsPromise: Promise<Array<{ choice: string; label: string; votes: number }> | null> =
+      Promise.resolve(pollResPromise).then(async ({ data }) => {
+        if (!data) return null;
+        const p = data as { id: string; closed_at: string | null; closes_at: string | null };
+        const isClosed =
+          !!p.closed_at || (p.closes_at != null && new Date(p.closes_at).getTime() <= Date.now());
+        if (!isClosed) return null;
+        const { data: rows } = await (sb.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: Array<{ choice: string; label: string; votes: number }> | null }>)(
+          "rpc_poll_results",
+          { p_poll: p.id },
+        );
+        return rows ?? null;
+      });
+
+    const [assignmentRes, quizRes, pollRes, pollResultsRows, attendanceRes, dayFeedbackRes] = await Promise.all([
       sb
         .from("assignments")
         .select(
@@ -85,6 +121,7 @@ export const getDayInteractive = cache(
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
+        .eq("submissions.user_id", userScope)
         .order("created_at"),
       sb
         .from("quizzes")
@@ -94,21 +131,25 @@ export const getDayInteractive = cache(
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
         .eq("is_published", true)
+        .eq("quiz_attempts.user_id", userScope)
         .order("version", { ascending: false })
         .limit(1)
         .maybeSingle(),
-      sb
-        .from("polls")
-        .select("id, question, options, closed_at, closes_at, poll_votes(choice, user_id)")
-        .eq("cohort_id", cohortId)
-        .eq("day_number", dayNumber)
-        .order("opened_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      pollResPromise,
+      pollResultsPromise,
       uid
         ? sb
             .from("attendance")
             .select("status")
+            .eq("cohort_id", cohortId)
+            .eq("day_number", dayNumber)
+            .eq("user_id", uid)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      uid
+        ? sb
+            .from("day_feedback")
+            .select("user_id")
             .eq("cohort_id", cohortId)
             .eq("day_number", dayNumber)
             .eq("user_id", uid)
@@ -182,22 +223,13 @@ export const getDayInteractive = cache(
         poll_votes: Array<{ choice: string; user_id: string }>;
       };
       const my = p.poll_votes?.find((v) => v.user_id === uid) ?? null;
-      const isClosed = !!p.closed_at || (p.closes_at != null && new Date(p.closes_at).getTime() <= Date.now());
-      let results: DayPoll["results"] = null;
-      if (isClosed) {
-        const { data: rows } = await (sb.rpc as unknown as (
-          fn: string,
-          args: Record<string, unknown>,
-        ) => Promise<{ data: Array<{ choice: string; label: string; votes: number }> | null }>)(
-          "rpc_poll_results",
-          { p_poll: p.id },
-        );
-        results = (rows ?? []).map((r) => ({
-          choice: r.choice,
-          label: r.label,
-          votes: Number(r.votes ?? 0),
-        }));
-      }
+      const results: DayPoll["results"] = pollResultsRows
+        ? pollResultsRows.map((r) => ({
+            choice: r.choice,
+            label: r.label,
+            votes: Number(r.votes ?? 0),
+          }))
+        : null;
       poll = {
         id: p.id,
         question: p.question,
@@ -216,6 +248,7 @@ export const getDayInteractive = cache(
       attendance: {
         status: ((attendanceRes.data as { status: DayAttendance["status"] } | null)?.status ?? null),
       },
+      dayFeedbackSubmitted: !!dayFeedbackRes.data,
     };
   },
 );

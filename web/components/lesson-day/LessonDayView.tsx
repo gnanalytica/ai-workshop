@@ -15,7 +15,6 @@ import { loadDay, listDays } from "@/lib/content/loader";
 import type { ActiveCohort } from "@/lib/queries/cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDayInteractive, type DayInteractive } from "@/lib/queries/day-interactive";
-import { getDayProgress } from "@/lib/queries/lesson-progress";
 import { fmtDateTime } from "@/lib/format";
 import { defaultPhase, splitDayPhases, type Phase } from "@/lib/content/phases";
 
@@ -24,6 +23,7 @@ const readOnlyInteractive: DayInteractive = {
   quiz: null,
   poll: null,
   attendance: { status: null },
+  dayFeedbackSubmitted: false,
 };
 
 type RailBase = "/day" | "/faculty/day";
@@ -45,14 +45,11 @@ export async function LessonDayView({
   const dayNumber = dayParam === "today" ? today : Number(dayParam);
   if (!Number.isFinite(dayNumber) || dayNumber < 1 || dayNumber > 30) notFound();
 
-  const [content, allDays, cohortDays, interactive, progress] = await Promise.all([
+  const [content, allDays, cohortDays, interactive] = await Promise.all([
     loadDay(dayNumber),
     listDays(),
     listCohortDays(cohort.id),
     readOnly ? Promise.resolve(readOnlyInteractive) : getDayInteractive(cohort.id, dayNumber),
-    readOnly
-      ? Promise.resolve({ dayFeedbackSubmitted: false })
-      : getDayProgress(cohort.id, dayNumber),
   ]);
   if (!content) notFound();
 
@@ -161,7 +158,7 @@ export async function LessonDayView({
   // and never sees the day-feedback button.
   const persistProps = readOnly
     ? {}
-    : { cohortId: cohort.id, dayNumber, dayFeedbackSubmitted: progress.dayFeedbackSubmitted };
+    : { cohortId: cohort.id, dayNumber, dayFeedbackSubmitted: interactive.dayFeedbackSubmitted };
 
   const prePanel = phases.pre ? (
     <LessonReader titles={preSections.map((s) => s.title)} {...persistProps}>
