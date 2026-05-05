@@ -46,6 +46,7 @@ const STATUS_TONE: Record<HelpDeskEntry["status"], "warn" | "accent" | "ok" | "d
   cancelled: "default",
 };
 
+type StatusTab = "pending" | "resolved";
 type Filter = "all" | "content" | "tech" | "team" | "other";
 
 const FILTER_LABEL: Record<Filter, string> = {
@@ -63,15 +64,25 @@ export function HelpDeskQueueClient({
   cohortId: string;
   items: HelpDeskEntry[];
 }) {
+  const [tab, setTab] = useState<StatusTab>("pending");
   const [filter, setFilter] = useState<Filter>("all");
   const [pending, start] = useTransition();
   const [resolveTarget, setResolveTarget] = useState<HelpDeskEntry | null>(null);
   const [resolveNote, setResolveNote] = useState("");
   useTableRefresh("help_desk_queue", { column: "cohort_id", value: cohortId });
-  const filtered = filter === "all" ? items : items.filter((i) => i.kind === filter);
-  // Priority: escalated first (oldest escalation = most urgent), then by
-  // submission time so the longest-waiting ticket is served next (FIFO).
+
+  const pendingItems = items.filter((i) => i.status === "open" || i.status === "helping");
+  const resolvedItems = items.filter((i) => i.status === "resolved");
+  const activeItems = tab === "pending" ? pendingItems : resolvedItems;
+
+  const filtered = filter === "all" ? activeItems : activeItems.filter((i) => i.kind === filter);
+
+  // Pending: escalated first (oldest escalation = most urgent), then FIFO.
+  // Resolved: newest-first.
   const sorted = [...filtered].sort((a, b) => {
+    if (tab === "resolved") {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
     const aEsc = a.escalated_at != null;
     const bEsc = b.escalated_at != null;
     if (aEsc !== bEsc) return aEsc ? -1 : 1;
@@ -80,8 +91,9 @@ export function HelpDeskQueueClient({
     }
     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
   });
-  const escalatedCount = sorted.filter((i) => i.escalated_at != null).length;
-  const openCount = sorted.length - escalatedCount;
+
+  const escalatedCount = pendingItems.filter((i) => i.escalated_at != null).length;
+  const openCount = pendingItems.length - escalatedCount;
 
   function onClaim(id: string) {
     start(async () => {
@@ -119,6 +131,33 @@ export function HelpDeskQueueClient({
 
   return (
     <div className="space-y-4">
+      {/* Status tabs */}
+      <div className="flex items-center gap-1 border-b border-line">
+        <button
+          onClick={() => setTab("pending")}
+          className={cn(
+            "px-3 py-1.5 text-sm font-medium -mb-px border-b-2 transition-colors",
+            tab === "pending"
+              ? "border-accent text-ink"
+              : "border-transparent text-muted hover:text-ink",
+          )}
+        >
+          Pending ({pendingItems.length})
+        </button>
+        <button
+          onClick={() => setTab("resolved")}
+          className={cn(
+            "px-3 py-1.5 text-sm font-medium -mb-px border-b-2 transition-colors",
+            tab === "resolved"
+              ? "border-accent text-ink"
+              : "border-transparent text-muted hover:text-ink",
+          )}
+        >
+          Resolved ({resolvedItems.length})
+        </button>
+      </div>
+
+      {/* Kind filter */}
       <div className="flex flex-wrap items-center gap-2">
         {(["all", "content", "tech", "team", "other"] as const).map((f) => (
           <button
@@ -138,9 +177,14 @@ export function HelpDeskQueueClient({
           {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
         </span>
       </div>
+
       {sorted.length === 0 ? (
-        <Card><CardSub>Inbox zero. Nice.</CardSub></Card>
-      ) : (
+        <Card>
+          <CardSub>
+            {tab === "pending" ? "Inbox zero. Nice." : "No resolved tickets yet."}
+          </CardSub>
+        </Card>
+      ) : tab === "pending" ? (
         <div className="space-y-2">
           <div className="text-muted text-xs">
             {escalatedCount} escalated · {openCount} open · sorted by priority
@@ -155,7 +199,14 @@ export function HelpDeskQueueClient({
             />
           ))}
         </div>
+      ) : (
+        <div className="space-y-2">
+          {sorted.map((s) => (
+            <ResolvedRow key={s.id} s={s} />
+          ))}
+        </div>
       )}
+
       {resolveTarget && (
         <ResolveDialog
           note={resolveNote}
@@ -268,6 +319,31 @@ function HelpDeskRow({
             </Button>
           )}
         </div>
+      </div>
+    </Card>
+  );
+}
+
+function ResolvedRow({ s }: { s: HelpDeskEntry }) {
+  return (
+    <Card className="p-4">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-ink text-sm font-medium">{s.user_name ?? "—"}</span>
+          <Badge variant={KIND_TONE[s.kind]}>{s.kind}</Badge>
+          <Badge variant="ok">resolved</Badge>
+        </div>
+        <p className="text-ink/85 mt-1.5 text-sm">{s.message ?? "—"}</p>
+        {s.resolution && (
+          <div className="bg-surface mt-2 rounded-md border border-line px-3 py-2">
+            <p className="text-muted text-xs font-medium uppercase tracking-wide">Resolution</p>
+            <p className="text-ink mt-0.5 text-sm">{s.resolution}</p>
+          </div>
+        )}
+        <p className="text-muted mt-1.5 text-xs">
+          {fmtDateTime(s.created_at)} · {relTime(s.created_at)}
+          {s.claimed_by_name && ` · resolved by ${s.claimed_by_name}`}
+        </p>
       </div>
     </Card>
   );

@@ -31,8 +31,8 @@ export default async function AdminHelpDeskPage() {
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">Help desk</h1>
         <p className="text-muted mt-1 text-sm">
-          All open tickets in this cohort, sorted by priority — escalated first,
-          then longest-waiting.
+          Pending and resolved tickets in this cohort. Pending are sorted by
+          priority — escalated first, then longest-waiting.
         </p>
       </header>
       <HelpDeskQueueClient cohortId={c.id} items={items} />

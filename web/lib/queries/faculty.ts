@@ -80,6 +80,7 @@ export interface HelpDeskEntry {
   kind: "content" | "tech" | "team" | "other";
   status: "open" | "helping" | "resolved" | "cancelled";
   message: string | null;
+  resolution: string | null;
   claimed_by_name: string | null;
   created_at: string;
   escalated_at: string | null;
@@ -94,17 +95,17 @@ export const listHelpDeskOpen = cache(async (cohortId: string, facultyUserId?: s
   let query = sb
     .from("help_desk_queue")
     .select(
-      "id, user_id, kind, status, message, created_at, escalated_at, escalation_note, profiles:user_id(full_name), claimer:profiles!help_desk_queue_claimed_by_fkey(full_name), escalator:profiles!help_desk_queue_escalated_by_fkey(full_name)",
+      "id, user_id, kind, status, message, resolution, created_at, escalated_at, escalation_note, profiles:user_id(full_name), claimer:profiles!help_desk_queue_claimed_by_fkey(full_name), escalator:profiles!help_desk_queue_escalated_by_fkey(full_name)",
     )
     .eq("cohort_id", cohortId)
-    .in("status", ["open", "helping"])
+    .in("status", ["open", "helping", "resolved"])
     .order("escalated_at", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
   if (studentIds) query = query.in("user_id", studentIds);
   const { data } = await query;
   return ((data ?? []) as unknown as Array<{
     id: string; user_id: string; kind: HelpDeskEntry["kind"]; status: HelpDeskEntry["status"];
-    message: string | null; created_at: string;
+    message: string | null; resolution: string | null; created_at: string;
     escalated_at: string | null; escalation_note: string | null;
     profiles: { full_name: string | null } | null;
     claimer: { full_name: string | null } | null;
@@ -116,6 +117,7 @@ export const listHelpDeskOpen = cache(async (cohortId: string, facultyUserId?: s
     kind: r.kind,
     status: r.status,
     message: r.message,
+    resolution: r.resolution ?? null,
     claimed_by_name: r.claimer?.full_name ?? null,
     created_at: r.created_at,
     escalated_at: r.escalated_at,

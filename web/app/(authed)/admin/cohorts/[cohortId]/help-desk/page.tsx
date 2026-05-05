@@ -23,7 +23,7 @@ export default async function CohortStuckPage({
     <>
       <CohortShell cohort={cohort} active="help-desk" />
       <CardSub className="max-w-2xl">
-        {escalatedCount} escalated · {openCount} other open. Escalated tickets jump the queue and need admin attention.
+        Pending and resolved tickets. {escalatedCount} escalated · {openCount} other open in the pending queue.
       </CardSub>
       <HelpDeskQueueClient cohortId={cohort.id} items={items} />
     </>
