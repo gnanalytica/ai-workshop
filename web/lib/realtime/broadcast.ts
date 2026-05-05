@@ -4,16 +4,17 @@ import "server-only";
  * Server → Realtime broadcast helper. Uses Supabase Realtime's HTTP send
  * endpoint so we don't need to open a websocket from a serverless function.
  *
- * Topics: `cohort:<uuid>`. Events emitted today: `poll`, `banner`. Payloads
- * are intentionally empty — clients refetch through the existing RLS-bound
- * API route on receipt. The broadcast is a tickle, not a data carrier.
+ * Topics: `cohort:<uuid>`. Events emitted today: `poll`, `banner`, `meet`.
+ * Payloads are usually empty — clients refetch through the existing RLS-bound
+ * API route on receipt. The broadcast is a tickle, not a data carrier
+ * (banner/meet pass the new row inline as an optimization).
  *
  * Best-effort: failures are swallowed so a Realtime hiccup never breaks a
  * write. Clients still have a slow fallback poll as a safety net.
  */
 export async function broadcastToCohort(
   cohortId: string,
-  event: "poll" | "banner",
+  event: "poll" | "banner" | "meet",
   payload: Record<string, unknown> = {},
 ): Promise<void> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

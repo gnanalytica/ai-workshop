@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { setCohortMeetLink } from "@/lib/actions/schedule";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 export function JoinSessionClient({
   cohortId,
@@ -20,6 +21,7 @@ export function JoinSessionClient({
   canEdit: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [liveLink, setLiveLink] = useState<string | null>(meetLink);
   const [value, setValue] = useState(meetLink ?? "");
   const [pending, start] = useTransition();
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -28,13 +30,32 @@ export function JoinSessionClient({
   // cohort-wide (one recurring room across all 30 days) so the cohort name
   // is the only piece of context we need in copy.
   const cohortLabel = cohortName?.trim() || "this cohort";
-  const titleAttr = meetLink
+  const titleAttr = liveLink
     ? `Join live · ${cohortLabel}`
     : `Add live link · ${cohortLabel}`;
 
   useEffect(() => {
+    setLiveLink(meetLink);
     setValue(meetLink ?? "");
   }, [meetLink]);
+
+  // Subscribe to the cohort's realtime topic so the Join button flips for
+  // students/faculty the moment admin or faculty save a link — mirrors the
+  // poll/banner broadcast pattern. Payload carries the new link inline.
+  useEffect(() => {
+    const sb = getSupabaseBrowser();
+    const ch = sb.channel(`cohort:${cohortId}`);
+    ch.on("broadcast", { event: "meet" }, ({ payload }) => {
+      const p = payload as { meet_link?: string | null } | undefined;
+      if (!p) return;
+      const next = p.meet_link ?? null;
+      setLiveLink(next);
+      setValue(next ?? "");
+    }).subscribe();
+    return () => {
+      sb.removeChannel(ch);
+    };
+  }, [cohortId]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,6 +83,9 @@ export function JoinSessionClient({
         meet_link: clean === "" ? null : clean,
       });
       if (r.ok) {
+        // Optimistically reflect the change locally; the broadcast tickle
+        // will arrive shortly and confirm (or correct) for everyone else.
+        setLiveLink(clean === "" ? null : clean);
         toast.success(
           clean === ""
             ? `Cleared link · ${cohortLabel}`
@@ -76,9 +100,9 @@ export function JoinSessionClient({
 
   return (
     <div className="relative flex items-center gap-1.5" ref={popoverRef}>
-      {meetLink ? (
+      {liveLink ? (
         <a
-          href={meetLink}
+          href={liveLink}
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
@@ -104,7 +128,7 @@ export function JoinSessionClient({
         </Button>
       ) : null}
 
-      {canEdit && meetLink && (
+      {canEdit && liveLink && (
         <Button
           variant="ghost"
           size="icon"
@@ -143,7 +167,7 @@ export function JoinSessionClient({
             <button
               type="button"
               onClick={() => save("")}
-              disabled={pending || (!meetLink && value.trim() === "")}
+              disabled={pending || (!liveLink && value.trim() === "")}
               className="text-muted hover:text-danger text-xs underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
             >
               Clear link
@@ -153,7 +177,7 @@ export function JoinSessionClient({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setValue(meetLink ?? "");
+                  setValue(liveLink ?? "");
                   setOpen(false);
                 }}
                 disabled={pending}

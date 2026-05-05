@@ -6,6 +6,7 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { addWorkingDays, isWeekdayISO } from "@/lib/calendar";
+import { broadcastToCohort } from "@/lib/realtime/broadcast";
 
 const WORKSHOP_DAYS = 30;
 
@@ -154,6 +155,11 @@ export async function setCohortMeetLink(input: z.infer<typeof meetLinkSchema>) {
   updateTag("cohorts");
   updateTag("cohort-days");
   revalidatePath("/", "layout");
+  // Tickle every connected client in this cohort so the topbar Join button
+  // flips immediately instead of waiting for a refresh. Mirrors the banner
+  // and poll broadcast pattern; payload carries the new link inline.
+  const nextLink = parsed.data.meet_link?.trim() ? parsed.data.meet_link.trim() : null;
+  await broadcastToCohort(parsed.data.cohort_id, "meet", { meet_link: nextLink });
   return actionOk();
 }
 

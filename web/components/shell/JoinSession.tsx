@@ -50,9 +50,11 @@ export async function JoinSession({
     }
   }
 
-  // Hide entirely when there is nothing to show or do.
-  if (!meetLink && !canEdit) return null;
-
+  // Always mount the client when there is a cohort: even when nothing is
+  // visible (no link, no edit perms), the client subscribes to the cohort
+  // realtime channel so a student/faculty sees the Join button appear the
+  // moment admin/faculty save the link — no refresh required. The client
+  // returns an empty container in that state, so this is layout-neutral.
   return (
     <JoinSessionClient
       cohortId={cohortId}
