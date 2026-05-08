@@ -6,6 +6,7 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InlineMarkdown } from "@/components/markdown/InlineMarkdown";
 import { saveDraft, submitAssignment } from "@/lib/actions/submissions";
 import type { DayAssignment } from "@/lib/queries/day-interactive";
 import { fmtDate, relTime } from "@/lib/format";
@@ -81,7 +82,7 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
       </div>
 
       {assignment.body_md && (
-        <p className="text-ink/85 text-sm whitespace-pre-line">{assignment.body_md}</p>
+        <InlineMarkdown source={assignment.body_md} className="text-ink/85" />
       )}
 
       {locked && !published ? (
@@ -115,9 +116,10 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
             )}
           </p>
           {assignment.submission?.feedback_md && (
-            <p className="text-ink/85 text-sm whitespace-pre-line">
-              {assignment.submission.feedback_md}
-            </p>
+            <InlineMarkdown
+              source={assignment.submission.feedback_md}
+              className="text-ink/85"
+            />
           )}
           {(assignment.submission?.links.length ?? 0) > 0 && (
             <div className="flex flex-wrap gap-2">
