@@ -11,25 +11,21 @@ reading_time: "12 min"
 tldr: "Three modes of AI research: Fast (1 min, vibes), Thinking (5 min, structured), Deep Research (30 min, cited report). Today you run the same question through all three and see when each is worth the wait — and the cost."
 tags: ["research", "grounding", "citations"]
 software: []
-online_tools: ["NotebookLM", "Perplexity", "Deep Research"]
+online_tools: ["Google Gemini"]
 video: "https://www.youtube.com/embed/6dHmu1GALmA"
 prompt_of_the_day: "Compare campus placement trends for CSE branches across IITs, NITs, and Tier-2 colleges in 2024–2025. Cite at least 5 sources. Output: 1-page brief, plus a 'what changed vs 2023' section."
 tools_hands_on:
-  - { name: "Perplexity", url: "https://www.perplexity.ai/" }
-  - { name: "NotebookLM", url: "https://notebooklm.google.com/" }
-  - { name: "ChatGPT Deep Research", url: "https://chat.openai.com/" }
-  - { name: "Gemini Deep Research", url: "https://gemini.google.com/" }
+  - { name: "Google Gemini", url: "https://gemini.google.com/" }
 tools_reference:
-  - { name: "NotebookLM Help", url: "https://support.google.com/notebooklm" }
-  - { name: "Perplexity Spaces", url: "https://www.perplexity.ai/hub/blog/introducing-perplexity-spaces" }
+  - { name: "Gemini Help Center", url: "https://support.google.com/gemini" }
 resources:
   - { title: "Anthropic — extended thinking", url: "https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking" }
   - { title: "Stanford HAI — On AI hallucinations", url: "https://hai.stanford.edu/news/hallucinating-law-legal-mistakes-large-language-models-are-pervasive" }
-lab: { title: "Same question, three depths", url: "https://www.perplexity.ai/" }
+lab: { title: "Same question, three Gemini modes", url: "https://gemini.google.com/" }
 objective:
-  topic: "Grounded research with AI: Fast vs Thinking vs Deep Research"
-  tools: ["Perplexity", "NotebookLM", "Deep Research"]
-  end_goal: "A 1-page comparison: same question answered Fast / Thinking / Deep — with notes on when each is worth using and where each lied."
+  topic: "Grounded research with Gemini: Fast vs Thinking vs Deep"
+  tools: ["Google Gemini"]
+  end_goal: "Run the same question through Gemini Fast, Thinking, and Deep — and develop a rule of thumb for when to use each."
 ---
 
 By Day 4 you can pick a model and prompt it well. By Day 5 you stop letting any single model be the final word. Real research is **grounded** — every claim points to a source you can click. Today you learn three speeds of grounded AI.
@@ -38,86 +34,87 @@ By Day 4 you can pick a model and prompt it well. By Day 5 you stop letting any 
 
 **Topic.** Grounded research with AI: Fast vs Thinking vs Deep Research.
 
-**By end of class you will have:**
-1. Run the same real question through **Perplexity (Fast)**, a **Thinking** model (Claude/o1), and **Deep Research**.
-2. Loaded your own PDFs into **NotebookLM** and queried them — only — without the model hallucinating.
-3. Caught at least one *confident-but-wrong* answer and traced where it came from.
-4. A clear rule of thumb: when to use which mode for *what kind of question*.
+**By the end of this class, you will:**
 
-> *Why this matters.* Your capstone (Week 4) needs sources. Your placement prep needs facts. A model that confidently fabricates a launch date, a stat, or a citation will cost you a viva — or, later, a customer.
+**1. Explore Different Models.** Understand how to use Gemini to analyze outputs from three different models: **Fast**, **Thinking**, and **Deep**.
 
-## ⏪ Pre-class · ~25 min
+**2. Utilize Prompting Skills.**
+- Apply the prompting techniques you learned on Day 3 to enhance the quality of your outputs.
+- Craft clear and specific prompts to guide the models effectively.
+- Experiment with different phrasing to see how it affects the responses.
+
+**3. Differentiate Between Outputs.**
+- Learn how to identify the differences in outputs from each model.
+- Recognize the strengths and weaknesses of each approach.
+- Develop a clear rule of thumb for when to use each model based on the type of question you have.
+
+**Practical Applications.** Real-world use: apply these models in practical scenarios to improve decision-making and problem-solving.
+
+## ⏪ Pre-class · ~15 min
 
 ### Setup (required)
 
-- [ ] Free account on **Perplexity** (https://www.perplexity.ai/).
-- [ ] Free account on **NotebookLM** (https://notebooklm.google.com/).
-- [ ] Pick **3 PDFs** you actually need to read this semester (paper, textbook chapter, internship report).
-
-### Primer (~10 min)
-
-- **Watch:** any 5-min "How NotebookLM works" walkthrough.
-- **Skim:** Perplexity's Spaces blog post.
+- [ ] Sign in to **Google Gemini** (https://gemini.google.com/).
+- [ ] Confirm you can switch between **Fast**, **Thinking**, and **Deep Research** modes inside Gemini.
 
 ### Bring to class
 
-- [ ] **One real question** you want a sourced answer to (career, project, personal finance — must have a factual answer).
-- [ ] Your 3 PDFs uploaded to a NotebookLM notebook.
+- [ ] **One real question** you want a sourced answer to (career, project, coursework — must have a factual answer).
+- [ ] A short list of phrasings/variations you want to try, applying your Day 3 prompting skills.
 
-> 🧠 **Quick glossary.** **Grounded** = answer cites a source the model actually retrieved. **RAG** = retrieval-augmented generation; the system fetches docs first, then writes. **Hallucination** = made-up "fact" that sounds right. **Deep Research** = agent that browses for 10–30 min and writes a report. **NotebookLM** = closed-corpus RAG over *only your* PDFs.
+> 🧠 **Quick glossary.** **Fast** = quick conversational answer, minimal browsing. **Thinking** = the model spends time reasoning step-by-step before answering. **Deep Research** = agent that browses many sources for 10–30 min and writes a cited report.
 
 ## 🎥 In-class · live session
+
+**Follow through Gemini usage.** Today's session is hands-on inside **Google Gemini** — we'll switch between Fast, Thinking, and Deep on the same question and watch how the outputs change.
 
 ### Agenda
 
 | Block | Time | What |
 |---|---|---|
-| Why "research mode" exists | 10 min | What Fast/Thinking/Deep change |
-| Demo: 1 question, 3 modes | 15 min | Live, with cost+time |
-| NotebookLM tour | 15 min | Closed-corpus questioning |
-| Lab: your question, 3 modes | 20 min | |
+| Why "research mode" exists | 10 min | What Fast / Thinking / Deep change |
+| Gemini walkthrough | 15 min | Switching modes; reading the response |
+| Demo: 1 question, 3 modes | 15 min | Same prompt across Fast / Thinking / Deep |
+| Lab: your question, 3 modes | 15 min | Hands-on |
 | Discussion + Q&A | 5 min | |
 
-### The three speeds
+### The three Gemini modes
 
-- **Fast (~30 sec).** Perplexity default, Gemini grounded, ChatGPT search. Good for *"what is X?"*, *"who founded Y?"*, latest news.
-- **Thinking (~3-5 min).** Claude with extended thinking, OpenAI o1, Gemini Thinking. Good for *"compare X and Y on these 4 axes"*, multi-step logic, math.
-- **Deep Research (~10-30 min).** ChatGPT, Gemini, Perplexity Pro variants. Browses 30+ sources, writes a multi-page cited report. Good for *"market analysis"*, *"literature review"*, *"competitive landscape"*.
-- **NotebookLM (closed corpus).** Different beast — answers *only* from PDFs you upload. Best for trustworthy citations from your own material.
+- **Fast.** Quick conversational answer. Good for *"what is X?"*, *"who founded Y?"*, latest news.
+- **Thinking.** Spends time reasoning step-by-step. Good for *"compare X and Y on these 4 axes"*, multi-step logic, math.
+- **Deep Research.** Browses 30+ sources for 10–30 min and writes a multi-page cited report. Good for *"market analysis"*, *"literature review"*, *"competitive landscape"*.
 
-## 🧪 Lab: Same question, three depths
+## 🧪 Lab: Same question, three Gemini modes
 
-1. Pick your **one real question** from prep.
-2. Run it on **Perplexity (Fast)**. Note time, source count, key claim.
-3. Run it on **ChatGPT (with reasoning/o1)** or **Claude (with thinking)**. Note time + reasoning trace.
-4. Run it on **ChatGPT/Gemini Deep Research**. Walk away for 15 min while it works.
-5. Open **NotebookLM**, ask the same question against your 3 PDFs. Note where it refuses or contradicts the open-web answers.
-6. Build a 4-row table: mode · time · source quality · how confident you'd be quoting it in a viva.
+1. Open **Google Gemini** and pick your **one real question** from prep.
+2. Run it in **Fast** mode. Note time and the key claim.
+3. Run it in **Thinking** mode. Note time + the reasoning trace Gemini shows.
+4. Run it in **Deep Research**. Walk away for 10–15 min while it works.
+5. Re-prompt at least once using a Day 3 technique (CREATE / role / constraints) and observe how the output changes.
+6. Build a 3-row table: mode · time · source quality · how confident you'd be quoting it in a viva.
 7. Write 3 sentences: *for this question I would ship with __ because __.*
 
-**Artifact.** Google Doc with the question, 4 outputs, comparison table, recommendation. Share link in the cohort channel.
+**Artifact.** Google Doc with the question, 3 outputs, comparison table, recommendation. Share link in the cohort channel.
 
 ## 📊 Live poll
 
-**For your placement-prep research (target companies, salary bands, interview style), which would you trust most?** (a) Perplexity Fast (b) Thinking model (c) Deep Research (d) NotebookLM with HR PDFs (e) Talking to a senior.
+**For your placement-prep research (target companies, salary bands, interview style), which Gemini mode would you trust most?** (a) Fast (b) Thinking (c) Deep Research (d) Talking to a senior.
 
 ## 💬 Discuss
 
 - Where did Deep Research's "33 sources cited" turn out to be padding?
-- What's a question NotebookLM is *better* at than Deep Research, and why?
+- Which kinds of questions are best answered by Fast vs Thinking?
 - If you only had time for one mode for your final-year project, which would you pick?
 
-## ❓ Quiz
+## 📝 Assignment · Research paper presentation
 
-Short quiz on grounding, RAG, when each mode wins, and NotebookLM's limits. Open from your dashboard when unlocked.
+**Q1.** You are working on a research paper presentation — how will you use what you learnt today? Share your observation on how **Fast / Thinking / Deep** would display the answer, and how you will use all three (or anything specific). Keep it short and simple — bullet points are fine.
+*Max 200 words.*
 
-## 📝 Assignment · One brief, three modes
-
-**Brief.** Pick **one researchable question** about your dream company or higher-studies target (e.g., *"What's the SDE-1 selection process at Razorpay in 2025?"*). Submit a 1-page brief: (a) Fast answer in 5 bullets, (b) Thinking answer in 5 bullets, (c) Deep Research summary in 8 bullets, (d) which lied/was thin and how you caught it.
+**Q2.** Take **1 sample case** — explain how you were able to use prompting (Day 3) to enhance what you got in the above case study.
+*Max 150 words.*
 
 **Submit.** Paste on dashboard before next class.
-
-**Rubric.** Source quality (4) · Mode-fit reasoning (4) · Caught-a-lie evidence (2).
 
 ## 🔁 Prep for next class
 
