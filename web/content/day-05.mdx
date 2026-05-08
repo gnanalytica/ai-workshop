@@ -3,22 +3,26 @@ day: 5
 date: "2026-05-07"
 weekday: "Thursday"
 week: 1
-topic: "Grounded research with AI: Fast vs Thinking vs Deep Research"
+topic: "Grounded research with Gemini: Fast vs Thinking vs Deep"
 faculty:
   main: "Jayasaagar"
   support: "Aparna"
-reading_time: "12 min"
-tldr: "Three modes of AI research: Fast (1 min, vibes), Thinking (5 min, structured), Deep Research (30 min, cited report). Today you run the same question through all three and see when each is worth the wait — and the cost."
-tags: ["research", "grounding", "citations"]
+reading_time: "10 min"
+tldr: "Three modes inside Google Gemini — Fast, Thinking, and Deep. Today you run the same question through all three, sharpen each prompt with Day 3 techniques, and develop a rule of thumb for when to use which."
+tags: ["research", "gemini", "model-modes"]
 software: []
 online_tools: ["Google Gemini"]
 video: "https://www.youtube.com/embed/6dHmu1GALmA"
-prompt_of_the_day: "Compare campus placement trends for CSE branches across IITs, NITs, and Tier-2 colleges in 2024–2025. Cite at least 5 sources. Output: 1-page brief, plus a 'what changed vs 2023' section."
+prompt_of_the_day: "Explain the placement landscape for CSE in Tier-2 colleges in 3 bullets. Then list 3 follow-up questions I should research before my own placement prep."
 tools_hands_on:
   - { name: "Google Gemini", url: "https://gemini.google.com/" }
 tools_reference:
   - { name: "Gemini Help Center", url: "https://support.google.com/gemini" }
+  - { name: "NotebookLM", url: "https://notebooklm.google.com/" }
+  - { name: "Perplexity", url: "https://www.perplexity.ai/" }
 resources:
+  - { title: "Introducing Gemini Deep Research", url: "https://blog.google/products/gemini/google-gemini-deep-research/" }
+  - { title: "Gemini 2.0 — Thinking experimental", url: "https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/" }
   - { title: "Anthropic — extended thinking", url: "https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking" }
   - { title: "Stanford HAI — On AI hallucinations", url: "https://hai.stanford.edu/news/hallucinating-law-legal-mistakes-large-language-models-are-pervasive" }
 lab: { title: "Same question, three Gemini modes", url: "https://gemini.google.com/" }
@@ -28,11 +32,11 @@ objective:
   end_goal: "Run the same question through Gemini Fast, Thinking, and Deep — and develop a rule of thumb for when to use each."
 ---
 
-By Day 4 you can pick a model and prompt it well. By Day 5 you stop letting any single model be the final word. Real research is **grounded** — every claim points to a source you can click. Today you learn three speeds of grounded AI.
+By Day 4 you can pick a model and prompt it well. By Day 5 you stop treating "AI" as one switch. The same question, asked the same way, looks very different in **Fast**, **Thinking**, and **Deep** — and once you can feel the difference, you can pick the right one for the job.
 
 ## 🎯 Today's objective
 
-**Topic.** Grounded research with AI: Fast vs Thinking vs Deep Research.
+**Topic.** Grounded research with Gemini: Fast vs Thinking vs Deep.
 
 **By the end of this class, you will:**
 
@@ -98,11 +102,11 @@ By Day 4 you can pick a model and prompt it well. By Day 5 you stop letting any 
 
 ## 📊 Live poll
 
-**For your placement-prep research (target companies, salary bands, interview style), which Gemini mode would you trust most?** (a) Fast (b) Thinking (c) Deep Research (d) Talking to a senior.
+**For your placement-prep research (target companies, salary bands, interview style), which Gemini mode would you trust most?** (a) Fast (b) Thinking (c) Deep (d) A mix of all three.
 
 ## 💬 Discuss
 
-- Where did Deep Research's "33 sources cited" turn out to be padding?
+- Where did Deep's "33 sources cited" turn out to be padding rather than substance?
 - Which kinds of questions are best answered by Fast vs Thinking?
 - If you only had time for one mode for your final-year project, which would you pick?
 
@@ -126,7 +130,14 @@ Day 6 is **Capstone Milestone 1: ideathon, brainstorm, research**. The day your 
 
 ## 📚 References
 
-- [NotebookLM](https://notebooklm.google.com/) — start with 3 PDFs, scale to 50.
-- [Perplexity Spaces blog](https://www.perplexity.ai/hub/blog/introducing-perplexity-spaces) — collaborative research.
-- [Anthropic — extended thinking](https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking) — what "thinking" actually does.
-- [Stanford HAI on hallucinations](https://hai.stanford.edu/news/hallucinating-law-legal-mistakes-large-language-models-are-pervasive) — why citations matter.
+**Gemini (today's tool)**
+- [Google Gemini](https://gemini.google.com/) — the home base for today's lab.
+- [Introducing Gemini Deep Research](https://blog.google/products/gemini/google-gemini-deep-research/) — Google's own walkthrough of what Deep does.
+- [Gemini 2.0 — thinking experimental](https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/) — context on how the Thinking mode reasons before answering.
+- [Gemini Help Center](https://support.google.com/gemini) — switching modes, sharing chats, prompt tips.
+
+**Other research tools (worth knowing)**
+- [NotebookLM](https://notebooklm.google.com/) — closed-corpus RAG over your own PDFs; great companion to Gemini for source-bound work.
+- [Perplexity Spaces](https://www.perplexity.ai/hub/blog/introducing-perplexity-spaces) — collaborative grounded research outside the Google stack.
+- [Anthropic — extended thinking](https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking) — what "thinking" actually does, in another lab.
+- [Stanford HAI on hallucinations](https://hai.stanford.edu/news/hallucinating-law-legal-mistakes-large-language-models-are-pervasive) — why citations matter no matter which mode you pick.
