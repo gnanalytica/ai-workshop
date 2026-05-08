@@ -16,6 +16,13 @@ export interface DayAttendanceBucket {
   excused: number;
 }
 
+export interface DayEngagementBucket {
+  day_number: number;
+  active: number;
+  total: number;
+  rate: number;
+}
+
 export interface AtRiskRow {
   user_id: string;
   full_name: string | null;
@@ -72,6 +79,110 @@ export const getAttendanceByDay = cache(async (cohortId: string): Promise<DayAtt
   }
   return [...buckets.values()].sort((a, b) => a.day_number - b.day_number);
 });
+
+/**
+ * Activity-based engagement per day. A confirmed student counts as "active"
+ * on a given day if they did any of: submitted/updated an assignment for that
+ * day, completed a quiz, gave day feedback, voted in a curriculum poll for
+ * that day, or marked lab progress. This is our auto-detected "attendance" —
+ * useful when faculty don't mark attendance manually.
+ */
+export const getEngagementByDay = cache(
+  async (cohortId: string): Promise<DayEngagementBucket[]> => {
+    const sb = await getSupabaseServer();
+    const [
+      regs,
+      subs,
+      quizzes,
+      feedback,
+      votes,
+      labs,
+    ] = await Promise.all([
+      sb
+        .from("registrations")
+        .select("user_id", { count: "exact", head: true })
+        .eq("cohort_id", cohortId)
+        .eq("status", "confirmed"),
+      sb
+        .from("submissions")
+        .select("user_id, assignments!inner(day_number, cohort_id)")
+        .eq("assignments.cohort_id", cohortId),
+      sb
+        .from("quiz_attempts")
+        .select("user_id, quizzes!inner(day_number, cohort_id)")
+        .eq("quizzes.cohort_id", cohortId),
+      sb
+        .from("day_feedback")
+        .select("user_id, day_number")
+        .eq("cohort_id", cohortId),
+      sb
+        .from("poll_votes")
+        .select("user_id, polls!inner(day_number, cohort_id)")
+        .eq("polls.cohort_id", cohortId)
+        .not("polls.day_number", "is", null),
+      sb
+        .from("lab_progress")
+        .select("user_id, day_number")
+        .eq("cohort_id", cohortId),
+    ]);
+
+    const total = regs.count ?? 0;
+    const buckets = new Map<number, Set<string>>();
+
+    const addRow = (day: number | null | undefined, userId: string) => {
+      if (typeof day !== "number") return;
+      const set = buckets.get(day) ?? new Set<string>();
+      set.add(userId);
+      buckets.set(day, set);
+    };
+
+    for (const r of (subs.data ?? []) as Array<{
+      user_id: string;
+      assignments: { day_number: number } | Array<{ day_number: number }>;
+    }>) {
+      const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
+      addRow(a?.day_number, r.user_id);
+    }
+    for (const r of (quizzes.data ?? []) as Array<{
+      user_id: string;
+      quizzes: { day_number: number } | Array<{ day_number: number }>;
+    }>) {
+      const q = Array.isArray(r.quizzes) ? r.quizzes[0] : r.quizzes;
+      addRow(q?.day_number, r.user_id);
+    }
+    for (const r of (feedback.data ?? []) as Array<{
+      user_id: string;
+      day_number: number;
+    }>) {
+      addRow(r.day_number, r.user_id);
+    }
+    for (const r of (votes.data ?? []) as Array<{
+      user_id: string;
+      polls: { day_number: number | null } | Array<{ day_number: number | null }>;
+    }>) {
+      const p = Array.isArray(r.polls) ? r.polls[0] : r.polls;
+      addRow(p?.day_number ?? null, r.user_id);
+    }
+    for (const r of (labs.data ?? []) as Array<{
+      user_id: string;
+      day_number: number;
+    }>) {
+      addRow(r.day_number, r.user_id);
+    }
+
+    return [...buckets.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([day_number, set]) => {
+        const active = set.size;
+        return {
+          day_number,
+          active,
+          total,
+          rate: total > 0 ? active / total : 0,
+        };
+      });
+  },
+);
 
 export const getAtRisk = cache(async (cohortId: string, threshold = 3): Promise<AtRiskRow[]> => {
   const sb = await getSupabaseServer();

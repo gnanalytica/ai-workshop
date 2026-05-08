@@ -2,23 +2,25 @@ import { notFound } from "next/navigation";
 import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { StackedBarChart, type BarRow } from "@/components/charts/BarChart";
+import { EngagementChart } from "@/components/charts/EngagementChart";
+import { PollsTable } from "@/components/admin-cohort/PollsTable";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import {
   AtRiskList,
   DayFeedbackList,
-  PulseList,
 } from "@/components/health/HealthSections";
 import {
   getCohortKpis,
   listAtRiskStudents,
   listRecentDayFeedback,
-  listRecentPulses,
 } from "@/lib/queries/faculty-cohort";
 import {
   getAnalyticsSummary,
   getAttendanceByDay,
+  getEngagementByDay,
 } from "@/lib/queries/analytics";
+import { listCohortPolls } from "@/lib/queries/polls-overview";
 import { listCohortDays } from "@/lib/queries/cohort";
 import { workingDayNumber } from "@/lib/calendar";
 
@@ -40,14 +42,22 @@ export default async function AdminCohortPulsePage({
     .sort((a, b) => b - a)
     .slice(0, 7);
 
-  const [kpis, summary, byDay, atRisk, dayFeedback, pulses] = await Promise.all([
-    getCohortKpis(cohort.id),
-    getAnalyticsSummary(cohort.id),
-    getAttendanceByDay(cohort.id),
-    listAtRiskStudents(cohort.id),
-    listRecentDayFeedback(cohort.id, recentDayNumbers, null),
-    listRecentPulses(cohort.id, 5),
-  ]);
+  const [kpis, summary, byDay, engagement, atRisk, dayFeedback, polls] =
+    await Promise.all([
+      getCohortKpis(cohort.id),
+      getAnalyticsSummary(cohort.id),
+      getAttendanceByDay(cohort.id),
+      getEngagementByDay(cohort.id),
+      listAtRiskStudents(cohort.id),
+      listRecentDayFeedback(cohort.id, recentDayNumbers, null),
+      listCohortPolls(cohort.id),
+    ]);
+
+  const hasMarkedAttendance = byDay.length > 0;
+  const recentEngagement = engagement
+    .filter((e) => e.day_number <= today)
+    .sort((a, b) => a.day_number - b.day_number)
+    .slice(-7);
 
   const studentHref = (uid: string) =>
     `/admin/cohorts/${cohort.id}/students/${uid}`;
@@ -69,10 +79,31 @@ export default async function AdminCohortPulsePage({
       ? Math.round((todayBucket.present / todayBucketTotal) * 100)
       : null;
 
-  const sparkValues = recentByDay.map((d) => {
-    const t = bucketTotal(d);
-    return t > 0 ? d.present / t : 0;
-  });
+  // Headline + sparkline default to marked attendance, fall back to
+  // activity-based engagement when no attendance has been recorded.
+  const todayEngagement = recentEngagement.at(-1);
+  const headlinePct = hasMarkedAttendance
+    ? todayAttendancePct
+    : todayEngagement
+      ? Math.round(todayEngagement.rate * 100)
+      : null;
+  const headlineLabel = hasMarkedAttendance
+    ? "Attendance · most recent day"
+    : "Engagement · most recent day (auto)";
+  const headlineHint = hasMarkedAttendance
+    ? todayBucket
+      ? `${todayBucket.present}/${todayBucketTotal} on Day ${todayBucket.day_number}`
+      : "no attendance recorded"
+    : todayEngagement
+      ? `${todayEngagement.active}/${todayEngagement.total} active on Day ${todayEngagement.day_number}`
+      : "no activity yet";
+
+  const sparkValues = hasMarkedAttendance
+    ? recentByDay.map((d) => {
+        const t = bucketTotal(d);
+        return t > 0 ? d.present / t : 0;
+      })
+    : recentEngagement.map((e) => e.rate);
 
   const chartRows: BarRow[] = byDay.map((d) => ({
     id: d.day_number,
@@ -101,21 +132,15 @@ export default async function AdminCohortPulsePage({
           }
         />
         <HeroStat
-          label="Attendance · most recent day"
-          value={
-            todayAttendancePct === null ? "—" : `${todayAttendancePct}%`
-          }
-          hint={
-            todayBucket
-              ? `${todayBucket.present}/${todayBucketTotal} on Day ${todayBucket.day_number}`
-              : "no attendance recorded"
-          }
+          label={headlineLabel}
+          value={headlinePct === null ? "—" : `${headlinePct}%`}
+          hint={headlineHint}
           tone={
-            todayAttendancePct === null
+            headlinePct === null
               ? "default"
-              : todayAttendancePct >= 70
+              : headlinePct >= 70
                 ? "ok"
-                : todayAttendancePct >= 50
+                : headlinePct >= 50
                   ? "warn"
                   : "danger"
           }
@@ -138,21 +163,38 @@ export default async function AdminCohortPulsePage({
       {/* Question 1 — Are they showing up? */}
       <Group
         title="Are they showing up?"
-        sub="Attendance trends over the cohort run."
+        sub={
+          hasMarkedAttendance
+            ? "Marked attendance per day, plus auto-detected engagement."
+            : "Auto-detected engagement — % of confirmed students who did anything that day (submit, quiz, feedback, vote, lab)."
+        }
       >
-        {chartRows.length === 0 ? (
-          <Card>
-            <CardSub>
-              No attendance recorded yet. Mark attendance during a live session
-              and this chart fills in.
-            </CardSub>
-          </Card>
-        ) : (
-          <Card>
-            <StackedBarChart rows={chartRows} />
-            <Legend />
-          </Card>
+        {hasMarkedAttendance && (
+          <div className="space-y-2">
+            <SectionHead title="Marked attendance" sub="from /faculty/today" />
+            <Card>
+              <StackedBarChart rows={chartRows} />
+              <Legend />
+            </Card>
+          </div>
         )}
+        <div className="space-y-2">
+          <SectionHead
+            title="Engagement (auto)"
+            sub="active = any submission, quiz, feedback, poll vote, or lab tick"
+          />
+          {engagement.length === 0 ? (
+            <Card>
+              <CardSub>
+                No student activity recorded yet for this cohort.
+              </CardSub>
+            </Card>
+          ) : (
+            <Card>
+              <EngagementChart rows={engagement} />
+            </Card>
+          )}
+        </div>
       </Group>
 
       {/* Question 2 — Are they keeping up? */}
@@ -204,24 +246,23 @@ export default async function AdminCohortPulsePage({
       {/* Question 3 — Are they happy? */}
       <Group
         title="Are they happy?"
-        sub="What students said about recent days and live polls."
+        sub="Day-end feedback ratings, plus the topics students flagged."
       >
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="space-y-2">
-            <SectionHead
-              title="Recent day feedback"
-              sub={`last ${recentDayNumbers.length} days`}
-            />
-            <DayFeedbackList rows={dayFeedback} />
-          </div>
-          <div className="space-y-2">
-            <SectionHead
-              title="Live poll responses"
-              sub={`last ${pulses.length}`}
-            />
-            <PulseList pulses={pulses} />
-          </div>
+        <div className="space-y-2">
+          <SectionHead
+            title="Recent day feedback"
+            sub={`last ${recentDayNumbers.length} days`}
+          />
+          <DayFeedbackList rows={dayFeedback} />
         </div>
+      </Group>
+
+      {/* Question 4 — Polls + pulses */}
+      <Group
+        title="Polls and pulses"
+        sub={`${polls.length} total · curriculum polls (with day) and live pulses (no day) across the cohort run.`}
+      >
+        <PollsTable polls={polls} />
       </Group>
     </>
   );

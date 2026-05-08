@@ -24,6 +24,7 @@ const readOnlyInteractive: DayInteractive = {
   poll: null,
   attendance: { status: null },
   dayFeedbackSubmitted: false,
+  doneLabIds: [],
 };
 
 type RailBase = "/day" | "/faculty/day";
@@ -160,10 +161,24 @@ export async function LessonDayView({
     ? {}
     : { cohortId: cohort.id, dayNumber, dayFeedbackSubmitted: interactive.dayFeedbackSubmitted };
 
+  const doneLabIds = new Set(interactive.doneLabIds);
+  const labCtx = readOnly
+    ? null
+    : (phase: string, sectionIdx: number) => ({
+        cohortId: cohort.id,
+        dayNumber,
+        scope: `${phase}-${sectionIdx}`,
+        doneLabIds,
+      });
+
   const prePanel = phases.pre ? (
     <LessonReader titles={preSections.map((s) => s.title)} {...persistProps}>
       {preSections.map((s, i) => (
-        <MarkdownView key={i} source={s.body} />
+        <MarkdownView
+          key={i}
+          source={s.body}
+          progressCtx={labCtx ? labCtx("pre", i) : undefined}
+        />
       ))}
     </LessonReader>
   ) : (
@@ -199,7 +214,11 @@ export async function LessonDayView({
           {...persistProps}
         >
           {liveSections.map((s, i) => (
-            <MarkdownView key={i} source={s.body} />
+            <MarkdownView
+              key={i}
+              source={s.body}
+              progressCtx={labCtx ? labCtx("live", i) : undefined}
+            />
           ))}
         </LessonReader>
       ) : (
@@ -303,7 +322,11 @@ export async function LessonDayView({
       triggerFeedbackOnLast={!readOnly}
     >
       {finalPostSections.map((s, i) => (
-        <MarkdownView key={i} source={s.body} />
+        <MarkdownView
+          key={i}
+          source={s.body}
+          progressCtx={labCtx ? labCtx("post", i) : undefined}
+        />
       ))}
     </LessonReader>
   ) : (
@@ -321,7 +344,11 @@ export async function LessonDayView({
       {...persistProps}
     >
       {extraSections.map((s, i) => (
-        <MarkdownView key={i} source={s.body} />
+        <MarkdownView
+          key={i}
+          source={s.body}
+          progressCtx={labCtx ? labCtx("extra", i) : undefined}
+        />
       ))}
     </LessonReader>
   ) : resourcesList ? (
@@ -385,7 +412,12 @@ export async function LessonDayView({
                   )}
                 </header>
                 {slidesPanel}
-                {phases.intro && <MarkdownView source={phases.intro} />}
+                {phases.intro && (
+                  <MarkdownView
+                    source={phases.intro}
+                    progressCtx={labCtx ? labCtx("intro", 0) : undefined}
+                  />
+                )}
               </>
             ),
             pre: prePanel,

@@ -62,6 +62,7 @@ export interface DayInteractive {
   poll: DayPoll | null;
   attendance: DayAttendance;
   dayFeedbackSubmitted: boolean;
+  doneLabIds: string[];
 }
 
 export const getDayInteractive = cache(
@@ -113,7 +114,7 @@ export const getDayInteractive = cache(
         return rows ?? null;
       });
 
-    const [assignmentRes, quizRes, pollRes, pollResultsRows, attendanceRes, dayFeedbackRes] = await Promise.all([
+    const [assignmentRes, quizRes, pollRes, pollResultsRows, attendanceRes, dayFeedbackRes, labProgressRes] = await Promise.all([
       sb
         .from("assignments")
         .select(
@@ -155,6 +156,15 @@ export const getDayInteractive = cache(
             .eq("user_id", uid)
             .maybeSingle()
         : Promise.resolve({ data: null }),
+      uid
+        ? sb
+            .from("lab_progress")
+            .select("lab_id")
+            .eq("cohort_id", cohortId)
+            .eq("day_number", dayNumber)
+            .eq("user_id", uid)
+            .eq("status", "done")
+        : Promise.resolve({ data: [] as Array<{ lab_id: string }> }),
     ]);
 
     const assignments: DayAssignment[] = [];
@@ -249,6 +259,9 @@ export const getDayInteractive = cache(
         status: ((attendanceRes.data as { status: DayAttendance["status"] } | null)?.status ?? null),
       },
       dayFeedbackSubmitted: !!dayFeedbackRes.data,
+      doneLabIds: ((labProgressRes.data ?? []) as Array<{ lab_id: string }>).map(
+        (r) => r.lab_id,
+      ),
     };
   },
 );

@@ -3,8 +3,10 @@ import { Card, CardSub } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentRow } from "@/components/student-row/StudentRow";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
+import { StudentTimeline } from "@/components/admin-cohort/StudentTimeline";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getStudentDetail } from "@/lib/queries/student-detail";
+import { getStudentTimeline } from "@/lib/queries/student-timeline";
 import { fmtDate } from "@/lib/format";
 
 export default async function StudentDetailPage({
@@ -15,7 +17,10 @@ export default async function StudentDetailPage({
   const { cohortId, id } = await params;
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
-  const student = await getStudentDetail(cohort.id, id);
+  const [student, timeline] = await Promise.all([
+    getStudentDetail(cohort.id, id),
+    getStudentTimeline(cohort.id, id),
+  ]);
   if (!student) notFound();
 
   return (
@@ -34,6 +39,14 @@ export default async function StudentDetailPage({
           {student.pod_name ?? "no pod"}
         </p>
       </header>
+
+      <section>
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">Activity timeline</h2>
+          <CardSub className="text-xs">latest {timeline.length}</CardSub>
+        </div>
+        <StudentTimeline events={timeline} />
+      </section>
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Attendance</h2>

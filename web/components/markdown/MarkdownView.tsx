@@ -1,5 +1,15 @@
 import { MDXRemote, type MDXRemoteProps } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import { LabCheckbox } from "@/components/markdown/LabCheckbox";
+
+export interface LabProgressCtx {
+  cohortId: string;
+  dayNumber: number;
+  /** Stable scope segment so checkbox indices don't collide across phases. */
+  scope: string;
+  /** lab_ids the user already marked done. */
+  doneLabIds: ReadonlySet<string>;
+}
 
 const baseComponents: MDXRemoteProps["components"] = {
   h1: (p) => <h1 {...p} className="mt-8 mb-3 text-3xl font-semibold tracking-tight" />,
@@ -148,12 +158,18 @@ export function MarkdownView({
   source,
   variant = "default",
   className = "",
+  progressCtx,
 }: {
   source: string;
   variant?: "default" | "handbook";
   className?: string;
+  /** When provided, GFM task-list checkboxes persist to lab_progress. */
+  progressCtx?: LabProgressCtx;
 }) {
-  const components = variant === "handbook" ? handbookComponents : baseComponents;
+  const baseSet = variant === "handbook" ? handbookComponents : baseComponents;
+  const components: MDXRemoteProps["components"] = progressCtx
+    ? withLabProgress(baseSet, progressCtx)
+    : baseSet;
   return (
     <article
       className={
@@ -167,4 +183,33 @@ export function MarkdownView({
       />
     </article>
   );
+}
+
+/**
+ * Replace the `input` override with one that emits a persistent LabCheckbox
+ * for each GFM task-list checkbox. Indices are scoped per render so the
+ * same lab_id is generated for the same checkbox on every re-render.
+ */
+function withLabProgress(
+  base: MDXRemoteProps["components"],
+  ctx: LabProgressCtx,
+): MDXRemoteProps["components"] {
+  let i = 0;
+  return {
+    ...base,
+    input: (p) => {
+      const props = p as React.InputHTMLAttributes<HTMLInputElement>;
+      if (props.type !== "checkbox") return <input {...p} />;
+      const labId = `${ctx.scope}-${i++}`;
+      const done = props.checked ?? props.defaultChecked ?? ctx.doneLabIds.has(labId);
+      return (
+        <LabCheckbox
+          cohortId={ctx.cohortId}
+          dayNumber={ctx.dayNumber}
+          labId={labId}
+          initialDone={done}
+        />
+      );
+    },
+  };
 }
