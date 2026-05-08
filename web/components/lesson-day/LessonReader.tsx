@@ -161,7 +161,39 @@ export function LessonReader({
               </p>
             )}
           </div>
-          <DotStrip total={total} idx={idx} onPick={goto} />
+          <div className="flex items-center gap-3">
+            <DotStrip total={total} idx={idx} onPick={goto} />
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => goto(idx - 1)}
+                disabled={isFirst}
+                aria-label="Previous section"
+                className={cn(
+                  "inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
+                  isFirst
+                    ? "border-line/60 text-muted/60 cursor-not-allowed"
+                    : "border-line text-ink hover:bg-bg-soft hover:border-accent/40",
+                )}
+              >
+                <ArrowLeft size={14} strokeWidth={2.1} />
+              </button>
+              <button
+                type="button"
+                onClick={() => goto(idx + 1)}
+                disabled={isLast}
+                aria-label="Next section"
+                className={cn(
+                  "inline-flex h-8 w-8 items-center justify-center rounded-md transition-opacity",
+                  isLast
+                    ? "bg-line/40 text-muted/60 cursor-not-allowed"
+                    : "bg-accent text-cta-ink hover:opacity-90",
+                )}
+              >
+                <ArrowRight size={14} strokeWidth={2.2} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div>{items[idx]}</div>
