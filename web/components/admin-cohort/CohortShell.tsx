@@ -19,6 +19,7 @@ export async function CohortShell({
     | "polls"
     | "live"
     | "help-desk"
+    | "pulse"
     | "analytics"
     | "health"
     | "milestones";

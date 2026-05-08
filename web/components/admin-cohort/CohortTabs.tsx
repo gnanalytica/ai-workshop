@@ -13,6 +13,7 @@ type Tab =
   | "polls"
   | "live"
   | "help-desk"
+  | "pulse"
   | "analytics"
   | "health"
   | "milestones";
@@ -23,8 +24,7 @@ const TABS: { id: Tab; label: string; href: (c: string) => string }[] = [
   { id: "pods", label: "Pods", href: (c) => `/admin/cohorts/${c}/pods` },
   { id: "curriculum", label: "Curriculum", href: (c) => `/admin/cohorts/${c}/curriculum` },
   { id: "grading", label: "Submissions", href: (c) => `/admin/cohorts/${c}/grading` },
-  { id: "analytics", label: "Analytics", href: (c) => `/admin/cohorts/${c}/analytics` },
-  { id: "health", label: "Health", href: (c) => `/admin/cohorts/${c}/health` },
+  { id: "pulse", label: "Pulse", href: (c) => `/admin/cohorts/${c}/pulse` },
   { id: "live", label: "Live", href: (c) => `/admin/cohorts/${c}/live` },
 ];
 
@@ -42,7 +42,8 @@ export function CohortTabs({
         // legacy schedule/content routes are shown (deep day editor etc.).
         const isActive =
           t.id === active ||
-          (t.id === "curriculum" && (active === "schedule" || active === "content"));
+          (t.id === "curriculum" && (active === "schedule" || active === "content")) ||
+          (t.id === "pulse" && (active === "analytics" || active === "health"));
         return (
           <Link
             key={t.id}

@@ -211,18 +211,14 @@ export default async function AdminCohortHome({
             <div className="text-muted text-xs">Tickets in this cohort</div>
           </Link>
           <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/analytics`}
+            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors sm:col-span-2"
+            href={`/admin/cohorts/${cohort.id}/pulse`}
           >
-            <div className="text-ink font-medium">Analytics</div>
-            <div className="text-muted text-xs">Attendance + at-risk</div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/health`}
-          >
-            <div className="text-ink font-medium">Health</div>
-            <div className="text-muted text-xs">Pulses + day feedback</div>
+            <div className="text-ink font-medium">Pulse</div>
+            <div className="text-muted text-xs">
+              Attendance, at-risk, day feedback, and pulse responses — all in
+              one
+            </div>
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
