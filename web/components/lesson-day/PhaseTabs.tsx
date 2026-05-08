@@ -94,16 +94,6 @@ export function PhaseTabs({
                   {i + 1}
                 </span>
                 <span className="min-w-0 truncate">{t.label}</span>
-                {t.hint && (
-                  <span
-                    className={cn(
-                      "hidden min-w-0 truncate text-[11px] font-normal xl:inline",
-                      isActive ? "text-cta-ink/75" : "text-muted/70",
-                    )}
-                  >
-                    · {t.hint}
-                  </span>
-                )}
                 {t.badge ? (
                   <span
                     className={cn(
