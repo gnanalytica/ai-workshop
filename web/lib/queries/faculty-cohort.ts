@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getStudentActivity } from "@/lib/queries/activity-score";
 
 export interface CohortPod {
   pod_id: string;
@@ -32,6 +33,10 @@ export interface AtRiskStudent {
   days_since_active: number | null;
   reason: "no_activity" | "low_completion";
   signals: AtRiskSignal[];
+  /** 0–100, share of unlocked days the student touched anything. */
+  activity_score: number;
+  /** 0–100, same but limited to the last 3 unlocked days. */
+  recent_score: number;
   details: {
     submissions: number;
     labs_done: number;
@@ -87,90 +92,81 @@ export const listCohortPods = cache(async (cohortId: string, myUserId: string): 
 
 export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRiskStudent[]> => {
   const sb = await getSupabaseServer();
-  const sinceDays = 3;
-  const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000).toISOString();
   const { data: regs } = await sb
     .from("registrations")
     .select("user_id, profiles!inner(full_name), pod_members!left(pods(name))")
     .eq("cohort_id", cohortId)
     .eq("status", "confirmed");
-  type Reg = { user_id: string; profiles: { full_name: string | null }; pod_members: Array<{ pods: { name: string | null } | null }> };
+  type Reg = {
+    user_id: string;
+    profiles: { full_name: string | null };
+    pod_members: Array<{ pods: { name: string | null } | null }>;
+  };
   const list = (regs ?? []) as unknown as Reg[];
   if (list.length === 0) return [];
 
   const userIds = list.map((r) => r.user_id);
-  const [{ data: recentLab }, { data: subs }, { data: labs }, { data: helpDesk }] =
-    await Promise.all([
-      sb
-        .from("lab_progress")
-        .select("user_id, updated_at")
-        .eq("cohort_id", cohortId)
-        .in("user_id", userIds)
-        .gte("updated_at", since),
-      sb
-        .from("submissions")
-        .select("user_id, assignments!inner(cohort_id)")
-        .eq("assignments.cohort_id", cohortId)
-        .in("user_id", userIds),
-      sb
-        .from("lab_progress")
-        .select("user_id")
-        .eq("cohort_id", cohortId)
-        .eq("status", "done")
-        .in("user_id", userIds),
-      sb
-        .from("help_desk_queue")
-        .select("user_id")
-        .eq("cohort_id", cohortId)
-        .in("status", ["open", "helping"])
-        .in("user_id", userIds),
-    ]);
+  const [activity, { data: helpDesk }] = await Promise.all([
+    getStudentActivity(cohortId, userIds),
+    sb
+      .from("help_desk_queue")
+      .select("user_id")
+      .eq("cohort_id", cohortId)
+      .in("status", ["open", "helping"])
+      .in("user_id", userIds),
+  ]);
 
-  const recentSet = new Set(
-    ((recentLab ?? []) as Array<{ user_id: string }>).map((r) => r.user_id),
-  );
-  const subsByUser = new Map<string, number>();
-  ((subs ?? []) as Array<{ user_id: string }>).forEach((r) => {
-    subsByUser.set(r.user_id, (subsByUser.get(r.user_id) ?? 0) + 1);
-  });
-  const labsByUser = new Map<string, number>();
-  ((labs ?? []) as Array<{ user_id: string }>).forEach((r) => {
-    labsByUser.set(r.user_id, (labsByUser.get(r.user_id) ?? 0) + 1);
-  });
   const helpDeskByUser = new Map<string, number>();
   ((helpDesk ?? []) as Array<{ user_id: string }>).forEach((r) => {
     helpDeskByUser.set(r.user_id, (helpDeskByUser.get(r.user_id) ?? 0) + 1);
   });
 
   const enriched: AtRiskStudent[] = list.map((r) => {
-    const subCount = subsByUser.get(r.user_id) ?? 0;
-    const labCount = labsByUser.get(r.user_id) ?? 0;
+    const a = activity.get(r.user_id);
+    const score = a?.score ?? 0;
+    const recentScore = a?.recent_score ?? 0;
+    const daysSinceActive = a?.days_since_active ?? null;
+    const subs = a?.signals.submissions ?? 0;
+    const labs = a?.signals.lab_progress ?? 0;
     const helpDeskCount = helpDeskByUser.get(r.user_id) ?? 0;
-    const inactive = !recentSet.has(r.user_id);
+
+    // Trigger rules — every signal has to have evidence behind it, otherwise
+    // the at-risk list becomes noise. The recent_score === 0 check replaces
+    // the old lab-only "no recent activity" fallacy.
+    const inactiveRecently =
+      recentScore === 0 || (daysSinceActive !== null && daysSinceActive >= 3);
     const signals: AtRiskSignal[] = [];
-    if (inactive) signals.push("no_activity");
-    if (subCount === 0) signals.push("no_submissions");
-    if (labCount < 3) signals.push("low_labs");
+    if (inactiveRecently) signals.push("no_activity");
+    if (subs === 0 && (a?.unlocked_days ?? 0) >= 2) signals.push("no_submissions");
+    if (labs === 0 && (a?.unlocked_days ?? 0) >= 3) signals.push("low_labs");
     if (helpDeskCount > 0) signals.push("open_help");
+
     return {
       user_id: r.user_id,
       full_name: r.profiles.full_name,
       pod_name: r.pod_members?.[0]?.pods?.name ?? null,
-      days_since_active: inactive ? sinceDays : null,
-      reason: inactive ? "no_activity" : "low_completion",
+      days_since_active: daysSinceActive,
+      reason: inactiveRecently ? "no_activity" : "low_completion",
       signals,
+      activity_score: score,
+      recent_score: recentScore,
       details: {
-        submissions: subCount,
-        labs_done: labCount,
+        submissions: subs,
+        labs_done: labs,
         open_help_desk: helpDeskCount,
       },
     };
   });
 
+  // Surface anyone with at least one signal OR a clearly low score.
   return enriched
-    .filter((s) => s.signals.length > 0)
-    .sort((a, b) => b.signals.length - a.signals.length)
-    .slice(0, 25);
+    .filter((s) => s.signals.length > 0 || s.activity_score < 40)
+    .sort((a, b) => {
+      const aw = a.signals.length * 100 + (100 - a.activity_score);
+      const bw = b.signals.length * 100 + (100 - b.activity_score);
+      return bw - aw;
+    })
+    .slice(0, 50);
 });
 
 export interface PodKpis {

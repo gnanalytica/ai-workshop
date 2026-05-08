@@ -70,9 +70,26 @@ export function AtRiskList({
                 </span>
               </div>
             </div>
-            {s.days_since_active !== null && (
-              <Badge variant="warn">{s.days_since_active}d idle</Badge>
-            )}
+            <div className="flex flex-col items-end gap-0.5 shrink-0">
+              <span
+                className={cn(
+                  "font-mono text-sm font-semibold tabular-nums",
+                  s.activity_score >= 60
+                    ? "text-ok"
+                    : s.activity_score >= 30
+                      ? "text-warn"
+                      : "text-danger",
+                )}
+                title={`Activity score · last 3 days: ${s.recent_score}%`}
+              >
+                {s.activity_score}%
+              </span>
+              {s.days_since_active !== null && s.days_since_active > 0 && (
+                <span className="text-muted text-[10px]">
+                  {s.days_since_active}d idle
+                </span>
+              )}
+            </div>
           </li>
         ))}
       </ul>

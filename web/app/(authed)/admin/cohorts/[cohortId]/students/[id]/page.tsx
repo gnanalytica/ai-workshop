@@ -7,7 +7,8 @@ import { StudentTimeline } from "@/components/admin-cohort/StudentTimeline";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getStudentDetail } from "@/lib/queries/student-detail";
 import { getStudentTimeline } from "@/lib/queries/student-timeline";
-import { fmtDate } from "@/lib/format";
+import { getStudentActivity } from "@/lib/queries/activity-score";
+import { fmtDate, relTime } from "@/lib/format";
 
 export default async function StudentDetailPage({
   params,
@@ -17,27 +18,70 @@ export default async function StudentDetailPage({
   const { cohortId, id } = await params;
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
-  const [student, timeline] = await Promise.all([
+  const [student, timeline, activityMap] = await Promise.all([
     getStudentDetail(cohort.id, id),
     getStudentTimeline(cohort.id, id),
+    getStudentActivity(cohort.id, [id]),
   ]);
   if (!student) notFound();
+  const activity = activityMap.get(id) ?? null;
 
   return (
     <>
       <CohortShell cohort={cohort} active="roster" />
 
-      <header>
-        <p className="text-accent font-mono text-xs tracking-widest uppercase">
-          Student
-        </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-          {student.full_name ?? student.email}
-        </h1>
-        <p className="text-muted mt-1 text-sm">
-          {student.email} · {student.college ?? "—"} ·{" "}
-          {student.pod_name ?? "no pod"}
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-accent font-mono text-xs tracking-widest uppercase">
+            Student
+          </p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            {student.full_name ?? student.email}
+          </h1>
+          <p className="text-muted mt-1 text-sm">
+            {student.email} · {student.college ?? "—"} ·{" "}
+            {student.pod_name ?? "no pod"}
+          </p>
+        </div>
+        {activity && (
+          <div className="border-line bg-card flex items-stretch gap-px overflow-hidden rounded-lg border text-xs">
+            <ActivityCell
+              label="Activity"
+              value={`${activity.score}%`}
+              hint={`${activity.active_days}/${activity.unlocked_days} days`}
+              tone={
+                activity.score >= 60
+                  ? "ok"
+                  : activity.score >= 30
+                    ? "warn"
+                    : "danger"
+              }
+            />
+            <ActivityCell
+              label="Last 3 days"
+              value={`${activity.recent_score}%`}
+              hint="recent"
+              tone={
+                activity.recent_score >= 60
+                  ? "ok"
+                  : activity.recent_score >= 30
+                    ? "warn"
+                    : "danger"
+              }
+            />
+            <ActivityCell
+              label="Last seen"
+              value={
+                activity.last_active_at ? relTime(activity.last_active_at) : "—"
+              }
+              hint={
+                activity.days_since_active === null
+                  ? "no activity"
+                  : `${activity.days_since_active}d ago`
+              }
+            />
+          </div>
+        )}
       </header>
 
       <section>
@@ -144,5 +188,37 @@ export default async function StudentDetailPage({
         />
       </Card>
     </>
+  );
+}
+
+function ActivityCell({
+  label,
+  value,
+  hint,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  tone?: "default" | "ok" | "warn" | "danger";
+}) {
+  const toneCls =
+    tone === "ok"
+      ? "text-ok"
+      : tone === "warn"
+        ? "text-warn"
+        : tone === "danger"
+          ? "text-danger"
+          : "text-ink";
+  return (
+    <div className="bg-card flex min-w-[6.5rem] flex-col gap-0.5 px-3 py-2.5">
+      <p className="text-muted font-mono text-[10px] uppercase tracking-[0.18em]">
+        {label}
+      </p>
+      <p className={`font-display text-base font-semibold tabular-nums ${toneCls}`}>
+        {value}
+      </p>
+      <p className="text-muted text-[10.5px]">{hint}</p>
+    </div>
   );
 }
