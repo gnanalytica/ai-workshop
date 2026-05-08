@@ -29,12 +29,18 @@ const baseComponents: MDXRemoteProps["components"] = {
     );
   },
   input: (p) => {
-    if ((p as React.InputHTMLAttributes<HTMLInputElement>).type === "checkbox") {
+    const props = p as React.InputHTMLAttributes<HTMLInputElement>;
+    if (props.type === "checkbox") {
+      // GFM emits `checked` (controlled). Convert to defaultChecked so the
+      // browser owns the state and the box is interactive without React
+      // warnings or wiring up a state handler per item.
+      const { checked, defaultChecked, ...rest } = props;
       return (
         <input
-          {...(p as React.InputHTMLAttributes<HTMLInputElement>)}
-          className="accent-[hsl(var(--accent))] mt-1.5 h-3.5 w-3.5"
-          disabled
+          {...rest}
+          type="checkbox"
+          defaultChecked={defaultChecked ?? checked ?? false}
+          className="accent-[hsl(var(--accent))] mt-1.5 h-3.5 w-3.5 cursor-pointer"
         />
       );
     }
