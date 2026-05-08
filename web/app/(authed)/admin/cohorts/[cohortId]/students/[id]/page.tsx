@@ -48,12 +48,12 @@ export default async function StudentDetailPage({
         <StudentTimeline events={timeline} />
       </section>
 
-      <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">Attendance</h2>
-        <Card>
-          {student.attendance.length === 0 ? (
-            <CardSub>No attendance recorded.</CardSub>
-          ) : (
+      {student.attendance.length > 0 && (
+        <section>
+          <h2 className="mb-3 text-lg font-semibold tracking-tight">
+            Manually marked attendance
+          </h2>
+          <Card>
             <div className="flex flex-wrap gap-1.5 text-xs">
               {student.attendance.map((a) => (
                 <span
@@ -66,9 +66,9 @@ export default async function StudentDetailPage({
                 </span>
               ))}
             </div>
-          )}
-        </Card>
-      </section>
+          </Card>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-3 text-lg font-semibold tracking-tight">Labs</h2>

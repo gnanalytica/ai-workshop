@@ -84,11 +84,15 @@ export const getAttendanceByDay = cache(async (cohortId: string): Promise<DayAtt
  * Activity-based engagement per day. A confirmed student counts as "active"
  * on a given day if they did any of: submitted/updated an assignment for that
  * day, completed a quiz, gave day feedback, voted in a curriculum poll for
- * that day, or marked lab progress. This is our auto-detected "attendance" —
- * useful when faculty don't mark attendance manually.
+ * that day, or marked lab progress. Optional `userIdFilter` narrows the
+ * "active" count + the "total" denominator to a subset (e.g. a pod's roster).
  */
 export const getEngagementByDay = cache(
-  async (cohortId: string): Promise<DayEngagementBucket[]> => {
+  async (
+    cohortId: string,
+    userIdFilter?: ReadonlyArray<string>,
+  ): Promise<DayEngagementBucket[]> => {
+    const scope = userIdFilter ? new Set(userIdFilter) : null;
     const sb = await getSupabaseServer();
     const [
       regs,
@@ -126,11 +130,12 @@ export const getEngagementByDay = cache(
         .eq("cohort_id", cohortId),
     ]);
 
-    const total = regs.count ?? 0;
+    const total = scope ? scope.size : regs.count ?? 0;
     const buckets = new Map<number, Set<string>>();
 
     const addRow = (day: number | null | undefined, userId: string) => {
       if (typeof day !== "number") return;
+      if (scope && !scope.has(userId)) return;
       const set = buckets.get(day) ?? new Set<string>();
       set.add(userId);
       buckets.set(day, set);

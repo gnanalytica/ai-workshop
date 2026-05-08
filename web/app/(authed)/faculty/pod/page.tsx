@@ -79,7 +79,7 @@ export default async function FacultyPodPage() {
               href="/faculty/pod/health"
               className="text-accent text-sm font-medium hover:underline"
             >
-              Pod health →
+              Pod Pulse →
             </Link>
           )}
         </div>

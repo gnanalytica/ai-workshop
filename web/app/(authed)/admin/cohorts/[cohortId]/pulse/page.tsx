@@ -3,7 +3,7 @@ import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { StackedBarChart, type BarRow } from "@/components/charts/BarChart";
 import { EngagementChart } from "@/components/charts/EngagementChart";
-import { PollsTable } from "@/components/admin-cohort/PollsTable";
+import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import {
@@ -79,31 +79,34 @@ export default async function AdminCohortPulsePage({
       ? Math.round((todayBucket.present / todayBucketTotal) * 100)
       : null;
 
-  // Headline + sparkline default to marked attendance, fall back to
-  // activity-based engagement when no attendance has been recorded.
+  // Activity is the canonical metric. We always show auto-detected engagement
+  // first; manual attendance, when present, lives in a collapsible section.
   const todayEngagement = recentEngagement.at(-1);
-  const headlinePct = hasMarkedAttendance
-    ? todayAttendancePct
-    : todayEngagement
-      ? Math.round(todayEngagement.rate * 100)
-      : null;
-  const headlineLabel = hasMarkedAttendance
-    ? "Attendance · most recent day"
-    : "Engagement · most recent day (auto)";
-  const headlineHint = hasMarkedAttendance
-    ? todayBucket
-      ? `${todayBucket.present}/${todayBucketTotal} on Day ${todayBucket.day_number}`
-      : "no attendance recorded"
-    : todayEngagement
-      ? `${todayEngagement.active}/${todayEngagement.total} active on Day ${todayEngagement.day_number}`
+  const headlinePct = todayEngagement
+    ? Math.round(todayEngagement.rate * 100)
+    : todayAttendancePct;
+  const headlineLabel = "Activity · most recent day";
+  const headlineHint = todayEngagement
+    ? `${todayEngagement.active}/${todayEngagement.total} active on Day ${todayEngagement.day_number}`
+    : hasMarkedAttendance && todayBucket
+      ? `${todayBucket.present}/${todayBucketTotal} marked present on Day ${todayBucket.day_number}`
       : "no activity yet";
 
-  const sparkValues = hasMarkedAttendance
-    ? recentByDay.map((d) => {
-        const t = bucketTotal(d);
-        return t > 0 ? d.present / t : 0;
-      })
-    : recentEngagement.map((e) => e.rate);
+  const sparkValues =
+    recentEngagement.length > 0
+      ? recentEngagement.map((e) => e.rate)
+      : recentByDay.map((d) => {
+          const t = bucketTotal(d);
+          return t > 0 ? d.present / t : 0;
+        });
+
+  // Trend delta — % point difference vs the previous day shown in the spark.
+  const headlineDelta = (() => {
+    if (sparkValues.length < 2) return null;
+    const cur = sparkValues[sparkValues.length - 1] ?? 0;
+    const prev = sparkValues[sparkValues.length - 2] ?? 0;
+    return Math.round((cur - prev) * 100);
+  })();
 
   const chartRows: BarRow[] = byDay.map((d) => ({
     id: d.day_number,
@@ -144,6 +147,7 @@ export default async function AdminCohortPulsePage({
                   ? "warn"
                   : "danger"
           }
+          delta={headlineDelta}
           sparkline={sparkValues}
         />
         <HeroStat
@@ -160,28 +164,15 @@ export default async function AdminCohortPulsePage({
         />
       </section>
 
-      {/* Question 1 — Are they showing up? */}
+      {/* Question 1 — Are they active? */}
       <Group
-        title="Are they showing up?"
-        sub={
-          hasMarkedAttendance
-            ? "Marked attendance per day, plus auto-detected engagement."
-            : "Auto-detected engagement — % of confirmed students who did anything that day (submit, quiz, feedback, vote, lab)."
-        }
+        title="Are they active?"
+        sub="Auto-detected — a student counts as active on a day when they submit, take a quiz, give feedback, vote, or tick a lab."
       >
-        {hasMarkedAttendance && (
-          <div className="space-y-2">
-            <SectionHead title="Marked attendance" sub="from /faculty/today" />
-            <Card>
-              <StackedBarChart rows={chartRows} />
-              <Legend />
-            </Card>
-          </div>
-        )}
         <div className="space-y-2">
           <SectionHead
-            title="Engagement (auto)"
-            sub="active = any submission, quiz, feedback, poll vote, or lab tick"
+            title="Activity by day"
+            sub={`${engagement.reduce((s, e) => s + e.active, 0)} active events across ${engagement.length} day${engagement.length === 1 ? "" : "s"}`}
           />
           {engagement.length === 0 ? (
             <Card>
@@ -195,6 +186,18 @@ export default async function AdminCohortPulsePage({
             </Card>
           )}
         </div>
+        {hasMarkedAttendance && (
+          <details className="border-line bg-card/60 group rounded-lg border">
+            <summary className="text-muted hover:text-ink cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+              Manually marked attendance ({chartRows.length} day
+              {chartRows.length === 1 ? "" : "s"})
+            </summary>
+            <div className="px-4 pb-4">
+              <StackedBarChart rows={chartRows} />
+              <Legend />
+            </div>
+          </details>
+        )}
       </Group>
 
       {/* Question 2 — Are they keeping up? */}
@@ -262,7 +265,7 @@ export default async function AdminCohortPulsePage({
         title="Polls and pulses"
         sub={`${polls.length} total · curriculum polls (with day) and live pulses (no day) across the cohort run.`}
       >
-        <PollsTable polls={polls} />
+        <PollsExplorer polls={polls} />
       </Group>
     </>
   );
@@ -282,12 +285,14 @@ function HeroStat({
   value,
   hint,
   tone = "default",
+  delta,
   sparkline,
 }: {
   label: string;
   value: string;
   hint: string;
   tone?: Tone;
+  delta?: number | null;
   sparkline?: number[];
 }) {
   return (
@@ -295,11 +300,27 @@ function HeroStat({
       <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
         {label}
       </p>
-      <p
-        className={`font-display text-2xl font-semibold tracking-tight tabular-nums ${TONE_RING[tone]}`}
-      >
-        {value}
-      </p>
+      <div className="flex items-baseline gap-2">
+        <p
+          className={`font-display text-2xl font-semibold tracking-tight tabular-nums ${TONE_RING[tone]}`}
+        >
+          {value}
+        </p>
+        {delta !== null && delta !== undefined && (
+          <span
+            className={`font-mono text-[11px] font-semibold tabular-nums ${
+              delta > 0
+                ? "text-ok"
+                : delta < 0
+                  ? "text-danger"
+                  : "text-muted"
+            }`}
+            title="vs previous day"
+          >
+            {delta > 0 ? "↑" : delta < 0 ? "↓" : "→"} {Math.abs(delta)}pp
+          </span>
+        )}
+      </div>
       <div className="mt-auto flex items-end justify-between gap-3 pt-1">
         <p className="text-muted text-xs">{hint}</p>
         {sparkline && sparkline.length > 1 && (
