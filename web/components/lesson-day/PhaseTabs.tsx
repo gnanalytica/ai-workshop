@@ -61,7 +61,7 @@ export function PhaseTabs({
         <nav
           role="tablist"
           aria-label="Lesson phase"
-          className="border-line bg-card flex gap-1 overflow-x-auto rounded-lg border p-1 shadow-sm"
+          className="border-line bg-card flex w-full gap-0.5 rounded-lg border p-1 shadow-sm sm:gap-1"
         >
           {tabs.map((t, i) => {
             const isActive = t.id === active;
@@ -74,8 +74,9 @@ export function PhaseTabs({
                 aria-controls={`phase-panel-${t.id}`}
                 id={`phase-tab-${t.id}`}
                 onClick={() => select(t.id)}
+                title={t.hint ? `${t.label} · ${t.hint}` : t.label}
                 className={cn(
-                  "relative flex flex-1 shrink-0 items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-semibold transition-all sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm",
+                  "group relative flex min-w-0 flex-1 basis-0 items-center justify-center gap-1.5 rounded-md px-1.5 py-2 text-xs font-semibold transition-all sm:gap-2 sm:px-3 sm:py-2.5 sm:text-sm",
                   isActive
                     ? "bg-accent text-cta-ink shadow-sm"
                     : "text-muted hover:text-ink hover:bg-bg/60",
@@ -83,7 +84,7 @@ export function PhaseTabs({
               >
                 <span
                   className={cn(
-                    "inline-flex h-5 w-5 items-center justify-center rounded-full font-mono text-[11px] tabular-nums",
+                    "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-mono text-[11px] tabular-nums",
                     isActive
                       ? "bg-cta-ink/15 text-cta-ink"
                       : "bg-line/60 text-muted",
@@ -92,11 +93,11 @@ export function PhaseTabs({
                 >
                   {i + 1}
                 </span>
-                <span>{t.label}</span>
+                <span className="min-w-0 truncate">{t.label}</span>
                 {t.hint && (
                   <span
                     className={cn(
-                      "hidden text-[11px] font-normal lg:inline",
+                      "hidden min-w-0 truncate text-[11px] font-normal xl:inline",
                       isActive ? "text-cta-ink/75" : "text-muted/70",
                     )}
                   >
@@ -106,7 +107,7 @@ export function PhaseTabs({
                 {t.badge ? (
                   <span
                     className={cn(
-                      "ml-0.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-mono text-[10px] font-bold tabular-nums",
+                      "ml-0.5 inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 font-mono text-[10px] font-bold tabular-nums",
                       isActive
                         ? "bg-cta-ink/20 text-cta-ink"
                         : "bg-accent text-bg",

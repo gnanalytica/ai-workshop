@@ -16,7 +16,7 @@ import type { ActiveCohort } from "@/lib/queries/cohort";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDayInteractive, type DayInteractive } from "@/lib/queries/day-interactive";
 import { fmtDateTime } from "@/lib/format";
-import { defaultPhase, splitDayPhases, type Phase } from "@/lib/content/phases";
+import { splitDayPhases, type Phase } from "@/lib/content/phases";
 
 const readOnlyInteractive: DayInteractive = {
   assignments: [],
@@ -70,7 +70,7 @@ export async function LessonDayView({
 
   const meta = content.meta;
   const phases = splitDayPhases(content.body);
-  const initialPhase: Phase = phaseParam ?? defaultPhase(cohortDay?.live_session_at);
+  const initialPhase: Phase = phaseParam ?? "intro";
 
   const livePending = interactive.poll && !interactive.poll.my_choice ? 1 : 0;
   const assignmentPending = interactive.assignments.filter((a) => {
@@ -333,7 +333,7 @@ export async function LessonDayView({
   return (
     <div className="-mx-4 -mt-4 flex md:-m-8">
       <DayRail items={railItems} activeDay={dayNumber} basePath={railBasePath} />
-      <article className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8 md:px-10 mx-auto max-w-3xl">
+      <article className="mx-auto min-w-0 w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8 md:px-10">
         <header className="mb-6">
           <p className="text-accent font-mono text-xs tracking-widest uppercase">
             Day {dayNumber} · Week {meta.week ?? "?"}
