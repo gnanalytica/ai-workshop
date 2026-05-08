@@ -334,29 +334,6 @@ export async function LessonDayView({
     <div className="-mx-4 -mt-4 flex md:-m-8">
       <DayRail items={railItems} activeDay={dayNumber} basePath={railBasePath} />
       <article className="mx-auto min-w-0 w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8 md:px-10">
-        <header className="mb-6">
-          <p className="text-accent font-mono text-xs tracking-widest uppercase">
-            Day {dayNumber} · Week {meta.week ?? "?"}
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight break-words sm:text-3xl md:text-4xl">{meta.topic}</h1>
-          {meta.tldr && <p className="text-muted mt-3 text-base leading-7">{meta.tldr}</p>}
-          <div className="text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
-            {cohortDay?.live_session_at && (
-              <span className="text-ink">Live · {fmtDateTime(cohortDay.live_session_at)}</span>
-            )}
-            {meta.faculty?.main && <span>Lead: {meta.faculty.main}</span>}
-            {meta.faculty?.support && <span>Support: {meta.faculty.support}</span>}
-            {meta.tags?.map((t) => (
-              <Badge key={t}>{t}</Badge>
-            ))}
-          </div>
-          {readOnly && (
-            <p className="text-muted mt-4 text-sm">
-              You are viewing the cohort curriculum in read-only mode (no assignments).
-            </p>
-          )}
-        </header>
-
         <PhaseTabs
           initial={initialPhase}
           tabs={[
@@ -379,6 +356,34 @@ export async function LessonDayView({
           panels={{
             intro: (
               <>
+                <header className="mb-6">
+                  <p className="text-accent font-mono text-xs tracking-widest uppercase">
+                    Day {dayNumber} · Week {meta.week ?? "?"}
+                  </p>
+                  <h1 className="mt-2 text-2xl font-semibold tracking-tight break-words sm:text-3xl md:text-4xl">
+                    {meta.topic}
+                  </h1>
+                  {meta.tldr && (
+                    <p className="text-muted mt-3 text-base leading-7">{meta.tldr}</p>
+                  )}
+                  <div className="text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
+                    {cohortDay?.live_session_at && (
+                      <span className="text-ink">
+                        Live · {fmtDateTime(cohortDay.live_session_at)}
+                      </span>
+                    )}
+                    {meta.faculty?.main && <span>Lead: {meta.faculty.main}</span>}
+                    {meta.faculty?.support && <span>Support: {meta.faculty.support}</span>}
+                    {meta.tags?.map((t) => (
+                      <Badge key={t}>{t}</Badge>
+                    ))}
+                  </div>
+                  {readOnly && (
+                    <p className="text-muted mt-4 text-sm">
+                      You are viewing the cohort curriculum in read-only mode (no assignments).
+                    </p>
+                  )}
+                </header>
                 {slidesPanel}
                 {phases.intro && <MarkdownView source={phases.intro} />}
               </>
