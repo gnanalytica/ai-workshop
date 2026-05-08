@@ -7,7 +7,6 @@ import { getProfile } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
 import { TourMount } from "@/components/tour/Tour";
-import { HelpFab } from "@/components/help/HelpFab";
 import { PollPopup } from "@/components/polls/PollPopup";
 import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
@@ -129,7 +128,6 @@ export async function AppShell({
         </div>
       </div>
       <TourMount persona={truePersona} initialOpen={initialOpen} />
-      <HelpFab persona={effectivePersona} />
       {activeCohortId && caps.includes("attendance.self") && (
         <PollPopup cohortId={activeCohortId} initialPoll={initialPoll} />
       )}
