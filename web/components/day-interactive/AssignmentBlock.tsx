@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { InlineMarkdown } from "@/components/markdown/InlineMarkdown";
 import { saveDraft, submitAssignment } from "@/lib/actions/submissions";
 import type { DayAssignment } from "@/lib/queries/day-interactive";
-import { fmtDate, relTime } from "@/lib/format";
+import { relTime } from "@/lib/format";
 
 type LinkRow = { label: string; url: string };
 
@@ -72,9 +72,6 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
         <CardTitle>📝 {assignment.title}</CardTitle>
         <div className="flex items-center gap-2">
           <Badge>{assignment.kind}</Badge>
-          {assignment.due_at && (
-            <Badge variant="warn">Due {fmtDate(assignment.due_at)}</Badge>
-          )}
           <Badge variant={status === "graded" ? "ok" : status === "submitted" ? "accent" : "default"}>
             {status}
           </Badge>

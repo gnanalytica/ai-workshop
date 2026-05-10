@@ -9,6 +9,8 @@ import { Sparkline } from "@/components/sparkline/Sparkline";
 import { getFacultyCohort, getFacultyTodayKpis } from "@/lib/queries/faculty";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
 import { listAtRiskStudents } from "@/lib/queries/faculty-cohort";
+import { getPodMilestoneSubmissions } from "@/lib/queries/faculty-pod-milestones";
+import { PodMilestoneNotes } from "./PodMilestoneNotes";
 import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getCohortTrend } from "@/lib/queries/cohort-trends";
 import { fmtDateTime } from "@/lib/format";
@@ -159,8 +161,26 @@ export default async function FacultyPodPage() {
             />
           </Suspense>
           <PodMembers members={myPod.members} totalDays={today} cohortId={f.cohort.id} />
+          <Suspense fallback={null}>
+            <PodMilestones cohortId={f.cohort.id} memberIds={myPod.members.map((m) => m.user_id)} />
+          </Suspense>
         </section>
       )}
+    </div>
+  );
+}
+
+async function PodMilestones({
+  cohortId,
+  memberIds,
+}: {
+  cohortId: string;
+  memberIds: string[];
+}) {
+  const rows = await getPodMilestoneSubmissions(cohortId, memberIds);
+  return (
+    <div className="mt-6">
+      <PodMilestoneNotes rows={rows} />
     </div>
   );
 }
