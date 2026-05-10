@@ -215,3 +215,44 @@
     }
   }
 }
+
+/* Present mode — projector-friendly view of any page.
+   Toggled by ?present=1 (PresentMode component adds .present-mode on <html>).
+   Hides every chrome wrapper marked [data-shell-chrome] and bumps typography
+   on the main pane so the back row of the room can read it. */
+html.present-mode [data-shell-chrome] {
+  display: none !important;
+}
+
+html.present-mode main[data-shell-main] {
+  max-width: 96ch;
+  margin: 0 auto;
+  padding: 2.5rem 1.75rem 6rem;
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
+
+html.present-mode main[data-shell-main] h1 {
+  font-size: 2.75rem;
+  line-height: 1.15;
+  margin-top: 0;
+}
+html.present-mode main[data-shell-main] h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-top: 2.25rem;
+}
+html.present-mode main[data-shell-main] h3 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin-top: 1.75rem;
+}
+html.present-mode main[data-shell-main] table {
+  font-size: 1.05rem;
+}
+html.present-mode main[data-shell-main] li {
+  margin: 0.25rem 0;
+}
+html.present-mode main[data-shell-main] blockquote {
+  font-size: 1.15rem;
+}

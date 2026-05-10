@@ -17,6 +17,8 @@ import { listCohortDays, todayDayNumber } from "@/lib/queries/cohort";
 import { getDayInteractive, type DayInteractive } from "@/lib/queries/day-interactive";
 import { fmtDateTime } from "@/lib/format";
 import { splitDayPhases, type Phase } from "@/lib/content/phases";
+import { PresentLink } from "@/components/shell/PresentMode";
+import { Maximize2 } from "lucide-react";
 
 const readOnlyInteractive: DayInteractive = {
   assignments: [],
@@ -404,6 +406,13 @@ export async function LessonDayView({
                     {meta.tags?.map((t) => (
                       <Badge key={t}>{t}</Badge>
                     ))}
+                    <PresentLink
+                      href={`${railBasePath}/${dayNumber}`}
+                      className="border-line text-muted hover:text-ink hover:border-accent/40 ml-auto flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-colors"
+                    >
+                      <Maximize2 size={12} strokeWidth={2} />
+                      Present
+                    </PresentLink>
                   </div>
                   {readOnly && (
                     <p className="text-muted mt-4 text-sm">

@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { SandboxBanner } from "./SandboxBanner";
 import { BannerStrip } from "./BannerStrip";
+import { PresentMode } from "./PresentMode";
 import { getProfile } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
@@ -102,31 +104,43 @@ export async function AppShell({
 
   return (
     <div className="bg-bg text-ink flex min-h-screen flex-col">
-      {activeCohortId && (
-        <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
-      )}
-      {sandboxName && <SandboxBanner cohortName={sandboxName} />}
+      <div data-shell-chrome>
+        {activeCohortId && (
+          <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
+        )}
+        {sandboxName && <SandboxBanner cohortName={sandboxName} />}
+      </div>
       <div className="flex flex-1">
-        <Sidebar
-          caps={caps}
-          persona={effectivePersona}
-          bannerOffset={!!sandboxName}
-          activeCohortId={activeCohortId}
-        />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar
-            profile={profile}
-            navItems={items}
-            cohortName={activeCohortName}
-            truePersona={truePersona}
-            effectivePersona={effectivePersona}
+        <div data-shell-chrome className="contents">
+          <Sidebar
+            caps={caps}
+            persona={effectivePersona}
+            bannerOffset={!!sandboxName}
             activeCohortId={activeCohortId}
           />
-          <main className="min-w-0 flex-1 overflow-x-clip px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8">
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div data-shell-chrome>
+            <Topbar
+              profile={profile}
+              navItems={items}
+              cohortName={activeCohortName}
+              truePersona={truePersona}
+              effectivePersona={effectivePersona}
+              activeCohortId={activeCohortId}
+            />
+          </div>
+          <main
+            data-shell-main
+            className="min-w-0 flex-1 overflow-x-clip px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-8"
+          >
             {children}
           </main>
         </div>
       </div>
+      <Suspense fallback={null}>
+        <PresentMode />
+      </Suspense>
       <TourMount persona={truePersona} initialOpen={initialOpen} />
       {activeCohortId && caps.includes("attendance.self") && (
         <PollPopup cohortId={activeCohortId} initialPoll={initialPoll} />
