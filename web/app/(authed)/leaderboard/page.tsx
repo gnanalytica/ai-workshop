@@ -1,4 +1,4 @@
-import { Card, CardTitle } from "@/components/ui/card";
+import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getFacultyPods } from "@/lib/queries/faculty-pod";
@@ -61,8 +61,11 @@ export default async function LeaderboardPage({
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Standings</h1>
         <p className="text-muted mt-1 text-sm">
-          Cumulative score = quizzes + graded assignments + 5×posts + 2×comments
-          + net upvotes received.
+          Total = <span className="text-ink">35%</span> quizzes ·{" "}
+          <span className="text-ink">35%</span> graded submissions ·{" "}
+          <span className="text-ink">30%</span> activity. Activity is
+          measured against days that had something to do — buffer days
+          can&apos;t pull you down.
         </p>
       </header>
 
@@ -73,9 +76,17 @@ export default async function LeaderboardPage({
       </nav>
 
       {tab === "student" && (
-        <Card>
-          <StudentLeaderboardTable rows={students} myPodName={myPodName} />
-        </Card>
+        <div className="space-y-4">
+          {me && <YourScorecard rows={students} viewerUserId={me.id} />}
+          <Card>
+            <StudentLeaderboardTable
+              rows={students}
+              myPodName={myPodName}
+              viewerUserId={me?.id ?? null}
+              canDrillIntoStudents={isFaculty}
+            />
+          </Card>
+        </div>
       )}
       {tab === "pod" && (
         <div className="space-y-6">
@@ -110,6 +121,92 @@ export default async function LeaderboardPage({
           <TeamLeaderboardTable rows={teams} />
         </Card>
       )}
+    </div>
+  );
+}
+
+function YourScorecard({
+  rows,
+  viewerUserId,
+}: {
+  rows: readonly Awaited<ReturnType<typeof listStudentLeaderboard>>[number][];
+  viewerUserId: string;
+}) {
+  const sorted = [...rows].sort((a, b) => b.total_score - a.total_score);
+  const idx = sorted.findIndex((r) => r.user_id === viewerUserId);
+  if (idx === -1) {
+    return (
+      <Card className="bg-bg-soft">
+        <CardTitle className="text-base">Your scorecard</CardTitle>
+        <CardSub className="mt-1">
+          You don&apos;t have any scoreable activity yet. Quizzes, graded
+          submissions, and daily activity will start filling this in once the
+          first deliverables drop.
+        </CardSub>
+      </Card>
+    );
+  }
+  const me = sorted[idx]!;
+  const rank = idx + 1;
+  const total = sorted.length;
+  return (
+    <Card className="border-accent/30 bg-accent/[0.04] p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <p className="text-accent font-mono text-xs tracking-widest uppercase">
+            Your scorecard
+          </p>
+          <h2 className="text-ink mt-1 text-xl font-semibold tracking-tight">
+            Rank #{rank}{" "}
+            <span className="text-muted text-sm font-normal">of {total}</span>
+          </h2>
+          {me.pod_name && (
+            <p className="text-muted mt-0.5 text-xs">{me.pod_name}</p>
+          )}
+        </div>
+        <div className="text-right">
+          <p className="text-muted text-xs uppercase tracking-wider">Total</p>
+          <p className="text-accent text-3xl font-semibold">{me.total_score}</p>
+        </div>
+      </div>
+      <div className="border-line/50 mt-4 grid grid-cols-3 gap-4 border-t pt-4">
+        <ScoreSlice label="Quiz" value={me.quiz_score} total={me.total_score} />
+        <ScoreSlice
+          label="Submissions"
+          value={me.submission_score}
+          total={me.total_score}
+        />
+        <ScoreSlice
+          label="Activity"
+          value={me.activity_score}
+          total={me.total_score}
+        />
+      </div>
+    </Card>
+  );
+}
+
+function ScoreSlice({
+  label,
+  value,
+  total,
+}: {
+  label: string;
+  value: number;
+  total: number;
+}) {
+  const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+  return (
+    <div>
+      <p className="text-muted text-xs uppercase tracking-wider">{label}</p>
+      <p className="text-ink mt-1 font-mono text-lg">{value}</p>
+      <div className="bg-line/40 mt-1.5 h-1 overflow-hidden rounded-full">
+        <div
+          className="bg-accent h-full rounded-full transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-muted mt-1 text-[10px]">{pct}% of total</p>
     </div>
   );
 }

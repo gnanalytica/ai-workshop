@@ -10,9 +10,18 @@ type RankedScoreRow = ScoreRow & { rank: number };
 interface Props {
   rows: readonly ScoreRow[];
   myPodName: string | null;
+  /** Current viewer's user id, used to highlight their own row. */
+  viewerUserId?: string | null;
+  /** When true, student names link to the faculty drill page. Faculty/admin only. */
+  canDrillIntoStudents?: boolean;
 }
 
-export function StudentLeaderboardTable({ rows, myPodName }: Props) {
+export function StudentLeaderboardTable({
+  rows,
+  myPodName,
+  viewerUserId = null,
+  canDrillIntoStudents = false,
+}: Props) {
   const [highlight, setHighlight] = useState(false);
 
   const ranked = useMemo<RankedScoreRow[]>(() => {
@@ -26,21 +35,46 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
         id: "rank",
         header: "#",
         accessor: (r) => r.rank,
-        cell: (r) => <span className="text-muted">{r.rank}</span>,
+        cell: (r) => (
+          <span
+            className={
+              viewerUserId && r.user_id === viewerUserId
+                ? "text-accent font-semibold"
+                : "text-muted"
+            }
+          >
+            {r.rank}
+          </span>
+        ),
         width: "3rem",
       },
       {
         id: "student",
         header: "Student",
         accessor: (r) => r.full_name ?? "",
-        cell: (r) => (
-          <Link
-            href={`/faculty/student/${r.user_id}`}
-            className="text-ink hover:text-accent font-medium"
-          >
-            {r.full_name ?? "—"}
-          </Link>
-        ),
+        cell: (r) => {
+          const isMe = viewerUserId && r.user_id === viewerUserId;
+          const label = (
+            <>
+              {r.full_name ?? "—"}
+              {isMe && (
+                <span className="bg-accent/15 text-accent ml-2 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                  You
+                </span>
+              )}
+            </>
+          );
+          return canDrillIntoStudents ? (
+            <Link
+              href={`/faculty/student/${r.user_id}`}
+              className="text-ink hover:text-accent font-medium"
+            >
+              {label}
+            </Link>
+          ) : (
+            <span className="text-ink font-medium">{label}</span>
+          );
+        },
       },
       {
         id: "pod",
@@ -79,10 +113,13 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
         className: "text-right",
       },
     ],
-    [],
+    [viewerUserId, canDrillIntoStudents],
   );
 
   const rowClassName = (row: RankedScoreRow): string | undefined => {
+    if (viewerUserId && row.user_id === viewerUserId) {
+      return "bg-accent/10 ring-1 ring-accent/30";
+    }
     if (highlight && myPodName && row.pod_name === myPodName) {
       return "bg-accent/5";
     }
@@ -114,28 +151,44 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
         searchPlaceholder="Search students or pods…"
         emptyMessage="No scores yet."
         rowClassName={rowClassName}
-        mobileCard={(r) => (
-          <div className="space-y-1.5 text-sm">
-            <div className="flex items-baseline justify-between gap-2">
-              <Link
-                href={`/faculty/student/${r.user_id}`}
-                className="text-ink hover:text-accent truncate font-medium"
-              >
-                <span className="text-muted mr-1.5">#{r.rank}</span>
-                {r.full_name ?? "—"}
-              </Link>
+        mobileCard={(r) => {
+          const isMe = viewerUserId && r.user_id === viewerUserId;
+          const Name = canDrillIntoStudents ? (
+            <Link
+              href={`/faculty/student/${r.user_id}`}
+              className="text-ink hover:text-accent truncate font-medium"
+            >
+              <span className="text-muted mr-1.5">#{r.rank}</span>
+              {r.full_name ?? "—"}
+            </Link>
+          ) : (
+            <span className="text-ink truncate font-medium">
+              <span className="text-muted mr-1.5">#{r.rank}</span>
+              {r.full_name ?? "—"}
+            </span>
+          );
+          return (
+            <div className="space-y-1.5 text-sm">
+              <div className="flex items-baseline justify-between gap-2">
+                {Name}
+                {isMe && (
+                  <span className="bg-accent/15 text-accent shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                    You
+                  </span>
+                )}
+              </div>
+              <div className="text-muted flex items-center justify-between gap-2 text-xs">
+                <span className="truncate">{r.pod_name ?? "—"}</span>
+                <span className="text-accent font-semibold">Total {r.total_score}</span>
+              </div>
+              <div className="text-muted flex flex-wrap gap-x-3 gap-y-0.5 text-xs">
+                <span>Quiz {r.quiz_score}</span>
+                <span>Subs {r.submission_score}</span>
+                <span>Activity {r.activity_score}</span>
+              </div>
             </div>
-            <div className="text-muted flex items-center justify-between gap-2 text-xs">
-              <span className="truncate">{r.pod_name ?? "—"}</span>
-              <span className="text-accent font-semibold">Total {r.total_score}</span>
-            </div>
-            <div className="text-muted flex flex-wrap gap-x-3 gap-y-0.5 text-xs">
-              <span>Quiz {r.quiz_score}</span>
-              <span>Subs {r.submission_score}</span>
-              <span>Activity {r.activity_score}</span>
-            </div>
-          </div>
-        )}
+          );
+        }}
       />
     </div>
   );
