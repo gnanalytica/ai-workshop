@@ -82,6 +82,33 @@ export function navForCaps(caps: readonly string[]): NavItem[] {
 }
 
 /**
+ * Cohort-scoped nav for admins. Used when admin is inside
+ * /admin/cohorts/[id]/* — the sidebar swaps to these items.
+ *
+ * Capabilities aren't filtered here; if you can reach the cohort overview
+ * (schedule.read), you can see this nav. Individual pages still
+ * requireCapability() at the route level.
+ */
+export function adminCohortNav(cohortId: string): NavItem[] {
+  const base = `/admin/cohorts/${cohortId}`;
+  return [
+    { label: "Overview",    href: base,                  cap: "schedule.read", group: "admin", section: "Run the day", icon: "home" },
+    { label: "Live",        href: `${base}/live`,        cap: "schedule.read", group: "admin", section: "Run the day", icon: "activity" },
+    { label: "Curriculum",  href: `${base}/curriculum`,  cap: "content.read",  group: "admin", section: "Run the day", icon: "book" },
+
+    { label: "Roster",      href: `${base}/roster`,      cap: "roster.read",   group: "admin", section: "People",      icon: "users-round" },
+    { label: "Pods",        href: `${base}/pods`,        cap: "roster.read",   group: "admin", section: "People",      icon: "users" },
+
+    { label: "Capstones",   href: `${base}/capstones`,   cap: "roster.read",   group: "admin", section: "Work",        icon: "milestone" },
+    { label: "Submissions", href: `${base}/grading`,     cap: "grading.read",  group: "admin", section: "Work",        icon: "check-square" },
+    { label: "Polls",       href: `${base}/polls`,       cap: "content.read",  group: "admin", section: "Work",        icon: "vote" },
+
+    { label: "Pulse",       href: `${base}/pulse`,       cap: "analytics.read:cohort", group: "admin", section: "Insight", icon: "bar-chart" },
+    { label: "Help desk",   href: `${base}/help-desk`,   cap: "support.triage", group: "admin", section: "Insight",     icon: "life-buoy" },
+  ];
+}
+
+/**
  * Filter NAV by both capability AND the persona the UI is rendering for.
  * - student persona → only "student" group items
  * - faculty persona → only "faculty" group items

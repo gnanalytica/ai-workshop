@@ -33,7 +33,7 @@ import {
   Vote,
   X,
 } from "lucide-react";
-import { navForPersona, type NavIcon, type NavItem } from "@/lib/rbac/menus";
+import { adminCohortNav, navForPersona, type NavIcon, type NavItem } from "@/lib/rbac/menus";
 import type { Persona } from "@/lib/auth/persona";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -104,11 +104,23 @@ export function Sidebar({
     });
   };
 
-  const rawItems = navForPersona(caps, persona);
-  // Send the admin "Cohorts" entry directly to the active cohort's home so a
-  // selection made in the topbar switcher survives a sidebar click. Falls
-  // back to /admin (the cohort list) when no cohort is active yet.
-  const items = activeCohortId
+  // Contextual sidebar: when admin is inside /admin/cohorts/[id]/*, the
+  // sidebar swaps to that cohort's sub-nav. Otherwise show the standard
+  // persona nav.
+  const cohortMatch = activePath.match(/^\/admin\/cohorts\/([^/]+)/);
+  const inCohort = persona === "admin" && !!cohortMatch;
+  const contextCohortId = cohortMatch?.[1] ?? null;
+
+  const rawItems = inCohort && contextCohortId
+    ? adminCohortNav(contextCohortId).filter(
+        (it) => it.cap == null || caps.includes(it.cap),
+      )
+    : navForPersona(caps, persona);
+
+  // Outside cohort context: send the admin "Cohorts" entry to the active
+  // cohort's home so a selection made in the topbar switcher survives a
+  // sidebar click. Falls back to /admin (the cohort list).
+  const items = !inCohort && activeCohortId
     ? rawItems.map((it) =>
         it.href === "/admin" && it.group === "admin"
           ? { ...it, href: `/admin/cohorts/${activeCohortId}` as NavItem["href"] }
@@ -167,6 +179,25 @@ export function Sidebar({
           </Link>
 
           <div className="flex-1 overflow-x-hidden overflow-y-auto py-3">
+            {inCohort && (
+              <div className="mb-3 px-3">
+                <Link
+                  href="/admin"
+                  title={!expanded ? "All cohorts" : undefined}
+                  className="text-muted hover:text-ink hover:bg-bg-soft flex h-8 items-center gap-3 rounded-md px-2.5 text-[12px] transition-colors"
+                >
+                  <ChevronsLeft size={15} strokeWidth={1.6} className="shrink-0" />
+                  <span
+                    className={cn(
+                      "whitespace-nowrap transition-opacity duration-200 ease-out",
+                      expanded ? "opacity-100" : "pointer-events-none opacity-0",
+                    )}
+                  >
+                    All cohorts
+                  </span>
+                </Link>
+              </div>
+            )}
             {sections.map(({ name, items }, i) => (
               <div key={name ?? `_${i}`} className={cn("px-3", i > 0 && "mt-4")}>
                 {name && (
@@ -283,6 +314,17 @@ export function Sidebar({
               </Button>
             </div>
             <div className="flex-1 overflow-y-auto py-3">
+              {inCohort && (
+                <div className="mb-3 px-3">
+                  <Link
+                    href="/admin"
+                    className="text-muted hover:text-ink hover:bg-bg-soft flex h-8 items-center gap-3 rounded-md px-2.5 text-xs"
+                  >
+                    <ChevronsLeft size={15} strokeWidth={1.6} />
+                    <span>All cohorts</span>
+                  </Link>
+                </div>
+              )}
               {sections.map(({ name, items }, i) => (
                 <div key={name ?? `_${i}`} className={cn("px-3", i > 0 && "mt-4")}>
                   {name && <p className="eyebrow mb-2 px-2">{name}</p>}

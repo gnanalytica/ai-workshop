@@ -3,5 +3,5 @@ import { getAdminCohort } from "@/lib/queries/admin-context";
 
 export default async function Redirect() {
   const c = await getAdminCohort();
-  redirect(c ? `/admin/cohorts/${c.id}/milestones` : "/admin");
+  redirect(c ? `/admin/cohorts/${c.id}/capstones` : "/admin");
 }

@@ -229,13 +229,6 @@ export default async function AdminCohortHome({
           </Link>
           <Link
             className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/milestones`}
-          >
-            <div className="text-ink font-medium">Milestones</div>
-            <div className="text-muted text-xs">Capstone phase board</div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
             href={`/admin/cohorts/${cohort.id}/polls`}
           >
             <div className="text-ink font-medium">Poll history</div>
