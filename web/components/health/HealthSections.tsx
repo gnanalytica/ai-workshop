@@ -100,9 +100,12 @@ export function AtRiskList({
 export function DayFeedbackList({
   rows,
   detailHref,
+  cohortSize,
 }: {
   rows: DayFeedbackSummary[];
   detailHref?: (dayNumber: number) => string;
+  /** When provided, each row shows N / cohortSize · pct%. */
+  cohortSize?: number;
 }) {
   const visible = rows.filter((r) => r.total_responses > 0);
   if (visible.length === 0) {
@@ -130,7 +133,9 @@ export function DayFeedbackList({
               <div className="min-w-[5rem]">
                 <p className="text-ink font-medium">Day {r.day_number}</p>
                 <p className="text-muted text-xs">
-                  {r.total_responses} response{r.total_responses === 1 ? "" : "s"}
+                  {cohortSize && cohortSize > 0
+                    ? `${r.total_responses}/${cohortSize} · ${Math.round((r.total_responses / cohortSize) * 100)}%`
+                    : `${r.total_responses} response${r.total_responses === 1 ? "" : "s"}`}
                 </p>
               </div>
               <div className="flex-1 min-w-[12rem]">

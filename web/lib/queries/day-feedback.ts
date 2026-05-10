@@ -174,6 +174,126 @@ export async function getFacultyPrimaryPodId(
   return rows[0]?.pod_id ?? null;
 }
 
+/**
+ * Recent fuzzy-topic entries across a window of days. Surfaces what
+ * students typed into the "anything fuzzy?" field — the highest-signal
+ * qualitative data that otherwise sits invisible on the cohort overview.
+ *
+ * Skips empty / "no" / "none" / "good" answers (we treat them as noise).
+ * Anonymous rows render with full_name = null.
+ */
+export interface FuzzyTopicEntry {
+  day_number: number;
+  text: string;
+  rating: number;
+  full_name: string | null;
+  created_at: string;
+}
+
+const FUZZY_NOISE = new Set([
+  "no", "none", "nothing", "nothing.", "good", "good.", "ok", "okay", "great",
+  "n/a", "na", "-", "—",
+]);
+
+export async function listRecentFuzzyTopics(
+  cohortId: string,
+  dayNumbers: number[],
+  limit = 25,
+): Promise<FuzzyTopicEntry[]> {
+  if (dayNumbers.length === 0) return [];
+  const sb = await getSupabaseServer();
+  const { data } = await sb
+    .from("day_feedback")
+    .select(
+      "day_number, fuzzy_topic, rating, anonymous, created_at, profiles:user_id(full_name)",
+    )
+    .eq("cohort_id", cohortId)
+    .in("day_number", dayNumbers)
+    .not("fuzzy_topic", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(limit * 3); // overshoot — we filter noise below
+
+  type Row = {
+    day_number: number;
+    fuzzy_topic: string | null;
+    rating: number;
+    anonymous: boolean;
+    created_at: string;
+    profiles: { full_name: string | null } | null;
+  };
+
+  const out: FuzzyTopicEntry[] = [];
+  for (const r of (data ?? []) as unknown as Row[]) {
+    const text = (r.fuzzy_topic ?? "").trim();
+    if (!text) continue;
+    if (FUZZY_NOISE.has(text.toLowerCase())) continue;
+    out.push({
+      day_number: r.day_number,
+      text,
+      rating: r.rating,
+      full_name: r.anonymous ? null : (r.profiles?.full_name ?? null),
+      created_at: r.created_at,
+    });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/**
+ * Students who left a low rating (≤ `maxRating`) on any day in the window.
+ * Returned newest-first; user_id is null for anonymous rows so the UI can
+ * still render the entry without linking.
+ */
+export interface LowRatingEntry {
+  day_number: number;
+  rating: number;
+  fuzzy_topic: string | null;
+  user_id: string | null;
+  full_name: string | null;
+  anonymous: boolean;
+  created_at: string;
+}
+
+export async function listLowRatingFeedback(
+  cohortId: string,
+  dayNumbers: number[],
+  maxRating = 2,
+  limit = 20,
+): Promise<LowRatingEntry[]> {
+  if (dayNumbers.length === 0) return [];
+  const sb = await getSupabaseServer();
+  const { data } = await sb
+    .from("day_feedback")
+    .select(
+      "day_number, rating, fuzzy_topic, user_id, anonymous, created_at, profiles:user_id(full_name)",
+    )
+    .eq("cohort_id", cohortId)
+    .in("day_number", dayNumbers)
+    .lte("rating", maxRating)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  type Row = {
+    day_number: number;
+    rating: number;
+    fuzzy_topic: string | null;
+    user_id: string;
+    anonymous: boolean;
+    created_at: string;
+    profiles: { full_name: string | null } | null;
+  };
+
+  return ((data ?? []) as unknown as Row[]).map((r) => ({
+    day_number: r.day_number,
+    rating: r.rating,
+    fuzzy_topic: r.fuzzy_topic,
+    user_id: r.anonymous ? null : r.user_id,
+    full_name: r.anonymous ? null : (r.profiles?.full_name ?? null),
+    anonymous: r.anonymous,
+    created_at: r.created_at,
+  }));
+}
+
 export async function getDayFeedbackSummary(
   cohortId: string,
   dayNumber: number,

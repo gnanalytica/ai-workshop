@@ -189,6 +189,130 @@ export const getEngagementByDay = cache(
   },
 );
 
+export interface CohortDayProgress {
+  day_number: number;
+  cohort_size: number;
+  /** Number of students who attempted the day's quiz (any quiz tagged for this day). null = no quiz on this day. */
+  quiz_attempts: number | null;
+  /** Pass count among attempts. Pass = score >= 60. null = no quiz. */
+  quiz_passed: number | null;
+  /** Number of students with a submission on this day (status = submitted or graded). null = no assignment. */
+  submitted: number | null;
+  /** Total non-reflection assignments for this day (lab or capstone). 0 = nothing to submit. */
+  submittable_assignments: number;
+}
+
+/**
+ * Quiz pass rate + submission rate per day for the recent window. Drives
+ * the "are they keeping up?" card on Pulse. Returns null axes when nothing
+ * was deployable on that day, so the UI can hide / dash instead of
+ * showing 0%.
+ */
+export const getCohortProgressByDay = cache(
+  async (cohortId: string, dayNumbers: number[]): Promise<CohortDayProgress[]> => {
+    if (dayNumbers.length === 0) return [];
+    const sb = await getSupabaseServer();
+
+    const [reg, quizMeta, attempts, asgnMeta, subs] = await Promise.all([
+      sb
+        .from("registrations")
+        .select("user_id", { count: "exact", head: true })
+        .eq("cohort_id", cohortId)
+        .eq("status", "confirmed"),
+      sb
+        .from("quizzes")
+        .select("id, day_number")
+        .eq("cohort_id", cohortId)
+        .in("day_number", dayNumbers),
+      sb
+        .from("quiz_attempts")
+        .select("user_id, score, completed_at, quizzes!inner(day_number, cohort_id)")
+        .eq("quizzes.cohort_id", cohortId)
+        .in("quizzes.day_number", dayNumbers)
+        .not("completed_at", "is", null),
+      sb
+        .from("assignments")
+        .select("id, day_number, kind")
+        .eq("cohort_id", cohortId)
+        .in("day_number", dayNumbers)
+        .neq("kind", "reflection"),
+      sb
+        .from("submissions")
+        .select("user_id, status, assignments!inner(day_number, cohort_id, kind)")
+        .eq("assignments.cohort_id", cohortId)
+        .in("assignments.day_number", dayNumbers)
+        .neq("assignments.kind", "reflection")
+        .in("status", ["submitted", "graded"]),
+    ]);
+
+    const cohortSize = reg.count ?? 0;
+
+    // Did this day have a quiz / assignment at all?
+    const quizDays = new Set<number>();
+    for (const r of (quizMeta.data ?? []) as Array<{ day_number: number }>) quizDays.add(r.day_number);
+
+    const asgnByDay = new Map<number, number>();
+    for (const r of (asgnMeta.data ?? []) as Array<{ day_number: number }>) {
+      asgnByDay.set(r.day_number, (asgnByDay.get(r.day_number) ?? 0) + 1);
+    }
+
+    // Distinct attempters per day, and pass count (best attempt per user-day).
+    type AttemptRow = {
+      user_id: string;
+      score: number | null;
+      quizzes: { day_number: number } | Array<{ day_number: number }>;
+    };
+    const bestByDayUser = new Map<string, number>(); // key: `${day}-${uid}`
+    for (const r of (attempts.data ?? []) as AttemptRow[]) {
+      const q = Array.isArray(r.quizzes) ? r.quizzes[0] : r.quizzes;
+      if (!q) continue;
+      const key = `${q.day_number}-${r.user_id}`;
+      const score = r.score ?? 0;
+      if (score > (bestByDayUser.get(key) ?? -1)) bestByDayUser.set(key, score);
+    }
+    const attemptCountByDay = new Map<number, number>();
+    const passCountByDay = new Map<number, number>();
+    for (const [key, score] of bestByDayUser) {
+      const day = Number(key.split("-")[0]);
+      attemptCountByDay.set(day, (attemptCountByDay.get(day) ?? 0) + 1);
+      if (score >= 60) passCountByDay.set(day, (passCountByDay.get(day) ?? 0) + 1);
+    }
+
+    // Distinct submitters per day.
+    type SubRow = {
+      user_id: string;
+      assignments: { day_number: number } | Array<{ day_number: number }>;
+    };
+    const submittersByDay = new Map<number, Set<string>>();
+    for (const r of (subs.data ?? []) as SubRow[]) {
+      const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
+      if (!a) continue;
+      let set = submittersByDay.get(a.day_number);
+      if (!set) {
+        set = new Set();
+        submittersByDay.set(a.day_number, set);
+      }
+      set.add(r.user_id);
+    }
+
+    return dayNumbers
+      .slice()
+      .sort((a, b) => a - b)
+      .map((day) => {
+        const hasQuiz = quizDays.has(day);
+        const submittable = asgnByDay.get(day) ?? 0;
+        return {
+          day_number: day,
+          cohort_size: cohortSize,
+          quiz_attempts: hasQuiz ? attemptCountByDay.get(day) ?? 0 : null,
+          quiz_passed: hasQuiz ? passCountByDay.get(day) ?? 0 : null,
+          submitted: submittable > 0 ? submittersByDay.get(day)?.size ?? 0 : null,
+          submittable_assignments: submittable,
+        };
+      });
+  },
+);
+
 export const getAtRisk = cache(async (cohortId: string, threshold = 3): Promise<AtRiskRow[]> => {
   const sb = await getSupabaseServer();
   const [regs, atts, labs] = await Promise.all([

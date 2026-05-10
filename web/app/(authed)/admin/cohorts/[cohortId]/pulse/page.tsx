@@ -10,6 +10,9 @@ import {
   AtRiskList,
   DayFeedbackList,
 } from "@/components/health/HealthSections";
+import { FuzzyTopicsPanel } from "@/components/health/FuzzyTopicsPanel";
+import { LowRatingTriage } from "@/components/health/LowRatingTriage";
+import { CohortProgressCard } from "@/components/health/CohortProgressCard";
 import {
   getCohortKpis,
   listAtRiskStudents,
@@ -18,8 +21,13 @@ import {
 import {
   getAnalyticsSummary,
   getAttendanceByDay,
+  getCohortProgressByDay,
   getEngagementByDay,
 } from "@/lib/queries/analytics";
+import {
+  listRecentFuzzyTopics,
+  listLowRatingFeedback,
+} from "@/lib/queries/day-feedback";
 import { listCohortPolls } from "@/lib/queries/polls-overview";
 import { listCohortDays } from "@/lib/queries/cohort";
 import { workingDayNumber } from "@/lib/calendar";
@@ -42,16 +50,29 @@ export default async function AdminCohortPulsePage({
     .sort((a, b) => b - a)
     .slice(0, 7);
 
-  const [kpis, summary, byDay, engagement, atRisk, dayFeedback, polls] =
-    await Promise.all([
-      getCohortKpis(cohort.id),
-      getAnalyticsSummary(cohort.id),
-      getAttendanceByDay(cohort.id),
-      getEngagementByDay(cohort.id),
-      listAtRiskStudents(cohort.id),
-      listRecentDayFeedback(cohort.id, recentDayNumbers, null),
-      listCohortPolls(cohort.id),
-    ]);
+  const [
+    kpis,
+    summary,
+    byDay,
+    engagement,
+    atRisk,
+    dayFeedback,
+    polls,
+    fuzzyTopics,
+    lowRating,
+    progress,
+  ] = await Promise.all([
+    getCohortKpis(cohort.id),
+    getAnalyticsSummary(cohort.id),
+    getAttendanceByDay(cohort.id),
+    getEngagementByDay(cohort.id),
+    listAtRiskStudents(cohort.id),
+    listRecentDayFeedback(cohort.id, recentDayNumbers, null),
+    listCohortPolls(cohort.id),
+    listRecentFuzzyTopics(cohort.id, recentDayNumbers, 25),
+    listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 20),
+    getCohortProgressByDay(cohort.id, recentDayNumbers),
+  ]);
 
   const hasMarkedAttendance = byDay.length > 0;
   const recentEngagement = engagement
@@ -231,6 +252,13 @@ export default async function AdminCohortPulsePage({
         </div>
         <div className="space-y-2">
           <SectionHead
+            title="Quiz pass & submission rate by day"
+            sub={`${recentDayNumbers.length} most recent day${recentDayNumbers.length === 1 ? "" : "s"} · pass = score ≥ 60`}
+          />
+          <CohortProgressCard rows={progress} />
+        </div>
+        <div className="space-y-2">
+          <SectionHead
             title="At-risk students"
             sub={
               atRisk.length === 0
@@ -249,14 +277,38 @@ export default async function AdminCohortPulsePage({
       {/* Question 3 — Are they happy? */}
       <Group
         title="Are they happy?"
-        sub="Day-end feedback ratings, plus the topics students flagged."
+        sub="Day-end feedback ratings, qualitative answers, and low-rating triage."
       >
         <div className="space-y-2">
           <SectionHead
             title="Recent day feedback"
-            sub={`last ${recentDayNumbers.length} days`}
+            sub={`last ${recentDayNumbers.length} day${recentDayNumbers.length === 1 ? "" : "s"} · response rate vs ${kpis.students} confirmed`}
           />
-          <DayFeedbackList rows={dayFeedback} />
+          <DayFeedbackList rows={dayFeedback} cohortSize={kpis.students} />
+        </div>
+
+        <div className="space-y-2">
+          <SectionHead
+            title="What's still fuzzy?"
+            sub={
+              fuzzyTopics.length === 0
+                ? "no qualitative answers yet"
+                : `${fuzzyTopics.length} qualitative answer${fuzzyTopics.length === 1 ? "" : "s"} · noise filtered`
+            }
+          />
+          <FuzzyTopicsPanel entries={fuzzyTopics} />
+        </div>
+
+        <div className="space-y-2">
+          <SectionHead
+            title="Low-rating triage"
+            sub={
+              lowRating.length === 0
+                ? "no 1- or 2-star ratings in the window"
+                : `${lowRating.length} student${lowRating.length === 1 ? "" : "s"} flagged ≤ 2★ recently — consider reaching out`
+            }
+          />
+          <LowRatingTriage entries={lowRating} studentHref={studentHref} />
         </div>
       </Group>
 
