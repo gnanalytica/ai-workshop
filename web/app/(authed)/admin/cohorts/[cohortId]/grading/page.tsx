@@ -1,13 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { listAssignments } from "@/lib/queries/content";
 import { listAssignmentSubmissions } from "@/lib/queries/grading";
 import { GradingClient } from "@/app/(authed)/admin/grading/GradingClient";
+import { AssignmentPicker } from "@/app/(authed)/admin/grading/AssignmentPicker";
 
 export default async function AdminCohortGradingPage({
   params,
@@ -23,60 +22,54 @@ export default async function AdminCohortGradingPage({
 
   const assignments = await listAssignments(cohort.id);
   const sp = await searchParams;
-  const activeId = sp.a ?? assignments[0]?.id ?? null;
+  // Default selection: first assignment that actually has submissions, else
+  // first assignment, else null.
+  const fallbackId =
+    assignments.find((a) => a.submission_count > 0)?.id ??
+    assignments[0]?.id ??
+    null;
+  const activeId = sp.a ?? fallbackId;
   const activeAssignment = assignments.find((a) => a.id === activeId) ?? null;
   const subs = activeId ? await listAssignmentSubmissions(activeId) : [];
 
   return (
     <>
-      <CohortShell cohort={cohort} active="grading" />
+      <CohortShell cohort={cohort} />
 
-      <p className="text-muted text-sm">
-        Run AI grading in batch, review the AI&apos;s drafts, then publish.
-        Until published, students don&apos;t see a score. Quizzes are auto-graded
-        (not shown here).
-      </p>
+      <div className="space-y-4">
+        <header>
+          <h1 className="text-xl font-semibold tracking-tight">Submissions</h1>
+          <p className="text-muted mt-1 text-sm">
+            Run AI grading in batch, review the AI&apos;s drafts, then publish.
+            Until published, students don&apos;t see a score. Quizzes are
+            auto-graded (not shown here).
+          </p>
+        </header>
 
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Assignments</h2>
         {assignments.length === 0 ? (
-          <Card><CardSub>No assignments yet.</CardSub></Card>
+          <Card>
+            <CardSub>
+              No assignments yet. Add one from the Curriculum tab.
+            </CardSub>
+          </Card>
         ) : (
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {assignments.map((a) => (
-              <Link key={a.id} prefetch={false} href={`/admin/cohorts/${cohort.id}/grading?a=${a.id}`}>
-                <Card
-                  className={
-                    "transition-colors " +
-                    (a.id === activeId ? "border-accent" : "hover:border-accent/40")
-                  }
-                >
-                  <p className="text-muted font-mono text-xs">D{String(a.day_number).padStart(2, "0")} · {a.kind}</p>
-                  <CardTitle>{a.title}</CardTitle>
-                  <CardSub className="mt-1">{a.submission_count} submissions</CardSub>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          <>
+            <AssignmentPicker
+              cohortId={cohort.id}
+              assignments={assignments}
+              activeId={activeId}
+            />
+            {activeAssignment && (
+              <GradingClient
+                key={activeId ?? "none"}
+                assignmentId={activeId!}
+                autoGrade={activeAssignment.auto_grade}
+                initial={subs}
+              />
+            )}
+          </>
         )}
-      </section>
-
-      {activeId && (
-        <section>
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold tracking-tight">
-            Submissions
-            <Badge>{subs.length}</Badge>
-            <Badge variant="ok">{subs.filter((s) => s.human_reviewed_at).length} published</Badge>
-            <Badge variant="warn">{subs.filter((s) => s.ai_graded && !s.human_reviewed_at).length} AI · pending review</Badge>
-            <Badge variant="danger">{subs.filter((s) => !s.ai_graded && s.status === "submitted").length} ungraded</Badge>
-          </h2>
-          <GradingClient
-            assignmentId={activeId}
-            autoGrade={activeAssignment?.auto_grade ?? true}
-            initial={subs}
-          />
-        </section>
-      )}
+      </div>
     </>
   );
 }
