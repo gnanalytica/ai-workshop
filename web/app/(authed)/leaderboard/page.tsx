@@ -13,10 +13,12 @@ import {
   listStudentLeaderboard,
   listTeamLeaderboard,
 } from "@/lib/queries/faculty-cohort";
+import { getStudentTimeline } from "@/lib/queries/student-timeline";
 import { StudentLeaderboardTable } from "@/app/(authed)/faculty/leaderboard/StudentLeaderboardTable";
 import { TeamLeaderboardTable } from "@/app/(authed)/faculty/leaderboard/TeamLeaderboardTable";
 import { StudentPodLeaderboardTable } from "./StudentPodLeaderboardTable";
 import { MyPodMembersTable } from "./MyPodMembersTable";
+import { ScoreBreakdown } from "@/components/score-breakdown/ScoreBreakdown";
 
 export default async function LeaderboardPage({
   searchParams,
@@ -38,12 +40,13 @@ export default async function LeaderboardPage({
 
   const isFaculty = await checkCapability("roster.read", cohortId);
   const me = await getSession();
-  const [students, pods, teams, facultyPods, myPod] = await Promise.all([
+  const [students, pods, teams, facultyPods, myPod, myTimeline] = await Promise.all([
     listStudentLeaderboard(cohortId),
     getCohortPodLeaderboard(cohortId),
     listTeamLeaderboard(cohortId),
     isFaculty && me ? getFacultyPods(cohortId, me.id) : Promise.resolve([]),
     getMyPod(cohortId),
+    me ? getStudentTimeline(cohortId, me.id) : Promise.resolve([]),
   ]);
 
   // For faculty: highlight the pod they coach. For students: highlight their
@@ -78,6 +81,12 @@ export default async function LeaderboardPage({
       {tab === "student" && (
         <div className="space-y-4">
           {me && <YourScorecard rows={students} viewerUserId={me.id} />}
+          {me && (
+            <ScoreBreakdown
+              events={myTimeline}
+              emptyHint="No quiz attempts, submissions, or activity logged yet."
+            />
+          )}
           <Card>
             <StudentLeaderboardTable
               rows={students}

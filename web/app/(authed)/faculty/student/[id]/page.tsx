@@ -10,9 +10,11 @@ import { getFacultyCohort } from "@/lib/queries/faculty";
 import { getStudentDrill } from "@/lib/queries/faculty-student";
 import { listCohortPods } from "@/lib/queries/faculty-cohort";
 import { listPodNotesForStudent } from "@/lib/queries/faculty-pod-notes";
+import { getStudentTimeline } from "@/lib/queries/student-timeline";
 import { fmtDateTime, relTime } from "@/lib/format";
 import { StudentActions } from "./StudentActions";
 import { PodNotesPanel } from "./PodNotesPanel";
+import { ScoreBreakdown } from "@/components/score-breakdown/ScoreBreakdown";
 
 export default async function StudentDrillPage({ params }: { params: Promise<{ id: string }> }) {
   await requireCapability("roster.read");
@@ -20,10 +22,11 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
   const me = await getSession();
   if (!f || !me) return <Card><CardTitle>You aren&apos;t assigned to a cohort.</CardTitle></Card>;
   const { id } = await params;
-  const [s, pods, notes] = await Promise.all([
+  const [s, pods, notes, timeline] = await Promise.all([
     getStudentDrill(f.cohort.id, id),
     listCohortPods(f.cohort.id, ""),
     listPodNotesForStudent(f.cohort.id, id),
+    getStudentTimeline(f.cohort.id, id),
   ]);
   if (!s) notFound();
   const podOptions = pods.map((p) => ({ pod_id: p.pod_id, name: p.name }));
@@ -95,17 +98,25 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
         />
       </section>
 
-      <section>
-        <h2 className="mb-2 text-lg font-semibold tracking-tight">Recent submissions</h2>
-        {s.recentSubmissions.length === 0 ? (
-          <Card><CardSub>No submissions yet — student hasn&apos;t turned in any assignments.</CardSub></Card>
-        ) : (
+      <ScoreBreakdown
+        events={timeline}
+        emptyHint="No quiz attempts, submissions, or activity logged for this student yet."
+      />
+
+      {s.recentSubmissions.length > 0 && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold tracking-tight">Submission detail</h2>
           <Card>
             <ul className="divide-y divide-line/50">
               {s.recentSubmissions.map((r) => (
                 <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
                   <div className="min-w-0">
-                    <span className="text-ink font-medium break-words">Day {r.day_number} · {r.assignment_title}</span>
+                    <Link
+                      href={`/admin/submissions/${r.id}`}
+                      className="text-ink hover:text-accent font-medium break-words"
+                    >
+                      Day {r.day_number} · {r.assignment_title}
+                    </Link>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={r.status === "graded" ? "ok" : r.status === "submitted" ? "warn" : "default"}>
@@ -118,8 +129,8 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
               ))}
             </ul>
           </Card>
-        )}
-      </section>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-2 text-lg font-semibold tracking-tight">Help desk (recent)</h2>
