@@ -4,13 +4,13 @@ import { listCohortDays } from "@/lib/queries/cohort";
 
 export interface StudentActivity {
   user_id: string;
-  /** % of unlocked days with at least one activity (0–100). */
+  /** % of opportunity days with at least one activity (0–100). 100 when no opportunity days have occurred yet. */
   score: number;
-  /** % of last 3 unlocked days with activity (0–100). */
+  /** % of last 3 opportunity days with activity (0–100). */
   recent_score: number;
-  /** Distinct unlocked days with any activity. */
+  /** Distinct opportunity days the student was active on. */
   active_days: number;
-  /** Total unlocked days against which active_days is measured. */
+  /** Total opportunity days (unlocked AND had an assignment/quiz/poll deployed). */
   unlocked_days: number;
   /** Most recent activity timestamp across all signals (ISO string), or null. */
   last_active_at: string | null;
@@ -31,8 +31,16 @@ export interface StudentActivity {
  *
  * "Active on day d" = the student touched any of: submissions for d, quiz
  * attempts for d, day_feedback for d, poll_votes for a poll tagged with d,
- * or lab_progress for d. The score is `active_days / unlocked_days * 100`,
- * which naturally evolves as new days unlock and new activity rolls in.
+ * or lab_progress for d.
+ *
+ * Scoring is *relative to what was available*: a day only counts in the
+ * denominator if at least one "opportunity" existed on it — an assignment,
+ * a quiz, or a tagged poll. A buffer day with nothing deployed cannot
+ * pull a student's score down. Likewise, the number of polls/quizzes on
+ * a given day is irrelevant: activity is binary at the day level.
+ *
+ * When zero opportunity days have happened yet (early cohort), score is
+ * 100 by convention — no penalty for the cohort not yet rolling.
  */
 export const getStudentActivity = cache(
   async (
@@ -47,15 +55,13 @@ export const getStudentActivity = cache(
       .map((d) => d.day_number)
       .sort((a, b) => a - b);
     const unlockedSet = new Set(unlocked);
-    const unlocked_days = Math.max(1, unlocked.length);
     const recentDays = unlocked.slice(-3);
     const recentSet = new Set(recentDays);
-    const recentDenom = Math.max(1, recentDays.length);
 
     const scope = userIdFilter ? new Set(userIdFilter) : null;
     const inScope = (uid: string) => !scope || scope.has(uid);
 
-    const [subs, quizzes, feedback, votes, labs] = await Promise.all([
+    const [subs, quizzes, feedback, votes, labs, opportunities] = await Promise.all([
       sb
         .from("submissions")
         .select(
@@ -81,7 +87,35 @@ export const getStudentActivity = cache(
         .from("lab_progress")
         .select("user_id, day_number, updated_at")
         .eq("cohort_id", cohortId),
+      // Days that had at least one deployable opportunity: an assignment,
+      // a quiz, or a tagged poll. These are the days we'll count in the
+      // denominator. Days without any of these (e.g., admin unlocked early
+      // before deploying content, or pure live-session days) are ignored.
+      Promise.all([
+        sb.from("assignments").select("day_number").eq("cohort_id", cohortId),
+        sb.from("quizzes").select("day_number").eq("cohort_id", cohortId),
+        sb
+          .from("polls")
+          .select("day_number")
+          .eq("cohort_id", cohortId)
+          .not("day_number", "is", null),
+      ]).then(([a, q, p]) => {
+        const set = new Set<number>();
+        for (const r of (a.data ?? []) as Array<{ day_number: number }>) set.add(r.day_number);
+        for (const r of (q.data ?? []) as Array<{ day_number: number }>) set.add(r.day_number);
+        for (const r of (p.data ?? []) as Array<{ day_number: number | null }>) {
+          if (typeof r.day_number === "number") set.add(r.day_number);
+        }
+        return set;
+      }),
     ]);
+
+    // Effective denominator: only unlocked days that had at least one
+    // opportunity (assignment / quiz / poll). Prevents "empty days"
+    // (unlocked but nothing deployed) from dragging the score down.
+    const opportunityDays = opportunities;
+    const effectiveDenom = unlocked.filter((d) => opportunityDays.has(d)).length;
+    const recentEffective = recentDays.filter((d) => opportunityDays.has(d)).length;
 
     interface UserState {
       activeDays: Set<number>;
@@ -174,10 +208,21 @@ export const getStudentActivity = cache(
 
     const out = new Map<string, StudentActivity>();
     for (const [uid, s] of m.entries()) {
-      const score = Math.round((s.activeDays.size / unlocked_days) * 100);
-      const recent_score = Math.round(
-        (s.recentActiveDays.size / recentDenom) * 100,
-      );
+      // Effective active days = active days that fell on an opportunity day.
+      // (A student could be "active" on a day with no formal opportunity by
+      // submitting feedback alone — that's still effort, but to keep the
+      // numerator and denominator comparable we count only opportunity days.)
+      let activeOnOpp = 0;
+      for (const d of s.activeDays) if (opportunityDays.has(d)) activeOnOpp++;
+      let recentActiveOnOpp = 0;
+      for (const d of s.recentActiveDays) if (opportunityDays.has(d)) recentActiveOnOpp++;
+
+      const score =
+        effectiveDenom === 0 ? 100 : Math.round((activeOnOpp / effectiveDenom) * 100);
+      const recent_score =
+        recentEffective === 0
+          ? 100
+          : Math.round((recentActiveOnOpp / recentEffective) * 100);
       const days_since_active = s.lastAt
         ? Math.floor((Date.now() - new Date(s.lastAt).getTime()) / 86_400_000)
         : null;
@@ -185,8 +230,8 @@ export const getStudentActivity = cache(
         user_id: uid,
         score,
         recent_score,
-        active_days: s.activeDays.size,
-        unlocked_days,
+        active_days: activeOnOpp,
+        unlocked_days: effectiveDenom,
         last_active_at: s.lastAt,
         days_since_active,
         signals: s.signals,

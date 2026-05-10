@@ -35,6 +35,95 @@ export interface FacultyRow {
   pods: number;
 }
 
+export interface AttentionItem {
+  kind: "pending_reg" | "pod_no_faculty" | "help_desk_stale" | "ungraded_old";
+  label: string;
+  hint: string;
+  href: string;
+  count: number;
+}
+
+/**
+ * Single-call attention rollup for the admin cohort overview.
+ *
+ * Items: pending registrations · pods without faculty · help-desk tickets
+ * open >24h · submissions submitted >3 days ago and still ungraded.
+ *
+ * Returned in priority order. Items with count=0 are filtered out before
+ * render, so the card stays empty (= nothing to do) when the cohort is
+ * tidy.
+ */
+export const getAdminAttentionItems = cache(
+  async (cohortId: string): Promise<AttentionItem[]> => {
+    const sb = await getSupabaseServer();
+    const now = Date.now();
+    const dayAgo = new Date(now - 24 * 3600_000).toISOString();
+    const threeDaysAgo = new Date(now - 3 * 86_400_000).toISOString();
+
+    const [pending, podsNoFac, helpStale, ungraded] = await Promise.all([
+      sb
+        .from("registrations")
+        .select("user_id", { count: "exact", head: true })
+        .eq("cohort_id", cohortId)
+        .eq("status", "pending"),
+      sb
+        .from("pods")
+        .select("id, pod_faculty(faculty_user_id)")
+        .eq("cohort_id", cohortId),
+      sb
+        .from("help_desk_queue")
+        .select("id", { count: "exact", head: true })
+        .eq("cohort_id", cohortId)
+        .eq("status", "open")
+        .lt("created_at", dayAgo),
+      sb
+        .from("submissions")
+        .select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
+        .eq("assignments.cohort_id", cohortId)
+        .eq("status", "submitted")
+        .is("human_reviewed_at", null)
+        .lt("updated_at", threeDaysAgo),
+    ]);
+
+    type PodWithFac = { id: string; pod_faculty: Array<{ faculty_user_id: string }> };
+    const podsList = (podsNoFac.data ?? []) as unknown as PodWithFac[];
+    const podNoFacCount = podsList.filter((p) => (p.pod_faculty ?? []).length === 0).length;
+
+    const items: AttentionItem[] = [
+      {
+        kind: "pending_reg",
+        label: "Pending registrations",
+        hint: "Confirm so students can log in",
+        href: `/admin/cohorts/${cohortId}/roster?status=pending`,
+        count: pending.count ?? 0,
+      },
+      {
+        kind: "pod_no_faculty",
+        label: "Pods without faculty",
+        hint: "Assign a coach before next class",
+        href: `/admin/cohorts/${cohortId}/pods`,
+        count: podNoFacCount,
+      },
+      {
+        kind: "help_desk_stale",
+        label: "Help desk · open >24h",
+        hint: "These are escalations to look at",
+        href: `/admin/cohorts/${cohortId}/help-desk`,
+        count: helpStale.count ?? 0,
+      },
+      {
+        kind: "ungraded_old",
+        label: "Ungraded · submitted >3 days ago",
+        hint: "Grade or send back for rework",
+        href: `/admin/cohorts/${cohortId}/grading?filter=ungraded`,
+        count: ungraded.count ?? 0,
+      },
+    ];
+
+    return items.filter((it) => it.count > 0);
+  },
+);
+
 export const getAdminCohortKpis = cache(async (cohortId: string): Promise<AdminCohortKpis> => {
   const sb = await getSupabaseServer();
   const [conf, pend, fac, pods] = await Promise.all([

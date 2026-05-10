@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { KpiGrid, StatCard } from "@/components/kpi/StatCard";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
-import { getAdminCohortKpis, listPods } from "@/lib/queries/admin";
+import { getAdminCohortKpis, getAdminAttentionItems, listPods } from "@/lib/queries/admin";
 import { listCohortDays } from "@/lib/queries/cohort";
 import { listCohortActivity, type ActivityKind } from "@/lib/queries/activity";
 import { fmtDateTime, relTime } from "@/lib/format";
@@ -32,8 +32,9 @@ export default async function AdminCohortHome({
   if (!cohort) notFound();
 
   const today = Math.min(30, workingDayNumber(cohort.starts_on, new Date()));
-  const [kpis, activity, feedbackSummaries, pods, days] = await Promise.all([
+  const [kpis, attention, activity, feedbackSummaries, pods, days] = await Promise.all([
     getAdminCohortKpis(cohort.id),
+    getAdminAttentionItems(cohort.id),
     listCohortActivity(cohort.id, 25),
     listRecentDaySummaries(cohort.id, today, 5),
     listPods(cohort.id),
@@ -75,6 +76,35 @@ export default async function AdminCohortHome({
           href={`/admin/cohorts/${cohort.id}/pods`}
         />
       </KpiGrid>
+
+      {attention.length > 0 && (
+        <section>
+          <div className="mb-3 flex items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold tracking-tight">Needs your attention</h2>
+            <CardSub className="text-xs">
+              {attention.length} item{attention.length === 1 ? "" : "s"}
+            </CardSub>
+          </div>
+          <Card className="divide-line/50 space-y-0 p-0">
+            <ul className="divide-line/50 divide-y">
+              {attention.map((it) => (
+                <li key={it.kind}>
+                  <Link
+                    href={it.href}
+                    className="hover:bg-bg-soft flex items-center justify-between gap-4 px-5 py-3 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-ink text-sm font-medium">{it.label}</p>
+                      <p className="text-muted mt-0.5 text-xs">{it.hint}</p>
+                    </div>
+                    <Badge variant={it.count > 5 ? "danger" : "warn"}>{it.count}</Badge>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </section>
+      )}
 
       <section>
         <div className="mb-3 flex items-center justify-between">
@@ -200,49 +230,6 @@ export default async function AdminCohortHome({
         </Card>
       </section>
 
-      <section>
-        <h2 className="mb-3 text-lg font-semibold tracking-tight">More views</h2>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/help-desk`}
-          >
-            <div className="text-ink font-medium">Help desk</div>
-            <div className="text-muted text-xs">Tickets in this cohort</div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors sm:col-span-2"
-            href={`/admin/cohorts/${cohort.id}/pulse`}
-          >
-            <div className="text-ink font-medium">Pulse</div>
-            <div className="text-muted text-xs">
-              Attendance, at-risk, day feedback, and pulse responses — all in
-              one
-            </div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/capstones`}
-          >
-            <div className="text-ink font-medium">Capstones</div>
-            <div className="text-muted text-xs">Per-student status</div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href={`/admin/cohorts/${cohort.id}/polls`}
-          >
-            <div className="text-ink font-medium">Poll history</div>
-            <div className="text-muted text-xs">Past polls + results</div>
-          </Link>
-          <Link
-            className="border-line hover:border-accent/40 hover:bg-bg-soft rounded-md border p-3 text-sm transition-colors"
-            href="/community?mod=1"
-          >
-            <div className="text-ink font-medium">Board moderation</div>
-            <div className="text-muted text-xs">Pin / hide / delete</div>
-          </Link>
-        </div>
-      </section>
     </>
   );
 }

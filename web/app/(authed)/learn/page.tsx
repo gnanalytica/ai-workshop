@@ -195,19 +195,35 @@ export default async function DashboardPage() {
       {upcoming.length > 0 && (
         <section>
           <h2 className="mb-3 text-lg font-semibold tracking-tight">Coming up</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {upcoming.map((d) => (
-              <DayCard
-                key={d.day_number}
-                dayNumber={d.day_number}
-                title={d.title}
-                isUnlocked={d.is_unlocked}
-                liveSessionAt={d.live_session_at}
-                capstoneKind={d.capstone_kind}
-                href={`/day/${d.day_number}`}
-              />
-            ))}
-          </div>
+          {upcoming.every((d) => !d.is_unlocked) ? (
+            <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
+                <p className="text-ink text-sm font-medium">
+                  Day {upcoming[0]!.day_number}
+                  {upcoming.length > 1 ? `–${upcoming[upcoming.length - 1]!.day_number}` : ""}
+                  {" "}unlock progressively this week
+                </p>
+                <p className="text-muted mt-0.5 text-xs">
+                  {upcoming.map((d) => `D${d.day_number} ${d.title ?? "?"}`).join(" · ")}
+                </p>
+              </div>
+              <Badge>locked</Badge>
+            </Card>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {upcoming.map((d) => (
+                <DayCard
+                  key={d.day_number}
+                  dayNumber={d.day_number}
+                  title={d.title}
+                  isUnlocked={d.is_unlocked}
+                  liveSessionAt={d.live_session_at}
+                  capstoneKind={d.capstone_kind}
+                  href={`/day/${d.day_number}`}
+                />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

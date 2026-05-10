@@ -60,10 +60,20 @@ export function CapstoneEditor({
     });
   }
 
+  const isEmpty = !initial;
+
   return (
     <Card className="space-y-4 p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <CardTitle>Project</CardTitle>
+        <div className="min-w-0">
+          <CardTitle>Project</CardTitle>
+          {isEmpty && (
+            <CardSub className="mt-1">
+              This is your home base for the 30 days. Start with a title and the
+              problem you&apos;re tackling — you can sharpen it as you go.
+            </CardSub>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <Badge variant={STATUS_TONE[status]}>{status}</Badge>
           <select
