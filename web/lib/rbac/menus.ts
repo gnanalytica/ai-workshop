@@ -53,8 +53,8 @@ export const NAV: readonly NavItem[] = [
   { label: "My Pod",      href: "/pod",         cap: null,             group: "student", section: "People",    icon: "users" },
   { label: "Classmates",  href: "/people",      cap: null,             group: "student", section: "People",    icon: "users-round" },
 
+  { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
   // Temporarily hidden from student nav — uncomment to restore:
-  // { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
   // { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
   { label: "Handbook",    href: "/handbook",    cap: null,             group: "student", section: "Reference", icon: "library" },
 

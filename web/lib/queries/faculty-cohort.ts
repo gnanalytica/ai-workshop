@@ -473,9 +473,7 @@ export interface ScoreRow {
   pod_name: string | null;
   quiz_score: number;
   submission_score: number;
-  posts_score: number;
-  comments_score: number;
-  upvotes_score: number;
+  activity_score: number;
   total_score: number;
 }
 
@@ -483,15 +481,14 @@ export const listStudentLeaderboard = cache(async (cohortId: string): Promise<Sc
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("v_student_score")
-    .select("user_id, quiz_score, submission_score, posts_score, comments_score, upvotes_score, total_score")
+    .select("user_id, quiz_score, submission_score, activity_score, total_score")
     .eq("cohort_id", cohortId)
     .order("total_score", { ascending: false })
     .limit(100);
   type Row = {
     user_id: string;
     quiz_score: number; submission_score: number;
-    posts_score: number; comments_score: number;
-    upvotes_score: number; total_score: number;
+    activity_score: number; total_score: number;
   };
   const rows = (data ?? []) as Row[];
   if (rows.length === 0) return [];
@@ -513,9 +510,7 @@ export const listStudentLeaderboard = cache(async (cohortId: string): Promise<Sc
     pod_name: podByStudent.get(r.user_id) ?? null,
     quiz_score: Number(r.quiz_score),
     submission_score: Number(r.submission_score),
-    posts_score: Number(r.posts_score),
-    comments_score: Number(r.comments_score),
-    upvotes_score: Number(r.upvotes_score),
+    activity_score: Number(r.activity_score),
     total_score: Number(r.total_score),
   }));
 });

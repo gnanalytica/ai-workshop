@@ -63,12 +63,10 @@ export default async function StudentDrillPage({ params }: { params: Promise<{ i
         <section>
           <h2 className="mb-2 text-lg font-semibold tracking-tight">Score breakdown</h2>
           <Card>
-            <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-5">
+            <div className="grid grid-cols-3 gap-4 text-sm">
               <Slice label="Quiz" value={s.score.quiz} total={s.score.total} />
               <Slice label="Submissions" value={s.score.submissions} total={s.score.total} />
-              <Slice label="Posts" value={s.score.posts} total={s.score.total} />
-              <Slice label="Comments" value={s.score.comments} total={s.score.total} />
-              <Slice label="Upvotes" value={s.score.upvotes} total={s.score.total} />
+              <Slice label="Activity" value={s.score.activity} total={s.score.total} />
             </div>
             <div className="border-line mt-4 flex items-center justify-between border-t pt-3 text-sm">
               <span className="text-muted">Total</span>

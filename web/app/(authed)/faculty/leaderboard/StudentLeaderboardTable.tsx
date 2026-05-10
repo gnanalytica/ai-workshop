@@ -63,24 +63,10 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
         className: "text-right",
       },
       {
-        id: "posts",
-        header: "Posts",
-        accessor: (r) => r.posts_score,
-        cell: (r) => r.posts_score,
-        className: "text-right",
-      },
-      {
-        id: "comm",
-        header: "Comm",
-        accessor: (r) => r.comments_score,
-        cell: (r) => r.comments_score,
-        className: "text-right",
-      },
-      {
-        id: "votes",
-        header: "Votes",
-        accessor: (r) => r.upvotes_score,
-        cell: (r) => r.upvotes_score,
+        id: "activity",
+        header: "Activity",
+        accessor: (r) => r.activity_score,
+        cell: (r) => r.activity_score,
         className: "text-right",
       },
       {
@@ -146,9 +132,7 @@ export function StudentLeaderboardTable({ rows, myPodName }: Props) {
             <div className="text-muted flex flex-wrap gap-x-3 gap-y-0.5 text-xs">
               <span>Quiz {r.quiz_score}</span>
               <span>Subs {r.submission_score}</span>
-              <span>Posts {r.posts_score}</span>
-              <span>Comm {r.comments_score}</span>
-              <span>Votes {r.upvotes_score}</span>
+              <span>Activity {r.activity_score}</span>
             </div>
           </div>
         )}

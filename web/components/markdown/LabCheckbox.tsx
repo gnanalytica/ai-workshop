@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { setLabStep, type LabStatus } from "@/lib/actions/lab-progress";
 
 /**
@@ -22,6 +22,10 @@ export function LabCheckbox({
 }) {
   const [done, setDone] = useState(initialDone);
   const [pending, startTransition] = useTransition();
+  const [flash, setFlash] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   return (
     <input
@@ -36,13 +40,19 @@ export function LabCheckbox({
         startTransition(async () => {
           const r = await setLabStep({ cohortId, dayNumber, labId, status });
           if (!r.ok) {
-            // revert on failure so the UI stays honest
             setDone(prev);
+            return;
           }
+          setFlash(true);
+          if (timer.current) clearTimeout(timer.current);
+          timer.current = setTimeout(() => setFlash(false), 900);
         });
       }}
-      className="accent-[hsl(var(--accent))] mt-1.5 h-3.5 w-3.5 cursor-pointer disabled:opacity-50"
+      className={`mt-1 h-[1.125rem] w-[1.125rem] shrink-0 cursor-pointer rounded border-2 border-line accent-[hsl(var(--accent))] transition-all hover:border-accent hover:shadow-[0_0_0_3px_hsl(var(--accent)/0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-50 ${
+        flash ? "ring-2 ring-accent ring-offset-1" : ""
+      }`}
       aria-label={labId}
+      title="Click to mark complete — your progress is saved"
     />
   );
 }

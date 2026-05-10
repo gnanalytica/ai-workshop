@@ -27,7 +27,10 @@ const baseComponents: MDXRemoteProps["components"] = {
     const { className, children, ...rest } = props as React.LiHTMLAttributes<HTMLLIElement>;
     if (className?.includes("task-list-item")) {
       return (
-        <li {...rest} className="text-ink/90 -ml-6 flex items-start gap-2 list-none">
+        <li
+          {...rest}
+          className="text-ink/90 -ml-6 flex items-start gap-2 list-none transition-opacity has-[input:checked]:text-muted has-[input:checked]:opacity-70 has-[input:checked]:line-through has-[input:checked]:decoration-muted/50"
+        >
           {children}
         </li>
       );
@@ -50,7 +53,7 @@ const baseComponents: MDXRemoteProps["components"] = {
           {...rest}
           type="checkbox"
           defaultChecked={defaultChecked ?? checked ?? false}
-          className="accent-[hsl(var(--accent))] mt-1.5 h-3.5 w-3.5 cursor-pointer"
+          className="mt-1 h-[1.125rem] w-[1.125rem] shrink-0 cursor-pointer rounded border-2 border-line accent-[hsl(var(--accent))] transition-all hover:border-accent hover:shadow-[0_0_0_3px_hsl(var(--accent)/0.15)]"
         />
       );
     }
@@ -124,7 +127,7 @@ const handbookComponents: MDXRemoteProps["components"] = {
       return (
         <li
           {...rest}
-          className="border-line/60 bg-bg-soft/50 text-ink/90 -ml-1 flex list-none items-start gap-2.5 rounded-r-md border border-l-2 border-l-accent/40 pl-3 py-2.5"
+          className="border-line/60 bg-bg-soft/50 text-ink/90 -ml-1 flex list-none items-start gap-2.5 rounded-r-md border border-l-2 border-l-accent/40 pl-3 py-2.5 transition-all has-[input:checked]:bg-accent/5 has-[input:checked]:border-l-accent has-[input:checked]:text-muted has-[input:checked]:line-through has-[input:checked]:decoration-muted/40"
         >
           {children}
         </li>

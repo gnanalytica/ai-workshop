@@ -158,7 +158,7 @@ export interface StudentDrill {
   pod_id: string | null;
   pod_name: string | null;
   score: {
-    quiz: number; submissions: number; posts: number; comments: number; upvotes: number; total: number;
+    quiz: number; submissions: number; activity: number; total: number;
   } | null;
   recentSubmissions: { id: string; assignment_title: string; day_number: number; status: string; score: number | null; updated_at: string }[];
   recentHelpDesk: { id: string; kind: string; status: string; message: string | null; created_at: string }[];
@@ -194,7 +194,7 @@ export const getStudentDrill = cache(
         .maybeSingle(),
       sb
         .from("v_student_score")
-        .select("quiz_score, submission_score, posts_score, comments_score, upvotes_score, total_score")
+        .select("quiz_score, submission_score, activity_score, total_score")
         .eq("cohort_id", cohortId)
         .eq("user_id", userId)
         .maybeSingle(),
@@ -247,9 +247,7 @@ export const getStudentDrill = cache(
         ? {
             quiz: Number((score as { quiz_score: number }).quiz_score),
             submissions: Number((score as { submission_score: number }).submission_score),
-            posts: Number((score as { posts_score: number }).posts_score),
-            comments: Number((score as { comments_score: number }).comments_score),
-            upvotes: Number((score as { upvotes_score: number }).upvotes_score),
+            activity: Number((score as { activity_score: number }).activity_score),
             total: Number((score as { total_score: number }).total_score),
           }
         : null,
