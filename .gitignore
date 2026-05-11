@@ -5,6 +5,9 @@ node_modules/
 # graphify outputs
 graphify-out/
 
+# class decks (local-only — not part of repo)
+docs/day-*-deck/
+
 # environment
 .env
 .env.local
