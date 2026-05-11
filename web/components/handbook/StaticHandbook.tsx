@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
-import { EnterSandboxButton } from "@/components/sandbox/EnterSandboxButton";
 import type { Persona } from "@/lib/auth/persona";
 import { VideoSlot } from "@/components/handbook/VideoSlot";
 
@@ -207,18 +206,7 @@ function DashboardNavTab({
               <Link href="/onboarding">Open Day 0</Link>
             </Button>
           )}
-          {(persona === "admin" || persona === "faculty") && (
-            <EnterSandboxButton />
-          )}
         </div>
-        {(persona === "admin" || persona === "faculty") && (
-          <p className="text-muted mt-3 text-xs leading-relaxed">
-            Tip: open the sandbox first, then start the guide. You will explore
-            the platform with realistic sample students — every action, grade,
-            or post is real, but limited to the sandbox cohort. Click{" "}
-            <span className="text-ink">Exit sandbox</span> at any time to leave.
-          </p>
-        )}
       </Card>
 
       {extras.length > 0 && <SectionGrid sections={extras} />}

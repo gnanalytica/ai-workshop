@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { SandboxBanner } from "./SandboxBanner";
 import { BannerStrip } from "./BannerStrip";
 import { PresentMode } from "./PresentMode";
 import { getProfile } from "@/lib/auth/session";
@@ -10,9 +9,7 @@ import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
 import { navForPersona } from "@/lib/rbac/menus";
 import { TourMount } from "@/components/tour/Tour";
 import { PollPopup } from "@/components/polls/PollPopup";
-import { getActiveSandboxCohortId } from "@/lib/sandbox/active";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { getSupabaseService } from "@/lib/supabase/service";
 import { getMyCurrentCohort } from "@/lib/queries/cohort";
 import { getShellState } from "@/lib/queries/shell";
 
@@ -31,11 +28,6 @@ export async function AppShell({
   cohortName?: string | null;
   cohortStartsOn?: string | null;
 }) {
-  // Phase 1: fan out everything that doesn't depend on activeCohortId.
-  // getMyCurrentCohort is only needed when no cohortId came in via props
-  // (i.e. student routes). All five helpers are React-cache wrapped, so any
-  // re-call from a child component is free.
-  const sandboxIdP = getActiveSandboxCohortId();
   const profileP = getProfile();
   const truePersonaP = getTruePersona();
   const effectivePersonaP = getEffectivePersona();
@@ -50,14 +42,9 @@ export async function AppShell({
   let activeCohortStart: string | null =
     cohortStartsOn ?? fallbackCohort?.starts_on ?? null;
 
-  // Phase 2: one combined RPC for caps + active banner + active poll (see
-  // migration 0085_rpc_shell_state). Cuts three parallel round-trips down to
-  // one — material on free-tier shared compute during a class-start burst.
-  // Cohort-meta and sandbox-name selects fan out alongside it.
-  const sandboxId = await sandboxIdP;
   const needsCohortMeta = !!activeCohortId && activeCohortStart == null;
 
-  const [shellState, cohortMeta, sandboxName, truePersona, effectivePersona] =
+  const [shellState, cohortMeta, truePersona, effectivePersona] =
     await Promise.all([
       getShellState(activeCohortId).catch(
         () => ({ caps: [], banner: null, poll: null }) as Awaited<ReturnType<typeof getShellState>>,
@@ -71,17 +58,6 @@ export async function AppShell({
               .maybeSingle()
               .then((r) => r.data as { starts_on?: string; name?: string } | null),
           )
-        : Promise.resolve(null),
-      sandboxId
-        ? getSupabaseService()
-            .from("cohorts")
-            .select("name")
-            .eq("id", sandboxId)
-            .maybeSingle()
-            .then(
-              (r) =>
-                (r.data?.name as string | undefined) ?? "Sandbox Cohort (DEMO)",
-            )
         : Promise.resolve(null),
       truePersonaP,
       effectivePersonaP,
@@ -108,14 +84,13 @@ export async function AppShell({
         {activeCohortId && (
           <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
         )}
-        {sandboxName && <SandboxBanner cohortName={sandboxName} />}
       </div>
       <div className="flex flex-1">
         <div data-shell-chrome className="contents">
           <Sidebar
             caps={caps}
             persona={effectivePersona}
-            bannerOffset={!!sandboxName}
+            bannerOffset={false}
             activeCohortId={activeCohortId}
           />
         </div>

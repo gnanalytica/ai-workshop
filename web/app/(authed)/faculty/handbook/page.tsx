@@ -4,7 +4,6 @@ import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { listFacultyHandbook } from "@/lib/queries/handbook";
 import { HandbookView } from "./HandbookView";
 import { StartGuideButton } from "@/components/tour/StartGuideButton";
-import { EnterSandboxButton } from "@/components/sandbox/EnterSandboxButton";
 import { tourFor } from "@/lib/tours";
 
 type Tab = "non_technical" | "technical" | "dashboard_nav" | "day_by_day";
@@ -184,14 +183,7 @@ function DashboardNavTab({
         </CardSub>
         <div className="flex flex-wrap items-center gap-3">
           <StartGuideButton persona="faculty" />
-          <EnterSandboxButton />
         </div>
-        <p className="text-muted mt-3 text-xs leading-relaxed">
-          Pro tip: open the sandbox first, then start the guide. You&apos;ll be
-          walking through the platform with realistic dummy students — every drag,
-          grade, or post is real, but scoped to the sandbox cohort. Hit{" "}
-          <span className="text-ink">Exit sandbox</span> any time.
-        </p>
         <div className="mt-6">
           <p className="text-muted text-xs font-medium uppercase tracking-wider">
             What the guide covers
