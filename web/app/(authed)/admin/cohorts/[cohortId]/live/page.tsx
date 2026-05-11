@@ -1,13 +1,13 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCapability } from "@/lib/auth/requireCapability";
-import { Card, CardSub, CardTitle } from "@/components/ui/card";
+import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { listPolls, listDraftPolls } from "@/lib/queries/polls";
+import { listCohortPolls } from "@/lib/queries/polls-overview";
 import { getActiveBanner } from "@/lib/queries/banners";
 import { PollResultsChart } from "@/app/(authed)/admin/polls/PollResultsChart";
-import { LazyPollResults } from "@/components/polls/LazyPollResults";
+import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { LiveClient } from "./LiveClient";
 
 export default async function LivePage({
@@ -20,21 +20,22 @@ export default async function LivePage({
   if (!cohort) notFound();
   await requireCapability("content.write", cohort.id);
 
-  const [polls, drafts, activeBanner] = await Promise.all([
+  const [polls, drafts, activeBanner, history] = await Promise.all([
     listPolls(cohort.id),
     listDraftPolls(cohort.id),
     getActiveBanner(cohort.id),
+    listCohortPolls(cohort.id),
   ]);
   const now = Date.now();
   const isActive = (p: (typeof polls)[number]) =>
-    p.closed_at === null && (p.closes_at === null || new Date(p.closes_at).getTime() > now);
+    p.closed_at === null &&
+    (p.closes_at === null || new Date(p.closes_at).getTime() > now);
 
   const active = polls.filter(isActive);
-  const recent = polls.filter((p) => !isActive(p)).slice(0, 5);
 
   return (
     <>
-      <CohortShell cohort={cohort} active="live" />
+      <CohortShell cohort={cohort} />
 
       <LiveClient
         cohortId={cohort.id}
@@ -58,36 +59,25 @@ export default async function LivePage({
         }))}
       />
 
-      {recent.length > 0 && (
-        <Card className="space-y-3 p-5">
-          <div className="flex items-baseline justify-between gap-2">
-            <CardTitle>Recent</CardTitle>
-            <Link
-              href={`/admin/cohorts/${cohort.id}/polls`}
-              className="text-accent text-xs"
-            >
-              Full poll history →
-            </Link>
-          </div>
-          <ul className="divide-line/40 divide-y">
-            {recent.map((p) => (
-              <li key={p.id} className="py-2 text-sm">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="text-ink min-w-0 break-words">{p.question}</span>
-                  <span className="flex items-baseline gap-3">
-                    <span className="text-muted tabular-nums text-xs">{p.vote_count} votes</span>
-                    <LazyPollResults pollId={p.id} cohortId={cohort.id} />
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-
-      {active.length === 0 && recent.length === 0 && (
-        <CardSub>Create the room. Fire a poll, see the room respond, end the moment.</CardSub>
-      )}
+      <section className="space-y-2">
+        <header className="border-line/50 flex flex-wrap items-baseline justify-between gap-2 border-b pb-2">
+          <h2 className="text-lg font-semibold tracking-tight">History</h2>
+          <p className="text-muted text-xs">
+            {history.length} poll{history.length === 1 ? "" : "s"} across the cohort
+            run · grouped by day, click a row to see results
+          </p>
+        </header>
+        {history.length === 0 ? (
+          <Card>
+            <CardSub>
+              Nothing yet. Fire a poll above and it&apos;ll land here once it
+              closes.
+            </CardSub>
+          </Card>
+        ) : (
+          <PollsExplorer polls={history} />
+        )}
+      </section>
     </>
   );
 }

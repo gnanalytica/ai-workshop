@@ -101,7 +101,6 @@ export function adminCohortNav(cohortId: string): NavItem[] {
 
     { label: "Capstones",   href: `${base}/capstones`,   cap: "roster.read",   group: "admin", section: "Work",        icon: "milestone" },
     { label: "Submissions", href: `${base}/grading`,     cap: "grading.read",  group: "admin", section: "Work",        icon: "check-square" },
-    { label: "Polls",       href: `${base}/polls`,       cap: "content.read",  group: "admin", section: "Work",        icon: "vote" },
 
     { label: "Pulse",       href: `${base}/pulse`,       cap: "analytics.read:cohort", group: "admin", section: "Insight", icon: "bar-chart" },
     { label: "Help desk",   href: `${base}/help-desk`,   cap: "support.triage", group: "admin", section: "Insight",     icon: "life-buoy" },
