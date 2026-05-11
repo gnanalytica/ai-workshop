@@ -3,6 +3,8 @@ import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { StackedBarChart, type BarRow } from "@/components/charts/BarChart";
 import { EngagementChart } from "@/components/charts/EngagementChart";
+import { ActivityHeatmap } from "@/components/charts/ActivityHeatmap";
+import { ChangeBand, type ChangeSignal } from "@/components/health/ChangeBand";
 import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
@@ -19,6 +21,7 @@ import {
   listRecentDayFeedback,
 } from "@/lib/queries/faculty-cohort";
 import {
+  getActivityMatrix,
   getAnalyticsSummary,
   getAttendanceByDay,
   getCohortProgressByDay,
@@ -61,6 +64,7 @@ export default async function AdminCohortPulsePage({
     fuzzyTopics,
     lowRating,
     progress,
+    activityMatrix,
   ] = await Promise.all([
     getCohortKpis(cohort.id),
     getAnalyticsSummary(cohort.id),
@@ -72,6 +76,12 @@ export default async function AdminCohortPulsePage({
     listRecentFuzzyTopics(cohort.id, recentDayNumbers, 25),
     listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 20),
     getCohortProgressByDay(cohort.id, recentDayNumbers),
+    getActivityMatrix(
+      cohort.id,
+      days
+        .filter((d) => d.is_unlocked && d.day_number <= today)
+        .map((d) => d.day_number),
+    ),
   ]);
 
   const hasMarkedAttendance = byDay.length > 0;
@@ -129,6 +139,93 @@ export default async function AdminCohortPulsePage({
     return Math.round((cur - prev) * 100);
   })();
 
+  // "What changed since the previous day" — best-effort using deltas we have.
+  const prevEngagement = recentEngagement.at(-2);
+  const inactiveToday = todayEngagement
+    ? todayEngagement.total - todayEngagement.active
+    : null;
+  const lowRatingToday = todayEngagement
+    ? lowRating.filter((r) => r.day_number === todayEngagement.day_number).length
+    : 0;
+  const recentProgress = progress.at(-1);
+  const submissionsCount = recentProgress?.submitted ?? null;
+  const submissionsExpected = recentProgress?.submittable_assignments
+    ? recentProgress.submittable_assignments * (recentProgress.cohort_size || 0)
+    : null;
+
+  const changeSignals: ChangeSignal[] = [];
+  if (todayEngagement) {
+    const deltaDir =
+      headlineDelta === null || headlineDelta === 0
+        ? "flat"
+        : headlineDelta > 0
+          ? "up"
+          : "down";
+    changeSignals.push({
+      label: `Activity Δ`,
+      value:
+        headlineDelta === null
+          ? `${Math.round(todayEngagement.rate * 100)}%`
+          : `${headlineDelta > 0 ? "+" : ""}${headlineDelta}pp`,
+      hint: prevEngagement
+        ? `Day ${todayEngagement.day_number} vs Day ${prevEngagement.day_number}`
+        : `Day ${todayEngagement.day_number}`,
+      tone:
+        headlineDelta === null || headlineDelta === 0
+          ? "default"
+          : headlineDelta < -5
+            ? "danger"
+            : headlineDelta < 0
+              ? "warn"
+              : "ok",
+      direction: deltaDir,
+    });
+  }
+  if (inactiveToday !== null && todayEngagement) {
+    changeSignals.push({
+      label: "Inactive today",
+      value: String(inactiveToday),
+      hint: `of ${todayEngagement.total} on Day ${todayEngagement.day_number}`,
+      tone:
+        inactiveToday === 0
+          ? "ok"
+          : inactiveToday <= Math.max(2, todayEngagement.total * 0.1)
+            ? "warn"
+            : "danger",
+    });
+  }
+  changeSignals.push({
+    label: "New ≤2★ ratings",
+    value: String(lowRatingToday),
+    hint:
+      todayEngagement
+        ? `on Day ${todayEngagement.day_number} · ${lowRating.length} in last ${recentDayNumbers.length}d`
+        : "no recent day",
+    tone: lowRatingToday === 0 ? "ok" : lowRatingToday <= 2 ? "warn" : "danger",
+  });
+  changeSignals.push({
+    label: "Grading queue",
+    value: String(summary.pendingReview),
+    hint:
+      submissionsCount !== null && submissionsExpected
+        ? `${submissionsCount}/${submissionsExpected} submitted on Day ${recentProgress?.day_number}`
+        : summary.pendingReview === 0
+          ? "queue clear"
+          : "awaiting review",
+    tone:
+      summary.pendingReview === 0
+        ? "ok"
+        : summary.pendingReview > 10
+          ? "danger"
+          : summary.pendingReview > 5
+            ? "warn"
+            : "default",
+  });
+
+  const heatmapDays = days
+    .filter((d) => d.is_unlocked && d.day_number <= today)
+    .map((d) => d.day_number);
+
   const chartRows: BarRow[] = byDay.map((d) => ({
     id: d.day_number,
     label: `D${String(d.day_number).padStart(2, "0")}`,
@@ -185,10 +282,14 @@ export default async function AdminCohortPulsePage({
         />
       </section>
 
+      {/* What changed since yesterday — a single-glance pulse strip. */}
+      <ChangeBand signals={changeSignals} />
+
       {/* Question 1 — Are they active? */}
       <Group
         title="Are they active?"
         sub="Auto-detected — a student counts as active on a day when they submit, take a quiz, give feedback, vote, or tick a lab."
+        tone="accent"
       >
         <div className="space-y-2">
           <SectionHead
@@ -207,6 +308,19 @@ export default async function AdminCohortPulsePage({
             </Card>
           )}
         </div>
+        {activityMatrix.length > 0 && heatmapDays.length > 0 && (
+          <div className="space-y-2">
+            <SectionHead
+              title="Who's drifting?"
+              sub={`${activityMatrix.length} students × ${heatmapDays.length} day${heatmapDays.length === 1 ? "" : "s"} · sorted by least active first`}
+            />
+            <ActivityHeatmap
+              rows={activityMatrix}
+              days={heatmapDays}
+              studentHref={studentHref}
+            />
+          </div>
+        )}
         {hasMarkedAttendance && (
           <details className="border-line bg-card/60 group rounded-lg border">
             <summary className="text-muted hover:text-ink cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
@@ -225,6 +339,7 @@ export default async function AdminCohortPulsePage({
       <Group
         title="Are they keeping up?"
         sub="Curriculum progress, grading queue, and students who need a nudge."
+        tone="warn"
       >
         <div className="grid gap-3 sm:grid-cols-3">
           <MiniStat
@@ -278,6 +393,7 @@ export default async function AdminCohortPulsePage({
       <Group
         title="Are they happy?"
         sub="Day-end feedback ratings, qualitative answers, and low-rating triage."
+        tone="ok"
       >
         <div className="space-y-2">
           <SectionHead
@@ -316,6 +432,7 @@ export default async function AdminCohortPulsePage({
       <Group
         title="Polls and pulses"
         sub={`${polls.length} total · curriculum polls (with day) and live pulses (no day) across the cohort run.`}
+        tone="muted"
       >
         <PollsExplorer polls={polls} />
       </Group>
@@ -445,19 +562,49 @@ function MiniStat({
   );
 }
 
+type GroupTone = "default" | "accent" | "ok" | "warn" | "danger" | "muted";
+
+const GROUP_BORDER: Record<GroupTone, string> = {
+  default: "border-line/40",
+  accent: "border-accent/60",
+  ok: "border-ok/60",
+  warn: "border-warn/60",
+  danger: "border-danger/60",
+  muted: "border-line/30",
+};
+
+const GROUP_DOT: Record<GroupTone, string> = {
+  default: "bg-line",
+  accent: "bg-accent",
+  ok: "bg-ok",
+  warn: "bg-warn",
+  danger: "bg-danger",
+  muted: "bg-muted/40",
+};
+
 function Group({
   title,
   sub,
+  tone = "default",
   children,
 }: {
   title: string;
   sub: string;
+  tone?: GroupTone;
   children: React.ReactNode;
 }) {
   return (
     <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b pb-2">
-        <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+      <header
+        className={`flex flex-wrap items-baseline justify-between gap-2 border-b-2 ${GROUP_BORDER[tone]} pb-2`}
+      >
+        <h2 className="flex items-center gap-2 text-base font-semibold tracking-tight">
+          <span
+            aria-hidden
+            className={`inline-block h-2 w-2 rounded-full ${GROUP_DOT[tone]}`}
+          />
+          {title}
+        </h2>
         <p className="text-muted text-xs">{sub}</p>
       </header>
       <div className="space-y-4">{children}</div>

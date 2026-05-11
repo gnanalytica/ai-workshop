@@ -313,6 +313,134 @@ export const getCohortProgressByDay = cache(
   },
 );
 
+export interface ActivityMatrixStudent {
+  user_id: string;
+  full_name: string | null;
+  email: string;
+  /** Map of day_number → distinct activity-type count (0–5). */
+  by_day: Record<number, number>;
+  /** Number of days in the requested window with at least one activity. */
+  total_active_days: number;
+}
+
+/**
+ * Per-student × per-day activity intensity (0–5) for the requested day window.
+ * Intensity = number of distinct activity sources (submission, quiz, feedback,
+ * poll vote, lab tick) observed on that day. Drives the Pulse heatmap.
+ */
+export const getActivityMatrix = cache(
+  async (
+    cohortId: string,
+    dayNumbers: number[],
+  ): Promise<ActivityMatrixStudent[]> => {
+    if (dayNumbers.length === 0) return [];
+    const sb = await getSupabaseServer();
+    const dayset = new Set(dayNumbers);
+
+    const [regs, subs, quizzes, feedback, votes, labs] = await Promise.all([
+      sb
+        .from("registrations")
+        .select("user_id, profiles!inner(full_name, email)")
+        .eq("cohort_id", cohortId)
+        .eq("status", "confirmed"),
+      sb
+        .from("submissions")
+        .select("user_id, assignments!inner(day_number, cohort_id)")
+        .eq("assignments.cohort_id", cohortId),
+      sb
+        .from("quiz_attempts")
+        .select("user_id, quizzes!inner(day_number, cohort_id)")
+        .eq("quizzes.cohort_id", cohortId),
+      sb
+        .from("day_feedback")
+        .select("user_id, day_number")
+        .eq("cohort_id", cohortId),
+      sb
+        .from("poll_votes")
+        .select("user_id, polls!inner(day_number, cohort_id)")
+        .eq("polls.cohort_id", cohortId)
+        .not("polls.day_number", "is", null),
+      sb
+        .from("lab_progress")
+        .select("user_id, day_number")
+        .eq("cohort_id", cohortId),
+    ]);
+
+    // For each (user, day) we accumulate which sources were seen.
+    const sources = new Map<string, Set<string>>(); // key `${user}|${day}`
+    const tag = (uid: string, day: number | null | undefined, src: string) => {
+      if (typeof day !== "number" || !dayset.has(day)) return;
+      const key = `${uid}|${day}`;
+      const set = sources.get(key) ?? new Set<string>();
+      set.add(src);
+      sources.set(key, set);
+    };
+
+    for (const r of (subs.data ?? []) as Array<{
+      user_id: string;
+      assignments: { day_number: number } | Array<{ day_number: number }>;
+    }>) {
+      const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
+      tag(r.user_id, a?.day_number, "sub");
+    }
+    for (const r of (quizzes.data ?? []) as Array<{
+      user_id: string;
+      quizzes: { day_number: number } | Array<{ day_number: number }>;
+    }>) {
+      const q = Array.isArray(r.quizzes) ? r.quizzes[0] : r.quizzes;
+      tag(r.user_id, q?.day_number, "quiz");
+    }
+    for (const r of (feedback.data ?? []) as Array<{
+      user_id: string;
+      day_number: number;
+    }>) {
+      tag(r.user_id, r.day_number, "fb");
+    }
+    for (const r of (votes.data ?? []) as Array<{
+      user_id: string;
+      polls: { day_number: number | null } | Array<{ day_number: number | null }>;
+    }>) {
+      const p = Array.isArray(r.polls) ? r.polls[0] : r.polls;
+      tag(r.user_id, p?.day_number ?? null, "poll");
+    }
+    for (const r of (labs.data ?? []) as Array<{
+      user_id: string;
+      day_number: number;
+    }>) {
+      tag(r.user_id, r.day_number, "lab");
+    }
+
+    const roster = ((regs.data ?? []) as unknown as Array<{
+      user_id: string;
+      profiles: { full_name: string | null; email: string };
+    }>).map((r) => {
+      const by_day: Record<number, number> = {};
+      let total_active_days = 0;
+      for (const day of dayNumbers) {
+        const set = sources.get(`${r.user_id}|${day}`);
+        const n = set?.size ?? 0;
+        by_day[day] = n;
+        if (n > 0) total_active_days += 1;
+      }
+      return {
+        user_id: r.user_id,
+        full_name: r.profiles.full_name,
+        email: r.profiles.email,
+        by_day,
+        total_active_days,
+      };
+    });
+
+    // Sort: least-active first so at-risk surfaces at the top of the heatmap.
+    return roster.sort((a, b) => {
+      if (a.total_active_days !== b.total_active_days) {
+        return a.total_active_days - b.total_active_days;
+      }
+      return (a.full_name ?? a.email).localeCompare(b.full_name ?? b.email);
+    });
+  },
+);
+
 export const getAtRisk = cache(async (cohortId: string, threshold = 3): Promise<AtRiskRow[]> => {
   const sb = await getSupabaseServer();
   const [regs, atts, labs] = await Promise.all([
