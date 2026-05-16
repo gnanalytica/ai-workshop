@@ -7,9 +7,18 @@ import { Button } from "@/components/ui/button";
 import { listAdminCohorts } from "@/lib/queries/admin-context";
 import { fmtDate } from "@/lib/format";
 
-export default async function AdminHome() {
+export default async function AdminHome({
+  searchParams,
+}: {
+  searchParams?: Promise<{ list?: string }>;
+}) {
   await requireCapability("schedule.read");
   const cohorts = await listAdminCohorts();
+  const sp = (await searchParams) ?? {};
+  // When the sidebar's "All cohorts" link is followed it passes ?list=1 to
+  // bypass the one-cohort auto-redirect — otherwise that shortcut bounces the
+  // admin straight back to the cohort they were trying to leave.
+  const forceList = sp.list === "1";
 
   if (cohorts.length === 0) {
     return (
@@ -25,7 +34,7 @@ export default async function AdminHome() {
     );
   }
 
-  if (cohorts.length === 1) {
+  if (cohorts.length === 1 && !forceList) {
     redirect(`/admin/cohorts/${cohorts[0]!.id}`);
   }
 

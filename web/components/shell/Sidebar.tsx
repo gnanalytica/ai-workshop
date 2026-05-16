@@ -182,7 +182,7 @@ export function Sidebar({
             {inCohort && (
               <div className="mb-3 px-3">
                 <Link
-                  href="/admin"
+                  href="/admin?list=1"
                   title={!expanded ? "All cohorts" : undefined}
                   className="text-muted hover:text-ink hover:bg-bg-soft flex h-8 items-center gap-3 rounded-md px-2.5 text-[12px] transition-colors"
                 >
@@ -317,7 +317,7 @@ export function Sidebar({
               {inCohort && (
                 <div className="mb-3 px-3">
                   <Link
-                    href="/admin"
+                    href="/admin?list=1"
                     className="text-muted hover:text-ink hover:bg-bg-soft flex h-8 items-center gap-3 rounded-md px-2.5 text-xs"
                   >
                     <ChevronsLeft size={15} strokeWidth={1.6} />
