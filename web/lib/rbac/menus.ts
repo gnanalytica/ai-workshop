@@ -92,7 +92,11 @@ export function navForCaps(caps: readonly string[]): NavItem[] {
 export function adminCohortNav(cohortId: string): NavItem[] {
   const base = `/admin/cohorts/${cohortId}`;
   return [
-    { label: "Overview",    href: base,                  cap: "schedule.read", group: "admin", section: "Run the day", icon: "home" },
+    // Pulse is the cohort landing — the old Overview page (KPI grid +
+    // attention items + day-feedback summary) is now redundant with the
+    // Pulse hero + change band + subject tabs, so the bare /cohorts/[id]
+    // URL redirects to /pulse and we point this item directly at /pulse.
+    { label: "Pulse",       href: `${base}/pulse`,       cap: "analytics.read:cohort", group: "admin", section: "Run the day", icon: "bar-chart" },
     { label: "Live",        href: `${base}/live`,        cap: "schedule.read", group: "admin", section: "Run the day", icon: "activity" },
     { label: "Curriculum",  href: `${base}/curriculum`,  cap: "content.read",  group: "admin", section: "Run the day", icon: "book" },
 
@@ -102,7 +106,6 @@ export function adminCohortNav(cohortId: string): NavItem[] {
     { label: "Capstones",   href: `${base}/capstones`,   cap: "roster.read",   group: "admin", section: "Work",        icon: "milestone" },
     { label: "Submissions", href: `${base}/grading`,     cap: "grading.read",  group: "admin", section: "Work",        icon: "check-square" },
 
-    { label: "Pulse",       href: `${base}/pulse`,       cap: "analytics.read:cohort", group: "admin", section: "Insight", icon: "bar-chart" },
     { label: "Feedback",    href: `${base}/feedback`,    cap: "analytics.read:cohort", group: "admin", section: "Insight", icon: "message-square" },
     { label: "Help desk",   href: `${base}/help-desk`,   cap: "support.triage", group: "admin", section: "Insight",     icon: "life-buoy" },
   ];

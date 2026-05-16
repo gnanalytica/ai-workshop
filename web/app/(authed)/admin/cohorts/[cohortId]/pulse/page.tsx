@@ -53,6 +53,8 @@ import {
 } from "@/lib/queries/pulse-scores";
 import { getAdminPodUserIds } from "@/lib/queries/pulse-exclusions";
 import { CollapsibleSection } from "@/components/admin-cohort/pulse/CollapsibleSection";
+import { ActivityFeed } from "@/components/admin-cohort/pulse/ActivityFeed";
+import { listCohortActivity } from "@/lib/queries/activity";
 
 const VALID_TABS = new Set<PulseTab>([
   "submissions",
@@ -143,6 +145,11 @@ export default async function AdminCohortPulsePage({
     getStudentActivity(cohort.id),
     getStudentScoreTotals(cohort.id, adminUserIds),
   ]);
+
+  // Activity feed lives only on the Engagement tab; cheap to fetch on every
+  // render but skip the extra round-trip on other tabs.
+  const activityFeed =
+    tab === "engagement" ? await listCohortActivity(cohort.id, 40) : [];
 
   const adminUserIdSet = new Set(adminUserIds);
   // At-risk goes through getStudentActivity internally; rather than thread
@@ -555,6 +562,14 @@ export default async function AdminCohortPulsePage({
             defaultOpen={false}
           >
             <PollsExplorer polls={polls} />
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            title="Recent activity feed"
+            sub={`${activityFeed.length} event${activityFeed.length === 1 ? "" : "s"} · registrations, labs, submissions, attendance, help desk, kudos`}
+            defaultOpen={false}
+          >
+            <ActivityFeed items={activityFeed} />
           </CollapsibleSection>
 
           <PodsAndStudents>
