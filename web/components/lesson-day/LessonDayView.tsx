@@ -315,7 +315,11 @@ export async function LessonDayView({
       {endGoalCard}
     </>
   );
-  const postPanel = phases.post ? (
+  // Render the post panel whenever there's *anything* to show — MDX body, an
+  // injected interactive (assignment / quiz from DB), or even just an
+  // unmatched assignment promoted into a synthetic section. Without this,
+  // slimmed-MDX days with DB-only assignments silently show the empty state.
+  const postPanel = (phases.post || finalPostSections.length > 0 || trailingQuiz) ? (
     <LessonReader
       titles={finalPostSections.map((s) => s.title)}
       trailing={postTrailing}
