@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
 import { getAssignmentDetail } from "@/lib/queries/assignment-detail";
+import { listRubricsByIds } from "@/lib/queries/rubrics";
 import { AssignmentEditor } from "./AssignmentEditor";
 
 export default async function AssignmentEditorPage({
@@ -19,6 +20,11 @@ export default async function AssignmentEditorPage({
   const assignment = await getAssignmentDetail(id);
   if (!assignment || assignment.cohort_id !== cohort.id) notFound();
   await requireCapability("content.write", assignment.cohort_id);
+
+  const rubricMap = assignment.rubric_id
+    ? await listRubricsByIds([assignment.rubric_id])
+    : null;
+  const rubric = rubricMap?.get(assignment.rubric_id!) ?? null;
 
   return (
     <>
@@ -54,6 +60,7 @@ export default async function AssignmentEditorPage({
             weight: assignment.weight,
             auto_grade: assignment.auto_grade,
           }}
+          rubric={rubric}
         />
       </Card>
     </>

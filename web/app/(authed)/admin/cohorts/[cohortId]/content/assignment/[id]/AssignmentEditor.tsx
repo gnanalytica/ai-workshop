@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateAssignment } from "@/lib/actions/content";
+import { RubricEditor } from "@/components/admin-cohort/RubricEditor";
 import type { AssignmentKind } from "@/lib/queries/assignment-detail";
+import type { RubricRow } from "@/lib/queries/rubrics";
 
 interface Initial {
   id: string;
@@ -27,9 +29,11 @@ function toDateInput(iso: string | null): string {
 export function AssignmentEditor({
   cohortId,
   initial,
+  rubric,
 }: {
   cohortId: string;
   initial: Initial;
+  rubric: RubricRow | null;
 }) {
   const [title, setTitle] = useState(initial.title);
   const [body, setBody] = useState(initial.body_md);
@@ -121,6 +125,28 @@ export function AssignmentEditor({
           {pending ? "Saving…" : "Save changes"}
         </Button>
       </div>
+
+      <section className="border-line/40 mt-6 border-t-2 pt-5">
+        <header className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-base font-semibold tracking-tight">
+            Grading rubric
+          </h2>
+          <p className="text-muted text-xs">
+            Used to score every submission for this assignment. Saved here;
+            applied at grade time. Changes do not retro-score submissions
+            already graded.
+          </p>
+        </header>
+        {rubric ? (
+          <RubricEditor cohortId={cohortId} rubric={rubric} />
+        ) : (
+          <p className="text-muted text-sm">
+            No rubric attached to this assignment yet. Contact a workshop
+            admin to create one — rubric authoring from scratch isn&apos;t in
+            this editor yet.
+          </p>
+        )}
+      </section>
     </div>
   );
 }

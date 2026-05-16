@@ -278,6 +278,21 @@ function AssignmentRowItem({
       >
         {row.title}
       </Link>
+      {row.kind !== "reflection" && (
+        <Link
+          href={`/admin/cohorts/${cohortId}/content/assignment/${row.id}#rubric`}
+          className="shrink-0"
+          title={
+            row.rubric_id
+              ? "Open assignment editor to view/edit the rubric"
+              : "No rubric — open assignment editor to attach one"
+          }
+        >
+          <Badge variant={row.rubric_id ? "ok" : "warn"}>
+            {row.rubric_id ? "rubric" : "no rubric"}
+          </Badge>
+        </Link>
+      )}
       {row.due_at && (
         <span className="text-muted shrink-0">· due {fmtDate(row.due_at)}</span>
       )}
