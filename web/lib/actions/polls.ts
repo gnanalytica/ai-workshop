@@ -108,6 +108,33 @@ export async function launchPoll(input: z.input<typeof launchSchema>) {
   return result;
 }
 
+const deleteDraftSchema = z.object({
+  poll_id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+});
+
+/**
+ * Delete a draft poll (opened_at is null). Refuses to touch live or closed
+ * polls so vote history is never silently destroyed.
+ */
+export async function deleteDraftPoll(input: z.infer<typeof deleteDraftSchema>) {
+  const parsed = deleteDraftSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("content.write", parsed.data.cohort_id);
+  return withSupabase(
+    (sb) =>
+      sb
+        .from("polls")
+        .delete()
+        .eq("id", parsed.data.poll_id)
+        .eq("cohort_id", parsed.data.cohort_id)
+        .is("opened_at", null)
+        .select()
+        .single(),
+    "/admin/polls",
+  );
+}
+
 const closeSchema = z.object({ poll_id: z.string().uuid(), cohort_id: z.string().uuid() });
 export async function closePoll(input: z.infer<typeof closeSchema>) {
   const parsed = closeSchema.safeParse(input);

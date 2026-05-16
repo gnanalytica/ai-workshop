@@ -7,6 +7,7 @@ import { listPolls, listDraftPolls } from "@/lib/queries/polls";
 import { listCohortPolls } from "@/lib/queries/polls-overview";
 import { getActiveBanner } from "@/lib/queries/banners";
 import { PollResultsChart } from "@/app/(authed)/admin/polls/PollResultsChart";
+import { PollResultsPie } from "@/app/(authed)/admin/polls/PollResultsPie";
 import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { LiveClient } from "./LiveClient";
 
@@ -32,10 +33,28 @@ export default async function LivePage({
     (p.closes_at === null || new Date(p.closes_at).getTime() > now);
 
   const active = polls.filter(isActive);
+  // polls is already ordered by opened_at desc in listPolls.
+  const mostRecent = polls[0] ?? null;
 
   return (
     <>
       <CohortShell cohort={cohort} />
+
+      {mostRecent && (
+        <Card className="space-y-2 p-5">
+          <header className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-sm font-semibold tracking-tight">
+              Most recent poll
+            </h2>
+            <span className="text-muted text-xs">
+              {mostRecent.vote_count} vote{mostRecent.vote_count === 1 ? "" : "s"}
+              {mostRecent.day_number != null ? ` · Day ${mostRecent.day_number}` : ""}
+            </span>
+          </header>
+          <p className="text-ink text-sm">{mostRecent.question}</p>
+          <PollResultsPie pollId={mostRecent.id} />
+        </Card>
+      )}
 
       <LiveClient
         cohortId={cohort.id}

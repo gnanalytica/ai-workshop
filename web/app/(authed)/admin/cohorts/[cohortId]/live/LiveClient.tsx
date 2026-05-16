@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Activity, Megaphone, Sparkles, Vote } from "lucide-react";
-import { createPoll, closePoll, launchPoll } from "@/lib/actions/polls";
+import { createPoll, closePoll, launchPoll, deleteDraftPoll } from "@/lib/actions/polls";
 import { setBanner, dismissBanner } from "@/lib/actions/banners";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
@@ -141,6 +141,17 @@ export function LiveClient({
         setQuestion("");
         setOptionsRaw("Yes\nNo");
         setSaveAsDraft(false); // reset so the next "Fire poll" doesn't silently save again
+        router.refresh();
+      } else toast.error(r.error);
+    });
+  }
+
+  function deleteDraft(pollId: string) {
+    if (!confirm("Delete this draft? This can't be undone.")) return;
+    start(async () => {
+      const r = await deleteDraftPoll({ poll_id: pollId, cohort_id: cohortId });
+      if (r.ok) {
+        toast.success("Draft deleted");
         router.refresh();
       } else toast.error(r.error);
     });
@@ -491,6 +502,17 @@ export function LiveClient({
                         disabled={pending}
                       >
                         Open
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => deleteDraft(d.id)}
+                        disabled={pending}
+                        className="text-[hsl(var(--danger))] hover:text-[hsl(var(--danger))]"
+                        aria-label="Delete draft"
+                        title="Delete draft"
+                      >
+                        ✕
                       </Button>
                     </div>
                   </div>
