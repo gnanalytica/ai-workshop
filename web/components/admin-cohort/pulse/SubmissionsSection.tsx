@@ -4,6 +4,7 @@ import {
   ScoreDistributionBar,
   ScoreDistributionLegend,
 } from "@/components/charts/ScoreDistributionBar";
+import { ScoreDistributionChart } from "@/components/charts/recharts/ScoreDistributionChart";
 import type { SubmissionDayScores } from "@/lib/queries/pulse-scores";
 
 function scoreToneClass(score: number | null): string {
@@ -16,10 +17,13 @@ function scoreToneClass(score: number | null): string {
 export function SubmissionsSection({
   rows,
   cohortSize,
+  dayHrefPattern,
 }: {
   /** Per-day score rollups, oldest day first. Days with no assignments are silently filtered from the per-day list and rate denominators. */
   rows: SubmissionDayScores[];
   cohortSize: number;
+  /** URL template for click-to-day navigation in the chart. `{n}` is replaced by day_number. */
+  dayHrefPattern?: string;
 }) {
   // A day only contributes to rates if it actually had an assignment.
   // Otherwise students had nothing to submit — counting it would penalize
@@ -94,10 +98,33 @@ export function SubmissionsSection({
         />
       </div>
 
+      {opportunityRows.length > 0 && (
+        <Card>
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold">Grade distribution by day</h3>
+            <ScoreDistributionChart
+              rows={[...opportunityRows]
+                .sort((a, b) => a.day_number - b.day_number)
+                .map((r) => ({
+                  day_number: r.day_number,
+                  total: r.graded,
+                  under_60: r.distribution.under_60,
+                  band_60_69: r.distribution.band_60_69,
+                  band_70_79: r.distribution.band_70_79,
+                  band_80_89: r.distribution.band_80_89,
+                  band_90_100: r.distribution.band_90_100,
+                  avg: r.avg_score,
+                }))}
+              dayHrefPattern={dayHrefPattern}
+            />
+          </div>
+        </Card>
+      )}
+
       <Card>
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
-            <h3 className="text-sm font-semibold">Grade distribution by day</h3>
+            <h3 className="text-sm font-semibold">Per-day detail</h3>
             <ScoreDistributionLegend />
           </div>
           {opportunityRows.length === 0 ? (

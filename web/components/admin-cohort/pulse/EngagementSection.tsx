@@ -1,23 +1,31 @@
 import { Card, CardSub } from "@/components/ui/card";
-import { EngagementChart } from "@/components/charts/EngagementChart";
+import { EngagementBarChart } from "@/components/charts/recharts/EngagementBarChart";
 import { ActivityHeatmap } from "@/components/charts/ActivityHeatmap";
-import { StackedBarChart, type BarRow } from "@/components/charts/BarChart";
-import type { DayEngagementBucket } from "@/lib/queries/analytics";
-import type { ActivityMatrixStudent } from "@/lib/queries/analytics";
+import { AttendanceStackedChart } from "@/components/charts/recharts/AttendanceStackedChart";
+import type {
+  DayAttendanceBucket,
+  DayEngagementBucket,
+  ActivityMatrixStudent,
+} from "@/lib/queries/analytics";
 
 export function EngagementSection({
   engagement,
   activityMatrix,
   heatmapDays,
-  chartRows,
+  attendance,
   hasMarkedAttendance,
+  cohortSize,
+  dayHrefPattern,
   studentHref,
 }: {
   engagement: DayEngagementBucket[];
   activityMatrix: ActivityMatrixStudent[];
   heatmapDays: number[];
-  chartRows: BarRow[];
+  attendance: DayAttendanceBucket[];
   hasMarkedAttendance: boolean;
+  cohortSize: number;
+  /** URL template for click-to-day navigation. `{n}` is replaced by day_number. */
+  dayHrefPattern?: string;
   studentHref: (uid: string) => string;
 }) {
   return (
@@ -36,7 +44,11 @@ export function EngagementSection({
           {engagement.length === 0 ? (
             <CardSub>No student activity recorded yet for this cohort.</CardSub>
           ) : (
-            <EngagementChart rows={engagement} />
+            <EngagementBarChart
+              rows={engagement}
+              cohortSize={cohortSize}
+              dayHrefPattern={dayHrefPattern}
+            />
           )}
         </div>
       </Card>
@@ -60,32 +72,14 @@ export function EngagementSection({
         </Card>
       )}
 
-      {hasMarkedAttendance && chartRows.length > 0 && (
+      {hasMarkedAttendance && attendance.length > 0 && (
         <details className="border-line bg-card/60 group rounded-lg border">
           <summary className="text-muted hover:text-ink cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-            Manually marked attendance ({chartRows.length} day
-            {chartRows.length === 1 ? "" : "s"})
+            Manually marked attendance ({attendance.length} day
+            {attendance.length === 1 ? "" : "s"})
           </summary>
           <div className="px-4 pb-4">
-            <StackedBarChart rows={chartRows} />
-            <div className="text-muted mt-4 flex flex-wrap gap-3 text-xs">
-              <span>
-                <span className="bg-ok/70 mr-1 inline-block h-2 w-2 rounded" />{" "}
-                Present
-              </span>
-              <span>
-                <span className="bg-warn/70 mr-1 inline-block h-2 w-2 rounded" />{" "}
-                Late
-              </span>
-              <span>
-                <span className="bg-bg-soft mr-1 inline-block h-2 w-2 rounded" />{" "}
-                Excused
-              </span>
-              <span>
-                <span className="bg-danger/70 mr-1 inline-block h-2 w-2 rounded" />{" "}
-                Absent
-              </span>
-            </div>
+            <AttendanceStackedChart rows={attendance} />
           </div>
         </details>
       )}

@@ -1,5 +1,7 @@
 import { Card, CardSub } from "@/components/ui/card";
 import { DivergingRatingBar } from "@/components/charts/DivergingRatingBar";
+import { FeedbackDistributionChart } from "@/components/charts/recharts/FeedbackDistributionChart";
+import { Sparkline } from "@/components/charts/recharts/Sparkline";
 import { FuzzyTopicsPanel } from "@/components/health/FuzzyTopicsPanel";
 import { LowRatingTriage } from "@/components/health/LowRatingTriage";
 import type { DayFeedbackSummary } from "@/lib/queries/faculty-cohort";
@@ -10,31 +12,6 @@ function ratingToneClass(avg: number | null): string {
   if (avg >= 4.0) return "text-ok";
   if (avg >= 3.0) return "text-warn";
   return "text-danger";
-}
-
-function Sparkline({ values }: { values: number[] }) {
-  const w = 96;
-  const h = 24;
-  if (values.length < 2) return null;
-  // ★1–5 scale → map to [0,1] for the y-axis
-  const min = 1;
-  const max = 5;
-  const step = w / (values.length - 1);
-  const points = values
-    .map((v, i) => `${i * step},${h - ((v - min) / (max - min)) * h}`)
-    .join(" ");
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden>
-      <polyline
-        points={points}
-        fill="none"
-        stroke="hsl(var(--ok))"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
 
 export function FeedbackSection({
@@ -63,11 +40,15 @@ export function FeedbackSection({
   const overallAvg = totalRated > 0 ? weightedSum / totalRated : null;
   const totalLow = summaries.reduce((s, r) => s + r.rating_1 + r.rating_2, 0);
 
-  const sparkValues = summaries
+  const sparkPoints = summaries
     .slice()
     .sort((a, b) => a.day_number - b.day_number)
     .filter((r) => r.avg_rating !== null)
-    .map((r) => r.avg_rating ?? 0);
+    .map((r) => ({
+      label: `Day ${r.day_number}`,
+      value: Number((r.avg_rating ?? 0).toFixed(2)),
+      hint: "★",
+    }));
 
   return (
     <section className="space-y-3">
@@ -99,15 +80,25 @@ export function FeedbackSection({
                 {summaries.length === 1 ? "" : "s"}
               </p>
             </div>
-            <div>
+            <div className="min-w-[140px]">
               <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
                 Trend (avg per day)
               </p>
-              <div className="mt-2">
-                <Sparkline values={sparkValues} />
+              <div className="mt-1">
+                <Sparkline points={sparkPoints} tone="ok" height={32} />
               </div>
             </div>
           </div>
+
+          {summaries.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold">Distribution by day</h3>
+              <FeedbackDistributionChart
+                rows={summaries}
+                cohortSize={cohortSize}
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <div className="flex items-baseline justify-between">

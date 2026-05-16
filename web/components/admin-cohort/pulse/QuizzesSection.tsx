@@ -4,6 +4,7 @@ import {
   ScoreDistributionBar,
   ScoreDistributionLegend,
 } from "@/components/charts/ScoreDistributionBar";
+import { ScoreDistributionChart } from "@/components/charts/recharts/ScoreDistributionChart";
 import type {
   QuizDayScores,
   QuizPerformanceRow,
@@ -28,10 +29,12 @@ export function QuizzesSection({
   byDay,
   byQuiz,
   cohortSize,
+  dayHrefPattern,
 }: {
   byDay: QuizDayScores[];
   byQuiz: QuizPerformanceRow[];
   cohortSize: number;
+  dayHrefPattern?: string;
 }) {
   // Only days that actually had a published quiz contribute to rates and
   // the per-day list. A quiet day should not drag the cohort score down.
@@ -98,10 +101,34 @@ export function QuizzesSection({
         />
       </div>
 
+      {opportunityDays.length > 0 && (
+        <Card>
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold">Score distribution by day</h3>
+            <ScoreDistributionChart
+              rows={[...opportunityDays]
+                .sort((a, b) => a.day_number - b.day_number)
+                .map((r) => ({
+                  day_number: r.day_number,
+                  total: r.attempts,
+                  under_60: r.distribution.under_60,
+                  band_60_69: r.distribution.band_60_69,
+                  band_70_79: r.distribution.band_70_79,
+                  band_80_89: r.distribution.band_80_89,
+                  band_90_100: r.distribution.band_90_100,
+                  avg: r.avg_score,
+                }))}
+              dayHrefPattern={dayHrefPattern}
+              metricLabel="attempts"
+            />
+          </div>
+        </Card>
+      )}
+
       <Card>
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
-            <h3 className="text-sm font-semibold">Score distribution by day</h3>
+            <h3 className="text-sm font-semibold">Per-day detail</h3>
             <ScoreDistributionLegend />
           </div>
           {opportunityDays.length === 0 ? (

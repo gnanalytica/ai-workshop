@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
-import { type BarRow } from "@/components/charts/BarChart";
 import { ChangeBand, type ChangeSignal } from "@/components/health/ChangeBand";
+import { Sparkline } from "@/components/charts/recharts/Sparkline";
 import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
@@ -246,17 +246,6 @@ export default async function AdminCohortPulsePage({
     .filter((d) => d.is_unlocked && d.day_number <= today)
     .map((d) => d.day_number);
 
-  const chartRows: BarRow[] = byDay.map((d) => ({
-    id: d.day_number,
-    label: `D${String(d.day_number).padStart(2, "0")}`,
-    segments: [
-      { value: d.present, label: "present", tone: "ok" },
-      { value: d.late, label: "late", tone: "warn" },
-      { value: d.excused, label: "excused", tone: "default" },
-      { value: d.absent, label: "absent", tone: "danger" },
-    ],
-  }));
-
   // Fetch the per-day score rollups used by the class tab's new
   // Submissions / Quizzes sections. Skipped on the pods/students tabs
   // where they're not rendered.
@@ -480,13 +469,14 @@ export default async function AdminCohortPulsePage({
           engagement={engagement}
           activityMatrix={activityMatrix}
           heatmapDays={heatmapDays}
-          chartRows={chartRows}
+          attendance={byDay}
           hasMarkedAttendance={hasMarkedAttendance}
           dayFeedback={dayFeedback}
           fuzzyTopics={fuzzyTopics}
           lowRating={lowRating}
           polls={polls}
           studentHref={studentHref}
+          dayHrefPattern={`/admin/cohorts/${cohort.id}/day/{n}`}
         />
       )}
     </>
@@ -509,8 +499,9 @@ function ClassPulsePanels(props: {
   engagement: Awaited<ReturnType<typeof getEngagementByDay>>;
   activityMatrix: Awaited<ReturnType<typeof getActivityMatrix>>;
   heatmapDays: number[];
-  chartRows: BarRow[];
+  attendance: Awaited<ReturnType<typeof getAttendanceByDay>>;
   hasMarkedAttendance: boolean;
+  dayHrefPattern: string;
   dayFeedback: Awaited<ReturnType<typeof listRecentDayFeedback>>;
   fuzzyTopics: Awaited<ReturnType<typeof listRecentFuzzyTopics>>;
   lowRating: Awaited<ReturnType<typeof listLowRatingFeedback>>;
@@ -533,13 +524,14 @@ function ClassPulsePanels(props: {
     engagement,
     activityMatrix,
     heatmapDays,
-    chartRows,
+    attendance,
     hasMarkedAttendance,
     dayFeedback,
     fuzzyTopics,
     lowRating,
     polls,
     studentHref,
+    dayHrefPattern,
   } = props;
 
   return (
@@ -591,20 +583,24 @@ function ClassPulsePanels(props: {
       <SubmissionsSection
         rows={[...submissionScores].sort((a, b) => b.day_number - a.day_number)}
         cohortSize={kpis.students}
+        dayHrefPattern={dayHrefPattern}
       />
 
       <QuizzesSection
         byDay={[...quizScores].sort((a, b) => b.day_number - a.day_number)}
         byQuiz={quizPerformance}
         cohortSize={kpis.students}
+        dayHrefPattern={dayHrefPattern}
       />
 
       <EngagementSection
         engagement={engagement}
         activityMatrix={activityMatrix}
         heatmapDays={heatmapDays}
-        chartRows={chartRows}
+        attendance={attendance}
         hasMarkedAttendance={hasMarkedAttendance}
+        cohortSize={kpis.students}
+        dayHrefPattern={dayHrefPattern}
         studentHref={studentHref}
       />
 
@@ -704,46 +700,20 @@ function HeroStat({
       <div className="mt-auto flex items-end justify-between gap-3 pt-1">
         <p className="text-muted text-xs">{hint}</p>
         {sparkline && sparkline.length > 1 && (
-          <Sparkline values={sparkline} tone={tone} />
+          <div className="w-20 shrink-0">
+            <Sparkline
+              points={sparkline.map((v, i) => ({
+                label: `Step ${i + 1}`,
+                value: Math.round(v * 100),
+                hint: "%",
+              }))}
+              tone={tone === "default" ? "accent" : tone}
+              height={22}
+            />
+          </div>
         )}
       </div>
     </div>
-  );
-}
-
-function Sparkline({ values, tone }: { values: number[]; tone: Tone }) {
-  const w = 72;
-  const h = 22;
-  const max = Math.max(...values, 0.0001);
-  const step = values.length > 1 ? w / (values.length - 1) : 0;
-  const points = values
-    .map((v, i) => `${i * step},${h - (v / max) * h}`)
-    .join(" ");
-  const stroke =
-    tone === "ok"
-      ? "hsl(var(--ok))"
-      : tone === "warn"
-        ? "hsl(var(--warn))"
-        : tone === "danger"
-          ? "hsl(var(--danger))"
-          : "hsl(var(--accent))";
-  return (
-    <svg
-      width={w}
-      height={h}
-      viewBox={`0 0 ${w} ${h}`}
-      className="shrink-0"
-      aria-hidden
-    >
-      <polyline
-        points={points}
-        fill="none"
-        stroke={stroke}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
