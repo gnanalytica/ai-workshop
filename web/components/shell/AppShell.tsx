@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { BannerStrip } from "./BannerStrip";
+import { PersonaBanner } from "./PersonaBanner";
 import { PresentMode } from "./PresentMode";
 import { getProfile } from "@/lib/auth/session";
 import { getTruePersona, getEffectivePersona } from "@/lib/auth/persona";
@@ -81,6 +82,7 @@ export async function AppShell({
   return (
     <div className="bg-bg text-ink flex min-h-screen flex-col">
       <div data-shell-chrome>
+        <PersonaBanner truePersona={truePersona} effectivePersona={effectivePersona} />
         {activeCohortId && (
           <BannerStrip cohortId={activeCohortId} initialBanner={initialBanner} />
         )}

@@ -62,13 +62,6 @@ export async function Topbar({
         <span className="font-display text-ink truncate text-[17px] leading-none font-medium tracking-tight">
           {roleLabel}
         </span>
-        {isAdminPreviewing && (
-          // Hidden once PreviewAsSwitcher is on screen (xl+); the switcher's
-          // selected option already reads "Faculty (preview)" / "Student (preview)".
-          <span className="border-accent/40 bg-accent/10 text-accent rounded-sm border px-2 py-0.5 font-mono text-[10px] tracking-widest uppercase xl:hidden">
-            Preview · {effectivePersona}
-          </span>
-        )}
         <div className="hidden lg:block">
           <CohortSwitcher persona={effectivePersona} />
         </div>
