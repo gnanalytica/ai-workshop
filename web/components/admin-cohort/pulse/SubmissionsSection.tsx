@@ -94,10 +94,8 @@ export function SubmissionsSection({
       </div>
 
       {opportunityRows.length > 0 && (
-        <Card>
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Grade distribution by day</h3>
-            <ScoreDistributionChart
+        <CollapsibleSection variant="card" title="Grade distribution by day">
+          <ScoreDistributionChart
               rows={[...opportunityRows]
                 .sort((a, b) => a.day_number - b.day_number)
                 .map((r) => ({
@@ -112,16 +110,16 @@ export function SubmissionsSection({
                 }))}
               dayHrefPattern={dayHrefPattern}
             />
-          </div>
-        </Card>
+        </CollapsibleSection>
       )}
 
-      <Card>
+      <CollapsibleSection
+        variant="card"
+        title="Per-day detail"
+        defaultOpen={false}
+        sub={<ScoreDistributionLegend />}
+      >
         <div className="space-y-3">
-          <div className="flex items-baseline justify-between">
-            <h3 className="text-sm font-semibold">Per-day detail</h3>
-            <ScoreDistributionLegend />
-          </div>
           {opportunityRows.length === 0 ? (
             <CardSub>No assignments deployed in the window.</CardSub>
           ) : (
@@ -181,7 +179,7 @@ export function SubmissionsSection({
             </ul>
           )}
         </div>
-      </Card>
+      </CollapsibleSection>
     </CollapsibleSection>
   );
 }

@@ -35,50 +35,40 @@ export function EngagementSection({
       sub="Activity = student submitted, took a quiz, gave feedback, voted, or ticked a lab on that day (any one source → counted once)."
     >
 
-      <Card>
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold">Active students by day</h3>
-          {engagement.length === 0 ? (
-            <CardSub>No student activity recorded yet for this cohort.</CardSub>
-          ) : (
-            <EngagementBarChart
-              rows={engagement}
-              cohortSize={cohortSize}
-              dayHrefPattern={dayHrefPattern}
-            />
-          )}
-        </div>
-      </Card>
+      <CollapsibleSection variant="card" title="Active students by day">
+        {engagement.length === 0 ? (
+          <CardSub>No student activity recorded yet for this cohort.</CardSub>
+        ) : (
+          <EngagementBarChart
+            rows={engagement}
+            cohortSize={cohortSize}
+            dayHrefPattern={dayHrefPattern}
+          />
+        )}
+      </CollapsibleSection>
 
       {activityMatrix.length > 0 && heatmapDays.length > 0 && (
-        <Card>
-          <div className="space-y-2">
-            <div className="flex items-baseline justify-between gap-2">
-              <h3 className="text-sm font-semibold">Who&apos;s drifting?</h3>
-              <p className="text-muted text-xs">
-                {activityMatrix.length} students × {heatmapDays.length} day
-                {heatmapDays.length === 1 ? "" : "s"} · least active first
-              </p>
-            </div>
-            <ActivityHeatmap
-              rows={activityMatrix}
-              days={heatmapDays}
-              studentHref={studentHref}
-            />
-          </div>
-        </Card>
+        <CollapsibleSection
+          variant="card"
+          title="Who's drifting?"
+          sub={`${activityMatrix.length} students × ${heatmapDays.length} day${heatmapDays.length === 1 ? "" : "s"} · least active first`}
+        >
+          <ActivityHeatmap
+            rows={activityMatrix}
+            days={heatmapDays}
+            studentHref={studentHref}
+          />
+        </CollapsibleSection>
       )}
 
       {hasMarkedAttendance && attendance.length > 0 && (
-        <details className="border-line bg-card/60 group rounded-lg border">
-          <summary className="text-muted hover:text-ink cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-            Manually marked attendance ({attendance.length} day
-            {attendance.length === 1 ? "" : "s"})
-          </summary>
-          <div className="px-4 pb-4">
-            <AttendanceStackedChart rows={attendance} />
-          </div>
-        </details>
+        <CollapsibleSection
+          variant="card"
+          title={`Manually marked attendance (${attendance.length} day${attendance.length === 1 ? "" : "s"})`}
+          defaultOpen={false}
+        >
+          <AttendanceStackedChart rows={attendance} />
+        </CollapsibleSection>
       )}
     </CollapsibleSection>
   );

@@ -97,35 +97,33 @@ export function QuizzesSection({
       </div>
 
       {opportunityDays.length > 0 && (
-        <Card>
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Score distribution by day</h3>
-            <ScoreDistributionChart
-              rows={[...opportunityDays]
-                .sort((a, b) => a.day_number - b.day_number)
-                .map((r) => ({
-                  day_number: r.day_number,
-                  total: r.attempts,
-                  under_60: r.distribution.under_60,
-                  band_60_69: r.distribution.band_60_69,
-                  band_70_79: r.distribution.band_70_79,
-                  band_80_89: r.distribution.band_80_89,
-                  band_90_100: r.distribution.band_90_100,
-                  avg: r.avg_score,
-                }))}
-              dayHrefPattern={dayHrefPattern}
-              metricLabel="attempts"
-            />
-          </div>
-        </Card>
+        <CollapsibleSection variant="card" title="Score distribution by day">
+          <ScoreDistributionChart
+            rows={[...opportunityDays]
+              .sort((a, b) => a.day_number - b.day_number)
+              .map((r) => ({
+                day_number: r.day_number,
+                total: r.attempts,
+                under_60: r.distribution.under_60,
+                band_60_69: r.distribution.band_60_69,
+                band_70_79: r.distribution.band_70_79,
+                band_80_89: r.distribution.band_80_89,
+                band_90_100: r.distribution.band_90_100,
+                avg: r.avg_score,
+              }))}
+            dayHrefPattern={dayHrefPattern}
+            metricLabel="attempts"
+          />
+        </CollapsibleSection>
       )}
 
-      <Card>
+      <CollapsibleSection
+        variant="card"
+        title="Per-day detail"
+        defaultOpen={false}
+        sub={<ScoreDistributionLegend />}
+      >
         <div className="space-y-3">
-          <div className="flex items-baseline justify-between">
-            <h3 className="text-sm font-semibold">Per-day detail</h3>
-            <ScoreDistributionLegend />
-          </div>
           {opportunityDays.length === 0 ? (
             <CardSub>No published quizzes in the window.</CardSub>
           ) : (
@@ -170,13 +168,11 @@ export function QuizzesSection({
             </ul>
           )}
         </div>
-      </Card>
+      </CollapsibleSection>
 
       {byQuiz.length > 0 && (
-        <Card>
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold">Per-quiz performance</h3>
-            <ul className="divide-line divide-y text-sm">
+        <CollapsibleSection variant="card" title="Per-quiz performance">
+          <ul className="divide-line divide-y text-sm">
               {byQuiz.map((q) => (
                 <li
                   key={q.quiz_id}
@@ -215,9 +211,8 @@ export function QuizzesSection({
                   </div>
                 </li>
               ))}
-            </ul>
-          </div>
-        </Card>
+          </ul>
+        </CollapsibleSection>
       )}
     </CollapsibleSection>
   );

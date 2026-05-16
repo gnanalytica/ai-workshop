@@ -54,118 +54,113 @@ export function FeedbackSection({
       sub={`Day-end ★ ratings · ${totalRated} response${totalRated === 1 ? "" : "s"} · ${totalLow} low (≤2★)`}
     >
 
-      <Card>
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
-                Avg rating
+      <CollapsibleSection
+        variant="card"
+        title="Avg rating + trend"
+        sub={`${summaries.length} day${summaries.length === 1 ? "" : "s"}`}
+      >
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
+              Avg rating
+            </p>
+            <div className="flex items-end gap-2">
+              <p
+                className={`font-display text-2xl font-semibold tabular-nums ${ratingToneClass(overallAvg)}`}
+              >
+                {overallAvg === null ? "—" : overallAvg.toFixed(2)}
               </p>
-              <div className="flex items-end gap-2">
-                <p
-                  className={`font-display text-2xl font-semibold tabular-nums ${ratingToneClass(overallAvg)}`}
-                >
-                  {overallAvg === null ? "—" : overallAvg.toFixed(2)}
-                </p>
-                <span className="text-muted text-xs">/5</span>
-              </div>
-              <p className="text-muted mt-0.5 text-xs">
-                across {summaries.length} day
-                {summaries.length === 1 ? "" : "s"}
-              </p>
-            </div>
-            <div className="min-w-[140px]">
-              <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
-                Trend (avg per day)
-              </p>
-              <div className="mt-1">
-                <Sparkline points={sparkPoints} tone="ok" height={32} />
-              </div>
+              <span className="text-muted text-xs">/5</span>
             </div>
           </div>
-
-          {summaries.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Distribution by day</h3>
-              <FeedbackDistributionChart
-                rows={summaries}
-                cohortSize={cohortSize}
-              />
+          <div className="min-w-[140px]">
+            <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
+              Trend (avg per day)
+            </p>
+            <div className="mt-1">
+              <Sparkline points={sparkPoints} tone="ok" height={32} />
             </div>
-          )}
-
-          <div className="space-y-2">
-            <div className="flex items-baseline justify-between">
-              <h3 className="text-sm font-semibold">Sentiment by day</h3>
-              <div className="text-muted flex gap-3 text-xs">
-                <span className="inline-flex items-center gap-1">
-                  <span className="bg-danger/70 inline-block h-2 w-3 rounded" />{" "}
-                  ≤2★
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="bg-warn/40 inline-block h-2 w-3 rounded" />{" "}
-                  3★
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="bg-ok/70 inline-block h-2 w-3 rounded" />{" "}
-                  ≥4★
-                </span>
-              </div>
-            </div>
-            {newestFirst.length === 0 ? (
-              <CardSub>No feedback rows yet.</CardSub>
-            ) : (
-              <ul className="divide-line divide-y">
-                {newestFirst.map((r) => (
-                  <li
-                    key={r.day_number}
-                    className="grid grid-cols-12 items-center gap-2 py-2"
-                  >
-                    <div className="col-span-2 sm:col-span-1">
-                      <span className="font-mono text-sm font-medium">
-                        D{String(r.day_number).padStart(2, "0")}
-                      </span>
-                    </div>
-                    <div className="text-muted col-span-3 text-xs sm:col-span-2">
-                      {r.total_responses}/{cohortSize}
-                      <br />
-                      <span className="text-[10px]">responded</span>
-                    </div>
-                    <div className="col-span-5 sm:col-span-7">
-                      <DivergingRatingBar
-                        rating_1={r.rating_1}
-                        rating_2={r.rating_2}
-                        rating_3={r.rating_3}
-                        rating_4={r.rating_4}
-                        rating_5={r.rating_5}
-                        total={r.total_responses}
-                      />
-                    </div>
-                    <div
-                      className={`col-span-2 text-right text-sm tabular-nums ${ratingToneClass(r.avg_rating)}`}
-                    >
-                      {r.avg_rating === null ? "—" : r.avg_rating.toFixed(1)}★
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
         </div>
-      </Card>
+      </CollapsibleSection>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold">Browse comments</h3>
-        <p className="text-muted text-xs">
-          search, filter by day or rating, switch to low-rating triage —{" "}
-          {fuzzyTopics.length} qualitative answer
-          {fuzzyTopics.length === 1 ? "" : "s"} · {lowRating.length} ≤2★
-        </p>
+      {summaries.length > 0 && (
+        <CollapsibleSection variant="card" title="Distribution by day">
+          <FeedbackDistributionChart
+            rows={summaries}
+            cohortSize={cohortSize}
+          />
+        </CollapsibleSection>
+      )}
+
+      <CollapsibleSection
+        variant="card"
+        title="Sentiment by day"
+        defaultOpen={false}
+        sub={
+          <div className="text-muted flex gap-3 text-xs">
+            <span className="inline-flex items-center gap-1">
+              <span className="bg-danger/70 inline-block h-2 w-3 rounded" /> ≤2★
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <span className="bg-warn/40 inline-block h-2 w-3 rounded" /> 3★
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <span className="bg-ok/70 inline-block h-2 w-3 rounded" /> ≥4★
+            </span>
+          </div>
+        }
+      >
+        {newestFirst.length === 0 ? (
+          <CardSub>No feedback rows yet.</CardSub>
+        ) : (
+          <ul className="divide-line divide-y">
+            {newestFirst.map((r) => (
+              <li
+                key={r.day_number}
+                className="grid grid-cols-12 items-center gap-2 py-2"
+              >
+                <div className="col-span-2 sm:col-span-1">
+                  <span className="font-mono text-sm font-medium">
+                    D{String(r.day_number).padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="text-muted col-span-3 text-xs sm:col-span-2">
+                  {r.total_responses}/{cohortSize}
+                  <br />
+                  <span className="text-[10px]">responded</span>
+                </div>
+                <div className="col-span-5 sm:col-span-7">
+                  <DivergingRatingBar
+                    rating_1={r.rating_1}
+                    rating_2={r.rating_2}
+                    rating_3={r.rating_3}
+                    rating_4={r.rating_4}
+                    rating_5={r.rating_5}
+                    total={r.total_responses}
+                  />
+                </div>
+                <div
+                  className={`col-span-2 text-right text-sm tabular-nums ${ratingToneClass(r.avg_rating)}`}
+                >
+                  {r.avg_rating === null ? "—" : r.avg_rating.toFixed(1)}★
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        variant="card"
+        title="Browse comments"
+        sub={`${fuzzyTopics.length} qualitative · ${lowRating.length} ≤2★ · search & filter`}
+      >
         <AdminFeedbackBrowser
           fuzzyTopics={fuzzyTopics}
           lowRating={lowRating}
         />
-      </div>
+      </CollapsibleSection>
     </CollapsibleSection>
   );
 }
