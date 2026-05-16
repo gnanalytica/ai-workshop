@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateAssignment } from "@/lib/actions/content";
+import { createRubricForAssignment } from "@/lib/actions/rubrics";
 import { RubricEditor } from "@/components/admin-cohort/RubricEditor";
 import type { AssignmentKind } from "@/lib/queries/assignment-detail";
 import type { RubricRow } from "@/lib/queries/rubrics";
@@ -42,6 +43,24 @@ export function AssignmentEditor({
   const [weight, setWeight] = useState(String(initial.weight));
   const [autoGrade, setAutoGrade] = useState(initial.auto_grade);
   const [pending, start] = useTransition();
+  const [rubricPending, startRubric] = useTransition();
+
+  function createRubric() {
+    startRubric(async () => {
+      const r = await createRubricForAssignment({
+        assignment_id: initial.id,
+        cohort_id: cohortId,
+      });
+      if (r.ok) {
+        toast.success("Rubric created");
+        // Server action revalidates the route; refreshing pulls the new
+        // rubric onto the page so the editor renders.
+        window.location.reload();
+      } else {
+        toast.error(r.error);
+      }
+    });
+  }
 
   function save() {
     if (!title.trim()) {
@@ -140,11 +159,21 @@ export function AssignmentEditor({
         {rubric ? (
           <RubricEditor cohortId={cohortId} rubric={rubric} />
         ) : (
-          <p className="text-muted text-sm">
-            No rubric attached to this assignment yet. Contact a workshop
-            admin to create one — rubric authoring from scratch isn&apos;t in
-            this editor yet.
-          </p>
+          <div className="space-y-3">
+            <p className="text-muted text-sm">
+              No rubric attached. Creating one inserts a 3-criterion starter
+              (Completeness / Depth / Evidence, scaled to 10 pts) — you can
+              rename, retune, add, or remove criteria right after.
+            </p>
+            <Button
+              type="button"
+              onClick={createRubric}
+              disabled={rubricPending}
+              size="sm"
+            >
+              {rubricPending ? "Creating…" : "Create rubric"}
+            </Button>
+          </div>
         )}
       </section>
     </div>
