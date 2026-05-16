@@ -135,6 +135,42 @@ export async function deleteDraftPoll(input: z.infer<typeof deleteDraftSchema>) 
   );
 }
 
+const relaunchSchema = z.object({
+  poll_id: z.string().uuid(),
+  cohort_id: z.string().uuid(),
+  duration_minutes: z.number().int().min(1).max(60 * 24).optional(),
+});
+
+/**
+ * Reset an already-fired poll back to live: clears closed_at and refreshes
+ * opened_at + closes_at. Existing votes are preserved — students who voted
+ * once won't vote again because of the unique (poll_id, user_id) constraint;
+ * new students can now join the same instance.
+ */
+export async function relaunchPoll(input: z.input<typeof relaunchSchema>) {
+  const parsed = relaunchSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  await requireCapability("content.write", parsed.data.cohort_id);
+  const result = await withSupabase(async (sb) => {
+    const opened_at = new Date().toISOString();
+    const closes_at =
+      parsed.data.duration_minutes != null
+        ? new Date(Date.now() + parsed.data.duration_minutes * 60_000).toISOString()
+        : null;
+    return sb
+      .from("polls")
+      .update({ opened_at, closes_at, closed_at: null } as never)
+      .eq("id", parsed.data.poll_id)
+      .eq("cohort_id", parsed.data.cohort_id)
+      // Refuse if it's still a true draft — drafts use launchPoll, not relaunch.
+      .not("opened_at", "is", null)
+      .select()
+      .single();
+  }, "/admin/polls");
+  if (result.ok) await broadcastPollUpdate(parsed.data.cohort_id);
+  return result;
+}
+
 const closeSchema = z.object({ poll_id: z.string().uuid(), cohort_id: z.string().uuid() });
 export async function closePoll(input: z.infer<typeof closeSchema>) {
   const parsed = closeSchema.safeParse(input);

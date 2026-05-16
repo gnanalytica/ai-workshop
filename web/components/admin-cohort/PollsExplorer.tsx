@@ -1,17 +1,22 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Card, CardSub } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { fmtDateTime } from "@/lib/format";
 import { fetchPollResults, type PollResultRow } from "@/lib/actions/poll-results";
+import { relaunchPoll } from "@/lib/actions/polls";
 import type { PollOverviewRow } from "@/lib/queries/polls-overview";
 import { cn } from "@/lib/utils";
 
 type DayFilter = "all" | number;
 type KindFilter = "all" | string;
 
-export function PollsExplorer({ polls }: { polls: PollOverviewRow[] }) {
+export function PollsExplorer({ polls, cohortId }: { polls: PollOverviewRow[]; cohortId?: string }) {
+  const router = useRouter();
   const [day, setDay] = useState<DayFilter>("all");
   const [kind, setKind] = useState<KindFilter>("all");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -119,6 +124,21 @@ export function PollsExplorer({ polls }: { polls: PollOverviewRow[] }) {
                     onToggle={() => toggle(p.id)}
                     rows={results[p.id]}
                     loading={pending && pendingFor === p.id}
+                    cohortId={cohortId}
+                    onRelaunch={async (durationMin) => {
+                      if (!cohortId) return;
+                      const r = await relaunchPoll({
+                        poll_id: p.id,
+                        cohort_id: cohortId,
+                        duration_minutes: durationMin ?? undefined,
+                      });
+                      if (r.ok) {
+                        toast.success("Poll re-fired");
+                        router.refresh();
+                      } else {
+                        toast.error(r.error);
+                      }
+                    }}
                   />
                 );
               })}
@@ -136,13 +156,18 @@ function FragmentRow({
   onToggle,
   rows,
   loading,
+  cohortId,
+  onRelaunch,
 }: {
   poll: PollOverviewRow;
   open: boolean;
   onToggle: () => void;
   rows?: PollResultRow[];
   loading: boolean;
+  cohortId?: string;
+  onRelaunch?: (durationMin: number | null) => Promise<void> | void;
 }) {
+  const canRelaunch = !!cohortId && !!onRelaunch && !!poll.opened_at;
   return (
     <>
       <tr
@@ -200,6 +225,23 @@ function FragmentRow({
               )
             ) : (
               <p className="text-muted text-xs">Click again to retry.</p>
+            )}
+            {canRelaunch && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="text-muted text-[10.5px] uppercase tracking-[0.15em]">
+                  Relaunch
+                </span>
+                <Button size="sm" onClick={(e) => { e.stopPropagation(); void onRelaunch!(1); }}>
+                  1m
+                </Button>
+                <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); void onRelaunch!(5); }}>
+                  5m
+                </Button>
+                <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); void onRelaunch!(null); }}>
+                  Open
+                </Button>
+                <span className="text-muted ml-auto text-[10px]">existing votes preserved</span>
+              </div>
             )}
           </td>
         </tr>

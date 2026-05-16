@@ -94,7 +94,7 @@ export default async function LivePage({
             </CardSub>
           </Card>
         ) : (
-          <PollsExplorer polls={history} />
+          <PollsExplorer polls={history} cohortId={cohort.id} />
         )}
       </section>
     </>
