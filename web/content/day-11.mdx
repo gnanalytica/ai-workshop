@@ -7,8 +7,8 @@ topic: "Intelligent Data – Creation, Identification and Real-World Usage"
 faculty:
   main: "Bollapragada Sairam"
   support: "TBD"
-reading_time: "8 min"
-tldr: "Raw data tells you what happened. Intelligent data — cleaned, integrated, enriched, and run through models — helps people and systems decide what to do next. Today you learn what makes data 'intelligent', how it's created end-to-end, and how it shows up in education, healthcare, and business."
+reading_time: "3 min"
+tldr: "Raw data tells you what happened. Intelligent data — cleaned, integrated, enriched, and run through models — helps people and systems decide what to do next. You had to be in the room for this one."
 tags: ["data", "intelligence", "ethics", "real-world"]
 software: []
 online_tools: []
@@ -20,151 +20,23 @@ tools_reference:
 resources:
   - { title: "Andrew Ng — From Model-centric to Data-centric AI (10 min)", url: "https://www.youtube.com/watch?v=06-AZXmwHjo" }
   - { title: "Google — Responsible AI practices", url: "https://ai.google/responsibility/responsible-ai-practices/" }
-  - { title: "DJ Patil — Data Jujitsu", url: "https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/" }
 objective:
-  topic: "Understand what makes data 'intelligent', how it's created and identified, and where it creates value across domains"
+  topic: "Build a working mental model of the raw → intelligent → decision pipeline"
   tools: []
-  end_goal: "A clear mental model of the raw → intelligent → decision pipeline, with one worked example from your own life and an awareness of ethics, bias, and human oversight."
+  end_goal: "Be able to point at any product you use and identify the intelligent data quietly running it."
 ---
 
-> 🧠 **Where this fits.** You've finished design thinking — problem, user, idea, features. Before you start building AI features next week, you need a working mental model of *what intelligent data is*, *how it's made*, and *where it creates real-world value*. Today is the bridge.
+> 🎤 **Live session, no spoilers.** This day was taught by Bollapragada Sairam as a live presentation. We've kept this page intentionally short — the details, examples, and discussions belonged in the room. The quiz and assignment will check that you were paying attention.
 
-## 🎯 Today's objective
+## 🎯 What we covered (one-liner each)
 
-**Topic.** Intelligent Data — Creation, Identification and Real-World Usage.
+- **The data ladder.** Raw → Information → Intelligent → Decision.
+- **How intelligent data is built.** Collection · cleaning · integration · enrichment · AI/ML layer.
+- **Five questions to identify it.** Accurate? Has context? Answers a question? Model-ready? Triggers action?
+- **Where it lives in the real world.** Education, healthcare, business, manufacturing, finance.
+- **Why ethics stays in the loop.** Bad data scales bad decisions. Human oversight is non-negotiable.
 
-**By end of class you will:**
-1. Know what separates **raw data**, **information**, and **intelligent data** — and why the distinction matters.
-2. Walk through the **creation pipeline**: collection → cleaning → integration → enrichment → AI/ML layer.
-3. Spot intelligent data in real products across **education, healthcare, business, manufacturing, and finance**.
-4. Understand the **risks** (bias, privacy, scaled unfairness) and why human judgment stays in the loop.
-
-> *Why this matters.* Every AI feature your capstone will ship next month depends on a chain of data decisions made today. If the data isn't *intelligent* — accurate, contextual, model-ready — your AI is just a chatbot wrapper.
-
-## ⏪ Pre-class · ~15 min
-
-### Setup (light)
-
-- [ ] Have your Day 10 1-pager (SCQA + JTBD) open — we'll reference it.
-- [ ] Note one product you use every day; you'll reverse-engineer its data flow in class.
-
-### Primer (~5 min)
-
-- **Watch:** Andrew Ng — *From Model-centric to Data-centric AI* (10 min) — https://www.youtube.com/watch?v=06-AZXmwHjo
-- **Skim:** Drew Conway's Data Science Venn Diagram — http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram
-
-### Bring to class
-
-- [ ] One screenshot from a product (Swiggy home, Netflix For-You, Instagram Reels) — we'll dissect what intelligent data drives that screen.
-
-> 🧠 **Quick glossary.** **Raw data** = isolated facts (a click, a log row). **Information** = organised, given meaning. **Intelligent data** = information + context + models + decision value. **Ground truth** = the correct answer you'd compare a prediction against. **Pipeline** = the path from raw collection to served prediction.
-
-## 🎥 In-class · live session
-
-### Agenda (mirrors the deck)
-
-| Block | Time | What |
-|---|---|---|
-| Intro + framing | 5 min | What "intelligent data" means, why today matters |
-| What is intelligent data? | 10 min | Raw → Information → Intelligent → Decision value |
-| How it's created | 15 min | Collection · cleaning · integration · enrichment · AI/ML layer |
-| How to identify it | 10 min | The 5-question checklist |
-| Core technologies | 10 min | Databases, data lakes, ETL/ELT, ML models, NLP, CV, dashboards |
-| Real-world use cases | 20 min | Education · Healthcare · Business / Manufacturing / Finance |
-| Risks, ethics, governance | 10 min | Bias at scale, privacy, surveillance, human oversight |
-| Careers + Q&A | 10 min | Roles, skills, what to study next |
-
-### What is intelligent data?
-
-- **Raw data** = isolated facts. A timestamp, a click, a row in a log.
-- **Information** = organised data with meaning. "User X clicked product Y at 8:13 PM."
-- **Intelligent data** = data + context + models + decision value. "User X is in the *evening browser* segment; recommend home-decor over fashion in the next session."
-
-The defining test: does it **support prediction, recommendation, or automation**? If yes, it's intelligent. If it only describes the past, it's still raw or informational.
-
-### How intelligent data is created
-
-1. **Collection** — sensors, apps, forms, transactions, logs. The raw stream.
-2. **Cleaning** — missing values, duplicates, format errors, outliers.
-3. **Integration** — merge sources into a common model (one user, many touchpoints).
-4. **Enrichment** — labels, metadata, external context (weather, demographics, prior history).
-5. **AI/ML layer** — patterns, predictions, recommendations sitting on top of the clean integrated whole.
-
-> The cliché holds: **garbage in, garbage intelligence out.** Every weak step above caps how intelligent your data can become.
-
-### How to identify intelligent data — the 5-question checklist
-
-- Is it **accurate and timely**?
-- Does it have **metadata and context**?
-- Can it **answer a business or social question**?
-- Can a **model use it reliably** (right shape, right labels, enough volume)?
-- Does it **trigger an insight or action** — or just sit there?
-
-If a dataset fails two of these, it's not intelligent data — it's a candidate for cleanup.
-
-### Core technologies behind intelligent data
-
-- **Storage:** databases (Postgres, MySQL), data lakes (S3, BigQuery).
-- **Movement:** ETL / ELT pipelines (Airbyte, Fivetran, dbt).
-- **Modelling:** machine learning frameworks (scikit-learn, PyTorch, Hugging Face).
-- **Specialised modalities:** NLP and computer vision when text or images are the raw input.
-- **Surface:** dashboards (Looker, Tableau, Metabase) and decision systems (rules engines, recommendation services).
-
-You don't need all of these to ship a capstone — but knowing the layer-cake helps you spot where your project's bottleneck will be.
-
-### Real-world use cases
-
-**Education**
-- Adaptive learning pathways
-- Early warning systems for struggling students
-- Automated feedback and tutoring support
-- Personalised content recommendations
-
-**Healthcare and biotech**
-- Patient risk scoring
-- Medical image interpretation
-- Predictive diagnostics
-- Hospital resource planning
-
-**Business, manufacturing and finance**
-- Demand forecasting and inventory optimisation
-- Predictive maintenance in factories
-- Fraud detection in finance
-- Customer support and workflow automation
-
-In each domain, the pattern is the same: raw signals → cleaned + integrated + enriched → a model produces an intelligent signal → a person or system *decides differently* because of it.
-
-### Risks, ethics and governance
-
-- **Bad data creates bad intelligence.** A biased training set produces a biased model that quietly scales the bias to millions.
-- **Bias can scale unfair decisions** — credit scoring, hiring, medical triage have all produced real harm.
-- **Privacy and surveillance concerns** — what you collect is what you can leak.
-- **Human oversight is essential** — high-stakes decisions need a person in the loop, not a model alone.
-- **Responsible AI requires transparency** — explainability, audit trails, recourse for affected users.
-
-The takeaway: *intelligent* doesn't automatically mean *good*. The same pipeline that recommends a movie can deny a loan.
-
-### Careers, takeaways and skills
-
-Intelligent data is a **cross-domain skill** — same toolkit, different domains.
-
-- **Roles:** data analyst · data engineer · ML engineer · BI analyst · AI product analyst
-- **Skills:** SQL, Python, visualisation, ML, ethics, communication
-- **The career-defining question:** *What problem is the data solving?* The technical chops follow.
-
-## 📊 Live poll
-
-**Where is intelligent data most underrated in India today?** Education / Healthcare / Manufacturing / Finance / Public services. Faculty uses this to pick the deeper use-case for next semester's electives.
-
-## 💬 Discuss
-
-- Pick the product you brought. What raw signal of yours did it convert into an intelligent label this week, and what decision did it make because of that?
-- Which of the 5 identification questions is *your* capstone idea most likely to fail today? What's the fix?
-- Name one place in your everyday life where AI made a decision *for* you that you wish a human had made instead. Why?
-
-## ❓ Quiz
-
-Short quiz on the raw / information / intelligent ladder, the 5-step creation pipeline, the identification checklist, and one ethics scenario. Opens on dashboard.
+If any of those one-liners feels fuzzy, find a classmate's notes — or ask in the cohort channel.
 
 ## 📝 Assignment · Intelligent Data Reflection
 
@@ -173,6 +45,10 @@ Short quiz on the raw / information / intelligent ladder, the 5-step creation pi
 **Submit.** Dashboard before Day 12.
 
 **Rubric.** Clarity of the chain (4) · Honest failure-mode analysis (4) · Awareness of ethics / oversight (2).
+
+## ❓ Quiz
+
+Short quiz on the raw / information / intelligent ladder, the 5-step creation pipeline, the identification checklist, and one ethics scenario. Opens on dashboard.
 
 ## 🔁 Prep for next class
 
@@ -186,6 +62,5 @@ Day 12 is **Text2Image** — Stable Diffusion, ChatGPT Images, Nano Banana, Adob
 
 - [Andrew Ng — From Model-centric to Data-centric AI](https://www.youtube.com/watch?v=06-AZXmwHjo) — why the data, not the model, is usually the bottleneck.
 - [Drew Conway — Data Science Venn Diagram](http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram) — where intelligent data lives.
-- [DJ Patil — Data Jujitsu](https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/) — short, practical, written by the first US Chief Data Scientist.
-- [Google — Responsible AI practices](https://ai.google/responsibility/responsible-ai-practices/) — the ethics half of today.
-- [Kaggle Datasets](https://www.kaggle.com/datasets) — start here when you need public data to practise on.
+- [Google — Responsible AI practices](https://ai.google/responsibility/responsible-ai-practices/) — the ethics half.
+- [Kaggle Datasets](https://www.kaggle.com/datasets) — start here when you need public data.
