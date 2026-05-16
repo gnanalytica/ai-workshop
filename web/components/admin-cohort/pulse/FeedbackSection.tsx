@@ -2,8 +2,7 @@ import { Card, CardSub } from "@/components/ui/card";
 import { DivergingRatingBar } from "@/components/charts/DivergingRatingBar";
 import { FeedbackDistributionChart } from "@/components/charts/recharts/FeedbackDistributionChart";
 import { Sparkline } from "@/components/charts/recharts/Sparkline";
-import { FuzzyTopicsPanel } from "@/components/health/FuzzyTopicsPanel";
-import { LowRatingTriage } from "@/components/health/LowRatingTriage";
+import { AdminFeedbackBrowser } from "@/components/admin-cohort/AdminFeedbackBrowser";
 import { CollapsibleSection } from "./CollapsibleSection";
 import type { DayFeedbackSummary } from "@/lib/queries/faculty-cohort";
 
@@ -20,14 +19,12 @@ export function FeedbackSection({
   cohortSize,
   fuzzyTopics,
   lowRating,
-  studentHref,
 }: {
   /** Oldest day first → reversed for display (newest first). */
   summaries: DayFeedbackSummary[];
   cohortSize: number;
-  fuzzyTopics: React.ComponentProps<typeof FuzzyTopicsPanel>["entries"];
-  lowRating: React.ComponentProps<typeof LowRatingTriage>["entries"];
-  studentHref: (uid: string) => string;
+  fuzzyTopics: React.ComponentProps<typeof AdminFeedbackBrowser>["fuzzyTopics"];
+  lowRating: React.ComponentProps<typeof AdminFeedbackBrowser>["lowRating"];
 }) {
   const newestFirst = [...summaries].sort(
     (a, b) => b.day_number - a.day_number,
@@ -157,25 +154,17 @@ export function FeedbackSection({
         </div>
       </Card>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <Card>
-          <h3 className="text-sm font-semibold">What&apos;s still fuzzy?</h3>
-          <p className="text-muted mb-2 text-xs">
-            {fuzzyTopics.length === 0
-              ? "no qualitative answers yet"
-              : `${fuzzyTopics.length} qualitative answer${fuzzyTopics.length === 1 ? "" : "s"} · noise filtered`}
-          </p>
-          <FuzzyTopicsPanel entries={fuzzyTopics} />
-        </Card>
-        <Card>
-          <h3 className="text-sm font-semibold">Low-rating triage</h3>
-          <p className="text-muted mb-2 text-xs">
-            {lowRating.length === 0
-              ? "no 1- or 2-star ratings in the window"
-              : `${lowRating.length} student${lowRating.length === 1 ? "" : "s"} flagged ≤ 2★ — consider reaching out`}
-          </p>
-          <LowRatingTriage entries={lowRating} studentHref={studentHref} />
-        </Card>
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold">Browse comments</h3>
+        <p className="text-muted text-xs">
+          search, filter by day or rating, switch to low-rating triage —{" "}
+          {fuzzyTopics.length} qualitative answer
+          {fuzzyTopics.length === 1 ? "" : "s"} · {lowRating.length} ≤2★
+        </p>
+        <AdminFeedbackBrowser
+          fuzzyTopics={fuzzyTopics}
+          lowRating={lowRating}
+        />
       </div>
     </CollapsibleSection>
   );

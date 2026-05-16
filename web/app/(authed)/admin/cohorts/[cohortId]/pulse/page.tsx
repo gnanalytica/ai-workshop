@@ -590,7 +590,6 @@ export default async function AdminCohortPulsePage({
             cohortSize={visibleCohortSize}
             fuzzyTopics={fuzzyTopics}
             lowRating={lowRating}
-            studentHref={studentHref}
           />
           <PodsAndStudents>
             <PodSlot title="Feedback by pod">
