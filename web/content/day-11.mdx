@@ -3,64 +3,65 @@ day: 11
 date: "2026-05-15"
 weekday: "Friday"
 week: 2
-topic: "Capstone Milestone 2: Idea Lock, Features and Automations with AI"
+topic: "Intelligent Data – Creation, Identification and Real-World Usage"
 faculty:
   main: "Sandeep"
   support: "TBD"
 reading_time: "10 min"
-tldr: "Milestone 2. You pitch your locked idea in 3 minutes, get critiqued, then convert it into a feature list and an automation map. By end of class your capstone has a spine."
-tags: ["capstone", "milestone", "features"]
+tldr: "Raw data tells you what happened. Intelligent data helps you decide what to do next. Today you learn to spot it inside your capstone idea — what to capture, what to label, what to throw away — so the AI features you ship next week actually have something to learn from."
+tags: ["data", "intelligence", "design-thinking", "decision-making"]
 software: []
-online_tools: []
-video: "https://www.youtube.com/embed/Th8JoIan4dg"
-prompt_of_the_day: "You are a startup product manager. Here is my locked idea [paste SCQA]. Break it into (a) 5 must-have features for v1, (b) 3 nice-to-haves, (c) 3 automations that can replace manual work. For each AI feature, name the model + why. Be brutal about scope cuts."
+online_tools: ["Kaggle", "Hugging Face Datasets", "Google Dataset Search"]
+video: "https://www.youtube.com/embed/HMQkRgLG7DM"
+prompt_of_the_day: "Here is my capstone idea [paste SCQA + JTBD]. List (a) 5 raw data signals my users emit (clicks, text, location, time, etc.), (b) for each, the intelligent data I can derive from it (intent, sentiment, anomaly, recommendation), (c) what decision that intelligent signal unlocks. Be specific — name the field, the model, and the user-facing change."
 tools_hands_on:
-  - { name: "Notion", url: "https://www.notion.so/" }
-  - { name: "Figma", url: "https://www.figma.com/" }
-  - { name: "ChatGPT", url: "https://chat.openai.com/" }
+  - { name: "Google Sheets", url: "https://sheets.google.com/" }
+  - { name: "Kaggle", url: "https://www.kaggle.com/datasets" }
+  - { name: "Hugging Face Datasets", url: "https://huggingface.co/datasets" }
 tools_reference:
-  - { name: "Marty Cagan — Inspired (book)", url: "https://www.svpg.com/inspired-how-to-create-products-customers-love/" }
+  - { name: "Google Dataset Search", url: "https://datasetsearch.research.google.com/" }
+  - { name: "Andrew Ng — Data-centric AI", url: "https://www.deeplearning.ai/the-batch/issue-155/" }
 resources:
-  - { title: "Y Combinator — How to evaluate startup ideas (10 min)", url: "https://www.youtube.com/watch?v=Th8JoIan4dg" }
-  - { title: "First Round — The Feature Audit", url: "https://review.firstround.com/" }
-  - { title: "Lenny Rachitsky — MVP scoping", url: "https://www.lennysnewsletter.com/" }
-lab: { title: "Idea Lock pitch + feature/automation map", url: "https://www.notion.so/" }
+  - { title: "Andrew Ng — From Model-centric to Data-centric AI (10 min)", url: "https://www.youtube.com/watch?v=06-AZXmwHjo" }
+  - { title: "DJ Patil — Data Jujitsu", url: "https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/" }
+  - { title: "Drew Conway — The Data Science Venn Diagram", url: "http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram" }
+lab: { title: "Raw → Intelligent → Decision map for your capstone", url: "https://sheets.google.com/" }
 objective:
-  topic: "Lock the capstone idea, decompose into features and automations"
-  tools: ["Notion", "Figma", "ChatGPT"]
-  end_goal: "A locked one-page capstone spec: SCQA + JTBD + 5 features + 3 automations + tech stack hypothesis + one cut you committed to."
+  topic: "Identify intelligent data inside your capstone, decide what to capture and what to build from it"
+  tools: ["Google Sheets", "Kaggle", "Hugging Face Datasets"]
+  end_goal: "A one-page data map: every raw signal your product captures, the intelligent signal it converts into, and the user-facing decision that signal drives."
 ---
 
-> 🏁 **Milestone 2 — Idea Lock.** This is the second of four capstone gates. After today, you stop pivoting *what* you're building and start arguing about *how*. Pitch is 3 minutes, Q&A is 4 minutes, you walk out with a locked spec.
+> 🧠 **Where this fits.** You've spent four days on design thinking — problem, user, idea, features. Today bridges that work into the building weeks ahead. Before you wire up any AI feature, you need to know *what data feeds it* and *what decision comes out the other side*.
 
 ## 🎯 Today's objective
 
-**Topic.** Lock the capstone idea. Decompose it into features and automations. Name the AI in each.
+**Topic.** Identify intelligent data inside your capstone, decide what to capture and what to build from it.
 
 **By end of class you will have:**
-1. Defended your idea in a 3-minute SCQA pitch in front of the cohort + faculty.
-2. A feature list (5 must / 3 nice) with the AI model named for each AI feature.
-3. An automation map: 3 manual steps you'll *not* build because automation will do them.
+1. A list of the **raw signals** your product can capture (clicks, text, time, location, ratings, etc.).
+2. For each, the **intelligent signal** you can derive (intent, sentiment, anomaly, segment, recommendation).
+3. For each intelligent signal, the **decision** it unlocks for the user or the system.
 
-> *Why this matters.* Every demo-day project that ships clearly cut something today. Every one that didn't, didn't.
+> *Why this matters.* AI features without data plans become demoware. The teams that ship next month already know — today — exactly what their app captures on day 1 and what it predicts on day 30.
 
 ## ⏪ Pre-class · ~20 min
 
 ### Setup (required)
 
-- [ ] Day-10 1-pager finalised (SCQA + causal loop + JTBD).
-- [ ] 3-minute pitch rehearsed once *out loud* — not in your head.
+- [ ] Have your Day 10 1-pager (SCQA + JTBD + empathy map) open.
+- [ ] Create a Kaggle account if you don't have one — we'll browse, not download.
 
 ### Primer (~5 min)
 
-- **Watch:** YC's *How to evaluate startup ideas* (10 min, watch on 1.5x) — https://www.youtube.com/watch?v=Th8JoIan4dg
+- **Watch:** Andrew Ng — *From Model-centric to Data-centric AI* (10 min) — https://www.youtube.com/watch?v=06-AZXmwHjo
+- **Skim:** Drew Conway's Data Science Venn diagram — http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram
 
 ### Bring to class
 
-- [ ] One feature you secretly know is scope creep. We'll cut it together.
-- [ ] Your laptop with Notion / Figma open.
+- [ ] One real screenshot from a product you use daily (Instagram, Swiggy, Netflix) — we'll reverse-engineer what data made that screen possible.
 
-> 🧠 **Quick glossary.** **Idea Lock** = no more pivoting on the *what*. **Feature** = a thing the user does. **Automation** = a thing that happens *without* the user. **MVP** = smallest thing that proves the riskiest assumption. **AI feature** = feature where an LLM or model does the heavy lift.
+> 🧠 **Quick glossary.** **Raw data** = what happened (a row in a log). **Intelligent data** = what it means (a label, score, prediction). **Decision** = what changes because of the intelligent signal. **Ground truth** = the answer you'd compare a prediction against. **Cold start** = the problem of having no data on day 1.
 
 ## 🎥 In-class · live session
 
@@ -68,53 +69,79 @@ objective:
 
 | Block | Time | What |
 |---|---|---|
-| Pitches round 1 | 25 min | 5 teams × 3 min pitch + 2 min critique |
-| Feature decomposition workshop | 15 min | One team's pitch → live feature breakdown |
-| AI vs deterministic | 10 min | Where to use an LLM, where to use plain code |
-| Lab: build your map | 20 min | Spec it on Notion |
-| Pitches round 2 + lock | 20 min | Remaining teams, final lock |
+| Hook: reverse-engineer Instagram's "For You" | 10 min | Raw signals → intelligent labels → decisions on screen |
+| Three layers of data | 15 min | Raw / Intelligent / Decision — examples from Swiggy, Netflix, Razorpay |
+| Where the data lives | 10 min | First-party vs third-party vs synthetic vs public datasets |
+| Lab: map your capstone | 25 min | Build your Raw → Intelligent → Decision table |
+| Cold-start strategies | 10 min | What you do on day 1 when you have no data |
+| Share + critique | 15 min | 3 teams present their map, the cohort pokes holes |
 
-### Where AI belongs (and where it doesn't)
+### The three layers of data
 
-- **AI is good for.** Open-ended generation, summarisation, classification of fuzzy text, semantic search.
-- **AI is bad for.** Exact arithmetic, deterministic workflow steps, anything legally binding without review, tasks where 95% accuracy is unacceptable.
-- **The default.** Plain code first. Reach for AI only when plain code can't do it cleanly.
+1. **Raw.** What the system captured. A click, a rating, a search query, a GPS ping, a message, a transaction.
+2. **Intelligent.** What you derived from the raw. *This user is at risk of churning. This review is sarcastic. These two products are substitutes. This transaction is anomalous.*
+3. **Decision.** What the product does differently because of the intelligent signal. *Send a discount. Hide the review. Bundle the products. Block the transaction.*
 
-## 🧪 Lab: Feature + automation map
+If a capstone idea can't fill all three columns, it's not yet a product — it's a feature looking for a problem.
 
-1. **Pitch (3 min).** Deliver SCQA. No slides — talk + your 1-pager.
-2. **Critique capture (4 min).** Write down every objection. Don't defend live; capture.
-3. **Feature list (8 min).** In Notion: 5 must-have features. For each, mark `[AI]` or `[code]` and name the model if AI.
-4. **Automation map (4 min).** List 3 manual tasks an automation will eat (cron job, webhook, agent loop, scheduled email).
-5. **Cut commitment (1 min).** Cross out *one* feature publicly. Tell a neighbour what you cut and why.
+### Where to *find* data when you have none
 
-**Artifact.** A Notion page (or Figma frame) with: SCQA, JTBD, feature list (with `[AI]` tags + model names), automation map, the cut feature, top-3 critiques received. Submit on dashboard.
+- **First-party.** Instrument your own app from day 1. Even 50 rows of real user behaviour beats 50,000 rows of synthetic.
+- **Third-party APIs.** Google Maps, OpenWeather, public Twitter/X, GitHub — what your product can read on demand.
+- **Public datasets.** Kaggle, Hugging Face, Google Dataset Search, government data portals (data.gov.in for India).
+- **Synthetic / LLM-generated.** Useful for cold start but never for evaluation.
+
+### What "intelligent" actually means (taxonomy)
+
+- **Classification.** Is this review positive? Is this transaction fraud?
+- **Regression.** What rating will this user give? How long until churn?
+- **Ranking / recommendation.** Out of 10,000 items, which 5 first?
+- **Clustering / segmentation.** Which users behave alike?
+- **Anomaly detection.** What's different this hour vs every other hour?
+- **Generation.** Given context, produce a reply / image / summary.
+
+## 🧪 Lab: Raw → Intelligent → Decision map
+
+Open a Google Sheet (or Notion table). Three columns:
+
+| Raw signal | Intelligent signal | Decision unlocked |
+|---|---|---|
+| Search query text | Inferred intent (browse / buy / help) | Different home screen layout |
+| GPS pings every 5 min | Commute pattern | Suggest evening route |
+| Star rating + review text | Sarcasm flag | Don't auto-publish 5-star sarcastic reviews |
+
+1. **Fill 5 rows** for your capstone. Be honest — don't write rows you don't actually need.
+2. For each intelligent signal, **name how you'd build it.** LLM prompt? Embedding similarity? Simple rule? Classifier?
+3. For each, **estimate cold-start.** Can you ship a v1 with 0 users of data? 100? 10,000?
+4. **Mark one row as risky** — the intelligent signal that, if you got it wrong, would hurt the user most.
+
+**Artifact.** Submit your sheet on the dashboard before Day 12. ~5 rows, all three columns filled.
 
 ## 📊 Live poll
 
-**Where in your stack is AI doing real work?** Generation only / Classification / Search / Workflow agent / Just a chat wrapper. Instructor uses this to plan Days 12–18.
+**What's your dominant data source for v1?** First-party instrumentation / Third-party API / Public dataset / Synthetic / LLM-generated. Instructor uses this to plan the RAG and agent days in Week 4.
 
 ## 💬 Discuss
 
-- Which critique landed hardest? What did you change because of it?
-- Name one feature you almost kept that you should cut.
-- Which "AI feature" is actually a regex in disguise?
+- Pick a product you use daily. What raw signal of yours did it convert into an intelligent label this week? What decision did the product make?
+- Which of *your* intelligent signals is actually just a regex you're calling "AI"?
+- Where in your capstone is cold-start fatal? Where is it survivable?
 
 ## ❓ Quiz
 
-Short quiz on must-have vs nice-to-have, when to use AI vs deterministic code, and what an automation is. Opens on dashboard.
+Short quiz on the three layers, when to use classification vs generation, and what "intelligent data" means in practice. Opens on dashboard.
 
-## 📝 Assignment · Locked Spec v1
+## 📝 Assignment · Capstone Data Map v1
 
-**Brief.** Polish your in-class Notion page into a **Locked Spec v1**. Add: tech stack hypothesis (frontend, backend, model, db), one risk + mitigation, and the *one* user you'll demo to in week 4. ~500 words.
+**Brief.** Polish your in-class sheet into a **Data Map v1**. Add: one paragraph per row explaining how the intelligent signal becomes the decision, and a "day-1 vs day-30" plan for each row (what's available on launch vs after a month of real users). ~400 words + your table.
 
 **Submit.** Dashboard before Day 12.
 
-**Rubric.** Sharpness of cuts (4) · Feasibility of stack (4) · Honesty about risk (2).
+**Rubric.** Honesty about cold-start (4) · Clarity of decision link (4) · Naming the build approach (2).
 
 ## 🔁 Prep for next class
 
-Day 12 jumps into **Text2Image** — Stable Diffusion, ChatGPT Images, Nano Banana, Adobe Firefly. Run by Jayasaagar with Sanjana on support.
+Day 12 is **Text2Image** — Stable Diffusion, ChatGPT Images, Nano Banana, Adobe Firefly. Run by Jayasaagar with Sanjana on support.
 
 - [ ] Free accounts on **Adobe Firefly** and **ChatGPT Plus or free image tier**.
 - [ ] If you have a GPU laptop, install **AUTOMATIC1111** or **ComfyUI** locally. Otherwise we'll use hosted Stable Diffusion.
@@ -122,7 +149,8 @@ Day 12 jumps into **Text2Image** — Stable Diffusion, ChatGPT Images, Nano Bana
 
 ## 📚 References
 
-- [YC — How to evaluate startup ideas](https://www.youtube.com/watch?v=Th8JoIan4dg) — pitch sanity check.
-- [SVPG — Inspired](https://www.svpg.com/inspired-how-to-create-products-customers-love/) — the PM bible.
-- [Lenny's Newsletter — MVP scoping](https://www.lennysnewsletter.com/) — practical scope cuts.
-- [Notion — Project spec template](https://www.notion.so/templates) — start from one.
+- [Andrew Ng — From Model-centric to Data-centric AI](https://www.youtube.com/watch?v=06-AZXmwHjo) — why the data, not the model, is usually the bottleneck.
+- [DJ Patil — Data Jujitsu](https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/) — short, practical, written by the first US Chief Data Scientist.
+- [Drew Conway — Data Science Venn Diagram](http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram) — where intelligent data lives.
+- [Kaggle Datasets](https://www.kaggle.com/datasets) — start here when you need public data.
+- [Google Dataset Search](https://datasetsearch.research.google.com/) — when Kaggle doesn't have it.
