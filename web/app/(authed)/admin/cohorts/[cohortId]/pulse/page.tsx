@@ -258,7 +258,27 @@ export default async function AdminCohortPulsePage({
 
   /* ─── Pod + student row aggregation ─── */
 
-  const confirmedRoster = roster.filter((r) => r.status === "confirmed");
+  // Pods whose name starts with or contains "admin" (case-insensitive) are
+  // staff/ops pods (e.g. "Gnanalytica Admin") used to give non-student
+  // accounts a home. They distort cohort metrics, so we drop them from the
+  // pod tables and exclude their members from the student tables.
+  const isAdminPodName = (name: string) => /\badmin\b/i.test(name);
+  const adminPodNames = new Set(
+    pods.filter((p) => isAdminPodName(p.name)).map((p) => p.name),
+  );
+  const visiblePods = pods.filter((p) => !isAdminPodName(p.name));
+
+  const confirmedRoster = roster.filter(
+    (r) =>
+      r.status === "confirmed" &&
+      (r.pod_name === null || !adminPodNames.has(r.pod_name)),
+  );
+  // Use the filtered count for any per-cohort denominator the sections care
+  // about. The underlying analytics queries (engagement / scores) still see
+  // every confirmed registration including admin-pod members, so the absolute
+  // counts in those charts may differ by a small handful — acceptable since
+  // their main value is the trend, not the precise headcount.
+  const visibleCohortSize = confirmedRoster.length;
 
   const studentRows: PulseStudentRow[] = confirmedRoster.map((r) => {
     const a = activity.get(r.user_id);
@@ -368,7 +388,7 @@ export default async function AdminCohortPulsePage({
     };
   };
 
-  const podRows: PulsePodRow[] = pods.map((p) => {
+  const podRows: PulsePodRow[] = visiblePods.map((p) => {
     const members = byPod.get(p.name) ?? [];
     return {
       pod_id: p.pod_id,
@@ -401,8 +421,8 @@ export default async function AdminCohortPulsePage({
           label="Today"
           value={`Day ${today}/30`}
           hint={
-            kpis.students > 0
-              ? `${kpis.students} student${kpis.students === 1 ? "" : "s"}`
+            visibleCohortSize > 0
+              ? `${visibleCohortSize} student${visibleCohortSize === 1 ? "" : "s"}`
               : "no roster yet"
           }
         />
@@ -446,7 +466,7 @@ export default async function AdminCohortPulsePage({
             rows={[...submissionScores].sort(
               (a, b) => b.day_number - a.day_number,
             )}
-            cohortSize={kpis.students}
+            cohortSize={visibleCohortSize}
             dayHrefPattern={dayHrefPattern}
           />
           <PodsAndStudents>
@@ -465,7 +485,7 @@ export default async function AdminCohortPulsePage({
           <QuizzesSection
             byDay={[...quizScores].sort((a, b) => b.day_number - a.day_number)}
             byQuiz={quizPerformance}
-            cohortSize={kpis.students}
+            cohortSize={visibleCohortSize}
             dayHrefPattern={dayHrefPattern}
           />
           <PodsAndStudents>
@@ -487,7 +507,7 @@ export default async function AdminCohortPulsePage({
             heatmapDays={heatmapDays}
             attendance={attendance}
             hasMarkedAttendance={hasMarkedAttendance}
-            cohortSize={kpis.students}
+            cohortSize={visibleCohortSize}
             dayHrefPattern={dayHrefPattern}
             studentHref={studentHref}
           />
@@ -539,7 +559,7 @@ export default async function AdminCohortPulsePage({
         <>
           <FeedbackSection
             summaries={dayFeedback}
-            cohortSize={kpis.students}
+            cohortSize={visibleCohortSize}
             fuzzyTopics={fuzzyTopics}
             lowRating={lowRating}
             studentHref={studentHref}
