@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-export type PulseWindow = 7 | 14 | 30 | "all";
+import type { PulseWindow } from "./pulse-window";
 
 const WINDOWS: { value: PulseWindow; label: string }[] = [
   { value: 7, label: "7d" },
@@ -55,8 +54,3 @@ export function PulseWindowPicker({ active }: { active: PulseWindow }) {
   );
 }
 
-export function parseWindow(raw: string | undefined): PulseWindow {
-  if (raw === "14" || raw === "30") return Number(raw) as PulseWindow;
-  if (raw === "all") return "all";
-  return 7;
-}

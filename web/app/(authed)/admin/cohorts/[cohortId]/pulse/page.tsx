@@ -27,10 +27,8 @@ import { workingDayNumber } from "@/lib/calendar";
 import { listRoster, listPods } from "@/lib/queries/admin";
 import { getStudentActivity } from "@/lib/queries/activity-score";
 import { PulseTabs, type PulseTab } from "@/components/admin-cohort/pulse/PulseTabs";
-import {
-  PulseWindowPicker,
-  parseWindow,
-} from "@/components/admin-cohort/pulse/PulseWindowPicker";
+import { PulseWindowPicker } from "@/components/admin-cohort/pulse/PulseWindowPicker";
+import { parseWindow } from "@/components/admin-cohort/pulse/pulse-window";
 import type { PulsePodRow } from "@/components/admin-cohort/pulse/PulsePodsTab";
 import type { PulseStudentRow } from "@/components/admin-cohort/pulse/PulseStudentsTab";
 import { SubmissionsSection } from "@/components/admin-cohort/pulse/SubmissionsSection";
