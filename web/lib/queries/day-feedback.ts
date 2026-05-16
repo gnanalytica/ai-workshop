@@ -199,13 +199,17 @@ export async function listRecentFuzzyTopics(
   cohortId: string,
   dayNumbers: number[],
   limit = 25,
+  excludeUserIds?: ReadonlyArray<string>,
 ): Promise<FuzzyTopicEntry[]> {
   if (dayNumbers.length === 0) return [];
   const sb = await getSupabaseServer();
+  // Select user_id so we can filter against the exclude list before the limit
+  // bites — the limit is post-filter so excluded rows can't crowd out real
+  // entries.
   const { data } = await sb
     .from("day_feedback")
     .select(
-      "day_number, fuzzy_topic, rating, anonymous, created_at, profiles:user_id(full_name)",
+      "day_number, fuzzy_topic, rating, anonymous, user_id, created_at, profiles:user_id(full_name)",
     )
     .eq("cohort_id", cohortId)
     .in("day_number", dayNumbers)
@@ -213,17 +217,21 @@ export async function listRecentFuzzyTopics(
     .order("created_at", { ascending: false })
     .limit(limit * 3); // overshoot — we filter noise below
 
+  const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
+
   type Row = {
     day_number: number;
     fuzzy_topic: string | null;
     rating: number;
     anonymous: boolean;
+    user_id: string;
     created_at: string;
     profiles: { full_name: string | null } | null;
   };
 
   const out: FuzzyTopicEntry[] = [];
   for (const r of (data ?? []) as unknown as Row[]) {
+    if (exclude && exclude.has(r.user_id)) continue;
     const text = (r.fuzzy_topic ?? "").trim();
     if (!text) continue;
     if (FUZZY_NOISE.has(text.toLowerCase())) continue;
@@ -259,9 +267,14 @@ export async function listLowRatingFeedback(
   dayNumbers: number[],
   maxRating = 2,
   limit = 20,
+  excludeUserIds?: ReadonlyArray<string>,
 ): Promise<LowRatingEntry[]> {
   if (dayNumbers.length === 0) return [];
   const sb = await getSupabaseServer();
+  // Over-fetch so the exclude filter doesn't shrink the visible result set
+  // below `limit` — we still cap the response to `limit` post-filter.
+  const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
+  const fetchLimit = exclude ? limit + exclude.size + 5 : limit;
   const { data } = await sb
     .from("day_feedback")
     .select(
@@ -271,7 +284,7 @@ export async function listLowRatingFeedback(
     .in("day_number", dayNumbers)
     .lte("rating", maxRating)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(fetchLimit);
 
   type Row = {
     day_number: number;
@@ -283,15 +296,18 @@ export async function listLowRatingFeedback(
     profiles: { full_name: string | null } | null;
   };
 
-  return ((data ?? []) as unknown as Row[]).map((r) => ({
-    day_number: r.day_number,
-    rating: r.rating,
-    fuzzy_topic: r.fuzzy_topic,
-    user_id: r.anonymous ? null : r.user_id,
-    full_name: r.anonymous ? null : (r.profiles?.full_name ?? null),
-    anonymous: r.anonymous,
-    created_at: r.created_at,
-  }));
+  return ((data ?? []) as unknown as Row[])
+    .filter((r) => !exclude || !exclude.has(r.user_id))
+    .slice(0, limit)
+    .map((r) => ({
+      day_number: r.day_number,
+      rating: r.rating,
+      fuzzy_topic: r.fuzzy_topic,
+      user_id: r.anonymous ? null : r.user_id,
+      full_name: r.anonymous ? null : (r.profiles?.full_name ?? null),
+      anonymous: r.anonymous,
+      created_at: r.created_at,
+    }));
 }
 
 export async function getDayFeedbackSummary(

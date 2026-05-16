@@ -360,9 +360,11 @@ export const listRecentDayFeedback = cache(
     cohortId: string,
     dayNumbers: number[],
     podId?: string | null,
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<DayFeedbackSummary[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
+    const excludeArg = excludeUserIds && excludeUserIds.length > 0 ? excludeUserIds : null;
     const summaries = await Promise.all(
       dayNumbers.map(async (day) => {
         const { data } = await (sb.rpc as unknown as (
@@ -382,6 +384,7 @@ export const listRecentDayFeedback = cache(
           p_cohort: cohortId,
           p_day: day,
           p_pod: podId ?? null,
+          p_exclude_user_ids: excludeArg,
         });
         const row = (data ?? [])[0];
         if (!row) {

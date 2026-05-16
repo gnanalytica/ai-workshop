@@ -99,10 +99,10 @@ export default async function AdminCohortPulsePage({
   const dayHrefPattern = `/admin/cohorts/${cohort.id}/day/{n}`;
 
   // Resolve admin-pod members first so every analytics rollup below excludes
-  // them from numerators + denominators. listRecentDayFeedback /
-  // listRecentFuzzyTopics / listLowRatingFeedback go through a stored
-  // procedure that doesn't accept a filter — their (small) inclusion is the
-  // remaining caveat.
+  // them from numerators + denominators. The feedback RPC accepts the
+  // exclude list via migration 0101; the fuzzy / low-rating queries filter
+  // on the JS side. End result: admin/staff accounts are invisible to every
+  // class-wide Pulse metric.
   const adminUserIds = await getAdminPodUserIds(cohort.id);
 
   // Always fetch everything — server-side React `cache()` dedupes shared
@@ -132,10 +132,10 @@ export default async function AdminCohortPulsePage({
     getAttendanceByDay(cohort.id, adminUserIds),
     getEngagementByDay(cohort.id, undefined, adminUserIds),
     listAtRiskStudents(cohort.id),
-    listRecentDayFeedback(cohort.id, recentDayNumbers, null),
+    listRecentDayFeedback(cohort.id, recentDayNumbers, null, adminUserIds),
     listCohortPolls(cohort.id),
-    listRecentFuzzyTopics(cohort.id, recentDayNumbers, 200),
-    listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 200),
+    listRecentFuzzyTopics(cohort.id, recentDayNumbers, 200, adminUserIds),
+    listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 200, adminUserIds),
     getActivityMatrix(cohort.id, unlockedRecent, adminUserIds),
     getSubmissionScoresByDay(cohort.id, recentDayNumbers, adminUserIds),
     getQuizScoresByDay(cohort.id, recentDayNumbers, adminUserIds),
