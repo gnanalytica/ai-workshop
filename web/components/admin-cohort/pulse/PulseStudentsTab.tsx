@@ -19,6 +19,11 @@ export interface PulseStudentRow {
   feedback: number;
   poll_votes: number;
   lab_progress: number;
+  /** Avg best-score across the student's quiz attempts. Null = never attempted. */
+  avg_quiz_score: number | null;
+  /** Avg final grade across the student's graded submissions. */
+  avg_submission_grade: number | null;
+  graded_submissions: number;
   /** Days since the student's most recent activity, or null if never. */
   days_since_active: number | null;
   studentHref: string;
@@ -29,6 +34,13 @@ function toneClass(value: number): string {
   if (value >= 50) return "text-warn";
   if (value > 0) return "text-danger";
   return "text-muted";
+}
+
+function scoreToneClass(score: number | null): string {
+  if (score === null) return "text-muted";
+  if (score >= 80) return "text-ok";
+  if (score >= 60) return "text-warn";
+  return "text-danger";
 }
 
 function freshness(days: number | null) {
@@ -94,6 +106,36 @@ export function PulseStudentsTab({ rows }: { rows: PulseStudentRow[] }) {
       accessor: (r) => r.score,
       cell: (r) => (
         <span className="tabular-nums">{Math.round(r.score)}%</span>
+      ),
+      width: "6rem",
+    },
+    {
+      id: "avg_quiz_score",
+      header: "Avg quiz",
+      accessor: (r) => r.avg_quiz_score ?? -1,
+      cell: (r) => (
+        <span
+          className={`tabular-nums font-medium ${scoreToneClass(r.avg_quiz_score)}`}
+          title="Average best-attempt quiz score"
+        >
+          {r.avg_quiz_score === null ? "—" : Math.round(r.avg_quiz_score)}
+        </span>
+      ),
+      width: "6rem",
+    },
+    {
+      id: "avg_submission_grade",
+      header: "Avg grade",
+      accessor: (r) => r.avg_submission_grade ?? -1,
+      cell: (r) => (
+        <span
+          className={`tabular-nums font-medium ${scoreToneClass(r.avg_submission_grade)}`}
+          title="Average final submission grade"
+        >
+          {r.avg_submission_grade === null
+            ? "—"
+            : Math.round(r.avg_submission_grade)}
+        </span>
       ),
       width: "6rem",
     },

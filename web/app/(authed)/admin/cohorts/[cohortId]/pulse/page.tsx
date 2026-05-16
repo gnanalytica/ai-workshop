@@ -1,20 +1,11 @@
 import { notFound } from "next/navigation";
-import { Card, CardSub } from "@/components/ui/card";
 import { CohortShell } from "@/components/admin-cohort/CohortShell";
-import { StackedBarChart, type BarRow } from "@/components/charts/BarChart";
-import { EngagementChart } from "@/components/charts/EngagementChart";
-import { ActivityHeatmap } from "@/components/charts/ActivityHeatmap";
+import { type BarRow } from "@/components/charts/BarChart";
 import { ChangeBand, type ChangeSignal } from "@/components/health/ChangeBand";
 import { PollsExplorer } from "@/components/admin-cohort/PollsExplorer";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getAdminCohortById } from "@/lib/queries/admin-context";
-import {
-  AtRiskList,
-  DayFeedbackList,
-} from "@/components/health/HealthSections";
-import { FuzzyTopicsPanel } from "@/components/health/FuzzyTopicsPanel";
-import { LowRatingTriage } from "@/components/health/LowRatingTriage";
-import { CohortProgressCard } from "@/components/health/CohortProgressCard";
+import { AtRiskList } from "@/components/health/HealthSections";
 import {
   getCohortKpis,
   listAtRiskStudents,
@@ -45,6 +36,19 @@ import {
   PulseStudentsTab,
   type PulseStudentRow,
 } from "@/components/admin-cohort/pulse/PulseStudentsTab";
+import { SubmissionsSection } from "@/components/admin-cohort/pulse/SubmissionsSection";
+import { QuizzesSection } from "@/components/admin-cohort/pulse/QuizzesSection";
+import { EngagementSection } from "@/components/admin-cohort/pulse/EngagementSection";
+import { FeedbackSection } from "@/components/admin-cohort/pulse/FeedbackSection";
+import {
+  getSubmissionScoresByDay,
+  getQuizScoresByDay,
+  listQuizPerformance,
+  getStudentScoreTotals,
+  type SubmissionDayScores,
+  type QuizDayScores,
+  type QuizPerformanceRow,
+} from "@/lib/queries/pulse-scores";
 
 export default async function AdminCohortPulsePage({
   params,
@@ -253,22 +257,38 @@ export default async function AdminCohortPulsePage({
     ],
   }));
 
+  // Fetch the per-day score rollups used by the class tab's new
+  // Submissions / Quizzes sections. Skipped on the pods/students tabs
+  // where they're not rendered.
+  let submissionScores: SubmissionDayScores[] = [];
+  let quizScores: QuizDayScores[] = [];
+  let quizPerformance: QuizPerformanceRow[] = [];
+  if (tab === "class") {
+    [submissionScores, quizScores, quizPerformance] = await Promise.all([
+      getSubmissionScoresByDay(cohort.id, recentDayNumbers),
+      getQuizScoresByDay(cohort.id, recentDayNumbers),
+      listQuizPerformance(cohort.id, recentDayNumbers),
+    ]);
+  }
+
   // Build pods/students breakdowns on demand. React `cache()` dedupes the
   // underlying fetches (registrations, submissions, etc.) so re-running them
   // here is cheap.
   let podRows: PulsePodRow[] = [];
   let studentRows: PulseStudentRow[] = [];
   if (tab === "pods" || tab === "students") {
-    const [roster, pods, activity] = await Promise.all([
+    const [roster, pods, activity, scoreTotals] = await Promise.all([
       listRoster(cohort.id),
       listPods(cohort.id),
       getStudentActivity(cohort.id),
+      getStudentScoreTotals(cohort.id),
     ]);
     const confirmedRoster = roster.filter((r) => r.status === "confirmed");
 
     if (tab === "students") {
       studentRows = confirmedRoster.map((r) => {
         const a = activity.get(r.user_id);
+        const s = scoreTotals.get(r.user_id);
         return {
           user_id: r.user_id,
           full_name: r.full_name,
@@ -281,6 +301,9 @@ export default async function AdminCohortPulsePage({
           feedback: a?.signals.feedback ?? 0,
           poll_votes: a?.signals.poll_votes ?? 0,
           lab_progress: a?.signals.lab_progress ?? 0,
+          avg_quiz_score: s?.avg_quiz_score ?? null,
+          avg_submission_grade: s?.avg_submission_grade ?? null,
+          graded_submissions: s?.graded_submissions ?? 0,
           days_since_active: a?.days_since_active ?? null,
           studentHref: studentHref(r.user_id),
         };
@@ -310,6 +333,9 @@ export default async function AdminCohortPulsePage({
             feedback: 0,
             poll_votes: 0,
             lab_progress: 0,
+            avg_quiz_score: null as number | null,
+            avg_submission_grade: null as number | null,
+            graded_submissions: 0,
           };
         }
         let scoreSum = 0;
@@ -321,6 +347,9 @@ export default async function AdminCohortPulsePage({
         let feedback = 0;
         let poll_votes = 0;
         let lab_progress = 0;
+        const quizScores: number[] = [];
+        const subScores: number[] = [];
+        let graded_submissions = 0;
         for (const m of members) {
           const a = activity.get(m.user_id);
           const s = a?.score ?? 0;
@@ -335,6 +364,17 @@ export default async function AdminCohortPulsePage({
           feedback += a?.signals.feedback ?? 0;
           poll_votes += a?.signals.poll_votes ?? 0;
           lab_progress += a?.signals.lab_progress ?? 0;
+          const sc = scoreTotals.get(m.user_id);
+          if (sc?.avg_quiz_score !== null && sc?.avg_quiz_score !== undefined) {
+            quizScores.push(sc.avg_quiz_score);
+          }
+          if (
+            sc?.avg_submission_grade !== null &&
+            sc?.avg_submission_grade !== undefined
+          ) {
+            subScores.push(sc.avg_submission_grade);
+          }
+          graded_submissions += sc?.graded_submissions ?? 0;
         }
         return {
           avg_activity: scoreSum / members.length,
@@ -346,6 +386,15 @@ export default async function AdminCohortPulsePage({
           feedback,
           poll_votes,
           lab_progress,
+          avg_quiz_score:
+            quizScores.length > 0
+              ? quizScores.reduce((s, n) => s + n, 0) / quizScores.length
+              : null,
+          avg_submission_grade:
+            subScores.length > 0
+              ? subScores.reduce((s, n) => s + n, 0) / subScores.length
+              : null,
+          graded_submissions,
         };
       };
 
@@ -416,10 +465,8 @@ export default async function AdminCohortPulsePage({
 
       {tab !== "class" ? null : (
         <ClassPulsePanels
-          cohortId={cohort.id}
           today={today}
           kpis={kpis}
-          summary={summary}
           atRisk={atRisk}
           headlinePct={headlinePct}
           headlineLabel={headlineLabel}
@@ -427,13 +474,14 @@ export default async function AdminCohortPulsePage({
           headlineDelta={headlineDelta}
           sparkValues={sparkValues}
           changeSignals={changeSignals}
+          submissionScores={submissionScores}
+          quizScores={quizScores}
+          quizPerformance={quizPerformance}
           engagement={engagement}
           activityMatrix={activityMatrix}
           heatmapDays={heatmapDays}
           chartRows={chartRows}
           hasMarkedAttendance={hasMarkedAttendance}
-          progress={progress}
-          recentDayNumbers={recentDayNumbers}
           dayFeedback={dayFeedback}
           fuzzyTopics={fuzzyTopics}
           lowRating={lowRating}
@@ -446,10 +494,8 @@ export default async function AdminCohortPulsePage({
 }
 
 function ClassPulsePanels(props: {
-  cohortId: string;
   today: number;
   kpis: Awaited<ReturnType<typeof getCohortKpis>>;
-  summary: Awaited<ReturnType<typeof getAnalyticsSummary>>;
   atRisk: Awaited<ReturnType<typeof listAtRiskStudents>>;
   headlinePct: number | null;
   headlineLabel: string;
@@ -457,13 +503,14 @@ function ClassPulsePanels(props: {
   headlineDelta: number | null;
   sparkValues: number[];
   changeSignals: ChangeSignal[];
+  submissionScores: SubmissionDayScores[];
+  quizScores: QuizDayScores[];
+  quizPerformance: QuizPerformanceRow[];
   engagement: Awaited<ReturnType<typeof getEngagementByDay>>;
   activityMatrix: Awaited<ReturnType<typeof getActivityMatrix>>;
   heatmapDays: number[];
   chartRows: BarRow[];
   hasMarkedAttendance: boolean;
-  progress: Awaited<ReturnType<typeof getCohortProgressByDay>>;
-  recentDayNumbers: number[];
   dayFeedback: Awaited<ReturnType<typeof listRecentDayFeedback>>;
   fuzzyTopics: Awaited<ReturnType<typeof listRecentFuzzyTopics>>;
   lowRating: Awaited<ReturnType<typeof listLowRatingFeedback>>;
@@ -473,7 +520,6 @@ function ClassPulsePanels(props: {
   const {
     today,
     kpis,
-    summary,
     atRisk,
     headlinePct,
     headlineLabel,
@@ -481,13 +527,14 @@ function ClassPulsePanels(props: {
     headlineDelta,
     sparkValues,
     changeSignals,
+    submissionScores,
+    quizScores,
+    quizPerformance,
     engagement,
     activityMatrix,
     heatmapDays,
     chartRows,
     hasMarkedAttendance,
-    progress,
-    recentDayNumbers,
     dayFeedback,
     fuzzyTopics,
     lowRating,
@@ -541,157 +588,65 @@ function ClassPulsePanels(props: {
       {/* What changed since yesterday — a single-glance pulse strip. */}
       <ChangeBand signals={changeSignals} />
 
-      {/* Question 1 — Are they active? */}
-      <Group
-        title="Are they active?"
-        sub="Auto-detected — a student counts as active on a day when they submit, take a quiz, give feedback, vote, or tick a lab."
-        tone="accent"
-      >
-        <div className="space-y-2">
-          <SectionHead
-            title="Activity by day"
-            sub={`${engagement.reduce((s, e) => s + e.active, 0)} active events across ${engagement.length} day${engagement.length === 1 ? "" : "s"}`}
-          />
-          {engagement.length === 0 ? (
-            <Card>
-              <CardSub>
-                No student activity recorded yet for this cohort.
-              </CardSub>
-            </Card>
-          ) : (
-            <Card>
-              <EngagementChart rows={engagement} />
-            </Card>
-          )}
-        </div>
-        {activityMatrix.length > 0 && heatmapDays.length > 0 && (
-          <div className="space-y-2">
-            <SectionHead
-              title="Who's drifting?"
-              sub={`${activityMatrix.length} students × ${heatmapDays.length} day${heatmapDays.length === 1 ? "" : "s"} · sorted by least active first`}
-            />
-            <ActivityHeatmap
-              rows={activityMatrix}
-              days={heatmapDays}
-              studentHref={studentHref}
-            />
-          </div>
-        )}
-        {hasMarkedAttendance && (
-          <details className="border-line bg-card/60 group rounded-lg border">
-            <summary className="text-muted hover:text-ink cursor-pointer px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
-              Manually marked attendance ({chartRows.length} day
-              {chartRows.length === 1 ? "" : "s"})
-            </summary>
-            <div className="px-4 pb-4">
-              <StackedBarChart rows={chartRows} />
-              <Legend />
-            </div>
-          </details>
-        )}
-      </Group>
+      <SubmissionsSection
+        rows={[...submissionScores].sort((a, b) => b.day_number - a.day_number)}
+        cohortSize={kpis.students}
+      />
 
-      {/* Question 2 — Are they keeping up? */}
-      <Group
-        title="Are they keeping up?"
-        sub="Curriculum progress, grading queue, and students who need a nudge."
-        tone="warn"
-      >
-        <div className="grid gap-3 sm:grid-cols-3">
-          <MiniStat
-            label="Avg days complete"
-            value={summary.avgDaysComplete.toFixed(1)}
-            hint={`of ${today} unlocked`}
-          />
-          <MiniStat
-            label="Pending review"
-            value={summary.pendingReview}
-            hint={
-              summary.pendingReview === 0
-                ? "queue is empty"
-                : "submissions waiting on a grader"
-            }
-            tone={summary.pendingReview > 5 ? "warn" : "default"}
-          />
-          <MiniStat
-            label="Pods"
-            value={kpis.pods}
-            hint={
-              kpis.pods === 0 ? "no pods yet" : "active learning groups"
-            }
-          />
-        </div>
-        <div className="space-y-2">
-          <SectionHead
-            title="Quiz pass & submission rate by day"
-            sub={`${recentDayNumbers.length} most recent day${recentDayNumbers.length === 1 ? "" : "s"} · pass = score ≥ 60`}
-          />
-          <CohortProgressCard rows={progress} />
-        </div>
-        <div className="space-y-2">
-          <SectionHead
-            title="At-risk students"
-            sub={
-              atRisk.length === 0
-                ? "no flags"
-                : `${atRisk.length} flagged`
-            }
-          />
+      <QuizzesSection
+        byDay={[...quizScores].sort((a, b) => b.day_number - a.day_number)}
+        byQuiz={quizPerformance}
+        cohortSize={kpis.students}
+      />
+
+      <EngagementSection
+        engagement={engagement}
+        activityMatrix={activityMatrix}
+        heatmapDays={heatmapDays}
+        chartRows={chartRows}
+        hasMarkedAttendance={hasMarkedAttendance}
+        studentHref={studentHref}
+      />
+
+      <FeedbackSection
+        summaries={dayFeedback}
+        cohortSize={kpis.students}
+        fuzzyTopics={fuzzyTopics}
+        lowRating={lowRating}
+        studentHref={studentHref}
+      />
+
+      {atRisk.length > 0 && (
+        <section className="space-y-3">
+          <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
+            <h2 className="text-base font-semibold tracking-tight">
+              At-risk students
+            </h2>
+            <p className="text-muted text-xs">
+              {atRisk.length} flagged · inactivity, missing submissions, or open
+              help-desk threads
+            </p>
+          </header>
           <AtRiskList
             students={atRisk}
             studentHref={studentHref}
-            emptyHint="Everyone's on track — no inactivity, missing submissions, or open help-desk threads."
+            emptyHint="Everyone's on track."
           />
-        </div>
-      </Group>
+        </section>
+      )}
 
-      {/* Question 3 — Are they happy? */}
-      <Group
-        title="Are they happy?"
-        sub="Day-end feedback ratings, qualitative answers, and low-rating triage."
-        tone="ok"
-      >
-        <div className="space-y-2">
-          <SectionHead
-            title="Recent day feedback"
-            sub={`last ${recentDayNumbers.length} day${recentDayNumbers.length === 1 ? "" : "s"} · response rate vs ${kpis.students} confirmed`}
-          />
-          <DayFeedbackList rows={dayFeedback} cohortSize={kpis.students} />
-        </div>
-
-        <div className="space-y-2">
-          <SectionHead
-            title="What's still fuzzy?"
-            sub={
-              fuzzyTopics.length === 0
-                ? "no qualitative answers yet"
-                : `${fuzzyTopics.length} qualitative answer${fuzzyTopics.length === 1 ? "" : "s"} · noise filtered`
-            }
-          />
-          <FuzzyTopicsPanel entries={fuzzyTopics} />
-        </div>
-
-        <div className="space-y-2">
-          <SectionHead
-            title="Low-rating triage"
-            sub={
-              lowRating.length === 0
-                ? "no 1- or 2-star ratings in the window"
-                : `${lowRating.length} student${lowRating.length === 1 ? "" : "s"} flagged ≤ 2★ recently — consider reaching out`
-            }
-          />
-          <LowRatingTriage entries={lowRating} studentHref={studentHref} />
-        </div>
-      </Group>
-
-      {/* Question 4 — Polls + pulses */}
-      <Group
-        title="Polls and pulses"
-        sub={`${polls.length} total · curriculum polls (with day) and live pulses (no day) across the cohort run.`}
-        tone="muted"
-      >
+      <section className="space-y-3">
+        <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
+          <h2 className="text-base font-semibold tracking-tight">
+            Polls and pulses
+          </h2>
+          <p className="text-muted text-xs">
+            {polls.length} total · curriculum polls (with day) and live pulses
+            (no day) across the cohort run
+          </p>
+        </header>
         <PollsExplorer polls={polls} />
-      </Group>
+      </section>
     </>
   );
 }
@@ -792,108 +747,3 @@ function Sparkline({ values, tone }: { values: number[]; tone: Tone }) {
   );
 }
 
-function MiniStat({
-  label,
-  value,
-  hint,
-  tone = "default",
-}: {
-  label: string;
-  value: string | number;
-  hint: string;
-  tone?: Tone;
-}) {
-  return (
-    <Card>
-      <p className="text-muted font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em]">
-        {label}
-      </p>
-      <p
-        className={`mt-1 font-display text-xl font-semibold tabular-nums ${TONE_RING[tone]}`}
-      >
-        {value}
-      </p>
-      <p className="text-muted mt-0.5 text-xs">{hint}</p>
-    </Card>
-  );
-}
-
-type GroupTone = "default" | "accent" | "ok" | "warn" | "danger" | "muted";
-
-const GROUP_BORDER: Record<GroupTone, string> = {
-  default: "border-line/40",
-  accent: "border-accent/60",
-  ok: "border-ok/60",
-  warn: "border-warn/60",
-  danger: "border-danger/60",
-  muted: "border-line/30",
-};
-
-const GROUP_DOT: Record<GroupTone, string> = {
-  default: "bg-line",
-  accent: "bg-accent",
-  ok: "bg-ok",
-  warn: "bg-warn",
-  danger: "bg-danger",
-  muted: "bg-muted/40",
-};
-
-function Group({
-  title,
-  sub,
-  tone = "default",
-  children,
-}: {
-  title: string;
-  sub: string;
-  tone?: GroupTone;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-3">
-      <header
-        className={`flex flex-wrap items-baseline justify-between gap-2 border-b-2 ${GROUP_BORDER[tone]} pb-2`}
-      >
-        <h2 className="flex items-center gap-2 text-base font-semibold tracking-tight">
-          <span
-            aria-hidden
-            className={`inline-block h-2 w-2 rounded-full ${GROUP_DOT[tone]}`}
-          />
-          {title}
-        </h2>
-        <p className="text-muted text-xs">{sub}</p>
-      </header>
-      <div className="space-y-4">{children}</div>
-    </section>
-  );
-}
-
-function SectionHead({ title, sub }: { title: string; sub: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-2">
-      <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
-      <CardSub className="text-xs">{sub}</CardSub>
-    </div>
-  );
-}
-
-function Legend() {
-  return (
-    <div className="text-muted mt-4 flex flex-wrap gap-3 text-xs">
-      <span>
-        <span className="bg-ok/70 mr-1 inline-block h-2 w-2 rounded" /> Present
-      </span>
-      <span>
-        <span className="bg-warn/70 mr-1 inline-block h-2 w-2 rounded" /> Late
-      </span>
-      <span>
-        <span className="bg-bg-soft mr-1 inline-block h-2 w-2 rounded" />{" "}
-        Excused
-      </span>
-      <span>
-        <span className="bg-danger/70 mr-1 inline-block h-2 w-2 rounded" />{" "}
-        Absent
-      </span>
-    </div>
-  );
-}

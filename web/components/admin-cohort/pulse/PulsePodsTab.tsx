@@ -22,6 +22,11 @@ export interface PulsePodRow {
   feedback: number;
   poll_votes: number;
   lab_progress: number;
+  /** Avg quiz best-score across pod members who attempted. Null = nobody attempted. */
+  avg_quiz_score: number | null;
+  /** Avg final submission grade across pod members who have graded subs. */
+  avg_submission_grade: number | null;
+  graded_submissions: number;
 }
 
 function pct(n: number) {
@@ -33,6 +38,13 @@ function toneClass(value: number): string {
   if (value >= 50) return "text-warn";
   if (value > 0) return "text-danger";
   return "text-muted";
+}
+
+function scoreToneClass(score: number | null): string {
+  if (score === null) return "text-muted";
+  if (score >= 80) return "text-ok";
+  if (score >= 60) return "text-warn";
+  return "text-danger";
 }
 
 export function PulsePodsTab({ rows }: { rows: PulsePodRow[] }) {
@@ -108,6 +120,36 @@ export function PulsePodsTab({ rows }: { rows: PulsePodRow[] }) {
             {r.inactive_3d}
           </Badge>
         ),
+      width: "6rem",
+    },
+    {
+      id: "avg_quiz_score",
+      header: "Avg quiz",
+      accessor: (r) => r.avg_quiz_score ?? -1,
+      cell: (r) => (
+        <span
+          className={`tabular-nums font-medium ${scoreToneClass(r.avg_quiz_score)}`}
+          title="Average best-attempt quiz score across members who attempted"
+        >
+          {r.avg_quiz_score === null ? "—" : Math.round(r.avg_quiz_score)}
+        </span>
+      ),
+      width: "6rem",
+    },
+    {
+      id: "avg_submission_grade",
+      header: "Avg grade",
+      accessor: (r) => r.avg_submission_grade ?? -1,
+      cell: (r) => (
+        <span
+          className={`tabular-nums font-medium ${scoreToneClass(r.avg_submission_grade)}`}
+          title="Average final submission grade across members with graded submissions"
+        >
+          {r.avg_submission_grade === null
+            ? "—"
+            : Math.round(r.avg_submission_grade)}
+        </span>
+      ),
       width: "6rem",
     },
     {
