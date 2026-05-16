@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export type PulseTab = "class" | "pods" | "students";
+export type PulseTab = "submissions" | "quizzes" | "engagement" | "feedback";
 
 const TABS: { id: PulseTab; label: string; hint: string }[] = [
-  { id: "class", label: "Class", hint: "cohort-wide pulse" },
-  { id: "pods", label: "Pods", hint: "per-pod breakdown" },
-  { id: "students", label: "Students", hint: "per-student breakdown" },
+  { id: "submissions", label: "Submissions", hint: "grades + queue ageing" },
+  { id: "quizzes", label: "Quizzes", hint: "attempts + pass rate" },
+  { id: "engagement", label: "Engagement", hint: "activity + polls + at-risk" },
+  { id: "feedback", label: "Feedback", hint: "ratings + fuzzy topics" },
 ];
 
 export function PulseTabs({ active }: { active: PulseTab }) {
   return (
-    <nav className="flex flex-wrap gap-2" aria-label="Pulse views">
+    <nav className="flex flex-wrap gap-2" aria-label="Pulse subject">
       {TABS.map((t) => {
         const isActive = t.id === active;
         return (
