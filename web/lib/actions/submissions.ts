@@ -19,6 +19,13 @@ const submitSchema = z.object({
   group_name: z.string().trim().min(1).max(120).optional(),
 });
 
+export const MIN_SUBMISSION_WORDS = 100;
+export const MAX_SUBMISSION_WORDS = 1000;
+
+export function countWords(s: string): number {
+  return s.trim().split(/\s+/).filter(Boolean).length;
+}
+
 async function upsertSubmission(
   input: z.infer<typeof submitSchema>,
   status: "draft" | "submitted",
@@ -27,10 +34,27 @@ async function upsertSubmission(
     const { data: user } = await sb.auth.getUser();
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
 
-    // Enforce group_name when the assignment is a group project. Drafts can
-    // be saved without it (so students aren't blocked while collecting work),
-    // but a real submit is rejected without one.
+    // Real submits (not drafts) get the full validation. Drafts can save WIP
+    // freely — students should be able to checkpoint short notes without
+    // hitting the word-count gate.
     if (status === "submitted") {
+      const words = countWords(input.body);
+      if (words < MIN_SUBMISSION_WORDS) {
+        return {
+          data: null,
+          error: {
+            message: `Submission must be at least ${MIN_SUBMISSION_WORDS} words (currently ${words}).`,
+          },
+        };
+      }
+      if (words > MAX_SUBMISSION_WORDS) {
+        return {
+          data: null,
+          error: {
+            message: `Submission must be at most ${MAX_SUBMISSION_WORDS} words (currently ${words}).`,
+          },
+        };
+      }
       const { data: a } = await sb
         .from("assignments")
         .select("is_group_project")

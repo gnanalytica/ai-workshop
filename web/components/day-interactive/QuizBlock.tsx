@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import type { DayQuiz } from "@/lib/queries/day-interactive";
 import { submitQuiz } from "@/lib/actions/quizzes";
 
+function isAnswered(v: unknown): boolean {
+  if (v === null || v === undefined) return false;
+  if (typeof v === "string") return v.trim().length > 0;
+  if (Array.isArray(v)) return v.length > 0;
+  return true;
+}
+
 export function QuizBlock({ quiz, dayNumber }: { quiz: DayQuiz; dayNumber: number }) {
   const completed = !!quiz.attempt?.completed_at;
   const [answers, setAnswers] = useState<Record<string, unknown>>(quiz.attempt?.answers ?? {});
@@ -21,7 +28,17 @@ export function QuizBlock({ quiz, dayNumber }: { quiz: DayQuiz; dayNumber: numbe
     setAnswers((a) => ({ ...a, [String(qOrdinal)]: value }));
   }
 
+  const answeredCount = quiz.questions.reduce(
+    (n, q) => n + (isAnswered(answers[String(q.ordinal)]) ? 1 : 0),
+    0,
+  );
+  const allAnswered = quiz.questions.length > 0 && answeredCount === quiz.questions.length;
+
   function submit() {
+    if (!allAnswered) {
+      toast.error(`Answer every question (${quiz.questions.length - answeredCount} left).`);
+      return;
+    }
     start(async () => {
       const r = await submitQuiz({ quiz_id: quiz.id, answers, day_number: dayNumber });
       if (r.ok) toast.success("Submitted");
@@ -93,8 +110,12 @@ export function QuizBlock({ quiz, dayNumber }: { quiz: DayQuiz; dayNumber: numbe
       )}
 
       {!completed && (
-        <div className="flex justify-end">
-          <Button onClick={submit} disabled={pending}>
+        <div className="flex items-center justify-between gap-3">
+          <p className={`text-xs ${allAnswered ? "text-muted" : "text-[hsl(var(--danger))]"}`}>
+            {answeredCount} / {quiz.questions.length} answered
+            {!allAnswered && " — all questions required"}
+          </p>
+          <Button onClick={submit} disabled={pending || !allAnswered}>
             {pending ? "Submitting…" : "Submit quiz"}
           </Button>
         </div>

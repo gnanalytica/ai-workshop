@@ -7,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InlineMarkdown } from "@/components/markdown/InlineMarkdown";
-import { saveDraft, submitAssignment } from "@/lib/actions/submissions";
+import {
+  saveDraft,
+  submitAssignment,
+  countWords,
+  MIN_SUBMISSION_WORDS,
+  MAX_SUBMISSION_WORDS,
+} from "@/lib/actions/submissions";
 import type { DayAssignment } from "@/lib/queries/day-interactive";
 import { relTime } from "@/lib/format";
 
@@ -64,6 +70,17 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
     if (action === "submit" && assignment.is_group_project && !trimmedGroup) {
       toast.error("Group name is required");
       return;
+    }
+    if (action === "submit") {
+      const words = countWords(body);
+      if (words < MIN_SUBMISSION_WORDS) {
+        toast.error(`Submission must be at least ${MIN_SUBMISSION_WORDS} words (currently ${words}).`);
+        return;
+      }
+      if (words > MAX_SUBMISSION_WORDS) {
+        toast.error(`Submission must be at most ${MAX_SUBMISSION_WORDS} words (currently ${words}).`);
+        return;
+      }
     }
     start(async () => {
       const fn = action === "submit" ? submitAssignment : saveDraft;
@@ -180,13 +197,33 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
               </p>
             </div>
           )}
-          <textarea
-            rows={8}
-            placeholder="Your submission (markdown)"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            className="border-line bg-input-bg text-ink w-full rounded-md border p-3 font-mono text-sm"
-          />
+          <div className="space-y-1">
+            <textarea
+              rows={8}
+              placeholder={`Your submission (markdown). Minimum ${MIN_SUBMISSION_WORDS} words, maximum ${MAX_SUBMISSION_WORDS}.`}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              className="border-line bg-input-bg text-ink w-full rounded-md border p-3 font-mono text-sm"
+            />
+            {(() => {
+              const w = countWords(body);
+              const tooFew = w > 0 && w < MIN_SUBMISSION_WORDS;
+              const tooMany = w > MAX_SUBMISSION_WORDS;
+              const tone = tooFew || tooMany ? "text-[hsl(var(--danger))]" : "text-muted";
+              return (
+                <p className={`${tone} text-[11px] flex justify-between`}>
+                  <span>
+                    {w} / {MAX_SUBMISSION_WORDS} words
+                  </span>
+                  <span>
+                    {tooFew && `Need ${MIN_SUBMISSION_WORDS - w} more`}
+                    {tooMany && `${w - MAX_SUBMISSION_WORDS} over limit`}
+                    {!tooFew && !tooMany && `Range: ${MIN_SUBMISSION_WORDS}–${MAX_SUBMISSION_WORDS}`}
+                  </span>
+                </p>
+              );
+            })()}
+          </div>
           <div className="space-y-2">
             <p className="text-muted text-xs uppercase tracking-wider">Links (optional)</p>
             {links.map((l, i) => (
@@ -219,11 +256,12 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
               Save draft
             </Button>
             <Button
-              disabled={
-                pending ||
-                !body.trim() ||
-                (assignment.is_group_project && !groupName.trim())
-              }
+              disabled={(() => {
+                if (pending || !body.trim()) return true;
+                if (assignment.is_group_project && !groupName.trim()) return true;
+                const w = countWords(body);
+                return w < MIN_SUBMISSION_WORDS || w > MAX_SUBMISSION_WORDS;
+              })()}
               onClick={() => go("submit")}
             >
               {pending ? "Saving…" : "Submit"}
