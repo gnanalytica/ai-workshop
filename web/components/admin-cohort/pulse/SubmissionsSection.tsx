@@ -17,18 +17,23 @@ export function SubmissionsSection({
   rows,
   cohortSize,
 }: {
-  /** Per-day score rollups, oldest day first. */
+  /** Per-day score rollups, oldest day first. Days with no assignments are silently filtered from the per-day list and rate denominators. */
   rows: SubmissionDayScores[];
   cohortSize: number;
 }) {
-  const totalSubmitted = rows.reduce((s, r) => s + r.submitted, 0);
-  const totalGraded = rows.reduce((s, r) => s + r.graded, 0);
-  const totalUngraded = rows.reduce((s, r) => s + r.ungraded, 0);
+  // A day only contributes to rates if it actually had an assignment.
+  // Otherwise students had nothing to submit — counting it would penalize
+  // them for the curriculum's gap, not their own behaviour.
+  const opportunityRows = rows.filter((r) => r.assignments > 0);
+  const totalSubmitted = opportunityRows.reduce((s, r) => s + r.submitted, 0);
+  const totalGraded = opportunityRows.reduce((s, r) => s + r.graded, 0);
+  const totalUngraded = opportunityRows.reduce((s, r) => s + r.ungraded, 0);
   const overallAvg =
     totalGraded > 0
-      ? rows.reduce((s, r) => s + (r.avg_score ?? 0) * r.graded, 0) / totalGraded
+      ? opportunityRows.reduce((s, r) => s + (r.avg_score ?? 0) * r.graded, 0) /
+        totalGraded
       : null;
-  const oldestUngraded = rows.reduce<number | null>((acc, r) => {
+  const oldestUngraded = opportunityRows.reduce<number | null>((acc, r) => {
     if (r.oldest_ungraded_hours === null) return acc;
     return acc === null || r.oldest_ungraded_hours > acc
       ? r.oldest_ungraded_hours
@@ -76,15 +81,15 @@ export function SubmissionsSection({
         <MiniStat
           label="Avg per-day submit rate"
           value={(() => {
-            const daysWithSubs = rows.filter((r) => r.submitted > 0).length;
-            if (cohortSize === 0 || daysWithSubs === 0) return "—";
+            if (cohortSize === 0 || opportunityRows.length === 0) return "—";
             const avg =
-              rows
-                .filter((r) => r.submitted > 0)
-                .reduce((s, r) => s + r.submitted / cohortSize, 0) / daysWithSubs;
+              opportunityRows.reduce(
+                (s, r) => s + r.submitted / (cohortSize * r.assignments),
+                0,
+              ) / opportunityRows.length;
             return `${Math.round(avg * 100)}%`;
           })()}
-          hint={`across ${rows.filter((r) => r.submitted > 0).length} day${rows.filter((r) => r.submitted > 0).length === 1 ? "" : "s"} with submissions`}
+          hint={`across ${opportunityRows.length} day${opportunityRows.length === 1 ? "" : "s"} with assignments`}
           toneClass="text-ink"
         />
       </div>
@@ -95,11 +100,11 @@ export function SubmissionsSection({
             <h3 className="text-sm font-semibold">Grade distribution by day</h3>
             <ScoreDistributionLegend />
           </div>
-          {rows.length === 0 ? (
-            <CardSub>No submitted assignments in the window.</CardSub>
+          {opportunityRows.length === 0 ? (
+            <CardSub>No assignments deployed in the window.</CardSub>
           ) : (
             <ul className="divide-line divide-y">
-              {rows.map((r) => (
+              {opportunityRows.map((r) => (
                 <li
                   key={r.day_number}
                   className="grid grid-cols-12 items-center gap-2 py-2"
@@ -110,9 +115,13 @@ export function SubmissionsSection({
                     </span>
                   </div>
                   <div className="text-muted col-span-3 text-xs sm:col-span-2">
-                    {r.submitted}/{cohortSize}
+                    {r.submitted}/{cohortSize * r.assignments}
                     <br />
-                    <span className="text-[10px]">submitted</span>
+                    <span className="text-[10px]">
+                      {r.assignments === 1
+                        ? "submitted"
+                        : `submitted · ${r.assignments} asg`}
+                    </span>
                   </div>
                   <div className="col-span-5 sm:col-span-6">
                     <ScoreDistributionBar

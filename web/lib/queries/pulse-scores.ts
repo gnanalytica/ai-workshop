@@ -28,6 +28,8 @@ const emptyDist = (): ScoreDistribution => ({
 
 export interface SubmissionDayScores {
   day_number: number;
+  /** Number of non-reflection assignments deployed on this day. 0 → nothing to submit, the day should not penalize submission rate. */
+  assignments: number;
   /** Count of submissions in (submitted, graded) status for the day. */
   submitted: number;
   /** Subset of `submitted` where status='graded' (either AI or human). */
@@ -57,15 +59,30 @@ export const getSubmissionScoresByDay = cache(
   ): Promise<SubmissionDayScores[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
-    const { data } = await sb
-      .from("submissions")
-      .select(
-        "status, score, ai_score, created_at, updated_at, assignments!inner(day_number, cohort_id, kind)",
-      )
-      .eq("assignments.cohort_id", cohortId)
-      .in("assignments.day_number", dayNumbers)
-      .neq("assignments.kind", "reflection")
-      .in("status", ["submitted", "graded"]);
+
+    const [subsRes, asgRes] = await Promise.all([
+      sb
+        .from("submissions")
+        .select(
+          "status, score, ai_score, created_at, updated_at, assignments!inner(day_number, cohort_id, kind)",
+        )
+        .eq("assignments.cohort_id", cohortId)
+        .in("assignments.day_number", dayNumbers)
+        .neq("assignments.kind", "reflection")
+        .in("status", ["submitted", "graded"]),
+      sb
+        .from("assignments")
+        .select("day_number, kind")
+        .eq("cohort_id", cohortId)
+        .in("day_number", dayNumbers)
+        .neq("kind", "reflection"),
+    ]);
+
+    const asgByDay = new Map<number, number>();
+    for (const r of (asgRes.data ?? []) as Array<{ day_number: number }>) {
+      asgByDay.set(r.day_number, (asgByDay.get(r.day_number) ?? 0) + 1);
+    }
+    const data = subsRes.data;
 
     type Row = {
       status: "submitted" | "graded";
@@ -123,9 +140,11 @@ export const getSubmissionScoresByDay = cache(
       .sort((a, b) => a - b)
       .map((day) => {
         const b = byDay.get(day);
+        const assignments = asgByDay.get(day) ?? 0;
         if (!b) {
           return {
             day_number: day,
+            assignments,
             submitted: 0,
             graded: 0,
             avg_score: null,
@@ -155,6 +174,7 @@ export const getSubmissionScoresByDay = cache(
         }
         return {
           day_number: day,
+          assignments,
           submitted: b.submitted,
           graded: b.graded,
           avg_score: avg,

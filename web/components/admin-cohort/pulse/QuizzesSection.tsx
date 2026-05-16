@@ -33,18 +33,21 @@ export function QuizzesSection({
   byQuiz: QuizPerformanceRow[];
   cohortSize: number;
 }) {
-  const totalAttempts = byDay.reduce((s, r) => s + r.attempts, 0);
-  const totalPassed = byDay.reduce((s, r) => s + r.passed, 0);
+  // Only days that actually had a published quiz contribute to rates and
+  // the per-day list. A quiet day should not drag the cohort score down.
+  const opportunityDays = byDay.filter((r) => r.quizzes > 0);
+  const totalAttempts = opportunityDays.reduce((s, r) => s + r.attempts, 0);
+  const totalPassed = opportunityDays.reduce((s, r) => s + r.passed, 0);
   const overallAvg =
     totalAttempts > 0
-      ? byDay.reduce(
+      ? opportunityDays.reduce(
           (s, r) => s + (r.avg_score ?? 0) * r.attempts,
           0,
         ) / totalAttempts
       : null;
   const overallPass =
     totalAttempts > 0 ? totalPassed / totalAttempts : null;
-  const totalQuizzes = byDay.reduce((s, r) => s + r.quizzes, 0);
+  const totalQuizzes = opportunityDays.reduce((s, r) => s + r.quizzes, 0);
 
   return (
     <section className="space-y-3">
@@ -52,8 +55,9 @@ export function QuizzesSection({
         <h2 className="text-base font-semibold tracking-tight">Quizzes</h2>
         <p className="text-muted text-xs">
           {totalQuizzes} published · {totalAttempts} attempt
-          {totalAttempts === 1 ? "" : "s"} · last {byDay.length} day
-          {byDay.length === 1 ? "" : "s"} · pass = score ≥ 60
+          {totalAttempts === 1 ? "" : "s"} · {opportunityDays.length} day
+          {opportunityDays.length === 1 ? "" : "s"} with a quiz · pass = score ≥
+          60
         </p>
       </header>
 
@@ -81,13 +85,12 @@ export function QuizzesSection({
         <MiniStat
           label="Attempt rate"
           value={(() => {
-            const daysWithQuiz = byDay.filter((r) => r.quizzes > 0).length;
-            if (cohortSize === 0 || daysWithQuiz === 0) return "—";
+            if (cohortSize === 0 || opportunityDays.length === 0) return "—";
             const avg =
-              byDay
-                .filter((r) => r.quizzes > 0)
-                .reduce((s, r) => s + r.attempters / cohortSize, 0) /
-              daysWithQuiz;
+              opportunityDays.reduce(
+                (s, r) => s + r.attempters / cohortSize,
+                0,
+              ) / opportunityDays.length;
             return `${Math.round(avg * 100)}%`;
           })()}
           hint={`avg unique attempters per day with a quiz`}
@@ -101,11 +104,11 @@ export function QuizzesSection({
             <h3 className="text-sm font-semibold">Score distribution by day</h3>
             <ScoreDistributionLegend />
           </div>
-          {byDay.length === 0 ? (
+          {opportunityDays.length === 0 ? (
             <CardSub>No published quizzes in the window.</CardSub>
           ) : (
             <ul className="divide-line divide-y">
-              {byDay.map((r) => (
+              {opportunityDays.map((r) => (
                 <li
                   key={r.day_number}
                   className="grid grid-cols-12 items-center gap-2 py-2"
