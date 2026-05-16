@@ -31,6 +31,7 @@ const studentCommon = {
   rowKey: (r: PulseStudentRow) => r.user_id,
   searchPlaceholder: "Search students…",
   emptyMessage: "No students match.",
+  pageSize: 25,
 };
 
 const podNameColumn: ColumnDef<PulsePodRow> = {

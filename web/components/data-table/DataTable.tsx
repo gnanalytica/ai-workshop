@@ -28,6 +28,10 @@ export interface DataTableProps<T> {
   rowClassName?: (row: T) => string | undefined;
   /** Optional mobile (<md) per-row card renderer. When set, the table is hidden under md and replaced with a card list. */
   mobileCard?: (row: T) => ReactNode;
+  /** Number of rows to render per page. Omit (or 0) to disable pagination and render every row. */
+  pageSize?: number;
+  /** Page-size options shown in the size picker. Defaults to [25, 50, 100]. */
+  pageSizeOptions?: number[];
 }
 
 /** Generic table primitive used across admin/faculty surfaces. */
@@ -41,12 +45,16 @@ export function DataTable<T>({
   initialSortId,
   rowClassName,
   mobileCard,
+  pageSize,
+  pageSizeOptions = [25, 50, 100],
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ id: string; dir: "asc" | "desc" } | null>(
     initialSortId ? { id: initialSortId, dir: "asc" } : null,
   );
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(pageSize ?? 0);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -74,7 +82,14 @@ export function DataTable<T>({
     });
   }, [filtered, columns, sort]);
 
-  const allSelected = bulkActions && sorted.length > 0 && sorted.every((r) => selected.has(rowKey(r)));
+  const totalPages = size > 0 ? Math.max(1, Math.ceil(sorted.length / size)) : 1;
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = size > 0 ? (currentPage - 1) * size : 0;
+  const pageEnd = size > 0 ? pageStart + size : sorted.length;
+  const paged = size > 0 ? sorted.slice(pageStart, pageEnd) : sorted;
+
+  const allSelected =
+    bulkActions && paged.length > 0 && paged.every((r) => selected.has(rowKey(r)));
   const selectedRows = sorted.filter((r) => selected.has(rowKey(r)));
 
   const tableWrapperClass = mobileCard
@@ -107,7 +122,10 @@ export function DataTable<T>({
                     type="checkbox"
                     checked={!!allSelected}
                     onChange={(e) => {
-                      if (e.target.checked) setSelected(new Set(sorted.map(rowKey)));
+                      // Select-all only affects rows visible on the current
+                      // page — common-sense behaviour for paginated tables.
+                      if (e.target.checked)
+                        setSelected(new Set(paged.map(rowKey)));
                       else setSelected(new Set());
                     }}
                     aria-label="Select all"
@@ -147,7 +165,7 @@ export function DataTable<T>({
             </tr>
           </thead>
           <tbody>
-            {sorted.length === 0 ? (
+            {paged.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length + (bulkActions ? 1 : 0)}
@@ -157,7 +175,7 @@ export function DataTable<T>({
                 </td>
               </tr>
             ) : (
-              sorted.map((row) => {
+              paged.map((row) => {
                 const k = rowKey(row);
                 const isSelected = selected.has(k);
                 return (
@@ -198,12 +216,12 @@ export function DataTable<T>({
       </div>
       {mobileCard && (
         <div className="space-y-2 md:hidden">
-          {sorted.length === 0 ? (
+          {paged.length === 0 ? (
             <div className="border-line bg-card text-muted rounded-lg border p-4 text-center text-sm">
               {emptyMessage}
             </div>
           ) : (
-            sorted.map((row) => {
+            paged.map((row) => {
               const k = rowKey(row);
               const isSelected = selected.has(k);
               return (
@@ -234,6 +252,56 @@ export function DataTable<T>({
               );
             })
           )}
+        </div>
+      )}
+
+      {size > 0 && sorted.length > 0 && (
+        <div className="text-muted flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div>
+            Showing <span className="font-medium tabular-nums">{pageStart + 1}</span>
+            –
+            <span className="font-medium tabular-nums">
+              {Math.min(pageEnd, sorted.length)}
+            </span>{" "}
+            of <span className="font-medium tabular-nums">{sorted.length}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1">
+              <span>Rows</span>
+              <select
+                value={size}
+                onChange={(e) => setSize(Number(e.target.value))}
+                className="border-line bg-card text-ink rounded border px-1.5 py-0.5 text-xs"
+              >
+                {pageSizeOptions.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                className="border-line text-ink hover:border-accent/40 disabled:text-muted disabled:hover:border-line rounded border px-2 py-0.5 transition-colors disabled:cursor-not-allowed"
+              >
+                ‹ Prev
+              </button>
+              <span className="tabular-nums">
+                Page {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                className="border-line text-ink hover:border-accent/40 disabled:text-muted disabled:hover:border-line rounded border px-2 py-0.5 transition-colors disabled:cursor-not-allowed"
+              >
+                Next ›
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

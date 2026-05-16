@@ -27,6 +27,10 @@ import { workingDayNumber } from "@/lib/calendar";
 import { listRoster, listPods } from "@/lib/queries/admin";
 import { getStudentActivity } from "@/lib/queries/activity-score";
 import { PulseTabs, type PulseTab } from "@/components/admin-cohort/pulse/PulseTabs";
+import {
+  PulseWindowPicker,
+  parseWindow,
+} from "@/components/admin-cohort/pulse/PulseWindowPicker";
 import type { PulsePodRow } from "@/components/admin-cohort/pulse/PulsePodsTab";
 import type { PulseStudentRow } from "@/components/admin-cohort/pulse/PulseStudentsTab";
 import { SubmissionsSection } from "@/components/admin-cohort/pulse/SubmissionsSection";
@@ -62,13 +66,14 @@ export default async function AdminCohortPulsePage({
   searchParams,
 }: {
   params: Promise<{ cohortId: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; window?: string }>;
 }) {
   const { cohortId } = await params;
   const sp = await searchParams;
   const tab: PulseTab = VALID_TABS.has(sp.tab as PulseTab)
     ? (sp.tab as PulseTab)
     : "submissions";
+  const windowChoice = parseWindow(sp.window);
 
   await requireCapability("content.write", cohortId);
   const cohort = await getAdminCohortById(cohortId);
@@ -79,9 +84,13 @@ export default async function AdminCohortPulsePage({
   const unlockedRecent = days
     .filter((d) => d.is_unlocked && d.day_number <= today)
     .map((d) => d.day_number);
+  // Window selector controls how far back the per-day rollups (feedback,
+  // score distributions, fuzzy topics, etc.) reach. "all" returns every
+  // unlocked day; the numeric options cap at the most-recent N.
+  const windowSize = windowChoice === "all" ? unlockedRecent.length : windowChoice;
   const recentDayNumbers = [...unlockedRecent]
     .sort((a, b) => b - a)
-    .slice(0, 7);
+    .slice(0, windowSize);
 
   const studentHref = (uid: string) =>
     `/admin/cohorts/${cohort.id}/students/${uid}`;
@@ -116,8 +125,8 @@ export default async function AdminCohortPulsePage({
     listAtRiskStudents(cohort.id),
     listRecentDayFeedback(cohort.id, recentDayNumbers, null),
     listCohortPolls(cohort.id),
-    listRecentFuzzyTopics(cohort.id, recentDayNumbers, 25),
-    listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 20),
+    listRecentFuzzyTopics(cohort.id, recentDayNumbers, 200),
+    listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 200),
     getActivityMatrix(cohort.id, unlockedRecent),
     getSubmissionScoresByDay(cohort.id, recentDayNumbers),
     getQuizScoresByDay(cohort.id, recentDayNumbers),
@@ -458,7 +467,10 @@ export default async function AdminCohortPulsePage({
 
       <ChangeBand signals={changeSignals} />
 
-      <PulseTabs active={tab} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <PulseTabs active={tab} />
+        <PulseWindowPicker active={windowChoice} />
+      </div>
 
       {tab === "submissions" && (
         <>

@@ -158,15 +158,15 @@ export const listAtRiskStudents = cache(async (cohortId: string): Promise<AtRisk
     };
   });
 
-  // Surface anyone with at least one signal OR a clearly low score.
+  // Surface anyone with at least one signal OR a clearly low score. Sorted
+  // worst-first; consumers can paginate or render the full list.
   return enriched
     .filter((s) => s.signals.length > 0 || s.activity_score < 40)
     .sort((a, b) => {
       const aw = a.signals.length * 100 + (100 - a.activity_score);
       const bw = b.signals.length * 100 + (100 - b.activity_score);
       return bw - aw;
-    })
-    .slice(0, 50);
+    });
 });
 
 export interface PodKpis {
