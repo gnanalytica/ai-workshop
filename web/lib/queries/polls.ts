@@ -67,6 +67,7 @@ export const listDraftPolls = cache(
       .eq("cohort_id", cohortId)
       .is("opened_at", null)
       .order("day_number", { ascending: true, nullsFirst: false })
+      .order("sort_order", { ascending: true, nullsFirst: false })
       .order("id", { ascending: true });
     return ((data ?? []) as unknown as Array<{
       id: string; cohort_id: string; day_number: number | null;
