@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export type PulseTab = "submissions" | "quizzes" | "engagement" | "feedback";
 
 const TABS: { id: PulseTab; label: string; hint: string }[] = [
-  { id: "submissions", label: "Submissions", hint: "grades + queue ageing" },
+  { id: "submissions", label: "Assignments", hint: "grades + queue ageing" },
   { id: "quizzes", label: "Quizzes", hint: "attempts + pass rate" },
   { id: "engagement", label: "Engagement", hint: "activity + polls + at-risk" },
   { id: "feedback", label: "Feedback", hint: "ratings + fuzzy topics" },

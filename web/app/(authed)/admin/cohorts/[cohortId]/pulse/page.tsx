@@ -450,10 +450,10 @@ export default async function AdminCohortPulsePage({
             dayHrefPattern={dayHrefPattern}
           />
           <PodsAndStudents>
-            <PodSlot title="Submissions by pod">
+            <PodSlot title="Assignments by pod">
               <SubmissionsPodsTable rows={podRows} />
             </PodSlot>
-            <StudentSlot title="Submissions by student">
+            <StudentSlot title="Assignments by student">
               <SubmissionsStudentsTable rows={studentRows} />
             </StudentSlot>
           </PodsAndStudents>

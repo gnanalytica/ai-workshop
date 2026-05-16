@@ -80,7 +80,7 @@ const studentPodColumn: ColumnDef<PulseStudentRow> = {
   width: "8rem",
 };
 
-/* ────────── Submissions tab ────────── */
+/* ────────── Assignments tab ────────── */
 
 export function SubmissionsPodsTable({ rows }: { rows: PulsePodRow[] }) {
   if (rows.length === 0) {
@@ -95,7 +95,7 @@ export function SubmissionsPodsTable({ rows }: { rows: PulsePodRow[] }) {
     podMembersColumn,
     {
       id: "submissions",
-      header: "Submissions",
+      header: "Submitted",
       accessor: (r) => r.submissions,
       cell: (r) => <span className="tabular-nums">{r.submissions}</span>,
       width: "7rem",

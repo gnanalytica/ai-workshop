@@ -47,11 +47,10 @@ export function SubmissionsSection({
   return (
     <section className="space-y-3">
       <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">Submissions</h2>
+        <h2 className="text-base font-semibold tracking-tight">Assignments</h2>
         <p className="text-muted text-xs">
-          {totalSubmitted} submission{totalSubmitted === 1 ? "" : "s"} ·{" "}
-          {totalGraded} graded · {totalUngraded} pending review · last{" "}
-          {rows.length} day{rows.length === 1 ? "" : "s"}
+          {totalSubmitted} submitted · {totalGraded} graded · {totalUngraded}{" "}
+          pending review · last {rows.length} day{rows.length === 1 ? "" : "s"}
         </p>
       </header>
 
@@ -61,7 +60,7 @@ export function SubmissionsSection({
           value={overallAvg === null ? "—" : Math.round(overallAvg).toString()}
           hint={
             totalGraded === 0
-              ? "no graded submissions yet"
+              ? "no graded assignments yet"
               : `across ${totalGraded} graded`
           }
           toneClass={scoreToneClass(overallAvg)}
