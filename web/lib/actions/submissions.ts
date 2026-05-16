@@ -6,6 +6,11 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { gradeWithAI } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
+import {
+  MIN_SUBMISSION_WORDS,
+  MAX_SUBMISSION_WORDS,
+  countWords,
+} from "@/lib/submissions/word-count";
 
 const linkSchema = z.object({
   label: z.string().min(1).max(120),
@@ -18,13 +23,6 @@ const submitSchema = z.object({
   links: z.array(linkSchema).max(10).default([]),
   group_name: z.string().trim().min(1).max(120).optional(),
 });
-
-export const MIN_SUBMISSION_WORDS = 100;
-export const MAX_SUBMISSION_WORDS = 1000;
-
-export function countWords(s: string): number {
-  return s.trim().split(/\s+/).filter(Boolean).length;
-}
 
 async function upsertSubmission(
   input: z.infer<typeof submitSchema>,

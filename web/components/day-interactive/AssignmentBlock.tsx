@@ -7,13 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InlineMarkdown } from "@/components/markdown/InlineMarkdown";
+import { saveDraft, submitAssignment } from "@/lib/actions/submissions";
 import {
-  saveDraft,
-  submitAssignment,
   countWords,
   MIN_SUBMISSION_WORDS,
   MAX_SUBMISSION_WORDS,
-} from "@/lib/actions/submissions";
+} from "@/lib/submissions/word-count";
 import type { DayAssignment } from "@/lib/queries/day-interactive";
 import { relTime } from "@/lib/format";
 
