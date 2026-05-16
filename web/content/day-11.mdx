@@ -5,139 +5,174 @@ weekday: "Friday"
 week: 2
 topic: "Intelligent Data – Creation, Identification and Real-World Usage"
 faculty:
-  main: "Sandeep"
+  main: "Bollapragada Sairam"
   support: "TBD"
-reading_time: "10 min"
-tldr: "Raw data tells you what happened. Intelligent data helps you decide what to do next. Today you learn to spot it inside your capstone idea — what to capture, what to label, what to throw away — so the AI features you ship next week actually have something to learn from."
-tags: ["data", "intelligence", "design-thinking", "decision-making"]
+reading_time: "8 min"
+tldr: "Raw data tells you what happened. Intelligent data — cleaned, integrated, enriched, and run through models — helps people and systems decide what to do next. Today you learn what makes data 'intelligent', how it's created end-to-end, and how it shows up in education, healthcare, and business."
+tags: ["data", "intelligence", "ethics", "real-world"]
 software: []
-online_tools: ["Kaggle", "Hugging Face Datasets", "Google Dataset Search"]
-video: "https://www.youtube.com/embed/HMQkRgLG7DM"
-prompt_of_the_day: "Here is my capstone idea [paste SCQA + JTBD]. List (a) 5 raw data signals my users emit (clicks, text, location, time, etc.), (b) for each, the intelligent data I can derive from it (intent, sentiment, anomaly, recommendation), (c) what decision that intelligent signal unlocks. Be specific — name the field, the model, and the user-facing change."
-tools_hands_on:
-  - { name: "Google Sheets", url: "https://sheets.google.com/" }
-  - { name: "Kaggle", url: "https://www.kaggle.com/datasets" }
-  - { name: "Hugging Face Datasets", url: "https://huggingface.co/datasets" }
+online_tools: []
+prompt_of_the_day: "Pick one product you use daily (Instagram, Swiggy, Google Maps). Walk through how it likely converts your raw activity into intelligent data: what's collected, how it's cleaned/integrated/enriched, which model uses it, and what decision the product makes for you because of it. Be specific."
+tools_hands_on: []
 tools_reference:
-  - { name: "Google Dataset Search", url: "https://datasetsearch.research.google.com/" }
+  - { name: "Drew Conway — Data Science Venn Diagram", url: "http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram" }
   - { name: "Andrew Ng — Data-centric AI", url: "https://www.deeplearning.ai/the-batch/issue-155/" }
 resources:
   - { title: "Andrew Ng — From Model-centric to Data-centric AI (10 min)", url: "https://www.youtube.com/watch?v=06-AZXmwHjo" }
+  - { title: "Google — Responsible AI practices", url: "https://ai.google/responsibility/responsible-ai-practices/" }
   - { title: "DJ Patil — Data Jujitsu", url: "https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/" }
-  - { title: "Drew Conway — The Data Science Venn Diagram", url: "http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram" }
-lab: { title: "Raw → Intelligent → Decision map for your capstone", url: "https://sheets.google.com/" }
 objective:
-  topic: "Identify intelligent data inside your capstone, decide what to capture and what to build from it"
-  tools: ["Google Sheets", "Kaggle", "Hugging Face Datasets"]
-  end_goal: "A one-page data map: every raw signal your product captures, the intelligent signal it converts into, and the user-facing decision that signal drives."
+  topic: "Understand what makes data 'intelligent', how it's created and identified, and where it creates value across domains"
+  tools: []
+  end_goal: "A clear mental model of the raw → intelligent → decision pipeline, with one worked example from your own life and an awareness of ethics, bias, and human oversight."
 ---
 
-> 🧠 **Where this fits.** You've spent four days on design thinking — problem, user, idea, features. Today bridges that work into the building weeks ahead. Before you wire up any AI feature, you need to know *what data feeds it* and *what decision comes out the other side*.
+> 🧠 **Where this fits.** You've finished design thinking — problem, user, idea, features. Before you start building AI features next week, you need a working mental model of *what intelligent data is*, *how it's made*, and *where it creates real-world value*. Today is the bridge.
 
 ## 🎯 Today's objective
 
-**Topic.** Identify intelligent data inside your capstone, decide what to capture and what to build from it.
+**Topic.** Intelligent Data — Creation, Identification and Real-World Usage.
 
-**By end of class you will have:**
-1. A list of the **raw signals** your product can capture (clicks, text, time, location, ratings, etc.).
-2. For each, the **intelligent signal** you can derive (intent, sentiment, anomaly, segment, recommendation).
-3. For each intelligent signal, the **decision** it unlocks for the user or the system.
+**By end of class you will:**
+1. Know what separates **raw data**, **information**, and **intelligent data** — and why the distinction matters.
+2. Walk through the **creation pipeline**: collection → cleaning → integration → enrichment → AI/ML layer.
+3. Spot intelligent data in real products across **education, healthcare, business, manufacturing, and finance**.
+4. Understand the **risks** (bias, privacy, scaled unfairness) and why human judgment stays in the loop.
 
-> *Why this matters.* AI features without data plans become demoware. The teams that ship next month already know — today — exactly what their app captures on day 1 and what it predicts on day 30.
+> *Why this matters.* Every AI feature your capstone will ship next month depends on a chain of data decisions made today. If the data isn't *intelligent* — accurate, contextual, model-ready — your AI is just a chatbot wrapper.
 
-## ⏪ Pre-class · ~20 min
+## ⏪ Pre-class · ~15 min
 
-### Setup (required)
+### Setup (light)
 
-- [ ] Have your Day 10 1-pager (SCQA + JTBD + empathy map) open.
-- [ ] Create a Kaggle account if you don't have one — we'll browse, not download.
+- [ ] Have your Day 10 1-pager (SCQA + JTBD) open — we'll reference it.
+- [ ] Note one product you use every day; you'll reverse-engineer its data flow in class.
 
 ### Primer (~5 min)
 
 - **Watch:** Andrew Ng — *From Model-centric to Data-centric AI* (10 min) — https://www.youtube.com/watch?v=06-AZXmwHjo
-- **Skim:** Drew Conway's Data Science Venn diagram — http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram
+- **Skim:** Drew Conway's Data Science Venn Diagram — http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram
 
 ### Bring to class
 
-- [ ] One real screenshot from a product you use daily (Instagram, Swiggy, Netflix) — we'll reverse-engineer what data made that screen possible.
+- [ ] One screenshot from a product (Swiggy home, Netflix For-You, Instagram Reels) — we'll dissect what intelligent data drives that screen.
 
-> 🧠 **Quick glossary.** **Raw data** = what happened (a row in a log). **Intelligent data** = what it means (a label, score, prediction). **Decision** = what changes because of the intelligent signal. **Ground truth** = the answer you'd compare a prediction against. **Cold start** = the problem of having no data on day 1.
+> 🧠 **Quick glossary.** **Raw data** = isolated facts (a click, a log row). **Information** = organised, given meaning. **Intelligent data** = information + context + models + decision value. **Ground truth** = the correct answer you'd compare a prediction against. **Pipeline** = the path from raw collection to served prediction.
 
 ## 🎥 In-class · live session
 
-### Agenda
+### Agenda (mirrors the deck)
 
 | Block | Time | What |
 |---|---|---|
-| Hook: reverse-engineer Instagram's "For You" | 10 min | Raw signals → intelligent labels → decisions on screen |
-| Three layers of data | 15 min | Raw / Intelligent / Decision — examples from Swiggy, Netflix, Razorpay |
-| Where the data lives | 10 min | First-party vs third-party vs synthetic vs public datasets |
-| Lab: map your capstone | 25 min | Build your Raw → Intelligent → Decision table |
-| Cold-start strategies | 10 min | What you do on day 1 when you have no data |
-| Share + critique | 15 min | 3 teams present their map, the cohort pokes holes |
+| Intro + framing | 5 min | What "intelligent data" means, why today matters |
+| What is intelligent data? | 10 min | Raw → Information → Intelligent → Decision value |
+| How it's created | 15 min | Collection · cleaning · integration · enrichment · AI/ML layer |
+| How to identify it | 10 min | The 5-question checklist |
+| Core technologies | 10 min | Databases, data lakes, ETL/ELT, ML models, NLP, CV, dashboards |
+| Real-world use cases | 20 min | Education · Healthcare · Business / Manufacturing / Finance |
+| Risks, ethics, governance | 10 min | Bias at scale, privacy, surveillance, human oversight |
+| Careers + Q&A | 10 min | Roles, skills, what to study next |
 
-### The three layers of data
+### What is intelligent data?
 
-1. **Raw.** What the system captured. A click, a rating, a search query, a GPS ping, a message, a transaction.
-2. **Intelligent.** What you derived from the raw. *This user is at risk of churning. This review is sarcastic. These two products are substitutes. This transaction is anomalous.*
-3. **Decision.** What the product does differently because of the intelligent signal. *Send a discount. Hide the review. Bundle the products. Block the transaction.*
+- **Raw data** = isolated facts. A timestamp, a click, a row in a log.
+- **Information** = organised data with meaning. "User X clicked product Y at 8:13 PM."
+- **Intelligent data** = data + context + models + decision value. "User X is in the *evening browser* segment; recommend home-decor over fashion in the next session."
 
-If a capstone idea can't fill all three columns, it's not yet a product — it's a feature looking for a problem.
+The defining test: does it **support prediction, recommendation, or automation**? If yes, it's intelligent. If it only describes the past, it's still raw or informational.
 
-### Where to *find* data when you have none
+### How intelligent data is created
 
-- **First-party.** Instrument your own app from day 1. Even 50 rows of real user behaviour beats 50,000 rows of synthetic.
-- **Third-party APIs.** Google Maps, OpenWeather, public Twitter/X, GitHub — what your product can read on demand.
-- **Public datasets.** Kaggle, Hugging Face, Google Dataset Search, government data portals (data.gov.in for India).
-- **Synthetic / LLM-generated.** Useful for cold start but never for evaluation.
+1. **Collection** — sensors, apps, forms, transactions, logs. The raw stream.
+2. **Cleaning** — missing values, duplicates, format errors, outliers.
+3. **Integration** — merge sources into a common model (one user, many touchpoints).
+4. **Enrichment** — labels, metadata, external context (weather, demographics, prior history).
+5. **AI/ML layer** — patterns, predictions, recommendations sitting on top of the clean integrated whole.
 
-### What "intelligent" actually means (taxonomy)
+> The cliché holds: **garbage in, garbage intelligence out.** Every weak step above caps how intelligent your data can become.
 
-- **Classification.** Is this review positive? Is this transaction fraud?
-- **Regression.** What rating will this user give? How long until churn?
-- **Ranking / recommendation.** Out of 10,000 items, which 5 first?
-- **Clustering / segmentation.** Which users behave alike?
-- **Anomaly detection.** What's different this hour vs every other hour?
-- **Generation.** Given context, produce a reply / image / summary.
+### How to identify intelligent data — the 5-question checklist
 
-## 🧪 Lab: Raw → Intelligent → Decision map
+- Is it **accurate and timely**?
+- Does it have **metadata and context**?
+- Can it **answer a business or social question**?
+- Can a **model use it reliably** (right shape, right labels, enough volume)?
+- Does it **trigger an insight or action** — or just sit there?
 
-Open a Google Sheet (or Notion table). Three columns:
+If a dataset fails two of these, it's not intelligent data — it's a candidate for cleanup.
 
-| Raw signal | Intelligent signal | Decision unlocked |
-|---|---|---|
-| Search query text | Inferred intent (browse / buy / help) | Different home screen layout |
-| GPS pings every 5 min | Commute pattern | Suggest evening route |
-| Star rating + review text | Sarcasm flag | Don't auto-publish 5-star sarcastic reviews |
+### Core technologies behind intelligent data
 
-1. **Fill 5 rows** for your capstone. Be honest — don't write rows you don't actually need.
-2. For each intelligent signal, **name how you'd build it.** LLM prompt? Embedding similarity? Simple rule? Classifier?
-3. For each, **estimate cold-start.** Can you ship a v1 with 0 users of data? 100? 10,000?
-4. **Mark one row as risky** — the intelligent signal that, if you got it wrong, would hurt the user most.
+- **Storage:** databases (Postgres, MySQL), data lakes (S3, BigQuery).
+- **Movement:** ETL / ELT pipelines (Airbyte, Fivetran, dbt).
+- **Modelling:** machine learning frameworks (scikit-learn, PyTorch, Hugging Face).
+- **Specialised modalities:** NLP and computer vision when text or images are the raw input.
+- **Surface:** dashboards (Looker, Tableau, Metabase) and decision systems (rules engines, recommendation services).
 
-**Artifact.** Submit your sheet on the dashboard before Day 12. ~5 rows, all three columns filled.
+You don't need all of these to ship a capstone — but knowing the layer-cake helps you spot where your project's bottleneck will be.
+
+### Real-world use cases
+
+**Education**
+- Adaptive learning pathways
+- Early warning systems for struggling students
+- Automated feedback and tutoring support
+- Personalised content recommendations
+
+**Healthcare and biotech**
+- Patient risk scoring
+- Medical image interpretation
+- Predictive diagnostics
+- Hospital resource planning
+
+**Business, manufacturing and finance**
+- Demand forecasting and inventory optimisation
+- Predictive maintenance in factories
+- Fraud detection in finance
+- Customer support and workflow automation
+
+In each domain, the pattern is the same: raw signals → cleaned + integrated + enriched → a model produces an intelligent signal → a person or system *decides differently* because of it.
+
+### Risks, ethics and governance
+
+- **Bad data creates bad intelligence.** A biased training set produces a biased model that quietly scales the bias to millions.
+- **Bias can scale unfair decisions** — credit scoring, hiring, medical triage have all produced real harm.
+- **Privacy and surveillance concerns** — what you collect is what you can leak.
+- **Human oversight is essential** — high-stakes decisions need a person in the loop, not a model alone.
+- **Responsible AI requires transparency** — explainability, audit trails, recourse for affected users.
+
+The takeaway: *intelligent* doesn't automatically mean *good*. The same pipeline that recommends a movie can deny a loan.
+
+### Careers, takeaways and skills
+
+Intelligent data is a **cross-domain skill** — same toolkit, different domains.
+
+- **Roles:** data analyst · data engineer · ML engineer · BI analyst · AI product analyst
+- **Skills:** SQL, Python, visualisation, ML, ethics, communication
+- **The career-defining question:** *What problem is the data solving?* The technical chops follow.
 
 ## 📊 Live poll
 
-**What's your dominant data source for v1?** First-party instrumentation / Third-party API / Public dataset / Synthetic / LLM-generated. Instructor uses this to plan the RAG and agent days in Week 4.
+**Where is intelligent data most underrated in India today?** Education / Healthcare / Manufacturing / Finance / Public services. Faculty uses this to pick the deeper use-case for next semester's electives.
 
 ## 💬 Discuss
 
-- Pick a product you use daily. What raw signal of yours did it convert into an intelligent label this week? What decision did the product make?
-- Which of *your* intelligent signals is actually just a regex you're calling "AI"?
-- Where in your capstone is cold-start fatal? Where is it survivable?
+- Pick the product you brought. What raw signal of yours did it convert into an intelligent label this week, and what decision did it make because of that?
+- Which of the 5 identification questions is *your* capstone idea most likely to fail today? What's the fix?
+- Name one place in your everyday life where AI made a decision *for* you that you wish a human had made instead. Why?
 
 ## ❓ Quiz
 
-Short quiz on the three layers, when to use classification vs generation, and what "intelligent data" means in practice. Opens on dashboard.
+Short quiz on the raw / information / intelligent ladder, the 5-step creation pipeline, the identification checklist, and one ethics scenario. Opens on dashboard.
 
-## 📝 Assignment · Capstone Data Map v1
+## 📝 Assignment · Intelligent Data Reflection
 
-**Brief.** Polish your in-class sheet into a **Data Map v1**. Add: one paragraph per row explaining how the intelligent signal becomes the decision, and a "day-1 vs day-30" plan for each row (what's available on launch vs after a month of real users). ~400 words + your table.
+**Brief.** In ~400 words, walk through the **raw → cleaned → integrated → enriched → model → decision** chain for one product you use daily *or* for your capstone idea. Then answer: which step would fail first, and which of the 5 identification questions would expose it?
 
 **Submit.** Dashboard before Day 12.
 
-**Rubric.** Honesty about cold-start (4) · Clarity of decision link (4) · Naming the build approach (2).
+**Rubric.** Clarity of the chain (4) · Honest failure-mode analysis (4) · Awareness of ethics / oversight (2).
 
 ## 🔁 Prep for next class
 
@@ -150,7 +185,7 @@ Day 12 is **Text2Image** — Stable Diffusion, ChatGPT Images, Nano Banana, Adob
 ## 📚 References
 
 - [Andrew Ng — From Model-centric to Data-centric AI](https://www.youtube.com/watch?v=06-AZXmwHjo) — why the data, not the model, is usually the bottleneck.
-- [DJ Patil — Data Jujitsu](https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/) — short, practical, written by the first US Chief Data Scientist.
 - [Drew Conway — Data Science Venn Diagram](http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram) — where intelligent data lives.
-- [Kaggle Datasets](https://www.kaggle.com/datasets) — start here when you need public data.
-- [Google Dataset Search](https://datasetsearch.research.google.com/) — when Kaggle doesn't have it.
+- [DJ Patil — Data Jujitsu](https://www.oreilly.com/library/view/data-jujitsu-the/9781449340841/) — short, practical, written by the first US Chief Data Scientist.
+- [Google — Responsible AI practices](https://ai.google/responsibility/responsible-ai-practices/) — the ethics half of today.
+- [Kaggle Datasets](https://www.kaggle.com/datasets) — start here when you need public data to practise on.
