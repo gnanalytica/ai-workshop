@@ -34,13 +34,29 @@ import {
 import { listCohortPolls } from "@/lib/queries/polls-overview";
 import { listCohortDays } from "@/lib/queries/cohort";
 import { workingDayNumber } from "@/lib/calendar";
+import { listRoster, listPods } from "@/lib/queries/admin";
+import { getStudentActivity } from "@/lib/queries/activity-score";
+import { PulseTabs, type PulseTab } from "@/components/admin-cohort/pulse/PulseTabs";
+import {
+  PulsePodsTab,
+  type PulsePodRow,
+} from "@/components/admin-cohort/pulse/PulsePodsTab";
+import {
+  PulseStudentsTab,
+  type PulseStudentRow,
+} from "@/components/admin-cohort/pulse/PulseStudentsTab";
 
 export default async function AdminCohortPulsePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ cohortId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { cohortId } = await params;
+  const sp = await searchParams;
+  const tab: PulseTab =
+    sp.tab === "pods" || sp.tab === "students" ? sp.tab : "class";
   await requireCapability("content.write", cohortId);
   const cohort = await getAdminCohortById(cohortId);
   if (!cohort) notFound();
@@ -237,10 +253,250 @@ export default async function AdminCohortPulsePage({
     ],
   }));
 
+  // Build pods/students breakdowns on demand. React `cache()` dedupes the
+  // underlying fetches (registrations, submissions, etc.) so re-running them
+  // here is cheap.
+  let podRows: PulsePodRow[] = [];
+  let studentRows: PulseStudentRow[] = [];
+  if (tab === "pods" || tab === "students") {
+    const [roster, pods, activity] = await Promise.all([
+      listRoster(cohort.id),
+      listPods(cohort.id),
+      getStudentActivity(cohort.id),
+    ]);
+    const confirmedRoster = roster.filter((r) => r.status === "confirmed");
+
+    if (tab === "students") {
+      studentRows = confirmedRoster.map((r) => {
+        const a = activity.get(r.user_id);
+        return {
+          user_id: r.user_id,
+          full_name: r.full_name,
+          email: r.email,
+          pod_name: r.pod_name,
+          score: a?.score ?? 0,
+          recent_score: a?.recent_score ?? 0,
+          submissions: a?.signals.submissions ?? 0,
+          quiz_attempts: a?.signals.quiz_attempts ?? 0,
+          feedback: a?.signals.feedback ?? 0,
+          poll_votes: a?.signals.poll_votes ?? 0,
+          lab_progress: a?.signals.lab_progress ?? 0,
+          days_since_active: a?.days_since_active ?? null,
+          studentHref: studentHref(r.user_id),
+        };
+      });
+    }
+
+    if (tab === "pods") {
+      // Group confirmed students by pod name (RosterRow exposes pod_name only).
+      // Pod metadata (faculty names, member_count) comes from listPods.
+      const byPod = new Map<string, typeof confirmedRoster>();
+      for (const r of confirmedRoster) {
+        const key = r.pod_name ?? "__unassigned__";
+        const arr = byPod.get(key) ?? [];
+        arr.push(r);
+        byPod.set(key, arr);
+      }
+
+      const aggregate = (members: typeof confirmedRoster) => {
+        if (members.length === 0) {
+          return {
+            avg_activity: 0,
+            avg_recent: 0,
+            active_3d: 0,
+            inactive_3d: 0,
+            submissions: 0,
+            quiz_attempts: 0,
+            feedback: 0,
+            poll_votes: 0,
+            lab_progress: 0,
+          };
+        }
+        let scoreSum = 0;
+        let recentSum = 0;
+        let active3d = 0;
+        let inactive3d = 0;
+        let submissions = 0;
+        let quiz_attempts = 0;
+        let feedback = 0;
+        let poll_votes = 0;
+        let lab_progress = 0;
+        for (const m of members) {
+          const a = activity.get(m.user_id);
+          const s = a?.score ?? 0;
+          const rs = a?.recent_score ?? 0;
+          const dsa = a?.days_since_active ?? null;
+          scoreSum += s;
+          recentSum += rs;
+          if (rs > 0) active3d++;
+          if (dsa === null || dsa >= 3) inactive3d++;
+          submissions += a?.signals.submissions ?? 0;
+          quiz_attempts += a?.signals.quiz_attempts ?? 0;
+          feedback += a?.signals.feedback ?? 0;
+          poll_votes += a?.signals.poll_votes ?? 0;
+          lab_progress += a?.signals.lab_progress ?? 0;
+        }
+        return {
+          avg_activity: scoreSum / members.length,
+          avg_recent: recentSum / members.length,
+          active_3d: active3d,
+          inactive_3d: inactive3d,
+          submissions,
+          quiz_attempts,
+          feedback,
+          poll_votes,
+          lab_progress,
+        };
+      };
+
+      podRows = pods.map((p) => {
+        const members = byPod.get(p.name) ?? [];
+        return {
+          pod_id: p.pod_id,
+          name: p.name,
+          member_count: members.length || p.member_count,
+          faculty_names: p.faculty_names,
+          ...aggregate(members),
+        };
+      });
+
+      // Surface an "unassigned" pseudo-pod when there are confirmed students
+      // not in any pod, so they're not silently dropped from the view.
+      const unassigned = byPod.get("__unassigned__") ?? [];
+      if (unassigned.length > 0) {
+        podRows.push({
+          pod_id: "__unassigned__",
+          name: "(Unassigned)",
+          member_count: unassigned.length,
+          faculty_names: [],
+          ...aggregate(unassigned),
+        });
+      }
+
+    }
+  }
+
   return (
     <>
       <CohortShell cohort={cohort} active="pulse" />
 
+      <PulseTabs active={tab} />
+
+      {tab === "pods" && (
+        <section className="space-y-3">
+          <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
+            <h2 className="text-base font-semibold tracking-tight">
+              Pods breakdown
+            </h2>
+            <p className="text-muted text-xs">
+              {podRows.length} pod{podRows.length === 1 ? "" : "s"} · sorted
+              ascending by recent activity (struggling pods first) — click any
+              column to re-sort
+            </p>
+          </header>
+          <PulsePodsTab rows={podRows} />
+        </section>
+      )}
+
+      {tab === "students" && (
+        <section className="space-y-3">
+          <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
+            <h2 className="text-base font-semibold tracking-tight">
+              Students breakdown
+            </h2>
+            <p className="text-muted text-xs">
+              {studentRows.length} confirmed student
+              {studentRows.length === 1 ? "" : "s"} · sorted ascending by recent
+              activity — click any column to re-sort
+            </p>
+          </header>
+          <PulseStudentsTab rows={studentRows} />
+        </section>
+      )}
+
+      {tab !== "class" ? null : (
+        <ClassPulsePanels
+          cohortId={cohort.id}
+          today={today}
+          kpis={kpis}
+          summary={summary}
+          atRisk={atRisk}
+          headlinePct={headlinePct}
+          headlineLabel={headlineLabel}
+          headlineHint={headlineHint}
+          headlineDelta={headlineDelta}
+          sparkValues={sparkValues}
+          changeSignals={changeSignals}
+          engagement={engagement}
+          activityMatrix={activityMatrix}
+          heatmapDays={heatmapDays}
+          chartRows={chartRows}
+          hasMarkedAttendance={hasMarkedAttendance}
+          progress={progress}
+          recentDayNumbers={recentDayNumbers}
+          dayFeedback={dayFeedback}
+          fuzzyTopics={fuzzyTopics}
+          lowRating={lowRating}
+          polls={polls}
+          studentHref={studentHref}
+        />
+      )}
+    </>
+  );
+}
+
+function ClassPulsePanels(props: {
+  cohortId: string;
+  today: number;
+  kpis: Awaited<ReturnType<typeof getCohortKpis>>;
+  summary: Awaited<ReturnType<typeof getAnalyticsSummary>>;
+  atRisk: Awaited<ReturnType<typeof listAtRiskStudents>>;
+  headlinePct: number | null;
+  headlineLabel: string;
+  headlineHint: string;
+  headlineDelta: number | null;
+  sparkValues: number[];
+  changeSignals: ChangeSignal[];
+  engagement: Awaited<ReturnType<typeof getEngagementByDay>>;
+  activityMatrix: Awaited<ReturnType<typeof getActivityMatrix>>;
+  heatmapDays: number[];
+  chartRows: BarRow[];
+  hasMarkedAttendance: boolean;
+  progress: Awaited<ReturnType<typeof getCohortProgressByDay>>;
+  recentDayNumbers: number[];
+  dayFeedback: Awaited<ReturnType<typeof listRecentDayFeedback>>;
+  fuzzyTopics: Awaited<ReturnType<typeof listRecentFuzzyTopics>>;
+  lowRating: Awaited<ReturnType<typeof listLowRatingFeedback>>;
+  polls: Awaited<ReturnType<typeof listCohortPolls>>;
+  studentHref: (uid: string) => string;
+}) {
+  const {
+    today,
+    kpis,
+    summary,
+    atRisk,
+    headlinePct,
+    headlineLabel,
+    headlineHint,
+    headlineDelta,
+    sparkValues,
+    changeSignals,
+    engagement,
+    activityMatrix,
+    heatmapDays,
+    chartRows,
+    hasMarkedAttendance,
+    progress,
+    recentDayNumbers,
+    dayFeedback,
+    fuzzyTopics,
+    lowRating,
+    polls,
+    studentHref,
+  } = props;
+
+  return (
+    <>
       {/* Hero — three numbers that answer "is anything on fire?" */}
       <section className="border-line bg-card/60 grid gap-px overflow-hidden rounded-lg border sm:grid-cols-3">
         <HeroStat
