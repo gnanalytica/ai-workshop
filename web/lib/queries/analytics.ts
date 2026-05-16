@@ -63,22 +63,39 @@ export const getAnalyticsSummary = cache(async (cohortId: string): Promise<Analy
   };
 });
 
-export const getAttendanceByDay = cache(async (cohortId: string): Promise<DayAttendanceBucket[]> => {
-  const sb = await getSupabaseServer();
-  const { data } = await sb
-    .from("attendance")
-    .select("day_number, status")
-    .eq("cohort_id", cohortId);
-  const buckets = new Map<number, DayAttendanceBucket>();
-  for (const r of (data ?? []) as Array<{ day_number: number; status: keyof Omit<DayAttendanceBucket, "day_number"> }>) {
-    if (!buckets.has(r.day_number)) {
-      buckets.set(r.day_number, { day_number: r.day_number, present: 0, absent: 0, late: 0, excused: 0 });
+export const getAttendanceByDay = cache(
+  async (
+    cohortId: string,
+    excludeUserIds?: ReadonlyArray<string>,
+  ): Promise<DayAttendanceBucket[]> => {
+    const sb = await getSupabaseServer();
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
+    const { data } = await sb
+      .from("attendance")
+      .select("user_id, day_number, status")
+      .eq("cohort_id", cohortId);
+    const buckets = new Map<number, DayAttendanceBucket>();
+    for (const r of (data ?? []) as Array<{
+      user_id: string;
+      day_number: number;
+      status: keyof Omit<DayAttendanceBucket, "day_number">;
+    }>) {
+      if (exclude && exclude.has(r.user_id)) continue;
+      if (!buckets.has(r.day_number)) {
+        buckets.set(r.day_number, {
+          day_number: r.day_number,
+          present: 0,
+          absent: 0,
+          late: 0,
+          excused: 0,
+        });
+      }
+      const b = buckets.get(r.day_number)!;
+      b[r.status] = (b[r.status] ?? 0) + 1;
     }
-    const b = buckets.get(r.day_number)!;
-    b[r.status] = (b[r.status] ?? 0) + 1;
-  }
-  return [...buckets.values()].sort((a, b) => a.day_number - b.day_number);
-});
+    return [...buckets.values()].sort((a, b) => a.day_number - b.day_number);
+  },
+);
 
 /**
  * Activity-based engagement per day. A confirmed student counts as "active"
@@ -91,8 +108,10 @@ export const getEngagementByDay = cache(
   async (
     cohortId: string,
     userIdFilter?: ReadonlyArray<string>,
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<DayEngagementBucket[]> => {
     const scope = userIdFilter ? new Set(userIdFilter) : null;
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
     const sb = await getSupabaseServer();
     const [
       regs,
@@ -130,12 +149,20 @@ export const getEngagementByDay = cache(
         .eq("cohort_id", cohortId),
     ]);
 
-    const total = scope ? scope.size : regs.count ?? 0;
+    const rawTotal = scope ? scope.size : regs.count ?? 0;
+    // Exclude staff-pod members from both numerator and denominator. If a
+    // userIdFilter (pod scope) is in use, the exclude list still applies on
+    // top — staff members in that pod simply drop out.
+    const excludeFromScope = exclude
+      ? [...exclude].filter((u) => !scope || scope.has(u)).length
+      : 0;
+    const total = Math.max(0, rawTotal - excludeFromScope);
     const buckets = new Map<number, Set<string>>();
 
     const addRow = (day: number | null | undefined, userId: string) => {
       if (typeof day !== "number") return;
       if (scope && !scope.has(userId)) return;
+      if (exclude && exclude.has(userId)) return;
       const set = buckets.get(day) ?? new Set<string>();
       set.add(userId);
       buckets.set(day, set);
@@ -332,10 +359,12 @@ export const getActivityMatrix = cache(
   async (
     cohortId: string,
     dayNumbers: number[],
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<ActivityMatrixStudent[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
     const dayset = new Set(dayNumbers);
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
 
     const [regs, subs, quizzes, feedback, votes, labs] = await Promise.all([
       sb
@@ -370,6 +399,7 @@ export const getActivityMatrix = cache(
     const sources = new Map<string, Set<string>>(); // key `${user}|${day}`
     const tag = (uid: string, day: number | null | undefined, src: string) => {
       if (typeof day !== "number" || !dayset.has(day)) return;
+      if (exclude && exclude.has(uid)) return;
       const key = `${uid}|${day}`;
       const set = sources.get(key) ?? new Set<string>();
       set.add(src);
@@ -413,7 +443,9 @@ export const getActivityMatrix = cache(
     const roster = ((regs.data ?? []) as unknown as Array<{
       user_id: string;
       profiles: { full_name: string | null; email: string };
-    }>).map((r) => {
+    }>)
+      .filter((r) => !exclude || !exclude.has(r.user_id))
+      .map((r) => {
       const by_day: Record<number, number> = {};
       let total_active_days = 0;
       for (const day of dayNumbers) {

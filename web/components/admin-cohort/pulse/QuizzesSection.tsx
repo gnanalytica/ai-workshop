@@ -5,6 +5,7 @@ import {
   ScoreDistributionLegend,
 } from "@/components/charts/ScoreDistributionBar";
 import { ScoreDistributionChart } from "@/components/charts/recharts/ScoreDistributionChart";
+import { CollapsibleSection } from "./CollapsibleSection";
 import type {
   QuizDayScores,
   QuizPerformanceRow,
@@ -53,16 +54,10 @@ export function QuizzesSection({
   const totalQuizzes = opportunityDays.reduce((s, r) => s + r.quizzes, 0);
 
   return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">Quizzes</h2>
-        <p className="text-muted text-xs">
-          {totalQuizzes} published · {totalAttempts} attempt
-          {totalAttempts === 1 ? "" : "s"} · {opportunityDays.length} day
-          {opportunityDays.length === 1 ? "" : "s"} with a quiz · pass = score ≥
-          60
-        </p>
-      </header>
+    <CollapsibleSection
+      title="Quizzes"
+      sub={`${totalQuizzes} published · ${totalAttempts} attempt${totalAttempts === 1 ? "" : "s"} · ${opportunityDays.length} day${opportunityDays.length === 1 ? "" : "s"} with a quiz · pass = score ≥ 60`}
+    >
 
       <div className="grid gap-3 sm:grid-cols-3">
         <MiniStat
@@ -224,7 +219,7 @@ export function QuizzesSection({
           </div>
         </Card>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }
 

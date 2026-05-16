@@ -5,6 +5,7 @@ import {
   ScoreDistributionLegend,
 } from "@/components/charts/ScoreDistributionBar";
 import { ScoreDistributionChart } from "@/components/charts/recharts/ScoreDistributionChart";
+import { CollapsibleSection } from "./CollapsibleSection";
 import type { SubmissionDayScores } from "@/lib/queries/pulse-scores";
 
 function scoreToneClass(score: number | null): string {
@@ -45,15 +46,10 @@ export function SubmissionsSection({
   }, null);
 
   return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">Assignments</h2>
-        <p className="text-muted text-xs">
-          {totalSubmitted} submitted · {totalGraded} graded · {totalUngraded}{" "}
-          pending review · last {rows.length} day{rows.length === 1 ? "" : "s"}
-        </p>
-      </header>
-
+    <CollapsibleSection
+      title="Assignments"
+      sub={`${totalSubmitted} submitted · ${totalGraded} graded · ${totalUngraded} pending review · last ${rows.length} day${rows.length === 1 ? "" : "s"}`}
+    >
       <div className="grid gap-3 sm:grid-cols-3">
         <MiniStat
           label="Avg grade (graded)"
@@ -186,7 +182,7 @@ export function SubmissionsSection({
           )}
         </div>
       </Card>
-    </section>
+    </CollapsibleSection>
   );
 }
 

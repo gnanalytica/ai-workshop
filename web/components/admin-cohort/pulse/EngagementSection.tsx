@@ -2,6 +2,7 @@ import { Card, CardSub } from "@/components/ui/card";
 import { EngagementBarChart } from "@/components/charts/recharts/EngagementBarChart";
 import { ActivityHeatmap } from "@/components/charts/ActivityHeatmap";
 import { AttendanceStackedChart } from "@/components/charts/recharts/AttendanceStackedChart";
+import { CollapsibleSection } from "./CollapsibleSection";
 import type {
   DayAttendanceBucket,
   DayEngagementBucket,
@@ -29,14 +30,10 @@ export function EngagementSection({
   studentHref: (uid: string) => string;
 }) {
   return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">Engagement</h2>
-        <p className="text-muted text-xs">
-          Activity = student submitted, took a quiz, gave feedback, voted, or
-          ticked a lab on that day (any one source → counted once).
-        </p>
-      </header>
+    <CollapsibleSection
+      title="Engagement"
+      sub="Activity = student submitted, took a quiz, gave feedback, voted, or ticked a lab on that day (any one source → counted once)."
+    >
 
       <Card>
         <div className="space-y-2">
@@ -83,6 +80,6 @@ export function EngagementSection({
           </div>
         </details>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }

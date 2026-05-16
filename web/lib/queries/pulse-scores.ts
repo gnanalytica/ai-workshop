@@ -56,15 +56,17 @@ export const getSubmissionScoresByDay = cache(
   async (
     cohortId: string,
     dayNumbers: number[],
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<SubmissionDayScores[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
 
     const [subsRes, asgRes] = await Promise.all([
       sb
         .from("submissions")
         .select(
-          "status, score, ai_score, created_at, updated_at, assignments!inner(day_number, cohort_id, kind)",
+          "user_id, status, score, ai_score, created_at, updated_at, assignments!inner(day_number, cohort_id, kind)",
         )
         .eq("assignments.cohort_id", cohortId)
         .in("assignments.day_number", dayNumbers)
@@ -85,6 +87,7 @@ export const getSubmissionScoresByDay = cache(
     const data = subsRes.data;
 
     type Row = {
+      user_id: string;
       status: "submitted" | "graded";
       score: number | null;
       ai_score: number | null;
@@ -104,6 +107,7 @@ export const getSubmissionScoresByDay = cache(
 
     const now = Date.now();
     for (const r of (data ?? []) as Row[]) {
+      if (exclude && exclude.has(r.user_id)) continue;
       const a = Array.isArray(r.assignments) ? r.assignments[0] : r.assignments;
       const day = a?.day_number;
       if (typeof day !== "number") continue;
@@ -213,9 +217,11 @@ export const getQuizScoresByDay = cache(
   async (
     cohortId: string,
     dayNumbers: number[],
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<QuizDayScores[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
 
     const [quizMeta, attempts] = await Promise.all([
       sb
@@ -247,6 +253,7 @@ export const getQuizScoresByDay = cache(
     };
     const bestByKey = new Map<string, number>();
     for (const r of (attempts.data ?? []) as AttemptRow[]) {
+      if (exclude && exclude.has(r.user_id)) continue;
       const key = `${r.quiz_id}|${r.user_id}`;
       const s = Number(r.score ?? 0);
       if (s > (bestByKey.get(key) ?? -1)) bestByKey.set(key, s);
@@ -329,9 +336,11 @@ export const listQuizPerformance = cache(
   async (
     cohortId: string,
     dayNumbers: number[],
+    excludeUserIds?: ReadonlyArray<string>,
   ): Promise<QuizPerformanceRow[]> => {
     if (dayNumbers.length === 0) return [];
     const sb = await getSupabaseServer();
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
 
     const [quizMeta, attempts] = await Promise.all([
       sb
@@ -360,6 +369,7 @@ export const listQuizPerformance = cache(
       user_id: string;
       score: number | null;
     }>) {
+      if (exclude && exclude.has(r.user_id)) continue;
       const key = `${r.quiz_id}|${r.user_id}`;
       const s = Number(r.score ?? 0);
       if (s > (bestByKey.get(key) ?? -1)) bestByKey.set(key, s);
@@ -412,8 +422,12 @@ export interface StudentScoreTotals {
 }
 
 export const getStudentScoreTotals = cache(
-  async (cohortId: string): Promise<Map<string, StudentScoreTotals>> => {
+  async (
+    cohortId: string,
+    excludeUserIds?: ReadonlyArray<string>,
+  ): Promise<Map<string, StudentScoreTotals>> => {
     const sb = await getSupabaseServer();
+    const exclude = excludeUserIds ? new Set(excludeUserIds) : null;
     const [attempts, subs] = await Promise.all([
       sb
         .from("quiz_attempts")
@@ -434,6 +448,7 @@ export const getStudentScoreTotals = cache(
       quiz_id: string;
       score: number | null;
     }>) {
+      if (exclude && exclude.has(r.user_id)) continue;
       const key = `${r.user_id}|${r.quiz_id}`;
       const s = Number(r.score ?? 0);
       if (s > (bestQuiz.get(key) ?? -1)) bestQuiz.set(key, s);
@@ -463,6 +478,7 @@ export const getStudentScoreTotals = cache(
       score: number | null;
     }>) {
       if (r.score === null) continue;
+      if (exclude && exclude.has(r.user_id)) continue;
       ensure(r.user_id).subScores.push(Number(r.score));
     }
 

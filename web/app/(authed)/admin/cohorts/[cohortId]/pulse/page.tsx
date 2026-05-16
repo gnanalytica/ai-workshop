@@ -53,6 +53,8 @@ import {
   listQuizPerformance,
   getStudentScoreTotals,
 } from "@/lib/queries/pulse-scores";
+import { getAdminPodUserIds } from "@/lib/queries/pulse-exclusions";
+import { CollapsibleSection } from "@/components/admin-cohort/pulse/CollapsibleSection";
 
 const VALID_TABS = new Set<PulseTab>([
   "submissions",
@@ -96,6 +98,13 @@ export default async function AdminCohortPulsePage({
     `/admin/cohorts/${cohort.id}/students/${uid}`;
   const dayHrefPattern = `/admin/cohorts/${cohort.id}/day/{n}`;
 
+  // Resolve admin-pod members first so every analytics rollup below excludes
+  // them from numerators + denominators. listRecentDayFeedback /
+  // listRecentFuzzyTopics / listLowRatingFeedback go through a stored
+  // procedure that doesn't accept a filter — their (small) inclusion is the
+  // remaining caveat.
+  const adminUserIds = await getAdminPodUserIds(cohort.id);
+
   // Always fetch everything — server-side React `cache()` dedupes shared
   // underlying queries (registrations, submissions) across each call, and we
   // need most of these for the persistent hero + change-band header anyway.
@@ -120,22 +129,27 @@ export default async function AdminCohortPulsePage({
   ] = await Promise.all([
     getCohortKpis(cohort.id),
     getAnalyticsSummary(cohort.id),
-    getAttendanceByDay(cohort.id),
-    getEngagementByDay(cohort.id),
+    getAttendanceByDay(cohort.id, adminUserIds),
+    getEngagementByDay(cohort.id, undefined, adminUserIds),
     listAtRiskStudents(cohort.id),
     listRecentDayFeedback(cohort.id, recentDayNumbers, null),
     listCohortPolls(cohort.id),
     listRecentFuzzyTopics(cohort.id, recentDayNumbers, 200),
     listLowRatingFeedback(cohort.id, recentDayNumbers, 2, 200),
-    getActivityMatrix(cohort.id, unlockedRecent),
-    getSubmissionScoresByDay(cohort.id, recentDayNumbers),
-    getQuizScoresByDay(cohort.id, recentDayNumbers),
-    listQuizPerformance(cohort.id, recentDayNumbers),
+    getActivityMatrix(cohort.id, unlockedRecent, adminUserIds),
+    getSubmissionScoresByDay(cohort.id, recentDayNumbers, adminUserIds),
+    getQuizScoresByDay(cohort.id, recentDayNumbers, adminUserIds),
+    listQuizPerformance(cohort.id, recentDayNumbers, adminUserIds),
     listRoster(cohort.id),
     listPods(cohort.id),
     getStudentActivity(cohort.id),
-    getStudentScoreTotals(cohort.id),
+    getStudentScoreTotals(cohort.id, adminUserIds),
   ]);
+
+  const adminUserIdSet = new Set(adminUserIds);
+  // At-risk goes through getStudentActivity internally; rather than thread
+  // the exclude list into that query, we just filter the result here.
+  const visibleAtRisk = atRisk.filter((s) => !adminUserIdSet.has(s.user_id));
 
   /* ─── Hero + change-band signals ─── */
 
@@ -453,12 +467,12 @@ export default async function AdminCohortPulsePage({
         />
         <HeroStat
           label="Red flags"
-          value={String(atRisk.length + kpis.helpDeskOpen)}
-          hint={`${atRisk.length} at-risk · ${kpis.helpDeskOpen} open help`}
+          value={String(visibleAtRisk.length + kpis.helpDeskOpen)}
+          hint={`${visibleAtRisk.length} at-risk · ${kpis.helpDeskOpen} open help`}
           tone={
-            atRisk.length + kpis.helpDeskOpen === 0
+            visibleAtRisk.length + kpis.helpDeskOpen === 0
               ? "ok"
-              : atRisk.length + kpis.helpDeskOpen <= 3
+              : visibleAtRisk.length + kpis.helpDeskOpen <= 3
                 ? "warn"
                 : "danger"
           }
@@ -524,37 +538,26 @@ export default async function AdminCohortPulsePage({
             studentHref={studentHref}
           />
 
-          {atRisk.length > 0 && (
-            <section className="space-y-3">
-              <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-                <h2 className="text-base font-semibold tracking-tight">
-                  At-risk students
-                </h2>
-                <p className="text-muted text-xs">
-                  {atRisk.length} flagged · inactivity, missing submissions, or
-                  open help-desk threads
-                </p>
-              </header>
+          {visibleAtRisk.length > 0 && (
+            <CollapsibleSection
+              title="At-risk students"
+              sub={`${visibleAtRisk.length} flagged · inactivity, missing submissions, or open help-desk threads`}
+            >
               <AtRiskList
-                students={atRisk}
+                students={visibleAtRisk}
                 studentHref={studentHref}
                 emptyHint="Everyone's on track."
               />
-            </section>
+            </CollapsibleSection>
           )}
 
-          <section className="space-y-3">
-            <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-              <h2 className="text-base font-semibold tracking-tight">
-                Polls and pulses
-              </h2>
-              <p className="text-muted text-xs">
-                {polls.length} total · curriculum polls (with day) and live
-                pulses (no day)
-              </p>
-            </header>
+          <CollapsibleSection
+            title="Polls and pulses"
+            sub={`${polls.length} total · curriculum polls (with day) and live pulses (no day)`}
+            defaultOpen={false}
+          >
             <PollsExplorer polls={polls} />
-          </section>
+          </CollapsibleSection>
 
           <PodsAndStudents>
             <PodSlot title="Engagement by pod">
@@ -603,14 +606,7 @@ function PodSlot({
   title: string;
   children: React.ReactNode;
 }) {
-  return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      </header>
-      {children}
-    </section>
-  );
+  return <CollapsibleSection title={title}>{children}</CollapsibleSection>;
 }
 
 function StudentSlot({
@@ -620,13 +616,11 @@ function StudentSlot({
   title: string;
   children: React.ReactNode;
 }) {
+  // Default closed — student tables can be long; users open them as needed.
   return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      </header>
+    <CollapsibleSection title={title} defaultOpen={false}>
       {children}
-    </section>
+    </CollapsibleSection>
   );
 }
 

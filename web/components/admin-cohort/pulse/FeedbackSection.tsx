@@ -4,6 +4,7 @@ import { FeedbackDistributionChart } from "@/components/charts/recharts/Feedback
 import { Sparkline } from "@/components/charts/recharts/Sparkline";
 import { FuzzyTopicsPanel } from "@/components/health/FuzzyTopicsPanel";
 import { LowRatingTriage } from "@/components/health/LowRatingTriage";
+import { CollapsibleSection } from "./CollapsibleSection";
 import type { DayFeedbackSummary } from "@/lib/queries/faculty-cohort";
 
 function ratingToneClass(avg: number | null): string {
@@ -51,14 +52,10 @@ export function FeedbackSection({
     }));
 
   return (
-    <section className="space-y-3">
-      <header className="border-line/40 flex flex-wrap items-baseline justify-between gap-2 border-b-2 pb-2">
-        <h2 className="text-base font-semibold tracking-tight">Feedback</h2>
-        <p className="text-muted text-xs">
-          Day-end ★ ratings · {totalRated} response
-          {totalRated === 1 ? "" : "s"} · {totalLow} low (≤2★)
-        </p>
-      </header>
+    <CollapsibleSection
+      title="Feedback"
+      sub={`Day-end ★ ratings · ${totalRated} response${totalRated === 1 ? "" : "s"} · ${totalLow} low (≤2★)`}
+    >
 
       <Card>
         <div className="space-y-3">
@@ -180,6 +177,6 @@ export function FeedbackSection({
           <LowRatingTriage entries={lowRating} studentHref={studentHref} />
         </Card>
       </div>
-    </section>
+    </CollapsibleSection>
   );
 }
