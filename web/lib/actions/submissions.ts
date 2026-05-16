@@ -16,23 +16,42 @@ const submitSchema = z.object({
   assignment_id: z.string().uuid(),
   body: z.string().min(1).max(50_000),
   links: z.array(linkSchema).max(10).default([]),
+  group_name: z.string().trim().min(1).max(120).optional(),
 });
 
-export async function submitAssignment(input: z.infer<typeof submitSchema>) {
-  const parsed = submitSchema.safeParse(input);
-  if (!parsed.success) return actionFail("Invalid input");
+async function upsertSubmission(
+  input: z.infer<typeof submitSchema>,
+  status: "draft" | "submitted",
+) {
   return withSupabase(async (sb) => {
     const { data: user } = await sb.auth.getUser();
     if (!user.user) return { data: null, error: { message: "Not signed in" } };
+
+    // Enforce group_name when the assignment is a group project. Drafts can
+    // be saved without it (so students aren't blocked while collecting work),
+    // but a real submit is rejected without one.
+    if (status === "submitted") {
+      const { data: a } = await sb
+        .from("assignments")
+        .select("is_group_project")
+        .eq("id", input.assignment_id)
+        .maybeSingle();
+      const isGroup = !!(a as { is_group_project?: boolean } | null)?.is_group_project;
+      if (isGroup && !input.group_name) {
+        return { data: null, error: { message: "Group name is required for this assignment" } };
+      }
+    }
+
     return sb
       .from("submissions")
       .upsert(
         {
-          assignment_id: parsed.data.assignment_id,
+          assignment_id: input.assignment_id,
           user_id: user.user.id,
-          body: parsed.data.body,
-          links: parsed.data.links,
-          status: "submitted",
+          body: input.body,
+          links: input.links,
+          group_name: input.group_name ?? null,
+          status,
         },
         // PK is `id` (uuid); the dedup key is the unique constraint on
         // (assignment_id, user_id). Without onConflict, supabase-js falls
@@ -45,27 +64,16 @@ export async function submitAssignment(input: z.infer<typeof submitSchema>) {
   });
 }
 
+export async function submitAssignment(input: z.infer<typeof submitSchema>) {
+  const parsed = submitSchema.safeParse(input);
+  if (!parsed.success) return actionFail("Invalid input");
+  return upsertSubmission(parsed.data, "submitted");
+}
+
 export async function saveDraft(input: z.infer<typeof submitSchema>) {
   const parsed = submitSchema.safeParse(input);
   if (!parsed.success) return actionFail("Invalid input");
-  return withSupabase(async (sb) => {
-    const { data: user } = await sb.auth.getUser();
-    if (!user.user) return { data: null, error: { message: "Not signed in" } };
-    return sb
-      .from("submissions")
-      .upsert(
-        {
-          assignment_id: parsed.data.assignment_id,
-          user_id: user.user.id,
-          body: parsed.data.body,
-          links: parsed.data.links,
-          status: "draft",
-        },
-        { onConflict: "assignment_id,user_id" },
-      )
-      .select()
-      .single();
-  });
+  return upsertSubmission(parsed.data, "draft");
 }
 
 export async function revalidateDayPage(day: number) {

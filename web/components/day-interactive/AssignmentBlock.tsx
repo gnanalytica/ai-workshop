@@ -26,6 +26,7 @@ function isValidUrl(v: string) {
 export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
   const [body, setBody] = useState(assignment.submission?.body ?? "");
   const [links, setLinks] = useState<LinkRow[]>(assignment.submission?.links ?? []);
+  const [groupName, setGroupName] = useState(assignment.submission?.group_name ?? "");
   const [pending, start] = useTransition();
 
   // Resync local state if the prop changes (e.g. after a server action /
@@ -33,6 +34,7 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
   useEffect(() => {
     setBody(assignment.submission?.body ?? "");
     setLinks(assignment.submission?.links ?? []);
+    setGroupName(assignment.submission?.group_name ?? "");
   }, [assignment.submission]);
   const status = assignment.submission?.status ?? "draft";
   const submitted = status === "submitted";
@@ -58,9 +60,19 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
       toast.error(`"${bad.label}" needs a valid http or https URL`);
       return;
     }
+    const trimmedGroup = groupName.trim();
+    if (action === "submit" && assignment.is_group_project && !trimmedGroup) {
+      toast.error("Group name is required");
+      return;
+    }
     start(async () => {
       const fn = action === "submit" ? submitAssignment : saveDraft;
-      const r = await fn({ assignment_id: assignment.id, body, links: cleanLinks });
+      const r = await fn({
+        assignment_id: assignment.id,
+        body,
+        links: cleanLinks,
+        group_name: trimmedGroup || undefined,
+      });
       if (r.ok) toast.success(action === "submit" ? "Submitted" : "Draft saved");
       else toast.error(r.error);
     });
@@ -85,6 +97,12 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
       {locked && !published ? (
         <Card className="bg-bg-soft space-y-3">
           <CardSub className="text-accent font-mono text-xs uppercase">Submitted</CardSub>
+          {assignment.submission?.group_name && (
+            <p className="text-ink/85 text-xs">
+              <span className="text-muted uppercase tracking-wider">Group · </span>
+              <span className="font-medium">{assignment.submission.group_name}</span>
+            </p>
+          )}
           <p className="text-ink/85 text-sm">
             Your submission has been received. Feedback will appear after an admin reviews it.
           </p>
@@ -146,6 +164,22 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
         </Card>
       ) : (
         <>
+          {assignment.is_group_project && (
+            <div className="space-y-1">
+              <label className="text-muted text-xs uppercase tracking-wider">
+                Group name <span className="text-[hsl(var(--danger))]">*</span>
+              </label>
+              <Input
+                placeholder="e.g. Pod 3 — Recommendation Wizards"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                required
+              />
+              <p className="text-muted text-[11px]">
+                Required. Every group member should enter the same group name so faculty can review submissions together.
+              </p>
+            </div>
+          )}
           <textarea
             rows={8}
             placeholder="Your submission (markdown)"
@@ -184,7 +218,14 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
             <Button variant="outline" disabled={pending} onClick={() => go("draft")}>
               Save draft
             </Button>
-            <Button disabled={pending || !body.trim()} onClick={() => go("submit")}>
+            <Button
+              disabled={
+                pending ||
+                !body.trim() ||
+                (assignment.is_group_project && !groupName.trim())
+              }
+              onClick={() => go("submit")}
+            >
               {pending ? "Saving…" : "Submit"}
             </Button>
           </div>

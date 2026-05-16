@@ -240,6 +240,11 @@ export function GradingClient({
                   <p className="text-ink truncate text-sm font-medium">
                     {s.user_name ?? "—"}
                   </p>
+                  {s.group_name && (
+                    <p className="text-muted truncate text-[10.5px] uppercase tracking-wider">
+                      Group · {s.group_name}
+                    </p>
+                  )}
                   <div className="mt-1 flex items-center gap-1.5">
                     {s.human_reviewed_at ? (
                       <Badge variant="ok">Published · {s.score}</Badge>
@@ -271,6 +276,12 @@ export function GradingClient({
           <Card className="space-y-5 p-6">
             <div>
               <CardTitle>{active.user_name ?? "—"}</CardTitle>
+              {active.group_name && (
+                <p className="text-ink mt-0.5 text-xs">
+                  <span className="text-muted uppercase tracking-wider">Group · </span>
+                  <span className="font-medium">{active.group_name}</span>
+                </p>
+              )}
               <p className="text-muted mt-1 text-xs">
                 Submitted {fmtDateTime(active.updated_at)} ·{" "}
                 {relTime(active.updated_at)}

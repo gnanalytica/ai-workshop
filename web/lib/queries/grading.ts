@@ -10,6 +10,7 @@ export interface GradingSubmission {
   id: string;
   user_id: string;
   user_name: string | null;
+  group_name: string | null;
   status: "draft" | "submitted" | "graded";
   body: string | null;
   links: SubmissionLink[];
@@ -31,13 +32,15 @@ export const listAssignmentSubmissions = cache(
     const { data } = await sb
       .from("submissions")
       .select(
-        "id, user_id, status, body, links, score, feedback_md, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, updated_at, profiles:user_id(full_name)",
+        "id, user_id, status, body, group_name, links, score, feedback_md, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, updated_at, profiles:user_id(full_name)",
       )
       .eq("assignment_id", assignmentId)
+      .order("group_name", { ascending: true, nullsFirst: false })
       .order("updated_at", { ascending: false });
     return ((data ?? []) as unknown as Array<{
       id: string; user_id: string; status: GradingSubmission["status"];
       body: string | null;
+      group_name: string | null;
       links: SubmissionLink[] | null;
       score: number | null; feedback_md: string | null;
       ai_graded: boolean; ai_score: number | null; ai_feedback_md: string | null;
@@ -49,6 +52,7 @@ export const listAssignmentSubmissions = cache(
       id: r.id,
       user_id: r.user_id,
       user_name: r.profiles?.full_name ?? null,
+      group_name: r.group_name,
       status: r.status,
       body: r.body,
       links: r.links ?? [],

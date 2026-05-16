@@ -10,9 +10,11 @@ export interface DayAssignment {
   body_md: string | null;
   kind: "lab" | "capstone" | "reflection";
   due_at: string | null;
+  is_group_project: boolean;
   submission?: {
     id: string;
     body: string | null;
+    group_name: string | null;
     links: { label: string; url: string }[];
     status: "draft" | "submitted" | "graded";
     score: number | null;
@@ -118,7 +120,7 @@ export const getDayInteractive = cache(
       sb
         .from("assignments")
         .select(
-          "id, title, body_md, kind, due_at, submissions(id, body, links, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
+          "id, title, body_md, kind, due_at, is_group_project, submissions(id, body, group_name, links, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
@@ -171,8 +173,10 @@ export const getDayInteractive = cache(
     if (assignmentRes.data) {
       type AssignmentRow = {
         id: string; title: string; body_md: string | null; kind: DayAssignment["kind"]; due_at: string | null;
+        is_group_project: boolean | null;
         submissions: Array<{
           id: string; body: string | null;
+          group_name: string | null;
           links: { label: string; url: string }[] | null;
           status: DayAssignment["submission"] extends { status: infer S } ? S : never;
           score: number | null; feedback_md: string | null;
@@ -189,10 +193,12 @@ export const getDayInteractive = cache(
           body_md: row.body_md,
           kind: row.kind,
           due_at: row.due_at,
+          is_group_project: !!row.is_group_project,
           submission: mine
             ? {
                 id: mine.id,
                 body: mine.body,
+                group_name: mine.group_name,
                 links: mine.links ?? [],
                 status: mine.status,
                 score: mine.human_reviewed_at ? mine.score : null,
