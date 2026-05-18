@@ -3,64 +3,69 @@ day: 14
 date: "2026-05-20"
 weekday: "Wednesday"
 week: 3
-topic: "Capstone Milestone 2: Idea Lock, Features and Automations with AI"
+topic: "Workflow automation, browser automation"
 faculty:
   main: "Sandeep"
-  support: "TBD"
+  support: "Harshith"
 reading_time: "10 min"
-tldr: "Milestone 2. You pitch your locked idea in 3 minutes, get critiqued, then convert it into a feature list and an automation map. By end of class your capstone has a spine."
-tags: ["capstone", "milestone", "features"]
-software: []
-online_tools: []
-video: "https://www.youtube.com/embed/Th8JoIan4dg"
-prompt_of_the_day: "You are a startup product manager. Here is my locked idea [paste SCQA]. Break it into (a) 5 must-have features for v1, (b) 3 nice-to-haves, (c) 3 automations that can replace manual work. For each AI feature, name the model + why. Be brutal about scope cuts."
+tldr: "Stop doing the same 7 clicks every morning. Today you wire a real automation in n8n, scrape a page with Firecrawl, and feel the moment a workflow runs without you. By end of class one boring task in your life is dead."
+tags: ["automation", "n8n", "firecrawl"]
+software: ["n8n", "firecrawl"]
+online_tools: ["Zapier", "n8n"]
+video: "https://www.youtube.com/embed/1MwSoB0gnM4"
+prompt_of_the_day: "You are a senior automation engineer. I want a workflow that: (1) reads a Google Sheet of company names, (2) for each, scrapes the careers page using Firecrawl, (3) extracts new openings matching 'data analyst intern Bengaluru', (4) emails me a daily digest at 9am IST. Sketch the n8n node graph + the prompt I should use for the LLM extractor."
 tools_hands_on:
-  - { name: "Notion", url: "https://www.notion.so/" }
-  - { name: "Figma", url: "https://www.figma.com/" }
-  - { name: "ChatGPT", url: "https://chat.openai.com/" }
+  - { name: "n8n.cloud", url: "https://n8n.io/" }
+  - { name: "Zapier", url: "https://zapier.com/" }
+  - { name: "Firecrawl", url: "https://www.firecrawl.dev/" }
+  - { name: "Google Sheets", url: "https://sheets.google.com/" }
 tools_reference:
-  - { name: "Marty Cagan — Inspired (book)", url: "https://www.svpg.com/inspired-how-to-create-products-customers-love/" }
+  - { name: "n8n docs", url: "https://docs.n8n.io/" }
+  - { name: "Firecrawl docs", url: "https://docs.firecrawl.dev/" }
 resources:
-  - { title: "Y Combinator — How to evaluate startup ideas (10 min)", url: "https://www.youtube.com/watch?v=Th8JoIan4dg" }
-  - { title: "First Round — The Feature Audit", url: "https://review.firstround.com/" }
-  - { title: "Lenny Rachitsky — MVP scoping", url: "https://www.lennysnewsletter.com/" }
-lab: { title: "Idea Lock pitch + feature/automation map", url: "https://www.notion.so/" }
+  - { title: "n8n — Build your first workflow (12 min)", url: "https://www.youtube.com/watch?v=1MwSoB0gnM4" }
+  - { title: "Zapier — Automation 101", url: "https://zapier.com/learn/" }
+  - { title: "Firecrawl — Scrape + Extract guide", url: "https://docs.firecrawl.dev/features/extract" }
+lab: { title: "Wire one real automation: scrape → extract → notify", url: "https://n8n.io/" }
 objective:
-  topic: "Lock the capstone idea, decompose into features and automations"
-  tools: ["Notion", "Figma", "ChatGPT"]
-  end_goal: "A locked one-page capstone spec: SCQA + JTBD + 5 features + 3 automations + tech stack hypothesis + one cut you committed to."
+  topic: "Build a real workflow + browser automation that runs without you"
+  tools: ["n8n", "Firecrawl", "Zapier"]
+  end_goal: "One n8n workflow that scrapes a page (Firecrawl), runs an LLM extraction step, and notifies you (email or Slack/Telegram) — running on a schedule."
 ---
 
-> 🏁 **Milestone 2 — Idea Lock.** This is the second of four capstone gates. After today, you stop pivoting *what* you're building and start arguing about *how*. Pitch is 3 minutes, Q&A is 4 minutes, you walk out with a locked spec.
+You've now spent 13 days building skills. Today is the first day a *machine* does something for you, on a schedule, while you're asleep. That feeling — "it just ran" — is the rest of the workshop in microcosm.
 
 ## 🎯 Today's objective
 
-**Topic.** Lock the capstone idea. Decompose it into features and automations. Name the AI in each.
+**Topic.** Workflow automation (n8n, Zapier) + browser/page automation (Firecrawl).
 
 **By end of class you will have:**
-1. Defended your idea in a 3-minute SCQA pitch in front of the cohort + faculty.
-2. A feature list (5 must / 3 nice) with the AI model named for each AI feature.
-3. An automation map: 3 manual steps you'll *not* build because automation will do them.
+1. One scheduled n8n workflow with at least 4 nodes (trigger → scrape → extract → notify).
+2. A working Firecrawl call that pulls clean markdown from a real page.
+3. Killed one repetitive task you currently do by hand.
 
-> *Why this matters.* Every demo-day project that ships clearly cut something today. Every one that didn't, didn't.
+> *Why this matters.* Capstone teams that ship by Day 30 have automation in their stack — for ingestion, monitoring, or reminders. Today you stop being the human cron job.
 
 ## ⏪ Pre-class · ~20 min
 
 ### Setup (required)
 
-- [ ] Day-11 Data Map finalised (raw → intelligent → decision rows for v1).
-- [ ] 3-minute pitch rehearsed once *out loud* — not in your head.
+- [ ] Sign up for **n8n.cloud** (free trial) OR install **n8n** locally with Docker (`docker run -p 5678:5678 n8nio/n8n`).
+- [ ] **Firecrawl** account → grab API key from dashboard.
+- [ ] **Zapier** free account (we compare briefly).
+- [ ] A Gmail / Slack / Telegram bot you can post to.
 
-### Primer (~5 min)
+### Primer (~10 min)
 
-- **Watch:** YC's *How to evaluate startup ideas* (10 min, watch on 1.5x) — https://www.youtube.com/watch?v=Th8JoIan4dg
+- **Watch:** *Build your first n8n workflow* (12 min) — https://www.youtube.com/watch?v=1MwSoB0gnM4
+- **Skim:** Firecrawl's `extract` docs — https://docs.firecrawl.dev/features/extract
 
 ### Bring to class
 
-- [ ] One feature you secretly know is scope creep. We'll cut it together.
-- [ ] Your laptop with Notion / Figma open.
+- [ ] 2 boring tasks from your week. Pick the most repetitive, lowest-stakes one for the lab.
+- [ ] One URL you regularly check (Naukri search page, IPL stats, a college notice board).
 
-> 🧠 **Quick glossary.** **Idea Lock** = no more pivoting on the *what*. **Feature** = a thing the user does. **Automation** = a thing that happens *without* the user. **MVP** = smallest thing that proves the riskiest assumption. **AI feature** = feature where an LLM or model does the heavy lift.
+> 🧠 **Quick glossary.** **Workflow** = a chain of steps. **Trigger** = what starts it (cron, webhook, manual). **Node** = one step. **Webhook** = a URL that, when hit, runs the workflow. **Scrape** = pull HTML; **extract** = turn it into structured fields. **Idempotent** = safe to run twice.
 
 ## 🎥 In-class · live session
 
@@ -68,61 +73,69 @@ objective:
 
 | Block | Time | What |
 |---|---|---|
-| Pitches round 1 | 25 min | 5 teams × 3 min pitch + 2 min critique |
-| Feature decomposition workshop | 15 min | One team's pitch → live feature breakdown |
-| AI vs deterministic | 10 min | Where to use an LLM, where to use plain code |
-| Lab: build your map | 20 min | Spec it on Notion |
-| Pitches round 2 + lock | 20 min | Remaining teams, final lock |
+| Why automation > AI alone | 10 min | The 80/20: most "AI products" are 80% plumbing |
+| n8n tour | 15 min | Trigger, HTTP, Code, IF, Schedule, AI nodes |
+| Firecrawl in 5 min | 5 min | One curl, clean markdown out |
+| Lab: build yours | 30 min | Trigger → scrape → LLM extract → notify |
+| Schedule + verify | 10 min | Set cron, watch it run live |
+| n8n vs Zapier | 10 min | When to pick which |
 
-### Where AI belongs (and where it doesn't)
+### Mental model
 
-- **AI is good for.** Open-ended generation, summarisation, classification of fuzzy text, semantic search.
-- **AI is bad for.** Exact arithmetic, deterministic workflow steps, anything legally binding without review, tasks where 95% accuracy is unacceptable.
-- **The default.** Plain code first. Reach for AI only when plain code can't do it cleanly.
+```
+trigger ──▶ fetch (Firecrawl) ──▶ transform (LLM) ──▶ act (email / Slack / Sheet)
+```
 
-## 🧪 Lab: Feature + automation map
+If you can name those four boxes for *any* automation in your life, you can build it.
 
-1. **Pitch (3 min).** Deliver SCQA. No slides — talk + your 1-pager.
-2. **Critique capture (4 min).** Write down every objection. Don't defend live; capture.
-3. **Feature list (8 min).** In Notion: 5 must-have features. For each, mark `[AI]` or `[code]` and name the model if AI.
-4. **Automation map (4 min).** List 3 manual tasks an automation will eat (cron job, webhook, agent loop, scheduled email).
-5. **Cut commitment (1 min).** Cross out *one* feature publicly. Tell a neighbour what you cut and why.
+## 🧪 Lab: Wire one real automation
 
-**Artifact.** A Notion page (or Figma frame) with: SCQA, JTBD, feature list (with `[AI]` tags + model names), automation map, the cut feature, top-3 critiques received. Submit on dashboard.
+1. **Pick the task.** Example: "Every morning, give me a list of new internships matching X on Y site."
+2. **Trigger.** Add a *Schedule* node, set to daily 9:00 IST.
+3. **Scrape.** Add an *HTTP Request* node calling Firecrawl `/scrape` with your URL → markdown out.
+4. **Extract.** Add an *OpenAI / Anthropic* node. Prompt: *"From this page markdown, return JSON: [&#123;title, location, link&#125;]"*. Use structured output.
+5. **Filter.** *IF* node: only items containing your keyword (e.g., "Bengaluru").
+6. **Notify.** *Gmail* / *Slack* / *Telegram* node → send the digest to you.
+7. **Run manually once.** Then activate the schedule.
+
+**Artifact.** Screenshot of the activated workflow + the first message it sent you. Submit on dashboard.
+
+> ⚠️ **Don't get banned.** Respect robots.txt. Don't poll faster than once per minute. Use Firecrawl's caching.
 
 ## 📊 Live poll
 
-**Where in your stack is AI doing real work?** Generation only / Classification / Search / Workflow agent / Just a chat wrapper. Instructor uses this to plan Days 15–18.
+**Where did your workflow break first?** Auth / scraping blocked / LLM JSON malformed / wrong cron / it actually worked first try. Instructor uses this to decide what to debug live.
 
 ## 💬 Discuss
 
-- Which critique landed hardest? What did you change because of it?
-- Name one feature you almost kept that you should cut.
-- Which "AI feature" is actually a regex in disguise?
+- Which task did you automate, and how many minutes/week does it save? Be specific.
+- Where did you reach for an LLM step vs plain code? Was the LLM overkill?
+- n8n vs Zapier — which would you pick for your capstone, and why?
 
 ## ❓ Quiz
 
-Short quiz on must-have vs nice-to-have, when to use AI vs deterministic code, and what an automation is. Opens on dashboard.
+Short quiz on trigger types, what Firecrawl returns, why structured outputs matter, and the n8n-vs-Zapier tradeoff. Opens on dashboard.
 
-## 📝 Assignment · Locked Spec v1
+## 📝 Assignment · Capstone automation #1
 
-**Brief.** Polish your in-class Notion page into a **Locked Spec v1**. Add: tech stack hypothesis (frontend, backend, model, db), one risk + mitigation, and the *one* user you'll demo to in week 4. ~500 words.
+**Brief.** Build **one automation that lives inside your capstone**. Examples: nightly ingestion of new data, daily user digest, on-form-submit notification, a webhook that triggers an LLM. Document trigger + nodes + sample output.
 
-**Submit.** Dashboard before Day 15.
+**Submit.** Dashboard with screenshot + workflow JSON export.
 
-**Rubric.** Sharpness of cuts (4) · Feasibility of stack (4) · Honesty about risk (2).
+**Rubric.** Real utility to capstone (4) · Reliability + error handling (4) · Cost / rate-limit awareness (2).
 
 ## 🔁 Prep for next class
 
-Day 15 is **Vibe Coding** — you'll build an actual app from a prompt using Antigravity, Cursor, Bolt, Emergent. Bring your locked spec; the demo you start tomorrow is what you'll pitch at Milestone 3 on Friday.
+Day 15 is **Agentic AI** — ReAct agents, tool use, LangGraph, MCP, and multi-agent systems.
 
-- [ ] Install **Antigravity** (https://antigravity.google/) — primary editor for Vibe Coding. **Cursor** (https://cursor.sh/) is optional if you want a second IDE.
-- [ ] Sign in to **Google AI Studio** (https://aistudio.google.com/) once and accept the terms.
-- [ ] Bring one tiny app idea (UPI splitter, hostel mess menu, attendance tracker) — we'll build it live.
+- [ ] Python venv with `pip install langchain langgraph langchain-openai crewai`.
+- [ ] OpenAI **or** Anthropic API key in `.env`. Confirm with a 2-line `chat.invoke("hi")`.
+- [ ] Optional: install Claude Desktop and try one MCP server (filesystem).
+- [ ] Bring one *agent-shaped problem* from your capstone.
 
 ## 📚 References
 
-- [YC — How to evaluate startup ideas](https://www.youtube.com/watch?v=Th8JoIan4dg) — pitch sanity check.
-- [SVPG — Inspired](https://www.svpg.com/inspired-how-to-create-products-customers-love/) — the PM bible.
-- [Lenny's Newsletter — MVP scoping](https://www.lennysnewsletter.com/) — practical scope cuts.
-- [Notion — Project spec template](https://www.notion.so/templates) — start from one.
+- [n8n docs](https://docs.n8n.io/) — comprehensive, copy from here.
+- [Firecrawl docs](https://docs.firecrawl.dev/) — scrape, crawl, extract.
+- [Zapier learn](https://zapier.com/learn/) — easier UX, less power.
+- [Awesome n8n templates](https://n8n.io/workflows/) — steal good ones.

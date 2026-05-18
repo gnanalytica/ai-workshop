@@ -3,70 +3,67 @@ day: 16
 date: "2026-05-22"
 weekday: "Friday"
 week: 3
-topic: "Capstone Milestone 3 — Presentation, Pitch, Prototype, Mini Demo"
+topic: "Vibe Coding (including Plan mode)"
 faculty:
-  main: "Sandeep"
-  support: "Jayasaagar"
-reading_time: "8 min"
-tldr: "Milestone 3. Today every team pitches: 5-minute deck, 2-minute live demo, 3 minutes of Q&A. No slides about future plans — only what works *now*. Half the cohort presents pre-lunch, half post."
-tags: ["capstone", "milestone", "pitch"]
-software: []
-online_tools: []
-video: "https://www.youtube.com/embed/Hzgzim5m7oU"
-prompt_of_the_day: "Critique this 5-minute pitch like a YC partner who's already heard 12 today. The pitch: <paste your script>. Be brutal but specific. Flag every sentence that's hand-wavy, every claim without a number, every slide a real customer wouldn't care about."
+  main: "Raunak"
+  support: "Harshith"
+reading_time: "12 min"
+tldr: "Vibe coding = describe what you want, AI writes the code. But raw vibes break at scale. Today you learn the *plan-then-code* loop in **Antigravity** (primary) and optionally Cursor, and ship a tiny working app three ways — Bolt, Emergent, Google AI Studio."
+tags: ["coding", "agents", "ide"]
+software: ["Antigravity", "Cursor (optional)"]
+online_tools: ["Bolt", "Emergent", "Google AI Studio"]
+video: "https://www.youtube.com/embed/V9_RzjqCXP8"
+prompt_of_the_day: "Build a single-page web app that lets a hostel mess committee mark today's menu (breakfast/lunch/dinner) and shows it to students in read-only view. Use plain HTML + JS, persist to localStorage. First, write a 5-step plan. Wait for me to approve before writing code."
 tools_hands_on:
-  - { name: "Gamma AI", url: "https://gamma.app/" }
-  - { name: "Kimi AI", url: "https://kimi.com/" }
-  - { name: "Canva", url: "https://www.canva.com/" }
+  - { name: "Antigravity", url: "https://antigravity.google/" }
+  - { name: "Cursor (optional)", url: "https://cursor.sh/" }
+  - { name: "Bolt", url: "https://bolt.new/" }
+  - { name: "Emergent", url: "https://emergent.sh/" }
+  - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
 tools_reference:
-  - { name: "YC — How to pitch", url: "https://www.ycombinator.com/library/6m-how-to-pitch-your-startup" }
-  - { name: "Guy Kawasaki — 10/20/30 rule", url: "https://guykawasaki.com/the_102030_rule/" }
+  - { name: "Cursor — Plan mode docs", url: "https://docs.cursor.com/" }
+  - { name: "Andrej Karpathy — vibe coding tweet", url: "https://x.com/karpathy/status/1886192184808149383" }
 resources:
-  - { title: "Sequoia — Writing a Business Plan", url: "https://www.sequoiacap.com/article/writing-a-business-plan/" }
-  - { title: "First Round Review — Demo day prep", url: "https://review.firstround.com/" }
-lab: { title: "Live milestone presentations", url: "" }
+  - { title: "Simon Willison — building tools with LLMs", url: "https://simonwillison.net/" }
+  - { title: "Bolt prompt guide", url: "https://support.bolt.new/" }
+lab: { title: "Mess-menu app — three ways", url: "https://bolt.new/" }
 objective:
-  topic: "Capstone Milestone 3 — Presentation, Pitch, Prototype"
-  tools: ["Your deck", "Your live demo"]
-  end_goal: "A 5-min pitch + 2-min live demo presented to faculty and peers, with structured feedback collected on the rubric."
+  topic: "Vibe Coding with Plan mode"
+  tools: ["Antigravity", "Cursor (optional)", "Bolt", "Emergent", "Google AI Studio"]
+  end_goal: "A working mess-menu app shipped in three different vibe-coding tools, with a written plan you approved before any code was generated."
 ---
 
-> 🏆 **Milestone 3.** This is a graded checkpoint. Every team presents. Every team gets feedback. There's no "we're not ready yet" — what you have today is what you have. Polish the demo of *what works*, don't fake what doesn't.
-
-Today is the first time you'll feel what Day 30 feels like. Same format, lower stakes. Use it.
+Vibe coding is real, and it's also a trap. Raw "make me an app" works for the first prompt and falls apart on the fourth. Today you learn the move that pros use: **Plan mode first, code mode second.**
 
 ## 🎯 Today's objective
 
-**Topic.** Capstone Milestone 3 — Presentation, Pitch, Prototype, Mini Demo.
+**Topic.** Vibe Coding (including Plan mode).
 
 **By end of class you will have:**
-1. Delivered a 5-minute pitch with the deck you built this week.
-2. Run a 2-minute *live* demo (no recordings, no "imagine if").
-3. Received written feedback from 2 faculty + 3 peers on the rubric below.
+1. Built the same tiny app three times — once each in Bolt, Emergent, and Google AI Studio.
+2. Used **Antigravity's plan flow** (or **Cursor's Plan mode** if you use the optional install) to scope a feature *before* a single line of code.
+3. A felt sense of when to switch tools mid-build.
 
-> *Why this matters.* You'll iterate the demo for two more weeks. Honest feedback now beats polite feedback at the finale.
+> *Why this matters.* Your capstone will live or die by how well you can *direct* a code-gen tool. Vibe ≠ winging it.
 
-## ⏪ Pre-class · ~30 min
+## ⏪ Pre-class · ~20 min
 
 ### Setup (required)
 
-- [ ] **Deck built and final** — generate in **Gamma** (https://gamma.app/) from your locked-spec one-pager, script the hook + ask in **Kimi AI** (https://kimi.com/), and polish slide 1 in **Canva** (https://canva.com/). 10 slides max, 10/20/30 rule. Export a PDF backup to your laptop (no live internet panic).
-- [ ] Demo URL working — open in **two different browsers** to confirm.
-- [ ] Phone hotspot ready as backup wifi.
-- [ ] Team roles agreed: who pitches, who demos, who answers Q&A.
+- [ ] **Antigravity** installed and signed in with your cohort Google account. Complete any other installs your cohort sent by email or chat. **Faculty:** use **Handbook → Setup & tools** (*Lab environment & tooling*) for a full lab checklist.
+- [ ] **Cursor** (optional) — install only if you want a second editor; free tier is fine.
+- [ ] Bookmarks for **Bolt.new**, **Emergent**, **Google AI Studio**.
 
-### Primer (~10 min)
+### Primer (~5 min)
 
-- **Read:** YC's *How to pitch your startup* — https://www.ycombinator.com/library/6m-how-to-pitch-your-startup
-- **Read:** Guy Kawasaki's *10/20/30 rule* — https://guykawasaki.com/the_102030_rule/
-- **Watch:** Any "Shark Tank India" 5-min pitch — note what makes you lean in.
+- **Watch:** A short Antigravity or "plan before code" walkthrough on YouTube (optional: Cursor Plan mode if you use Cursor).
+- **Read:** Karpathy's original *vibe coding* tweet — https://x.com/karpathy/status/1886192184808149383
 
 ### Bring to class
 
-- [ ] Printed copy of your slide notes (1 page max).
-- [ ] HDMI/USB-C dongle for projector.
+- [ ] One micro-feature you've always wanted: hostel mess menu, fee deadline tracker, lab attendance counter.
 
-> 🧠 **Quick glossary.** **Demo** = you click, it works, in front of humans. **Walkthrough** = you narrate Figma. We want **demos**. **Cold open** = first 30 seconds of your pitch — make them count.
+> 🧠 **Quick glossary.** **Vibe coding** = describing what you want in natural language, accepting most of what the AI writes. **Plan mode** = AI writes a step-by-step plan first; you approve, *then* it codes. **Agent loop** = AI runs, observes errors, fixes itself.
 
 ## 🎥 In-class · live session
 
@@ -74,69 +71,69 @@ Today is the first time you'll feel what Day 30 feels like. Same format, lower s
 
 | Block | Time | What |
 |---|---|---|
-| Format reminder + order | 10 min | Slot order on the board |
-| Group A presentations | 60 min | 6 teams × 10 min each |
-| Break | 15 min | Snacks + cohort feedback forms |
-| Group B presentations | 60 min | 6 teams × 10 min each |
-| Faculty debrief | 15 min | Common patterns we saw |
+| Why plan first | 10 min | Demo of vibe-then-fix vs plan-then-code |
+| Lab block A: Bolt + Emergent | 20 min | Same prompt, two tools |
+| Lab block B: AI Studio | 10 min | Gemini-native build |
+| Antigravity (or optional Cursor) + plan | 15 min | Take the best output local, iterate |
+| Poll + discuss | 5 min | Which tool felt fastest *and* most controllable |
 
-### The 5-2-3 format
+### Plan-then-code in 4 steps
 
-- **5 min pitch.** Problem → user → solution → why-now → demo lead-in → ask.
-- **2 min live demo.** Click, don't narrate. If it crashes, recover, don't apologise.
-- **3 min Q&A.** Faculty + 2 peer questions. Short answers win.
+1. **State the goal in one sentence** — "menu app, 3 meals, localStorage, read-only view."
+2. **Ask for a plan, not code** — "Before writing anything, list 5 steps and the files you'll create."
+3. **Edit the plan** — drop a step, add a constraint (no React, plain JS only).
+4. **Approve → code.** Now let it rip.
 
-### Rules
+### When to swap tools
 
-1. **Hard cut at 7 min.** Mic off. We protect the next team's slot.
-2. **No "in the future we'll…"** in the pitch. Save it for Q&A if asked.
-3. **Demo from the deployed URL**, not localhost. Preview links from Bolt/Vercel are fine.
-4. **One slide of numbers** is mandatory: users you've talked to, signups, anything real.
+- **Bolt** — fastest for "give me a working web app from scratch." Stackblitz under the hood.
+- **Emergent** — agentic, longer-running tasks; good when you want it to keep going.
+- **Google AI Studio** — best when you want to riff with Gemini directly + see token-level behaviour.
+- **Antigravity** — once you have code locally, this is your home base. **Cursor** is an optional second editor if you installed it.
 
-## 🧪 Lab: Live milestone presentations
+## 🧪 Lab: Mess-menu app, three ways
 
-1. **30 min before your slot:** open your deck + demo, close every other tab, mute notifications.
-2. **2 min before:** plug in, share screen, sip water.
-3. **Pitch.** Eyes up. Don't read slides.
-4. **Demo.** Narrate the *user's* journey, not your code.
-5. **Q&A.** "I don't know yet, here's how I'd find out" beats making things up.
-6. **After:** fill out self-reflection form on the dashboard while it's fresh.
+1. Open **Bolt**. Paste the prompt of the day. Note: it includes "First, write a 5-step plan. Wait for me to approve." Did Bolt obey?
+2. Approve the plan (or correct it), let Bolt generate. Click *Preview* — does it work?
+3. Open **Emergent** in a new tab. Same prompt. Compare its plan to Bolt's.
+4. Open **Google AI Studio** → pick *Build* → same prompt. Compare again.
+5. Take the best output, download it, open in **Antigravity** (or optional **Cursor**). Use your tool's plan flow: e.g. in Cursor, **Plan mode** (Cmd-Shift-P / Ctrl-Shift-P). Ask: *"Add a date stamp to each saved menu and show last 7 days."* Approve plan → run.
+6. Confirm `localStorage` persistence by reloading the page.
 
-**Artifact.** Recorded video of your pitch (your team-mate films on a phone, landscape) + the filled rubric. Upload both before midnight.
+**Artifact.** A GitHub gist (or zipped folder uploaded to Drive) with your final `index.html` + a 4-line note: which tool you'd pick again, for what.
 
 ## 📊 Live poll
 
-**Right after each pitch, the cohort votes:** *Would you use this product today?* Yes / Maybe / Need more info / No / Not the target user.
+**For a 1-day hackathon, which would you start with?** Bolt / Emergent / Google AI Studio / Antigravity from scratch / optional Cursor / Depends on the project.
 
-## 💬 Discuss (after both groups)
+## 💬 Discuss
 
-- Which team's *problem statement* was sharpest, and what made it sharp?
-- Whose demo had the cleanest cold open? Steal that move.
-- What was the most common weak spot across all teams? (Faculty will share theirs too.)
+- Did any tool *skip* the plan and just code? How did you correct it?
+- Which tool's output was hardest to read after the fact?
+- Where did vibe coding actively hurt you — a hallucinated API, a broken import, a fake library?
 
 ## ❓ Quiz
 
-No quiz today — the pitch *is* the assessment.
+Short quiz on Plan mode behaviour, agent loops, and tool fit. Open it on your dashboard during class.
 
-## 📝 Assignment · Iteration plan
+## 📝 Assignment · Vibe-built micro-tool
 
-**Brief.** Within 24 hours, write a 200-word *iteration plan* answering: (a) one thing the feedback got right that hurt to hear, (b) one thing you'll change before Day 24, (c) one assumption you'll go test with real users this week.
+**Brief.** Pick **your own** micro-feature (not the mess menu). Use Plan mode first, ship a working version. Write a 100-word note: where vibe coding helped, where it failed, what you'd do differently.
 
-**Submit.** Paste on the dashboard. Faculty mentors will reply inline.
+**Submit.** GitHub gist link + reflection on the dashboard.
 
-**Rubric (Milestone 3).** Problem clarity (4) · Working live demo (4) · Real-world numbers / user evidence (2).
+**Rubric.** App actually works (4) · Plan was written and edited (3) · Honest reflection (3).
 
 ## 🔁 Prep for next class
 
-Day 17 is **Git, GitHub, localhost, APIs** — the skills that make your demo *not* die at the finale.
+Day 17 is next — check the dashboard for the topic and setup instructions.
 
-- [ ] Install **Git** — `git --version` should print 2.40+.
-- [ ] Create a **GitHub** account (use your college email).
-- [ ] Bring laptop with your capstone code in a folder, even if it's a single `index.html`.
+- [ ] Polish your Day-13 deck.
+- [ ] Have a working demo URL (Bolt-hosted is fine for v1).
 
 ## 📚 References
 
-- [YC — How to pitch your startup](https://www.ycombinator.com/library/6m-how-to-pitch-your-startup) — the one read worth re-reading.
-- [Sequoia — Writing a Business Plan](https://www.sequoiacap.com/article/writing-a-business-plan/) — the original 10-slide structure.
-- [First Round Review](https://review.firstround.com/) — long-form interviews with founders on demo prep.
-- [Aaron Patzer — Mint demo day pitch (video)](https://www.youtube.com/watch?v=Hzgzim5m7oU) — the gold-standard example.
+- [Antigravity](https://antigravity.google/) — product home. [Cursor — Plan mode](https://docs.cursor.com/) — if you use the optional Cursor install.
+- [Bolt support — prompting tips](https://support.bolt.new/)
+- [Simon Willison's blog](https://simonwillison.net/) — daily notes on building with LLMs.
+- [Geoffrey Huntley — vibe coding is here to stay](https://ghuntley.com/) — practitioner take.

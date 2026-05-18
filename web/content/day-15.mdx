@@ -3,67 +3,67 @@ day: 15
 date: "2026-05-21"
 weekday: "Thursday"
 week: 3
-topic: "Vibe Coding (including Plan mode)"
+topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agentic System"
 faculty:
-  main: "Raunak"
+  main: "Sandeep"
   support: "Harshith"
 reading_time: "12 min"
-tldr: "Vibe coding = describe what you want, AI writes the code. But raw vibes break at scale. Today you learn the *plan-then-code* loop in **Antigravity** (primary) and optionally Cursor, and ship a tiny working app three ways — Bolt, Emergent, Google AI Studio."
-tags: ["coding", "agents", "ide"]
-software: ["Antigravity", "Cursor (optional)"]
-online_tools: ["Bolt", "Emergent", "Google AI Studio"]
-video: "https://www.youtube.com/embed/V9_RzjqCXP8"
-prompt_of_the_day: "Build a single-page web app that lets a hostel mess committee mark today's menu (breakfast/lunch/dinner) and shows it to students in read-only view. Use plain HTML + JS, persist to localStorage. First, write a 5-step plan. Wait for me to approve before writing code."
+tldr: "An LLM that just chats is a calculator. An LLM with tools, memory, and a graph of decisions is an agent. Today you build a ReAct agent in LangGraph, give it two tools, and watch it loop until it's done."
+tags: ["agents", "langgraph", "mcp", "react"]
+software: ["LangChain", "LangGraph", "CrewAI"]
+online_tools: []
+video: "https://www.youtube.com/embed/aHCDrAbH_go"
+prompt_of_the_day: "Build me a ReAct agent in LangGraph with two tools: web_search and calculator. Question to answer: 'What was the GDP per capita of India in the latest IMF data, and how many times has it grown since 2000?' Show the trace."
 tools_hands_on:
-  - { name: "Antigravity", url: "https://antigravity.google/" }
-  - { name: "Cursor (optional)", url: "https://cursor.sh/" }
-  - { name: "Bolt", url: "https://bolt.new/" }
-  - { name: "Emergent", url: "https://emergent.sh/" }
-  - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
+  - { name: "LangGraph", url: "https://langchain-ai.github.io/langgraph/" }
+  - { name: "LangChain", url: "https://python.langchain.com/" }
+  - { name: "CrewAI", url: "https://www.crewai.com/" }
+  - { name: "Model Context Protocol", url: "https://modelcontextprotocol.io/" }
 tools_reference:
-  - { name: "Cursor — Plan mode docs", url: "https://docs.cursor.com/" }
-  - { name: "Andrej Karpathy — vibe coding tweet", url: "https://x.com/karpathy/status/1886192184808149383" }
+  - { name: "ReAct paper (Yao et al.)", url: "https://arxiv.org/abs/2210.03629" }
+  - { name: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents" }
 resources:
-  - { title: "Simon Willison — building tools with LLMs", url: "https://simonwillison.net/" }
-  - { title: "Bolt prompt guide", url: "https://support.bolt.new/" }
-lab: { title: "Mess-menu app — three ways", url: "https://bolt.new/" }
+  - { title: "LangGraph quickstart", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
+  - { title: "MCP servers list", url: "https://github.com/modelcontextprotocol/servers" }
+lab: { title: "Two-tool ReAct agent in LangGraph", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
 objective:
-  topic: "Vibe Coding with Plan mode"
-  tools: ["Antigravity", "Cursor (optional)", "Bolt", "Emergent", "Google AI Studio"]
-  end_goal: "A working mess-menu app shipped in three different vibe-coding tools, with a written plan you approved before any code was generated."
+  topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems"
+  tools: ["LangGraph", "LangChain", "CrewAI", "MCP"]
+  end_goal: "A working ReAct agent in 60 lines of Python that uses two tools and prints its reasoning trace, plus a sketch of a 2-agent CrewAI team."
 ---
 
-Vibe coding is real, and it's also a trap. Raw "make me an app" works for the first prompt and falls apart on the fourth. Today you learn the move that pros use: **Plan mode first, code mode second.**
+A chatbot answers. An agent **acts**. The difference is a loop, a set of tools, and a controller that decides what to do next. Today we open that loop.
 
 ## 🎯 Today's objective
 
-**Topic.** Vibe Coding (including Plan mode).
+**Topic.** Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems.
 
 **By end of class you will have:**
-1. Built the same tiny app three times — once each in Bolt, Emergent, and Google AI Studio.
-2. Used **Antigravity's plan flow** (or **Cursor's Plan mode** if you use the optional install) to scope a feature *before* a single line of code.
-3. A felt sense of when to switch tools mid-build.
+1. A working ReAct agent in LangGraph with two tools, running locally.
+2. Read its full *Thought → Action → Observation* trace and explained one step.
+3. A 2-agent CrewAI sketch (researcher + writer) and a one-paragraph note on when MCP beats a custom tool.
 
-> *Why this matters.* Your capstone will live or die by how well you can *direct* a code-gen tool. Vibe ≠ winging it.
+> *Why this matters.* Half the capstone projects this cohort will pitch agents. Knowing the wiring under "I built an agent" separates demos from toys.
 
-## ⏪ Pre-class · ~20 min
+## ⏪ Pre-class · ~25 min
 
 ### Setup (required)
 
-- [ ] **Antigravity** installed and signed in with your cohort Google account. Complete any other installs your cohort sent by email or chat. **Faculty:** use **Handbook → Setup & tools** (*Lab environment & tooling*) for a full lab checklist.
-- [ ] **Cursor** (optional) — install only if you want a second editor; free tier is fine.
-- [ ] Bookmarks for **Bolt.new**, **Emergent**, **Google AI Studio**.
+- [ ] Python venv with `pip install langchain langgraph langchain-openai crewai`.
+- [ ] OpenAI **or** Anthropic API key in `.env`. Confirm with a 2-line `chat.invoke("hi")`.
+- [ ] Optional: install Claude Desktop and try one MCP server (filesystem).
 
-### Primer (~5 min)
+### Primer (~10 min)
 
-- **Watch:** A short Antigravity or “plan before code” walkthrough on YouTube (optional: Cursor Plan mode if you use Cursor).
-- **Read:** Karpathy's original *vibe coding* tweet — https://x.com/karpathy/status/1886192184808149383
+- **Watch:** "What is LangGraph?" — https://www.youtube.com/watch?v=aHCDrAbH_go (8 min).
+- **Read:** Anthropic's *Building effective agents* — skim "Workflows vs agents" and "When to use agents."
+- **Skim:** the ReAct paper abstract + Figure 1 (Yao et al.). You don't need the math.
 
 ### Bring to class
 
-- [ ] One micro-feature you've always wanted: hostel mess menu, fee deadline tracker, lab attendance counter.
+- [ ] One *agent-shaped problem* from your capstone. Not "summarise text" — that's a pipeline. Try "find me the cheapest train Bangalore→Hyderabad next Friday and book a placeholder."
 
-> 🧠 **Quick glossary.** **Vibe coding** = describing what you want in natural language, accepting most of what the AI writes. **Plan mode** = AI writes a step-by-step plan first; you approve, *then* it codes. **Agent loop** = AI runs, observes errors, fixes itself.
+> 🧠 **Quick glossary.** **ReAct** = Reason + Act loop. **Tool** = a function the LLM can call. **LangGraph** = library for building stateful agent graphs. **MCP** = Model Context Protocol — a standard way to plug tools into any agent. **CrewAI** = multi-agent orchestration with role-playing.
 
 ## 🎥 In-class · live session
 
@@ -71,70 +71,79 @@ Vibe coding is real, and it's also a trap. Raw "make me an app" works for the fi
 
 | Block | Time | What |
 |---|---|---|
-| Why plan first | 10 min | Demo of vibe-then-fix vs plan-then-code |
-| Lab block A: Bolt + Emergent | 20 min | Same prompt, two tools |
-| Lab block B: AI Studio | 10 min | Gemini-native build |
-| Antigravity (or optional Cursor) + plan | 15 min | Take the best output local, iterate |
-| Poll + discuss | 5 min | Which tool felt fastest *and* most controllable |
+| Chatbot vs workflow vs agent | 10 min | Where each fits |
+| ReAct loop, drawn on the whiteboard | 10 min | Thought → Action → Observation |
+| Live build: LangGraph agent | 20 min | 60 lines, two tools |
+| MCP demo + multi-agent sketch | 10 min | Why MCP, when to use Crew |
+| Lab + Q&A | 5 min |  |
 
-### Plan-then-code in 4 steps
+### The minimum agent
 
-1. **State the goal in one sentence** — "menu app, 3 meals, localStorage, read-only view."
-2. **Ask for a plan, not code** — "Before writing anything, list 5 steps and the files you'll create."
-3. **Edit the plan** — drop a step, add a constraint (no React, plain JS only).
-4. **Approve → code.** Now let it rip.
+```
+loop:
+  thought  = LLM(state)         # "I need the latest GDP figure"
+  action   = pick_tool(thought) # web_search("India GDP per capita 2025")
+  observe  = run_tool(action)   # "$2,710 per IMF April 2025"
+  state    = state + observe
+  if LLM says "done": break
+```
 
-### When to swap tools
+That's it. Everything else — LangGraph, CrewAI, AutoGen — is sugar on this loop.
 
-- **Bolt** — fastest for "give me a working web app from scratch." Stackblitz under the hood.
-- **Emergent** — agentic, longer-running tasks; good when you want it to keep going.
-- **Google AI Studio** — best when you want to riff with Gemini directly + see token-level behaviour.
-- **Antigravity** — once you have code locally, this is your home base. **Cursor** is an optional second editor if you installed it.
+### When to reach for what
 
-## 🧪 Lab: Mess-menu app, three ways
+- **One LLM call** — classification, summary. Don't build an agent.
+- **Fixed pipeline (workflow)** — LangChain chain. Predictable, cheap, debuggable.
+- **Agent (LangGraph)** — when the *path* depends on intermediate results.
+- **Multi-agent (CrewAI)** — when roles are genuinely different and parallel: researcher + critic + writer.
+- **MCP** — when the *same* tool needs to plug into Claude Desktop, Cursor, your custom agent, all at once.
 
-1. Open **Bolt**. Paste the prompt of the day. Note: it includes "First, write a 5-step plan. Wait for me to approve." Did Bolt obey?
-2. Approve the plan (or correct it), let Bolt generate. Click *Preview* — does it work?
-3. Open **Emergent** in a new tab. Same prompt. Compare its plan to Bolt's.
-4. Open **Google AI Studio** → pick *Build* → same prompt. Compare again.
-5. Take the best output, download it, open in **Antigravity** (or optional **Cursor**). Use your tool’s plan flow: e.g. in Cursor, **Plan mode** (Cmd-Shift-P / Ctrl-Shift-P). Ask: *"Add a date stamp to each saved menu and show last 7 days."* Approve plan → run.
-6. Confirm `localStorage` persistence by reloading the page.
+## 🧪 Lab: Two-tool ReAct agent
 
-**Artifact.** A GitHub gist (or zipped folder uploaded to Drive) with your final `index.html` + a 4-line note: which tool you'd pick again, for what.
+1. New file `agent.py`. Define two `@tool`s: `web_search(query)` (use Tavily or DuckDuckGo) and `calculator(expression)`.
+2. Build a LangGraph `StateGraph` with one node `agent` (the LLM) and one node `tools` (the tool runner). Edges: `agent → tools → agent` until `END`.
+3. Run with the prompt of the day. Print every `(thought, action, observation)` triple.
+4. Break it on purpose: ask a question requiring **three** tool calls. Watch the loop hold up.
+
+**Artifact.** `agent.py` + a copy-pasted trace in your repo at `/labs/day-15/`. Push.
+
+> ⚠️ **Cost watch.** Each loop costs ~₹1–4. Cap with `recursion_limit=10` so a runaway agent doesn't burn your credits.
 
 ## 📊 Live poll
 
-**For a 1-day hackathon, which would you start with?** Bolt / Emergent / Google AI Studio / Antigravity from scratch / optional Cursor / Depends on the project.
+**Where does your capstone need an agent (vs a workflow)?** Auth/forms / Search-and-summarise / Multi-step reasoning / Booking-style flows / *Honestly, nowhere.*
 
 ## 💬 Discuss
 
-- Did any tool *skip* the plan and just code? How did you correct it?
-- Which tool's output was hardest to read after the fact?
-- Where did vibe coding actively hurt you — a hallucinated API, a broken import, a fake library?
+- A workflow is cheaper and more reliable. When is the agent's flexibility worth the extra cost?
+- Your capstone uses Razorpay. Should that be an MCP server or a hand-coded tool? Argue both sides.
+- Two agents (researcher + writer) vs one agent with two tools — what changes?
 
 ## ❓ Quiz
 
-Short quiz on Plan mode behaviour, agent loops, and tool fit. Open it on your dashboard during class.
+Short quiz on the ReAct loop, when MCP beats custom tools, and what `recursion_limit` does. Open on the dashboard mid-class.
 
-## 📝 Assignment · Vibe-built micro-tool
+## 📝 Assignment · Your first agent
 
-**Brief.** Pick **your own** micro-feature (not the mess menu). Use Plan mode first, ship a working version. Write a 100-word note: where vibe coding helped, where it failed, what you'd do differently.
+**Brief.** Submit your `agent.py` plus a 150-word note: *what the agent did well, where it failed, what it cost in tokens.*
 
-**Submit.** GitHub gist link + reflection on the dashboard.
+**Stretch (optional).** Convert one of your tools into an MCP server (e.g., filesystem read) and call it from Claude Desktop or Cursor. +2 bonus points if you push the server config + a screenshot.
 
-**Rubric.** App actually works (4) · Plan was written and edited (3) · Honest reflection (3).
+**Submit.** GitHub link + note on the dashboard before Day 16.
+
+**Rubric.** Tools wired and called correctly (4) · Trace is readable, with thoughts visible (4) · Honest reflection on failures + cost (2).
 
 ## 🔁 Prep for next class
 
-Day 16 is **Capstone Milestone 3** — you present your prototype.
+Day 16 is **Vibe Coding** — you'll build an actual app from a prompt using Antigravity, Cursor, Bolt, Emergent.
 
-- [ ] Polish your Day-14 deck.
-- [ ] Have a working demo URL (Bolt-hosted is fine for v1).
-- [ ] 5-minute pitch + 2-minute Q&A. Rehearse once out loud.
+- [ ] Install **Antigravity** (https://antigravity.google/) — primary editor for Vibe Coding. **Cursor** (https://cursor.sh/) is optional if you want a second IDE.
+- [ ] Sign in to **Google AI Studio** (https://aistudio.google.com/) once and accept the terms.
+- [ ] Bring one tiny app idea (UPI splitter, hostel mess menu, attendance tracker) — we'll build it live.
 
 ## 📚 References
 
-- [Antigravity](https://antigravity.google/) — product home. [Cursor — Plan mode](https://docs.cursor.com/) — if you use the optional Cursor install.
-- [Bolt support — prompting tips](https://support.bolt.new/)
-- [Simon Willison's blog](https://simonwillison.net/) — daily notes on building with LLMs.
-- [Geoffrey Huntley — vibe coding is here to stay](https://ghuntley.com/) — practitioner take.
+- [LangGraph quickstart](https://langchain-ai.github.io/langgraph/tutorials/introduction/) — the canonical tutorial.
+- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents) — the post that reset this field.
+- [ReAct paper (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) — the original loop.
+- [MCP servers](https://github.com/modelcontextprotocol/servers) — 100+ ready-to-use tools.
