@@ -3,53 +3,53 @@ day: 14
 date: "2026-05-20"
 weekday: "Wednesday"
 week: 3
-topic: "Workflow automation with n8n, Firecrawl & Gemini"
+topic: "Workflow automation with n8n, Firecrawl & Groq"
 faculty:
   main: "Sandeep"
   support: "Harshith"
 reading_time: "10 min"
-tldr: "Today you build your very first automation — three nodes in n8n that scrape a webpage with Firecrawl and summarize it with Google Gemini. No coding, no cron, no Slack — just three boxes connected with arrows. Click 'Test workflow' and watch the machine read a page for you."
-tags: ["automation", "n8n", "firecrawl", "gemini"]
+tldr: "Today you build your very first automation — three nodes in n8n that scrape a webpage with Firecrawl and summarize it with Groq (Llama 3.3, blazing-fast LPU inference). No coding, no cron, no Slack — just three boxes connected with arrows. Click 'Test workflow' and watch the machine read a page for you."
+tags: ["automation", "n8n", "firecrawl", "groq"]
 software: []
-online_tools: ["n8n.cloud", "Firecrawl", "Google AI Studio"]
+online_tools: ["n8n.cloud", "Firecrawl", "Groq Cloud"]
 video: "https://www.youtube.com/embed/1MwSoB0gnM4"
 prompt_of_the_day: "Summarize this article in 5 bullet points. Be specific and use plain English. Mention any numbers, names, or dates that appear."
 tools_hands_on:
   - { name: "n8n.cloud (free trial)", url: "https://app.n8n.cloud/register" }
   - { name: "Firecrawl", url: "https://www.firecrawl.dev/" }
-  - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
+  - { name: "Groq Cloud", url: "https://console.groq.com/" }
 tools_reference:
   - { name: "n8n docs — first workflow", url: "https://docs.n8n.io/try-it-out/" }
   - { name: "Firecrawl docs", url: "https://docs.firecrawl.dev/" }
-  - { name: "Gemini API quickstart", url: "https://ai.google.dev/gemini-api/docs/quickstart" }
+  - { name: "Groq API quickstart", url: "https://console.groq.com/docs/quickstart" }
 resources:
   - { title: "n8n — Build your first workflow (12 min)", url: "https://www.youtube.com/watch?v=1MwSoB0gnM4" }
   - { title: "Firecrawl — Scrape API guide", url: "https://docs.firecrawl.dev/api-reference/endpoint/scrape" }
-  - { title: "Google AI Studio — Get an API key", url: "https://aistudio.google.com/app/apikey" }
-lab: { title: "Your first n8n workflow: scrape a page and let Gemini summarize it", url: "https://app.n8n.cloud/" }
+  - { title: "Groq — Get an API key", url: "https://console.groq.com/keys" }
+lab: { title: "Your first n8n workflow: scrape a page and let Groq summarize it", url: "https://app.n8n.cloud/" }
 objective:
   topic: "Your first n8n automation"
-  tools: ["n8n.cloud", "Firecrawl", "Google Gemini"]
-  end_goal: "One n8n workflow with 3 nodes — Manual Trigger → Firecrawl Scrape → Gemini Summarize — that runs when you click 'Test workflow' and shows you a 5-bullet summary of any webpage you pick."
+  tools: ["n8n.cloud", "Firecrawl", "Groq (Llama 3.3)"]
+  end_goal: "One n8n workflow with 3 nodes — Manual Trigger → Firecrawl Scrape → Groq Summarize — that runs when you click 'Test workflow' and shows you a 5-bullet summary of any webpage you pick."
 ---
 
 Up to today, *you've* been the one clicking. Today the *computer* clicks for you.
 
 We're keeping it small on purpose. By the end of class you'll have:
 - A free n8n account in the cloud (no laptop install, no Docker, no terminal).
-- Two API keys: one from Firecrawl, one from Google AI Studio.
+- Two API keys: one from Firecrawl, one from Groq.
 - A working 3-node workflow that reads any URL and summarizes it.
 
 If you've never written code, that's perfect. Today is mostly **clicking, copying, and pasting.**
 
 ## 🎯 Today's objective
 
-**Topic.** Build your very first automation — n8n + Firecrawl + Google Gemini.
+**Topic.** Build your very first automation — n8n + Firecrawl + Groq.
 
 **By end of class you will have:**
 1. A free n8n.cloud account with one workflow in it.
-2. A Firecrawl API key and a Google Gemini API key.
-3. A 3-node workflow that scrapes one webpage and asks Gemini to summarize it in 5 bullets.
+2. A Firecrawl API key and a Groq Cloud API key.
+3. A 3-node workflow that scrapes one webpage and asks Groq (Llama 3.3) to summarize it in 5 bullets.
 
 > *Why this matters.* Once you understand "click → scrape → AI → answer", you can build literally any automation: research, monitoring, content drafts, daily digests. Today is the foundation. Everything else is just more nodes.
 
@@ -72,12 +72,12 @@ You'll create **three free accounts**. None of them ask for a credit card. Keep 
 - Click **Create API Key** → copy the key (starts with `fc-...`).
 - Paste it into a Notes app for now. You'll need it in class.
 
-**3. Google AI Studio (free Gemini API key)**
+**3. Groq Cloud (free API key, very fast Llama 3.3 inference)**
 
-- Open https://aistudio.google.com/app/apikey → sign in with your Google account.
-- Click **Create API key** → **Create API key in new project**.
-- Copy the key (long string starting with `AIza...`).
-- Paste it into Notes too.
+- Open https://console.groq.com/ → click **Sign Up** (Google / GitHub / email).
+- After signup, in the left sidebar click **API Keys** → **Create API Key**.
+- Give it any name (e.g. `n8n-workshop`) → click **Submit** → copy the key (long string starting with `gsk_...`).
+- Paste it into Notes too. **You won't be able to see it again** after closing the dialog.
 
 > ⚠️ **Don't share these keys publicly.** They're like passwords. Don't paste them in WhatsApp, GitHub, screenshots, or anyone's DMs.
 
@@ -90,7 +90,7 @@ Skim only if you've never seen n8n before:
 ### Bring to class
 
 - [ ] All three accounts created. All three keys copied somewhere safe.
-- [ ] **One URL** you'd like Gemini to read for you. Anything stable — a Wikipedia article, a Hacker News story, a news article. Pick something with at least 5 paragraphs of text.
+- [ ] **One URL** you'd like Groq to read for you. Anything stable — a Wikipedia article, a Hacker News story, a news article. Pick something with at least 5 paragraphs of text.
 
 > 🧠 **Quick glossary.** **Workflow** = a chain of boxes (nodes) that pass data left to right. **Node** = one box that does one job (scrape a page, ask an AI, send a message). **Trigger** = the first node — what starts the workflow (a button, a webhook, a schedule). **API key** = a long password that lets one service talk to another. **Scrape** = fetch a webpage and turn it into clean text.
 
@@ -109,7 +109,7 @@ Skim only if you've never seen n8n before:
 ### Mental model
 
 ```
-[ click button ]  →  [ scrape the page ]  →  [ ask Gemini ]  →  [ see the summary ]
+[ click button ]  →  [ scrape the page ]  →  [ ask Groq ]  →  [ see the summary ]
 ```
 
 Three boxes. That's it. Once you've built three boxes that talk to each other, you can build thirty.
@@ -160,56 +160,62 @@ You should now see one orange node labelled **"When clicking 'Test workflow'"**.
 
 > If you see a red error, double-check the Bearer key. The single most common mistake: missing the space between `Bearer` and your key.
 
-### Step 4 — Add Gemini (the AI summarizer)
+### Step 4 — Add Groq (the AI summarizer)
 
 1. Click the **+** to the right of the HTTP Request node → search for **"HTTP Request"** again → click it.
 2. Fill in these fields:
 
    - **Method:** `POST`
-   - **URL:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIza_YOUR_GEMINI_KEY_HERE`
-     - Paste your Gemini key from Google AI Studio after `key=`. No quotes, no spaces.
+   - **URL:** `https://api.groq.com/openai/v1/chat/completions`
+   - **Authentication:** select `Generic Credential Type` → `Header Auth`.
+     - Click **Create New Credential**.
+     - **Header Name:** `Authorization`
+     - **Header Value:** `Bearer gsk_YOUR_KEY_HERE` (paste your Groq key after the word `Bearer ` — keep the space).
+     - Click **Save** → close the credential panel.
    - **Send Body:** toggle **ON**.
    - **Body Content Type:** `JSON`.
    - **Specify Body:** `Using JSON`.
    - **JSON paste box:**
      ```json
      {
-       "contents": [{
-         "parts": [{
-           "text": "Summarize this article in 5 bullet points. Be specific and use plain English. Mention any numbers, names, or dates that appear.\n\nARTICLE:\n{{ $json.data.markdown }}"
-         }]
-       }]
+       "model": "llama-3.3-70b-versatile",
+       "messages": [
+         {
+           "role": "user",
+           "content": "Summarize this article in 5 bullet points. Be specific and use plain English. Mention any numbers, names, or dates that appear.\n\nARTICLE:\n{{ $json.data.markdown }}"
+         }
+       ]
      }
      ```
 
    The bit `{{ $json.data.markdown }}` is **n8n's way of saying "use the markdown from the previous node."** Type it exactly — the double curly braces and the spaces matter.
 
-3. Click **Test step**. Wait 10–20 seconds. You should see Gemini's response in the bottom panel — find the part that says `"text": "• Bullet 1... • Bullet 2..."`.
+3. Click **Test step**. Groq is *fast* — usually under 2 seconds. You should see Groq's response in the bottom panel — find the field `choices → 0 → message → content`, which is your 5-bullet summary.
 
 ### Step 5 — Run the whole thing end-to-end
 
 1. Top-right of the canvas: click **Test workflow**.
-2. Watch the three nodes light up in order — first the trigger, then the scraper (green check), then Gemini (green check).
-3. Click on the Gemini node → look at the right panel → expand `candidates → 0 → content → parts → 0 → text`. That's your 5-bullet summary.
+2. Watch the three nodes light up in order — first the trigger, then the scraper (green check), then Groq (green check).
+3. Click on the Groq node → look at the right panel → expand `choices → 0 → message → content`. That's your 5-bullet summary.
 
 If all three nodes are green, **you just shipped your first automation.** 🎉
 
 ### Step 6 — Change the URL and run again
 
-Edit the Firecrawl node's URL to a different webpage. Click **Test workflow** again. Gemini summarizes a totally different article in 10 seconds.
+Edit the Firecrawl node's URL to a different webpage. Click **Test workflow** again. Groq summarizes a totally different article in seconds.
 
-**Artifact.** Take a screenshot showing all three nodes with green checkmarks **and** Gemini's 5-bullet output. Submit on the dashboard via the assignment block below — paste the screenshot link, or paste the bullets straight into the text box.
+**Artifact.** Take a screenshot showing all three nodes with green checkmarks **and** Groq's 5-bullet output. Submit on the dashboard via the assignment block below — paste the screenshot link, or paste the bullets straight into the text box.
 
-> ⚠️ **API key safety.** Don't share the workflow with anyone — your keys are inside it. If you accidentally exposed a key, regenerate it from each service's dashboard (Firecrawl → API Keys → Revoke; Google AI Studio → API Keys → Delete).
+> ⚠️ **API key safety.** Don't share the workflow with anyone — your keys are inside it. If you accidentally exposed a key, regenerate it from each service's dashboard (Firecrawl → API Keys → Revoke; Groq → API Keys → Delete).
 
 ## 📊 Live poll
 
-**Where did your workflow break first?** Couldn't create the n8n account / Firecrawl auth error / Gemini key error / forgot the `{{ $json.data.markdown }}` part / it actually worked first try. The instructor uses this to decide what to demo live.
+**Where did your workflow break first?** Couldn't create the n8n account / Firecrawl auth error / Groq key error / forgot the `{{ $json.data.markdown }}` part / it actually worked first try. The instructor uses this to decide what to demo live.
 
 ## 💬 Discuss
 
 - What was the easiest step? What was the hardest?
-- If you swap the prompt in step 4 to something else — *"List all the names of people mentioned"* or *"What are the 3 most surprising facts?"* — does Gemini's output change? Try one and share.
+- If you swap the prompt in step 4 to something else — *"List all the names of people mentioned"* or *"What are the 3 most surprising facts?"* — does Groq's output change? Try one and share.
 - Now that you know how to wire three boxes, what's *one* tiny daily task in *your* life you could imagine automating? (No need to actually build it today.)
 
 ## ❓ Quiz
@@ -229,5 +235,5 @@ Day 15 is **Agentic AI** — ReAct agents, tool use, LangGraph, MCP, and multi-a
 
 - [n8n docs — Try it out](https://docs.n8n.io/try-it-out/) — same walkthrough in n8n's own words.
 - [Firecrawl scrape API](https://docs.firecrawl.dev/api-reference/endpoint/scrape) — what comes back when you call `/v1/scrape`.
-- [Google AI Studio — Get an API key](https://aistudio.google.com/app/apikey) — free Gemini access.
-- [Gemini API quickstart](https://ai.google.dev/gemini-api/docs/quickstart) — official examples in several languages.
+- [Groq Cloud — Get an API key](https://console.groq.com/keys) — free Llama 3.3 access via OpenAI-compatible API.
+- [Groq quickstart](https://console.groq.com/docs/quickstart) — official examples in several languages.
