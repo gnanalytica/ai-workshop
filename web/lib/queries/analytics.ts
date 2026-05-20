@@ -37,7 +37,7 @@ export const getAnalyticsSummary = cache(async (cohortId: string): Promise<Analy
     sb.from("registrations").select("user_id", { count: "exact", head: true }).eq("cohort_id", cohortId).eq("status", "confirmed"),
     sb.from("lab_progress").select("user_id, day_number, status").eq("cohort_id", cohortId).eq("status", "done"),
     sb.from("attendance").select("status").eq("cohort_id", cohortId),
-    sb.from("submissions").select("id, assignments!inner(cohort_id)", { count: "exact", head: true }).eq("status", "submitted").eq("assignments.cohort_id", cohortId),
+    sb.from("assignment_submissions").select("id, assignments!inner(cohort_id)", { count: "exact", head: true }).eq("status", "submitted").eq("assignments.cohort_id", cohortId),
   ]);
 
   const totalStudents = students.count ?? 0;
@@ -127,7 +127,7 @@ export const getEngagementByDay = cache(
         .eq("cohort_id", cohortId)
         .eq("status", "confirmed"),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("user_id, assignments!inner(day_number, cohort_id)")
         .eq("assignments.cohort_id", cohortId),
       sb
@@ -264,7 +264,7 @@ export const getCohortProgressByDay = cache(
         .in("day_number", dayNumbers)
         .neq("kind", "reflection"),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("user_id, status, assignments!inner(day_number, cohort_id, kind)")
         .eq("assignments.cohort_id", cohortId)
         .in("assignments.day_number", dayNumbers)
@@ -373,7 +373,7 @@ export const getActivityMatrix = cache(
         .eq("cohort_id", cohortId)
         .eq("status", "confirmed"),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("user_id, assignments!inner(day_number, cohort_id)")
         .eq("assignments.cohort_id", cohortId),
       sb

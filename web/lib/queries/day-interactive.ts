@@ -120,7 +120,7 @@ export const getDayInteractive = cache(
       sb
         .from("assignments")
         .select(
-          "id, title, body_md, kind, due_at, is_group_project, submissions(id, body, group_name, links, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
+          "id, title, body_md, kind, due_at, is_group_project, assignment_submissions(id, body, group_name, links, status, score, feedback_md, ai_graded, ai_strengths, ai_weaknesses, human_reviewed_at, updated_at, user_id)",
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)

@@ -27,7 +27,7 @@ export const getStudentTimeline = cache(
     const sb = await getSupabaseServer();
     const [subs, quizzes, feedback, votes, labs] = await Promise.all([
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select(
           "id, status, score, updated_at, assignments!inner(title, day_number, cohort_id)",
         )

@@ -28,7 +28,7 @@ export const getStudentDetail = cache(
       sb.from("profiles").select("full_name, email, college").eq("id", userId).maybeSingle(),
       sb.from("attendance").select("day_number, status").eq("cohort_id", cohortId).eq("user_id", userId).order("day_number"),
       sb.from("lab_progress").select("day_number, lab_id, status").eq("cohort_id", cohortId).eq("user_id", userId).order("day_number"),
-      sb.from("submissions").select("id, status, score, body, feedback_md, updated_at, assignments!inner(title, day_number, cohort_id)").eq("user_id", userId).eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }),
+      sb.from("assignment_submissions").select("id, status, score, body, feedback_md, updated_at, assignments!inner(title, day_number, cohort_id)").eq("user_id", userId).eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }),
       sb.from("pod_members").select("pods(name)").eq("student_user_id", userId).eq("cohort_id", cohortId).maybeSingle(),
     ]);
     if (!profile.data) return null;

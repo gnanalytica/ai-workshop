@@ -51,7 +51,7 @@ export const getStudentDrawerSummary = cache(
         .eq("cohort_id", cohortId)
         .maybeSingle(),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select(
           "id, status, score, updated_at, assignments!inner(title, day_number, cohort_id)",
         )
@@ -199,7 +199,7 @@ export const getStudentDrill = cache(
         .eq("user_id", userId)
         .maybeSingle(),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("id, status, score, updated_at, assignments!inner(title, day_number, cohort_id)")
         .eq("user_id", userId)
         .eq("assignments.cohort_id", cohortId)

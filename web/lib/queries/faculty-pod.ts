@@ -78,7 +78,7 @@ export const getFacultyPods = cache(
         .eq("status", "done")
         .in("user_id", studentIds),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("user_id, assignments!inner(cohort_id)")
         .eq("status", "submitted")
         .eq("assignments.cohort_id", cohortId)

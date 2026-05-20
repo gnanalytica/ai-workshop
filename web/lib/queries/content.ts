@@ -27,7 +27,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
   const sb = await getSupabaseServer();
   const { data } = await sb
     .from("assignments")
-    .select("id, cohort_id, day_number, kind, title, due_at, rubric_id, auto_grade, submissions(count)")
+    .select("id, cohort_id, day_number, kind, title, due_at, rubric_id, auto_grade, assignment_submissions(count)")
     .eq("cohort_id", cohortId)
     .order("day_number");
   return ((data ?? []) as unknown as Array<{

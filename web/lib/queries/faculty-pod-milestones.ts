@@ -21,7 +21,7 @@ export const getPodMilestoneSubmissions = cache(
     if (memberIds.length === 0) return [];
     const sb = await getSupabaseServer();
     const { data } = await sb
-      .from("submissions")
+      .from("assignment_submissions")
       .select(
         "id, body, status, faculty_notes_md, updated_at, user_id, profiles:user_id(full_name), assignments!inner(id, title, day_number, milestone_number, kind, cohort_id)",
       )

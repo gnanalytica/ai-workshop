@@ -16,7 +16,7 @@ export const listCohortActivity = cache(async (cohortId: string, limit = 40): Pr
   const [regs, labs, subs, atts, helpDesks, kudos] = await Promise.all([
     sb.from("registrations").select("user_id, status, updated_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("lab_progress").select("user_id, day_number, lab_id, status, updated_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
-    sb.from("submissions").select("id, status, updated_at, profiles:user_id(full_name), assignments!inner(title, day_number, cohort_id)").eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
+    sb.from("assignment_submissions").select("id, status, updated_at, profiles:user_id(full_name), assignments!inner(title, day_number, cohort_id)").eq("assignments.cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("attendance").select("user_id, day_number, status, marked_at, profiles!inner(full_name)").eq("cohort_id", cohortId).order("marked_at", { ascending: false }).limit(limit),
     sb.from("help_desk_queue").select("id, kind, status, updated_at, profiles:user_id(full_name)").eq("cohort_id", cohortId).order("updated_at", { ascending: false }).limit(limit),
     sb.from("kudos").select("id, note, created_at, from:profiles!from_user_id(full_name), to:profiles!to_user_id(full_name)").eq("cohort_id", cohortId).order("created_at", { ascending: false }).limit(limit),

@@ -30,7 +30,7 @@ export const listAssignmentSubmissions = cache(
   async (assignmentId: string): Promise<GradingSubmission[]> => {
     const sb = await getSupabaseServer();
     const { data } = await sb
-      .from("submissions")
+      .from("assignment_submissions")
       .select(
         "id, user_id, status, body, group_name, links, score, feedback_md, ai_graded, ai_score, ai_feedback_md, ai_strengths, ai_weaknesses, ai_graded_at, human_reviewed_at, updated_at, profiles:user_id(full_name)",
       )

@@ -23,7 +23,7 @@ export const getAssignmentDetail = cache(
     const { data, error } = await sb
       .from("assignments")
       .select(
-        "id, cohort_id, day_number, kind, title, body_md, due_at, weight, auto_grade, rubric_id, submissions(count)",
+        "id, cohort_id, day_number, kind, title, body_md, due_at, weight, auto_grade, rubric_id, assignment_submissions(count)",
       )
       .eq("id", assignmentId)
       .maybeSingle();

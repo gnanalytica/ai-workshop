@@ -65,7 +65,7 @@ async function upsertSubmission(
     }
 
     return sb
-      .from("submissions")
+      .from("assignment_submissions")
       .upsert(
         {
           assignment_id: input.assignment_id,
@@ -145,7 +145,7 @@ export async function batchGradeAssignment(
   // Re-grade everything that hasn't been published yet (status='submitted'
   // OR ai_graded but not human_reviewed). Skip already-published rows.
   const { data: subs } = await sb
-    .from("submissions")
+    .from("assignment_submissions")
     .select("id, body, links, ai_graded, human_reviewed_at, status")
     .eq("assignment_id", parsed.data.assignment_id)
     .or("status.eq.submitted,and(ai_graded.eq.true,human_reviewed_at.is.null)");
@@ -162,7 +162,7 @@ export async function batchGradeAssignment(
     });
     if (!result) { failed++; continue; }
     const { error } = await sb
-      .from("submissions")
+      .from("assignment_submissions")
       .update({
         ai_graded: true,
         ai_score: result.score,
@@ -201,7 +201,7 @@ export async function publishGrade(input: z.infer<typeof publishSchema>) {
   if (!user.user) return actionFail("Not signed in");
 
   const { data: row } = await sb
-    .from("submissions")
+    .from("assignment_submissions")
     .select("ai_score, ai_feedback_md")
     .eq("id", parsed.data.submission_id)
     .maybeSingle();
@@ -212,7 +212,7 @@ export async function publishGrade(input: z.infer<typeof publishSchema>) {
   if (score === null || score === undefined) return actionFail("No score to publish");
 
   const { error } = await sb
-    .from("submissions")
+    .from("assignment_submissions")
     .update({
       score,
       feedback_md: feedback,

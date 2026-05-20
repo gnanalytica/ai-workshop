@@ -77,7 +77,7 @@ export const getAdminAttentionItems = cache(
         .eq("status", "open")
         .lt("created_at", dayAgo),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
         .eq("assignments.cohort_id", cohortId)
         .eq("status", "submitted")

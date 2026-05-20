@@ -52,7 +52,7 @@ export const getCohortKpis = cache(async (cohortId: string): Promise<CohortKpis>
     sb.from("pods").select("id", { count: "exact", head: true }).eq("cohort_id", cohortId),
     sb.from("pod_members").select("student_user_id", { count: "exact", head: true })
       .eq("cohort_id", cohortId),
-    sb.from("submissions").select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
+    sb.from("assignment_submissions").select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
       .eq("status", "submitted").eq("assignments.cohort_id", cohortId),
     sb.from("help_desk_queue").select("id", { count: "exact", head: true })
       .eq("cohort_id", cohortId).in("status", ["open", "helping"]),
@@ -222,7 +222,7 @@ export const getPodKpis = cache(
           .select("id", { count: "exact", head: true })
           .eq("cohort_id", cohortId),
         sb
-          .from("submissions")
+          .from("assignment_submissions")
           .select("user_id, assignments!inner(cohort_id)", {
             count: "exact",
             head: true,

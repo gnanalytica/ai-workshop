@@ -67,7 +67,7 @@ export const getMyCapstoneMilestones = cache(
     const { data } = await sb
       .from("assignments")
       .select(
-        "id, title, day_number, milestone_number, kind, submissions(body, links, status, score, feedback_md, faculty_notes_md, human_reviewed_at, updated_at, user_id)",
+        "id, title, day_number, milestone_number, kind, assignment_submissions(body, links, status, score, feedback_md, faculty_notes_md, human_reviewed_at, updated_at, user_id)",
       )
       .eq("cohort_id", cohortId)
       .not("milestone_number", "is", null)
@@ -172,7 +172,7 @@ export const listCohortCapstones = cache(
         .eq("cohort_id", cohortId),
       sb
         .from("assignments")
-        .select("id, milestone_number, submissions(user_id, status, human_reviewed_at)")
+        .select("id, milestone_number, assignment_submissions(user_id, status, human_reviewed_at)")
         .eq("cohort_id", cohortId)
         .not("milestone_number", "is", null)
         .neq("kind", "reflection"),

@@ -54,7 +54,7 @@ export const getFacultyTodayKpis = cache(async (cohortId: string, facultyUserId:
   const sb = await getSupabaseServer();
   const [toReview, helpDesk] = await Promise.all([
     sb
-      .from("submissions")
+      .from("assignment_submissions")
       .select("id, assignments!inner(cohort_id)", { count: "exact", head: true })
       .eq("assignments.cohort_id", cohortId)
       .in("user_id", studentIds)

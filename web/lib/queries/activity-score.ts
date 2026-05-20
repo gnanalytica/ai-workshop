@@ -63,7 +63,7 @@ export const getStudentActivity = cache(
 
     const [subs, quizzes, feedback, votes, labs, opportunities] = await Promise.all([
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select(
           "user_id, updated_at, assignments!inner(day_number, cohort_id)",
         )

@@ -33,7 +33,7 @@ export const getCohortTrend = cache(async (cohortId: string, userIds?: string[])
     .eq("status", "done")
     .gte("updated_at", since);
   const subQ = sb
-    .from("submissions")
+    .from("assignment_submissions")
     .select("updated_at, assignments!inner(cohort_id)")
     .eq("status", "submitted")
     .eq("assignments.cohort_id", cohortId)

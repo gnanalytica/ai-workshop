@@ -64,7 +64,7 @@ export const getSubmissionScoresByDay = cache(
 
     const [subsRes, asgRes] = await Promise.all([
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select(
           "user_id, status, score, ai_score, created_at, updated_at, assignments!inner(day_number, cohort_id, kind)",
         )
@@ -435,7 +435,7 @@ export const getStudentScoreTotals = cache(
         .eq("quizzes.cohort_id", cohortId)
         .not("completed_at", "is", null),
       sb
-        .from("submissions")
+        .from("assignment_submissions")
         .select("user_id, score, status, assignments!inner(cohort_id)")
         .eq("assignments.cohort_id", cohortId)
         .eq("status", "graded"),
