@@ -1,4 +1,4 @@
-import { Card, CardSub } from "@/components/ui/card";
+import { CardSub } from "@/components/ui/card";
 import { DivergingRatingBar } from "@/components/charts/DivergingRatingBar";
 import { FeedbackDistributionChart } from "@/components/charts/recharts/FeedbackDistributionChart";
 import { Sparkline } from "@/components/charts/recharts/Sparkline";

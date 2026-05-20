@@ -1,4 +1,3 @@
-/* eslint-disable */
 // k6 load test for the 150–200 concurrent-user target.
 //
 // Run:
@@ -37,7 +36,6 @@ if (!COHORT_ID) fail("COHORT_ID is required");
 const cookies = new SharedArray("cookies", () => {
   if (!COOKIES_FILE) fail("COOKIES_FILE is required");
   // open() is k6's only file-read primitive; available at init.
-  // eslint-disable-next-line no-undef
   const raw = open(COOKIES_FILE);
   return raw
     .split("\n")
@@ -86,7 +84,6 @@ export const options = {
 };
 
 function pickCookie() {
-  // eslint-disable-next-line no-undef
   return cookies[Math.floor(Math.random() * cookies.length)];
 }
 

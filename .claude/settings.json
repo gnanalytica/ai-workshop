@@ -1,8 +1,4 @@
 {
-  "enabledPlugins": {
-    "supabase@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
-  },
   "permissions": {
     "deny": [
       "Edit(.env)",
@@ -45,5 +41,10 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "supabase@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "figma@claude-plugins-official": true
   }
 }

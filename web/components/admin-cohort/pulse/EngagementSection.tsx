@@ -1,4 +1,4 @@
-import { Card, CardSub } from "@/components/ui/card";
+import { CardSub } from "@/components/ui/card";
 import { EngagementBarChart } from "@/components/charts/recharts/EngagementBarChart";
 import { ActivityHeatmap } from "@/components/charts/ActivityHeatmap";
 import { AttendanceStackedChart } from "@/components/charts/recharts/AttendanceStackedChart";
