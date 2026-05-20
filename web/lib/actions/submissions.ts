@@ -8,6 +8,7 @@ import { gradeWithAI } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import {
   MIN_SUBMISSION_WORDS,
+  MIN_SUBMISSION_WORDS_WITH_LINK,
   MAX_SUBMISSION_WORDS,
   countWords,
 } from "@/lib/submissions/word-count";
@@ -37,12 +38,17 @@ async function upsertSubmission(
     // hitting the word-count gate.
     if (status === "submitted") {
       const words = countWords(input.body);
-      if (words < MIN_SUBMISSION_WORDS) {
+      // Link-bearing submissions (decks, repos, deployed apps) only need a
+      // short note; pure-text submissions (reflections) need the full minimum.
+      const hasLink = input.links.length > 0;
+      const min = hasLink ? MIN_SUBMISSION_WORDS_WITH_LINK : MIN_SUBMISSION_WORDS;
+      if (words < min) {
+        const detail = hasLink
+          ? `at least ${MIN_SUBMISSION_WORDS_WITH_LINK} words alongside your link`
+          : `at least ${MIN_SUBMISSION_WORDS} words, or a link plus ${MIN_SUBMISSION_WORDS_WITH_LINK}+ words`;
         return {
           data: null,
-          error: {
-            message: `Submission must be at least ${MIN_SUBMISSION_WORDS} words (currently ${words}).`,
-          },
+          error: { message: `Submission needs ${detail} (currently ${words}).` },
         };
       }
       if (words > MAX_SUBMISSION_WORDS) {

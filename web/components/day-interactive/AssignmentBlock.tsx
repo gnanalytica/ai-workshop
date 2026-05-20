@@ -11,6 +11,7 @@ import { saveDraft, submitAssignment } from "@/lib/actions/submissions";
 import {
   countWords,
   MIN_SUBMISSION_WORDS,
+  MIN_SUBMISSION_WORDS_WITH_LINK,
   MAX_SUBMISSION_WORDS,
 } from "@/lib/submissions/word-count";
 import type { DayAssignment } from "@/lib/queries/day-interactive";
@@ -72,8 +73,12 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
     }
     if (action === "submit") {
       const words = countWords(body);
-      if (words < MIN_SUBMISSION_WORDS) {
-        toast.error(`Submission must be at least ${MIN_SUBMISSION_WORDS} words (currently ${words}).`);
+      const min = cleanLinks.length > 0 ? MIN_SUBMISSION_WORDS_WITH_LINK : MIN_SUBMISSION_WORDS;
+      if (words < min) {
+        const hint = cleanLinks.length > 0
+          ? `at least ${MIN_SUBMISSION_WORDS_WITH_LINK} words alongside your link`
+          : `at least ${MIN_SUBMISSION_WORDS} words, or a link plus ${MIN_SUBMISSION_WORDS_WITH_LINK}+ words`;
+        toast.error(`Submission needs ${hint} (currently ${words}).`);
         return;
       }
       if (words > MAX_SUBMISSION_WORDS) {
@@ -199,32 +204,44 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
           <div className="space-y-1">
             <textarea
               rows={8}
-              placeholder={`Your submission (markdown). Minimum ${MIN_SUBMISSION_WORDS} words, maximum ${MAX_SUBMISSION_WORDS}.`}
+              placeholder={`Your submission (markdown). ${MIN_SUBMISSION_WORDS}+ words, or share a link + ${MIN_SUBMISSION_WORDS_WITH_LINK}+ words. Max ${MAX_SUBMISSION_WORDS}.`}
               value={body}
               onChange={(e) => setBody(e.target.value)}
               className="border-line bg-input-bg text-ink w-full rounded-md border p-3 font-mono text-sm"
             />
             {(() => {
               const w = countWords(body);
-              const tooFew = w > 0 && w < MIN_SUBMISSION_WORDS;
+              const hasLink = links.some((l) => l.label.trim() && l.url.trim() && isValidUrl(l.url.trim()));
+              const min = hasLink ? MIN_SUBMISSION_WORDS_WITH_LINK : MIN_SUBMISSION_WORDS;
+              const tooFew = w > 0 && w < min;
               const tooMany = w > MAX_SUBMISSION_WORDS;
               const tone = tooFew || tooMany ? "text-[hsl(var(--danger))]" : "text-muted";
+              const rangeHint = hasLink
+                ? `Range: ${MIN_SUBMISSION_WORDS_WITH_LINK}–${MAX_SUBMISSION_WORDS} (link added)`
+                : `Range: ${MIN_SUBMISSION_WORDS}–${MAX_SUBMISSION_WORDS} (add a link for ${MIN_SUBMISSION_WORDS_WITH_LINK}+ words)`;
               return (
-                <p className={`${tone} text-[11px] flex justify-between`}>
+                <p className={`${tone} text-[11px] flex justify-between gap-2`}>
                   <span>
                     {w} / {MAX_SUBMISSION_WORDS} words
                   </span>
-                  <span>
-                    {tooFew && `Need ${MIN_SUBMISSION_WORDS - w} more`}
+                  <span className="text-right">
+                    {tooFew && `Need ${min - w} more`}
                     {tooMany && `${w - MAX_SUBMISSION_WORDS} over limit`}
-                    {!tooFew && !tooMany && `Range: ${MIN_SUBMISSION_WORDS}–${MAX_SUBMISSION_WORDS}`}
+                    {!tooFew && !tooMany && rangeHint}
                   </span>
                 </p>
               );
             })()}
           </div>
           <div className="space-y-2">
-            <p className="text-muted text-xs uppercase tracking-wider">Links (optional)</p>
+            <p className="text-muted text-xs uppercase tracking-wider">
+              Links {(() => {
+                const hasLink = links.some((l) => l.label.trim() && l.url.trim() && isValidUrl(l.url.trim()));
+                return hasLink
+                  ? <span className="text-accent">· lowers word minimum to {MIN_SUBMISSION_WORDS_WITH_LINK}</span>
+                  : <span>(optional — adding one lowers the word minimum to {MIN_SUBMISSION_WORDS_WITH_LINK})</span>;
+              })()}
+            </p>
             {links.map((l, i) => (
               <div key={i} className="flex gap-2">
                 <Input
@@ -259,7 +276,10 @@ export function AssignmentBlock({ assignment }: { assignment: DayAssignment }) {
                 if (pending || !body.trim()) return true;
                 if (assignment.is_group_project && !groupName.trim()) return true;
                 const w = countWords(body);
-                return w < MIN_SUBMISSION_WORDS || w > MAX_SUBMISSION_WORDS;
+                if (w > MAX_SUBMISSION_WORDS) return true;
+                const hasLink = links.some((l) => l.label.trim() && l.url.trim() && isValidUrl(l.url.trim()));
+                const min = hasLink ? MIN_SUBMISSION_WORDS_WITH_LINK : MIN_SUBMISSION_WORDS;
+                return w < min;
               })()}
               onClick={() => go("submit")}
             >
