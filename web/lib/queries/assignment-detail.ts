@@ -39,7 +39,7 @@ export const getAssignmentDetail = cache(
       weight: number | string;
       auto_grade: boolean;
       rubric_id: string | null;
-      submissions: Array<{ count: number }>;
+      assignment_submissions: Array<{ count: number }>;
     };
     return {
       id: d.id,
@@ -52,7 +52,7 @@ export const getAssignmentDetail = cache(
       weight: Number(d.weight ?? 1),
       auto_grade: !!d.auto_grade,
       rubric_id: d.rubric_id,
-      submission_count: d.submissions?.[0]?.count ?? 0,
+      submission_count: d.assignment_submissions?.[0]?.count ?? 0,
     };
   },
 );

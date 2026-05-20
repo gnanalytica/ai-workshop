@@ -124,7 +124,7 @@ export const getDayInteractive = cache(
         )
         .eq("cohort_id", cohortId)
         .eq("day_number", dayNumber)
-        .eq("submissions.user_id", userScope)
+        .eq("assignment_submissions.user_id", userScope)
         .order("created_at"),
       sb
         .from("quizzes")
@@ -174,7 +174,7 @@ export const getDayInteractive = cache(
       type AssignmentRow = {
         id: string; title: string; body_md: string | null; kind: DayAssignment["kind"]; due_at: string | null;
         is_group_project: boolean | null;
-        submissions: Array<{
+        assignment_submissions: Array<{
           id: string; body: string | null;
           group_name: string | null;
           links: { label: string; url: string }[] | null;
@@ -186,7 +186,7 @@ export const getDayInteractive = cache(
         }>;
       };
       for (const row of assignmentRes.data as unknown as AssignmentRow[]) {
-        const mine = row.submissions?.find((s) => s.user_id === uid) ?? null;
+        const mine = row.assignment_submissions?.find((s) => s.user_id === uid) ?? null;
         assignments.push({
           id: row.id,
           title: row.title,

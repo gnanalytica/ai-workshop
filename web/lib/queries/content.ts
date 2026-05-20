@@ -39,7 +39,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
     due_at: string | null;
     rubric_id: string | null;
     auto_grade: boolean;
-    submissions: Array<{ count: number }>;
+    assignment_submissions: Array<{ count: number }>;
   }>).map((r) => ({
     id: r.id,
     cohort_id: r.cohort_id,
@@ -49,7 +49,7 @@ export const listAssignments = cache(async (cohortId: string): Promise<Assignmen
     due_at: r.due_at,
     rubric_id: r.rubric_id,
     auto_grade: !!r.auto_grade,
-    submission_count: r.submissions?.[0]?.count ?? 0,
+    submission_count: r.assignment_submissions?.[0]?.count ?? 0,
   }));
 });
 

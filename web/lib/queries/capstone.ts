@@ -78,7 +78,7 @@ export const getMyCapstoneMilestones = cache(
     type Row = {
       id: string; title: string; day_number: number;
       milestone_number: number; kind: AssignmentKind;
-      submissions: Array<{
+      assignment_submissions: Array<{
         body: string | null;
         links: { label: string; url: string }[] | null;
         status: "draft" | "submitted" | "graded";
@@ -91,7 +91,7 @@ export const getMyCapstoneMilestones = cache(
       }>;
     };
     return (data as unknown as Row[]).map((a) => {
-      const mine = a.submissions?.find((s) => s.user_id === user.user!.id) ?? null;
+      const mine = a.assignment_submissions?.find((s) => s.user_id === user.user!.id) ?? null;
       return {
         assignment_id: a.id,
         assignment_title: a.title,
@@ -184,13 +184,13 @@ export const listCohortCapstones = cache(
     type CapsAssignmentRow = {
       id: string;
       milestone_number: number;
-      submissions: Array<{ user_id: string; status: string; human_reviewed_at: string | null }>;
+      assignment_submissions: Array<{ user_id: string; status: string; human_reviewed_at: string | null }>;
     };
     const capsAssignments = (capstoneAssignmentsRes.data ?? []) as unknown as CapsAssignmentRow[];
     const milestonesTotal = new Set(capsAssignments.map((a) => a.milestone_number)).size;
     const doneByUser = new Map<string, Set<number>>();
     for (const a of capsAssignments) {
-      for (const s of a.submissions ?? []) {
+      for (const s of a.assignment_submissions ?? []) {
         if (s.human_reviewed_at) {
           let set = doneByUser.get(s.user_id);
           if (!set) {
