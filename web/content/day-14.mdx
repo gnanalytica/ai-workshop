@@ -3,69 +3,96 @@ day: 14
 date: "2026-05-20"
 weekday: "Wednesday"
 week: 3
-topic: "Workflow automation, browser automation"
+topic: "Workflow automation with n8n, Firecrawl & Gemini"
 faculty:
   main: "Sandeep"
   support: "Harshith"
 reading_time: "10 min"
-tldr: "Stop doing the same 7 clicks every morning. Today you wire a real automation in n8n, scrape a page with Firecrawl, and feel the moment a workflow runs without you. By end of class one boring task in your life is dead."
-tags: ["automation", "n8n", "firecrawl"]
-software: ["n8n", "firecrawl"]
-online_tools: ["Zapier", "n8n"]
+tldr: "Today you build your very first automation — three nodes in n8n that scrape a webpage with Firecrawl and summarize it with Google Gemini. No coding, no cron, no Slack — just three boxes connected with arrows. Click 'Test workflow' and watch the machine read a page for you."
+tags: ["automation", "n8n", "firecrawl", "gemini"]
+software: []
+online_tools: ["n8n.cloud", "Firecrawl", "Google AI Studio"]
 video: "https://www.youtube.com/embed/1MwSoB0gnM4"
-prompt_of_the_day: "You are a senior automation engineer. I want a workflow that: (1) reads a Google Sheet of company names, (2) for each, scrapes the careers page using Firecrawl, (3) extracts new openings matching 'data analyst intern Bengaluru', (4) emails me a daily digest at 9am IST. Sketch the n8n node graph + the prompt I should use for the LLM extractor."
+prompt_of_the_day: "Summarize this article in 5 bullet points. Be specific and use plain English. Mention any numbers, names, or dates that appear."
 tools_hands_on:
-  - { name: "n8n.cloud", url: "https://n8n.io/" }
-  - { name: "Zapier", url: "https://zapier.com/" }
+  - { name: "n8n.cloud (free trial)", url: "https://app.n8n.cloud/register" }
   - { name: "Firecrawl", url: "https://www.firecrawl.dev/" }
-  - { name: "Google Sheets", url: "https://sheets.google.com/" }
+  - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
 tools_reference:
-  - { name: "n8n docs", url: "https://docs.n8n.io/" }
+  - { name: "n8n docs — first workflow", url: "https://docs.n8n.io/try-it-out/" }
   - { name: "Firecrawl docs", url: "https://docs.firecrawl.dev/" }
+  - { name: "Gemini API quickstart", url: "https://ai.google.dev/gemini-api/docs/quickstart" }
 resources:
   - { title: "n8n — Build your first workflow (12 min)", url: "https://www.youtube.com/watch?v=1MwSoB0gnM4" }
-  - { title: "Zapier — Automation 101", url: "https://zapier.com/learn/" }
-  - { title: "Firecrawl — Scrape + Extract guide", url: "https://docs.firecrawl.dev/features/extract" }
-lab: { title: "Wire one real automation: scrape → extract → notify", url: "https://n8n.io/" }
+  - { title: "Firecrawl — Scrape API guide", url: "https://docs.firecrawl.dev/api-reference/endpoint/scrape" }
+  - { title: "Google AI Studio — Get an API key", url: "https://aistudio.google.com/app/apikey" }
+lab: { title: "Your first n8n workflow: scrape a page and let Gemini summarize it", url: "https://app.n8n.cloud/" }
 objective:
-  topic: "Build a real workflow + browser automation that runs without you"
-  tools: ["n8n", "Firecrawl", "Zapier"]
-  end_goal: "One n8n workflow that scrapes a page (Firecrawl), runs an LLM extraction step, and notifies you (email or Slack/Telegram) — running on a schedule."
+  topic: "Your first n8n automation"
+  tools: ["n8n.cloud", "Firecrawl", "Google Gemini"]
+  end_goal: "One n8n workflow with 3 nodes — Manual Trigger → Firecrawl Scrape → Gemini Summarize — that runs when you click 'Test workflow' and shows you a 5-bullet summary of any webpage you pick."
 ---
 
-You've now spent 13 days building skills. Today is the first day a *machine* does something for you, on a schedule, while you're asleep. That feeling — "it just ran" — is the rest of the workshop in microcosm.
+Up to today, *you've* been the one clicking. Today the *computer* clicks for you.
+
+We're keeping it small on purpose. By the end of class you'll have:
+- A free n8n account in the cloud (no laptop install, no Docker, no terminal).
+- Two API keys: one from Firecrawl, one from Google AI Studio.
+- A working 3-node workflow that reads any URL and summarizes it.
+
+If you've never written code, that's perfect. Today is mostly **clicking, copying, and pasting.**
 
 ## 🎯 Today's objective
 
-**Topic.** Workflow automation (n8n, Zapier) + browser/page automation (Firecrawl).
+**Topic.** Build your very first automation — n8n + Firecrawl + Google Gemini.
 
 **By end of class you will have:**
-1. One scheduled n8n workflow with at least 4 nodes (trigger → scrape → extract → notify).
-2. A working Firecrawl call that pulls clean markdown from a real page.
-3. Killed one repetitive task you currently do by hand.
+1. A free n8n.cloud account with one workflow in it.
+2. A Firecrawl API key and a Google Gemini API key.
+3. A 3-node workflow that scrapes one webpage and asks Gemini to summarize it in 5 bullets.
 
-> *Why this matters.* Capstone teams that ship by Day 30 have automation in their stack — for ingestion, monitoring, or reminders. Today you stop being the human cron job.
+> *Why this matters.* Once you understand "click → scrape → AI → answer", you can build literally any automation: research, monitoring, content drafts, daily digests. Today is the foundation. Everything else is just more nodes.
 
 ## ⏪ Pre-class · ~20 min
 
-### Setup (required)
+### Setup (required — do this before class)
 
-- [ ] Sign up for **n8n.cloud** (free trial) OR install **n8n** locally with Docker (`docker run -p 5678:5678 n8nio/n8n`).
-- [ ] **Firecrawl** account → grab API key from dashboard.
-- [ ] **Zapier** free account (we compare briefly).
-- [ ] A Gmail / Slack / Telegram bot you can post to.
+You'll create **three free accounts**. None of them ask for a credit card. Keep all three browser tabs open when class starts.
 
-### Primer (~10 min)
+**1. n8n.cloud (free 14-day trial)**
+
+- Open https://app.n8n.cloud/register → sign up with your college email.
+- Choose the **Starter** plan → start the free trial.
+- You'll land on your own n8n workspace. **Bookmark this URL** — it's yours.
+
+**2. Firecrawl (free tier, 500 credits/month)**
+
+- Open https://www.firecrawl.dev/ → click **Sign Up**.
+- After signup, click your name (top-right) → **API Keys**.
+- Click **Create API Key** → copy the key (starts with `fc-...`).
+- Paste it into a Notes app for now. You'll need it in class.
+
+**3. Google AI Studio (free Gemini API key)**
+
+- Open https://aistudio.google.com/app/apikey → sign in with your Google account.
+- Click **Create API key** → **Create API key in new project**.
+- Copy the key (long string starting with `AIza...`).
+- Paste it into Notes too.
+
+> ⚠️ **Don't share these keys publicly.** They're like passwords. Don't paste them in WhatsApp, GitHub, screenshots, or anyone's DMs.
+
+### Primer (~10 min, optional)
+
+Skim only if you've never seen n8n before:
 
 - **Watch:** *Build your first n8n workflow* (12 min) — https://www.youtube.com/watch?v=1MwSoB0gnM4
-- **Skim:** Firecrawl's `extract` docs — https://docs.firecrawl.dev/features/extract
 
 ### Bring to class
 
-- [ ] 2 boring tasks from your week. Pick the most repetitive, lowest-stakes one for the lab.
-- [ ] One URL you regularly check (Naukri search page, IPL stats, a college notice board).
+- [ ] All three accounts created. All three keys copied somewhere safe.
+- [ ] **One URL** you'd like Gemini to read for you. Anything stable — a Wikipedia article, a Hacker News story, a news article. Pick something with at least 5 paragraphs of text.
 
-> 🧠 **Quick glossary.** **Workflow** = a chain of steps. **Trigger** = what starts it (cron, webhook, manual). **Node** = one step. **Webhook** = a URL that, when hit, runs the workflow. **Scrape** = pull HTML; **extract** = turn it into structured fields. **Idempotent** = safe to run twice.
+> 🧠 **Quick glossary.** **Workflow** = a chain of boxes (nodes) that pass data left to right. **Node** = one box that does one job (scrape a page, ask an AI, send a message). **Trigger** = the first node — what starts the workflow (a button, a webhook, a schedule). **API key** = a long password that lets one service talk to another. **Scrape** = fetch a webpage and turn it into clean text.
 
 ## 🎥 In-class · live session
 
@@ -73,56 +100,121 @@ You've now spent 13 days building skills. Today is the first day a *machine* doe
 
 | Block | Time | What |
 |---|---|---|
-| Why automation > AI alone | 10 min | The 80/20: most "AI products" are 80% plumbing |
-| n8n tour | 15 min | Trigger, HTTP, Code, IF, Schedule, AI nodes |
-| Firecrawl in 5 min | 5 min | One curl, clean markdown out |
-| Lab: build yours | 30 min | Trigger → scrape → LLM extract → notify |
-| Schedule + verify | 10 min | Set cron, watch it run live |
-| n8n vs Zapier | 10 min | When to pick which |
+| Why "click → scrape → AI → answer" | 5 min | The mental model |
+| Tour of n8n.cloud | 10 min | The canvas, nodes, the **Test workflow** button |
+| Live build together | 35 min | We build the 3-node workflow side by side |
+| Run it twice with different URLs | 5 min | See what changes, what doesn't |
+| Q&A | 15 min | Whatever broke, we fix |
 
 ### Mental model
 
 ```
-trigger ──▶ fetch (Firecrawl) ──▶ transform (LLM) ──▶ act (email / Slack / Sheet)
+[ click button ]  →  [ scrape the page ]  →  [ ask Gemini ]  →  [ see the summary ]
 ```
 
-If you can name those four boxes for *any* automation in your life, you can build it.
+Three boxes. That's it. Once you've built three boxes that talk to each other, you can build thirty.
 
-## 🧪 Lab: Wire one real automation
+## 🧪 Lab: Your first n8n workflow
 
-1. **Pick the task.** Example: "Every morning, give me a list of new internships matching X on Y site."
-2. **Trigger.** Add a *Schedule* node, set to daily 9:00 IST.
-3. **Scrape.** Add an *HTTP Request* node calling Firecrawl `/scrape` with your URL → markdown out.
-4. **Extract.** Add an *OpenAI / Anthropic* node. Prompt: *"From this page markdown, return JSON: [&#123;title, location, link&#125;]"*. Use structured output.
-5. **Filter.** *IF* node: only items containing your keyword (e.g., "Bengaluru").
-6. **Notify.** *Gmail* / *Slack* / *Telegram* node → send the digest to you.
-7. **Run manually once.** Then activate the schedule.
+Don't read ahead. We do this step-by-step in class, together. **If you get stuck, raise your hand — don't move on without help.**
 
-**Artifact.** Screenshot of the activated workflow + the first message it sent you. Submit on dashboard.
+### Step 1 — Create a new workflow
 
-> ⚠️ **Don't get banned.** Respect robots.txt. Don't poll faster than once per minute. Use Firecrawl's caching.
+1. Open your n8n.cloud workspace.
+2. Top-right corner: click **+ Create Workflow**.
+3. You'll see a big empty canvas with a small **+** in the middle. That's where nodes go.
+4. Rename the workflow (top of the screen) to: **"My first scraper"**.
+
+### Step 2 — Add the trigger (the button)
+
+1. Click the **+** in the middle of the canvas → search for **"Manual"** → click **Trigger manually**.
+2. Close the side panel.
+
+You should now see one orange node labelled **"When clicking 'Test workflow'"**. That's your button.
+
+### Step 3 — Add Firecrawl (scrape the page)
+
+1. Click the **+** to the right of the trigger node → search for **"HTTP Request"** → click it.
+2. A side panel opens. Fill in these exact fields:
+
+   - **Method:** `POST`
+   - **URL:** `https://api.firecrawl.dev/v1/scrape`
+   - **Authentication:** select `Generic Credential Type` → `Header Auth`.
+     - Click **Create New Credential**.
+     - **Header Name:** `Authorization`
+     - **Header Value:** `Bearer fc-YOUR_KEY_HERE` (paste your Firecrawl key after the word `Bearer ` — keep the space).
+     - Click **Save** → close the credential panel.
+   - **Send Body:** toggle **ON**.
+   - **Body Content Type:** `JSON`.
+   - **Specify Body:** select `Using JSON`.
+   - **JSON paste box:**
+     ```json
+     {
+       "url": "https://en.wikipedia.org/wiki/Bengaluru",
+       "formats": ["markdown"]
+     }
+     ```
+     (Replace the Wikipedia URL with the one you brought to class if you like.)
+
+3. Click **Test step** (top-right of the panel). Wait 5–10 seconds. If it worked you'll see a **green checkmark** and a big blob of markdown text below — that's the scraped page.
+
+> If you see a red error, double-check the Bearer key. The single most common mistake: missing the space between `Bearer` and your key.
+
+### Step 4 — Add Gemini (the AI summarizer)
+
+1. Click the **+** to the right of the HTTP Request node → search for **"HTTP Request"** again → click it.
+2. Fill in these fields:
+
+   - **Method:** `POST`
+   - **URL:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIza_YOUR_GEMINI_KEY_HERE`
+     - Paste your Gemini key from Google AI Studio after `key=`. No quotes, no spaces.
+   - **Send Body:** toggle **ON**.
+   - **Body Content Type:** `JSON`.
+   - **Specify Body:** `Using JSON`.
+   - **JSON paste box:**
+     ```json
+     {
+       "contents": [{
+         "parts": [{
+           "text": "Summarize this article in 5 bullet points. Be specific and use plain English. Mention any numbers, names, or dates that appear.\n\nARTICLE:\n{{ $json.data.markdown }}"
+         }]
+       }]
+     }
+     ```
+
+   The bit `{{ $json.data.markdown }}` is **n8n's way of saying "use the markdown from the previous node."** Type it exactly — the double curly braces and the spaces matter.
+
+3. Click **Test step**. Wait 10–20 seconds. You should see Gemini's response in the bottom panel — find the part that says `"text": "• Bullet 1... • Bullet 2..."`.
+
+### Step 5 — Run the whole thing end-to-end
+
+1. Top-right of the canvas: click **Test workflow**.
+2. Watch the three nodes light up in order — first the trigger, then the scraper (green check), then Gemini (green check).
+3. Click on the Gemini node → look at the right panel → expand `candidates → 0 → content → parts → 0 → text`. That's your 5-bullet summary.
+
+If all three nodes are green, **you just shipped your first automation.** 🎉
+
+### Step 6 — Change the URL and run again
+
+Edit the Firecrawl node's URL to a different webpage. Click **Test workflow** again. Gemini summarizes a totally different article in 10 seconds.
+
+**Artifact.** Take a screenshot showing all three nodes with green checkmarks **and** Gemini's 5-bullet output. Submit on the dashboard via the assignment block below — paste the screenshot link, or paste the bullets straight into the text box.
+
+> ⚠️ **API key safety.** Don't share the workflow with anyone — your keys are inside it. If you accidentally exposed a key, regenerate it from each service's dashboard (Firecrawl → API Keys → Revoke; Google AI Studio → API Keys → Delete).
 
 ## 📊 Live poll
 
-**Where did your workflow break first?** Auth / scraping blocked / LLM JSON malformed / wrong cron / it actually worked first try. Instructor uses this to decide what to debug live.
+**Where did your workflow break first?** Couldn't create the n8n account / Firecrawl auth error / Gemini key error / forgot the `{{ $json.data.markdown }}` part / it actually worked first try. The instructor uses this to decide what to demo live.
 
 ## 💬 Discuss
 
-- Which task did you automate, and how many minutes/week does it save? Be specific.
-- Where did you reach for an LLM step vs plain code? Was the LLM overkill?
-- n8n vs Zapier — which would you pick for your capstone, and why?
+- What was the easiest step? What was the hardest?
+- If you swap the prompt in step 4 to something else — *"List all the names of people mentioned"* or *"What are the 3 most surprising facts?"* — does Gemini's output change? Try one and share.
+- Now that you know how to wire three boxes, what's *one* tiny daily task in *your* life you could imagine automating? (No need to actually build it today.)
 
 ## ❓ Quiz
 
-Short quiz on trigger types, what Firecrawl returns, why structured outputs matter, and the n8n-vs-Zapier tradeoff. Opens on dashboard.
-
-## 📝 Assignment · Capstone automation #1
-
-**Brief.** Build **one automation that lives inside your capstone**. Examples: nightly ingestion of new data, daily user digest, on-form-submit notification, a webhook that triggers an LLM. Document trigger + nodes + sample output.
-
-**Submit.** Dashboard with screenshot + workflow JSON export.
-
-**Rubric.** Real utility to capstone (4) · Reliability + error handling (4) · Cost / rate-limit awareness (2).
+Short quiz on what each of the 3 nodes does, what an API key is, and why we use `{{ $json.data.markdown }}` between nodes. Open it on your dashboard.
 
 ## 🔁 Prep for next class
 
@@ -135,20 +227,7 @@ Day 15 is **Agentic AI** — ReAct agents, tool use, LangGraph, MCP, and multi-a
 
 ## 📚 References
 
-### n8n
-- [n8n docs](https://n8n.io/docs) — official documentation.
-- [n8n templates](https://n8n.io/workflows) — template library, steal good ones.
-- [n8n GitHub](https://github.com/n8n-io/n8n) — source code, issues, releases.
-- [n8n community](https://community.n8n.io/) — forum for help and ideas.
-
-### Zapier
-- [Zapier Learn](https://zapier.com/learn) — free courses on automation basics.
-- [Zapier templates](https://zapier.com/templates) — 2,000+ ready-made templates.
-- [Zapier changelog](https://zapier.com/blog/updates) — latest updates and new features.
-- [Zapier pricing](https://zapier.com/pricing) — plans and limits.
-
-### Firecrawl
-- [Firecrawl docs](https://firecrawl.dev/docs) — API reference.
-- [Firecrawl playground](https://firecrawl.dev/playground) — live test in the browser.
-- [Firecrawl GitHub](https://github.com/mendableai/firecrawl) — source code and examples.
-- [Firecrawl SDKs](https://docs.firecrawl.dev/sdks) — Python, Node, and more.
+- [n8n docs — Try it out](https://docs.n8n.io/try-it-out/) — same walkthrough in n8n's own words.
+- [Firecrawl scrape API](https://docs.firecrawl.dev/api-reference/endpoint/scrape) — what comes back when you call `/v1/scrape`.
+- [Google AI Studio — Get an API key](https://aistudio.google.com/app/apikey) — free Gemini access.
+- [Gemini API quickstart](https://ai.google.dev/gemini-api/docs/quickstart) — official examples in several languages.
