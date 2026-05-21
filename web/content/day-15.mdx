@@ -5,8 +5,8 @@ weekday: "Thursday"
 week: 3
 topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agentic System"
 faculty:
-  main: "Sandeep"
-  support: "Harshith"
+  main: "Harshith"
+  support: "Sandeep"
 reading_time: "12 min"
 tldr: "An LLM that just chats is a calculator. An LLM with tools, memory, and a graph of decisions is an agent. Today you build a ReAct agent in LangGraph, give it two tools, and watch it loop until it's done."
 tags: ["agents", "langgraph", "mcp", "react"]
@@ -39,43 +39,57 @@ A chatbot answers. An agent **acts**. The difference is a loop, a set of tools, 
 **Topic.** Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems.
 
 **By end of class you will have:**
-1. A working ReAct agent in LangGraph with two tools, running locally.
-2. Read its full *Thought → Action → Observation* trace and explained one step.
-3. A 2-agent CrewAI sketch (researcher + writer) and a one-paragraph note on when MCP beats a custom tool.
+1. **Seen** a real ReAct agent run live — read its Thought → Action → Observation trace and explained one step.
+2. **Tried** an agent yourself, two ways: through Claude Desktop or ChatGPT (no install), and through a pre-built Colab notebook.
+3. **Sketched** a 2-agent CrewAI team for your capstone (researcher + writer) and written one paragraph on when MCP beats a custom tool.
 
-> *Why this matters.* Half the capstone projects this cohort will pitch agents. Knowing the wiring under "I built an agent" separates demos from toys.
+> *Why this matters.* The word *"agent"* is in every capstone pitch this cohort will hear. Today you go from hearing it to recognising one — and to knowing when NOT to build one.
 
-## ⏪ Pre-class · ~25 min
+## ⏪ Pre-class · ~20 min
 
-### Setup (required)
+### Setup (required for everyone)
 
-- [ ] Python venv with `pip install langchain langgraph langchain-openai crewai`.
-- [ ] OpenAI **or** Anthropic API key in `.env`. Confirm with a 2-line `chat.invoke("hi")`.
-- [ ] Optional: install Claude Desktop and try one MCP server (filesystem).
+- [ ] **Open Claude.ai or ChatGPT** in your browser. Confirm you can chat with it. That's it.
+- [ ] Bookmark the **Day 15 Colab notebook** (link will be in the channel) — we'll run it together in class.
+
+### Setup (only if you want the bonus Python lab)
+
+- [ ] Python 3.10+ installed and a fresh virtualenv ready.
+- [ ] `pip install langchain langgraph langchain-openai crewai` runs without errors.
+- [ ] OpenAI **or** Anthropic API key saved in a `.env` file.
+- [ ] Optional: install **Claude Desktop** if you want to try a real MCP server (filesystem).
 
 ### Primer (~10 min)
 
-- **Watch:** "What is LangGraph?" — https://www.youtube.com/watch?v=aHCDrAbH_go (8 min).
-- **Read:** Anthropic's *Building effective agents* — skim "Workflows vs agents" and "When to use agents."
-- **Skim:** the ReAct paper abstract + Figure 1 (Yao et al.). You don't need the math.
+- **Watch:** "What is LangGraph?" — https://www.youtube.com/watch?v=aHCDrAbH_go (8 min). One pass, no notes needed.
+- **Skim:** Anthropic's *Building effective agents* — read only the section *"Workflows vs agents"*.
+- *(Optional)* The ReAct paper abstract + Figure 1 — you don't need the math.
 
 ### Bring to class
 
-- [ ] One *agent-shaped problem* from your capstone. Not "summarise text" — that's a pipeline. Try "find me the cheapest train Bangalore→Hyderabad next Friday and book a placeholder."
+- [ ] One *agent-shaped problem* from your capstone. Not "summarise text" — that's a pipeline. Try *"find me the cheapest train Hyderabad → Tirupati next Friday and pick a budget hotel near the temple."*
 
-> 🧠 **Quick glossary.** **ReAct** = Reason + Act loop. **Tool** = a function the LLM can call. **LangGraph** = library for building stateful agent graphs. **MCP** = Model Context Protocol — a standard way to plug tools into any agent. **CrewAI** = multi-agent orchestration with role-playing.
+> 🧠 **Quick glossary.**
+> **ReAct** = the loop where the LLM **Re**asons and **Act**s in turns.
+> **Tool** = a function the LLM is allowed to call (search, calculator, send-email).
+> **Trace** = the printed log of every Thought → Action → Observation step.
+> **LangChain** = the toolkit for building LLM apps.
+> **LangGraph** = the agent runtime built on top — handles the loop.
+> **MCP (Model Context Protocol)** = an open standard from Anthropic so the same tool can plug into Claude Desktop, Cursor, your own agent — no rewiring.
+> **CrewAI** = library for hiring multiple agents (researcher + writer + critic) instead of one giant agent.
 
 ## 🎥 In-class · live session
 
-### Agenda
+### Agenda (~60 min)
 
 | Block | Time | What |
 |---|---|---|
-| Chatbot vs workflow vs agent | 10 min | Where each fits |
-| ReAct loop, drawn on the whiteboard | 10 min | Thought → Action → Observation |
-| Live build: LangGraph agent | 20 min | 60 lines, two tools |
-| MCP demo + multi-agent sketch | 10 min | Why MCP, when to use Crew |
-| Lab + Q&A | 5 min |  |
+| Hook + recap + 3 categories | 10 min | Chatbot vs workflow vs agent |
+| ReAct loop, walked on screen | 10 min | Thought → Action → Observation, on a real trace |
+| Tools, LangChain vs LangGraph, MCP | 10 min | The vocabulary, in plain English |
+| Multi-agent (CrewAI Tollywood crew) | 5 min | Roles, goals, hand-off |
+| Lab + cost / safety | 20 min | Try Claude/ChatGPT live, then the Colab |
+| Polls and Q&A | ~5 min | 4 polls fire across the class |
 
 ### The minimum agent
 
@@ -98,20 +112,40 @@ That's it. Everything else — LangGraph, CrewAI, AutoGen — is sugar on this l
 - **Multi-agent (CrewAI)** — when roles are genuinely different and parallel: researcher + critic + writer.
 - **MCP** — when the *same* tool needs to plug into Claude Desktop, Cursor, your custom agent, all at once.
 
-## 🧪 Lab: Two-tool ReAct agent
+## 🧪 Lab: See an agent. Try an agent. Sketch your own.
 
-1. New file `agent.py`. Define two `@tool`s: `web_search(query)` (use Tavily or DuckDuckGo) and `calculator(expression)`.
-2. Build a LangGraph `StateGraph` with one node `agent` (the LLM) and one node `tools` (the tool runner). Edges: `agent → tools → agent` until `END`.
+The main lab needs **no Python**. The Python build is **bonus** for anyone who wants depth.
+
+### Main lab — 20 minutes · in this room
+
+1. **Try a real agent · 5 min.** Open **Claude.ai** (or ChatGPT). Paste this prompt: *"Look up the weather in Hyderabad, Vijayawada, and Visakhapatnam right now. Tell me which city is warmest and by how many degrees."* Watch the chatbot **think → search → search → compare**. That's a ReAct agent. Take a screenshot.
+2. **Read a real trace · 8 min.** Open the **Day 15 Colab notebook** (link in the channel). Run the cell that already has the agent built. Use the prompt of the day. Read every printed *Thought → Action → Observation* line out loud to your podmate.
+3. **Modify one tool docstring · 4 min.** In the same Colab, change the `calculator` tool's docstring to be deliberately vague: *"Does math."* Re-run. Does the agent still pick it correctly? Take a screenshot of the difference.
+4. **Sketch a 2-agent crew · 3 min.** On paper or in your M2 doc, sketch a CrewAI team for your capstone: one **researcher** agent + one **writer** agent. Note each agent's *role*, *goal*, and *tools*. No code needed.
+
+**Artifact.** Three screenshots + the 2-agent sketch, all dropped into a single Google Doc named `Day 15 — Agent Lab — <Your Name>`. Submit on the dashboard.
+
+### Bonus track — build it from scratch (optional, 25 min)
+
+For students with a Python comfort:
+
+1. New file `agent.py`. Define two `@tool`s — `web_search(query)` (use Tavily or DuckDuckGo) and `calculator(expression)`.
+2. Build a LangGraph `StateGraph` with two nodes (`agent` and `tools`) and the loop `agent → tools → agent → END`.
 3. Run with the prompt of the day. Print every `(thought, action, observation)` triple.
-4. Break it on purpose: ask a question requiring **three** tool calls. Watch the loop hold up.
+4. Break it on purpose: ask a question that needs **three** tool calls. Confirm the loop holds.
 
-**Artifact.** `agent.py` + a copy-pasted trace in your repo at `/labs/day-15/`. Push.
+**Bonus artefact.** `agent.py` + a `trace.txt` in your repo at `/labs/day-15/`. Push. +3 bonus points.
 
-> ⚠️ **Cost watch.** Each loop costs ~₹1–4. Cap with `recursion_limit=10` so a runaway agent doesn't burn your credits.
+> ⚠️ **Cost watch.** Each agent run costs roughly ₹1–4 in tokens. **Always** set `recursion_limit=10` before invoking — a runaway agent can quietly burn ₹500 in one bad loop. Last cohort had one. Don't be that one.
 
-## 📊 Live poll
+## 📊 Live polls (4 checkpoints)
 
-**Where does your capstone need an agent (vs a workflow)?** Auth/forms / Search-and-summarise / Multi-step reasoning / Booking-style flows / *Honestly, nowhere.*
+Four polls fire during class — each tests a concept against a real example. Vote when prompted on your dashboard.
+
+1. **Pulse check** (after the Maps re-routing hook) — When you used a chatbot today, was it just talking or actually *doing*?
+2. **Which task needs an agent?** — Translate / plan a trip / summarise a PDF / make a poster.
+3. **When NOT to call a tool** — You ask the agent the capital of Telangana. It already knows. Best move?
+4. **Your capstone shape** — 1 agent + tools / 2 agents / plain workflow / no agent fits.
 
 ## 💬 Discuss
 
@@ -119,19 +153,25 @@ That's it. Everything else — LangGraph, CrewAI, AutoGen — is sugar on this l
 - Your capstone uses Razorpay. Should that be an MCP server or a hand-coded tool? Argue both sides.
 - Two agents (researcher + writer) vs one agent with two tools — what changes?
 
-## ❓ Quiz
+## ❓ Quiz · 5 MCQs
 
-Short quiz on the ReAct loop, when MCP beats custom tools, and what `recursion_limit` does. Open on the dashboard mid-class.
+Five single-choice questions on the ReAct loop, when an agent beats a workflow, what a tool is in code, what `recursion_limit` does, and when MCP beats a custom tool. Open on your dashboard mid-class (around the MCP slide).
 
-## 📝 Assignment · Your first agent
+## 📝 Assignment · Recognise an agent in the wild
 
-**Brief.** Submit your `agent.py` plus a 150-word note: *what the agent did well, where it failed, what it cost in tokens.*
+**Brief.** In a Google Doc named `Day 15 — <Your Name>`, submit:
 
-**Stretch (optional).** Convert one of your tools into an MCP server (e.g., filesystem read) and call it from Claude Desktop or Cursor. +2 bonus points if you push the server config + a screenshot.
+- (a) The 3 screenshots from the main lab (Claude/ChatGPT trace, Colab trace, Colab after the vague docstring).
+- (b) Your 2-agent CrewAI sketch — one researcher + one writer, each with a role, goal, and 1–2 tools.
+- (c) A 100-word note: *one moment the agent felt smart, one moment it felt dumb, and what you'd change if you were rebuilding it.*
 
-**Submit.** GitHub link + note on the dashboard before Day 16.
+**Stretch · +3 bonus points.** Push the Python `agent.py` + `trace.txt` from the bonus track to your repo at `/labs/day-15/`. Paste the GitHub link in your submission.
 
-**Rubric.** Tools wired and called correctly (4) · Trace is readable, with thoughts visible (4) · Honest reflection on failures + cost (2).
+**Stretch · +2 bonus points.** Convert one tool into an MCP server (e.g. filesystem read) and call it from Claude Desktop. Push the server config + a screenshot.
+
+**Submit.** Paste the Google Doc link (and optional GitHub link) on the dashboard before Day 16.
+
+**Rubric (out of 10).** Lab screenshots all 3 captured (3) · Crew sketch is specific, not generic (3) · Honest reflection (2) · Bonus tracks where attempted (up to +5).
 
 ## 🔁 Prep for next class
 
