@@ -27,9 +27,15 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // IMPORTANT: do not put any logic between createServerClient and getUser —
-  // it refreshes the session and writes the new cookies onto `response`.
-  await supabase.auth.getUser();
+  // IMPORTANT: do not put any logic between createServerClient and the
+  // session-refresh call — it writes the new cookies onto `response`.
+  //
+  // Uses getSession() (cookie-only, no DB roundtrip) rather than getUser().
+  // The old call hit auth.users/sessions/identities/mfa_factors on every
+  // request — pg_stat_statements showed ~1.4M chained queries saturating
+  // the pool during class peaks. The downstream PostgREST call still
+  // verifies the JWT signature, so RLS protection is unchanged.
+  await supabase.auth.getSession();
 
   return response;
 }
