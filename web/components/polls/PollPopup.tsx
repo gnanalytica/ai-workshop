@@ -75,6 +75,7 @@ export function PollPopup({
   const [now, setNow] = useState<number>(() => Date.now());
   const [pending, start] = useTransition();
   const abortRef = useRef<AbortController | null>(null);
+  const lastFetchRef = useRef<number>(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +83,7 @@ export function PollPopup({
     // (realtime tickle, visibility return, post-vote) bypass the browser
     // cache so any actual change is picked up immediately.
     async function fetchPoll() {
+      lastFetchRef.current = Date.now();
       abortRef.current?.abort();
       const ac = new AbortController();
       abortRef.current = ac;
@@ -96,9 +98,14 @@ export function PollPopup({
       } catch {
       }
     }
-    // Refetch on visibility return (covers backgrounded tabs catching up).
+    // Refetch on visibility return — debounced so a user toggling tabs
+    // doesn't flood rpc_active_poll. Realtime broadcasts already keep state
+    // fresh while the tab is visible; the visibility fetch is just a
+    // catch-up for tabs that were backgrounded for a long stretch.
     function onVisibility() {
-      if (document.visibilityState === "visible") fetchPoll();
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - lastFetchRef.current < 10_000) return;
+      fetchPoll();
     }
     document.addEventListener("visibilitychange", onVisibility);
     // Realtime broadcast — emitted by createPoll/closePoll/castVote server
@@ -123,7 +130,9 @@ export function PollPopup({
         });
       } else {
         // Legacy tickle (no payload) — jitter the fallback fetch to spread
-        // simultaneous receivers across ~2s instead of all at once.
+        // simultaneous receivers across ~2s instead of all at once. Also
+        // skip if we fetched recently, to dampen storms of legacy tickles.
+        if (Date.now() - lastFetchRef.current < 5_000) return;
         setTimeout(() => fetchPoll(), Math.random() * 2000);
       }
     }).subscribe();
