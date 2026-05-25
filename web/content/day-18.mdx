@@ -3,158 +3,185 @@ day: 18
 date: "2026-05-26"
 weekday: "Tuesday"
 week: 4
-topic: "Deployment with Vercel and Supabase (OpenCode)"
+topic: "Cost Estimation of AI: Tokens, API costs, Knowledge Graphs, Neo Clouds & GPUs"
 faculty:
   main: "Harshith"
   support: "Sandeep"
 reading_time: "12 min"
-tldr: "Localhost is for you. A live URL is for everyone else. Today: deploy yesterday's repo to Vercel in under 5 minutes, add a Supabase database, and wire OpenCode/Antigravity/Codex to ship the next change without leaving the chat."
-tags: ["deployment", "vercel", "supabase", "backend"]
-software: ["Node.js", "Python", "Git"]
-online_tools: ["Vercel", "Supabase", "Antigravity", "Codex", "GitHub"]
-video: "https://www.youtube.com/embed/2HBIzEx6IZA"
-prompt_of_the_day: "I have a public GitHub repo with a static index.html that calls a weather API. I want to (a) deploy it on Vercel, (b) add a Supabase table to log every search with timestamp + city, (c) read those logs back on the page. Write me a step-by-step deployment plan. No code yet."
+tldr: "Yesterday you called your first real API. Today you find out what it costs. By 5:30 PM you have a spreadsheet that prices your capstone at 1, 100, and 10,000 users — across closed APIs vs self-hosted open-source on a Neo Cloud GPU."
+tags: ["cost", "tokens", "knowledge-graphs", "gpu", "open-source", "economics"]
+software: []
+online_tools: ["OpenAI Tokenizer", "Google Sheets"]
+video: "https://www.youtube.com/embed/zduSFxRajkE"
+prompt_of_the_day: "Estimate the monthly API cost for a chatbot serving 10,000 Indian college students, 5 messages each per day, with average 800 input + 300 output tokens, on Claude Haiku 4.5. Show the math in rupees. Then show the same number on Claude Sonnet 4.6 and tell me the gap."
 tools_hands_on:
-  - { name: "Vercel", url: "https://vercel.com/" }
-  - { name: "Supabase", url: "https://supabase.com/" }
-  - { name: "OpenCode", url: "https://opencode.ai/" }
-  - { name: "Antigravity", url: "https://antigravity.google/" }
-  - { name: "Codex", url: "https://chatgpt.com/codex" }
+  - { name: "OpenAI Tokenizer", url: "https://platform.openai.com/tokenizer" }
+  - { name: "Anthropic pricing", url: "https://www.anthropic.com/pricing" }
+  - { name: "OpenAI pricing", url: "https://openai.com/api/pricing/" }
+  - { name: "RunPod pricing", url: "https://www.runpod.io/pricing" }
+  - { name: "Artificial Analysis leaderboard", url: "https://artificialanalysis.ai/" }
 tools_reference:
-  - { name: "Vercel — Deploy from GitHub", url: "https://vercel.com/docs/getting-started-with-vercel" }
-  - { name: "Supabase — Quickstart", url: "https://supabase.com/docs/guides/getting-started" }
+  - { name: "Together.ai pricing", url: "https://www.together.ai/pricing" }
+  - { name: "Lambda Labs GPUs", url: "https://lambdalabs.com/service/gpu-cloud" }
+  - { name: "Hugging Face open models", url: "https://huggingface.co/models" }
 resources:
-  - { title: "Vercel Edge Functions docs", url: "https://vercel.com/docs/functions" }
-  - { title: "Supabase JS client", url: "https://supabase.com/docs/reference/javascript/introduction" }
-lab: { title: "Repo → Vercel → Supabase logging", url: "https://vercel.com/" }
+  - { title: "Microsoft GraphRAG paper", url: "https://arxiv.org/abs/2404.16130" }
+  - { title: "Anthropic prompt caching (90% discount)", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" }
+  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
+lab: { title: "Cost-model your capstone in a spreadsheet", url: "https://platform.openai.com/tokenizer" }
 objective:
-  topic: "Deployment with Vercel and Supabase using OpenCode"
-  tools: ["Vercel", "Supabase", "OpenCode", "Antigravity", "Codex", "GitHub"]
-  end_goal: "A publicly accessible Vercel URL whose page logs each search to a Supabase table and displays the last 5 entries."
+  topic: "Cost Estimation of AI: Tokens, APIs, Knowledge Graphs, GPUs, Neo Clouds"
+  tools: ["OpenAI Tokenizer", "Anthropic / OpenAI pricing", "RunPod / Lambda / Together", "Google Sheets"]
+  end_goal: "A live spreadsheet pricing your capstone at 1, 100, and 10,000 users — comparing closed APIs vs self-hosted Llama on a Neo Cloud GPU, with one break-even number."
 ---
 
-Yesterday you went from laptop folder → public repo. Today you go from public repo → public **URL with a database** — the actual finale-day setup. We'll use OpenCode (or Antigravity / Codex) so most of the work happens inside one chat.
+Yesterday you wrote `fetch()` and got data back. Magic, free, instant. Today reality. Every one of those API calls costs money — fractions of a cent now, lakhs of rupees at scale. **If you can't say what your AI feature costs per user, you don't have a product — you have a science fair project.** Today is the rupee day.
 
 ## 🎯 Today's objective
 
-**Topic.** Deployment with Vercel + Supabase, driven by OpenCode-style coding agents.
+**Topic.** Cost Estimation of AI: Tokens, API costs, Knowledge Graphs, Neo Clouds + GPUs with open-source models.
 
 **By end of class you will have:**
-1. Yesterday's GitHub repo deployed to a live `.vercel.app` URL with auto-redeploy on push.
-2. A Supabase project with one `searches` table (id, city, created_at).
-3. Page logs every search and renders the last 5 from the database.
+1. **Tokenized** 3 real prompts in the OpenAI Tokenizer and converted token count → ₹ for two providers.
+2. **Modelled** your capstone at 1, 100, and 10,000 users in a Google Sheet.
+3. **Computed** one break-even — at what user count does a self-hosted Llama on RunPod beat the closed API?
+4. **Identified** one place in your capstone where a Knowledge Graph would cut 60–80% of context tokens.
 
-> *Why this matters.* This is *the* skeleton. Most capstone projects are a static front-end + Supabase + Vercel. After today you've built it once.
+> *Why this matters.* Demo Day investors ask one question: *"What does this cost per user?"* You should know to two decimal places. Day 17 made your app exist. Day 18 makes it survive at scale.
 
-## ⏪ Pre-class · ~25 min
+## ⏪ Pre-class · ~20 min
 
 ### Setup (required)
 
-- [ ] **Node.js** ≥ 20: `node -v`.
-- [ ] **Python** 3.10+ for any local scripts.
-- [ ] **Vercel** account, signed in via GitHub.
-- [ ] **Supabase** account + a new empty project (it takes ~2 min to provision — start it before class).
-- [ ] Pick one agent: **OpenCode** CLI, **Antigravity**, or **Codex**. Just one.
+- [ ] Bookmarks: **OpenAI Tokenizer**, **Anthropic pricing**, **OpenAI pricing**, **RunPod pricing**.
+- [ ] Open a fresh **Google Sheet** — title it `Day 18 — <Your Name> — capstone cost`.
+- [ ] Have your **Day-17 OpenWeather** API call response on hand (we'll tokenize it together).
 
 ### Primer (~10 min)
 
-- **Read:** Vercel quickstart — https://vercel.com/docs/getting-started-with-vercel
-- **Read:** Supabase quickstart — https://supabase.com/docs/guides/getting-started
+- **Watch:** "How much does GPT-4 actually cost?" — https://www.youtube.com/watch?v=zduSFxRajkE (8 min).
+- **Skim:** Anthropic + OpenAI pricing pages side by side. Notice the **input vs output gap** — output is 3–5× pricier.
+- **Read:** the GraphRAG paper abstract — focus on the *60–90% context reduction* claim.
 
 ### Bring to class
 
-- [ ] Your Day-17 GitHub repo URL.
-- [ ] Supabase project URL + `anon` public key (Settings → API).
+- [ ] One number: **expected daily active users** of your capstone. A guess is fine (1, 100, 10,000 — pick one).
 
-> 🧠 **Quick glossary.** **Deployment** = your code runs on someone else's machine, reachable by a URL. **Edge function** = code that runs near the user, on Vercel's network. **anon key** = a public Supabase API key safe to ship to the browser (RLS protects the data). **RLS** = Row Level Security — Postgres rules deciding who can read/write what.
+> 🧠 **Quick glossary.**
+> **Token** = roughly 4 characters of English (less in Hindi/Telugu — closer to 2). The unit OpenAI/Anthropic bill you in.
+> **Input vs output tokens** — billed separately. Output is 3–5× costlier (the model is *generating*, not just reading).
+> **Closed API** = OpenAI / Anthropic / Gemini. You pay per token. They host.
+> **Open source** = Llama (Meta), Mistral, Qwen, DeepSeek. Free to use. You host (or pay someone else to).
+> **GPU** = the chip that runs models. NVIDIA owns ~90% of this market.
+> **Neo Cloud** = newer GPU clouds (RunPod, Lambda, Together, CoreWeave) that undercut AWS by 3–5× on hourly rates.
+> **Knowledge Graph (KG / GraphRAG)** = structured facts that replace stuffing the whole document into the prompt. Less input tokens = less ₹.
 
 ## 🎥 In-class · live session
 
-### Agenda
+### Agenda (~60 min)
 
 | Block | Time | What |
 |---|---|---|
-| Vercel: GitHub → live URL | 10 min | Import, deploy, share link |
-| Supabase: project → table → RLS | 15 min | Schema in the dashboard |
-| Wire `supabase-js` in the page | 15 min | Insert + select |
-| OpenCode-driven change | 15 min | Add a feature without leaving chat |
-| Debug + redeploy | 10 min | Push → Vercel rebuilds in 30 sec |
-| Q&A | 5 min |   |
+| Hook + recap + the goal | 8 min | Andhra meals analogy · today's spreadsheet |
+| Tokens + API pricing (with business angle) | 12 min | Why output costs more, who makes the money |
+| LIVE math: cost a real capstone | 10 min | 3 cohort examples on the projector |
+| Open source + GPUs + Neo Clouds | 12 min | Llama, NVIDIA H100, RunPod, the business |
+| Knowledge Graphs + break-even | 8 min | GraphRAG, when self-host wins |
+| Lab + polls + Q&A | 10 min | Spreadsheet build + 4 polls fire across class |
 
-### The deploy loop you'll use forever
+### The cost equation, plain
 
-1. Edit code locally.
-2. `git push`.
-3. Vercel auto-detects, rebuilds, redeploys.
-4. Refresh the live URL. Done.
-
-### Why Supabase for v1
-
-- **Postgres** + auth + storage + realtime in one click.
-- Free tier is plenty for a class project (500 MB DB, 50k MAU).
-- `supabase-js` is a one-line import in the browser.
-
-## 🧪 Lab: Deploy + database in one sitting
-
-1. Vercel → *Add New Project* → import your Day-17 repo → *Deploy*. Wait. Open the live URL.
-2. Supabase → *Table Editor* → new table `searches`: `id` (bigint, identity), `city` (text), `created_at` (timestamptz, default `now()`). Disable RLS *for class only* (we'll harden Day 19+).
-3. In `index.html`, add the Supabase client:
-
-```html
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const sb = createClient('YOUR_URL', 'YOUR_ANON_KEY');
-
-  document.getElementById('b').addEventListener('click', async () => {
-    const city = 'Bengaluru';
-    // fetch weather (existing code)…
-    await sb.from('searches').insert({ city });
-    const { data } = await sb.from('searches').select('city, created_at').order('created_at', { ascending: false }).limit(5);
-    document.getElementById('log').innerHTML = data.map(r => `${r.city} — ${new Date(r.created_at).toLocaleTimeString()}`).join('<br>');
-  });
-</script>
-<div id="log"></div>
+```
+cost_per_request = (in_tokens × in_price) + (out_tokens × out_price)
+monthly_cost     = users × requests/user/day × 30 × cost_per_request
+break_even       = (gpu_hourly × 720) / cost_per_request
 ```
 
-4. Open **OpenCode** (`opencode` in terminal) or Antigravity / Codex. Prompt: *"In this repo, add an input box so the user can type any city instead of hard-coded Bengaluru. Then commit and push."*
-5. Watch it edit, commit, push. Vercel auto-rebuilds. Refresh your live URL.
-6. Type a city. Watch the log grow. Open Supabase Table Editor — confirm the row.
+That's it. Three lines. Plug in your numbers.
 
-**Artifact.** Live Vercel URL + Supabase project name in the cohort channel. Faculty will click and submit a test entry.
+### The three levers that actually move the bill
 
-## 📊 Live poll
+1. **Cut input tokens.** Move from "stuff the whole PDF" to a Knowledge Graph or RAG. 60–90% saving.
+2. **Use the smaller model where you can.** Haiku / 4o-mini handles ~70% of traffic at 5× lower cost. Route the hard 30% to Sonnet / 4o.
+3. **Cache aggressively.** Anthropic's prompt caching = **90% off cached input tokens**. System prompts are *always* cacheable.
 
-**Where did the deployment friction land?** GitHub auth on Vercel / Supabase RLS error / `import` not working in browser / CORS / Nowhere — clean ride.
+### Indian-context numbers (May 2026, USD → INR ≈ 85)
+
+- **Claude Sonnet 4.6**: ~₹255 / 1M input · ~₹1,275 / 1M output ($3 / $15).
+- **Claude Haiku 4.5**: ~₹85 / 1M input · ~₹425 / 1M output ($1 / $5). Hits 70% of your traffic at 5× lower cost.
+- **GPT-4o-mini**: ~₹12 / 1M input · ~₹50 / 1M output. Cheap router target.
+- **RunPod A100 80GB**: ~₹60/hr community / ~₹100/hr on-demand.
+- **Lambda Labs H100**: ~$2.49/hr ≈ ~₹211/hr.
+- **Llama-3.3-70B on Together AI**: ~₹75 / 1M combined tokens (single-tier billing).
+- **Anthropic prompt caching**: cached input read at 10% of base price (= 90% off). System prompts → **always cache**.
+
+## 🧪 Lab: Build the cost model · 20 min · in class
+
+Five steps. Your spreadsheet at the end is the deliverable.
+
+1. **Tokenize · 3 min.** Open the OpenAI Tokenizer. Paste your prompt-of-the-day. Note the token count. Paste a Telugu sentence — notice the difference. Screenshot both.
+2. **Set up columns · 4 min.** Open your sheet. Columns: `users`, `req/user/day`, `in_tok`, `out_tok`, `in_₹/M`, `out_₹/M`, `monthly_₹`.
+3. **Fill 3 rows · 6 min.** GPT-4o-mini · Claude Sonnet 4.6 · Self-hosted Llama-3.3-70B on RunPod (₹100/hr × 720 = ₹72,000/mo amortised across requests).
+4. **Add a cache-hit column · 3 min.** Model 0%, 50%, 80% caching. Watch the cliff (the 80% column should make you smile).
+5. **Compute break-even · 4 min.** At what `requests/month` does the GPU box beat each API? Highlight the cell in green.
+
+**Walk-out artefact.** Share the sheet (view-only link) on the dashboard. One row per scenario, formulas live.
+
+> ⚠️ **Mistake to avoid.** Don't quote the cheapest model price as your "answer." Investors discount projections that assume `4o-mini` handles a use case Sonnet barely solves. Be honest about which model handles which traffic.
+
+### Bonus track (+3 points, optional)
+
+Add a 4th and 5th row to your sheet:
+- Same workload, but with **GraphRAG cutting input tokens by 70%** — show the new monthly bill.
+- Same workload, but with **Anthropic prompt caching at 80% hit rate** — show that bill too.
+
+The 4-row comparison is your bonus artefact.
+
+## 📊 Live polls (4 checkpoints)
+
+Four polls fire across the class — each tests a concept against a relatable Indian example. Vote when prompted on your dashboard.
+
+1. **Pulse check** (after the Andhra meals hook) — Yesterday you called the OpenWeather API. Did you even *think* about cost?
+2. **Tokens & pricing** (after the API pricing slide) — Which costs more: 1,000 input tokens or 1,000 output tokens?
+3. **Self-host vs API** (after the GPU + Neo Cloud slides) — Your capstone is 50 active users. Cheapest stack?
+4. **Your capstone economics** (after Knowledge Graphs) — At 10,000 DAU, what wins for *your* capstone?
 
 ## 💬 Discuss
 
-- What happens if you commit your `anon` key vs your `service_role` key? Why does Supabase ship a public-by-design key?
-- Vercel rebuilt in 30 seconds. What did it actually do under the hood?
-- When would you add an Edge Function instead of calling Supabase directly from the browser?
+- Where in your capstone is "stuff the whole document into the prompt" hiding? That's your Knowledge Graph opportunity.
+- A Neo Cloud GPU at ₹60–100/hr — what's the **operational tax** (uptime, cold starts, ops time, billing surprises) you're not pricing?
+- Output tokens cost 3–5× input. Where in your prompt are you accidentally generating long answers when a short one would do?
 
-## ❓ Quiz
+## ❓ Quiz · 5 MCQs
 
-Short quiz on Vercel build flow, Supabase keys, and where RLS lives. Open it on your dashboard.
+Five single-choice questions covering: what a token is, why output costs more than input, what a Neo Cloud is, when GraphRAG beats vanilla RAG, and the break-even logic for self-hosting. Opens mid-class.
 
-## 📝 Assignment · Deployed mini-app
+## 📝 Assignment · The ₹ slide
 
-**Brief.** Take your Day-17 project (or the one we built today) and add **one user-visible feature** that requires writing to and reading from Supabase. Push, redeploy, share the live URL.
+**Brief.** Build a **one-slide unit-economics summary** for your capstone:
+- Cost per user at 100 users and at 10,000 users
+- Your chosen stack (API only / hybrid router / self-host)
+- One sentence on what changes at scale (caching kicks in, model routing helps, GPU amortises)
 
-**Submit.** Live URL + repo URL on the dashboard.
+Slide should be a single image (Canva / PowerPoint / Figma — your choice). The math behind it lives in the spreadsheet you built in the lab.
 
-**Rubric.** Live URL works for a stranger (4) · DB write + read both demonstrable (4) · README updated with deploy notes (2).
+**Submit.** Slide image + spreadsheet view-link on the dashboard before Day 19.
+
+**Rubric (out of 10).** Math is correct + sources cited (4) · Realistic at 10K users — accounts for caching + model routing (3) · One sentence is honest, not hand-wavy (3).
 
 ## 🔁 Prep for next class
 
-Day 19 is **Context Engineering — Embeddings & RAG.** You'll teach a model facts it doesn't know.
+Day 19 is **Context Engineering — Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice.** Today you learned how to cost a token. Tomorrow you learn how to use *fewer* of them by retrieving only what you need.
 
-- [ ] Install **Python 3.10+** + `pip install langchain chromadb sentence-transformers`.
-- [ ] Sign up for **Hugging Face** (free).
-- [ ] Have your **Gemini** or **ChatGPT** key handy if you have one (we'll use free tier where possible).
+- [ ] Pick **one PDF you actually want to query** (your college handbook, a Sarvam paper, your hostel rule book).
+- [ ] Note: how many pages? Roughly how many tokens? (Use today's tokenizer.)
+- [ ] Bring one question you'd want to ask that PDF that needs the *exact* page citation.
 
 ## 📚 References
 
-- [Vercel — Getting Started](https://vercel.com/docs/getting-started-with-vercel)
-- [Supabase — Getting Started](https://supabase.com/docs/guides/getting-started)
-- [supabase-js reference](https://supabase.com/docs/reference/javascript/introduction)
-- [OpenCode docs](https://opencode.ai/) — the open-source agent CLI.
+- 🧮 [**OpenAI Tokenizer**](https://platform.openai.com/tokenizer) — paste any text, see the tokens, count the cost.
+- 📊 [**Artificial Analysis leaderboard**](https://artificialanalysis.ai/) — live price/perf across every major model.
+- 💸 [Anthropic prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — the 90% discount almost nobody uses.
+- 🖥️ [RunPod pricing](https://www.runpod.io/pricing) — your Neo Cloud baseline. Spot vs on-demand explained.
+- 🦙 [Llama-3.3 on Together AI pricing](https://www.together.ai/pricing) — the open-source benchmark for self-host vs API math.
+- 📑 [GraphRAG paper (Microsoft)](https://arxiv.org/abs/2404.16130) — when knowledge graphs beat chunked retrieval.
