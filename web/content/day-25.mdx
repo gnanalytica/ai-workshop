@@ -1,70 +1,70 @@
 ---
 day: 25
-date: "2026-06-04"
-weekday: "Thursday"
+date: "2026-06-03"
+weekday: "Wednesday"
 week: 5
-topic: "Local LLMs, prompt patterns, eval habits, tracing"
+topic: "GEO, AEO, Leaderboards, Benchmarking, Keeping up with AI"
 faculty:
-  main: "Harshith"
-  support: "Sanjana"
-reading_time: "11 min"
-tldr: "A model on your laptop, three prompt patterns that actually move the needle, an eval set of 10 examples, and a LangSmith trace you can show your skeptical CTO. Today is the engineering hygiene Demo Day will reward."
-tags: ["local-llm", "ollama", "evals", "tracing", "langsmith"]
-software: ["OpenEvals", "Galileo", "LangSmith", "Ollama"]
-online_tools: []
-video: "https://www.youtube.com/embed/UU1WVnMk4E8"
-prompt_of_the_day: "Take my 'classify customer email' prompt. Generate 10 diverse Indian-context test cases (banking, edtech, ecommerce, mixed Hinglish), run them through both Llama-3.1-8B (Ollama) and GPT-4o-mini, and show me a per-case pass/fail table."
+  main: "Jayasaagar"
+  support: "Aparna"
+reading_time: "10 min"
+tldr: "SEO is half-dead. Now your product has to show up inside ChatGPT, Perplexity, and Gemini answers. Today: how models pick what to cite, which leaderboards actually matter, and a 2-feed system to never feel left behind again."
+tags: ["geo", "aeo", "benchmarks", "leaderboards", "career"]
+software: []
+online_tools: ["HeyGen", "Higgsfield", "Veo3", "ElevenLabs"]
+video: "https://www.youtube.com/embed/3-2Lw5qQjho"
+prompt_of_the_day: "You are a GEO strategist. My product is <one-line>. List the top-10 generative-search queries an Indian buyer would type, and for each, the one piece of content I must publish so the model cites me."
 tools_hands_on:
-  - { name: "Ollama", url: "https://ollama.com/" }
-  - { name: "LangSmith", url: "https://smith.langchain.com/" }
-  - { name: "OpenEvals", url: "https://github.com/langchain-ai/openevals" }
-  - { name: "Galileo", url: "https://www.galileo.ai/" }
+  - { name: "LMArena", url: "https://lmarena.ai/" }
+  - { name: "Hugging Face Open LLM Leaderboard", url: "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard" }
+  - { name: "Artificial Analysis", url: "https://artificialanalysis.ai/" }
+  - { name: "Perplexity", url: "https://www.perplexity.ai/" }
 tools_reference:
-  - { name: "Anthropic — prompt engineering", url: "https://docs.anthropic.com/en/docs/prompt-engineering" }
-  - { name: "OpenAI — Evals cookbook", url: "https://cookbook.openai.com/examples/evaluation/getting_started_with_openai_evals" }
+  - { name: "Princeton — GEO paper", url: "https://arxiv.org/abs/2311.09735" }
+  - { name: "SWE-bench leaderboard", url: "https://www.swebench.com/" }
 resources:
-  - { title: "Hamel Husain — Your AI app needs evals", url: "https://hamel.dev/blog/posts/evals/" }
-  - { title: "Eugene Yan — Evals", url: "https://eugeneyan.com/writing/evals/" }
-lab: { title: "Local LLM + 10-example eval set + traced run", url: "https://ollama.com/" }
+  - { title: "Ahrefs — GEO guide", url: "https://ahrefs.com/blog/generative-engine-optimization/" }
+  - { title: "Latent Space podcast", url: "https://www.latent.space/" }
+  - { title: "Simon Willison's blog", url: "https://simonwillison.net/" }
+  - { title: "The Batch (DeepLearning.AI)", url: "https://www.deeplearning.ai/the-batch/" }
+lab: { title: "GEO audit your capstone + benchmark drill", url: "https://lmarena.ai/" }
 objective:
-  topic: "Local LLMs, prompt patterns, eval habits, tracing"
-  tools: ["Ollama", "LangSmith", "OpenEvals"]
-  end_goal: "A 10-case eval set running against both a local Llama and a hosted GPT, with every call traced in LangSmith and a pass/fail report you can paste into your README."
+  topic: "Get your product cited by generative engines, and build a sustainable AI-news habit"
+  tools: ["Perplexity", "LMArena", "HF Leaderboards"]
+  end_goal: "A 5-query GEO audit of your capstone and a 2-feed personal information diet you'll stick with after the cohort."
 ---
 
-Anyone can ship a prompt. Engineers ship a prompt **with an eval set behind it**. Today is the day your capstone stops being a vibes-based demo.
+After Demo Day, the question stops being "did I learn AI?" and becomes "how do I stay relevant in an industry that ships a new SOTA model every Tuesday?" Today is the operating system for that.
 
 ## 🎯 Today's objective
 
-**Topic.** Local LLMs, prompt patterns, eval habits, tracing.
+**Topic.** GEO, leaderboards, benchmarking, and keeping up with AI without burning out.
 
 **By end of class you will have:**
-1. Llama-3.1-8B running locally via Ollama, answering your capstone's core prompt.
-2. Three prompt patterns applied — *role + format + few-shot* — and the before/after delta measured.
-3. A 10-case eval set running through OpenEvals, with traces visible in LangSmith.
+1. Done a 5-query GEO audit on your capstone — which chatbots cite you and which don't.
+2. Read three leaderboards (LMArena, HF, Artificial Analysis) and named when each one is actually useful.
+3. Picked **one daily** + **one weekly** AI-news source to follow for the next 6 months.
 
-> *Why this matters.* Demo Day judges will ask "how do you know it works?" "It looked good in testing" loses. "Here's our 10-case eval, 90% pass, here's the trace" wins.
+> *Why this matters.* In 2026, the URL bar is moving from Google to ChatGPT. If your product, name, or repo isn't in the model's training or web index, you're invisible.
 
-## ⏪ Pre-class · ~30 min
+## ⏪ Pre-class · ~25 min
 
-### Setup (required)
+### Setup
 
-- [ ] Install Ollama. `ollama pull llama3.1:8b` and `ollama pull qwen2.5:7b`. Confirm both run.
-- [ ] LangSmith account + `LANGCHAIN_API_KEY` in `.env`. Set `LANGCHAIN_TRACING_V2=true`.
-- [ ] `pip install openevals langchain langsmith ollama`.
-- [ ] Have two prompts from your capstone ready — one good, one flaky.
+- [ ] Free Perplexity account.
+- [ ] LMArena and HF Leaderboard tabs open.
 
-### Primer (~12 min)
+### Primer
 
-- **Watch:** "Run any LLM locally with Ollama" — https://www.youtube.com/watch?v=UU1WVnMk4E8 (10 min).
-- **Read:** Hamel Husain's "Your AI app needs evals" — the *level 1 → 4* progression. Aim for level 2 today.
-- **Skim:** Anthropic's prompt engineering docs — *XML tags*, *chain of thought*, *prefilling*.
+- **Watch:** "How LLMs pick what to cite" — https://www.youtube.com/watch?v=3-2Lw5qQjho
+- **Skim:** Princeton's GEO paper — abstract and Section 3 only.
 
 ### Bring to class
 
-- [ ] 10 *real* inputs your capstone receives (or will receive). Not synthetic — actual user-shaped messages, including Hinglish if applicable.
+- [ ] The three answers you saved yesterday from ChatGPT / Claude / Perplexity for *"best [your category] in India 2026"*.
+- [ ] One AI news source you currently follow. *"My friend's WhatsApp forwards"* counts.
 
-> 🧠 **Quick glossary.** **Local LLM** = model running on your laptop (no API). **Eval** = a test case for an LLM. **Trace** = the full record of a run: inputs, prompts, tokens, latency. **OpenEvals** = LangChain's eval harness. **LangSmith** = the trace viewer.
+> 🧠 **Quick glossary.** **GEO** = Generative Engine Optimization, optimising for citations inside AI answers. **Leaderboard** = ranked benchmark scoreboard. **Elo** = pairwise rating used by LMArena. **Benchmark** = fixed eval (MMLU, GPQA, SWE-bench). **Eval contamination** = benchmark leaked into training data.
 
 ## 🎥 In-class · live session
 
@@ -72,72 +72,74 @@ Anyone can ship a prompt. Engineers ship a prompt **with an eval set behind it**
 
 | Block | Time | What |
 |---|---|---|
-| Local LLMs — when worth it | 10 min | Privacy, cost, latency, offline |
-| 3 prompt patterns that move scores | 15 min | Role, format, few-shot |
-| Eval mindset | 10 min | Why 10 cases beat 0 |
-| Lab | 20 min | Build + run + trace |
-| Share + tear-down | 5 min |  |
+| Why SEO → GEO | 10 min | The traffic cliff |
+| What gets cited: 6 levers | 15 min | Authority, structure, freshness, schema, citations, brand mentions |
+| Leaderboard tour | 15 min | LMArena vs HF vs Artificial Analysis |
+| GEO audit lab | 15 min | Audit your capstone live |
+| 2-feed system | 5 min | One daily, one weekly, nothing else |
 
-### Three prompt patterns, in order of ROI
+### 6 GEO levers (from highest to lowest impact, 2026 data)
 
-1. **Explicit role + output format.** *"You are X. Return JSON with keys A, B, C. No prose."* Cuts hallucination, makes parsing trivial.
-2. **Few-shot with edge cases.** Three examples beats three paragraphs of instruction. Pick examples that look like the *failures* you've seen.
-3. **Chain of thought / scratchpad.** *"Think step-by-step in `<thinking>` tags before you answer."* Worth the tokens for any reasoning task.
+1. **Citations from authoritative sites** — being mentioned in Wikipedia, GitHub READMEs, top-rated blogs.
+2. **Clean, scannable structure** — H2 headings, lists, FAQs. LLMs love structure.
+3. **Schema + JSON-LD** — `Product`, `FAQPage`, `HowTo`.
+4. **Brand mention frequency** — does your name co-occur with the category enough?
+5. **Freshness signals** — `lastmod`, `<time datetime>`, dated content.
+6. **Direct answers** — one-sentence answers near the top of each page.
 
-### When local Llama actually wins
+### Leaderboards — when each lies
 
-- **Privacy** — student health data, exam answers, anything you can't send to OpenAI.
-- **Cost at high volume** — once you cross ~10M tokens/month, your laptop or a cheap GPU box wins.
-- **Offline / unreliable network** — campus during exams, rural deployments.
-- **Latency** — first token in 50ms vs 800ms over the API.
+- **LMArena** — best for "which model feels nicer to humans," skewed toward chatty answers.
+- **HF Open LLM Leaderboard** — academic benchmarks; risk of **contamination**.
+- **Artificial Analysis** — speed + price + quality combined; best for **picking a model for your product**.
+- **SWE-bench / GPQA** — only trust for the specific skill they measure.
 
-It does *not* win on raw quality. Llama-3.1-8B is roughly GPT-3.5 level. Plan accordingly.
+## 🧪 Lab: GEO audit + benchmark drill
 
-## 🧪 Lab: Local LLM + eval set + trace
+1. Open Perplexity. Run 5 queries: *"best [your category] in India"*, *"open-source [your category]"*, *"[your project name]"*, *"alternative to [biggest competitor]"*, *"how to [job-to-be-done]"*.
+2. For each, log: cited sources (top 3), is your project there (Y/N), what would beat the cited source.
+3. On LMArena, pick three models you've never tried. Vote in 5 blind battles. Note your gut ranking vs the public Elo.
+4. On Artificial Analysis, find the cheapest model that beats GPT-4-class on quality. Save it for your post-cohort builds.
 
-1. Pick **one** capstone prompt. Run it through `ollama` directly: `ollama run llama3.1:8b "<your prompt>"`. Note the output.
-2. Apply the three patterns (role/format, 2 few-shot examples, scratchpad). Run again. Note the delta.
-3. Build `evals.jsonl` — 10 lines, each `&#123;"input": "...", "expected": "..."&#125;`. Indian-context examples preferred.
-4. Wire OpenEvals: write a grader (`exact_match` or LLM-as-judge), run all 10 cases against both `llama3.1:8b` and `gpt-4o-mini` with `LANGCHAIN_TRACING_V2=true`.
-5. Open LangSmith. Find the slowest case. Find the most expensive case. Screenshot both.
+**Artifact.** `geo-audit.md` in your capstone repo with the 5 queries, citations, and 3 concrete actions ranked by effort × impact.
 
-**Artifact.** Push `evals.jsonl`, `run_evals.py`, and a `README.md` with your pass-rate table + LangSmith share link to `/labs/day-25/`.
-
-> ⚠️ **Indian-context note.** Llama-3.1 tokenizes Devanagari/Tamil at ~2 chars/token vs ~4 for English. Hinglish prompts cost more than they look. Measure.
+> ⚠️ **Don't optimise for one engine.** ChatGPT, Perplexity, and Gemini index differently. Aim for structural wins that help all three.
 
 ## 📊 Live poll
 
-**On your eval set, which model wins?** Llama-3.1-8B local / Qwen2.5-7B local / GPT-4o-mini / Claude Haiku / *Tied.*
+**Where does your capstone show up today?** Cited by 1+ engine / mentioned but not cited / not found / haven't checked. Used to drive the next 10-min discussion.
 
 ## 💬 Discuss
 
-- One case where local Llama beat the API on *your* eval. Why?
-- LLM-as-judge vs exact-match — when does each lie?
-- A prompt with a 70% pass rate — ship it or fix it? Defend.
+- Did the leaderboard ranking match your gut after blind voting? Where did it diverge?
+- One Indian-context query where Western leaderboards completely fail. (Hindi tasks? Code-mixed? Tier-2 city queries?)
+- Which of the 6 GEO levers is highest leverage for *your* capstone — and why?
+- Burnout-honest: how many AI newsletters can you actually read per week?
 
 ## ❓ Quiz
 
-Short quiz on prompt patterns, when to choose local vs hosted, and what a trace shows. On the dashboard during class.
+Short class quiz on GEO levers, LMArena vs HF, and contamination. Open from your dashboard.
 
-## 📝 Assignment · Eval-driven prompt fix
+## 📝 Assignment · 2-feed system + one GEO ship
 
-**Brief.** Take your flakiest capstone prompt. Submit (a) the original prompt + 10-case eval, (b) the improved prompt, (c) before/after pass rate, (d) LangSmith share link.
+**Brief.** Pick **one daily** source (Simon Willison, The Batch, X list) and **one weekly** (Latent Space, Ahead of AI, Stratechery). Unsubscribe from the rest publicly in the cohort channel. Then ship one GEO improvement to your capstone repo (README rewrite, FAQ section, or schema tag).
 
-**Submit.** GitHub link + LangSmith link on the dashboard before Day 26.
+**Submit.** Dashboard → Day 25 → 2 source URLs + 1 commit link.
 
-**Rubric.** Eval set is realistic — Indian-context, includes edge cases (4) · Measurable improvement, with numbers (4) · Trace link works for a stranger (2).
+**Rubric.** Realistic feed picks (3) · One actually-shipped GEO change (4) · Honest unsubscribe note (3).
 
 ## 🔁 Prep for next class
 
-Day 26 starts the home stretch. Polish, deploy hardening, and the demo script.
+Day 26 is **Context Engineering: CLAUDE.MD, AGENTS.MD, Rules and Skills.**
 
-- [ ] Run your eval set on production. If pass rate &lt; 80%, that's tomorrow's first task.
-- [ ] Time your full demo flow end-to-end. Note where it stalls.
-- [ ] Pick the *one* slide you'd keep if you could only show one.
+- [ ] Make sure your capstone repo is cloned locally with at least 3 files of real code.
+- [ ] Skim the Anthropic Claude Code best-practices page and the agents.md homepage.
+- [ ] One sentence: *"The thing the AI keeps getting wrong about my project is ___."* Bring it.
 
 ## 📚 References
 
-- [Hamel Husain — Your AI app needs evals](https://hamel.dev/blog/posts/evals/) — the practitioner's bible.
-- [Eugene Yan — Evals](https://eugeneyan.com/writing/evals/) — taxonomy, examples, code.
-- [Anthropic prompt engineering](https://docs.anthropic.com/en/docs/prompt-engineering) — XML, prefill, CoT.
-- [Ollama](https://ollama.com/) — `pull`, `run`, `serve`. That's the whole API.
+- [Princeton — GEO paper](https://arxiv.org/abs/2311.09735) — the original framing.
+- [Simon Willison's blog](https://simonwillison.net/) — daily, calm, technical.
+- [The Batch — DeepLearning.AI](https://www.deeplearning.ai/the-batch/) — weekly, Andrew Ng curated.
+- [LMArena](https://lmarena.ai/) — the only ranking that's hard to game.
+- [Artificial Analysis](https://artificialanalysis.ai/) — picking models for production.

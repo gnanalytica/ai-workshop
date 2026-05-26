@@ -3,66 +3,71 @@ day: 20
 date: "2026-05-28"
 weekday: "Thursday"
 week: 4
-topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
+topic: "Deployment with Vercel and Supabase (OpenCode)"
 faculty:
-  main: "Harshith"
-  support: "Sanjana"
-reading_time: "10 min"
-tldr: "Stop re-explaining your project to the AI every time. In **Antigravity** (primary) you write a CLAUDE.md, an AGENTS.md, a Cursor rule if you use optional Cursor, and a tiny Skill — and watch the same model behave like it's been on your team for a year."
-tags: ["context-engineering", "tooling", "claude", "cursor"]
-software: ["Antigravity", "Cursor (optional)"]
+  main: "Raunak"
+  support: "Harshith"
+reading_time: "11 min"
+tldr: "Yesterday your idea got locked. Today it gets a URL. Push to GitHub, deploy on Vercel, wire Supabase, watch a live `*.vercel.app` link serve real data. OpenCode in the loop so the agent ships the boilerplate, not you."
+tags: ["deploy", "vercel", "supabase", "opencode", "cicd"]
+software: ["Antigravity", "Cursor"]
 online_tools: ["Claude"]
-video: "https://www.youtube.com/embed/eBVi_sLaYsc"
-prompt_of_the_day: "Read CLAUDE.md and AGENTS.md before doing anything. Then add a /health endpoint to our Express app following the conventions you find there. List the conventions you used."
+prompt_of_the_day: "You are a senior platform engineer. Walk me through deploying a Next.js + Supabase stack to Vercel on a Windows laptop. Pause at every command and tell me exactly what could go wrong, and the one-line fix for each."
 tools_hands_on:
-  - { name: "Antigravity (Google)", url: "https://antigravity.google/" }
-  - { name: "Cursor (optional)", url: "https://cursor.com/" }
-  - { name: "Claude (web)", url: "https://claude.ai/" }
+  - { name: "Vercel", url: "https://vercel.com/" }
+  - { name: "Supabase", url: "https://supabase.com/" }
+  - { name: "OpenCode", url: "https://opencode.ai/" }
+  - { name: "Antigravity", url: "https://antigravity.google/" }
+  - { name: "Cursor", url: "https://cursor.com/" }
 tools_reference:
-  - { name: "Anthropic — Claude Code best practices", url: "https://www.anthropic.com/engineering/claude-code-best-practices" }
-  - { name: "Cursor Rules docs", url: "https://docs.cursor.com/context/rules" }
+  - { name: "Vercel — deploy Next.js", url: "https://vercel.com/docs/frameworks/nextjs" }
+  - { name: "Supabase — quickstart", url: "https://supabase.com/docs/guides/getting-started" }
+  - { name: "Vercel + Supabase integration", url: "https://vercel.com/integrations/supabase" }
 resources:
-  - { title: "agents.md spec", url: "https://agents.md/" }
-  - { title: "Anthropic Skills overview", url: "https://docs.anthropic.com/en/docs/agents/skills" }
-lab: { title: "Wire up CLAUDE.md, AGENTS.md, a Cursor rule, and a Skill", url: "https://cursor.com/" }
+  - { title: "GitHub — first repo", url: "https://docs.github.com/en/get-started/quickstart/create-a-repo" }
+  - { title: "OpenCode docs", url: "https://opencode.ai/docs/" }
+lab: { title: "Ship one page from prototype to a public URL", url: "https://vercel.com/new" }
 objective:
-  topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
-  tools: ["Antigravity", "Cursor (optional)", "Claude"]
-  end_goal: "A repo where any agent — Claude Code, Cursor, Antigravity — picks up your conventions on the first turn, with no hand-holding."
+  topic: "Take yesterday's prototype and ship a live URL backed by a real database"
+  tools: ["Vercel", "Supabase", "OpenCode", "Antigravity or Cursor"]
+  end_goal: "A `*.vercel.app` URL serving one page that reads from a Supabase table. Pushable. Re-deployable in <30s."
 ---
 
-By Day 20 you've written enough AI-assisted code to feel the tax: every new chat starts dumb. Today we fix that. Context engineering is the discipline of writing *for the model that will read your repo tomorrow*.
+A clickable Figma is a sketch. A vercel.app URL is a thing. Today you cross that line — and let OpenCode write 70% of the boilerplate so you spend your time on the actual product, not on `npm install` failures.
 
 ## 🎯 Today's objective
 
-**Topic.** Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills.
+**Topic.** Deployment with Vercel and Supabase, with OpenCode in the loop.
 
 **By end of class you will have:**
-1. A working `CLAUDE.md` and `AGENTS.md` in your capstone repo, each under 60 lines, no fluff.
-2. One Cursor rule (`.cursor/rules/*.mdc`) that auto-applies when you edit a specific folder.
-3. One reusable Skill (a `SKILL.md` + helper file) that survives across chats.
+1. A GitHub repo with your capstone's smallest deployable slice.
+2. A Vercel deployment that auto-redeploys on `git push`.
+3. A Supabase project with one table, one row, and a working read.
+4. One OpenCode-driven commit that landed without you typing the code.
 
-> *Why this matters.* Day 21 you deploy your capstone. If your context files are honest, the agent stops asking "where does auth live?" every turn.
+> *Why this matters.* Demo Day judges click the URL. If the URL doesn't exist, the demo doesn't exist.
 
-## ⏪ Pre-class · ~25 min
+## ⏪ Pre-class · ~30 min
 
-### Setup (required)
+### Setup
 
-- [ ] **Antigravity** installed and signed in (primary). **Cursor** only if you want the optional second editor and `.cursor/` rules in-tree.
-- [ ] Your capstone repo cloned locally with at least 3 files of real code in it.
-- [ ] Claude.ai tab open for cross-checking your context files.
+- [ ] Node.js 20+, Python 3.11+, Git installed. Screenshot `node -v && python --version && git --version`.
+- [ ] GitHub, Vercel, Supabase accounts (sign in with GitHub for all three).
+- [ ] **Antigravity** signed in (primary) OR Cursor. **OpenCode** installed: `npm i -g opencode-ai` then `opencode auth login`.
+- [ ] One Supabase project created — pick **Mumbai** or **Singapore** region.
 
-### Primer (~10 min)
+### Primer
 
-- **Watch:** "Claude Code in 30 minutes" — https://www.youtube.com/watch?v=eBVi_sLaYsc — focus on the CLAUDE.md section.
-- **Read:** the agents.md homepage (5 min). Notice how short the spec is.
-- **Skim:** Cursor Rules docs — the `alwaysApply` vs `globs` vs `manual` distinction.
+- **Watch:** "Deploy Next.js to Vercel in 5 min" (any current YouTube version).
+- **Skim:** OpenCode docs — the `/init` and `/run` commands.
+- **Read:** Supabase quickstart, the *Project URL* and *anon key* section.
 
 ### Bring to class
 
-- [ ] One sentence: *"The thing the AI keeps getting wrong about my project is ___."* That sentence is the first line of your CLAUDE.md.
+- [ ] Yesterday's clickable prototype, ready to translate into one real page.
+- [ ] Two URLs in your tab: vercel.com/new and supabase.com/dashboard.
 
-> 🧠 **Quick glossary.** **CLAUDE.md** = repo memory that Claude Code auto-reads. **AGENTS.md** = vendor-neutral version, same idea. **Rule** = Cursor's per-folder/per-glob context. **Skill** = packaged instructions + scripts an agent can invoke by name.
+> 🧠 **Quick glossary.** **OpenCode** = open-source coding agent that runs locally and writes code via your terminal. **`.env.local`** = secrets file, never commit. **Anon key** = Supabase's "public" key, safe in client code; **service role key** = server-only, never in client.
 
 ## 🎥 In-class · live session
 
@@ -70,72 +75,72 @@ By Day 20 you've written enough AI-assisted code to feel the tax: every new chat
 
 | Block | Time | What |
 |---|---|---|
-| Why every new chat is dumb | 10 min | The repeating-yourself tax |
-| CLAUDE.md vs AGENTS.md vs Rules vs Skills | 15 min | Where each one fits |
-| Live edit: Harshith's repo | 15 min | Watch the file shrink as it gets sharper |
-| Lab | 15 min | You write yours |
-| Show + tear-down | 5 min |  |
+| GitHub → Vercel mental model | 10 min | Push triggers deploy |
+| OpenCode walkthrough | 15 min | Raunak ships a page live, hands-off |
+| Supabase wiring | 15 min | URL + keys into Vercel envs |
+| Lab | 25 min | You ship your URL |
+| Common failure tour | 10 min | The 6 things that bite first-timers |
 
-### The four layers, plain
+### The three-leg mental model
 
-1. **CLAUDE.md / AGENTS.md** — *what this repo is + non-obvious conventions*. Lives at repo root. Read every turn.
-2. **Sub-CLAUDE.md** — folder-scoped overrides. Useful for `/migrations` or `/edge-functions`.
-3. **Cursor rules** — IDE-specific, glob-triggered. Best for "when editing `*.tsx`, prefer Server Components."
-4. **Skills** — invoked by name. Best for repeated workflows: `/graphify`, `/security-review`.
+- **GitHub** holds the truth.
+- **Vercel** mirrors `main` to a URL on every push.
+- **Supabase** is the database your URL talks to over HTTPS.
+- Every `git push` to `main` redeploys. That's the loop.
 
-### Rules of thumb
+### What OpenCode is doing for you
 
-- **Write what's not obvious.** "Use TypeScript" is noise. "Filter submissions via `assignments!inner(cohort_id)` — there is no direct `cohort_id`" is gold.
-- **One file, one job.** If CLAUDE.md is doing five things, split it.
-- **Delete more than you add.** Every line costs tokens on every turn.
+- `opencode /init` reads your repo and writes a CLAUDE.md / AGENTS.md stub.
+- `opencode /run "add a page that reads my supabase 'posts' table"` writes the page, the type, the env wiring — and asks before touching anything sensitive.
+- You're the **director**. The agent is the typist.
 
-## 🧪 Lab: Wire your repo for agents
+## 🧪 Lab: One page, one URL, one row
 
-In your capstone repo:
+1. `npx create-next-app@latest capstone --ts --tailwind --app` (or use your existing prototype scaffold).
+2. `git init && git add . && git commit -m "deploy: bootstrap"`. Push to a new GitHub repo.
+3. vercel.com → New Project → import repo → deploy. Wait for the green check.
+4. supabase.com → New project → Table editor → create `posts (id uuid, body text)`. Insert one row.
+5. Copy Supabase Project URL + anon key into `.env.local` *and* Vercel → Settings → Environment Variables.
+6. Run `opencode /run "make the home page show the posts.body from supabase"`. Review the diff, accept.
+7. Push. Watch Vercel redeploy. Open URL.
 
-1. Create `CLAUDE.md` at the root. Sections: *What this is* (2 lines), *Key surfaces* (file map), *Non-obvious architecture* (the gotchas), *Conventions*. Cap at 60 lines.
-2. Create `AGENTS.md` — copy CLAUDE.md, strip Anthropic-specific bits, point both at the same content if identical.
-3. Create `.cursor/rules/styling.mdc` with `globs: ["**/*.tsx", "**/*.css"]` and 5 lines of styling rules.
-4. Create `.claude/skills/changelog/SKILL.md` — a tiny skill that, given a git diff, writes one-line changelog entries.
-5. Open a fresh Cursor chat: ask "What does this repo do, and what's one gotcha?" Verify it answers from your file, not from guessing.
+**Artifact.** Live URL + GitHub repo + screenshot of OpenCode's diff that you accepted.
 
-**Artifact.** Push the four files. Paste the link to your repo + a screenshot of Cursor quoting your CLAUDE.md back, in the cohort channel.
-
-> ⚠️ **Tell.** If the model answers correctly *without* citing your files, you wrote noise. Rewrite.
+> ⚠️ **Indian-context gotcha.** Campus Wi-Fi blocks Vercel CLI auth on some networks. If `vercel login` hangs, hotspot for 60s.
 
 ## 📊 Live poll
 
-**Which layer will you actually maintain in 3 months?** CLAUDE.md / AGENTS.md / Cursor rules / Skills / *honestly, none*. We'll discuss the honest answer.
+**Where did you get stuck?** Node install / Git auth / Vercel deploy / Supabase keys / OpenCode setup / *shipped clean*. Honest answer = callout.
 
 ## 💬 Discuss
 
-- What's one convention in your repo that *only you* know? That's your CLAUDE.md line 1.
-- Where does a Cursor rule beat CLAUDE.md, and vice versa?
-- A Skill vs a long prompt — when is each worth it?
+- Where did OpenCode beat you? Where did it write code you'd never write?
+- `.env.local` vs Vercel envs — what's the one mistake that leaks your service key?
+- Free tier limits: at what point does Vercel + Supabase free stop being enough for your capstone?
 
 ## ❓ Quiz
 
-Short quiz on file precedence, glob triggering, and when a Skill beats a rule. Open on your dashboard during class.
+Short class quiz on env-var placement, the Vercel build flow, which file should never be committed, and what OpenCode `/init` writes. On your dashboard during class.
 
-## 📝 Assignment · Context that earns its tokens
+## 📝 Assignment · Deploy + OpenCode diff
 
-**Brief.** Submit your repo URL with `CLAUDE.md`, `AGENTS.md`, one rule, one Skill. In a 100-word note, paste **one before/after**: a question the agent got wrong without your context, and got right with it.
+**Brief.** Submit (a) live URL, (b) GitHub repo URL, (c) a 60-second screen recording showing one `git push` triggering a Vercel redeploy, (d) one screenshot of an OpenCode-written diff you reviewed and accepted.
 
-**Submit.** Repo URL + note on the dashboard before next class.
+**Submit.** Dashboard → Day 20 → 4 links / files.
 
-**Rubric.** Specificity of conventions (4) · Before/after evidence (4) · File hygiene — under 60 lines, no fluff (2).
+**Rubric.** URL is live + loads in <3s (3) · Supabase query actually wired (3) · Re-deploy demo shows green check (2) · OpenCode diff review evidence (2).
 
 ## 🔁 Prep for next class
 
-Day 21 is **Capstone Milestone 4: Workspace Setup and First Deploy**.
+Day 21 — **Context Engineering: Embeddings & RAG, prompt vs retrieve vs fine-tune.** You'll make your URL *know things* it didn't see in training.
 
-- [ ] Confirm Node.js 20+, Python 3.11+, and Git are installed and on PATH.
-- [ ] Create accounts on **Vercel** and **Supabase** with your college email.
-- [ ] Pick the *smallest possible* slice of your capstone you could deploy tomorrow. One page is fine.
+- [ ] `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai` in a fresh venv.
+- [ ] Get a free Gemini API key — https://aistudio.google.com/apikey
+- [ ] Bring one PDF you care about (your college handbook, hostel rules, a paper). 5–50 pages.
 
 ## 📚 References
 
-- [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices) — the canonical CLAUDE.md guide.
-- [agents.md](https://agents.md/) — the cross-vendor spec.
-- [Cursor Rules](https://docs.cursor.com/context/rules) — globs, alwaysApply, examples.
-- [Anthropic Skills](https://docs.anthropic.com/en/docs/agents/skills) — when to package vs prompt.
+- [Vercel — Next.js deploy](https://vercel.com/docs/frameworks/nextjs) — the official five-min walk.
+- [Supabase — quickstart](https://supabase.com/docs/guides/getting-started) — auth, DB, storage in one read.
+- [OpenCode docs](https://opencode.ai/docs/) — the agent you'll use for the rest of the cohort.
+- [Vercel + Supabase integration](https://vercel.com/integrations/supabase) — auto-syncs envs.

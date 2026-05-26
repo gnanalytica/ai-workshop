@@ -3,69 +3,63 @@ day: 19
 date: "2026-05-27"
 weekday: "Wednesday"
 week: 4
-topic: "Context Engineering — Embeddings & RAG; prompt vs retrieve vs fine-tune"
+topic: "Capstone Milestone 2: Presentation, Pitch, Prototype + Mini Demo"
 faculty:
-  main: "Sanjana"
+  main: "Jayasaagar"
   support: "Sandeep"
-reading_time: "14 min"
-tldr: "LLMs don't know your data. Three ways to fix that: better prompts, retrieval (RAG), or fine-tuning. Today we make the *right* choice for the right job, and build a working RAG pipeline over a real document — your college's exam handbook."
-tags: ["embeddings", "rag", "vector-db", "context"]
-software: ["LangChain", "Chroma", "sentence-transformers", "Pinecone", "pgvector"]
+reading_time: "10 min"
+tldr: "Idea-lock day. By end of class your capstone has a 5-slide deck, a 60-second pitch, a clickable prototype, and a 90-second mini demo recorded — so the next ten days are *build*, not *brainstorm*."
+tags: ["capstone", "milestone", "pitch", "prototype"]
+software: ["Langchain", "Chroma", "sentence-transformers", "pinecone", "pgvector"]
 online_tools: ["ChatGPT", "Hugging Face", "Gemini"]
-video: "https://www.youtube.com/embed/T-D1OfcDW1M"
-prompt_of_the_day: "Given this 40-page college exam handbook, answer the student's question in 3 sentences citing the page numbers I retrieved. If the answer isn't in the retrieved context, reply 'Not in handbook' — do NOT use general knowledge. Question: <user query>. Context: <top-k chunks>."
+prompt_of_the_day: "You are a YC partner reviewing my capstone. Here's my problem statement: <one line>. Here's my user: <one line>. Stress-test the pitch: what's the weakest claim, what's the strongest, and what's the one slide I'm missing?"
 tools_hands_on:
-  - { name: "LangChain (Python)", url: "https://www.langchain.com/" }
-  - { name: "Chroma", url: "https://www.trychroma.com/" }
-  - { name: "sentence-transformers", url: "https://www.sbert.net/" }
-  - { name: "Hugging Face", url: "https://huggingface.co/" }
-  - { name: "Gemini API", url: "https://ai.google.dev/" }
+  - { name: "Figma", url: "https://www.figma.com/" }
+  - { name: "Canva", url: "https://www.canva.com/" }
+  - { name: "Gamma", url: "https://gamma.app/" }
 tools_reference:
-  - { name: "Pinecone — What is RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" }
-  - { name: "pgvector", url: "https://github.com/pgvector/pgvector" }
+  - { name: "YC — How to pitch", url: "https://www.ycombinator.com/library/6Z-startup-pitch-deck-template" }
+  - { name: "Heilmeier Catechism", url: "https://www.darpa.mil/about/heilmeier-catechism" }
 resources:
-  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
-  - { title: "Lilian Weng — LLM-powered agents", url: "https://lilianweng.github.io/posts/2023-06-23-agent/" }
-lab: { title: "RAG over your college handbook", url: "https://www.trychroma.com/" }
+  - { title: "Steve Blank — Customer development", url: "https://steveblank.com/category/customer-development/" }
+  - { title: "First Round — Pitch deck teardowns", url: "https://review.firstround.com/" }
+lab: { title: "Ship deck, pitch, prototype, and mini-demo recording", url: "https://gamma.app/" }
 objective:
-  topic: "Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice"
-  tools: ["LangChain", "Chroma", "sentence-transformers", "Gemini"]
-  end_goal: "A working RAG pipeline that ingests a PDF, embeds chunks, and answers questions with citations — refusing to answer when the document doesn't contain the info."
+  topic: "Lock the capstone idea with a deck, a pitch, a clickable prototype, and a mini demo"
+  tools: ["Figma or Canva", "Gamma or Slides", "Loom or QuickTime"]
+  end_goal: "Four artifacts in your repo: 5-slide deck, 60-sec pitch script, clickable prototype URL, 90-sec demo recording."
 ---
 
-You've spent two weeks impressed that ChatGPT *seems* to know everything. Today is the trick behind making it know **your** stuff — your handbook, your codebase, your meeting notes. The pattern is **R**etrieval-**A**ugmented **G**eneration, and once you grok it you stop fine-tuning models you didn't need to.
+> 🚩 **Milestone 2.** Graded checkpoint. By end of class, all four artifacts must be submitted. No idea-lock = no milestone credit.
+
+Three weeks in. You have research, problem statements, and design-thinking artifacts. Today you commit. The goal isn't perfection — it's *legible enough* that a stranger can grasp what you're building in 90 seconds.
 
 ## 🎯 Today's objective
 
-**Topic.** Context Engineering: Embeddings & RAG; prompt vs retrieve vs fine-tune.
+**Topic.** Capstone Milestone 2: Presentation, Pitch, Prototype + Mini Demo.
 
 **By end of class you will have:**
-1. Built a **vector index** of your college's exam handbook (or any PDF you bring).
-2. Run **top-k retrieval** with sentence-transformers + Chroma.
-3. Wired retrieved chunks into a Gemini (or ChatGPT) prompt and gotten cited answers.
-4. A clear rule for when to **prompt**, when to **retrieve**, when to **fine-tune**.
+1. A **5-slide deck**: problem, user, solution, prototype screenshot, ask.
+2. A **60-second pitch** script you can deliver without notes.
+3. A **clickable prototype** (Figma frames or a working stub page) — at least 3 screens connected.
+4. A **90-second mini demo** screen recording walking through the prototype with voice-over.
 
-> *Why this matters.* Most "AI startups" are RAG with a UI. After today you can build that core in one sitting.
+> *Why this matters.* Milestone 3 (next week) is "Workspace Setup and First Deploy." Things you haven't committed to today get rebuilt three times.
 
-## ⏪ Pre-class · ~30 min
+## ⏪ Pre-class · ~25 min
 
-### Setup (required)
+### Setup
 
-- [ ] Python 3.10+, virtualenv, then `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai`
-- [ ] **Gemini API key** (free) — https://aistudio.google.com/apikey
-- [ ] **Hugging Face** account.
-- [ ] One PDF you care about: college exam handbook, hostel rules, your own notes (5–50 pages).
-
-### Primer (~10 min)
-
-- **Read:** Pinecone's *What is RAG* — https://www.pinecone.io/learn/retrieval-augmented-generation/
-- **Watch:** Any 6-min "Embeddings explained visually" video.
+- [ ] Pick the slide tool you'll actually keep using: **Gamma** (AI-first), **Canva** (templates), or plain Google Slides.
+- [ ] Figma free account (for the clickable prototype).
+- [ ] Loom / QuickTime / OBS for the 90-second screen recording.
 
 ### Bring to class
 
-- [ ] Three real questions about your PDF that the LLM *shouldn't* be able to answer without it.
+- [ ] Your Day-7 problem statement, Day-9 interview notes, Day-10 systems diagram.
+- [ ] One sentence: *"My capstone helps ___ do ___ so they can ___."*
 
-> 🧠 **Quick glossary.** **Embedding** = a vector (list of numbers) representing meaning. **Vector DB** = stores embeddings, finds nearest neighbours fast. **Chunk** = a slice of source text (e.g., 500 tokens). **Top-k** = retrieve the k most similar chunks to a query. **RAG** = retrieve relevant chunks → stuff into prompt → LLM answers using them. **Fine-tune** = adjust the model's weights with new data (expensive, last resort).
+> 🧠 **Quick glossary.** **Deck** = the slides. **Pitch** = the words you say. **Prototype** = the thing they click. **Demo** = the recording of the thing working. Four artifacts, one story.
 
 ## 🎥 In-class · live session
 
@@ -73,101 +67,68 @@ You've spent two weeks impressed that ChatGPT *seems* to know everything. Today 
 
 | Block | Time | What |
 |---|---|---|
-| Three ways to inject knowledge | 15 min | Prompt vs RAG vs fine-tune decision tree |
-| Embeddings, visualised | 10 min | "King − man + woman = queen" + a 2D plot |
-| Live build: ingest → embed → query | 25 min | LangChain + Chroma + sentence-transformers |
-| Wire to Gemini with citations | 10 min | Prompt template + refusal behaviour |
-| Poll + Q&A | 10 min |   |
+| Milestone 2 frame | 10 min | What "idea lock" means |
+| 5-slide deck teardowns | 15 min | Jayasaagar tears down two volunteer decks |
+| Pitch structure | 10 min | The 60-second cold open |
+| Lab | 45 min | You ship all four artifacts |
+| Show round | 10 min | Three random students present |
 
-### Decision tree
+### The 5-slide deck
 
-| Need | Use |
-|---|---|
-| Change tone/format of answers | **Prompt** |
-| Add facts the model didn't see in training | **Retrieve (RAG)** |
-| Bake a new skill / domain style deeply | **Fine-tune** |
-| Need fresh info that changes daily | **Retrieve** |
-| Have only 50 examples | Prompt → RAG. *Not* fine-tune. |
+1. **Problem** — one sentence + one statistic. No "in today's world."
+2. **User** — one person, by name and role. *"Priya, 3rd-year CSE, fails 1 backlog/sem because reval forms are paper-only."*
+3. **Solution** — one screenshot of your prototype + one sentence claim.
+4. **Demo** — embed your 90-sec recording or a GIF that loops.
+5. **Ask** — what you need from the cohort to ship Demo Day: testers, a co-founder, a domain expert.
 
-### Why retrieve before you fine-tune
+### The 60-second pitch shape
 
-- Cheaper. Faster. Updatable in seconds (just re-index).
-- No model drift, no training infra, no leaked data risk.
-- Works with *any* base model. Swap GPT for Gemini in one line.
+- 0:00–0:15 — cold open with a story or stat. *"68 hours. That's how long my friend waited for a reval form last semester."*
+- 0:15–0:35 — problem + user.
+- 0:35–0:50 — your solution + the single most surprising thing about it.
+- 0:50–1:00 — the ask. Make it concrete.
 
-## 🧪 Lab: RAG over your handbook
+## 🧪 Lab: Ship the four
 
-```python
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-import google.generativeai as genai, os
+1. **Deck (15 min).** Open Gamma → "Generate from prompt" → paste your one-sentence problem. Edit the 5 slides ruthlessly. Export as PDF.
+2. **Pitch (10 min).** Write the 60-second script *as you'd say it*. Read out loud. Cut 20%.
+3. **Prototype (15 min).** In Figma: 3 frames minimum (home → core action → result). Connect them with prototype links. Share the link.
+4. **Mini demo (10 min).** Loom or QuickTime. Open your prototype, talk through the 3 frames as if presenting. 90 seconds. Re-record once.
 
-# 1. Load + chunk
-docs = PyPDFLoader("handbook.pdf").load()
-chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(docs)
-
-# 2. Embed + index
-emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-db = Chroma.from_documents(chunks, emb, persist_directory="./store")
-
-# 3. Retrieve
-q = "What is the re-evaluation deadline for end-sem papers?"
-hits = db.similarity_search(q, k=3)
-context = "\n---\n".join(f"[p.{h.metadata.get('page')}] {h.page_content}" for h in hits)
-
-# 4. Generate with citations
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
-prompt = f"""Answer in 3 sentences citing page numbers from the context.
-If the answer isn't in the context, reply exactly 'Not in handbook'.
-Context:\n{context}\n\nQuestion: {q}"""
-print(model.generate_content(prompt).text)
-```
-
-1. Drop your PDF in the working directory as `handbook.pdf`.
-2. Run the script. Confirm citations.
-3. Ask one of your three pre-class questions. Confirm it cites pages.
-4. Ask a question whose answer is *not* in the PDF (e.g., "Who won IPL 2024?"). Confirm the model says **"Not in handbook."**
-5. Increase `k` from 3 to 8. Does the answer change? Why?
-
-**Artifact.** A GitHub gist with: your script, your 3 questions, the model's answers, and one paragraph on what surprised you.
+**Artifact.** Push all four to your capstone repo: `deck.pdf`, `pitch.md`, `prototype-url.txt`, `demo.mp4` (or Loom link).
 
 ## 📊 Live poll
 
-**For *your* capstone, the right tool is:** Better prompt only / RAG / Fine-tune / Mix of prompt + RAG / Don't know yet.
+**Which artifact was hardest?** Deck / Pitch / Prototype / Demo recording. Used to calibrate the rest of the week.
 
 ## 💬 Discuss
 
-- Embeddings put "Bengaluru" close to "Mumbai" but far from "samosa". Why does that property make retrieval work?
-- Your retrieval returned 3 chunks. One was irrelevant. What knobs would you turn first — chunk size, k, embedding model, or query rewriting?
-- Where would Pinecone or pgvector beat Chroma in production?
+- One claim in your pitch you're not sure you can defend. Name it.
+- The weakest slide in your deck. Why is it weak — missing user, missing number, missing demo?
+- One person you'd cold-DM tomorrow with your prototype link.
 
 ## ❓ Quiz
 
-Short quiz on embedding intuition, top-k retrieval, and the prompt/retrieve/fine-tune choice. Open it on your dashboard.
+Short class quiz on the 5-slide structure, pitch arc, and what counts as a "clickable" prototype. Open from your dashboard.
 
-## 📝 Assignment · RAG over your own corpus
+## 📝 Assignment · Milestone 2 submission
 
-**Brief.** Pick a corpus that matters to you — your notes for one subject, 10 of your college's announcement PDFs, your hostel's mess menu archive. Build a tiny RAG pipeline. Demonstrate **3 questions answered correctly with citations** and **1 question correctly refused**.
+**Brief.** Submit all four artifacts in one dashboard form. Include a 50-word note: *"What this milestone forced me to cut, and why."*
 
-**Submit.** GitHub gist or repo + a 90-second Loom showing the 4 questions on the dashboard.
+**Submit.** Dashboard → Day 19 → 4 links + note.
 
-**Rubric.** Pipeline runs end-to-end (4) · Citations are correct page/chunk (3) · Refusal behaviour works on out-of-corpus questions (3).
+**Rubric.** Deck story holds together (4) · Pitch lands the problem in 60s (3) · Prototype actually clicks through 3 screens (2) · Demo recording plays cleanly (1).
 
 ## 🔁 Prep for next class
 
-Day 20 deepens this into **production-grade context engineering** (longer-context tricks, hybrid search, reranking).
+Day 20 — **Deployment with Vercel and Supabase (OpenCode).** Your prototype graduates from a Figma link to a real URL.
 
-- [ ] Skim Lilian Weng's *Agents* post — https://lilianweng.github.io/posts/2023-06-23-agent/
-- [ ] Keep your Day-19 vector store on disk — we'll iterate on it.
-- [ ] Bring one *failure case* from today's lab where retrieval got the wrong chunks. We'll debug live.
+- [ ] Install Node.js 20+, Python 3.11+, Git. Run `node -v && python --version && git --version`.
+- [ ] Create accounts on Vercel and Supabase with your college email.
+- [ ] Pick the smallest possible slice of your capstone that could be a real webpage by tomorrow.
 
 ## 📚 References
 
-- [Pinecone — What is RAG](https://www.pinecone.io/learn/retrieval-augmented-generation/) — clearest 10-min read.
-- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/)
-- [pgvector](https://github.com/pgvector/pgvector) — when you outgrow Chroma and want it inside Postgres/Supabase.
-- [Hugging Face — sentence-transformers](https://www.sbert.net/)
-- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the "embeddings as meaning" intuition.
+- [YC — Pitch deck template](https://www.ycombinator.com/library/6Z-startup-pitch-deck-template) — the 10-slide canon; we use 5.
+- [Heilmeier Catechism](https://www.darpa.mil/about/heilmeier-catechism) — the questions every pitch must answer.
+- [First Round — Pitch deck teardowns](https://review.firstround.com/) — see what good decks look like.

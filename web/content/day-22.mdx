@@ -1,69 +1,69 @@
 ---
 day: 22
-date: "2026-06-01"
-weekday: "Monday"
-week: 5
-topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agentic System"
+date: "2026-05-30"
+weekday: "Saturday"
+week: 4
+topic: "Data Visualization"
 faculty:
-  main: "Sandeep"
-  support: "Harshith"
-reading_time: "12 min"
-tldr: "An LLM that just chats is a calculator. An LLM with tools, memory, and a graph of decisions is an agent. Today you build a ReAct agent in LangGraph, give it two tools, and watch it loop until it's done."
-tags: ["agents", "langgraph", "mcp", "react"]
-software: ["LangChain", "LangGraph", "CrewAI"]
+  main: "Jayasaagar"
+  support: "Aparna"
+reading_time: "10 min"
+tldr: "A dashboard is a sentence in numbers. Today you take one slice of your capstone's data and turn it into three charts a stranger can read in 10 seconds — one for users, one for ops, one for the pitch deck."
+tags: ["dataviz", "charts", "dashboards", "design"]
+software: []
 online_tools: []
-video: "https://www.youtube.com/embed/aHCDrAbH_go"
-prompt_of_the_day: "Build me a ReAct agent in LangGraph with two tools: web_search and calculator. Question to answer: 'What was the GDP per capita of India in the latest IMF data, and how many times has it grown since 2000?' Show the trace."
+prompt_of_the_day: "You are an Edward-Tufte-disciplined data designer. Given this CSV: <paste>, propose three chart types — one for end users, one for ops, one for a pitch deck. For each, name the chart, the encoding (x, y, color, size), and the one number it makes obvious."
 tools_hands_on:
-  - { name: "LangGraph", url: "https://langchain-ai.github.io/langgraph/" }
-  - { name: "LangChain", url: "https://python.langchain.com/" }
-  - { name: "CrewAI", url: "https://www.crewai.com/" }
-  - { name: "Model Context Protocol", url: "https://modelcontextprotocol.io/" }
+  - { name: "Observable Plot", url: "https://observablehq.com/plot" }
+  - { name: "Recharts", url: "https://recharts.org/" }
+  - { name: "Plotly", url: "https://plotly.com/" }
+  - { name: "Datawrapper", url: "https://www.datawrapper.de/" }
 tools_reference:
-  - { name: "ReAct paper (Yao et al.)", url: "https://arxiv.org/abs/2210.03629" }
-  - { name: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents" }
+  - { name: "From Data to Viz — chart picker", url: "https://www.data-to-viz.com/" }
+  - { name: "Vega-Lite gallery", url: "https://vega.github.io/vega-lite/examples/" }
 resources:
-  - { title: "LangGraph quickstart", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
-  - { title: "MCP servers list", url: "https://github.com/modelcontextprotocol/servers" }
-lab: { title: "Two-tool ReAct agent in LangGraph", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
+  - { title: "Edward Tufte — Visual Display", url: "https://www.edwardtufte.com/tufte/books_vdqi" }
+  - { title: "Cole Knaflic — Storytelling with Data", url: "https://www.storytellingwithdata.com/" }
+  - { title: "Datawrapper — chart-type guide", url: "https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/" }
+lab: { title: "Three charts from one slice of your capstone's data", url: "https://observablehq.com/plot" }
 objective:
-  topic: "Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems"
-  tools: ["LangGraph", "LangChain", "CrewAI", "MCP"]
-  end_goal: "A working ReAct agent in 60 lines of Python that uses two tools and prints its reasoning trace, plus a sketch of a 2-agent CrewAI team."
+  topic: "Pick the right chart and ship three readable visuals from real capstone data"
+  tools: ["Observable Plot or Recharts", "Datawrapper", "Plotly"]
+  end_goal: "Three charts published in your capstone repo: one user-facing, one ops-facing, one deck-ready. Each readable in under 10 seconds."
 ---
 
-A chatbot answers. An agent **acts**. The difference is a loop, a set of tools, and a controller that decides what to do next. Today we open that loop.
+By now your capstone has *some* data — even if it's 12 rows from your own test usage. Today you make it readable. Data visualization isn't about D3.js — it's about picking the chart that makes the answer obvious.
 
 ## 🎯 Today's objective
 
-**Topic.** Agentic AI: ReAct agents, tool use, LangGraph, MCP, Multi-Agent Systems.
+**Topic.** Data Visualization — chart picking, encoding, and design for three audiences.
 
 **By end of class you will have:**
-1. A working ReAct agent in LangGraph with two tools, running locally.
-2. Read its full *Thought → Action → Observation* trace and explained one step.
-3. A 2-agent CrewAI sketch (researcher + writer) and a one-paragraph note on when MCP beats a custom tool.
+1. **Three charts** built from your capstone data: user, ops, deck.
+2. A clear answer for each: *"What's the one question this chart answers?"*
+3. One chart embedded live in your capstone URL.
 
-> *Why this matters.* Half the capstone projects this cohort will pitch agents. Knowing the wiring under "I built an agent" separates demos from toys.
+> *Why this matters.* Demo Day judges decide in 7 seconds whether your deck is worth reading. A clear chart buys those 7 seconds. A bad chart loses them.
 
-## ⏪ Pre-class · ~25 min
+## ⏪ Pre-class · ~20 min
 
-### Setup (required)
+### Setup
 
-- [ ] Python venv with `pip install langchain langgraph langchain-openai crewai`.
-- [ ] OpenAI **or** Anthropic API key in `.env`. Confirm with a 2-line `chat.invoke("hi")`.
-- [ ] Optional: install Claude Desktop and try one MCP server (filesystem).
+- [ ] Free **Observable** account (for Plot) OR your Next.js capstone with **Recharts** installed.
+- [ ] Free **Datawrapper** account (for the pitch chart — no code).
+- [ ] One CSV from your capstone: 50–500 rows is fine. If you have nothing, export your dashboard's analytics page.
 
-### Primer (~10 min)
+### Primer
 
-- **Watch:** "What is LangGraph?" — https://www.youtube.com/watch?v=aHCDrAbH_go (8 min).
-- **Read:** Anthropic's *Building effective agents* — skim "Workflows vs agents" and "When to use agents."
-- **Skim:** the ReAct paper abstract + Figure 1 (Yao et al.). You don't need the math.
+- **Read (10 min):** Datawrapper's chart-type guide. Pay attention to "compare", "show change", "show distribution", "show parts of a whole".
+- **Skim:** the Observable Plot examples gallery.
 
 ### Bring to class
 
-- [ ] One *agent-shaped problem* from your capstone. Not "summarise text" — that's a pipeline. Try "find me the cheapest train Bangalore→Hyderabad next Friday and book a placeholder."
+- [ ] Your CSV.
+- [ ] One sentence for each audience: *"User wants to know ___. Ops wants to know ___. Investor wants to know ___."*
 
-> 🧠 **Quick glossary.** **ReAct** = Reason + Act loop. **Tool** = a function the LLM can call. **LangGraph** = library for building stateful agent graphs. **MCP** = Model Context Protocol — a standard way to plug tools into any agent. **CrewAI** = multi-agent orchestration with role-playing.
+> 🧠 **Quick glossary.** **Encoding** = mapping data fields to visual properties (x, y, color, size). **Marks** = bars, dots, lines. **Channels** = position > length > color > size in human accuracy. **Chartjunk** = decoration that doesn't carry information.
 
 ## 🎥 In-class · live session
 
@@ -71,79 +71,82 @@ A chatbot answers. An agent **acts**. The difference is a loop, a set of tools, 
 
 | Block | Time | What |
 |---|---|---|
-| Chatbot vs workflow vs agent | 10 min | Where each fits |
-| ReAct loop, drawn on the whiteboard | 10 min | Thought → Action → Observation |
-| Live build: LangGraph agent | 20 min | 60 lines, two tools |
-| MCP demo + multi-agent sketch | 10 min | Why MCP, when to use Crew |
-| Lab + Q&A | 5 min |  |
+| Why most charts lie | 10 min | Truncated axes, dual y, pie-chart sins |
+| The chart-picker decision tree | 15 min | Compare / change / distribution / parts |
+| Three audiences, three charts | 10 min | What user, ops, investor each need |
+| Lab | 30 min | You build all three |
+| Critique round | 15 min | We tear apart 3 volunteer charts |
 
-### The minimum agent
+### The chart-picker shortlist
 
-```
-loop:
-  thought  = LLM(state)         # "I need the latest GDP figure"
-  action   = pick_tool(thought) # web_search("India GDP per capita 2025")
-  observe  = run_tool(action)   # "$2,710 per IMF April 2025"
-  state    = state + observe
-  if LLM says "done": break
-```
+| Question | Chart |
+|---|---|
+| Compare across categories | **Bar** (horizontal if labels are long) |
+| Change over time | **Line** (or area if cumulative) |
+| Distribution of one variable | **Histogram** or **box plot** |
+| Relationship between two | **Scatter** (add color for third) |
+| Parts of a whole | **Stacked bar** (skip pies above 4 slices) |
+| Geographic | **Map** with choropleth or symbols |
 
-That's it. Everything else — LangGraph, CrewAI, AutoGen — is sugar on this loop.
+### Three audiences, three encodings
 
-### When to reach for what
+- **User chart** — in-product. Single number + a trend. They want *"is this up or down?"*
+- **Ops chart** — internal dashboard. Multiple series. They want *"where's the anomaly?"*
+- **Deck chart** — for the pitch. One bold encoding. They want *"the headline."*
 
-- **One LLM call** — classification, summary. Don't build an agent.
-- **Fixed pipeline (workflow)** — LangChain chain. Predictable, cheap, debuggable.
-- **Agent (LangGraph)** — when the *path* depends on intermediate results.
-- **Multi-agent (CrewAI)** — when roles are genuinely different and parallel: researcher + critic + writer.
-- **MCP** — when the *same* tool needs to plug into Claude Desktop, Cursor, your custom agent, all at once.
+### Five sins to never commit
 
-## 🧪 Lab: Two-tool ReAct agent
+1. Truncated y-axis on bars (lies about magnitude).
+2. Dual y-axes (humans can't read them).
+3. 3-D pie charts (every angle lies differently).
+4. Rainbow color scales (perceptually nonlinear).
+5. Tiny labels on a 4K dashboard (test on your phone).
 
-1. New file `agent.py`. Define two `@tool`s: `web_search(query)` (use Tavily or DuckDuckGo) and `calculator(expression)`.
-2. Build a LangGraph `StateGraph` with one node `agent` (the LLM) and one node `tools` (the tool runner). Edges: `agent → tools → agent` until `END`.
-3. Run with the prompt of the day. Print every `(thought, action, observation)` triple.
-4. Break it on purpose: ask a question requiring **three** tool calls. Watch the loop hold up.
+## 🧪 Lab: Three charts, one CSV
 
-**Artifact.** `agent.py` + a copy-pasted trace in your repo at `/labs/day-22/`. Push.
+1. **Pick** your CSV. Identify the 1–2 fields that matter most.
+2. **User chart (10 min).** In Recharts (if web) or Observable Plot (if data-only): one number + a small trend line. Embed it in your capstone.
+3. **Ops chart (10 min).** Multi-series time chart or anomaly callout. Stays in your `/admin` or notebook.
+4. **Deck chart (10 min).** Datawrapper. One bold headline. Export as PNG. Replace the chart on your Day-19 deck's "user" slide.
+5. **Critique** (peer pairs, 5 min each): your partner names the one question your chart answers. If they can't say it in one sentence, redo.
 
-> ⚠️ **Cost watch.** Each loop costs ~₹1–4. Cap with `recursion_limit=10` so a runaway agent doesn't burn your credits.
+**Artifact.** Three chart screenshots + one paragraph each — *"What this chart makes obvious"* — in `viz.md` in your repo.
+
+> ⚠️ **Don't show three charts to the same audience.** Each one is for a different person.
 
 ## 📊 Live poll
 
-**Where does your capstone need an agent (vs a workflow)?** Auth/forms / Search-and-summarise / Multi-step reasoning / Booking-style flows / *Honestly, nowhere.*
+**Which chart was hardest to design?** User / Ops / Deck. Drives the post-lab discussion.
 
 ## 💬 Discuss
 
-- A workflow is cheaper and more reliable. When is the agent's flexibility worth the extra cost?
-- Your capstone uses Razorpay. Should that be an MCP server or a hand-coded tool? Argue both sides.
-- Two agents (researcher + writer) vs one agent with two tools — what changes?
+- A famous chart that misled you (gas prices, COVID curves, stock graphs). What was the sin?
+- One chart from a competitor's marketing site you'd steal the *form* of (not the data). Why does it work?
+- Where would a single big number beat any chart?
 
 ## ❓ Quiz
 
-Short quiz on the ReAct loop, when MCP beats custom tools, and what `recursion_limit` does. Open on the dashboard mid-class.
+Short class quiz on chart picking, encoding accuracy, and which sin shows up most in college projects. Open from your dashboard.
 
-## 📝 Assignment · Your first agent
+## 📝 Assignment · Embed one chart live
 
-**Brief.** Submit your `agent.py` plus a 150-word note: *what the agent did well, where it failed, what it cost in tokens.*
+**Brief.** Pick the user-facing chart from today. Embed it live on your deployed capstone URL (Day 20). Push the commit. Submit the URL + one screenshot.
 
-**Stretch (optional).** Convert one of your tools into an MCP server (e.g., filesystem read) and call it from Claude Desktop or Cursor. +2 bonus points if you push the server config + a screenshot.
+**Submit.** Dashboard → Day 22 → URL + screenshot + `viz.md` link.
 
-**Submit.** GitHub link + note on the dashboard before Day 23.
-
-**Rubric.** Tools wired and called correctly (4) · Trace is readable, with thoughts visible (4) · Honest reflection on failures + cost (2).
+**Rubric.** Chart embedded and rendering live (4) · Right chart for the question (4) · No sin from the list (2).
 
 ## 🔁 Prep for next class
 
-Day 23 is **Cost Estimation of AI** — tokens, knowledge graphs, Neo Cloud GPUs.
+Day 23 — **Adding a Chatbot to your application: Streaming, Guardrails, User & System Prompts.** Your capstone gets a face that talks back.
 
-- [ ] Save the *exact* token count from today's agent run. We'll cost it out tomorrow.
-- [ ] Read OpenAI's pricing page and Anthropic's pricing page. Note the gap.
-- [ ] Bring one capstone feature you're worried will be expensive at scale.
+- [ ] In your repo, scope where a chatbot would *actually* belong (a help corner? a query box? a side panel?).
+- [ ] Draft your system prompt in plain English: persona, scope, refusal rules. 5–10 lines.
+- [ ] Pick a model: Claude Haiku, Gemini Flash, or GPT-4o-mini — whichever has free credits left.
 
 ## 📚 References
 
-- [LangGraph quickstart](https://langchain-ai.github.io/langgraph/tutorials/introduction/) — the canonical tutorial.
-- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents) — the post that reset this field.
-- [ReAct paper (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) — the original loop.
-- [MCP servers](https://github.com/modelcontextprotocol/servers) — 100+ ready-to-use tools.
+- [From Data to Viz](https://www.data-to-viz.com/) — the chart picker that ends arguments.
+- [Datawrapper chart-type guide](https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/) — clearest 10-min read.
+- [Storytelling with Data](https://www.storytellingwithdata.com/) — Cole Knaflic, beginner-friendly.
+- [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi) — the original argument for data-ink.

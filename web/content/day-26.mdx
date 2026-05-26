@@ -1,72 +1,68 @@
 ---
 day: 26
-date: "2026-06-05"
-weekday: "Friday"
+date: "2026-06-04"
+weekday: "Thursday"
 week: 5
-topic: "Capstone Milestone 5: Add agentic frameworks and a chatbot to your project"
+topic: "Context Engineering: CLAUDE.MD, AGENTS.MD Rules and Skills"
 faculty:
-  main: "Sandeep"
-  support: "Harshith"
+  main: "Sanjana"
+  support: "Raunak"
 reading_time: "10 min"
-tldr: "Your capstone gets a brain and a face today. Wire one agent loop (LangGraph or CrewAI) into your existing project, then bolt on a chatbot UI so a non-technical user can drive it. Ship by midnight."
-tags: ["capstone", "agents", "chatbot", "milestone"]
-software: ["Python 3.10+", "Node 20+ (optional for UI)"]
-online_tools: ["LangGraph", "CrewAI", "Streamlit", "Chainlit"]
-video: "https://www.youtube.com/embed/aHCDrAbH_go"
-prompt_of_the_day: "You are an agent designer. My capstone is <one-line description>. Propose a 3-node agent graph (planner → tool-caller → reflector) with the exact tools each node needs and the stop condition."
+tldr: "Stop re-explaining your project to the AI every time. In **Antigravity** (primary) you write a CLAUDE.md, an AGENTS.md, a Cursor rule if you use optional Cursor, and a tiny Skill — and watch the same model behave like it's been on your team for a year."
+tags: ["context-engineering", "tooling", "claude", "cursor"]
+software: ["OpenEvals", "Galileo", "LangSmith", "Ollama"]
+online_tools: []
+video: "https://www.youtube.com/embed/eBVi_sLaYsc"
+prompt_of_the_day: "Read CLAUDE.md and AGENTS.md before doing anything. Then add a /health endpoint to our Express app following the conventions you find there. List the conventions you used."
 tools_hands_on:
-  - { name: "LangGraph", url: "https://langchain-ai.github.io/langgraph/" }
-  - { name: "CrewAI", url: "https://docs.crewai.com/" }
-  - { name: "Chainlit", url: "https://docs.chainlit.io/" }
-  - { name: "Streamlit chat", url: "https://docs.streamlit.io/develop/api-reference/chat" }
+  - { name: "Antigravity (Google)", url: "https://antigravity.google/" }
+  - { name: "Cursor (optional)", url: "https://cursor.com/" }
+  - { name: "Claude (web)", url: "https://claude.ai/" }
 tools_reference:
-  - { name: "LangChain — Agents overview", url: "https://python.langchain.com/docs/concepts/agents/" }
-  - { name: "Anthropic — Building effective agents", url: "https://www.anthropic.com/research/building-effective-agents" }
+  - { name: "Anthropic — Claude Code best practices", url: "https://www.anthropic.com/engineering/claude-code-best-practices" }
+  - { name: "Cursor Rules docs", url: "https://docs.cursor.com/context/rules" }
 resources:
-  - { title: "LangGraph quickstart", url: "https://langchain-ai.github.io/langgraph/tutorials/introduction/" }
-  - { title: "CrewAI examples repo", url: "https://github.com/crewAIInc/crewAI-examples" }
-  - { title: "Chainlit cookbook", url: "https://github.com/Chainlit/cookbook" }
-lab: { title: "Wrap your capstone in an agent + chat UI", url: "https://langchain-ai.github.io/langgraph/" }
+  - { title: "agents.md spec", url: "https://agents.md/" }
+  - { title: "Anthropic Skills overview", url: "https://docs.anthropic.com/en/docs/agents/skills" }
+lab: { title: "Wire up CLAUDE.md, AGENTS.md, a Cursor rule, and a Skill", url: "https://cursor.com/" }
 objective:
-  topic: "Add an agent loop and a chatbot front-end to your capstone"
-  tools: ["LangGraph or CrewAI", "Chainlit or Streamlit"]
-  end_goal: "A running chatbot that calls your capstone's tools through an agent graph and answers a real user task end-to-end."
+  topic: "Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills"
+  tools: ["Antigravity", "Cursor (optional)", "Claude"]
+  end_goal: "A repo where any agent — Claude Code, Cursor, Antigravity — picks up your conventions on the first turn, with no hand-holding."
 ---
 
-Milestone 5 is the one that flips your capstone from "script with prompts" into "thing a stranger can use." Today you give it an agent loop and a face.
-
-> 🏁 **Milestone 5 callout.** By tonight you must demo: (1) one agent graph with ≥2 tools, (2) a chatbot UI a non-coder can open and use, (3) one full task completed without you touching the code. Submit a 60-second screen-recording on the dashboard.
+By Day 26 you've written enough AI-assisted code to feel the tax: every new chat starts dumb. Today we fix that. Context engineering is the discipline of writing *for the model that will read your repo tomorrow*.
 
 ## 🎯 Today's objective
 
-**Topic.** Add agentic frameworks and a chatbot to your project.
+**Topic.** Context Engineering: CLAUDE.md, AGENTS.md, Rules and Skills.
 
 **By end of class you will have:**
-1. Picked LangGraph **or** CrewAI (not both) and rewired one workflow from your capstone into an agent loop.
-2. Exposed at least two of your capstone's functions as **tools** the agent can call.
-3. Shipped a Chainlit or Streamlit chat UI with your project URL pasted into the cohort channel.
+1. A working `CLAUDE.md` and `AGENTS.md` in your capstone repo, each under 60 lines, no fluff.
+2. One Cursor rule (`.cursor/rules/*.mdc`) that auto-applies when you edit a specific folder.
+3. One reusable Skill (a `SKILL.md` + helper file) that survives across chats.
 
-> *Why this matters.* Demo Day judges click first, ask later. A working chat box hides 200 lines of glue.
+> *Why this matters.* Tomorrow you ship the audio/video pitch reel for Demo Day. If your context files are honest, the agent stops asking "where does auth live?" every turn.
 
 ## ⏪ Pre-class · ~25 min
 
-### Setup
+### Setup (required)
 
-- [ ] `pip install langgraph langchain-openai chainlit` (or `crewai crewai-tools streamlit`).
-- [ ] Capstone repo on `main` with Milestone 4 merged.
-- [ ] One API key working in `.env` — OpenAI, Anthropic, or Groq.
+- [ ] **Antigravity** installed and signed in (primary). **Cursor** only if you want the optional second editor and `.cursor/` rules in-tree.
+- [ ] Your capstone repo cloned locally with at least 3 files of real code in it.
+- [ ] Claude.ai tab open for cross-checking your context files.
 
-### Primer
+### Primer (~10 min)
 
-- **Watch:** "Building effective agents" walkthrough — https://www.youtube.com/watch?v=aHCDrAbH_go
-- **Skim:** Anthropic's *Building effective agents* — pay attention to the "agent vs workflow" distinction.
+- **Watch:** "Claude Code in 30 minutes" — https://www.youtube.com/watch?v=eBVi_sLaYsc — focus on the CLAUDE.md section.
+- **Read:** the agents.md homepage (5 min). Notice how short the spec is.
+- **Skim:** Cursor Rules docs — the `alwaysApply` vs `globs` vs `manual` distinction.
 
 ### Bring to class
 
-- [ ] One sentence: *"The user types ___, my agent does ___ ___ ___, returns ___."*
-- [ ] List of every function in your capstone that takes inputs and returns something — these become tools.
+- [ ] One sentence: *"The thing the AI keeps getting wrong about my project is ___."* That sentence is the first line of your CLAUDE.md.
 
-> 🧠 **Quick glossary.** **Agent** = LLM in a loop with tools. **Tool** = a Python function the LLM can call by name. **Graph** = nodes (LLM/tool/router) + edges (who calls whom). **State** = the dict that flows through the graph.
+> 🧠 **Quick glossary.** **CLAUDE.md** = repo memory that Claude Code auto-reads. **AGENTS.md** = vendor-neutral version, same idea. **Rule** = Cursor's per-folder/per-glob context. **Skill** = packaged instructions + scripts an agent can invoke by name.
 
 ## 🎥 In-class · live session
 
@@ -74,71 +70,73 @@ Milestone 5 is the one that flips your capstone from "script with prompts" into 
 
 | Block | Time | What |
 |---|---|---|
-| LangGraph vs CrewAI — pick one | 10 min | Decision tree, no holy war |
-| Live build: planner → tool → reflect | 25 min | One graph, three nodes |
-| Chatbot UI in 15 lines | 15 min | Chainlit live demo |
-| Pair debug: stuck loops, infinite recursion | 10 min |  |
+| Why every new chat is dumb | 10 min | The repeating-yourself tax |
+| CLAUDE.md vs AGENTS.md vs Rules vs Skills | 15 min | Where each one fits |
+| Live edit: Harshith's repo | 15 min | Watch the file shrink as it gets sharper |
+| Lab | 15 min | You write yours |
+| Show + tear-down | 5 min |  |
 
-### LangGraph vs CrewAI — quick call
+### The four layers, plain
 
-- **LangGraph** if you want explicit control of the graph, easier to debug, better for one-user tools.
-- **CrewAI** if your capstone is naturally multi-agent (researcher + writer + reviewer) and you want roles, not nodes.
-- Both are fine. Don't waste 40 minutes choosing.
+1. **CLAUDE.md / AGENTS.md** — *what this repo is + non-obvious conventions*. Lives at repo root. Read every turn.
+2. **Sub-CLAUDE.md** — folder-scoped overrides. Useful for `/migrations` or `/edge-functions`.
+3. **Cursor rules** — IDE-specific, glob-triggered. Best for "when editing `*.tsx`, prefer Server Components."
+4. **Skills** — invoked by name. Best for repeated workflows: `/graphify`, `/security-review`.
 
-### The 3-node pattern that always works
+### Rules of thumb
 
-1. **Planner** — LLM call that decomposes the user message into 1–3 sub-tasks.
-2. **Tool-caller** — picks a tool, executes, appends result to state.
-3. **Reflector** — checks if done; either loops back or returns final answer.
+- **Write what's not obvious.** "Use TypeScript" is noise. "Filter submissions via `assignments!inner(cohort_id)` — there is no direct `cohort_id`" is gold.
+- **One file, one job.** If CLAUDE.md is doing five things, split it.
+- **Delete more than you add.** Every line costs tokens on every turn.
 
-Stop condition: max 6 iterations OR `state.done == True`. Always cap iterations.
+## 🧪 Lab: Wire your repo for agents
 
-## 🧪 Lab: Wrap your capstone
+In your capstone repo:
 
-1. Identify 2 functions in your capstone (e.g., `fetch_data`, `summarise`, `query_pdf`). Decorate them as tools.
-2. Build the 3-node graph above. Pass your tool list to the tool-caller node.
-3. Run from CLI first: one user query, see the trace, fix the obvious break.
-4. Wrap in Chainlit: `@cl.on_message async def main(msg): await cl.Message(await graph.ainvoke(&#123;"input": msg.content&#125;)).send()`
-5. Run `chainlit run app.py` and DM the URL (or screen-recording) to your pod.
+1. Create `CLAUDE.md` at the root. Sections: *What this is* (2 lines), *Key surfaces* (file map), *Non-obvious architecture* (the gotchas), *Conventions*. Cap at 60 lines.
+2. Create `AGENTS.md` — copy CLAUDE.md, strip Anthropic-specific bits, point both at the same content if identical.
+3. Create `.cursor/rules/styling.mdc` with `globs: ["**/*.tsx", "**/*.css"]` and 5 lines of styling rules.
+4. Create `.claude/skills/changelog/SKILL.md` — a tiny skill that, given a git diff, writes one-line changelog entries.
+5. Open a fresh Cursor chat: ask "What does this repo do, and what's one gotcha?" Verify it answers from your file, not from guessing.
 
-**Artifact.** GitHub PR titled `milestone-5: agent + chat` + 60-sec Loom of one full task.
+**Artifact.** Push the four files. Paste the link to your repo + a screenshot of Cursor quoting your CLAUDE.md back, in the cohort channel.
 
-> ⚠️ **Common bug.** Tools that mutate global state cause the graph to re-fire forever. Make tools pure or pass state explicitly.
+> ⚠️ **Tell.** If the model answers correctly *without* citing your files, you wrote noise. Rewrite.
 
 ## 📊 Live poll
 
-**Which framework did you pick — and one reason?** LangGraph / CrewAI / built my own / still deciding. Instructor will pull two voters from each side to defend the choice.
+**Which layer will you actually maintain in 3 months?** CLAUDE.md / AGENTS.md / Cursor rules / Skills / *honestly, none*. We'll discuss the honest answer.
 
 ## 💬 Discuss
 
-- Where did your agent loop infinite? What stop rule fixed it?
-- Which of your capstone functions made *bad* tools — and why?
-- Chat UI changed how you thought about the prompt. How?
-- One thing your agent does that a plain function call can't.
+- What's one convention in your repo that *only you* know? That's your CLAUDE.md line 1.
+- Where does a Cursor rule beat CLAUDE.md, and vice versa?
+- A Skill vs a long prompt — when is each worth it?
 
 ## ❓ Quiz
 
-Short class quiz on agent loops, tools, stop conditions, and the LangGraph vs CrewAI trade-off. Open it from your dashboard when prompted.
+Short quiz on file precedence, glob triggering, and when a Skill beats a rule. Open on your dashboard during class.
 
-## 📝 Assignment · Milestone 5 ship
+## 📝 Assignment · Context that earns its tokens
 
-**Brief.** Submit your PR + Loom by 23:59 IST. Include in the PR description: agent framework, list of tools exposed, and the stop condition you set.
+**Brief.** Submit your repo URL with `CLAUDE.md`, `AGENTS.md`, one rule, one Skill. In a 100-word note, paste **one before/after**: a question the agent got wrong without your context, and got right with it.
 
-**Submit.** Dashboard → Day 26 → upload PR link + Loom URL.
+**Submit.** Repo URL + note on the dashboard before next class.
 
-**Rubric.** Working agent loop with ≥2 tools (4) · Usable chat UI a non-coder can open (4) · Clear stop condition + no runaway loops (2).
+**Rubric.** Specificity of conventions (4) · Before/after evidence (4) · File hygiene — under 60 lines, no fluff (2).
 
 ## 🔁 Prep for next class
 
-Day 27 — **AI ethics, safety, guard-rails, red-teaming**. The chatbot you just built is now an attack surface.
+Day 27 is **Text2Audio, Text2Video** — your capstone gets a 30-second pitch reel.
 
-- [ ] Try one prompt-injection on your own bot. Note what happened.
-- [ ] Read OWASP LLM Top 10 — https://owasp.org/www-project-top-10-for-large-language-model-applications/. Skim, don't memorise.
-- [ ] Bring one screenshot where any public chatbot (Indian or global) gave a clearly unsafe answer.
+- [ ] ElevenLabs free tier account (10k chars/month).
+- [ ] HeyGen free trial (1 minute of video per month).
+- [ ] A 30-second clean voice recording of yourself reading any paragraph — we'll clone it.
+- [ ] A 30-second polished script of your capstone pitch.
 
 ## 📚 References
 
-- [LangGraph quickstart](https://langchain-ai.github.io/langgraph/tutorials/introduction/) — the official 20-minute path.
-- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents) — the essay every team should read.
-- [Chainlit cookbook](https://github.com/Chainlit/cookbook) — copy-paste UIs.
-- [CrewAI examples](https://github.com/crewAIInc/crewAI-examples) — multi-agent patterns.
+- [Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices) — the canonical CLAUDE.md guide.
+- [agents.md](https://agents.md/) — the cross-vendor spec.
+- [Cursor Rules](https://docs.cursor.com/context/rules) — globs, alwaysApply, examples.
+- [Anthropic Skills](https://docs.anthropic.com/en/docs/agents/skills) — when to package vs prompt.

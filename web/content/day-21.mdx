@@ -3,69 +3,69 @@ day: 21
 date: "2026-05-29"
 weekday: "Friday"
 week: 4
-topic: "Capstone Milestone 4: Workspace Setup and First Deploy"
+topic: "Context Engineering: Embeddings & RAG, prompt vs retrieve vs fine-tune"
 faculty:
-  main: "Harshith"
-  support: "Sanjana"
-reading_time: "10 min"
-tldr: "Today your capstone leaves your laptop. Node + Python + Git locally, **Antigravity** open (primary), **Cursor** optional, and a one-page slice live on a vercel.app URL backed by Supabase. Demo Day starts to feel real."
-tags: ["capstone", "milestone", "deploy", "vercel", "supabase"]
-software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor (optional)"]
+  main: "Sanjana"
+  support: "Sandeep"
+reading_time: "14 min"
+tldr: "LLMs don't know your data. Three ways to fix that: better prompts, retrieval (RAG), or fine-tuning. Today we make the *right* choice for the right job, and build a working RAG pipeline over a real document — your college's exam handbook."
+tags: ["embeddings", "rag", "vector-db", "context"]
+software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor"]
 online_tools: ["Vercel", "Supabase"]
-video: "https://www.youtube.com/embed/seVxXHi2YMs"
-prompt_of_the_day: "Walk me through deploying this Next.js app to Vercel with a Supabase backend. Stop at every command and explain what it does and what could go wrong on a Windows laptop."
+video: "https://www.youtube.com/embed/T-D1OfcDW1M"
+prompt_of_the_day: "Given this 40-page college exam handbook, answer the student's question in 3 sentences citing the page numbers I retrieved. If the answer isn't in the retrieved context, reply 'Not in handbook' — do NOT use general knowledge. Question: <user query>. Context: <top-k chunks>."
 tools_hands_on:
-  - { name: "Vercel", url: "https://vercel.com/" }
-  - { name: "Supabase", url: "https://supabase.com/" }
-  - { name: "Antigravity", url: "https://antigravity.google/" }
-  - { name: "Cursor (optional)", url: "https://cursor.com/" }
+  - { name: "LangChain (Python)", url: "https://www.langchain.com/" }
+  - { name: "Chroma", url: "https://www.trychroma.com/" }
+  - { name: "sentence-transformers", url: "https://www.sbert.net/" }
+  - { name: "Hugging Face", url: "https://huggingface.co/" }
+  - { name: "Gemini API", url: "https://ai.google.dev/" }
 tools_reference:
-  - { name: "Vercel — deploy Next.js", url: "https://vercel.com/docs/frameworks/nextjs" }
-  - { name: "Supabase — quickstart", url: "https://supabase.com/docs/guides/getting-started" }
+  - { name: "Pinecone — What is RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" }
+  - { name: "pgvector", url: "https://github.com/pgvector/pgvector" }
 resources:
-  - { title: "GitHub — first repo guide", url: "https://docs.github.com/en/get-started/quickstart/create-a-repo" }
-  - { title: "Vercel + Supabase integration", url: "https://vercel.com/integrations/supabase" }
-lab: { title: "Ship one page to a public URL", url: "https://vercel.com/new" }
+  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
+  - { title: "Lilian Weng — LLM-powered agents", url: "https://lilianweng.github.io/posts/2023-06-23-agent/" }
+lab: { title: "RAG over your college handbook", url: "https://www.trychroma.com/" }
 objective:
-  topic: "Capstone Milestone 4: Workspace Setup and First Deploy"
-  tools: ["Node.js", "Python", "Git", "Vercel", "Supabase", "Antigravity", "Cursor (optional)"]
-  end_goal: "A live `*.vercel.app` URL serving one real page from your capstone, with the repo on GitHub and Supabase wired in."
+  topic: "Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice"
+  tools: ["LangChain", "Chroma", "sentence-transformers", "Gemini"]
+  end_goal: "A working RAG pipeline that ingests a PDF, embeds chunks, and answers questions with citations — refusing to answer when the document doesn't contain the info."
 ---
 
-> 🚩 **Milestone 4.** This is a graded capstone checkpoint. By end of class, your project must have a public URL. No URL = no milestone.
-
-You've prototyped enough. Today the project gets a passport — a public URL anyone in your hostel can open on their phone.
+You've spent two weeks impressed that ChatGPT *seems* to know everything. Today is the trick behind making it know **your** stuff — your handbook, your codebase, your meeting notes. The pattern is **R**etrieval-**A**ugmented **G**eneration, and once you grok it you stop fine-tuning models you didn't need to.
 
 ## 🎯 Today's objective
 
-**Topic.** Capstone Milestone 4: Workspace Setup and First Deploy.
+**Topic.** Context Engineering: Embeddings & RAG; prompt vs retrieve vs fine-tune.
 
 **By end of class you will have:**
-1. Local stack confirmed: `node -v` ≥ 20, `python --version` ≥ 3.11, `git --version` working.
-2. GitHub repo pushed, one Supabase project created, one Vercel deployment green.
-3. A live URL displaying *one* real page of your capstone — even if it's just the hero + a button.
+1. Built a **vector index** of your college's exam handbook (or any PDF you bring).
+2. Run **top-k retrieval** with sentence-transformers + Chroma.
+3. Wired retrieved chunks into a Gemini (or ChatGPT) prompt and gotten cited answers.
+4. A clear rule for when to **prompt**, when to **retrieve**, when to **fine-tune**.
 
-> *Why this matters.* Demo Day is 9 days away. Things that aren't deployed don't get demoed.
+> *Why this matters.* Most "AI startups" are RAG with a UI. After today you can build that core in one sitting.
 
 ## ⏪ Pre-class · ~30 min
 
 ### Setup (required)
 
-- [ ] Install Node.js 20 LTS, Python 3.11, Git. Run `node -v && python --version && git --version` and screenshot.
-- [ ] GitHub account with SSH key OR personal access token saved.
-- [ ] Vercel account (sign in with GitHub).
-- [ ] Supabase account (sign in with GitHub). Create one new project — pick **Mumbai** or **Singapore** region for low latency from India.
+- [ ] Python 3.10+, virtualenv, then `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai`
+- [ ] **Gemini API key** (free) — https://aistudio.google.com/apikey
+- [ ] **Hugging Face** account.
+- [ ] One PDF you care about: college exam handbook, hostel rules, your own notes (5–50 pages).
 
 ### Primer (~10 min)
 
-- **Watch:** "Deploy Next.js to Vercel in 5 min" — https://www.youtube.com/watch?v=seVxXHi2YMs
-- **Read:** Supabase quickstart, the *Project URL* and *anon key* section. Copy both into a `.env.local` template.
+- **Read:** Pinecone's *What is RAG* — https://www.pinecone.io/learn/retrieval-augmented-generation/
+- **Watch:** Any 6-min "Embeddings explained visually" video.
 
 ### Bring to class
 
-- [ ] The smallest deployable slice of your capstone in a folder. If you have nothing, run `npx create-next-app@latest capstone --ts --tailwind --app` before class.
+- [ ] Three real questions about your PDF that the LLM *shouldn't* be able to answer without it.
 
-> 🧠 **Quick glossary.** **Vercel** = hosting that auto-deploys on `git push`. **Supabase** = Postgres + Auth + Storage you can hit from anywhere. **`.env.local`** = secrets file, never commit.
+> 🧠 **Quick glossary.** **Embedding** = a vector (list of numbers) representing meaning. **Vector DB** = stores embeddings, finds nearest neighbours fast. **Chunk** = a slice of source text (e.g., 500 tokens). **Top-k** = retrieve the k most similar chunks to a query. **RAG** = retrieve relevant chunks → stuff into prompt → LLM answers using them. **Fine-tune** = adjust the model's weights with new data (expensive, last resort).
 
 ## 🎥 In-class · live session
 
@@ -73,64 +73,101 @@ You've prototyped enough. Today the project gets a passport — a public URL any
 
 | Block | Time | What |
 |---|---|---|
-| Stack check, room walk | 10 min | Everyone runs the three `-v` commands |
-| GitHub → Vercel pipeline | 15 min | Push triggers deploy |
-| Supabase wiring | 15 min | URL + anon key into `.env.local` and Vercel envs |
-| Lab: ship it | 15 min | Get a live URL |
-| Demo round | 5 min | Three random students share their URLs |
+| Three ways to inject knowledge | 15 min | Prompt vs RAG vs fine-tune decision tree |
+| Embeddings, visualised | 10 min | "King − man + woman = queen" + a 2D plot |
+| Live build: ingest → embed → query | 25 min | LangChain + Chroma + sentence-transformers |
+| Wire to Gemini with citations | 10 min | Prompt template + refusal behaviour |
+| Poll + Q&A | 10 min |   |
 
-### The mental model
+### Decision tree
 
-- **GitHub** holds the truth. **Vercel** mirrors it to a URL. **Supabase** is the database your URL talks to.
-- Every `git push` to `main` redeploys. That's the loop you'll live in for the rest of the workshop.
-- Secrets live in **two** places: your local `.env.local` and Vercel's *Environment Variables* panel. Never in code.
+| Need | Use |
+|---|---|
+| Change tone/format of answers | **Prompt** |
+| Add facts the model didn't see in training | **Retrieve (RAG)** |
+| Bake a new skill / domain style deeply | **Fine-tune** |
+| Need fresh info that changes daily | **Retrieve** |
+| Have only 50 examples | Prompt → RAG. *Not* fine-tune. |
 
-## 🧪 Lab: One page, one URL
+### Why retrieve before you fine-tune
 
-1. `git init && git add . && git commit -m "milestone 4: bootstrap"`. Push to a new GitHub repo.
-2. On vercel.com → **New Project** → import your repo → deploy. Wait for the green check. Open the URL.
-3. On supabase.com → your project → Settings → API. Copy `Project URL` and `anon public` key.
-4. Add both to `.env.local` and to Vercel → Settings → Environment Variables. Redeploy.
-5. Add one Supabase call to your home page (e.g. `select count(*) from auth.users`). Push. Confirm the URL renders without errors.
-6. Drop a screenshot of your live URL on a phone in the cohort channel.
+- Cheaper. Faster. Updatable in seconds (just re-index).
+- No model drift, no training infra, no leaked data risk.
+- Works with *any* base model. Swap GPT for Gemini in one line.
 
-**Artifact.** Public URL + GitHub repo URL pasted on the dashboard. Both must work for a stranger.
+## 🧪 Lab: RAG over your handbook
 
-> ⚠️ **Indian-context gotcha.** Campus Wi-Fi often blocks `vercel.com` CLI auth. If `vercel login` hangs, hotspot from your phone for 60 seconds, then return to campus Wi-Fi.
+```python
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+import google.generativeai as genai, os
+
+# 1. Load + chunk
+docs = PyPDFLoader("handbook.pdf").load()
+chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(docs)
+
+# 2. Embed + index
+emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+db = Chroma.from_documents(chunks, emb, persist_directory="./store")
+
+# 3. Retrieve
+q = "What is the re-evaluation deadline for end-sem papers?"
+hits = db.similarity_search(q, k=3)
+context = "\n---\n".join(f"[p.{h.metadata.get('page')}] {h.page_content}" for h in hits)
+
+# 4. Generate with citations
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+model = genai.GenerativeModel("gemini-2.5-flash")
+prompt = f"""Answer in 3 sentences citing page numbers from the context.
+If the answer isn't in the context, reply exactly 'Not in handbook'.
+Context:\n{context}\n\nQuestion: {q}"""
+print(model.generate_content(prompt).text)
+```
+
+1. Drop your PDF in the working directory as `handbook.pdf`.
+2. Run the script. Confirm citations.
+3. Ask one of your three pre-class questions. Confirm it cites pages.
+4. Ask a question whose answer is *not* in the PDF (e.g., "Who won IPL 2024?"). Confirm the model says **"Not in handbook."**
+5. Increase `k` from 3 to 8. Does the answer change? Why?
+
+**Artifact.** A GitHub gist with: your script, your 3 questions, the model's answers, and one paragraph on what surprised you.
 
 ## 📊 Live poll
 
-**Where did you get stuck?** Node install / Git auth / Vercel deploy / Supabase keys / *I shipped clean*. Honest answer wins a callout.
+**For *your* capstone, the right tool is:** Better prompt only / RAG / Fine-tune / Mix of prompt + RAG / Don't know yet.
 
 ## 💬 Discuss
 
-- What's the *one* feature you want live by Day 25? Defend the scope.
-- Vercel's free tier vs deploying on a college server — when does each make sense?
-- One thing you don't yet trust about Supabase. Bring it up.
+- Embeddings put "Bengaluru" close to "Mumbai" but far from "samosa". Why does that property make retrieval work?
+- Your retrieval returned 3 chunks. One was irrelevant. What knobs would you turn first — chunk size, k, embedding model, or query rewriting?
+- Where would Pinecone or pgvector beat Chroma in production?
 
 ## ❓ Quiz
 
-Short quiz on env-var placement, Vercel build flow, and which file should never be committed. On your dashboard during class.
+Short quiz on embedding intuition, top-k retrieval, and the prompt/retrieve/fine-tune choice. Open it on your dashboard.
 
-## 📝 Assignment · Milestone 4 submission
+## 📝 Assignment · RAG over your own corpus
 
-**Brief.** Submit (a) your live URL, (b) your GitHub repo URL, (c) a 60-second screen recording walking through pushing a one-line change and watching Vercel redeploy.
+**Brief.** Pick a corpus that matters to you — your notes for one subject, 10 of your college's announcement PDFs, your hostel's mess menu archive. Build a tiny RAG pipeline. Demonstrate **3 questions answered correctly with citations** and **1 question correctly refused**.
 
-**Submit.** All three on the dashboard before Day 22.
+**Submit.** GitHub gist or repo + a 90-second Loom showing the 4 questions on the dashboard.
 
-**Rubric.** URL is live and loads in under 3s (4) · Supabase actually wired and queried (4) · Repo is clean — `.env.local` ignored, README has setup steps (2).
+**Rubric.** Pipeline runs end-to-end (4) · Citations are correct page/chunk (3) · Refusal behaviour works on out-of-corpus questions (3).
 
 ## 🔁 Prep for next class
 
-Day 22 jumps into **Agentic AI** — ReAct, LangGraph, MCP, multi-agent systems.
+Day 22 is **Data Visualization** — you'll turn one slice of your capstone's data into three charts a stranger can read in 10 seconds.
 
-- [ ] `pip install langchain langgraph` in a fresh Python venv. Confirm imports work.
-- [ ] Skim the LangGraph quickstart: https://langchain-ai.github.io/langgraph/
-- [ ] Get an OpenAI or Anthropic API key ready (₹500 in credits is enough for the week).
+- [ ] Export one CSV from your capstone (or any usage analytics you have). 50–500 rows is fine.
+- [ ] Keep today's RAG store on disk — we may revisit it for retrieval analytics.
+- [ ] Bring one chart from a competitor you'd steal the *form* of, and one chart you've seen that misled you.
 
 ## 📚 References
 
-- [Vercel — Next.js deploy guide](https://vercel.com/docs/frameworks/nextjs) — five-minute version.
-- [Supabase — quickstart](https://supabase.com/docs/guides/getting-started) — auth, DB, storage in one read.
-- [Vercel + Supabase integration](https://vercel.com/integrations/supabase) — auto-syncs envs.
-- [GitHub — first repo](https://docs.github.com/en/get-started/quickstart/create-a-repo) — for anyone still confused by `git push -u origin main`.
+- [Pinecone — What is RAG](https://www.pinecone.io/learn/retrieval-augmented-generation/) — clearest 10-min read.
+- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/)
+- [pgvector](https://github.com/pgvector/pgvector) — when you outgrow Chroma and want it inside Postgres/Supabase.
+- [Hugging Face — sentence-transformers](https://www.sbert.net/)
+- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the "embeddings as meaning" intuition.
