@@ -6,12 +6,7 @@ import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { gradeWithAI } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
-import {
-  MIN_SUBMISSION_WORDS,
-  MIN_SUBMISSION_WORDS_WITH_LINK,
-  MAX_SUBMISSION_WORDS,
-  countWords,
-} from "@/lib/submissions/word-count";
+import { submissionError } from "@/lib/submissions/word-count";
 
 const linkSchema = z.object({
   label: z.string().min(1).max(120),
@@ -20,7 +15,9 @@ const linkSchema = z.object({
 
 const submitSchema = z.object({
   assignment_id: z.string().uuid(),
-  body: z.string().min(1).max(50_000),
+  // Body may be empty when the student is submitting links only; the
+  // link-or-text rule is enforced by submissionError() at submit time.
+  body: z.string().max(50_000).default(""),
   links: z.array(linkSchema).max(10).default([]),
   group_name: z.string().trim().min(1).max(120).optional(),
 });
@@ -37,28 +34,10 @@ async function upsertSubmission(
     // freely — students should be able to checkpoint short notes without
     // hitting the word-count gate.
     if (status === "submitted") {
-      const words = countWords(input.body);
-      // Link-bearing submissions (decks, repos, deployed apps) only need a
-      // short note; pure-text submissions (reflections) need the full minimum.
-      const hasLink = input.links.length > 0;
-      const min = hasLink ? MIN_SUBMISSION_WORDS_WITH_LINK : MIN_SUBMISSION_WORDS;
-      if (words < min) {
-        const detail = hasLink
-          ? `at least ${MIN_SUBMISSION_WORDS_WITH_LINK} words alongside your link`
-          : `at least ${MIN_SUBMISSION_WORDS} words, or a link plus ${MIN_SUBMISSION_WORDS_WITH_LINK}+ words`;
-        return {
-          data: null,
-          error: { message: `Submission needs ${detail} (currently ${words}).` },
-        };
-      }
-      if (words > MAX_SUBMISSION_WORDS) {
-        return {
-          data: null,
-          error: {
-            message: `Submission must be at most ${MAX_SUBMISSION_WORDS} words (currently ${words}).`,
-          },
-        };
-      }
+      // A link on its own is a valid submission; pure text needs the full
+      // word minimum. Shared with the client form so the two never drift.
+      const err = submissionError(input.body, input.links.length > 0);
+      if (err) return { data: null, error: { message: err } };
       const { data: a } = await sb
         .from("assignments")
         .select("is_group_project")
