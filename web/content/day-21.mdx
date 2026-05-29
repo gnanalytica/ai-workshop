@@ -1,71 +1,69 @@
 ---
-day: 21
-date: "2026-05-29"
-weekday: "Friday"
+day: 22
+date: "2026-05-30"
+weekday: "Saturday"
 week: 4
-topic: "Context Engineering: Embeddings & RAG, prompt vs retrieve vs fine-tune"
+topic: "Data Visualization"
 faculty:
-  main: "Sanjana"
-  support: "Sandeep"
-reading_time: "14 min"
-tldr: "LLMs don't know your data. Three ways to fix that: better prompts, retrieval (RAG), or fine-tuning. Today we make the *right* choice for the right job, and build a working RAG pipeline over a real document — your college's exam handbook."
-tags: ["embeddings", "rag", "vector-db", "context"]
-software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor"]
-online_tools: ["Vercel", "Supabase"]
-video: "https://www.youtube.com/embed/T-D1OfcDW1M"
-prompt_of_the_day: "Given this 40-page college exam handbook, answer the student's question in 3 sentences citing the page numbers I retrieved. If the answer isn't in the retrieved context, reply 'Not in handbook' — do NOT use general knowledge. Question: <user query>. Context: <top-k chunks>."
+  main: "Jayasaagar"
+  support: "Aparna"
+reading_time: "10 min"
+tldr: "A dashboard is a sentence in numbers. Today you take one slice of your capstone's data and turn it into three charts a stranger can read in 10 seconds — one for users, one for ops, one for the pitch deck."
+tags: ["dataviz", "charts", "dashboards", "design"]
+software: []
+online_tools: []
+prompt_of_the_day: "You are an Edward-Tufte-disciplined data designer. Given this CSV: <paste>, propose three chart types — one for end users, one for ops, one for a pitch deck. For each, name the chart, the encoding (x, y, color, size), and the one number it makes obvious."
 tools_hands_on:
-  - { name: "LangChain (Python)", url: "https://www.langchain.com/" }
-  - { name: "Chroma", url: "https://www.trychroma.com/" }
-  - { name: "sentence-transformers", url: "https://www.sbert.net/" }
-  - { name: "Hugging Face", url: "https://huggingface.co/" }
-  - { name: "Gemini API", url: "https://ai.google.dev/" }
+  - { name: "Observable Plot", url: "https://observablehq.com/plot" }
+  - { name: "Recharts", url: "https://recharts.org/" }
+  - { name: "Plotly", url: "https://plotly.com/" }
+  - { name: "Datawrapper", url: "https://www.datawrapper.de/" }
 tools_reference:
-  - { name: "Pinecone — What is RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" }
-  - { name: "pgvector", url: "https://github.com/pgvector/pgvector" }
+  - { name: "From Data to Viz — chart picker", url: "https://www.data-to-viz.com/" }
+  - { name: "Vega-Lite gallery", url: "https://vega.github.io/vega-lite/examples/" }
 resources:
-  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
-  - { title: "Lilian Weng — LLM-powered agents", url: "https://lilianweng.github.io/posts/2023-06-23-agent/" }
-lab: { title: "RAG over your college handbook", url: "https://www.trychroma.com/" }
+  - { title: "Edward Tufte — Visual Display", url: "https://www.edwardtufte.com/tufte/books_vdqi" }
+  - { title: "Cole Knaflic — Storytelling with Data", url: "https://www.storytellingwithdata.com/" }
+  - { title: "Datawrapper — chart-type guide", url: "https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/" }
+lab: { title: "Three charts from one slice of your capstone's data", url: "https://observablehq.com/plot" }
 objective:
-  topic: "Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice"
-  tools: ["LangChain", "Chroma", "sentence-transformers", "Gemini"]
-  end_goal: "A working RAG pipeline that ingests a PDF, embeds chunks, and answers questions with citations — refusing to answer when the document doesn't contain the info."
+  topic: "Pick the right chart and ship three readable visuals from real capstone data"
+  tools: ["Observable Plot or Recharts", "Datawrapper", "Plotly"]
+  end_goal: "Three charts published in your capstone repo: one user-facing, one ops-facing, one deck-ready. Each readable in under 10 seconds."
 ---
 
-You've spent two weeks impressed that ChatGPT *seems* to know everything. Today is the trick behind making it know **your** stuff — your handbook, your codebase, your meeting notes. The pattern is **R**etrieval-**A**ugmented **G**eneration, and once you grok it you stop fine-tuning models you didn't need to.
+By now your capstone has *some* data — even if it's 12 rows from your own test usage. Today you make it readable. Data visualization isn't about D3.js — it's about picking the chart that makes the answer obvious.
 
 ## 🎯 Today's objective
 
-**Topic.** Context Engineering: Embeddings & RAG; prompt vs retrieve vs fine-tune.
+**Topic.** Data Visualization — chart picking, encoding, and design for three audiences.
 
 **By end of class you will have:**
-1. Built a **vector index** of your college's exam handbook (or any PDF you bring).
-2. Run **top-k retrieval** with sentence-transformers + Chroma.
-3. Wired retrieved chunks into a Gemini (or ChatGPT) prompt and gotten cited answers.
-4. A clear rule for when to **prompt**, when to **retrieve**, when to **fine-tune**.
+1. **Three charts** built from your capstone data: user, ops, deck.
+2. A clear answer for each: *"What's the one question this chart answers?"*
+3. One chart embedded live in your capstone URL.
 
-> *Why this matters.* Most "AI startups" are RAG with a UI. After today you can build that core in one sitting.
+> *Why this matters.* Demo Day judges decide in 7 seconds whether your deck is worth reading. A clear chart buys those 7 seconds. A bad chart loses them.
 
-## ⏪ Pre-class · ~30 min
+## ⏪ Pre-class · ~20 min
 
-### Setup (required)
+### Setup
 
-- [ ] Python 3.10+, virtualenv, then `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai`
-- [ ] **Gemini API key** (free) — https://aistudio.google.com/apikey
-- [ ] **Hugging Face** account.
-- [ ] One PDF you care about: college exam handbook, hostel rules, your own notes (5–50 pages).
+- [ ] Free **Observable** account (for Plot) OR your Next.js capstone with **Recharts** installed.
+- [ ] Free **Datawrapper** account (for the pitch chart — no code).
+- [ ] One CSV from your capstone: 50–500 rows is fine. If you have nothing, export your dashboard's analytics page.
 
-### Primer (~10 min)
+### Primer
 
-- **Read:** Pinecone's *What is RAG* — https://www.pinecone.io/learn/retrieval-augmented-generation/
-- **Watch:** Any 6-min "Embeddings explained visually" video.
+- **Read (10 min):** Datawrapper's chart-type guide. Pay attention to "compare", "show change", "show distribution", "show parts of a whole".
+- **Skim:** the Observable Plot examples gallery.
 
 ### Bring to class
 
-- [ ] Three real questions about your PDF that the LLM *shouldn't* be able to answer without it.
+- [ ] Your CSV.
+- [ ] One sentence for each audience: *"User wants to know ___. Ops wants to know ___. Investor wants to know ___."*
 
-> 🧠 **Quick glossary.** **Embedding** = a vector (list of numbers) representing meaning. **Vector DB** = stores embeddings, finds nearest neighbours fast. **Chunk** = a slice of source text (e.g., 500 tokens). **Top-k** = retrieve the k most similar chunks to a query. **RAG** = retrieve relevant chunks → stuff into prompt → LLM answers using them. **Fine-tune** = adjust the model's weights with new data (expensive, last resort).
+> 🧠 **Quick glossary.** **Encoding** = mapping data fields to visual properties (x, y, color, size). **Marks** = bars, dots, lines. **Channels** = position > length > color > size in human accuracy. **Chartjunk** = decoration that doesn't carry information.
 
 ## 🎥 In-class · live session
 
@@ -73,101 +71,82 @@ You've spent two weeks impressed that ChatGPT *seems* to know everything. Today 
 
 | Block | Time | What |
 |---|---|---|
-| Three ways to inject knowledge | 15 min | Prompt vs RAG vs fine-tune decision tree |
-| Embeddings, visualised | 10 min | "King − man + woman = queen" + a 2D plot |
-| Live build: ingest → embed → query | 25 min | LangChain + Chroma + sentence-transformers |
-| Wire to Gemini with citations | 10 min | Prompt template + refusal behaviour |
-| Poll + Q&A | 10 min |   |
+| Why most charts lie | 10 min | Truncated axes, dual y, pie-chart sins |
+| The chart-picker decision tree | 15 min | Compare / change / distribution / parts |
+| Three audiences, three charts | 10 min | What user, ops, investor each need |
+| Lab | 30 min | You build all three |
+| Critique round | 15 min | We tear apart 3 volunteer charts |
 
-### Decision tree
+### The chart-picker shortlist
 
-| Need | Use |
+| Question | Chart |
 |---|---|
-| Change tone/format of answers | **Prompt** |
-| Add facts the model didn't see in training | **Retrieve (RAG)** |
-| Bake a new skill / domain style deeply | **Fine-tune** |
-| Need fresh info that changes daily | **Retrieve** |
-| Have only 50 examples | Prompt → RAG. *Not* fine-tune. |
+| Compare across categories | **Bar** (horizontal if labels are long) |
+| Change over time | **Line** (or area if cumulative) |
+| Distribution of one variable | **Histogram** or **box plot** |
+| Relationship between two | **Scatter** (add color for third) |
+| Parts of a whole | **Stacked bar** (skip pies above 4 slices) |
+| Geographic | **Map** with choropleth or symbols |
 
-### Why retrieve before you fine-tune
+### Three audiences, three encodings
 
-- Cheaper. Faster. Updatable in seconds (just re-index).
-- No model drift, no training infra, no leaked data risk.
-- Works with *any* base model. Swap GPT for Gemini in one line.
+- **User chart** — in-product. Single number + a trend. They want *"is this up or down?"*
+- **Ops chart** — internal dashboard. Multiple series. They want *"where's the anomaly?"*
+- **Deck chart** — for the pitch. One bold encoding. They want *"the headline."*
 
-## 🧪 Lab: RAG over your handbook
+### Five sins to never commit
 
-```python
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-import google.generativeai as genai, os
+1. Truncated y-axis on bars (lies about magnitude).
+2. Dual y-axes (humans can't read them).
+3. 3-D pie charts (every angle lies differently).
+4. Rainbow color scales (perceptually nonlinear).
+5. Tiny labels on a 4K dashboard (test on your phone).
 
-# 1. Load + chunk
-docs = PyPDFLoader("handbook.pdf").load()
-chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(docs)
+## 🧪 Lab: Three charts, one CSV
 
-# 2. Embed + index
-emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-db = Chroma.from_documents(chunks, emb, persist_directory="./store")
+1. **Pick** your CSV. Identify the 1–2 fields that matter most.
+2. **User chart (10 min).** In Recharts (if web) or Observable Plot (if data-only): one number + a small trend line. Embed it in your capstone.
+3. **Ops chart (10 min).** Multi-series time chart or anomaly callout. Stays in your `/admin` or notebook.
+4. **Deck chart (10 min).** Datawrapper. One bold headline. Export as PNG. Replace the chart on your Day-19 deck's "user" slide.
+5. **Critique** (peer pairs, 5 min each): your partner names the one question your chart answers. If they can't say it in one sentence, redo.
 
-# 3. Retrieve
-q = "What is the re-evaluation deadline for end-sem papers?"
-hits = db.similarity_search(q, k=3)
-context = "\n---\n".join(f"[p.{h.metadata.get('page')}] {h.page_content}" for h in hits)
+**Artifact.** Three chart screenshots + one paragraph each — *"What this chart makes obvious"* — in `viz.md` in your repo.
 
-# 4. Generate with citations
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
-prompt = f"""Answer in 3 sentences citing page numbers from the context.
-If the answer isn't in the context, reply exactly 'Not in handbook'.
-Context:\n{context}\n\nQuestion: {q}"""
-print(model.generate_content(prompt).text)
-```
-
-1. Drop your PDF in the working directory as `handbook.pdf`.
-2. Run the script. Confirm citations.
-3. Ask one of your three pre-class questions. Confirm it cites pages.
-4. Ask a question whose answer is *not* in the PDF (e.g., "Who won IPL 2024?"). Confirm the model says **"Not in handbook."**
-5. Increase `k` from 3 to 8. Does the answer change? Why?
-
-**Artifact.** A GitHub gist with: your script, your 3 questions, the model's answers, and one paragraph on what surprised you.
+> ⚠️ **Don't show three charts to the same audience.** Each one is for a different person.
 
 ## 📊 Live poll
 
-**For *your* capstone, the right tool is:** Better prompt only / RAG / Fine-tune / Mix of prompt + RAG / Don't know yet.
+**Which chart was hardest to design?** User / Ops / Deck. Drives the post-lab discussion.
 
 ## 💬 Discuss
 
-- Embeddings put "Bengaluru" close to "Mumbai" but far from "samosa". Why does that property make retrieval work?
-- Your retrieval returned 3 chunks. One was irrelevant. What knobs would you turn first — chunk size, k, embedding model, or query rewriting?
-- Where would Pinecone or pgvector beat Chroma in production?
+- A famous chart that misled you (gas prices, COVID curves, stock graphs). What was the sin?
+- One chart from a competitor's marketing site you'd steal the *form* of (not the data). Why does it work?
+- Where would a single big number beat any chart?
 
 ## ❓ Quiz
 
-Short quiz on embedding intuition, top-k retrieval, and the prompt/retrieve/fine-tune choice. Open it on your dashboard.
+Short class quiz on chart picking, encoding accuracy, and which sin shows up most in college projects. Open from your dashboard.
 
-## 📝 Assignment · RAG over your own corpus
+## 📝 Assignment · Embed one chart live
 
-**Brief.** Pick a corpus that matters to you — your notes for one subject, 10 of your college's announcement PDFs, your hostel's mess menu archive. Build a tiny RAG pipeline. Demonstrate **3 questions answered correctly with citations** and **1 question correctly refused**.
+**Brief.** Pick the user-facing chart from today. Embed it live on your deployed capstone URL (Day 20). Push the commit. Submit the URL + one screenshot.
 
-**Submit.** GitHub gist or repo + a 90-second Loom showing the 4 questions on the dashboard.
+**Submit.** Dashboard → Day 22 → URL + screenshot + `viz.md` link.
 
-**Rubric.** Pipeline runs end-to-end (4) · Citations are correct page/chunk (3) · Refusal behaviour works on out-of-corpus questions (3).
+**Rubric.** Chart embedded and rendering live (4) · Right chart for the question (4) · No sin from the list (2).
 
 ## 🔁 Prep for next class
 
-Day 22 is **Data Visualization** — you'll turn one slice of your capstone's data into three charts a stranger can read in 10 seconds.
+Day 23 — **Adding a Chatbot to your application: Streaming, Guardrails, User & System Prompts.** Your capstone gets a face that talks back.
 
-- [ ] Export one CSV from your capstone (or any usage analytics you have). 50–500 rows is fine.
-- [ ] Keep today's RAG store on disk — we may revisit it for retrieval analytics.
-- [ ] Bring one chart from a competitor you'd steal the *form* of, and one chart you've seen that misled you.
+- [ ] In your repo, scope where a chatbot would *actually* belong (a help corner? a query box? a side panel?).
+- [ ] Draft your system prompt in plain English: persona, scope, refusal rules. 5–10 lines.
+- [ ] Pick a model: Claude Haiku, Gemini Flash, or GPT-4o-mini — whichever has free credits left.
 
 ## 📚 References
 
-- [Pinecone — What is RAG](https://www.pinecone.io/learn/retrieval-augmented-generation/) — clearest 10-min read.
-- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/)
-- [pgvector](https://github.com/pgvector/pgvector) — when you outgrow Chroma and want it inside Postgres/Supabase.
-- [Hugging Face — sentence-transformers](https://www.sbert.net/)
-- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the "embeddings as meaning" intuition.
+- [From Data to Viz](https://www.data-to-viz.com/) — the chart picker that ends arguments.
+- [Datawrapper chart-type guide](https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/) — clearest 10-min read.
+- [Storytelling with Data](https://www.storytellingwithdata.com/) — Cole Knaflic, beginner-friendly.
+- [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi) — the original argument for data-ink.
