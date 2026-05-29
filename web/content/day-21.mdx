@@ -8,133 +8,162 @@ faculty:
   main: "Jayasaagar"
   support: "Aparna"
 reading_time: "10 min"
-tldr: "A dashboard is a sentence in numbers. Today you take one slice of your capstone's data and turn it into three charts a stranger can read in 10 seconds — one for users, one for ops, one for the pitch deck."
-tags: ["dataviz", "charts", "dashboards", "design"]
+tldr: "Data Visualization is the art and science of turning raw data into visuals that communicate meaning instantly. Today we cover how the eye processes visuals, how to keep them engaging, which chart types to use, and where data viz shows up in the real world."
+tags: ["dataviz", "charts", "design", "perception", "storytelling"]
 software: []
 online_tools: []
-prompt_of_the_day: "You are an Edward-Tufte-disciplined data designer. Given this CSV: <paste>, propose three chart types — one for end users, one for ops, one for a pitch deck. For each, name the chart, the encoding (x, y, color, size), and the one number it makes obvious."
+prompt_of_the_day: "You are a data-visualization coach. Here is my dataset: <paste>. Recommend the single chart type that best fits the story I want to tell (<one-line story>). Name the chart, the encoding (x, y, color, size), the one number it should make obvious, and one design principle to apply (colour, hierarchy, or simplicity)."
 tools_hands_on:
-  - { name: "Observable Plot", url: "https://observablehq.com/plot" }
-  - { name: "Recharts", url: "https://recharts.org/" }
-  - { name: "Plotly", url: "https://plotly.com/" }
   - { name: "Datawrapper", url: "https://www.datawrapper.de/" }
+  - { name: "Flourish", url: "https://flourish.studio/" }
+  - { name: "Observable Plot", url: "https://observablehq.com/plot" }
 tools_reference:
   - { name: "From Data to Viz — chart picker", url: "https://www.data-to-viz.com/" }
-  - { name: "Vega-Lite gallery", url: "https://vega.github.io/vega-lite/examples/" }
+  - { name: "Datawrapper River", url: "https://www.datawrapper.de/river" }
+  - { name: "Flowing Data", url: "https://flowingdata.com/" }
 resources:
-  - { title: "Edward Tufte — Visual Display", url: "https://www.edwardtufte.com/tufte/books_vdqi" }
+  - { title: "David McCandless — The Beauty of Data Visualization (TED, 17 min)", url: "https://www.ted.com/talks/david_mccandless_the_beauty_of_data_visualization" }
+  - { title: "Florence Nightingale — Rose Chart (1858)", url: "https://en.wikipedia.org/wiki/Nightingale_rose_diagram" }
+  - { title: "John Snow — Cholera Map (1854)", url: "https://en.wikipedia.org/wiki/1854_Broad_Street_cholera_outbreak" }
   - { title: "Cole Knaflic — Storytelling with Data", url: "https://www.storytellingwithdata.com/" }
-  - { title: "Datawrapper — chart-type guide", url: "https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/" }
-lab: { title: "Three charts from one slice of your capstone's data", url: "https://observablehq.com/plot" }
+lab: { title: "Build one visualization from your own data and pass the 5-second rule", url: "https://www.datawrapper.de/" }
 objective:
-  topic: "Pick the right chart and ship three readable visuals from real capstone data"
-  tools: ["Observable Plot or Recharts", "Datawrapper", "Plotly"]
-  end_goal: "Three charts published in your capstone repo: one user-facing, one ops-facing, one deck-ready. Each readable in under 10 seconds."
+  topic: "Turn raw data into visuals that communicate meaning in under 5 seconds"
+  tools: ["Datawrapper", "Flourish", "Observable Plot"]
+  end_goal: "One chart built from your own data, applying at least one design principle (colour, hierarchy, or simplicity), tested with the 5-second rule on a real person."
 ---
 
-By now your capstone has *some* data — even if it's 12 rows from your own test usage. Today you make it readable. Data visualization isn't about D3.js — it's about picking the chart that makes the answer obvious.
+Data Visualization is the art and science of turning raw data into visuals that communicate meaning instantly. Today's session covers how the eye processes visuals, how to make information engaging, which chart types to use, and where visualizations are used in the real world.
+
+### Learning objectives
+
+- Understand how the brain processes visual information.
+- Identify which visualization type fits different data stories.
+- Apply design principles to make visuals clearer and more engaging.
+- Recognise real-world use cases across industries.
+
+### What we'll cover
+
+- What your eye sees first and why it matters.
+- Ways to keep visuals interesting and information-rich.
+- The main types of visualizations and when to use each.
+- Where data visualization is applied across industries and tools.
+
+**Key themes.** Visual perception · Chart selection · Storytelling with data · Design principles · Real-world application.
 
 ## 🎯 Today's objective
 
-**Topic.** Data Visualization — chart picking, encoding, and design for three audiences.
+**Topic.** Data Visualization — perception, chart choice, design principles, and real-world application.
 
 **By end of class you will have:**
-1. **Three charts** built from your capstone data: user, ops, deck.
-2. A clear answer for each: *"What's the one question this chart answers?"*
-3. One chart embedded live in your capstone URL.
+1. A working mental model for **what your eye sees first** and why.
+2. A shortlist of **chart families** and when each one fits.
+3. **One visualization** of your own that passes the 5-second rule.
 
-> *Why this matters.* Demo Day judges decide in 7 seconds whether your deck is worth reading. A clear chart buys those 7 seconds. A bad chart loses them.
+> *Why this matters.* A clear chart earns the few seconds an audience gives you. A muddled one wastes them. Visualization is the bridge between data and decision.
 
-## ⏪ Pre-class · ~20 min
+## ⏪ Pre-class · ~30–45 min
 
-### Setup
+### What to do before class
 
-- [ ] Free **Observable** account (for Plot) OR your Next.js capstone with **Recharts** installed.
-- [ ] Free **Datawrapper** account (for the pitch chart — no code).
-- [ ] One CSV from your capstone: 50–500 rows is fine. If you have nothing, export your dashboard's analytics page.
+- [ ] Look at **3 different charts online** — a bar chart, a map, and an infographic. For each one, note the very first thing your eye jumped to, and ask yourself *why*.
+- [ ] Spend **10 minutes** browsing the [Datawrapper River](https://www.datawrapper.de/river) or the [Flowing Data](https://flowingdata.com/) blog. Notice how professionals present data visually.
+- [ ] Think of **one dataset from your own life** — spending, time spent on apps, weekly steps — and consider how you'd show it visually.
+- [ ] *Optional:* watch [David McCandless — The Beauty of Data Visualization](https://www.ted.com/talks/david_mccandless_the_beauty_of_data_visualization) on TED (~17 min).
 
-### Primer
+### Reflection prompts
 
-- **Read (10 min):** Datawrapper's chart-type guide. Pay attention to "compare", "show change", "show distribution", "show parts of a whole".
-- **Skim:** the Observable Plot examples gallery.
+- When you see a chart, what makes you **stop and actually read it** versus scroll past?
+- Can you think of a time a visual helped you understand something that words alone couldn't?
+- What's the difference between a chart that **informs** and one that **misleads**?
 
-### Bring to class
+> 🕒 **Estimated prep time:** 30–45 minutes. Browse visuals 15 min · reflection 10 min · optional TED talk 17 min.
 
-- [ ] Your CSV.
-- [ ] One sentence for each audience: *"User wants to know ___. Ops wants to know ___. Investor wants to know ___."*
-
-> 🧠 **Quick glossary.** **Encoding** = mapping data fields to visual properties (x, y, color, size). **Marks** = bars, dots, lines. **Channels** = position > length > color > size in human accuracy. **Chartjunk** = decoration that doesn't carry information.
-
-## 🎥 In-class · live session
-
-### Agenda
+## 🎥 In-class · live session (75 min)
 
 | Block | Time | What |
 |---|---|---|
-| Why most charts lie | 10 min | Truncated axes, dual y, pie-chart sins |
-| The chart-picker decision tree | 15 min | Compare / change / distribution / parts |
-| Three audiences, three charts | 10 min | What user, ops, investor each need |
-| Lab | 30 min | You build all three |
-| Critique round | 15 min | We tear apart 3 volunteer charts |
+| Opening: what do you see first? | 0–10 min | Pre-attentive attributes |
+| The power of one visual | 10–25 min | Nightingale, Snow, the 5-second rule |
+| Ways to keep things interesting | 25–45 min | Colour, layering, small multiples, removing chartjunk |
+| Types of visualizations | 45–60 min | The seven chart families + quick quiz |
+| Where visualizations are used | 60–75 min | Real-world domains and the tool landscape |
 
-### The chart-picker shortlist
+### 0–10 min · Opening activity — *What do you see first?*
 
-| Question | Chart |
-|---|---|
-| Compare across categories | **Bar** (horizontal if labels are long) |
-| Change over time | **Line** (or area if cumulative) |
-| Distribution of one variable | **Histogram** or **box plot** |
-| Relationship between two | **Scatter** (add color for third) |
-| Parts of a whole | **Stacked bar** (skip pies above 4 slices) |
-| Geographic | **Map** with choropleth or symbols |
+Three images on screen, one at a time. Students call out the first thing they notice. Then we name the **pre-attentive attributes** — *colour, shape, size, position* — and explain how the brain processes them before conscious thought.
 
-### Three audiences, three encodings
+### 10–25 min · The power of one visual
 
-- **User chart** — in-product. Single number + a trend. They want *"is this up or down?"*
-- **Ops chart** — internal dashboard. Multiple series. They want *"where's the anomaly?"*
-- **Deck chart** — for the pitch. One bold encoding. They want *"the headline."*
+- **Florence Nightingale — Rose Chart (1858).** Convinced the British Army that more soldiers died from preventable disease than from battle wounds.
+- **John Snow — Cholera Map (1854).** Localized a London outbreak to a single contaminated water pump.
+- Each is a *single well-designed visual that changed a real-world decision.*
+- Introduce the **5-second rule** — your audience should understand the point within five seconds.
 
-### Five sins to never commit
+### 25–45 min · Ways to keep things interesting
 
-1. Truncated y-axis on bars (lies about magnitude).
-2. Dual y-axes (humans can't read them).
-3. 3-D pie charts (every angle lies differently).
-4. Rainbow color scales (perceptually nonlinear).
-5. Tiny labels on a 4K dashboard (test on your phone).
+Design techniques that pull weight without adding noise:
 
-## 🧪 Lab: Three charts, one CSV
+- **Colour to encode meaning** — not decoration.
+- **Layering information progressively** — start with the headline, reveal detail on demand.
+- **Small multiples** — repeated tiny charts side-by-side beat one busy chart.
+- **Sparklines** — trend in the space of a word.
+- **Combining chart types** thoughtfully (e.g. bar + reference line).
+- Walk through a **before-and-after**: cluttered chart vs. clean one. Define **chartjunk** — decoration that doesn't carry information — and show why removing it works.
 
-1. **Pick** your CSV. Identify the 1–2 fields that matter most.
-2. **User chart (10 min).** In Recharts (if web) or Observable Plot (if data-only): one number + a small trend line. Embed it in your capstone.
-3. **Ops chart (10 min).** Multi-series time chart or anomaly callout. Stays in your `/admin` or notebook.
-4. **Deck chart (10 min).** Datawrapper. One bold headline. Export as PNG. Replace the chart on your Day-19 deck's "user" slide.
-5. **Critique** (peer pairs, 5 min each): your partner names the one question your chart answers. If they can't say it in one sentence, redo.
+### 45–60 min · Types of visualizations
 
-**Artifact.** Three chart screenshots + one paragraph each — *"What this chart makes obvious"* — in `viz.md` in your repo.
+The seven families and where each fits:
 
-> ⚠️ **Don't show three charts to the same audience.** Each one is for a different person.
+| Family | Use when you want to show… | One strong example |
+|---|---|---|
+| **Comparison** | One category vs. another | Bar chart |
+| **Trend** | Change over time | Line / area chart |
+| **Part-to-whole** | Composition | Stacked bar (skip pies above 4 slices) |
+| **Distribution** | Spread of one variable | Histogram, box plot |
+| **Relationship** | Two variables interacting | Scatter plot |
+| **Geography** | Where things happen | Choropleth / symbol map |
+| **Network** | Connections between things | Node-link diagram |
 
-## 📊 Live poll
+Run a quick **"which chart would you use?"** quiz with 3 scenarios.
 
-**Which chart was hardest to design?** User / Ops / Deck. Drives the post-lab discussion.
+### 60–75 min · Where visualizations are used
 
-## 💬 Discuss
+One example from each domain:
 
-- A famous chart that misled you (gas prices, COVID curves, stock graphs). What was the sin?
-- One chart from a competitor's marketing site you'd steal the *form* of (not the data). Why does it work?
-- Where would a single big number beat any chart?
+- **Business** — sales dashboards, funnel analysis.
+- **Healthcare** — patient outcomes, public-health surveillance.
+- **Education** — student progress, learning analytics.
+- **Journalism** — election results, climate explainers.
+- **Product design** — usage heatmaps, A/B test readouts.
+- **AI / ML** — model performance, embedding spaces, attention maps.
 
-## ❓ Quiz
+End with a quick **tool overview** — no-code (Datawrapper, Flourish), code-based (Observable Plot, Recharts, D3), design-first (Figma, Illustrator), and AI-assisted (ChatGPT data analyst, Claude with CSV uploads).
 
-Short class quiz on chart picking, encoding accuracy, and which sin shows up most in college projects. Open from your dashboard.
+## 🧪 Lab · Build one visualization
 
-## 📝 Assignment · Embed one chart live
+1. **Pick a dataset** you actually have access to — phone screen time, a public CSV from Kaggle, a survey result, or a simple personal log.
+2. **Pick the chart type** that fits the story you want to tell. Use the table above; don't just default to a bar chart.
+3. **Build it** in a tool of your choice — Datawrapper, Flourish, Observable Plot, or even a spreadsheet.
+4. **Apply at least one design principle** from class — colour, hierarchy, or simplicity. Be ready to name which one and why.
+5. **Test it with the 5-second rule.** Show it to someone who wasn't in class. Ask: *"What does this chart say?"* If they can't answer in 5 seconds, redo.
 
-**Brief.** Pick the user-facing chart from today. Embed it live on your deployed capstone URL (Day 20). Push the commit. Submit the URL + one screenshot.
+## 📝 Assignment · Your visualization + the 5-second test
 
-**Submit.** Dashboard → Day 22 → URL + screenshot + `viz.md` link.
+**Brief.** Submit your single chart from the lab, plus one paragraph on which design principle you applied and what the 5-second tester said when you showed it to them.
 
-**Rubric.** Chart embedded and rendering live (4) · Right chart for the question (4) · No sin from the list (2).
+**Submit.** Dashboard → Day 22 → chart image (PNG/JPG) + paragraph + name of the person who took the 5-second test.
+
+**Rubric.** Right chart type for the question (4) · One design principle clearly applied (4) · Passes the 5-second rule with a real tester (2).
+
+## ❓ Quiz — Pulse check
+
+A short class quiz on the day's core ideas. Open from your dashboard.
+
+1. Name one **pre-attentive attribute** and explain how it guides the viewer's eye.
+2. You have sales data split by **month** across **5 product categories**. Which chart type would you use and why?
+3. What is one way to **show a lot of information without overwhelming** the viewer?
+4. What is **chartjunk** — and give one example of it.
 
 ## 🔁 Prep for next class
 
@@ -147,6 +176,7 @@ Day 23 — **Adding a Chatbot to your application: Streaming, Guardrails, User &
 ## 📚 References
 
 - [From Data to Viz](https://www.data-to-viz.com/) — the chart picker that ends arguments.
-- [Datawrapper chart-type guide](https://blog.datawrapper.de/what-to-consider-when-creating-a-chart/) — clearest 10-min read.
+- [Datawrapper River](https://www.datawrapper.de/river) — fresh, well-crafted charts from real newsrooms.
+- [Flowing Data](https://flowingdata.com/) — Nathan Yau's long-running viz blog.
+- [David McCandless — The Beauty of Data Visualization (TED)](https://www.ted.com/talks/david_mccandless_the_beauty_of_data_visualization).
 - [Storytelling with Data](https://www.storytellingwithdata.com/) — Cole Knaflic, beginner-friendly.
-- [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi) — the original argument for data-ink.
