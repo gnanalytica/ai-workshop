@@ -1,71 +1,76 @@
 ---
-day: 21
-date: "2026-05-29"
-weekday: "Friday"
-week: 4
-topic: "Context Engineering: Embeddings & RAG, prompt vs retrieve vs fine-tune"
+day: 22
+date: "2026-06-01"
+weekday: "Monday"
+week: 5
+topic: "Zero to live: ship a webpage in one session"
 faculty:
   main: "Sanjana"
-  support: "Sandeep"
-reading_time: "14 min"
-tldr: "LLMs don't know your data. Three ways to fix that: better prompts, retrieval (RAG), or fine-tuning. Today we make the *right* choice for the right job, and build a working RAG pipeline over a real document — your college's exam handbook."
-tags: ["embeddings", "rag", "vector-db", "context"]
-software: ["Nodejs", "Python", "Git", "Antigravity", "Cursor"]
-online_tools: ["Vercel", "Supabase"]
-video: "https://www.youtube.com/embed/T-D1OfcDW1M"
-prompt_of_the_day: "Given this 40-page college exam handbook, answer the student's question in 3 sentences citing the page numbers I retrieved. If the answer isn't in the retrieved context, reply 'Not in handbook' — do NOT use general knowledge. Question: <user query>. Context: <top-k chunks>."
+  support: "Raunak"
+reading_time: "8 min"
+tldr: "You don't need to know how to code to ship a webpage today. Using Antigravity and vibe coding, you will describe a product in plain English, watch the AI build it, tweak it live, and deploy it to a real URL on GitHub Pages — all in one session."
+tags: ["vibe-coding", "static-web", "github-pages", "antigravity", "html-css-js"]
+software: ["Antigravity", "Git"]
+online_tools: ["GitHub", "GitHub Pages"]
+video: ""
+prompt_of_the_day: "Create a modern animated landing page for a fictional Indian startup called 'AirDosa' — an AI-powered instant dosa delivery drone service. Include: a hero section with a big headline and tagline, 3 feature cards with icons, a pricing section with 2 plans, and a footer. Add smooth scroll animations when sections come into view and a floating 'Order Now' button that bounces gently. Everything in one index.html file."
 tools_hands_on:
-  - { name: "LangChain (Python)", url: "https://www.langchain.com/" }
-  - { name: "Chroma", url: "https://www.trychroma.com/" }
-  - { name: "sentence-transformers", url: "https://www.sbert.net/" }
-  - { name: "Hugging Face", url: "https://huggingface.co/" }
-  - { name: "Gemini API", url: "https://ai.google.dev/" }
+  - { name: "Antigravity", url: "https://antigravity.ai/" }
+  - { name: "GitHub Pages", url: "https://pages.github.com/" }
 tools_reference:
-  - { name: "Pinecone — What is RAG", url: "https://www.pinecone.io/learn/retrieval-augmented-generation/" }
-  - { name: "pgvector", url: "https://github.com/pgvector/pgvector" }
+  - { name: "Git documentation", url: "https://git-scm.com/doc" }
+  - { name: "GitHub Pages docs", url: "https://docs.github.com/en/pages" }
+  - { name: "MDN — How the web works", url: "https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works" }
 resources:
-  - { title: "Karpathy — Intro to LLMs (1h)", url: "https://www.youtube.com/watch?v=zjkBMFhNj_g" }
-  - { title: "Lilian Weng — LLM-powered agents", url: "https://lilianweng.github.io/posts/2023-06-23-agent/" }
-lab: { title: "RAG over your college handbook", url: "https://www.trychroma.com/" }
+  - { title: "HTML in 100 seconds — Fireship", url: "https://www.youtube.com/watch?v=ok-plXXHlWw" }
+  - { title: "Git in 100 seconds — Fireship", url: "https://www.youtube.com/watch?v=hwP7WQkmECE" }
+  - { title: "GitHub Pages quickstart", url: "https://docs.github.com/en/pages/quickstart" }
+lab: { title: "Mini browser game — build and deploy", url: "https://antigravity.ai/" }
 objective:
-  topic: "Embeddings, RAG, and the prompt-vs-retrieve-vs-fine-tune choice"
-  tools: ["LangChain", "Chroma", "sentence-transformers", "Gemini"]
-  end_goal: "A working RAG pipeline that ingests a PDF, embeds chunks, and answers questions with citations — refusing to answer when the document doesn't contain the info."
+  topic: "Vibe coding a static webpage and deploying it live with GitHub Pages"
+  tools: ["Antigravity", "Git", "GitHub Pages"]
+  end_goal: "A fully animated static landing page for a fake product, live on a public GitHub Pages URL, pushed from your own GitHub repo — built entirely using vibe coding with zero manual HTML writing."
 ---
 
-You've spent two weeks impressed that ChatGPT *seems* to know everything. Today is the trick behind making it know **your** stuff — your handbook, your codebase, your meeting notes. The pattern is **R**etrieval-**A**ugmented **G**eneration, and once you grok it you stop fine-tuning models you didn't need to.
+A webpage you can't share is just a file. Today you build one, push it to GitHub, and put it on the internet — using plain English and AI. No prior coding experience needed.
 
 ## 🎯 Today's objective
 
-**Topic.** Context Engineering: Embeddings & RAG; prompt vs retrieve vs fine-tune.
+**Topic.** Vibe coding a static webpage and deploying it live with GitHub Pages.
 
 **By end of class you will have:**
-1. Built a **vector index** of your college's exam handbook (or any PDF you bring).
-2. Run **top-k retrieval** with sentence-transformers + Chroma.
-3. Wired retrieved chunks into a Gemini (or ChatGPT) prompt and gotten cited answers.
-4. A clear rule for when to **prompt**, when to **retrieve**, when to **fine-tune**.
+1. A fully animated static landing page for a fake product, running locally on your browser.
+2. The same page live on a public URL via GitHub Pages — shareable with anyone.
+3. Made at least one live change via Antigravity and re-deployed it.
 
-> *Why this matters.* Most "AI startups" are RAG with a UI. After today you can build that core in one sitting.
+> *Why this matters.* Every product starts with a webpage. Whether you are launching a startup, presenting a capstone, or just proving something exists — shipping a live URL in under 3 hours is a skill you will use forever.
 
-## ⏪ Pre-class · ~30 min
+## ⏪ Pre-class · ~20 min
 
-### Setup (required)
+### Accounts to create (required)
 
-- [ ] Python 3.10+, virtualenv, then `pip install langchain langchain-community chromadb sentence-transformers pypdf google-generativeai`
-- [ ] **Gemini API key** (free) — https://aistudio.google.com/apikey
-- [ ] **Hugging Face** account.
-- [ ] One PDF you care about: college exam handbook, hostel rules, your own notes (5–50 pages).
+- [ ] **GitHub** — free account at github.com. This is where your code lives and your site deploys from.
+- [ ] **Antigravity** — sign in at antigravity.ai. This is the vibe coding tool you will use to generate your entire site.
+
+### Software to install (required)
+
+- [ ] **Git** — download from git-scm.com. After installing, open Terminal (Mac) or Command Prompt (Windows) and run `git --version`. You should see a version number.
+
+### Quick pre-check (do this the night before)
+
+```bash
+git --version          # should show git version 2.x
+# Open github.com      → confirm you can log in
+# Open antigravity.ai  → confirm you can log in
+```
 
 ### Primer (~10 min)
 
-- **Read:** Pinecone's *What is RAG* — https://www.pinecone.io/learn/retrieval-augmented-generation/
-- **Watch:** Any 6-min "Embeddings explained visually" video.
+- **Watch:** "HTML in 100 seconds" — Fireship (2 min). Just to know what HTML is before class.
+- **Watch:** "Git in 100 seconds" — Fireship (2 min). Understand what a commit is.
+- **Think:** What fake product would you build a landing page for? Pick something fun. The weirder, the better.
 
-### Bring to class
-
-- [ ] Three real questions about your PDF that the LLM *shouldn't* be able to answer without it.
-
-> 🧠 **Quick glossary.** **Embedding** = a vector (list of numbers) representing meaning. **Vector DB** = stores embeddings, finds nearest neighbours fast. **Chunk** = a slice of source text (e.g., 500 tokens). **Top-k** = retrieve the k most similar chunks to a query. **RAG** = retrieve relevant chunks → stuff into prompt → LLM answers using them. **Fine-tune** = adjust the model's weights with new data (expensive, last resort).
+> 🧠 **Quick glossary.** **Static site** = a webpage made of just HTML, CSS, and JS files — no server, no database. **Vibe coding** = describing what you want in plain English and letting AI write the code. **Git** = a tool that tracks every change you make to your code. **GitHub** = a website that stores your Git projects online. **GitHub Pages** = a free feature that turns any GitHub repo into a live website.
 
 ## 🎥 In-class · live session
 
@@ -73,101 +78,190 @@ You've spent two weeks impressed that ChatGPT *seems* to know everything. Today 
 
 | Block | Time | What |
 |---|---|---|
-| Three ways to inject knowledge | 15 min | Prompt vs RAG vs fine-tune decision tree |
-| Embeddings, visualised | 10 min | "King − man + woman = queen" + a 2D plot |
-| Live build: ingest → embed → query | 25 min | LangChain + Chroma + sentence-transformers |
-| Wire to Gemini with citations | 10 min | Prompt template + refusal behaviour |
-| Poll + Q&A | 10 min |   |
+| How the web works | 5 min | Browser → HTML → rendered page, static vs dynamic |
+| Git & GitHub essentials | 5 min | init, add, commit, push — shown not taught |
+| Antigravity setup: agents.md + MCP | 10 min | Interface walkthrough, agents.md, connect GitHub MCP + Filesystem MCP |
+| Live demo: AirDosa animated landing page | 20 min | Full build → local view → make a change → deploy |
+| Students build their own | 15 min | Guided hands-on, TAs circulating |
+| Group deploy + show & tell | 5 min | Everyone pushes, 1–2 share their live URL |
 
-### Decision tree
+### How the web actually works (mental model)
 
-| Need | Use |
-|---|---|
-| Change tone/format of answers | **Prompt** |
-| Add facts the model didn't see in training | **Retrieve (RAG)** |
-| Bake a new skill / domain style deeply | **Fine-tune** |
-| Need fresh info that changes daily | **Retrieve** |
-| Have only 50 examples | Prompt → RAG. *Not* fine-tune. |
+```
+You type a URL
+  → browser asks a server: "give me this page"
+  → server sends back index.html + style.css + script.js
+  → browser reads those files and draws the page
 
-### Why retrieve before you fine-tune
-
-- Cheaper. Faster. Updatable in seconds (just re-index).
-- No model drift, no training infra, no leaked data risk.
-- Works with *any* base model. Swap GPT for Gemini in one line.
-
-## 🧪 Lab: RAG over your handbook
-
-```python
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-import google.generativeai as genai, os
-
-# 1. Load + chunk
-docs = PyPDFLoader("handbook.pdf").load()
-chunks = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50).split_documents(docs)
-
-# 2. Embed + index
-emb = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-db = Chroma.from_documents(chunks, emb, persist_directory="./store")
-
-# 3. Retrieve
-q = "What is the re-evaluation deadline for end-sem papers?"
-hits = db.similarity_search(q, k=3)
-context = "\n---\n".join(f"[p.{h.metadata.get('page')}] {h.page_content}" for h in hits)
-
-# 4. Generate with citations
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
-prompt = f"""Answer in 3 sentences citing page numbers from the context.
-If the answer isn't in the context, reply exactly 'Not in handbook'.
-Context:\n{context}\n\nQuestion: {q}"""
-print(model.generate_content(prompt).text)
+Static site: the server just sends files. No logic, no database.
+GitHub Pages: GitHub IS the server. Your repo IS the files.
 ```
 
-1. Drop your PDF in the working directory as `handbook.pdf`.
-2. Run the script. Confirm citations.
-3. Ask one of your three pre-class questions. Confirm it cites pages.
-4. Ask a question whose answer is *not* in the PDF (e.g., "Who won IPL 2024?"). Confirm the model says **"Not in handbook."**
-5. Increase `k` from 3 to 8. Does the answer change? Why?
+That's all of today in one diagram. Everything else is detail.
 
-**Artifact.** A GitHub gist with: your script, your 3 questions, the model's answers, and one paragraph on what surprised you.
+### The vibe coding workflow
+
+```
+1. Open Antigravity → new project
+2. Create agents.md  → tells the AI what kind of project this is
+3. Connect MCP plugins → GitHub MCP + Filesystem MCP
+4. Type a prompt describing your page
+5. AI writes all the code
+6. Open index.html in browser → see it locally
+7. Ask Antigravity to change something → refresh → see the update
+8. Push to GitHub → enable Pages → live URL
+```
+
+### Setting up agents.md (show students exactly this)
+
+Create a file called `agents.md` in your project root. This briefing file tells the AI the rules before it writes anything:
+
+```markdown
+# Project: My Landing Page
+
+## What this is
+A static animated landing page for a fictional product.
+Built with plain HTML, CSS, and JavaScript only.
+No frameworks. No npm. No build tools.
+
+## Rules
+- All code goes in a single index.html file
+- Use CSS animations for all motion effects
+- Keep it simple — must work by opening index.html in a browser
+- Deploy target: GitHub Pages
+```
+
+### Connecting MCP plugins
+
+In Antigravity settings, enable two plugins before building:
+
+- **GitHub MCP** — lets the AI push code directly to your GitHub repo.
+- **Filesystem MCP** — lets the AI read and write files on your computer.
+
+> 🧠 **What is MCP?** Model Context Protocol — a standard way to give your AI extra abilities. Without GitHub MCP the AI can write code but can't push it. With it, it can do both. Think of MCPs as apps you install for your AI.
+
+### Live demo — AirDosa animated landing page
+
+Instructor builds "AirDosa" (AI-powered dosa delivery by drone) from scratch in real time using Antigravity. The full arc:
+
+1. **Prompt** → page is generated
+2. **Open index.html locally** → see it in browser
+3. **Make a change via Antigravity** → refresh → change appears
+4. **6 terminal commands** → pushed to GitHub
+5. **3 clicks in GitHub Settings** → live on GitHub Pages
+6. **One more change + push** → live URL updates → full loop shown
+
+**The 6 deploy commands (students follow along):**
+
+```bash
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
+git push -u origin main
+```
+
+**After first deploy, every future update is just:**
+
+```bash
+git add .
+git commit -m "describe your change"
+git push
+```
+
+### When students build their own
+
+Pick any fake product — a startup idea, a college club, a fictional app, anything. Your page must have:
+
+- [ ] A hero section with a headline and tagline
+- [ ] At least 2 more sections (features, pricing, about, etc.)
+- [ ] At least one CSS animation
+- [ ] A live GitHub Pages URL by end of session
 
 ## 📊 Live poll
 
-**For *your* capstone, the right tool is:** Better prompt only / RAG / Fine-tune / Mix of prompt + RAG / Don't know yet.
+**What fake product are you building?** Food delivery drone / AI study tool / Gaming peripheral / College event page / Something completely unhinged.
 
 ## 💬 Discuss
 
-- Embeddings put "Bengaluru" close to "Mumbai" but far from "samosa". Why does that property make retrieval work?
-- Your retrieval returned 3 chunks. One was irrelevant. What knobs would you turn first — chunk size, k, embedding model, or query rewriting?
-- Where would Pinecone or pgvector beat Chroma in production?
+- You built a full page today without writing a single line of HTML. What does that mean for who gets to build products?
+- What's the difference between a file on your computer and a deployed website?
+- If you wanted to update your live site every day — what would that workflow look like?
 
 ## ❓ Quiz
 
-Short quiz on embedding intuition, top-k retrieval, and the prompt/retrieve/fine-tune choice. Open it on your dashboard.
+1. What does `git push` do?
+   - a) Deletes your local files
+   - b) Uploads local commits to GitHub ✓
+   - c) Creates a new branch
+   - d) Deploys to GitHub Pages
 
-## 📝 Assignment · RAG over your own corpus
+2. What kind of site did we build today?
+   - a) Dynamic with a database
+   - b) Static — HTML/CSS/JS only ✓
+   - c) Mobile app
+   - d) Server-side rendered
 
-**Brief.** Pick a corpus that matters to you — your notes for one subject, 10 of your college's announcement PDFs, your hostel's mess menu archive. Build a tiny RAG pipeline. Demonstrate **3 questions answered correctly with citations** and **1 question correctly refused**.
+3. Which file is the entry point of a webpage?
+   - a) style.css
+   - b) script.js
+   - c) index.html ✓
+   - d) README.md
 
-**Submit.** GitHub gist or repo + a 90-second Loom showing the 4 questions on the dashboard.
+4. What does agents.md do in Antigravity?
+   - a) It deploys your site automatically
+   - b) It tells the AI the rules and context of your project ✓
+   - c) It connects your GitHub account
+   - d) It runs your local server
 
-**Rubric.** Pipeline runs end-to-end (4) · Citations are correct page/chunk (3) · Refusal behaviour works on out-of-corpus questions (3).
+## 🧪 Lab: Mini browser game
+
+Build and deploy a playable browser game using Antigravity.
+
+**Rules:**
+- Must be playable in the browser with no downloads
+- Examples: snake, flappy block, whack-a-mole, typing speed test, or anything you invent
+- Push to a **new** GitHub repo and deploy on GitHub Pages
+
+**Artifact.** Live GitHub Pages URL + repo link submitted on the dashboard.
+
+> 💡 **Starter prompt for Antigravity:** "Build a playable snake game in a single index.html file using HTML canvas and JavaScript. The snake should speed up as it eats food. Show the score. Add a restart button on game over."
+
+## 📝 Assignment · Mood board / vibe playlist page
+
+**Brief.** Build a page with 3–4 mood buttons (focused, chill, hype, sad, etc.). When clicked, the entire page transforms — background colour, font, layout vibe, and an embedded YouTube playlist or Spotify link changes to match the mood. Each mood must feel genuinely different. Deploy on GitHub Pages.
+
+**Requirements:**
+- Minimum 3 moods
+- Each mood changes: background, font or colour scheme, and embedded playlist
+- Smooth CSS transitions between moods
+- Deployed and live on GitHub Pages
+
+**Submit.** GitHub repo link + live URL on the dashboard before Day 23.
+
+**Rubric.** Moods are visually distinct (4) · CSS transitions work smoothly (3) · Deployed and accessible on GitHub Pages (3).
+
+### Bonus challenge (optional)
+
+Combine both — embed your mini game inside the mood page so the game's colours and music change depending on which mood is active. One repo, one deploy, two things in one.
 
 ## 🔁 Prep for next class
 
-Day 22 is **Data Visualization** — you'll turn one slice of your capstone's data into three charts a stranger can read in 10 seconds.
+Day 23 is **your first full-stack app** — a real database, real users, real-time data.
 
-- [ ] Export one CSV from your capstone (or any usage analytics you have). 50–500 rows is fine.
-- [ ] Keep today's RAG store on disk — we may revisit it for retrieval analytics.
-- [ ] Bring one chart from a competitor you'd steal the *form* of, and one chart you've seen that misled you.
+- [ ] Sign up at supabase.com (free). Just create the account — no setup needed yet.
+- [ ] Sign up at vercel.com (free). Connect it to your GitHub account.
+- [ ] Read: "What is a REST API?" — any short article or video (5 min).
+- [ ] Think: what data would your capstone app need to store? Users? Orders? Notes?
+
+> ⚠️ **Bring your laptop charged and both accounts ready.** Day 23 moves fast.
 
 ## 📚 References
 
-- [Pinecone — What is RAG](https://www.pinecone.io/learn/retrieval-augmented-generation/) — clearest 10-min read.
-- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/)
-- [pgvector](https://github.com/pgvector/pgvector) — when you outgrow Chroma and want it inside Postgres/Supabase.
-- [Hugging Face — sentence-transformers](https://www.sbert.net/)
-- [Karpathy — Intro to LLMs (1h)](https://www.youtube.com/watch?v=zjkBMFhNj_g) — the "embeddings as meaning" intuition.
+- [Antigravity](https://antigravity.ai/) — the vibe coding tool used today.
+- [GitHub Pages quickstart](https://docs.github.com/en/pages/quickstart) — official deploy guide.
+- [MDN — How the web works](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works) — the best plain-English explanation.
+- [Git in 100 seconds — Fireship](https://www.youtube.com/watch?v=hwP7WQkmECE) — fastest git intro on YouTube.
+- [HTML in 100 seconds — Fireship](https://www.youtube.com/watch?v=ok-plXXHlWw) — same for HTML.
+- [Model Context Protocol](https://modelcontextprotocol.io/) — what MCP is and why it exists.
