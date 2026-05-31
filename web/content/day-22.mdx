@@ -112,34 +112,6 @@ That's all of today in one diagram. Everything else is detail.
 8. Push to GitHub → enable Pages → live URL
 ```
 
-### Setting up agents.md (show students exactly this)
-
-Create a file called `agents.md` in your project root. This briefing file tells the AI the rules before it writes anything:
-
-```markdown
-# Project: My Landing Page
-
-## What this is
-A static animated landing page for a fictional product.
-Built with plain HTML, CSS, and JavaScript only.
-No frameworks. No npm. No build tools.
-
-## Rules
-- All code goes in a single index.html file
-- Use CSS animations for all motion effects
-- Keep it simple — must work by opening index.html in a browser
-- Deploy target: GitHub Pages
-```
-
-### Connecting MCP plugins
-
-In Antigravity settings, enable two plugins before building:
-
-- **GitHub MCP** — lets the AI push code directly to your GitHub repo.
-- **Filesystem MCP** — lets the AI read and write files on your computer.
-
-> 🧠 **What is MCP?** Model Context Protocol — a standard way to give your AI extra abilities. Without GitHub MCP the AI can write code but can't push it. With it, it can do both. Think of MCPs as apps you install for your AI.
-
 ### Live demo — AirDosa animated landing page
 
 Instructor builds "AirDosa" (AI-powered dosa delivery by drone) from scratch in real time using Antigravity. The full arc:
@@ -162,23 +134,6 @@ git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
 git push -u origin main
 ```
 
-**After first deploy, every future update is just:**
-
-```bash
-git add .
-git commit -m "describe your change"
-git push
-```
-
-### When students build their own
-
-Pick any fake product — a startup idea, a college club, a fictional app, anything. Your page must have:
-
-- [ ] A hero section with a headline and tagline
-- [ ] At least 2 more sections (features, pricing, about, etc.)
-- [ ] At least one CSS animation
-- [ ] A live GitHub Pages URL by end of session
-
 ## 📊 Live poll
 
 **What fake product are you building?** Food delivery drone / AI study tool / Gaming peripheral / College event page / Something completely unhinged.
@@ -189,31 +144,6 @@ Pick any fake product — a startup idea, a college club, a fictional app, anyth
 - What's the difference between a file on your computer and a deployed website?
 - If you wanted to update your live site every day — what would that workflow look like?
 
-## ❓ Quiz
-
-1. What does `git push` do?
-   - a) Deletes your local files
-   - b) Uploads local commits to GitHub ✓
-   - c) Creates a new branch
-   - d) Deploys to GitHub Pages
-
-2. What kind of site did we build today?
-   - a) Dynamic with a database
-   - b) Static — HTML/CSS/JS only ✓
-   - c) Mobile app
-   - d) Server-side rendered
-
-3. Which file is the entry point of a webpage?
-   - a) style.css
-   - b) script.js
-   - c) index.html ✓
-   - d) README.md
-
-4. What does agents.md do in Antigravity?
-   - a) It deploys your site automatically
-   - b) It tells the AI the rules and context of your project ✓
-   - c) It connects your GitHub account
-   - d) It runs your local server
 
 ## 🧪 Lab: Mini browser game
 
