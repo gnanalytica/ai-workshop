@@ -9,10 +9,25 @@ import { z } from "zod";
 // for rubric-based reflection grading.
 const GRADING_MODEL_ID = "gemini-2.5-flash";
 
+// Matches the rubric_templates.criteria jsonb shape: each criterion carries a
+// point ceiling (`max`) and a 0..max ladder of anchor descriptions. `weight`/
+// `description` are kept optional for any legacy rows that used the old shape.
+export interface AIRubricCriterion {
+  key?: string;
+  name: string;
+  max?: number;
+  anchors?: Record<string, string>;
+  weight?: number;
+  description?: string;
+}
+
 export interface AIGradeInput {
   assignmentTitle: string;
   assignmentBody: string | null;
-  rubricCriteria?: { name: string; weight?: number; description?: string }[] | null;
+  rubricCriteria?: AIRubricCriterion[] | null;
+  // Total points the rubric criteria sum to (jsonb `scale_max`, usually 10).
+  // The 0-100 score is the rubric total rescaled to a percentage.
+  rubricScaleMax?: number | null;
   studentBody: string;
   links?: { label: string; url: string }[] | null;
 }
@@ -58,10 +73,34 @@ export async function gradeWithAI(input: AIGradeInput): Promise<AIGradeResult | 
 }
 
 function buildPrompt(i: AIGradeInput): string {
+  // Render each criterion with its point ceiling and the full anchor ladder so
+  // the model grades against the same descriptive levels a human would. Falls
+  // back to the legacy name/weight/description form for any row missing anchors.
   const rubric = i.rubricCriteria?.length
-    ? `\n\nRubric criteria:\n${i.rubricCriteria
-        .map((c) => `- ${c.name}${c.weight ? ` (weight ${c.weight})` : ""}${c.description ? `: ${c.description}` : ""}`)
-        .join("\n")}`
+    ? (() => {
+        const total =
+          (i.rubricScaleMax ??
+            i.rubricCriteria!.reduce((s, c) => s + (c.max ?? 0), 0)) ||
+          null;
+        const lines = i.rubricCriteria!.map((c) => {
+          const cap = typeof c.max === "number" ? ` (max ${c.max} pts)` : c.weight ? ` (weight ${c.weight})` : "";
+          const anchorLadder =
+            c.anchors && Object.keys(c.anchors).length
+              ? "\n" +
+                Object.entries(c.anchors)
+                  .sort((a, b) => Number(a[0]) - Number(b[0]))
+                  .map(([pts, desc]) => `    ${pts}: ${desc}`)
+                  .join("\n")
+              : c.description
+                ? `: ${c.description}`
+                : "";
+          return `- ${c.name}${cap}${anchorLadder}`;
+        });
+        const header = total
+          ? `\n\nRubric (score the work against these criteria; they sum to ${total} points, which you then rescale to 0-100):`
+          : `\n\nRubric criteria:`;
+        return `${header}\n${lines.join("\n")}`;
+      })()
     : "";
   const links = i.links?.length
     ? `\n\nLinks the student attached:\n${i.links.map((l) => `- ${l.label}: ${l.url}`).join("\n")}`
