@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { gradeWithAI } from "@/lib/ai/grade";
+import { gradeWithAI, type AIRubricCriterion } from "@/lib/ai/grade";
 import { withSupabase, actionFail, actionOk } from "./_helpers";
 import { submissionError } from "@/lib/submissions/word-count";
 
@@ -122,10 +122,22 @@ export async function batchGradeAssignment(
     return { ok: false, error: "This assignment is manual-grade only" };
   }
 
-  type RubricCriteria = { name: string; weight?: number; description?: string };
-  const rubricRaw = ((assignment as unknown) as { rubric_templates: { criteria: unknown } | null })
+  // rubric_templates.criteria is a WRAPPER object: { criteria: [...], scale_max,
+  // auto_grade_hints }. Pull the inner criteria array (each item is
+  // { key, name, max, anchors }) and the scale_max so the grader sees the full
+  // anchored rubric — not just criterion names. (Legacy rows may store the
+  // criteria array directly, so handle both shapes.)
+  type RubricCriteria = AIRubricCriterion;
+  const rubricJson = ((assignment as unknown) as { rubric_templates: { criteria: unknown } | null })
     ?.rubric_templates?.criteria;
-  const criteria = Array.isArray(rubricRaw) ? (rubricRaw as RubricCriteria[]) : null;
+  const rubricObj =
+    rubricJson && typeof rubricJson === "object" && !Array.isArray(rubricJson)
+      ? (rubricJson as { criteria?: unknown; scale_max?: unknown })
+      : null;
+  const criteriaRaw = rubricObj ? rubricObj.criteria : rubricJson;
+  const criteria = Array.isArray(criteriaRaw) ? (criteriaRaw as RubricCriteria[]) : null;
+  const rubricScaleMax =
+    rubricObj && typeof rubricObj.scale_max === "number" ? rubricObj.scale_max : null;
 
   // Re-grade everything that hasn't been published yet (status='submitted'
   // OR ai_graded but not human_reviewed). Skip already-published rows.
@@ -142,6 +154,7 @@ export async function batchGradeAssignment(
       assignmentTitle: (assignment as { title: string }).title,
       assignmentBody: (assignment as { body_md: string | null }).body_md,
       rubricCriteria: criteria,
+      rubricScaleMax,
       studentBody: s.body,
       links: s.links ?? null,
     });
