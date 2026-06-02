@@ -1,71 +1,61 @@
 ---
 day: 24
-date: "2026-06-02"
-weekday: "Tuesday"
+date: "2026-06-03"
+weekday: "Wednesday"
 week: 5
-topic: "Capstone Milestone 3: Workspace Setup and First Deploy"
+topic: "Give your app a voice: plug an AI-powered assistant (Chatbot) into your project"
 faculty:
   main: "Sandeep"
-  support: "Aparna"
-reading_time: "10 min"
-tldr: "Today your capstone leaves your laptop. Node + Python + Git locally, **Antigravity** open (primary), **Cursor** optional, and a one-page slice live on a vercel.app URL backed by Supabase. Demo Day starts to feel real."
-tags: ["capstone", "milestone", "deploy", "vercel", "supabase"]
-software: []
-online_tools: []
-video: "https://www.youtube.com/embed/seVxXHi2YMs"
-prompt_of_the_day: "Walk me through deploying this Next.js app to Vercel with a Supabase backend. Stop at every command and explain what it does and what could go wrong on a Windows laptop."
+  support: "Raunak"
+reading_time: "9 min"
+tldr: "We finish what Day 23 started — wire any feature like Order Now to Supabase and watch real orders appear live. Then we give AirDosa a brain: a Claude-powered AI chatbot that answers customer questions right inside your deployed app."
+tags: ["full-stack", "ai", "chatbot", "anthropic", "claude", "supabase", "vercel", "vibe-coding"]
+software: ["Antigravity", "Git"]
+online_tools: ["GitHub", "Supabase", "Vercel", "Anthropic Console"]
+video: ""
+prompt_of_the_day: "Add a floating AI chatbot widget to this Next.js app. Use the Anthropic Claude API. The chatbot should know it is the AirDosa assistant and answer questions about the menu, delivery, and pricing. Show a chat bubble icon fixed at bottom right. Clicking it opens a chat window. Use the NEXT_PUBLIC_ANTHROPIC_API_KEY environment variable."
 tools_hands_on:
-  - { name: "Vercel", url: "https://vercel.com/" }
+  - { name: "Antigravity", url: "https://antigravity.ai/" }
   - { name: "Supabase", url: "https://supabase.com/" }
-  - { name: "Antigravity", url: "https://antigravity.google/" }
-  - { name: "Cursor (optional)", url: "https://cursor.com/" }
+  - { name: "Vercel", url: "https://vercel.com/" }
+  - { name: "Anthropic Console", url: "https://console.anthropic.com/" }
 tools_reference:
-  - { name: "Vercel — deploy Next.js", url: "https://vercel.com/docs/frameworks/nextjs" }
-  - { name: "Supabase — quickstart", url: "https://supabase.com/docs/guides/getting-started" }
+  - { name: "Anthropic API docs", url: "https://docs.anthropic.com/" }
+  - { name: "Next.js API routes", url: "https://nextjs.org/docs/app/building-your-application/routing/route-handlers" }
+  - { name: "Supabase Table Editor", url: "https://supabase.com/docs/guides/database/tables" }
 resources:
-  - { title: "GitHub — first repo guide", url: "https://docs.github.com/en/get-started/quickstart/create-a-repo" }
-  - { title: "Vercel + Supabase integration", url: "https://vercel.com/integrations/supabase" }
-lab: { title: "Ship one page to a public URL", url: "https://vercel.com/new" }
+  - { title: "Anthropic Claude API — getting started", url: "https://docs.anthropic.com/en/api/getting-started" }
+  - { title: "What is an API? — Fireship", url: "https://www.youtube.com/watch?v=s7wmiS2mSXY" }
+  - { title: "Next.js API routes explained", url: "https://www.youtube.com/watch?v=Kkht2mwSL_I" }
+lab: { title: "AirDosa AI Chatbot — Order Now live + Claude assistant deployed", url: "https://vercel.com/" }
 objective:
-  topic: "Capstone Milestone 3: Workspace Setup and First Deploy"
-  tools: ["Node.js", "Python", "Git", "Vercel", "Supabase", "Antigravity", "Cursor (optional)"]
-  end_goal: "A live `*.vercel.app` URL serving one real page from your capstone, with the repo on GitHub and Supabase wired in."
+  topic: "Complete Supabase Order Now integration and add a Claude-powered AI chatbot to AirDosa"
+  tools: ["Antigravity", "Next.js", "Supabase", "Vercel", "Anthropic Claude API"]
+  end_goal: "Order Now button stores real orders in Supabase. A floating Claude chatbot answers customer questions live on the deployed AirDosa site."
 ---
 
-> 🚩 **Milestone 3.** This is a graded capstone checkpoint. By end of class, your project must have a public URL. No URL = no milestone.
-
-You've prototyped enough. Today the project gets a passport — a public URL anyone in your hostel can open on their phone.
+Day 23 gave AirDosa a database and a deployment pipeline. Today we close the loop — real orders flowing into Supabase — and then give the app a voice with a Claude-powered AI assistant.
 
 ## 🎯 Today's objective
 
-**Topic.** Capstone Milestone 3: Workspace Setup and First Deploy.
-
 **By end of class you will have:**
-1. Local stack confirmed: `node -v` ≥ 20, `python --version` ≥ 3.11, `git --version` working.
-2. GitHub repo pushed, one Supabase project created, one Vercel deployment green.
-3. A live URL displaying *one* real page of your capstone — even if it's just the hero + a button.
+1. Order Now button wired — clicking it stores a real order in your Supabase orders table.
+2. Live orders visible in Supabase Table Editor in real time.
+3. A floating AI chatbot on your AirDosa site powered by Claude.
+4. Everything deployed and live on Vercel.
 
-> *Why this matters.* Demo Day is 9 days away. Things that aren't deployed don't get demoed.
+## ⏪ Pre-class · ~15 min
 
-## ⏪ Pre-class · ~30 min
+### Carry forward from Day 23 (required)
+- [ ] Your AirDosa project is deployed on Vercel — note your live URL.
+- [ ] Supabase project is live — orders table exists.
+- [ ] Supabase URL in Vercel does NOT have `/rest/v1` — just `https://xxxx.supabase.co`
 
-### Setup (required)
+### New account needed
+- [ ] **Anthropic Console** — console.anthropic.com → Sign up → Get API key.
 
-- [ ] Install Node.js 20 LTS, Python 3.11, Git. Run `node -v && python --version && git --version` and screenshot.
-- [ ] GitHub account with SSH key OR personal access token saved.
-- [ ] Vercel account (sign in with GitHub).
-- [ ] Supabase account (sign in with GitHub). Create one new project — pick **Mumbai** or **Singapore** region for low latency from India.
-
-### Primer (~10 min)
-
-- **Watch:** "Deploy Next.js to Vercel in 5 min" — https://www.youtube.com/watch?v=seVxXHi2YMs
-- **Read:** Supabase quickstart, the *Project URL* and *anon key* section. Copy both into a `.env.local` template.
-
-### Bring to class
-
-- [ ] The smallest deployable slice of your capstone in a folder. If you have nothing, run `npx create-next-app@latest capstone --ts --tailwind --app` before class.
-
-> 🧠 **Quick glossary.** **Vercel** = hosting that auto-deploys on `git push`. **Supabase** = Postgres + Auth + Storage you can hit from anywhere. **`.env.local`** = secrets file, never commit.
+### Primer
+- **Think:** What 3 questions would a customer ask AirDosa? (delivery time, menu, price?) — your chatbot will answer these.
 
 ## 🎥 In-class · live session
 
@@ -73,64 +63,148 @@ You've prototyped enough. Today the project gets a passport — a public URL any
 
 | Block | Time | What |
 |---|---|---|
-| Stack check, room walk | 10 min | Everyone runs the three `-v` commands |
-| GitHub → Vercel pipeline | 15 min | Push triggers deploy |
-| Supabase wiring | 15 min | URL + anon key into `.env.local` and Vercel envs |
-| Lab: ship it | 15 min | Get a live URL |
-| Demo round | 5 min | Three random students share their URLs |
+| Finish Day 23 — Wire Order Now | 20 min | Antigravity prompts + .env.local + test locally |
+| Watch it live in Supabase | 10 min | Click Order Now → see row appear in Table Editor |
+| Concept: What is an API call? | 5 min | How chatbot talks to Claude |
+| Step 1: Get Claude API key | 5 min | Anthropic Console → create key |
+| Step 2: Add chatbot with Antigravity | 20 min | Prompt → wire API key → test locally |
+| Step 3: Deploy chatbot live | 10 min | Add API key to Vercel → redeploy → test live |
+| Show & tell | 5 min | Live URLs + chatbot demo in group chat |
 
-### The mental model
+---
 
-- **GitHub** holds the truth. **Vercel** mirrors it to a URL. **Supabase** is the database your URL talks to.
-- Every `git push` to `main` redeploys. That's the loop you'll live in for the rest of the workshop.
-- Secrets live in **two** places: your local `.env.local` and Vercel's *Environment Variables* panel. Never in code.
+## Part 1 — Finishing Day 23
 
-## 🧪 Lab: One page, one URL
+### Antigravity prompts to run first
 
-1. `git init && git add . && git commit -m "milestone 4: bootstrap"`. Push to a new GitHub repo.
-2. On vercel.com → **New Project** → import your repo → deploy. Wait for the green check. Open the URL.
-3. On supabase.com → your project → Settings → API. Copy `Project URL` and `anon public` key.
-4. Add both to `.env.local` and to Vercel → Settings → Environment Variables. Redeploy.
-5. Add one Supabase call to your home page (e.g. `select count(*) from auth.users`). Push. Confirm the URL renders without errors.
-6. Drop a screenshot of your live URL on a phone in the cohort channel.
+**Wire Supabase to Order Now button:**
+```
+Add Supabase to this Next.js project. Create lib/supabase.js using
+environment variables NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
+When the Order Now button is clicked, open a modal asking for the user's name,
+item and delivery address. On submit, insert a row into the Supabase orders table
+with item name, user name, and address. Show a success message after.
+```
 
-**Artifact.** Public URL + GitHub repo URL pasted on the dashboard. Both must work for a stranger.
+### Test locally first
+```bash
+pnpm dev
+```
+- Open `http://localhost:3000`
+- Click Order Now → fill in name and address → submit
+- Go to Supabase → Table Editor → orders table
+- New row should appear ✅
 
-> ⚠️ **Indian-context gotcha.** Campus Wi-Fi often blocks `vercel.com` CLI auth. If `vercel login` hangs, hotspot from your phone for 60 seconds, then return to campus Wi-Fi.
+### Then push to GitHub
+```bash
+git add .
+git commit -m "Wire Order Now to Supabase"
+git push
+```
+Vercel auto-deploys. Test on your live URL too.
+
+### Watch it live in Supabase
+Open Supabase Table Editor — keep it open on one screen. Click Order Now on your live site on another screen. Watch the row appear in real time. That's your full-stack working. 🎉
+
+---
+
+## Part 2 — Adding the AI Chatbot
+
+### Concept: How the chatbot works
+
+```
+User types a question in chat widget
+        ↓
+Next.js sends it to Anthropic Claude API
+        ↓
+Claude reads your system prompt (knows it's AirDosa assistant)
+        ↓
+Claude replies with an answer
+        ↓
+Answer appears in chat widget on your site
+```
+
+### Step 1 — Get your Claude API key
+- Go to console.anthropic.com
+- Sign up → go to **API Keys**
+- Create new key → copy it → save it safely
+- It looks like: `sk-ant-...`
+
+### Step 2 — Add to .env.local
+```
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+### Step 3 — Antigravity prompt for chatbot
+
+```
+Add a floating AI chatbot widget to this Next.js app using the Anthropic Claude API.
+The chatbot should know it is the AirDosa assistant — it delivers hot dosas by drone.
+It should answer questions about the menu (Classic Masala, Cheese Burst, Gunpowder Ghee Roast),
+delivery time (15-20 minutes), pricing (Standard, Express, Dosa Enthusiast plans),
+and how drone delivery works.
+Show a chat bubble icon fixed at bottom right of the page.
+Clicking it opens a chat window.
+Create an API route at app/api/chat/route.js that calls Anthropic using the
+ANTHROPIC_API_KEY environment variable.
+```
+
+### Step 4 — Deploy chatbot to Vercel
+
+**Test on live site:**
+- Open your live Vercel URL
+- Click the chat bubble bottom right
+- Ask: "What dosas do you have?" → Claude should reply ✅
+
+---
 
 ## 📊 Live poll
 
-**Where did you get stuck?** Node install / Git auth / Vercel deploy / Supabase keys / *I shipped clean*. Honest answer wins a callout.
+**How does it feel to have an AI inside your own app?** Mind blown 🤯 / Makes sense now / Want to customize it more / Something broke 🆘
 
 ## 💬 Discuss
 
-- What's the *one* feature you want live by Day 25? Defend the scope.
-- Vercel's free tier vs deploying on a college server — when does each make sense?
-- One thing you don't yet trust about Supabase. Bring it up.
+- Your chatbot is powered by Claude but branded as AirDosa. What does that say about how AI products are built?
+- What happens if someone asks your AirDosa chatbot something totally unrelated — like homework help?
+- You now have a database + AI in one app. What would you build next?
+
+## 🧪 Lab: AirDosa AI Chatbot — Order Now live + Claude assistant deployed
 
 ## ❓ Quiz
 
-Short quiz on env-var placement, Vercel build flow, and which file should never be committed. On your dashboard during class.
+Short quiz on APIs, environment variables, and how AI assistants are wired into apps. Open it from your dashboard when your instructor unlocks it.
 
-## 📝 Assignment · Milestone 3 submission
+## 📝 Assignment · AI-Powered Personal Portfolio Chatbot
 
-**Brief.** Submit (a) your live URL, (b) your GitHub repo URL, (c) a 60-second screen recording walking through pushing a one-line change and watching Vercel redeploy.
+Add an AI chatbot to your existing portfolio or any web project that answers questions about you — your skills, projects, and experience.
 
-**Submit.** All three on the dashboard before Day 25.
+**Rules:**
+- Build on top of any existing project (portfolio, landing page, or new project).
+- Chatbot must use the Anthropic Claude API.
+- System prompt must be customized — the bot should know who you are and what you do.
+- Deploy on Vercel with API key stored as environment variable (not in code).
+- Push to a new GitHub repository.
 
-**Rubric.** URL is live and loads in under 3s (4) · Supabase actually wired and queried (4) · Repo is clean — `.env.local` ignored, README has setup steps (2).
+**Artifact.** Live Vercel URL + GitHub repository link submitted on the dashboard.
+
+> 💡 **Starter prompt for Antigravity:** "Add a floating AI chatbot to this Next.js app using the Anthropic Claude API. The chatbot represents [your name] and answers questions about their skills, projects, and background. Use a system prompt that describes who they are. Create an API route at app/api/chat/route.js. Store the API key as ANTHROPIC_API_KEY environment variable."
 
 ## 🔁 Prep for next class
 
-Day 25 covers **GEO, AEO, leaderboards, benchmarking, and keeping up with AI**.
+Day 25 goes deeper into AI integrations — more control over Claude's behavior, memory across conversations, and connecting to real data.
 
-- [ ] Ask ChatGPT, Claude, Perplexity: *"What are the best [your capstone category] tools in India in 2026?"* Save the answers.
-- [ ] Bookmark **lmarena.ai** and **Hugging Face leaderboards**.
-- [ ] Bring one question about how new models actually get ranked.
+- [ ] Keep your AirDosa chatbot live on Vercel.
+- [ ] Note what questions your chatbot answers well and what it gets wrong.
+- [ ] Think: what extra knowledge would make your chatbot more useful?
+
+> ⚠️ **Your Anthropic API key has usage costs.** Free tier credits cover class use — but don't share your key publicly or push it to GitHub.
 
 ## 📚 References
 
-- [Vercel — Next.js deploy guide](https://vercel.com/docs/frameworks/nextjs) — five-minute version.
-- [Supabase — quickstart](https://supabase.com/docs/guides/getting-started) — auth, DB, storage in one read.
-- [Vercel + Supabase integration](https://vercel.com/integrations/supabase) — auto-syncs envs.
-- [GitHub — first repo](https://docs.github.com/en/get-started/quickstart/create-a-repo) — for anyone still confused by `git push -u origin main`.
+- [Anthropic Claude API — getting started](https://docs.anthropic.com/en/api/getting-started)
+- [Next.js API routes explained](https://www.youtube.com/watch?v=Kkht2mwSL_I)
+- [What is an API? — Fireship](https://www.youtube.com/watch?v=s7wmiS2mSXY)
+- [Next.js App Router docs](https://nextjs.org/docs/app)
+- [Supabase Table Editor docs](https://supabase.com/docs/guides/database/tables)
