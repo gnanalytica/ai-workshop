@@ -1,0 +1,7 @@
+{
+  "project_id": "ucqatbscxgborqsgnrjl",
+  "cohort_id": "fbd78241-7d28-434b-aa55-0659bb614be7",
+  "scoring": "each assignment /10 via anchored criteria; ai_score stored 0-100 (=score/10*100); write ai_score/ai_feedback_md/ai_strengths/ai_weaknesses/ai_graded/ai_graded_at; do NOT publish (leave score/human_reviewed_at null)",
+  "day_cap": 20,
+  "gradeable_assignments_33": "see worklist below; ~4640 subs total"
+}

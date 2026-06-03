@@ -1,0 +1,175 @@
+{
+  "_meta": {
+    "purpose": "Rubrics authored from LIVE DB assignment briefs, keyed by real assignment_id. Days 1-10 already have good live rubrics (NOT re-authored). Day 11 fixes the empty shell. Days 12-20 are new. scale_max=10 each; % = score/10*100 feeds the 35% submission slice. Pending user approval before grading + DB write.",
+    "convention": "criterion = {key,name,max,anchors{0..max}}. sum(max)==scale_max==10. Where the live brief already embedded a point scheme (days 16 M3, 17, 20), those weights are honored verbatim.",
+    "skipped": {
+      "day19_form_link": "assignment e8191b09 'Registration Link - forms.gle/...' has no gradeable content; excluded.",
+      "reflections": "weight 0 -> excluded from submission score.",
+      "day12_empty": "assignment 52b89d89 has empty body_md but is a real duplicate image task; shares Day 12 rubric below."
+    }
+  },
+
+  "day11_shell_fix": {
+    "rubric_id": "b96cf01c-ce70-4fee-989b-908b821f7533",
+    "applies_to_assignments": "all 10 Day-11 Intelligent Data Project tracks (group project)",
+    "note": "Existing shell had 5 criteria x 20pts but NO anchors (unusable by anchor-based grading). Rewritten to scale_max=10, 5 criteria x max 2, each fully anchored. Preserves the 5 original dimensions.",
+    "title": "Day 11 · Intelligent Data Project",
+    "criteria": [
+      {"key": "problem", "name": "Problem understanding", "max": 2,
+        "anchors": {"0": "Problem not stated or off-track.", "1": "Problem named but the 'why intelligent data' lens is thin.", "2": "Clear problem framing and why an intelligent-data approach is the right lens."}},
+      {"key": "data_prep", "name": "Data preparation & quality", "max": 2,
+        "anchors": {"0": "No data handling described.", "1": "Mentions data but glosses over cleaning/missing values.", "2": "Honest treatment of cleaning, missing values, integration/enrichment."}},
+      {"key": "model", "name": "Intelligent insight / model design", "max": 2,
+        "anchors": {"0": "No rule/model.", "1": "A rule/model exists but logic is shaky or unexplained.", "2": "Sound rule or model that genuinely turns raw data into an intelligent signal."}},
+      {"key": "usefulness", "name": "Practical usefulness of output", "max": 2,
+        "anchors": {"0": "Output wouldn't change any decision.", "1": "Plausibly useful but not tied to a real user action.", "2": "A real user/operator would change a decision because of this output."}},
+      {"key": "presentation", "name": "Presentation, clarity & group roles", "max": 2,
+        "anchors": {"0": "No write-up / unreadable.", "1": "Write-up present but charts or roles unclear.", "2": "Crisp write-up, charts read at a glance, group + roles named."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {
+      "red_flags": ["no dataset described", "model is just 'we used AI'", "no group roles for a group project", "output with no decision attached"],
+      "evidence_required": ["problem statement", "data cleaning notes", "model/rule logic", "at-risk/insight view or dashboard", "group roles"]
+    }
+  },
+
+  "day12": {
+    "assignment_ids": ["2915f986-b449-4652-8d31-5711d9a3c401", "52b89d89-3729-42f7-809d-89db7b47a675"],
+    "title": "Day 12 · Lab · Image models + hero image",
+    "criteria": [
+      {"key": "four_models", "name": "Same prompt across the image models", "max": 3,
+        "anchors": {"0": "None.", "1": "1-2 tools.", "2": "3 tools, outputs shown.", "3": "Same structured prompt across all four (SD/ChatGPT/Nano/Firefly), labeled grid."}},
+      {"key": "iteration", "name": "Iterate on the winner (2+ rounds)", "max": 3,
+        "anchors": {"0": "No iteration.", "1": "One tweak.", "2": "2 rounds noted.", "3": "2+ documented iterations producing a usable hero image."}},
+      {"key": "hero", "name": "Final hero image", "max": 2,
+        "anchors": {"0": "Missing.", "1": "Image present, low effort.", "2": "A polished final hero image they'd actually use."}},
+      {"key": "note", "name": "Prompt-engineering note", "max": 2,
+        "anchors": {"0": "Absent.", "1": "Generic.", "2": "5-8 line note: original prompt, what changed across iterations, why the pick won."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["one tool only", "no iterations", "no final prompt/process note"], "evidence_required": ["4-output grid", "2+ iterations", "final hero", "prompt note"]}
+  },
+
+  "day13": {
+    "assignment_ids": ["02afb928-bd5c-4241-ad9c-d7a7fe05a596", "b0140e6f-8881-4d0a-8a54-db9b655e9948"],
+    "title": "Day 13 · Lab · AI-generated deck (+ scripts)",
+    "criteria": [
+      {"key": "deck", "name": "Deck shipped (public link, required slides)", "max": 4,
+        "anchors": {"0": "No deck/link.", "1": "Link private or broken.", "2": "Public deck, default AI output, no edits.", "3": "Public deck with the required slide structure.", "4": "Public deck, full structure, AND at least two cards hand-edited (headline + image swap)."}},
+      {"key": "scripts_or_tooling", "name": "Scripts (slide 1 & 10) OR multi-tool workflow", "max": 4,
+        "anchors": {"0": "Neither.", "1": "One weak element.", "2": "Some script/tool work.", "3": "Both hook+ask scripts OR a clear Gamma+Kimi+Canva workflow.", "4": "Tight 60-sec scripts for slide 1 & 10 produced via the multi-tool flow."}},
+      {"key": "note", "name": "Tool-choice note", "max": 2,
+        "anchors": {"0": "Absent.", "1": "One generic line.", "2": "Specific: which tool earned its keep, which to skip next time."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["deck link private/broken", "no edits over the AI default", "no scripts and no tool reflection"], "evidence_required": ["public deck link", "scripts or multi-tool evidence", "tool note"]}
+  },
+
+  "day14": {
+    "assignment_ids": ["a2bfa66c-dba4-418a-8553-1deccb0fc8d4"],
+    "title": "Day 14 · Lab · 3-node n8n workflow (Firecrawl + Groq)",
+    "criteria": [
+      {"key": "workflow", "name": "3 nodes run green", "max": 4,
+        "anchors": {"0": "No workflow.", "1": "Nodes added, errors / not run.", "2": "Runs, one node failing or no summary.", "3": "All three nodes execute (trigger -> Firecrawl -> Groq).", "4": "Green checkmarks on all 3 AND Groq's 5-bullet output visible."}},
+      {"key": "evidence", "name": "Screenshot / bullet evidence", "max": 3,
+        "anchors": {"0": "None.", "1": "Partial.", "2": "Screenshot OR bullets.", "3": "Screenshot of green nodes plus the 5-bullet summary (or bullets pasted)."}},
+      {"key": "note", "name": "What-scraped + surprise note", "max": 3,
+        "anchors": {"0": "No note.", "1": "Mechanical restatement.", "2": "Names the URL scraped.", "3": "Names the URL and which bullet surprised them — shows understanding."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["screenshot from the brief not their canvas", "no Groq output", "API keys pasted in plaintext"], "evidence_required": ["3 green nodes", "Groq 5-bullet output", "scraped-URL note"]}
+  },
+
+  "day15": {
+    "assignment_ids": ["e832bb84-d86a-4931-848f-41fdbcfa64e9"],
+    "title": "Day 15 · Lab · Recognise/Try a ReAct agent",
+    "criteria": [
+      {"key": "trace", "name": "Real ReAct trace observed", "max": 4,
+        "anchors": {"0": "None.", "1": "Screenshot without the think->act loop.", "2": "Trace shown, not explained.", "3": "Colab trace run + screenshot.", "4": "Trace run AND the Thought->Action->Observation loop explained in own words."}},
+      {"key": "experiment", "name": "Docstring break experiment", "max": 3,
+        "anchors": {"0": "Not attempted.", "1": "Mentioned, no result.", "2": "Changed the calculator docstring, vague result.", "3": "Made docstring vague, re-ran, documented whether the agent still selected it."}},
+      {"key": "crew_sketch", "name": "2-agent crew sketch", "max": 3,
+        "anchors": {"0": "Missing.", "1": "Two agents named only.", "2": "Researcher + writer with partial role/goal/tools.", "3": "Both agents with role, goal, and 1-2 tools each."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["no actual agent trace", "docstring experiment not run", "crew sketch missing role/goal/tools"], "evidence_required": ["agent trace + explanation", "docstring experiment result", "2-agent sketch"]}
+  },
+
+  "day16_milestone3": {
+    "assignment_ids": ["ae1de383-6c60-4a6d-b807-e68d863d1d92"],
+    "title": "Day 16 · Capstone · Milestone 3 — Pitch + Live Demo",
+    "_source": "Honors the embedded brief rubric verbatim: Problem clarity (4) · Working live demo (4) · Real-world numbers/user evidence (2).",
+    "criteria": [
+      {"key": "problem", "name": "Problem clarity", "max": 4,
+        "anchors": {"0": "No clear problem.", "1": "Vague problem.", "2": "Problem stated, weak framing.", "3": "Clear problem + who it's for.", "4": "Sharp, well-scoped problem with a compelling 'why now'."}},
+      {"key": "demo", "name": "Working live demo", "max": 4,
+        "anchors": {"0": "No demo.", "1": "Localhost/recording only, not live.", "2": "Deployed URL with errors.", "3": "Live deployed demo, mostly works.", "4": "Smooth 2-min live demo from a deployed URL."}},
+      {"key": "numbers", "name": "Real-world numbers / user evidence", "max": 2,
+        "anchors": {"0": "None.", "1": "Hand-wavy claims.", "2": "Concrete numbers or real user evidence."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["demo is localhost or a recording", "no problem framing", "no evidence/numbers"], "evidence_required": ["pitch video", "deployed demo URL", "numbers/user evidence"]}
+  },
+
+  "day16_portfolio": {
+    "assignment_ids": ["73b4893a-372a-4ff5-acf0-bef5a91e2370"],
+    "title": "Day 16 · Lab · Vibe-coded portfolio",
+    "criteria": [
+      {"key": "ships", "name": "Portfolio ships with required sections", "max": 4,
+        "anchors": {"0": "Nothing.", "1": "Broken/private link.", "2": "Loads but missing sections.", "3": "Public portfolio: bio + 2-3 projects + contact.", "4": "All sections AND a visible self-made styling edit (colour/font/layout)."}},
+      {"key": "plan_mode", "name": "Plan-mode-first evidence", "max": 3,
+        "anchors": {"0": "No plan.", "1": "Claims a plan, no detail.", "2": "Shows a rough plan.", "3": "A 4-step plan, edited, then generated."}},
+      {"key": "reflection", "name": "60-120 word tool reflection", "max": 3,
+        "anchors": {"0": "Absent.", "1": "One generic line.", "2": "Tool + one nail or one miss.", "3": "Tool choice + what it nailed + what it got wrong and how they corrected it."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["link broken/private", "no plan step", "no required sections"], "evidence_required": ["public portfolio link/screenshot", "plan evidence", "60-120 word reflection"]}
+  },
+
+  "day17": {
+    "assignment_ids": ["160c3c77-def3-4435-9640-7a8f998c574a"],
+    "title": "Day 17 · Lab · Public repo + real API call",
+    "_source": "Honors the embedded brief rubric verbatim: Repo runs after git clone (4) · API works without edits (3) · README has run instructions + screenshot (3).",
+    "criteria": [
+      {"key": "repo_runs", "name": "Repo runs after git clone", "max": 4,
+        "anchors": {"0": "No repo / private.", "1": "Public repo, won't run.", "2": "Runs with manual fixes.", "3": "Runs after clone, minor friction.", "4": "Clean public repo that runs straight after git clone."}},
+      {"key": "api", "name": "Real API call works without code edits", "max": 3,
+        "anchors": {"0": "No API call.", "1": "Snippet present, not working.", "2": "Works after edits.", "3": "Live API call renders real data with no code edits (and not OpenWeather)."}},
+      {"key": "readme", "name": "README: run instructions + screenshot", "max": 3,
+        "anchors": {"0": "No README.", "1": "Title only.", "2": "Run instructions OR screenshot.", "3": "What-it-does + how-to-run + screenshot."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["repo private", "API key committed to a public repo", "OpenWeather used (explicitly excluded)", "no README"], "evidence_required": ["public repo URL", "working API call", "README with run steps + screenshot"]}
+  },
+
+  "day18": {
+    "assignment_ids": ["402f9812-c0d7-48b8-bd92-046295ebda60"],
+    "title": "Day 18 · Lab · Capstone cost spreadsheet",
+    "criteria": [
+      {"key": "model", "name": "3-row cost model, live formulas", "max": 4,
+        "anchors": {"0": "No sheet.", "1": "Static typed numbers.", "2": "Rows present, formulas partial.", "3": "3 rows (4o-mini/Sonnet/self-hosted) with live formulas.", "4": "Full column set (users/req/tokens/price) with a correct monthly-₹ formula across all 3 rows."}},
+      {"key": "cache_breakeven", "name": "Cache-hit + break-even", "max": 3,
+        "anchors": {"0": "Absent.", "1": "Mentions caching, no numbers.", "2": "Cache-hit column 0/50/80%.", "3": "Cache-hit column AND a computed break-even cell highlighted green."}},
+      {"key": "honesty", "name": "Honest model-to-traffic mapping", "max": 3,
+        "anchors": {"0": "Cheapest price quoted as the answer.", "1": "One model for everything.", "2": "Acknowledges stronger models for some tasks.", "3": "Maps which model serves which traffic; doesn't lowball with 4o-mini."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["no live formulas (typed numbers)", "cheapest price as the whole answer", "no view-link to the sheet"], "evidence_required": ["3-row sheet view-link", "cache-hit column", "break-even cell"]}
+  },
+
+  "day20": {
+    "assignment_ids": ["b331bdfa-808a-4a26-aa1a-ace5600ca86f"],
+    "title": "Day 20 · Lab · Context that earns its tokens",
+    "_source": "Honors the embedded brief rubric verbatim: Specificity of conventions (4) · Before/after evidence (4) · File hygiene under 60 lines (2).",
+    "criteria": [
+      {"key": "specificity", "name": "Specificity of conventions", "max": 4,
+        "anchors": {"0": "No context files.", "1": "Generic boilerplate.", "2": "Some project-specific rules.", "3": "Mostly specific conventions across the 4 files.", "4": "Sharp, project-specific conventions in CLAUDE.md/AGENTS.md/cursor rule/skill."}},
+      {"key": "before_after", "name": "Before/after evidence", "max": 4,
+        "anchors": {"0": "None.", "1": "Claimed, no example.", "2": "Vague before/after.", "3": "A concrete before/after.", "4": "Clear before/after: a question the agent got wrong without context, right with it."}},
+      {"key": "hygiene", "name": "File hygiene (under 60 lines, no fluff)", "max": 2,
+        "anchors": {"0": "Bloated or missing files.", "1": "Files present but padded.", "2": "CLAUDE.md under 60 lines, no fluff; all 4 files present."}}
+    ],
+    "scale_max": 10,
+    "auto_grade_hints": {"red_flags": ["generic boilerplate context", "no before/after", "CLAUDE.md bloated >60 lines"], "evidence_required": ["4 context files", "before/after note", "concise CLAUDE.md"]}
+  }
+}

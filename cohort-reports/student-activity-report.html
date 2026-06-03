@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cohort Activity Report — Day 12</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="chart.min.js"></script>
+<style>
+  :root, [data-theme="dark"]{
+    --bg:#0b0d10; --panel:#11151b; --panel2:#161b22; --line:#232a35;
+    --ink:#e6e9ef; --mute:#8a93a6; --accent:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --chip:#1f2630;
+  }
+  [data-theme="light"]{
+    --bg:#f7f8fa; --panel:#ffffff; --panel2:#f0f2f5; --line:#dde1e8;
+    --ink:#1a1d23; --mute:#5b6473; --accent:#2c8a3e; --warn:#c46a0a; --bad:#c0392b;
+    --chip:#e7eaf0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:1320px;margin:0 auto;padding:32px 24px 80px}
+  h1{font-size:28px;margin:0 0 4px;letter-spacing:-.02em}
+  .sub{color:var(--mute);font-size:13px;margin-bottom:24px}
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:24px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .kpi .lbl{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.15em}
+  .kpi .v{font-size:24px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+  .charts{grid-template-columns:repeat(auto-fit,minmax(420px,1fr));margin-bottom:24px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .card h2{font-size:14px;margin:0 0 12px;color:var(--ink);font-weight:600}
+  .card h2 .hint{color:var(--mute);font-weight:400;font-size:12px;margin-left:6px}
+  .chart-box{position:relative;height:300px}
+  .chart-box.tall{height:380px}
+  .row2{grid-template-columns:1fr 1fr}
+  .row3{grid-template-columns:repeat(3,1fr)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mute);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.12em;
+     background:var(--panel2);position:sticky;top:0;cursor:pointer;user-select:none}
+  th:hover{color:var(--ink)}
+  th.sort-asc::after{content:" ▲";color:var(--accent)}
+  th.sort-desc::after{content:" ▼";color:var(--accent)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr:hover td{background:#0e1218}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--chip);
+    color:var(--mute);font-size:11px}
+  .pill.un{background:#3a2317;color:#ff9966}
+  .pill.bsc{background:#1a2840;color:#7eb3ff}
+  .pill.ai{background:#1f3324;color:var(--accent)}
+  .pill.ds{background:#321a3a;color:#cf99ff}
+  .good{color:var(--accent)}
+  .warn{color:var(--warn)}
+  .bad{color:var(--bad)}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+  .toolbar input,.toolbar select{background:var(--panel2);color:var(--ink);
+    border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:13px}
+  .toolbar input{flex:1;min-width:220px}
+  .count{color:var(--mute);font-size:12px;margin-left:auto}
+  .legend{color:var(--mute);font-size:11px;margin-top:10px}
+  details{margin-top:20px}
+  details summary{cursor:pointer;color:var(--mute);padding:8px 0}
+  .tbl-wrap{max-height:640px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  .footer{color:var(--mute);font-size:11px;margin-top:32px;text-align:center}
+  .viewbtn{background:var(--panel2);color:var(--mute);border:1px solid var(--line);
+    border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .viewbtn.active{background:var(--accent);color:#0b0d10;border-color:var(--accent)}
+  .denom{color:var(--mute);font-size:11px}
+  .chbtn{background:var(--panel2);color:var(--mute);border:1px solid var(--line);
+    border-radius:99px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;
+    transition:all .15s;--chcolor:var(--accent)}
+  .chbtn:hover{color:var(--ink);border-color:var(--mute)}
+  .chbtn.on{background:var(--chcolor);color:#0b0d10;border-color:var(--chcolor);font-weight:600}
+  .section-head{display:flex;align-items:baseline;gap:16px;margin:40px 0 16px;padding-bottom:8px;
+    border-bottom:1px solid var(--line)}
+  .section-head h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .section-head .desc{color:var(--mute);font-size:12px}
+  .section-head .tag{font-size:11px;padding:3px 10px;border-radius:99px;
+    background:var(--chip);color:var(--accent);text-transform:uppercase;letter-spacing:.15em}
+  .section-head.score .tag{color:#cf99ff}
+  [data-theme="light"] .section-head.score .tag{color:#7340a0}
+  .theme-btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;
+    transition:all .15s}
+  .theme-btn:hover{border-color:var(--mute)}
+  [data-theme="dark"] .theme-ico-light, [data-theme="light"] .theme-ico-dark { display: none; }
+</style>
+</head>
+<body>
+<script>
+  // Apply theme early to avoid flash
+  (function(){
+    const saved = localStorage.getItem("report-theme") || "dark";
+    document.documentElement.setAttribute("data-theme", saved);
+  })();
+</script>
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <h1>Cohort Activity Report</h1>
+      <div class="sub">As of 2026-05-18 · Day 12 of 30 unlocked · 158 students · cohort <code>fbd78241…</code></div>
+    </div>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+      <span class="theme-ico-dark">☀ Light</span>
+      <span class="theme-ico-light">☾ Dark</span>
+    </button>
+  </div>
+
+  <div class="grid kpis">
+    <div class="kpi"><div class="lbl">Students</div><div class="v" id="kpi-total">—</div></div>
+    <div class="kpi"><div class="lbl">Pods</div><div class="v">3 <span style="color:var(--mute);font-size:13px">+ unassigned</span></div></div>
+    <div class="kpi"><div class="lbl">Avg days active</div><div class="v" id="kpi-days">—</div></div>
+    <div class="kpi"><div class="lbl">Avg quiz score</div><div class="v" id="kpi-quiz">—</div></div>
+    <div class="kpi"><div class="lbl">Avg assignments</div><div class="v" id="kpi-subs">—</div></div>
+    <div class="kpi"><div class="lbl">Avg poll votes</div><div class="v" id="kpi-polls">—</div></div>
+  </div>
+
+  <div class="section-head">
+    <span class="tag">Section 1</span>
+    <h2>Participation &amp; Engagement</h2>
+    <span class="desc">who's showing up, what they're touching, how broadly</span>
+  </div>
+
+  <div class="grid charts">
+    <div class="card">
+      <h2>Students per pod <span class="hint">distribution</span></h2>
+      <div class="chart-box"><canvas id="podChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Per-day participation by channel <span class="hint">% of 158 · click channels to toggle</span></h2>
+      <div id="channelToggle" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+      <div class="chart-box tall"><canvas id="daysChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <h2>Engagement extremes <span class="hint">top 10 + bottom 10 by composite · composite = days×3 + quizzes×2 + assignments + polls/2 + avgQuiz/4</span></h2>
+    <div class="chart-box tall"><canvas id="engRankChart"></canvas></div>
+  </div>
+
+  <div class="section-head score">
+    <span class="tag">Section 2</span>
+    <h2>Grading &amp; Scores</h2>
+    <span class="desc">quiz performance · how well students understand the material</span>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <h2>Quiz score distribution <span class="hint">avg quiz % per student</span></h2>
+    <div class="chart-box"><canvas id="quizChart"></canvas></div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <h2>Quiz score extremes <span class="hint">top 10 + bottom 10 by avg quiz % · min 3 attempts</span></h2>
+    <div class="chart-box tall"><canvas id="quizRankChart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <h2>Full roster <span class="hint">click headers to sort · type to filter</span></h2>
+    <div class="toolbar">
+      <input id="search" placeholder="Filter by name, email, or pod…">
+      <select id="podFilter">
+        <option value="">All pods</option>
+      </select>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl">
+        <thead><tr>
+          <th data-k="name">Name</th>
+          <th data-k="email">Email</th>
+          <th data-k="pod">Pod</th>
+          <th class="num" data-k="days">Days /12</th>
+          <th class="num" data-k="quizzes">Quizzes /11</th>
+          <th class="num" data-k="quizPct">Avg %</th>
+          <th class="num" data-k="subs">Assignments /35</th>
+          <th class="num" data-k="polls">Polls /83</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="legend">Quiz % colors: <span class="good">≥75</span> · <span class="warn">50–75</span> · <span class="bad">&lt;50</span></div>
+  </div>
+
+  <div class="footer">Generated 2026-05-18 from cohort <code>fbd78241-7d28-434b-aa55-0659bb614be7</code></div>
+</div>
+
+<script>
+const DATA = [
+  {name:"Abdul Jainbee",email:"abduljainbee@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:73.75,subs:32,polls:20},
+  {name:"Akram Shaik bsc com 1",email:"akrambash546@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:63.33,subs:32,polls:33},
+  {name:"Anand Kumar -AI",email:"anand914482@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:65.08,subs:32,polls:31},
+  {name:"Anshu Mail",email:"anshumail9573@gmail.com",pod:"Unassigned",days:9,quizzes:8,quizPct:72.86,subs:20,polls:41},
+  {name:"ARELLA RAM-BSCCOMP-1",email:"r62204706@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:7,quizPct:91.43,subs:29,polls:35},
+  {name:"Avala Anand Babu Ai&Ml",email:"avalaanandbabu@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:71.30,subs:22,polls:41},
+  {name:"B.Madhuri BSC COMP-1",email:"mounibantumilli13@gmail.com",pod:"BSC_COMPUTERS",days:12,quizzes:10,quizPct:72.67,subs:34,polls:33},
+  {name:"Balaji Majji",email:"balajimajji20@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:9,quizPct:65.56,subs:22,polls:24},
+  {name:"Bavaraju Sneha-2nd bsc(stat)",email:"bavarajusneha33@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:76.25,subs:28,polls:52},
+  {name:"BEULAH/II-DS",email:"gudisabeulah46@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:62.50,subs:22,polls:52},
+  {name:"BHOOMIKA VENTURI",email:"venturibhoomika@gmail.com",pod:"Unassigned",days:10,quizzes:9,quizPct:72.22,subs:22,polls:9},
+  {name:"Bokka satish",email:"satishbokka958@gmail.com",pod:"Unassigned",days:7,quizzes:6,quizPct:80.00,subs:16,polls:3},
+  {name:"Boodsu Swathi BSC COMP-1",email:"boodsuswathi@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:72.22,subs:21,polls:33},
+  {name:"ch sai charan bsc computer-1",email:"sc6880241@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:75.00,subs:30,polls:1},
+  {name:"Ch.Sravanthi/II-DS",email:"chintadasravanthi76@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:7,quizPct:78.57,subs:22,polls:38},
+  {name:"Ch.Yugalasri-AI/ML",email:"chikatiyugalasri@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:70.24,subs:32,polls:80},
+  {name:"Chintala Dileep kumar -AI",email:"chintaladileep968@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:44.44,subs:32,polls:32},
+  {name:"Chinthapalli Sudeshna",email:"sudeshnachinthapalli@gmail.com",pod:"Unassigned",days:8,quizzes:5,quizPct:76.00,subs:25,polls:1},
+  {name:"D.ajay (ai&ml)",email:"ajaydasaridasari20@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:70.00,subs:26,polls:20},
+  {name:"Dasika Sarath kumar-AI",email:"dasikasarath@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:51.75,subs:24,polls:39},
+  {name:"Devarapalli Nikhitha Bsc comp-1",email:"devarapallinikhita@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:7,quizPct:57.14,subs:30,polls:66},
+  {name:"Dupaguntla Keerthi DS",email:"keerthidupaguntla20066@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:80.00,subs:22,polls:43},
+  {name:"ELARI PRABHAS",email:"prabhaselari@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:73.75,subs:24,polls:0},
+  {name:"Eswar Kumar",email:"majjieswarkumar2006@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:82.50,subs:21,polls:52},
+  {name:"G. Prasanna Kumar - II DS",email:"prsnnkmrganesh@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:71.96,subs:11,polls:57},
+  {name:"G. V .Ganesh DS",email:"ganeshreddy5632r@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:7,quizPct:91.43,subs:22,polls:36},
+  {name:"G.Chaitanya-AI",email:"chaitanyagandepalli45@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:77.41,subs:22,polls:20},
+  {name:"G.krishnaswamy(AI&ML)",email:"krishnaswamyguti@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:57.78,subs:32,polls:42},
+  {name:"GANDABOYINA Mounika DS",email:"gandaboyinamounika9@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:65.56,subs:23,polls:30},
+  {name:"Ganesh somisetty",email:"somisetty.ganeshnaidu@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:73.75,subs:29,polls:5},
+  {name:"GOPI RAM GANESH (243311)",email:"ramganesh3214@gmail.com",pod:"BSC_COMPUTERS",days:10,quizzes:9,quizPct:70.00,subs:22,polls:30},
+  {name:"guddati.charithasri 2Bsc(DS)",email:"guddaticharithasri@gmail.com",pod:"INTERN SHIP DS/STAT",days:12,quizzes:10,quizPct:67.67,subs:25,polls:71},
+  {name:"gudela tirumaleswari Bsc DS 03",email:"gudelatirumaleswari@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:66.25,subs:26,polls:57},
+  {name:"Gundu.Nithin-bsccomp-1",email:"gvsnithin22@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:68.89,subs:31,polls:43},
+  {name:"Hamsika Ongole-ai&ml",email:"ongolehamsika@gmail.com",pod:"II BSC(AI)",days:11,quizzes:8,quizPct:79.46,subs:22,polls:67},
+  {name:"Harikrishna Kudhigana Bsc Comp-1",email:"krishnakudhigana06@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:68.75,subs:32,polls:34},
+  {name:"Jagadeesh Akula",email:"jagadeeshakula1432@gmail.com",pod:"Unassigned",days:10,quizzes:9,quizPct:63.33,subs:22,polls:0},
+  {name:"jagadeesh akula bsc comp1",email:"akulajagadeesh22@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:78.42,subs:32,polls:27},
+  {name:"jagan ds 245230",email:"sunny2345pandu@gmail.com",pod:"Unassigned",days:7,quizzes:6,quizPct:81.67,subs:16,polls:0},
+  {name:"Jami Meghana - II STAT",email:"meghanasrinivasarao40@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:76.25,subs:28,polls:33},
+  {name:"Jayanth ds245215",email:"jayanth328328@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:82.50,subs:20,polls:21},
+  {name:"jellila.yuva madhuri-DS",email:"madhuria696@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:67.78,subs:22,polls:64},
+  {name:"John Newton BSc computers",email:"s.johnnewton333@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:73.33,subs:27,polls:18},
+  {name:"Jyothi Aridi",email:"jyothiaridi00@gmail.com",pod:"Unassigned",days:9,quizzes:8,quizPct:67.86,subs:18,polls:31},
+  {name:"k Meghana",email:"meghana2007ammu@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:76.25,subs:32,polls:35},
+  {name:"K. K. V. Satish Harsha DS",email:"saiharsha7014@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:72.50,subs:22,polls:33},
+  {name:"k.Bharathi bsc comp-1",email:"bharathikilari17@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:63.75,subs:30,polls:38},
+  {name:"K.Bhavani Bhargava-AI",email:"bhargavakona3@gmail.com",pod:"II BSC(AI)",days:11,quizzes:10,quizPct:69.67,subs:23,polls:31},
+  {name:"K.Manoj kumar (BSC.AI&ML)",email:"kandukurim635@gmail.com",pod:"II BSC(AI)",days:11,quizzes:7,quizPct:62.86,subs:30,polls:38},
+  {name:"Kaleb Vikas-AI",email:"kalebvikas29@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:71.67,subs:21,polls:55},
+  {name:"Karra Tharun AI",email:"karratharun5@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:65.74,subs:22,polls:69},
+  {name:"katuri Rajitha-2Bsc(DS)",email:"honey0282006@gmail.com",pod:"INTERN SHIP DS/STAT",days:12,quizzes:9,quizPct:75.19,subs:29,polls:39},
+  {name:"Kavitapu .Dhanush -AI",email:"kavitapudhanush8@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:71.30,subs:29,polls:63},
+  {name:"Keerthisree Devathu bsccomp-1",email:"keerthisree2607@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:67.78,subs:32,polls:22},
+  {name:"Kiran Kumar pachhikori Bsc Comp -1",email:"pachhikorikiran11@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:72.22,subs:29,polls:31},
+  {name:"konduruyamini krishnasri Bsc.comp 1",email:"konduruyaminikrishnasri@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:61.27,subs:22,polls:63},
+  {name:"Koti Bhavana-AI",email:"mailtokotibhavana@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:68.41,subs:25,polls:30},
+  {name:"Kumar Swamy aiml",email:"kumarswamy5311@gmail.com",pod:"II BSC(AI)",days:11,quizzes:6,quizPct:81.67,subs:31,polls:73},
+  {name:"kuppila balaji reddy-AI",email:"reddy.kuppila2006@gmail.com",pod:"II BSC(AI)",days:10,quizzes:8,quizPct:71.25,subs:22,polls:40},
+  {name:"kuppulashanmukhareddyds",email:"shanmukhreddy2004@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:75.00,subs:22,polls:44},
+  {name:"lalithacomputers",email:"lalithasingamsetty536@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:7,quizPct:71.43,subs:31,polls:50},
+  {name:"lankalapalli yaswanthvenkat-AI",email:"yaswanthvenkatlankalapalli@gmail.com",pod:"II BSC(AI)",days:11,quizzes:8,quizPct:73.75,subs:27,polls:73},
+  {name:"M. Gabriel samuel-BSC(AI/ML)",email:"mgabriel050804@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:71.11,subs:31,polls:56},
+  {name:"M.pranaswi BSC COMP-1",email:"kumarim3260@gmail.com",pod:"BSC_COMPUTERS",days:12,quizzes:10,quizPct:72.67,subs:35,polls:21},
+  {name:"m.vamsi AI",email:"mudraboinavamsi06@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:69.67,subs:34,polls:17},
+  {name:"Maddula.Namitha-ai",email:"namitha.maddula24@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:70.63,subs:25,polls:68},
+  {name:"Mahanthi.Durga-STAT",email:"durgamahanthi270@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:65.56,subs:21,polls:59},
+  {name:"MAHESH DS",email:"maheshds245237@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:62.71,subs:32,polls:17},
+  {name:"Maheswari Bhupathi-II(DS)",email:"maheswaribhupathi74@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:61.11,subs:26,polls:38},
+  {name:"Mallela Kalyan stat",email:"mallelakalyan521@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:9,quizPct:35.95,subs:22,polls:38},
+  {name:"Manikant Paritala bsc computer 1",email:"manikantparitala@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:78.42,subs:30,polls:20},
+  {name:"Mary BSC-1",email:"rambujjirambujji271@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:66.67,subs:31,polls:26},
+  {name:"MATLAPUDI ABHISHEK-BSC-COMP1",email:"matlapudiabhishek@gmail.com",pod:"BSC_COMPUTERS",days:10,quizzes:9,quizPct:67.78,subs:22,polls:32},
+  {name:"Melimi Hasini-2nd bsc(stat)",email:"melimihasini@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:81.25,subs:27,polls:54},
+  {name:"mohammad aayan bsccomp1",email:"aayanmohammed2018@gmail.com",pod:"BSC_COMPUTERS",days:10,quizzes:9,quizPct:54.44,subs:19,polls:19},
+  {name:"Mouni Gadi BSC.computers-1",email:"gadimouni1@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:60.63,subs:22,polls:64},
+  {name:"Mukesh /AI",email:"mukeshparasanaboina@gmail.com",pod:"II BSC(AI)",days:10,quizzes:8,quizPct:76.25,subs:22,polls:23},
+  {name:"N.Khatwang-AI&ML",email:"nannamkhatwang3@gmail.com",pod:"II BSC(AI)",days:11,quizzes:6,quizPct:53.33,subs:23,polls:32},
+  {name:"n.lakshmi balaji(ai&ml)",email:"balubalaji47616@gmail.com",pod:"II BSC(AI)",days:10,quizzes:9,quizPct:63.33,subs:22,polls:6},
+  {name:"N.Lakshmiprasanna-DS",email:"namalagayethri@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:77.50,subs:22,polls:76},
+  {name:"Naga Srikari_AIML",email:"srikarinaga@gmail.com",pod:"II BSC(AI)",days:10,quizzes:9,quizPct:72.22,subs:22,polls:45},
+  {name:"Nani krishna chaitanya",email:"nanikrishnachaitanya30032005@gmail.com",pod:"BSC_COMPUTERS",days:10,quizzes:9,quizPct:59.05,subs:11,polls:30},
+  {name:"nannam umesh bsc 1",email:"soloking299983@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:58.89,subs:30,polls:9},
+  {name:"NATHAM MANOJ KUMAR-AI",email:"nathammanojkumar@gmail.com",pod:"II BSC(AI)",days:10,quizzes:7,quizPct:81.43,subs:21,polls:36},
+  {name:"Navya Charitha_AIML",email:"charithanavya8@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:70.00,subs:22,polls:73},
+  {name:"Neelima-AI/ML",email:"neelimakambampati9@gmail.com",pod:"II BSC(AI)",days:12,quizzes:9,quizPct:70.45,subs:33,polls:81},
+  {name:"Orsu SivaBrahmaiah B.SC(AI&ML)",email:"orsusivabrahmaiah@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:66.67,subs:22,polls:40},
+  {name:"P. Vikram Adithya-AI",email:"vikrampalli357@gmail.com",pod:"II BSC(AI)",days:11,quizzes:8,quizPct:68.75,subs:24,polls:53},
+  {name:"P.ABHISHEK-BSC COMP.1",email:"abhishekpalla442@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:65.71,subs:32,polls:34},
+  {name:"P.Imran Khan BSC(DS)-245206",email:"pimran123abc@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:71.96,subs:29,polls:7},
+  {name:"P.Kavitha Kalyani/II-DS",email:"pkavithakalyani@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:67.50,subs:26,polls:44},
+  {name:"P.NIVYA_AIML",email:"nivyapydipothu4@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:72.22,subs:22,polls:56},
+  {name:"P.Rama Krishna COMPUTERS-1",email:"khumbarama.04@gmail.com",pod:"BSC_COMPUTERS",days:7,quizzes:5,quizPct:86.00,subs:15,polls:1},
+  {name:"P.Sri Durga Vaishnavi-AI",email:"itsmevaishu7325@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:69.41,subs:32,polls:67},
+  {name:"P.srinivas",email:"jeev7800@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:80.00,subs:32,polls:23},
+  {name:"Pachigolla Karunasri BSC comp-1",email:"anithapachigolla699@gmail.com",pod:"BSC_COMPUTERS",days:10,quizzes:8,quizPct:79.17,subs:21,polls:27},
+  {name:"parimi meghana",email:"meghanaparimi06@gmail.com",pod:"BSC_COMPUTERS",days:9,quizzes:8,quizPct:81.46,subs:20,polls:26},
+  {name:"Patnala Viswa teja -AI&ML",email:"viswatejapatnala@gmail.com",pod:"II BSC(AI)",days:11,quizzes:7,quizPct:78.57,subs:32,polls:24},
+  {name:"Pattan.Ameerkhan(AI&ML)",email:"prince143ameer@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:68.67,subs:33,polls:27},
+  {name:"pattapu lakshmi naga anjali-DS",email:"anjalipattapu115@gmail.com",pod:"INTERN SHIP DS/STAT",days:1,quizzes:0,quizPct:0,subs:0,polls:5},
+  {name:"Pawan Kumar AIML",email:"pkorkprs@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:50.69,subs:22,polls:61},
+  {name:"Pita amarnath",email:"amarnath200321@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:9,quizPct:71.11,subs:22,polls:36},
+  {name:"Pujitha Bodiredla",email:"pujithabodiredla07@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:82.50,subs:24,polls:29},
+  {name:"Puthi Lahari stat",email:"puthilahari@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:63.97,subs:27,polls:69},
+  {name:"R.varshath_B.sc computers-1",email:"varshathvarshath288@gmail.com",pod:"BSC_COMPUTERS",days:9,quizzes:8,quizPct:72.50,subs:19,polls:30},
+  {name:"rajesh nag kumar bsc comp1",email:"nagkumarrajesh@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:63.33,subs:32,polls:28},
+  {name:"Rajesh Vijji AI",email:"rajeshvijji7@gmail.com",pod:"II BSC(AI)",days:11,quizzes:6,quizPct:88.33,subs:28,polls:10},
+  {name:"Ramakrishna Madala BscComp1",email:"ramakrishnamadala559@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:73.33,subs:30,polls:21},
+  {name:"Rameswarapu Mahalakshmi DS",email:"rameswarapumahalakshmi7@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:77.50,subs:18,polls:41},
+  {name:"Ravada syam bsc comp-1",email:"syamr8377@gmail.com",pod:"Unassigned",days:10,quizzes:8,quizPct:68.75,subs:22,polls:2},
+  {name:"Renuka Midithireddy 245239",email:"renukamidithireddy086@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:30.69,subs:12,polls:14},
+  {name:"Rohitkumar Rohit",email:"rohitrohitkumar3006@gmail.com",pod:"Unassigned",days:10,quizzes:8,quizPct:72.50,subs:21,polls:7},
+  {name:"rowthusrinivasds",email:"rowthusrinu07@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:70.00,subs:22,polls:34},
+  {name:"Rubeena Shaik_bsccomp1",email:"skraziya5577@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:70.71,subs:22,polls:77},
+  {name:"Rumpavalasa Johanya Bsc comp-1",email:"rumpavalasajohanya@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:66.25,subs:28,polls:44},
+  {name:"RUPAKVENKATASAIKIRAN-BSC(AI/ML)",email:"iamrupak93@gmail.com",pod:"II BSC(AI)",days:11,quizzes:8,quizPct:75.00,subs:32,polls:59},
+  {name:"S Joseph DS",email:"jos245212@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:52.32,subs:22,polls:35},
+  {name:"S. Mahendra Bsc computers-1",email:"mahendrasai54544@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:66.67,subs:31,polls:23},
+  {name:"S.rajesh bsc comp -1",email:"sainadhamrajesh@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:61.25,subs:32,polls:22},
+  {name:"Sahithi Gullapudi bsc(ds) 245220",email:"sahithigullapudi@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:46.13,subs:22,polls:32},
+  {name:"Sai Harsha vardhan BSCcomp-1",email:"sain3370@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:59.05,subs:32,polls:41},
+  {name:"Sai kishore Ippili",email:"ippilisaikishore@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:4,quizPct:97.92,subs:6,polls:4},
+  {name:"Sai Vardhan Mudhiraj",email:"saivardhanmudhiraj07@gmail.com",pod:"Unassigned",days:5,quizzes:2,quizPct:92.86,subs:15,polls:12},
+  {name:"sakinala.likitha-STAT",email:"sakinalalikitha@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:67.78,subs:29,polls:68},
+  {name:"Saman Chandu bsccom1",email:"chandusaman6@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:70.16,subs:32,polls:25},
+  {name:"saragada siva srinivas",email:"ks6159102@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:61.11,subs:27,polls:36},
+  {name:"SASI DS",email:"srinivassasids245226@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:78.75,subs:32,polls:25},
+  {name:"Shaik Abdul Rehaman-AI",email:"shaikabdulrehaman2006@gmail.com",pod:"II BSC(AI)",days:12,quizzes:10,quizPct:67.24,subs:23,polls:62},
+  {name:"Shaik Azeem-Bsc(ai/ml)",email:"skazeem120906@gmail.com",pod:"II BSC(AI)",days:11,quizzes:7,quizPct:77.14,subs:24,polls:23},
+  {name:"Shaik Gousya",email:"shaikgousya7860@gmail.com",pod:"Unassigned",days:11,quizzes:8,quizPct:80.00,subs:32,polls:13},
+  {name:"shaik irfan _ Bsc computer-1",email:"irfansk03042003@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:63.75,subs:27,polls:15},
+  {name:"Shaik Naadia Tasleem",email:"naadia0019@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:70.63,subs:28,polls:73},
+  {name:"Shaik roshan-Bsc comp 1",email:"roshanskaik0001@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:81.25,subs:32,polls:28},
+  {name:"Shaik Sadiq-Bsc comp 1",email:"sadiqshaik9439@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:68.75,subs:32,polls:25},
+  {name:"Shaik Tabarak-bsc comp-1",email:"dreamlesstabu70@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:78.75,subs:32,polls:40},
+  {name:"Shaik Zakeer",email:"zakeershaik967@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:58.89,subs:22,polls:51},
+  {name:"Sk khaja Munny",email:"skkhajamunny7@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:82.50,subs:21,polls:31},
+  {name:"Subhani -Bsc computers-1",email:"subhani93933@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:61.11,subs:32,polls:29},
+  {name:"Surya Gudela-AI&ML",email:"suryagudela93@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:52.54,subs:31,polls:55},
+  {name:"syed tahera bsc comp-1",email:"syedmuskanmuskan33@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:8,quizPct:80.21,subs:26,polls:33},
+  {name:"T.Bhaskar Teja (bsc.ai&ml)",email:"bhaskarteja012@gmail.com",pod:"Unassigned",days:11,quizzes:9,quizPct:65.56,subs:31,polls:30},
+  {name:"T.kruparaju-Bsc computers-1",email:"kruparajutammisetti311@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:65.56,subs:32,polls:55},
+  {name:"T.Manasa DS",email:"manasa10092007@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:9,quizPct:70.00,subs:22,polls:26},
+  {name:"Tejaswini Thorlikonda-AI&ML",email:"tejaswinithorlikonda@gmail.com",pod:"II BSC(AI)",days:12,quizzes:9,quizPct:69.05,subs:22,polls:74},
+  {name:"thotasubbaraods",email:"subbuthota2005@gmail.com",pod:"INTERN SHIP DS/STAT",days:10,quizzes:8,quizPct:75.00,subs:22,polls:31},
+  {name:"Tulasi Pulipati-AIML",email:"tulasipulipati26@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:68.78,subs:25,polls:63},
+  {name:"V. Durga charan teja -DS",email:"veesarapupandu@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:9,quizPct:59.52,subs:32,polls:14},
+  {name:"V.AKASH/B.SC(AI&ML)",email:"vikramakash01@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:70.00,subs:22,polls:60},
+  {name:"Vadugu Dhanush",email:"vadugudhanush6@gmail.com",pod:"Unassigned",days:10,quizzes:8,quizPct:68.42,subs:22,polls:4},
+  {name:"Vaishnavi Lingam",email:"vaishnavilingam045@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:73.33,subs:32,polls:29},
+  {name:"Vallala Sai keerthi_Bsc comp1",email:"vallalasaikeerthi@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:52.38,subs:22,polls:53},
+  {name:"VARUN COMPUTER-1",email:"ramsinghvarunkumar@gmail.com",pod:"BSC_COMPUTERS",days:11,quizzes:9,quizPct:65.56,subs:32,polls:34},
+  {name:"Vempa Venkata Naga Aditya",email:"nagaadityavampa@gmail.com",pod:"II BSC(AI)",days:0,quizzes:0,quizPct:0,subs:0,polls:0},
+  {name:"Venkata Surendra (AI & ML)",email:"tumuvenkatasurendra@gmail.com",pod:"II BSC(AI)",days:11,quizzes:8,quizPct:73.75,subs:28,polls:62},
+  {name:"YASWANTH SANAPATHI BSC COMP-1",email:"yaswanthsanapathi52@gmail.com",pod:"BSC_COMPUTERS",days:9,quizzes:8,quizPct:81.25,subs:20,polls:26},
+  {name:"yenduri kushwanth sai tarun AI",email:"mymailofficial06@gmail.com",pod:"II BSC(AI)",days:11,quizzes:9,quizPct:60.82,subs:22,polls:48},
+  {name:"yvinaykumards",email:"ykristhudasuyvinay@gmail.com",pod:"INTERN SHIP DS/STAT",days:11,quizzes:8,quizPct:76.25,subs:22,polls:52},
+  {name:"Zabi Arsalaan Khan ai",email:"zabiarsalaankhankhan@gmail.com",pod:"II BSC(AI)",days:11,quizzes:7,quizPct:77.14,subs:31,polls:26},
+];
+
+// helpers
+const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+const podClass = p => p==="Unassigned" ? "un" : p.includes("AI")?"ai" : p.includes("DS/STAT")||p.includes("DS")?"ds" : "bsc";
+const scoreClass = q => q>=75?"good":q>=50?"warn":"bad";
+const compositeScore = d => d.days*3 + d.quizzes*2 + d.subs + d.polls/2 + d.quizPct/4;
+
+// KPIs
+document.getElementById("kpi-total").textContent = DATA.length;
+document.getElementById("kpi-days").textContent  = mean(DATA.map(d=>d.days)).toFixed(1)+" /12";
+document.getElementById("kpi-quiz").textContent  = mean(DATA.map(d=>d.quizPct)).toFixed(1)+"%";
+document.getElementById("kpi-subs").textContent  = mean(DATA.map(d=>d.subs)).toFixed(1);
+document.getElementById("kpi-polls").textContent = mean(DATA.map(d=>d.polls)).toFixed(1);
+
+// pod filter options
+const podsSet = [...new Set(DATA.map(d=>d.pod))].sort();
+const podSel = document.getElementById("podFilter");
+podsSet.forEach(p=>{ const o=document.createElement("option"); o.value=p; o.textContent=p; podSel.appendChild(o); });
+
+// chart palette — read from CSS so it follows theme
+function readPalette() {
+  const css = getComputedStyle(document.documentElement);
+  const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+  return {
+    ai:  isDark ? "#7ee787" : "#2c8a3e",
+    ds:  isDark ? "#cf99ff" : "#7340a0",
+    bsc: isDark ? "#7eb3ff" : "#1f5fb8",
+    un:  isDark ? "#ff9966" : "#c46a0a",
+    bad: isDark ? "#ff6b6b" : "#c0392b",
+    mute:css.getPropertyValue("--mute").trim(),
+    ink: css.getPropertyValue("--ink").trim(),
+    grid:css.getPropertyValue("--line").trim(),
+  };
+}
+let C = readPalette();
+
+// Theme toggle (reload to cleanly rebuild Chart.js with new palette)
+document.getElementById("themeToggle").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "dark";
+  const next = cur === "dark" ? "light" : "dark";
+  localStorage.setItem("report-theme", next);
+  location.reload();
+});
+
+if (typeof Chart === "undefined") {
+  document.querySelectorAll(".chart-box").forEach(b => {
+    b.innerHTML = '<div style="color:var(--warn);font-size:12px;padding:20px;text-align:center">Chart library not loaded — check that chart.min.js is in the same folder.</div>';
+  });
+} else {
+try {
+Chart.defaults.color = C.mute;
+Chart.defaults.borderColor = C.grid;
+Chart.defaults.font.family = "ui-sans-serif,system-ui,Segoe UI,Roboto,sans-serif";
+
+// 1. Students per pod
+const podCounts = {};
+DATA.forEach(d=>{ podCounts[d.pod]=(podCounts[d.pod]||0)+1; });
+new Chart(document.getElementById("podChart"), {
+  type:"doughnut",
+  data:{
+    labels:Object.keys(podCounts),
+    datasets:[{
+      data:Object.values(podCounts),
+      backgroundColor:Object.keys(podCounts).map(p=>{ const k=podClass(p); return ({ai:C.ai,ds:C.ds,bsc:C.bsc,un:C.un})[k]; }),
+      borderColor:"#0b0d10", borderWidth:2
+    }]
+  },
+  options:{ plugins:{ legend:{position:"bottom"} }, cutout:"55%" }
+});
+
+// 2. Per-day participation by channel
+const TOTAL = 158;
+const BY_CHANNEL = {
+  subs:  [155,155,154,154,154,153,150,149,147,144, 88,  9],
+  quiz:  [156,156,138,154,  0,153,154,146,142, 87,  0, 13],
+  polls: [ 86,121,104,108,  0,  0,127,120, 77, 93, 71,  0],
+  labs:  [117,117,117,117,123,116,116,115, 64, 75,  0,  3],
+  fb:    [155,154,156,154,155,152,152,147,146,139, 53,  2],
+};
+const CHANNELS = [
+  {k:"subs",  label:"Assignments",  color:C.ai},
+  {k:"quiz",  label:"Quiz",         color:C.bsc},
+  {k:"polls", label:"Polls/Pulses", color:"#ffb454"},
+  {k:"labs",  label:"Labs",         color:C.ds},
+  {k:"fb",    label:"Feedback",     color:C.un},
+];
+const dayLabels = BY_CHANNEL.subs.map((_,i)=>"D"+String(i+1).padStart(2,"0"));
+
+// Build channel-toggle buttons (multi-select)
+const active = new Set(CHANNELS.map(c=>c.k));
+const toggleEl = document.getElementById("channelToggle");
+function mkBtn(label, isOn, onClick, color) {
+  const b = document.createElement("button");
+  b.className = "chbtn" + (isOn?" on":"");
+  b.textContent = label;
+  if (color) b.style.setProperty("--chcolor", color);
+  b.addEventListener("click", () => { onClick(b); });
+  return b;
+}
+const allBtn = mkBtn("All", true, b => {
+  if (active.size === CHANNELS.length) { active.clear(); b.classList.remove("on"); }
+  else { CHANNELS.forEach(c=>active.add(c.k)); b.classList.add("on"); }
+  toggleEl.querySelectorAll(".chbtn[data-k]").forEach(x => {
+    x.classList.toggle("on", active.has(x.dataset.k));
+  });
+  redrawDays();
+});
+toggleEl.appendChild(allBtn);
+CHANNELS.forEach(c => {
+  const b = mkBtn(c.label, true, btn => {
+    if (active.has(c.k)) { active.delete(c.k); btn.classList.remove("on"); }
+    else { active.add(c.k); btn.classList.add("on"); }
+    allBtn.classList.toggle("on", active.size === CHANNELS.length);
+    redrawDays();
+  }, c.color);
+  b.dataset.k = c.k;
+  toggleEl.appendChild(b);
+});
+
+let daysChartRef = null;
+function redrawDays() {
+  const datasets = CHANNELS.filter(c => active.has(c.k)).map(c => ({
+    label: c.label,
+    data: BY_CHANNEL[c.k].map(v => +(v/TOTAL*100).toFixed(1)),
+    _raw: BY_CHANNEL[c.k],
+    backgroundColor: c.color,
+    borderRadius: 2
+  }));
+  if (daysChartRef) daysChartRef.destroy();
+  daysChartRef = new Chart(document.getElementById("daysChart"), {
+    type:"bar",
+    data:{ labels: dayLabels, datasets },
+    options:{
+      plugins:{
+        legend:{display:false},
+        tooltip:{ callbacks:{
+          label: ctx => `${ctx.dataset.label}: ${ctx.dataset._raw[ctx.dataIndex]} of ${TOTAL} (${ctx.raw}%)`
+        } }
+      },
+      scales:{
+        x:{title:{display:true,text:"Day"}},
+        y:{title:{display:true,text:"% of cohort"}, beginAtZero:true, max:100, ticks:{callback:v=>v+"%"}}
+      }
+    }
+  });
+}
+redrawDays();
+
+// 3. Quiz score distribution (Section 2)
+const QUIZ_BANDS = [
+  {lo:0,   hi:40,  label:"<40%",   color:C.un},
+  {lo:40,  hi:55,  label:"40–55%", color:C.un},
+  {lo:55,  hi:65,  label:"55–65%", color:"#ffb454"},
+  {lo:65,  hi:75,  label:"65–75%", color:"#ffb454"},
+  {lo:75,  hi:85,  label:"75–85%", color:C.ai},
+  {lo:85,  hi:101, label:"85+%",   color:C.ai},
+];
+const qBuckets = QUIZ_BANDS.map(()=>0);
+DATA.forEach(d => {
+  const idx = QUIZ_BANDS.findIndex(b => d.quizPct >= b.lo && d.quizPct < b.hi);
+  if (idx >= 0) qBuckets[idx]++;
+});
+new Chart(document.getElementById("quizChart"), {
+  type:"bar",
+  data:{ labels:QUIZ_BANDS.map(b=>b.label),
+         datasets:[{ data:qBuckets, backgroundColor:QUIZ_BANDS.map(b=>b.color), borderRadius:3 }] },
+  options:{ plugins:{ legend:{display:false} }, scales:{ y:{title:{display:true,text:"Students"}, beginAtZero:true} } }
+});
+
+// 4. (Subs vs polls scatter removed per feedback)
+
+// 4. Merged engagement ranking (top 10 + bottom 10)
+const ranked = [...DATA].map(d=>({...d, score:compositeScore(d)})).sort((a,b)=>b.score-a.score);
+const engTop10 = ranked.slice(0,10);
+const engBot10 = ranked.slice(-10);
+const engRows = [...engTop10, ...engBot10];
+new Chart(document.getElementById("engRankChart"), {
+  type:"bar",
+  data:{
+    labels: engRows.map(r => r.name.length>32 ? r.name.slice(0,30)+"…" : r.name),
+    datasets:[{
+      data: engRows.map(r => +r.score.toFixed(0)),
+      backgroundColor: engRows.map((_,i) => i<10 ? C.ai : C.bad),
+      borderRadius:3
+    }]
+  },
+  options:{
+    indexAxis:"y",
+    plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{
+        label: ctx => {
+          const r = engRows[ctx.dataIndex];
+          return `composite ${r.score.toFixed(0)} · ${r.days}/12 days · ${r.quizzes} quizzes (${r.quizPct}%) · ${r.subs} assignments · ${r.polls} polls`;
+        }
+      } }
+    },
+    scales:{ x:{ title:{display:true,text:"composite score"} } }
+  }
+});
+
+// 5. Merged quiz ranking (top 10 + bottom 10, min 3 attempts)
+const quizRanked = [...DATA].filter(d => d.quizzes >= 3)
+  .sort((a,b) => b.quizPct - a.quizPct || b.quizzes - a.quizzes);
+const quizTop10 = quizRanked.slice(0,10);
+const quizBot10 = quizRanked.slice(-10);
+const quizRows = [...quizTop10, ...quizBot10];
+new Chart(document.getElementById("quizRankChart"), {
+  type:"bar",
+  data:{
+    labels: quizRows.map(r => r.name.length>32 ? r.name.slice(0,30)+"…" : r.name),
+    datasets:[{
+      data: quizRows.map(r => r.quizPct),
+      backgroundColor: quizRows.map((_,i) => i<10 ? C.ai : C.bad),
+      borderRadius:3
+    }]
+  },
+  options:{
+    indexAxis:"y",
+    plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{
+        label: ctx => {
+          const r = quizRows[ctx.dataIndex];
+          return `${r.quizPct.toFixed(2)}% across ${r.quizzes}/11 quizzes · ${r.days}/12 days`;
+        }
+      } }
+    },
+    scales:{ x:{ title:{display:true,text:"avg quiz %"}, min:0, max:100, ticks:{callback:v=>v+"%"} } }
+  }
+});
+
+} catch(e) {
+  console.error("Chart error:", e);
+  document.querySelectorAll(".chart-box").forEach(b => {
+    if (!b.innerHTML.includes("canvas") || b.querySelector("canvas").getContext) {}
+  });
+}
+}
+
+// 6. Table
+const tbody = document.querySelector("#tbl tbody");
+let view = [...DATA];
+let sortKey = "name", sortDir = 1;
+
+function render(){
+  const term = document.getElementById("search").value.toLowerCase();
+  const pf = document.getElementById("podFilter").value;
+  const rows = view.filter(d =>
+    (!pf || d.pod===pf) &&
+    (!term || d.name.toLowerCase().includes(term) || d.email.toLowerCase().includes(term) || d.pod.toLowerCase().includes(term))
+  ).sort((a,b)=>{
+    const x=a[sortKey], y=b[sortKey];
+    if(typeof x==="number") return (x-y)*sortDir;
+    return String(x).localeCompare(String(y))*sortDir;
+  });
+  tbody.innerHTML = rows.map(d=>`
+    <tr>
+      <td>${d.name}</td>
+      <td style="color:var(--mute)">${d.email}</td>
+      <td><span class="pill ${podClass(d.pod)}">${d.pod}</span></td>
+      <td class="num">${d.days}<span class="denom">/12</span></td>
+      <td class="num">${d.quizzes}<span class="denom">/11</span></td>
+      <td class="num ${scoreClass(d.quizPct)}">${d.quizPct.toFixed(2)}</td>
+      <td class="num">${d.subs}<span class="denom">/35</span></td>
+      <td class="num">${d.polls}<span class="denom">/83</span></td>
+    </tr>`).join("");
+  document.getElementById("count").textContent = `${rows.length} of ${DATA.length}`;
+  document.querySelectorAll("#tbl th").forEach(th=>{
+    th.classList.remove("sort-asc","sort-desc");
+    if(th.dataset.k===sortKey) th.classList.add(sortDir===1?"sort-asc":"sort-desc");
+  });
+}
+document.querySelectorAll("#tbl th").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const k = th.dataset.k;
+    if(sortKey===k) sortDir=-sortDir; else { sortKey=k; sortDir=1; }
+    render();
+  });
+});
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("podFilter").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
