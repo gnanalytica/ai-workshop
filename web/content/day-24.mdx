@@ -170,7 +170,158 @@ GEMINI_API_KEY environment variable.
 - What happens if someone asks your AirDosa chatbot something totally unrelated — like homework help?
 - You now have a database + AI in one app. What would you build next?
 
-## 🧪 Lab: AirDosa AI Chatbot — Order Now live + Claude assistant deployed
+## 🧪 Lab: AirDosa AI Chatbot — Order Now live + Gemini assistant deployed
+
+---
+
+## Part 3 — Real-Time Orders Dashboard
+
+### Goal
+Display live drone delivery orders from your Supabase table on your AirDosa website. Every time someone places an order (or you update one in Supabase), it appears instantly on the dashboard.
+
+### Step 1 — Create an Orders API Route
+
+Create `/app/api/orders/route.ts`:
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export async function GET() {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
+}
+```
+
+**Test locally:** `curl http://localhost:3000/api/orders`
+
+### Step 2 — Build an Orders Component
+
+Create `/app/components/OrdersList.tsx`:
+
+```typescript
+'use client';
+
+import { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export default function OrdersList() {
+  const [orders, setOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch initial orders
+    fetch('/api/orders')
+      .then(res => res.json())
+      .then(data => setOrders(data));
+
+    // Subscribe to real-time updates (optional but cool)
+    const subscription = supabase
+      .from('orders')
+      .on('*', (payload) => {
+        setOrders(prev => [payload.new, ...prev]);
+      })
+      .subscribe();
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">🚁 Live Drone Orders</h2>
+      <table className="w-full border">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border p-2">Customer</th>
+            <th className="border p-2">Item</th>
+            <th className="border p-2">Address</th>
+            <th className="border p-2">Status</th>
+            <th className="border p-2">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order, i) => (
+            <tr key={i} className="border">
+              <td className="border p-2">{order.user_name}</td>
+              <td className="border p-2">{order.item_name}</td>
+              <td className="border p-2">{order.delivery_address}</td>
+              <td className="border p-2">🚀 In Flight</td>
+              <td className="border p-2">{new Date(order.created_at).toLocaleTimeString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+```
+
+### Step 3 — Add Orders Page or Section
+
+**Option A — New page:** Create `/app/orders/page.tsx`:
+
+```typescript
+import OrdersList from '@/components/OrdersList';
+
+export default function OrdersPage() {
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <OrdersList />
+    </main>
+  );
+}
+```
+
+**Option B — Add to homepage:** Import `<OrdersList />` into your existing `page.tsx`.
+
+### Step 4 — Test Locally
+
+```bash
+pnpm dev
+```
+
+- Open `http://localhost:3000/orders` (or your homepage if you embedded it)
+- Verify orders appear from your Supabase table
+- **Live test:** Open Supabase Table Editor in another tab → add a new row → watch it appear instantly on your site
+
+### Step 5 — Deploy
+
+```bash
+git add .
+git commit -m "feat: add real-time orders dashboard"
+git push
+```
+
+Vercel auto-deploys. Verify env vars are set in Vercel dashboard → Project Settings → Environment Variables:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+**Test live:** Click Order Now on your live site, then watch the order appear on your Orders page in real-time. 🎉
+
+### Optional: MCP Integration (Advanced)
+
+Once your dashboard works, you can wire it up to Claude's Model Context Protocol (MCP) so your AI assistant can:
+- Query live orders: *"How many orders are in flight?"*
+- Summarize delivery status: *"What's the next dosa to go out?"*
+- Trigger actions: *"Cancel order #42"*
+
+For now, ship the dashboard. MCP is Day 26 territory.
+
+---
 
 ## ❓ Quiz
 
