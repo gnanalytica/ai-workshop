@@ -139,16 +139,70 @@ GEMINI_API_KEY=AIzaSy-your-key-here
 
 ### Step 3 — Antigravity prompt for chatbot
 
+**What's being built:** A customer support chatbot powered by Google's latest Gemini generative AI. The chatbot will:
+- Run on your Next.js backend (API route)
+- Accept user messages from a floating chat widget
+- Send them to Gemini with a custom system prompt
+- Stream responses back to the frontend in real-time
+- Maintain conversation history within a session
+
+**Prompt for Antigravity:**
+
 ```
-Add a floating AI chatbot widget to this Next.js app using the Google Gemini API.
-The chatbot should know it is the AirDosa assistant — it delivers hot dosas by drone.
-It should answer questions about the menu (Classic Masala, Cheese Burst, Gunpowder Ghee Roast),
-delivery time (15-20 minutes), pricing (Standard, Express, Dosa Enthusiast plans),
-and how drone delivery works.
-Show a chat bubble icon fixed at bottom right of the page.
-Clicking it opens a chat window.
-Create an API route at app/api/chat/route.js that calls Gemini using the
-GEMINI_API_KEY environment variable.
+You are setting up a Google Gemini-powered chatbot for an AI-driven food delivery app called AirDosa.
+
+ARCHITECTURE:
+- Frontend: Floating chat bubble widget fixed at bottom-right. Opens/closes a chat window on click.
+- Backend: Next.js API route that handles chat requests and calls Google Gemini API.
+- Auth: Uses GEMINI_API_KEY environment variable (no authentication required for this MVP).
+- State: Chat message history persists in the React component during the session.
+
+IMPLEMENTATION DETAILS:
+
+1. Create API route at app/api/chat/route.ts
+   - Accept POST requests with { message: string, history: Message[] }
+   - Initialize Google Generative AI client using GEMINI_API_KEY
+   - Use model: "gemini-2.0-flash-exp" or "gemini-1.5-pro" (latest available)
+   - Build conversation history from the passed messages array
+   - Send system prompt + user message to Gemini
+   - Return { reply: string, usage: { inputTokens, outputTokens } }
+   - Handle errors gracefully (API limits, invalid keys, network issues)
+
+2. Create chatbot component at app/components/AirDosaChat.tsx
+   - Export a client-side component with useState for messages and loading state
+   - Render:
+     * A floating chat bubble icon (use an emoji or Lucide icon) fixed at bottom-right (z-50, position-fixed)
+     * On click, toggle a chat window showing conversation history
+     * Input field for user messages
+     * Send button that calls /api/chat with the message and history
+     * Display bot responses with a thinking/loading state while awaiting Gemini
+   - System prompt the bot should receive:
+     "You are the AirDosa customer support assistant. AirDosa delivers hot dosas by drone to homes and offices.
+      Menu: Classic Masala (₹99), Cheese Burst (₹129), Gunpowder Ghee Roast (₹149).
+      Delivery: 15–20 minutes via autonomous drone. Service available 6am–11pm.
+      Pricing plans: Standard (free delivery), Express (₹29), Dosa Enthusiast (₹199/month, unlimited delivery).
+      Answer questions about menu, delivery, pricing, and drone safety. Be friendly and concise."
+
+3. Add ChatBot component to your homepage or main layout
+   - Import and render <AirDosaChat /> at the bottom of your page
+   - Component should not interfere with other content (floating, dismissible)
+
+4. Environment setup
+   - GEMINI_API_KEY must be set in .env.local for local testing
+   - For Vercel deployment, add GEMINI_API_KEY to Vercel Project Settings → Environment Variables
+
+WHAT THE USER WILL EXPERIENCE:
+- They see a chat bubble icon on every page
+- Clicking opens a chat window with "Hi! I'm the AirDosa assistant. How can I help?"
+- They type: "What dosas do you have?" → Gemini responds with menu details
+- They type: "How long is delivery?" → Gemini responds with delivery info
+- Conversation persists until they refresh or close and re-open the chat
+
+LIBRARIES NEEDED:
+- @google/generative-ai (install via npm if not already there)
+- Existing Supabase and Next.js setup from Day 23
+
+BUILD IT EXACTLY LIKE THIS. NO SHORTCUTS.
 ```
 
 ### Step 4 — Deploy chatbot to Vercel
@@ -156,7 +210,9 @@ GEMINI_API_KEY environment variable.
 **Test on live site:**
 - Open your live Vercel URL
 - Click the chat bubble bottom right
-- Ask: "What dosas do you have?" → Claude should reply ✅
+- Ask: "What dosas do you have?" → Gemini should reply with menu details ✅
+- Ask: "How long is delivery?" → Gemini should answer 15-20 minutes ✅
+- Ask: "What's your delivery drone speed?" → Gemini should stay in character as AirDosa ✅
 
 ---
 
@@ -166,7 +222,7 @@ GEMINI_API_KEY environment variable.
 
 ## 💬 Discuss
 
-- Your chatbot is powered by Claude but branded as AirDosa. What does that say about how AI products are built?
+- Your chatbot is powered by Gemini but branded as AirDosa. What does that say about how AI products are built?
 - What happens if someone asks your AirDosa chatbot something totally unrelated — like homework help?
 - You now have a database + AI in one app. What would you build next?
 
