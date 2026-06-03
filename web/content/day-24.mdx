@@ -8,30 +8,30 @@ faculty:
   main: "Sandeep"
   support: "Raunak"
 reading_time: "9 min"
-tldr: "We finish what Day 23 started — wire any feature like Order Now to Supabase and watch real orders appear live. Then we give AirDosa a brain: a Claude-powered AI chatbot that answers customer questions right inside your deployed app."
-tags: ["full-stack", "ai", "chatbot", "anthropic", "claude", "supabase", "vercel", "vibe-coding"]
+tldr: "We finish what Day 23 started — wire any feature like Order Now to Supabase and watch real orders appear live. Then we give AirDosa a brain: a Google Gemini-powered AI chatbot that answers customer questions right inside your deployed app."
+tags: ["full-stack", "ai", "chatbot", "google", "gemini", "supabase", "vercel", "vibe-coding"]
 software: ["Antigravity", "Git"]
-online_tools: ["GitHub", "Supabase", "Vercel", "Anthropic Console"]
+online_tools: ["GitHub", "Supabase", "Vercel", "Google AI Studio"]
 video: ""
-prompt_of_the_day: "Add a floating AI chatbot widget to this Next.js app. Use the Anthropic Claude API. The chatbot should know it is the AirDosa assistant and answer questions about the menu, delivery, and pricing. Show a chat bubble icon fixed at bottom right. Clicking it opens a chat window. Use the NEXT_PUBLIC_ANTHROPIC_API_KEY environment variable."
+prompt_of_the_day: "Add a floating AI chatbot widget to this Next.js app. Use the Google Gemini API. The chatbot should know it is the AirDosa assistant and answer questions about the menu, delivery, and pricing. Show a chat bubble icon fixed at bottom right. Clicking it opens a chat window. Use the GEMINI_API_KEY environment variable."
 tools_hands_on:
   - { name: "Antigravity", url: "https://antigravity.ai/" }
   - { name: "Supabase", url: "https://supabase.com/" }
   - { name: "Vercel", url: "https://vercel.com/" }
-  - { name: "Anthropic Console", url: "https://console.anthropic.com/" }
+  - { name: "Google AI Studio", url: "https://aistudio.google.com/" }
 tools_reference:
-  - { name: "Anthropic API docs", url: "https://docs.anthropic.com/" }
+  - { name: "Google Gemini API docs", url: "https://ai.google.dev/tutorials/python_quickstart" }
   - { name: "Next.js API routes", url: "https://nextjs.org/docs/app/building-your-application/routing/route-handlers" }
   - { name: "Supabase Table Editor", url: "https://supabase.com/docs/guides/database/tables" }
 resources:
-  - { title: "Anthropic Claude API — getting started", url: "https://docs.anthropic.com/en/api/getting-started" }
+  - { title: "Google Gemini API — getting started", url: "https://ai.google.dev/gemini-api/docs" }
   - { title: "What is an API? — Fireship", url: "https://www.youtube.com/watch?v=s7wmiS2mSXY" }
   - { title: "Next.js API routes explained", url: "https://www.youtube.com/watch?v=Kkht2mwSL_I" }
 lab: { title: "AirDosa AI Chatbot — Order Now live + Claude assistant deployed", url: "https://vercel.com/" }
 objective:
-  topic: "Complete Supabase Order Now integration and add a Claude-powered AI chatbot to AirDosa"
-  tools: ["Antigravity", "Next.js", "Supabase", "Vercel", "Anthropic Claude API"]
-  end_goal: "Order Now button stores real orders in Supabase. A floating Claude chatbot answers customer questions live on the deployed AirDosa site."
+  topic: "Complete Supabase Order Now integration and add a Google Gemini-powered AI chatbot to AirDosa"
+  tools: ["Antigravity", "Next.js", "Supabase", "Vercel", "Google Gemini API"]
+  end_goal: "Order Now button stores real orders in Supabase. A floating Gemini chatbot answers customer questions live on the deployed AirDosa site."
 ---
 
 Day 23 gave AirDosa a database and a deployment pipeline. Today we close the loop — real orders flowing into Supabase — and then give the app a voice with a Claude-powered AI assistant.
@@ -52,7 +52,7 @@ Day 23 gave AirDosa a database and a deployment pipeline. Today we close the loo
 - [ ] Supabase URL in Vercel does NOT have `/rest/v1` — just `https://xxxx.supabase.co`
 
 ### New account needed
-- [ ] **Anthropic Console** — console.anthropic.com → Sign up → Get API key.
+- [ ] **Google AI Studio** — aistudio.google.com → Sign in → Get API key.
 
 ### Primer
 - **Think:** What 3 questions would a customer ask AirDosa? (delivery time, menu, price?) — your chatbot will answer these.
@@ -65,8 +65,8 @@ Day 23 gave AirDosa a database and a deployment pipeline. Today we close the loo
 |---|---|---|
 | Finish Day 23 — Wire Order Now | 20 min | Antigravity prompts + .env.local + test locally |
 | Watch it live in Supabase | 10 min | Click Order Now → see row appear in Table Editor |
-| Concept: What is an API call? | 5 min | How chatbot talks to Claude |
-| Step 1: Get Claude API key | 5 min | Anthropic Console → create key |
+| Concept: What is an API call? | 5 min | How chatbot talks to Gemini |
+| Step 1: Get Gemini API key | 5 min | Google AI Studio → create key |
 | Step 2: Add chatbot with Antigravity | 20 min | Prompt → wire API key → test locally |
 | Step 3: Deploy chatbot live | 10 min | Add API key to Vercel → redeploy → test live |
 | Show & tell | 5 min | Live URLs + chatbot demo in group chat |
@@ -115,40 +115,40 @@ Open Supabase Table Editor — keep it open on one screen. Click Order Now on yo
 ```
 User types a question in chat widget
         ↓
-Next.js sends it to Anthropic Claude API
+Next.js sends it to Google Gemini API
         ↓
-Claude reads your system prompt (knows it's AirDosa assistant)
+Gemini reads your system prompt (knows it's AirDosa assistant)
         ↓
-Claude replies with an answer
+Gemini replies with an answer
         ↓
 Answer appears in chat widget on your site
 ```
 
-### Step 1 — Get your Claude API key
-- Go to console.anthropic.com
-- Sign up → go to **API Keys**
+### Step 1 — Get your Gemini API key
+- Go to aistudio.google.com
+- Sign in with Google → go to **Get API Key**
 - Create new key → copy it → save it safely
-- It looks like: `sk-ant-...`
+- It looks like: `AIzaSy...`
 
 ### Step 2 — Add to .env.local
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-ANTHROPIC_API_KEY=sk-ant-your-key-here
+GEMINI_API_KEY=AIzaSy-your-key-here
 ```
 
 ### Step 3 — Antigravity prompt for chatbot
 
 ```
-Add a floating AI chatbot widget to this Next.js app using the Anthropic Claude API.
+Add a floating AI chatbot widget to this Next.js app using the Google Gemini API.
 The chatbot should know it is the AirDosa assistant — it delivers hot dosas by drone.
 It should answer questions about the menu (Classic Masala, Cheese Burst, Gunpowder Ghee Roast),
 delivery time (15-20 minutes), pricing (Standard, Express, Dosa Enthusiast plans),
 and how drone delivery works.
 Show a chat bubble icon fixed at bottom right of the page.
 Clicking it opens a chat window.
-Create an API route at app/api/chat/route.js that calls Anthropic using the
-ANTHROPIC_API_KEY environment variable.
+Create an API route at app/api/chat/route.js that calls Gemini using the
+GEMINI_API_KEY environment variable.
 ```
 
 ### Step 4 — Deploy chatbot to Vercel
@@ -182,14 +182,14 @@ Add an AI chatbot to your existing portfolio or any web project that answers que
 
 **Rules:**
 - Build on top of any existing project (portfolio, landing page, or new project).
-- Chatbot must use the Anthropic Claude API.
+- Chatbot must use the Google Gemini API.
 - System prompt must be customized — the bot should know who you are and what you do.
 - Deploy on Vercel with API key stored as environment variable (not in code).
 - Push to a new GitHub repository.
 
 **Artifact.** Live Vercel URL + GitHub repository link submitted on the dashboard.
 
-> 💡 **Starter prompt for Antigravity:** "Add a floating AI chatbot to this Next.js app using the Anthropic Claude API. The chatbot represents [your name] and answers questions about their skills, projects, and background. Use a system prompt that describes who they are. Create an API route at app/api/chat/route.js. Store the API key as ANTHROPIC_API_KEY environment variable."
+> 💡 **Starter prompt for Antigravity:** "Add a floating AI chatbot to this Next.js app using the Google Gemini API. The chatbot represents [your name] and answers questions about their skills, projects, and background. Use a system prompt that describes who they are. Create an API route at app/api/chat/route.js. Store the API key as GEMINI_API_KEY environment variable."
 
 ## 🔁 Prep for next class
 
@@ -199,11 +199,11 @@ Day 25 goes deeper into AI integrations — more control over Claude's behavior,
 - [ ] Note what questions your chatbot answers well and what it gets wrong.
 - [ ] Think: what extra knowledge would make your chatbot more useful?
 
-> ⚠️ **Your Anthropic API key has usage costs.** Free tier credits cover class use — but don't share your key publicly or push it to GitHub.
+> ⚠️ **Your Gemini API key has usage costs.** Free tier covers class use generously — but don't share your key publicly or push it to GitHub.
 
 ## 📚 References
 
-- [Anthropic Claude API — getting started](https://docs.anthropic.com/en/api/getting-started)
+- [Google Gemini API — getting started](https://ai.google.dev/gemini-api/docs)
 - [Next.js API routes explained](https://www.youtube.com/watch?v=Kkht2mwSL_I)
 - [What is an API? — Fireship](https://www.youtube.com/watch?v=s7wmiS2mSXY)
 - [Next.js App Router docs](https://nextjs.org/docs/app)
