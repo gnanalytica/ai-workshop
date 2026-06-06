@@ -2,10 +2,22 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Allow unauthenticated routes
+  if (
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/start") ||
+    pathname.startsWith("/auth") ||
+    pathname === "/"
+  ) {
+    return NextResponse.next();
+  }
+
   // Make the current pathname readable from RSCs via headers().get("x-pathname").
   // Layouts don't get URL params, so this is the cleanest way for the auth shell
   // to know which admin-cohort page the user is on.
-  request.headers.set("x-pathname", request.nextUrl.pathname);
+  request.headers.set("x-pathname", pathname);
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -35,7 +47,23 @@ export async function proxy(request: NextRequest) {
   // request — pg_stat_statements showed ~1.4M chained queries saturating
   // the pool during class peaks. The downstream PostgREST call still
   // verifies the JWT signature, so RLS protection is unchanged.
-  await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // Check for missing roll_number on confirmed students
+  if (session && pathname !== "/start/roll-number") {
+    const { data: registration } = await supabase
+      .from("registrations")
+      .select("roll_number")
+      .eq("user_id", session.user.id)
+      .eq("status", "confirmed")
+      .maybeSingle();
+
+    if (registration && !registration.roll_number) {
+      return NextResponse.redirect(new URL("/start/roll-number", request.url));
+    }
+  }
 
   return response;
 }
