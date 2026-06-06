@@ -7,9 +7,9 @@
 drop policy if exists reg_self_update_roll_number on registrations;
 create policy reg_self_update_roll_number on registrations
   for update
-  using (user_id = auth.uid() and status = 'confirmed')
+  using (user_id = (select auth.uid()) and status = 'confirmed')
   with check (
-    user_id = auth.uid()
+    user_id = (select auth.uid())
     and status = 'confirmed'
-    and cohort_id = (select cohort_id from registrations where user_id = auth.uid() and status = 'confirmed')
+    and cohort_id = (select cohort_id from registrations where user_id = (select auth.uid()) and status = 'confirmed')
   );
