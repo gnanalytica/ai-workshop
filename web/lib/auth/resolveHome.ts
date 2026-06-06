@@ -7,11 +7,12 @@ import { getSupabaseService } from "@/lib/supabase/service";
  *   - student has at most one confirmed registration
  *   - faculty may be assigned to multiple cohorts (cookie picks current)
  *
- *   /admin        — has admin staff_role
- *   /faculty      — has any cohort_faculty assignment
- *   /learn        — has a confirmed registration
- *   /start/claim  — authenticated but no role yet
- *   /start        — not authenticated
+ *   /admin              — has admin staff_role
+ *   /faculty            — has any cohort_faculty assignment
+ *   /learn              — has a confirmed registration with roll_number
+ *   /start/roll-number  — student with confirmed registration but no roll_number
+ *   /start/claim        — authenticated but no role yet
+ *   /start              — not authenticated
  */
 const STAFF_HOMES: Record<string, string> = {
   admin: "/admin",
@@ -29,7 +30,7 @@ export async function resolveHome(): Promise<string> {
     svc.from("cohort_faculty").select("user_id").eq("user_id", user.id).limit(1).maybeSingle(),
     svc
       .from("registrations")
-      .select("user_id")
+      .select("user_id, roll_number")
       .eq("user_id", user.id)
       .eq("status", "confirmed")
       .limit(1)
@@ -42,6 +43,10 @@ export async function resolveHome(): Promise<string> {
   }
 
   if (facRes.data) return "/faculty";
-  if (regRes.data) return "/learn";
+  if (regRes.data) {
+    // Student is enrolled but if they don't have a roll number yet, capture it.
+    if (!regRes.data.roll_number) return "/start/roll-number";
+    return "/learn";
+  }
   return "/start/claim";
 }

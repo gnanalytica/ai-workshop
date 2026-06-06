@@ -84,3 +84,46 @@ export async function updateMyProfile(input: z.infer<typeof profileSchema>) {
       .single();
   }, "/settings/profile");
 }
+
+const rollNumberSchema = z.object({
+  roll_number: z.string().trim().min(1, "Roll number is required").max(64),
+});
+
+export async function updateMyRollNumber(
+  cohortId: string,
+  rollNumber: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const parsed = rollNumberSchema.safeParse({ roll_number: rollNumber });
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid roll number" };
+  }
+
+  const sb = await getSupabaseServer();
+  const { data: u } = await sb.auth.getUser();
+  if (!u.user) return { ok: false, error: "Not signed in" };
+
+  // Check if roll number is already taken in this cohort
+  const { data: existing, error: checkErr } = await sb
+    .from("registrations")
+    .select("user_id")
+    .eq("cohort_id", cohortId)
+    .eq("roll_number", parsed.data.roll_number)
+    .eq("status", "confirmed")
+    .neq("user_id", u.user.id)
+    .maybeSingle();
+
+  if (checkErr) return { ok: false, error: "Could not validate roll number" };
+  if (existing) return { ok: false, error: "This roll number is already taken in your cohort" };
+
+  // Update the registration
+  const { error: updateErr } = await sb
+    .from("registrations")
+    .update({ roll_number: parsed.data.roll_number })
+    .eq("user_id", u.user.id)
+    .eq("cohort_id", cohortId);
+
+  if (updateErr) return { ok: false, error: updateErr.message };
+
+  revalidatePath("/settings/profile");
+  return { ok: true };
+}
