@@ -11,5 +11,4 @@ create policy reg_self_update_roll_number on registrations
   with check (
     user_id = (select auth.uid())
     and status = 'confirmed'
-    and cohort_id = (select cohort_id from registrations where user_id = (select auth.uid()) and status = 'confirmed')
   );
