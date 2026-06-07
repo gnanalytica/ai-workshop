@@ -163,7 +163,7 @@ export function RosterTabs({
             <Card>
               <CardTitle>No teams yet</CardTitle>
               <CardSub className="mt-2">
-                Students form their own teams from /teams.
+                Import the finalized group list from the Teams page.
               </CardSub>
             </Card>
           ) : (

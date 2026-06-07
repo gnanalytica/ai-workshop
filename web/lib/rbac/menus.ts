@@ -53,6 +53,7 @@ export const NAV: readonly NavItem[] = [
   { label: "My Pod",      href: "/pod",         cap: null,             group: "student", section: "People",    icon: "users" },
   { label: "Classmates",  href: "/people",      cap: null,             group: "student", section: "People",    icon: "users-round" },
 
+  { label: "Showcase",    href: "/showcase",    cap: null,             group: "student", section: "Reference", icon: "trophy" },
   { label: "Leaderboard", href: "/leaderboard", cap: null,             group: "student", section: "Reference", icon: "trophy" },
   // Temporarily hidden from student nav — uncomment to restore:
   // { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
@@ -103,7 +104,7 @@ export function adminCohortNav(cohortId: string): NavItem[] {
     { label: "Roster",      href: `${base}/roster`,      cap: "roster.read",   group: "admin", section: "People",      icon: "users-round" },
     { label: "Pods",        href: `${base}/pods`,        cap: "roster.read",   group: "admin", section: "People",      icon: "users" },
 
-    { label: "Capstones",   href: `${base}/capstones`,   cap: "roster.read",   group: "admin", section: "Work",        icon: "milestone" },
+    { label: "Teams",       href: `${base}/teams`,       cap: "roster.read",   group: "admin", section: "Work",        icon: "users" },
     { label: "Submissions", href: `${base}/grading`,     cap: "grading.read",  group: "admin", section: "Work",        icon: "check-square" },
 
     { label: "Help desk",   href: `${base}/help-desk`,   cap: "support.triage", group: "admin", section: "Insight",     icon: "life-buoy" },

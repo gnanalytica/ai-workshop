@@ -64,5 +64,59 @@ select _expect('student lacks grading.read',   has_cap('grading.read','11111111-
 select _expect('student has attendance.self',  has_cap('attendance.self','11111111-1111-1111-1111-111111111111'), true);
 select _expect('student lacks pods.write',     has_cap('pods.write','11111111-1111-1111-1111-111111111111'), false);
 
+\echo '--- team capstone: membership, edit window, grading (migration 0115) ---'
+-- Fixtures (created as superuser; RLS is bypassed here, so these tests exercise
+-- the helper functions / capability math, matching the rest of this spec).
+insert into teams (id, cohort_id, name, team_number, pitched_ideas)
+  values ('22222222-2222-2222-2222-222222222222',
+          '11111111-1111-1111-1111-111111111111', 'RBAC Test Team', 99, '["a","b"]'::jsonb)
+  on conflict (cohort_id, name) do nothing;
+insert into team_members (team_id, user_id)
+  select '22222222-2222-2222-2222-222222222222', id
+    from profiles where email = 'student01@seed.local'
+  on conflict do nothing;
+
+select _set_uid('student01@seed.local');
+select _expect('member: is_team_member true',
+  is_team_member('22222222-2222-2222-2222-222222222222'), true);
+select _expect('member: edit open when no deadline',
+  team_edit_open('22222222-2222-2222-2222-222222222222'), true);
+select _expect('student lacks grading.write:cohort',
+  has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
+
+select _set_uid('student02@seed.local');
+select _expect('non-member: is_team_member false',
+  is_team_member('22222222-2222-2222-2222-222222222222'), false);
+
+-- A past deadline closes editing for members.
+update cohorts set team_submission_deadline = now() - interval '1 day'
+  where id = '11111111-1111-1111-1111-111111111111';
+select _set_uid('student01@seed.local');
+select _expect('past deadline: edit closed',
+  team_edit_open('22222222-2222-2222-2222-222222222222'), false);
+
+-- Admin reopen overrides the deadline (guard trigger lets admins set unlocked).
+select _set_uid('admin@seed.local');
+insert into team_submissions (team_id, cohort_id, unlocked)
+  values ('22222222-2222-2222-2222-222222222222',
+          '11111111-1111-1111-1111-111111111111', true)
+  on conflict (team_id) do update set unlocked = excluded.unlocked;
+select _expect('admin unlock overrides deadline',
+  team_edit_open('22222222-2222-2222-2222-222222222222'), true);
+select _expect('admin has grading.write:cohort (teams)',
+  has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), true);
+
+-- Faculty stay review-only on the team grade.
+select _set_uid('support1@seed.local');
+select _expect('faculty lacks grading.write:cohort (teams)',
+  has_cap('grading.write:cohort','11111111-1111-1111-1111-111111111111'), false);
+
+-- cleanup
+update cohorts set team_submission_deadline = null
+  where id = '11111111-1111-1111-1111-111111111111';
+delete from team_submissions where team_id = '22222222-2222-2222-2222-222222222222';
+delete from team_members   where team_id = '22222222-2222-2222-2222-222222222222';
+delete from teams          where id      = '22222222-2222-2222-2222-222222222222';
+
 drop function _expect(text, boolean, boolean);
 drop function _set_uid(text);
