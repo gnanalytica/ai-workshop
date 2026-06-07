@@ -1,134 +1,142 @@
 # Capstone Team Submissions — Spec & Plan
 
-Status: **proposed** (awaiting approval before implementation)
+Status: **approved-design / awaiting build go-ahead**
 Owner: sandeep@gnanalytica.com
 Branch: `claude/capstone-team-creation-s6H8S`
 
 ## Problem
 
-Final-project groups are already finalized off-platform in a spreadsheet:
-one row per group with a **team name/number**, **3–5 roll numbers**, and the
-**3 ideas** they pitched. We need in-app UI/UX so that, on login, students see
-their locked team and submit **one group deliverable**: a presentation link, a
-live website/app URL, and a GitHub repo.
+Final-project groups are finalized off-platform in a spreadsheet: one row per
+group with a **team name/number**, **3–5 roll numbers**, and the **3 ideas** they
+pitched. The final project is now a **team deliverable, not per-student**. On
+login, members see their locked team and submit one shared final.
 
 ## Decisions (locked)
 
-| Question | Decision |
+| Topic | Decision |
 |---|---|
-| Roll number → account mapping | Key on `registrations.roll_number` (already exists, `0113`). No new mapping field. |
-| Who can edit/submit deliverables | **Any team member**. |
-| Team model | **Locked / admin-managed** — teams come only from the import; no student self-service create/join/leave. |
-| Rollout | Plan-first (this doc), then implement on the branch. |
+| Roll → account mapping | Key on `registrations.roll_number` (`0113`). No new field. |
+| Who edits/submits | **Any team member.** |
+| Team model | **Locked / admin-managed** — teams come only from the import. No student create/join/leave. |
+| Individual capstone | **Replaced by team.** Per-student capstone retired from the UI; tables archived (kept), not dropped. |
+| Grading | **One shared team grade** by admin; all members see the same score + feedback. Faculty review-only (per RBAC). |
+| Gallery visibility | **Public, always** — every team visible to all enrolled students live, **including drafts**. |
+| Final captures | 3 core links (presentation, live URL, repo) + **title** + **short pitch** + **demo video URL** + **cover image URL** + **chosen idea**. |
+| Cover image | **URL only** (no Storage bucket for now). |
+| Lock | **Per-cohort deadline** locks editing; admin can reopen a team. |
 
-## What already exists (reuse, don't rebuild)
+## Reuse (don't rebuild)
 
-- `teams` (`id, cohort_id, name, description, created_by, unique(cohort_id,name)`)
-  and `team_members` (`team_id, user_id, role`) — `0008_extensions_schema.sql`,
-  RLS already routed through `is_enrolled_in()` / `has_cap('roster.*')`.
-- `registrations.roll_number` (text, unique per confirmed reg per cohort) — `0113`.
-- `/teams` page + `lib/queries/teams.ts` + `lib/actions/teams.ts` (currently
-  self-service create/join/leave — to be repurposed to read-only).
-- URL validation (`githubRe`, `http(s)://` check) in `lib/actions/capstone.ts` — reuse.
-- Nav entries for Teams + Capstone in `lib/rbac/menus.ts`.
+- `teams` / `team_members` (`0008`) — RLS already via `is_enrolled_in()` / `has_cap('roster.*')`.
+- `registrations.roll_number` (`0113`) for import resolution.
+- URL validation (`githubRe`, `http(s)://`) from `lib/actions/capstone.ts`.
+- Existing **Showcase** nav slot for the public gallery.
 
-`capstone_projects` stays as-is (per-student milestone work). Team deliverables
-are a **separate, team-scoped** concept and must not be jammed into it.
-
-## Schema changes — one migration: `0115_team_capstone_submissions.sql`
+## Schema — migration `0115_team_capstone_submissions.sql`
 
 1. **Extend `teams`** (admin-managed, read-only to students):
-   - `team_number int`
-   - `pitched_ideas jsonb not null default '[]'::jsonb` (array of the 3 ideas)
-   - `chosen_idea text` (nullable — which idea they're building, optional)
+   - `team_number int`, `pitched_ideas jsonb not null default '[]'::jsonb`.
 
-2. **New `team_submissions`** (1:1 with team; this is what members edit):
+2. **Extend `cohorts`**: `team_submission_deadline timestamptz` (admin-set).
+
+3. **`team_submissions`** — 1:1 with team, **member-editable content**:
    ```
-   team_id        uuid primary key references teams(id) on delete cascade
-   cohort_id      uuid not null references cohorts(id) on delete cascade
+   team_id          uuid primary key references teams(id) on delete cascade
+   cohort_id        uuid not null references cohorts(id) on delete cascade
+   title            text
+   pitch            text                 -- 1–2 line description
+   chosen_idea      text                 -- which pitched idea they built
    presentation_url text
-   product_url      text   -- live website / app
-   repo_url         text   -- github
-   status         text not null default 'draft'  -- draft | submitted | reviewed
-   submitted_at   timestamptz
-   updated_at     timestamptz not null default now()
-   updated_by     uuid references profiles(id) on delete set null
+   product_url      text                 -- live website / app
+   repo_url         text                 -- github
+   demo_video_url   text                 -- youtube / loom
+   cover_image_url  text                 -- gallery card image (URL)
+   status           text not null default 'draft'   -- draft | submitted
+   unlocked         boolean not null default false  -- admin reopen override
+   submitted_at     timestamptz
+   updated_at       timestamptz not null default now()
+   updated_by       uuid references profiles(id) on delete set null
    ```
-   `cohort_id` denormalized so RLS/`has_cap` checks don't need a join through `teams`.
 
-3. **RLS on `team_submissions`** (route through helpers, no role math):
-   - `select`: team members **or** `has_cap('roster.read', cohort_id)`.
-   - `insert`/`update`: caller is a member of that team
-     (`exists (select 1 from team_members tm where tm.team_id = team_submissions.team_id and tm.user_id = auth.uid())`)
-     **and** `is_enrolled_in(cohort_id)`.
-   - admin `for all`: `has_cap('roster.write', cohort_id)`.
-   - A `before update`/`insert` trigger stamps `updated_at`/`updated_by` and sets
-     `submitted_at` when status first flips to `submitted` (members can't backdate).
+4. **`team_grades`** — separate so the **member/admin split is clean** (no
+   column-level RLS): `team_id` pk, `cohort_id`, `score int`, `feedback_md text`,
+   `reviewed_by uuid`, `reviewed_at timestamptz`. Admin-only.
 
-4. **Lock down self-service** (because teams are admin-managed):
-   - Drop `teams_create` (students can no longer create teams).
-   - Replace `tm_self` (currently `for all`) with a **select-only** self policy so
-     students can't add/remove themselves; membership is admin-only via `tm_admin`.
+5. **RLS** (route through helpers, no role math):
+   - `team_submissions` **select**: any enrolled cohort member (`is_enrolled_in`) —
+     this is what makes the gallery public — **or** `has_cap('roster.read')`.
+   - `team_submissions` **insert/update**: caller is a member of that team
+     **and** editing is open (before `team_submission_deadline`, or `unlocked`,
+     or caller has `roster.write`). Enforced in a `before` trigger so the
+     deadline can't be bypassed.
+   - `team_grades`: select by team members + `has_cap('roster.read')`; write by
+     `has_cap('grading.write:cohort')` (admin). Faculty never write.
+   - Trigger stamps `updated_at`/`updated_by`; sets `submitted_at` on first flip
+     to `submitted`.
 
-Run `supabase/tests/rbac.sql` after, per repo convention.
+6. **Lock self-service**: drop `teams_create`; make `tm_self` **select-only**.
+   Membership becomes admin-only (`tm_admin`).
+
+Run `supabase/tests/rbac.sql` after.
 
 ## App changes (`web/`)
 
 **Queries — `lib/queries/teams.ts`**
-- `getMyTeam(cohortId)` → the caller's team with members (names + roll numbers),
-  `pitched_ideas`, and current `team_submissions` row (or null). `null` if unassigned.
-- `listTeamsWithSubmissions(cohortId)` → admin/faculty overview: each team, member
-  count, submission status, the three links.
+- `getMyTeam(cohortId)` → caller's team: members (name + roll), `pitched_ideas`,
+  submission row, grade, and `editable`/`deadline` flags. `null` if unassigned.
+- `listTeamGallery(cohortId)` → all teams + submissions for the **public gallery**
+  (drafts included; show "in progress" state for empty ones).
+- `listTeamsAdmin(cohortId)` → teams + submission status + grade for admin.
 
 **Actions — `lib/actions/teams.ts`**
-- `upsertTeamSubmission({ team_id, presentation_url, product_url, repo_url, status })`
-  — any member; reuse `githubRe` + `http(s)` validation; `revalidatePath('/teams')`.
-- `importTeams({ cohort_id, rows })` — admin (`requireCapability('roster.write', cohortId)`).
-  Each row = `{ team_number, name, roll_numbers[], ideas[] }`. For each roll number,
-  resolve `registrations.roll_number → user_id` within the cohort; upsert the team
-  (on `cohort_id,name`), set `team_number`/`pitched_ideas`, and replace `team_members`.
-  Returns a per-row report: matched members, **unmatched roll numbers**, errors.
-- Remove/retire `createTeam` / `joinTeam` / `leaveTeam` from the student surface
-  (keep `leaveTeam`/`joinTeam` only behind admin, or delete — TBD in review).
+- `upsertTeamSubmission(...)` — any member; reuse URL validation; blocks when
+  locked; `revalidatePath`.
+- `setTeamStatus({team_id,'submitted'|'draft'})` — any member, before deadline.
+- `importTeams({cohort_id, rows})` — `requireCapability('roster.write')`. Resolves
+  each roll number via `registrations`, upserts team (`cohort_id,name`), sets
+  `team_number`/`pitched_ideas`, replaces members. Returns per-row report with
+  **unmatched roll numbers**.
+- `gradeTeam(...)` — `requireCapability('grading.write:cohort')`.
+- `setSubmissionDeadline(...)` / `reopenTeam(...)` — admin.
+- Retire student `createTeam/joinTeam/leaveTeam` from the UI.
 
-**Student UI — repurpose `app/(authed)/capstone/` (or `/teams`)**
-- Replace "Find your capstone team" with **"Your Team"**: team name/number,
-  teammates (read-only), the 3 pitched ideas, and a submission card with three
-  validated fields (presentation, live URL, repo) + a Submit toggle and status badge.
-- If the signed-in student isn't in any imported team → a clear "not assigned yet,
-  contact faculty" empty state (no create button).
+**Student surfaces**
+- **`/capstone` → "Your Team"**: locked roster, the 3 pitched ideas, editable
+  final card (title, pitch, chosen idea, 3 links, demo video, cover image),
+  submit/locked/graded status, score + feedback when graded. Empty state if
+  unassigned ("not on a team yet — contact faculty").
+- **Showcase = public gallery**: grid of all teams' cards (cover image, title,
+  pitch, links, members), live including drafts.
+- Old per-student capstone page/milestones removed from nav; `/capstone` now the
+  team surface. `capstone_projects` data left intact (archived).
 
-**Admin UI — `app/(authed)/admin/cohorts/[cohortId]/teams/`**
-- Import page: paste CSV / TSV (matching the spreadsheet columns) → preview with
-  matched/unmatched roll numbers → confirm. Surfaces every unmatched roll number so
-  staff can fix the sheet or the student's roll number.
-- Overview table: all teams, members, submission status, links — extends the existing
-  `…/capstones` pattern.
+**Admin — `app/(authed)/admin/cohorts/[cohortId]/teams/`**
+- CSV import (paste) with matched/unmatched preview + confirm.
+- Overview: teams, members, submission status, links, **grade** action.
+- Set submission deadline; reopen a locked team.
 
-**Nav — `lib/rbac/menus.ts`**
-- Point the student "Teams" entry at the new Your-Team surface; add an admin
-  "Teams" entry under the cohort admin section (cap `roster.read`/`roster.write`).
+**Nav — `lib/rbac/menus.ts`**: point Showcase → gallery; student "Capstone"/"Teams"
+→ Your-Team; add admin "Teams" (cap `roster.read`/`roster.write`); drop the
+individual-capstone entry.
 
-## CSV import format (matches the spreadsheet)
+## CSV import format
 
 ```
 team_number,team_name,roll_numbers,idea_1,idea_2,idea_3
 1,Neural Ninjas,"23BCE1001;23BCE1002;23BCE1003",Idea A,Idea B,Idea C
 ```
-`roll_numbers` is a `;`-separated list (3–5). Ideas map into `pitched_ideas`.
-
-## Open items for review
-
-- Confirm the student surface lives at `/capstone` vs `/teams` (I lean `/capstone`
-  since that's the "final project" mental model; `/teams` then redirects there).
-- Whether to hard-delete `createTeam/joinTeam/leaveTeam` or keep them admin-only.
-- Whether `chosen_idea` is needed now or later.
+`roll_numbers` = `;`-separated (3–5); ideas → `pitched_ideas`.
 
 ## Test plan
 
-- `supabase/tests/rbac.sql`: non-member can't read/write another team's submission;
-  member can upsert; faculty read-only; admin all.
-- Vitest: `importTeams` roll-number resolution incl. unmatched rows; submission
-  URL validation.
-- Playwright: student sees locked team + ideas, submits links, status flips to
-  submitted; non-assigned student sees empty state.
+- `rbac.sql`: non-member can read (gallery) but not write another team's submission;
+  member writes before deadline, blocked after (unless reopened); faculty can't
+  grade; admin grades.
+- Vitest: `importTeams` roll resolution incl. unmatched; URL validation; deadline lock.
+- Playwright: member edits + submits, sees status; gallery lists all teams live;
+  unassigned student sees empty state; admin grades and reopens.
+
+## Still worth confirming
+
+- Exact home for the gallery (reuse **Showcase** vs new `/gallery`).
+- Whether retired individual-capstone routes should redirect to `/capstone` or 404.
