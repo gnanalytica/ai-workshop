@@ -63,6 +63,7 @@ export const NAV: readonly NavItem[] = [
   { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },
   { label: "Full cohort",  href: "/faculty/cohort",     cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "users-round" },
   { label: "My pod",       href: "/faculty/pod",        cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "home" },
+  { label: "Teams",        href: "/teams-board",        cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "users" },
   { label: "Help desk",    href: "/faculty/help-desk",  cap: "support.triage", group: "faculty", section: "Support",   icon: "life-buoy" },
   { label: "Community",    href: "/community",          cap: "community.read", group: "faculty", section: "Reference", icon: "message-square" },
   { label: "Leaderboard",  href: "/leaderboard",        cap: "roster.read",    group: "faculty", section: "Reference", icon: "trophy" },
@@ -70,6 +71,7 @@ export const NAV: readonly NavItem[] = [
 
   // ----- Admin -----
   { label: "Cohorts",       href: "/admin",           cap: "schedule.read",  group: "admin",                  icon: "home" },
+  { label: "Teams",         href: "/teams-board",     cap: "roster.read",    group: "admin",                  icon: "users" },
   { label: "Help desk",     href: "/admin/help-desk", cap: "support.triage", group: "admin",                  icon: "life-buoy" },
   { label: "Community",     href: "/community",       cap: "community.read", group: "admin",                  icon: "message-square" },
   { label: "Invites",       href: "/admin/invites",   cap: "orgs.write",     group: "system",                 icon: "ticket" },

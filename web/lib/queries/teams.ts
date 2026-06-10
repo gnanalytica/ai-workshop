@@ -276,6 +276,62 @@ export const listTeamsAdmin = cache(
   },
 );
 
+// ---------------------------------------------------------------------------
+// Staff-only read board — every team with members (name + roll), pitched
+// ideas, and submission. Powers /teams-board. Gated by roster.read at the
+// route; roll numbers come through because staff RLS reads all registrations.
+// ---------------------------------------------------------------------------
+
+export interface TeamBoardRow {
+  id: string;
+  name: string;
+  team_number: number | null;
+  pitched_ideas: string[];
+  members: TeamMember[];
+  submission: TeamSubmission | null;
+}
+
+export const listTeamsBoard = cache(
+  async (cohortId: string): Promise<TeamBoardRow[]> => {
+    const sb = await getSupabaseServer();
+    const [teamsRes, regsRes, subsRes] = await Promise.all([
+      sb
+        .from("teams")
+        .select("id, name, team_number, pitched_ideas, team_members(user_id, profiles(full_name))")
+        .eq("cohort_id", cohortId)
+        .order("team_number", { ascending: true, nullsFirst: false })
+        .order("name"),
+      sb.from("registrations").select("user_id, roll_number").eq("cohort_id", cohortId),
+      sb.from("team_submissions").select("*").eq("cohort_id", cohortId),
+    ]);
+
+    const rollByUser = new Map<string, string | null>();
+    for (const r of (regsRes.data ?? []) as Array<{ user_id: string; roll_number: string | null }>) {
+      rollByUser.set(r.user_id, r.roll_number);
+    }
+    const subByTeam = new Map<string, TeamSubmission>();
+    for (const s of (subsRes.data ?? []) as TeamSubmission[]) subByTeam.set(s.team_id, s);
+
+    return ((teamsRes.data ?? []) as unknown as Array<{
+      id: string; name: string; team_number: number | null; pitched_ideas: unknown;
+      team_members: Array<{ user_id: string; profiles: { full_name: string | null } | null }>;
+    }>).map((t) => ({
+      id: t.id,
+      name: t.name,
+      team_number: t.team_number,
+      pitched_ideas: asIdeas(t.pitched_ideas),
+      members: t.team_members
+        .map((m) => ({
+          user_id: m.user_id,
+          full_name: m.profiles?.full_name ?? null,
+          roll_number: rollByUser.get(m.user_id) ?? null,
+        }))
+        .sort((a, b) => (a.roll_number ?? "").localeCompare(b.roll_number ?? "")),
+      submission: subByTeam.get(t.id) ?? null,
+    }));
+  },
+);
+
 /** Per-cohort submission deadline (admin-set). */
 export const getTeamDeadline = cache(
   async (cohortId: string): Promise<string | null> => {
