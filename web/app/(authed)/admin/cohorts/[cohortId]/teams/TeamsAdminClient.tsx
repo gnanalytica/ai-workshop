@@ -264,7 +264,9 @@ function TeamAdminRow({
             {team.grade?.score != null && <Badge variant="accent">{team.grade.score}/100</Badge>}
           </div>
           <p className="text-muted mt-1 text-xs">
-            {team.name} · {team.member_names.join(", ")}
+            {team.name} · {team.members.map((m) =>
+              m.roll_number ? `${m.full_name ?? "—"} (${m.roll_number})` : (m.full_name ?? "—")
+            ).join(", ")}
           </p>
         </div>
         {canManage && (

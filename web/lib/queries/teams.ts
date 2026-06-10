@@ -10,7 +10,7 @@ export interface TeamRow {
   cohort_id: string;
   name: string;
   member_count: number;
-  members: { user_id: string; full_name: string | null }[];
+  members: { user_id: string; full_name: string | null; roll_number: string | null }[];
 }
 
 export const listTeams = cache(async (cohortId: string): Promise<TeamRow[]> => {
@@ -21,15 +21,35 @@ export const listTeams = cache(async (cohortId: string): Promise<TeamRow[]> => {
     .eq("cohort_id", cohortId)
     .order("name");
   if (error) return [];
-  return ((data ?? []) as unknown as Array<{
+  const rows = (data ?? []) as unknown as Array<{
     id: string; cohort_id: string; name: string;
     team_members: Array<{ user_id: string; profiles: { full_name: string | null } | null }>;
-  }>).map((t) => ({
+  }>;
+
+  // Fetch roll numbers for all team members in one query
+  const allUserIds = rows.flatMap((t) => t.team_members.map((m) => m.user_id));
+  const rollByUser = new Map<string, string | null>();
+  if (allUserIds.length) {
+    const { data: regs } = await sb
+      .from("registrations")
+      .select("user_id, roll_number")
+      .eq("cohort_id", cohortId)
+      .in("user_id", allUserIds);
+    for (const r of (regs ?? []) as Array<{ user_id: string; roll_number: string | null }>) {
+      rollByUser.set(r.user_id, r.roll_number);
+    }
+  }
+
+  return rows.map((t) => ({
     id: t.id,
     cohort_id: t.cohort_id,
     name: t.name,
     member_count: t.team_members.length,
-    members: t.team_members.map((m) => ({ user_id: m.user_id, full_name: m.profiles?.full_name ?? null })),
+    members: t.team_members.map((m) => ({
+      user_id: m.user_id,
+      full_name: m.profiles?.full_name ?? null,
+      roll_number: rollByUser.get(m.user_id) ?? null,
+    })),
   }));
 });
 
@@ -196,7 +216,7 @@ export interface AdminTeamRow {
   name: string;
   team_number: number | null;
   member_count: number;
-  member_names: string[];
+  members: { user_id: string; full_name: string | null; roll_number: string | null }[];
   submission: TeamSubmission | null;
   grade: TeamGrade | null;
 }
@@ -208,7 +228,7 @@ export const listTeamsAdmin = cache(
     const [teamsRes, subsRes, gradesRes] = await Promise.all([
       sb
         .from("teams")
-        .select("id, name, team_number, team_members(profiles(full_name))")
+        .select("id, name, team_number, team_members(user_id, profiles(full_name))")
         .eq("cohort_id", cohortId)
         .order("team_number", { ascending: true, nullsFirst: false })
         .order("name"),
@@ -221,15 +241,35 @@ export const listTeamsAdmin = cache(
     const gradeByTeam = new Map<string, TeamGrade>();
     for (const g of (gradesRes.data ?? []) as TeamGrade[]) gradeByTeam.set(g.team_id, g);
 
-    return ((teamsRes.data ?? []) as unknown as Array<{
+    const rows = ((teamsRes.data ?? []) as unknown as Array<{
       id: string; name: string; team_number: number | null;
-      team_members: Array<{ profiles: { full_name: string | null } | null }>;
-    }>).map((t) => ({
+      team_members: Array<{ user_id: string; profiles: { full_name: string | null } | null }>;
+    }>);
+
+    // Fetch roll numbers for all team members in one query
+    const allUserIds = rows.flatMap((t) => t.team_members.map((m) => m.user_id));
+    const rollByUser = new Map<string, string | null>();
+    if (allUserIds.length) {
+      const { data: regs } = await sb
+        .from("registrations")
+        .select("user_id, roll_number")
+        .eq("cohort_id", cohortId)
+        .in("user_id", allUserIds);
+      for (const r of (regs ?? []) as Array<{ user_id: string; roll_number: string | null }>) {
+        rollByUser.set(r.user_id, r.roll_number);
+      }
+    }
+
+    return rows.map((t) => ({
       id: t.id,
       name: t.name,
       team_number: t.team_number,
       member_count: t.team_members.length,
-      member_names: t.team_members.map((m) => m.profiles?.full_name ?? "—"),
+      members: t.team_members.map((m) => ({
+        user_id: m.user_id,
+        full_name: m.profiles?.full_name ?? null,
+        roll_number: rollByUser.get(m.user_id) ?? null,
+      })),
       submission: subByTeam.get(t.id) ?? null,
       grade: gradeByTeam.get(t.id) ?? null,
     }));

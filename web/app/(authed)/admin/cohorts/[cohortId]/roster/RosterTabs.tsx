@@ -179,7 +179,10 @@ export function RosterTabs({
                   </div>
                   <ul className="text-muted mt-3 space-y-1 text-sm">
                     {t.members.map((m) => (
-                      <li key={m.user_id}>{m.full_name ?? "—"}</li>
+                      <li key={m.user_id}>
+                        {m.full_name ?? "—"}
+                        {m.roll_number && <span className="ml-1 opacity-60">· {m.roll_number}</span>}
+                      </li>
                     ))}
                   </ul>
                 </Card>
