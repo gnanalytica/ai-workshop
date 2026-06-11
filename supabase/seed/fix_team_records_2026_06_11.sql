@@ -1,171 +1,116 @@
 -- =============================================================================
 -- supabase/seed/fix_team_records_2026_06_11.sql
--- Targeted fixes for KBN internship team records (requested 2026-06-11):
---   1. DS Team 7   / roll 245229 — correct name to "V Durga Charan Teja"
---   2. Team DS 9   / roll 245238 — add member P Swamy
---   3. Team 4 (DS) / roll 245209 — correct name to "Y Vinay"
---   4. DS Team 5   / roll 245211 — add member G Mounika (create team if absent)
---   5. Stat Team 2 / roll 243508 — add member Srinivas
+-- Targeted fixes for KBN internship team records (requested 2026-06-11).
 --
--- NON-DESTRUCTIVE: only UPDATE profiles.full_name and INSERT teams/team_members.
--- No rows are deleted; member inserts are ON CONFLICT DO NOTHING, so the script
--- is safe to re-run. Do NOT re-run teams.sql instead — it wipes team
--- submissions and grades for the whole cohort.
+-- Investigation against the live DB showed the real situation differs from the
+-- request's surface reading:
+--   * P.srinivas (a STAT student, real roll 243508) registered with roll
+--     245229 — which belongs to V Durga Charan Teja (DS). That single typo
+--     put Srinivas's name on DS Team 7 AND kept him off Stat Team 2.
+--   * Durga Charan Teja registered with garbled roll "k2247829245229".
+--   * G Mounika is confirmed but has no roll number, so she never landed in
+--     DS Team 5 (which already exists in the live DB with 3 members).
+--   * P Swamy (roll 245238) has NO account at all — he must sign in first;
+--     his DS Team 9 membership cannot be created yet.
+--
+-- Fixes applied (single transaction; identity-checked; only one row deleted —
+-- Srinivas's incorrect DS Team 7 membership, replaced by his correct
+-- Stat Team 2 membership):
+--   1. Roll swap: Srinivas 245229 -> 243508, then Durga -> 245229.
+--   2. Names: Durga -> "V Durga Charan Teja"; roll 245209 -> "Y Vinay".
+--   3. DS Team 7: remove Srinivas, add Durga.
+--   4. Stat Team 2: add Srinivas.
+--   5. DS Team 5: set Mounika's roll to 245211, add her.
 --
 -- Run once against production:
 --   psql "$DB_URL" -f supabase/seed/fix_team_records_2026_06_11.sql
+-- (or: supabase db query --linked -f <this file>)
 --
--- Watch the NOTICE/WARNING output: if a roll number has no confirmed
--- registration (students self-enter rolls on first login, so typos/blanks
--- happen), that change is skipped and candidate students with a similar name
--- are listed so you can fix the registration's roll_number first.
+-- Idempotent: re-running after success is a no-op (the STRICT lookups below
+-- find nothing left to fix and abort the transaction without changes).
 -- =============================================================================
 
 BEGIN;
 
 DO $$
 DECLARE
-  v_cohort uuid;
-  v_user   uuid;
-  v_team   uuid;
-  v_old    text;
-  v_next   int;
-  r        record;
+  v_cohort   uuid;
+  v_srinivas uuid;
+  v_durga    uuid;
+  v_vinay    uuid;
+  v_mounika  uuid;
+  v_t7       uuid;
+  v_t5       uuid;
+  v_stat2    uuid;
 BEGIN
-  -- ---- Resolve the active cohort from a known roll number (same anchor as teams.sql)
+  -- ---- Resolve cohort (same anchor as teams.sql) ---------------------------
   SELECT reg.cohort_id INTO STRICT v_cohort
     FROM registrations reg
-   WHERE reg.roll_number = '245210'
-     AND reg.status = 'confirmed'
+   WHERE reg.roll_number = '245210' AND reg.status = 'confirmed'
    LIMIT 1;
 
-  RAISE NOTICE 'Fixing team records for cohort %', v_cohort;
+  -- ---- Resolve the students by their CURRENT (wrong) identifiers -----------
+  SELECT user_id INTO STRICT v_srinivas FROM registrations
+   WHERE cohort_id = v_cohort AND status = 'confirmed' AND roll_number = '245229';
+  SELECT user_id INTO STRICT v_durga FROM registrations
+   WHERE cohort_id = v_cohort AND status = 'confirmed' AND roll_number = 'k2247829245229';
+  SELECT user_id INTO STRICT v_vinay FROM registrations
+   WHERE cohort_id = v_cohort AND status = 'confirmed' AND roll_number = '245209';
+  SELECT r.user_id INTO STRICT v_mounika
+    FROM registrations r JOIN profiles p ON p.id = r.user_id
+   WHERE r.cohort_id = v_cohort AND r.status = 'confirmed'
+     AND r.roll_number IS NULL AND p.full_name = 'GANDABOYINA Mounika DS';
 
-  -- ==========================================================================
-  -- 1. DS Team 7 / roll 245229 — correct name to "V Durga Charan Teja"
-  -- ==========================================================================
-  SELECT reg.user_id INTO v_user
-    FROM registrations reg
-   WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-     AND reg.roll_number = '245229';
-  IF v_user IS NULL THEN
-    RAISE WARNING '[1] No confirmed registration with roll 245229 — name NOT changed';
-  ELSE
-    SELECT full_name INTO v_old FROM profiles WHERE id = v_user;
-    UPDATE profiles SET full_name = 'V Durga Charan Teja' WHERE id = v_user;
-    RAISE NOTICE '[1] roll 245229 renamed: "%" -> "V Durga Charan Teja"', v_old;
+  -- ---- Identity safety checks: abort if the DB no longer matches -----------
+  IF (SELECT full_name FROM profiles WHERE id = v_srinivas) NOT ILIKE '%srinivas%' THEN
+    RAISE EXCEPTION 'identity check failed: roll 245229 is not Srinivas';
   END IF;
-
-  -- ==========================================================================
-  -- 2. Team DS 9 / roll 245238 — add member P Swamy
-  -- ==========================================================================
-  SELECT t.id INTO v_team
-    FROM teams t
-   WHERE t.cohort_id = v_cohort
-     AND lower(replace(t.name, ' ', '')) = 'teamds9';
-  SELECT reg.user_id INTO v_user
-    FROM registrations reg
-   WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-     AND reg.roll_number = '245238';
-  IF v_team IS NULL THEN
-    RAISE WARNING '[2] Team "Team DS 9" not found — member NOT added';
-  ELSIF v_user IS NULL THEN
-    RAISE WARNING '[2] No confirmed registration with roll 245238 (P Swamy) — member NOT added. Set roll_number on the student''s registration, then re-run.';
-    FOR r IN
-      SELECT p.full_name, reg.roll_number
-        FROM registrations reg JOIN profiles p ON p.id = reg.user_id
-       WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-         AND p.full_name ILIKE '%swamy%'
-    LOOP
-      RAISE NOTICE '[2]   candidate: "%" (roll %)', r.full_name, coalesce(r.roll_number, 'none');
-    END LOOP;
-  ELSE
-    INSERT INTO team_members (team_id, user_id)
-    VALUES (v_team, v_user)
-    ON CONFLICT DO NOTHING;
-    RAISE NOTICE '[2] roll 245238 (P Swamy) is now a member of Team DS 9';
+  IF (SELECT full_name FROM profiles WHERE id = v_durga) NOT ILIKE '%durga%teja%' THEN
+    RAISE EXCEPTION 'identity check failed: roll k2247829245229 is not Durga Charan Teja';
+  END IF;
+  IF (SELECT full_name FROM profiles WHERE id = v_vinay) NOT ILIKE '%vinay%' THEN
+    RAISE EXCEPTION 'identity check failed: roll 245209 is not Vinay';
   END IF;
 
-  -- ==========================================================================
-  -- 3. Team 4 (DS) / roll 245209 — correct name to "Y Vinay"
-  -- ==========================================================================
-  SELECT reg.user_id INTO v_user
-    FROM registrations reg
-   WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-     AND reg.roll_number = '245209';
-  IF v_user IS NULL THEN
-    RAISE WARNING '[3] No confirmed registration with roll 245209 — name NOT changed';
-  ELSE
-    SELECT full_name INTO v_old FROM profiles WHERE id = v_user;
-    UPDATE profiles SET full_name = 'Y Vinay' WHERE id = v_user;
-    RAISE NOTICE '[3] roll 245209 renamed: "%" -> "Y Vinay"', v_old;
-  END IF;
+  -- ---- Resolve teams (live names, which differ from teams.sql) -------------
+  SELECT id INTO STRICT v_t7    FROM teams WHERE cohort_id = v_cohort AND name = 'DS Team 7';
+  SELECT id INTO STRICT v_t5    FROM teams WHERE cohort_id = v_cohort AND name = 'DS Team 5';
+  SELECT id INTO STRICT v_stat2 FROM teams WHERE cohort_id = v_cohort AND name = 'Stat Team 2';
 
-  -- ==========================================================================
-  -- 4. DS Team 5 / roll 245211 — add member G Mounika (create team if absent)
-  -- ==========================================================================
-  SELECT t.id INTO v_team
-    FROM teams t
-   WHERE t.cohort_id = v_cohort
-     AND lower(replace(t.name, ' ', '')) = 'dsteam5';
-  IF v_team IS NULL THEN
-    SELECT coalesce(max(team_number), 0) + 1 INTO v_next
-      FROM teams WHERE cohort_id = v_cohort;
-    INSERT INTO teams (cohort_id, name, team_number)
-    VALUES (v_cohort, 'DS Team 5', v_next)
-    RETURNING id INTO v_team;
-    RAISE NOTICE '[4] created team "DS Team 5" (team_number %)', v_next;
-  END IF;
-  SELECT reg.user_id INTO v_user
-    FROM registrations reg
-   WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-     AND reg.roll_number = '245211';
-  IF v_user IS NULL THEN
-    RAISE WARNING '[4] No confirmed registration with roll 245211 (G Mounika) — member NOT added. Set roll_number on the student''s registration, then re-run.';
-    FOR r IN
-      SELECT p.full_name, reg.roll_number
-        FROM registrations reg JOIN profiles p ON p.id = reg.user_id
-       WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-         AND p.full_name ILIKE '%mounika%'
-    LOOP
-      RAISE NOTICE '[4]   candidate: "%" (roll %)', r.full_name, coalesce(r.roll_number, 'none');
-    END LOOP;
-  ELSE
-    INSERT INTO team_members (team_id, user_id)
-    VALUES (v_team, v_user)
-    ON CONFLICT DO NOTHING;
-    RAISE NOTICE '[4] roll 245211 (G Mounika) is now a member of DS Team 5';
-  END IF;
+  -- ---- 1. Roll swap: free 245229 first, then hand it to Durga --------------
+  UPDATE registrations SET roll_number = '243508'
+   WHERE cohort_id = v_cohort AND user_id = v_srinivas;
+  UPDATE registrations SET roll_number = '245229'
+   WHERE cohort_id = v_cohort AND user_id = v_durga;
+  RAISE NOTICE 'roll swap done: Srinivas -> 243508, Durga -> 245229';
 
-  -- ==========================================================================
-  -- 5. Stat Team 2 / roll 243508 — add member Srinivas
-  -- ==========================================================================
-  SELECT t.id INTO v_team
-    FROM teams t
-   WHERE t.cohort_id = v_cohort
-     AND lower(replace(t.name, ' ', '')) = 'statteam2';
-  SELECT reg.user_id INTO v_user
-    FROM registrations reg
-   WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-     AND reg.roll_number = '243508';
-  IF v_team IS NULL THEN
-    RAISE WARNING '[5] Team "Stat Team 2" not found — member NOT added';
-  ELSIF v_user IS NULL THEN
-    RAISE WARNING '[5] No confirmed registration with roll 243508 (Srinivas) — member NOT added. Set roll_number on the student''s registration, then re-run.';
-    FOR r IN
-      SELECT p.full_name, reg.roll_number
-        FROM registrations reg JOIN profiles p ON p.id = reg.user_id
-       WHERE reg.cohort_id = v_cohort AND reg.status = 'confirmed'
-         AND p.full_name ILIKE '%srinivas%'
-    LOOP
-      RAISE NOTICE '[5]   candidate: "%" (roll %)', r.full_name, coalesce(r.roll_number, 'none');
-    END LOOP;
-  ELSE
-    INSERT INTO team_members (team_id, user_id)
-    VALUES (v_team, v_user)
-    ON CONFLICT DO NOTHING;
-    RAISE NOTICE '[5] roll 243508 (Srinivas) is now a member of Stat Team 2';
-  END IF;
+  -- ---- 2. Name corrections --------------------------------------------------
+  UPDATE profiles SET full_name = 'V Durga Charan Teja' WHERE id = v_durga;
+  UPDATE profiles SET full_name = 'Y Vinay'             WHERE id = v_vinay;
+  RAISE NOTICE 'names corrected: V Durga Charan Teja (245229), Y Vinay (245209)';
+
+  -- ---- 3+4. DS Team 7: Srinivas out, Durga in; Stat Team 2: Srinivas in ----
+  DELETE FROM team_members WHERE team_id = v_t7 AND user_id = v_srinivas;
+  INSERT INTO team_members (team_id, user_id) VALUES (v_t7, v_durga)
+  ON CONFLICT DO NOTHING;
+  INSERT INTO team_members (team_id, user_id) VALUES (v_stat2, v_srinivas)
+  ON CONFLICT DO NOTHING;
+  RAISE NOTICE 'memberships fixed: DS Team 7 = Durga, Stat Team 2 += Srinivas';
+
+  -- ---- 5. Mounika: assign roll 245211 and add to DS Team 5 ------------------
+  UPDATE registrations SET roll_number = '245211'
+   WHERE cohort_id = v_cohort AND user_id = v_mounika;
+  INSERT INTO team_members (team_id, user_id) VALUES (v_t5, v_mounika)
+  ON CONFLICT DO NOTHING;
+  RAISE NOTICE 'Mounika: roll 245211 set, added to DS Team 5';
+
+  -- ---- P Swamy (245238, DS Team 9): NOT possible — no account exists -------
+  -- Once he signs in and his registration is confirmed with roll 245238, run:
+  --   insert into team_members (team_id, user_id)
+  --   select t.id, r.user_id from teams t, registrations r
+  --    where t.cohort_id = r.cohort_id and t.name = 'DS Team 9'
+  --      and r.status = 'confirmed' and r.roll_number = '245238'
+  --   on conflict do nothing;
 
 END $$;
 

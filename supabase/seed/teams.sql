@@ -397,7 +397,8 @@ BEGIN
        AND r.roll_number IN ('245911','245926','245903','245904');
 
   -- ========================================================================
-  -- 31. DS Team 5 (added 2026-06-11 — see fix_team_records_2026_06_11.sql)
+  -- 31. DS Team 5 (added 2026-06-11 — see fix_team_records_2026_06_11.sql;
+  --     membership mirrors the live board as of that date)
   -- ========================================================================
   INSERT INTO teams (cohort_id, name, team_number, pitched_ideas)
   VALUES (v_cohort, 'DS Team 5', 31, '[]'::jsonb)
@@ -405,7 +406,7 @@ BEGIN
   INSERT INTO team_members (team_id, user_id)
     SELECT v_team, r.user_id FROM registrations r
      WHERE r.cohort_id = v_cohort AND r.status = 'confirmed'
-       AND r.roll_number IN ('245211');
+       AND r.roll_number IN ('245211','245220','245230','245239');
 
   -- ---- Summary ---------------------------------------------------------------
   RAISE NOTICE 'Inserted % teams, % members for cohort %',
