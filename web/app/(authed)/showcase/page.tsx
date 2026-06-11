@@ -126,9 +126,27 @@ function TeamCard({ team }: { team: GalleryTeam }) {
 
         {s?.pitch && <p className="text-ink/85 text-sm break-words">{s.pitch}</p>}
 
-        <p className="text-muted mt-auto text-xs">
-          {team.member_names.slice(0, 5).join(", ")}
-        </p>
+        <div className="mt-auto">
+          <p className="text-muted font-mono text-[11px] tracking-widest uppercase">
+            Members · {team.members.length}
+          </p>
+          {team.members.length === 0 ? (
+            <p className="text-muted mt-1 text-xs">No members listed.</p>
+          ) : (
+            <table className="mt-1.5 w-full text-xs">
+              <tbody>
+                {team.members.map((m) => (
+                  <tr key={m.user_id} className="border-line/40 border-t first:border-t-0">
+                    <td className="text-ink/85 break-words py-1 pr-2">{m.full_name ?? "—"}</td>
+                    <td className="text-muted py-1 text-right font-mono whitespace-nowrap">
+                      {m.roll_number ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
 
         <div className="flex flex-wrap gap-2 pt-1 text-sm">
           {links

@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSupabaseService } from "@/lib/supabase/service";
 import { getSession } from "@/lib/auth/session";
 
 // ---------------------------------------------------------------------------
@@ -177,7 +178,7 @@ export interface GalleryTeam {
   id: string;
   name: string;
   team_number: number | null;
-  member_names: string[];
+  members: TeamMember[];
   submission: TeamSubmission | null;
 }
 
@@ -188,24 +189,47 @@ export const listTeamGallery = cache(
     const [teamsRes, subsRes] = await Promise.all([
       sb
         .from("teams")
-        .select("id, name, team_number, team_members(profiles(full_name))")
+        .select("id, name, team_number, team_members(user_id, profiles(full_name))")
         .eq("cohort_id", cohortId)
         .order("team_number", { ascending: true, nullsFirst: false })
         .order("name"),
       sb.from("team_submissions").select("*").eq("cohort_id", cohortId),
     ]);
 
+    // Roll numbers are RLS-restricted to "self" for students, but the showcase
+    // intentionally displays every member's roll — so read them with the
+    // service client (bypasses RLS; selects only user_id + roll_number).
+    const rollByUser = new Map<string, string | null>();
+    try {
+      const svc = getSupabaseService();
+      const { data: regs } = await svc
+        .from("registrations")
+        .select("user_id, roll_number")
+        .eq("cohort_id", cohortId);
+      for (const r of (regs ?? []) as Array<{ user_id: string; roll_number: string | null }>) {
+        rollByUser.set(r.user_id, r.roll_number);
+      }
+    } catch {
+      /* service key unavailable (e.g. headless) — fall back to blank rolls */
+    }
+
     const subByTeam = new Map<string, TeamSubmission>();
     for (const s of (subsRes.data ?? []) as TeamSubmission[]) subByTeam.set(s.team_id, s);
 
     return ((teamsRes.data ?? []) as unknown as Array<{
       id: string; name: string; team_number: number | null;
-      team_members: Array<{ profiles: { full_name: string | null } | null }>;
+      team_members: Array<{ user_id: string; profiles: { full_name: string | null } | null }>;
     }>).map((t) => ({
       id: t.id,
       name: t.name,
       team_number: t.team_number,
-      member_names: t.team_members.map((m) => m.profiles?.full_name ?? "—"),
+      members: t.team_members
+        .map((m) => ({
+          user_id: m.user_id,
+          full_name: m.profiles?.full_name ?? null,
+          roll_number: rollByUser.get(m.user_id) ?? null,
+        }))
+        .sort((a, b) => (a.roll_number ?? "").localeCompare(b.roll_number ?? "")),
       submission: subByTeam.get(t.id) ?? null,
     }));
   },
