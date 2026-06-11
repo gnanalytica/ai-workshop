@@ -6,6 +6,11 @@
 --   psql "$DB_URL" -f supabase/seed/teams.sql
 --
 -- Idempotent: deletes existing teams for the cohort before re-inserting.
+--
+-- *** DANGER — DATA LOSS ***
+-- Re-running this script DELETES team_submissions and team_grades for the
+-- whole cohort. Once teams have submitted, do NOT re-run it; apply targeted
+-- fixes instead (see fix_team_records_2026_06_11.sql for the pattern).
 -- =============================================================================
 
 BEGIN;
@@ -390,6 +395,17 @@ BEGIN
     SELECT v_team, r.user_id FROM registrations r
      WHERE r.cohort_id = v_cohort AND r.status = 'confirmed'
        AND r.roll_number IN ('245911','245926','245903','245904');
+
+  -- ========================================================================
+  -- 31. DS Team 5 (added 2026-06-11 — see fix_team_records_2026_06_11.sql)
+  -- ========================================================================
+  INSERT INTO teams (cohort_id, name, team_number, pitched_ideas)
+  VALUES (v_cohort, 'DS Team 5', 31, '[]'::jsonb)
+  RETURNING id INTO v_team;
+  INSERT INTO team_members (team_id, user_id)
+    SELECT v_team, r.user_id FROM registrations r
+     WHERE r.cohort_id = v_cohort AND r.status = 'confirmed'
+       AND r.roll_number IN ('245211');
 
   -- ---- Summary ---------------------------------------------------------------
   RAISE NOTICE 'Inserted % teams, % members for cohort %',
