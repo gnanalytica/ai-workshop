@@ -20,7 +20,6 @@ export default async function CertificatePage() {
 
   const today = todayDayNumber(cohort);
   const cohortEnded = today >= 30;
-  const requiredAssignments = Math.ceil(completion.totalAssignments * 0.5);
   const eligible =
     cohortEnded &&
     kpis.daysComplete >= REQUIRED_DAYS &&
@@ -49,17 +48,17 @@ export default async function CertificatePage() {
 
           <div className="mx-auto mt-6 max-w-md">
             <div className="flex flex-wrap justify-center gap-2 text-xs">
-              <Badge variant={kpis.daysComplete >= REQUIRED_DAYS ? "ok" : "default"}>
-                Days {kpis.daysComplete}/{REQUIRED_DAYS}
+              <Badge variant={kpis.daysComplete >= REQUIRED_DAYS ? "ok" : "danger"}>
+                Days completed {kpis.daysComplete}/30
               </Badge>
-              <Badge variant={kpis.attendanceCount >= REQUIRED_ATTENDANCE ? "ok" : "default"}>
-                Attendance {kpis.attendanceCount}/{REQUIRED_ATTENDANCE}
+              <Badge variant={kpis.attendanceCount >= REQUIRED_ATTENDANCE ? "ok" : "danger"}>
+                Attendance {kpis.attendanceCount}/30
               </Badge>
-              <Badge variant={completion.meetsFiftyPercent ? "ok" : "default"}>
-                Assignments {completion.submittedCount}/{requiredAssignments}
+              <Badge variant={completion.meetsFiftyPercent ? "ok" : "danger"}>
+                Assignments {completion.submittedCount}/{completion.totalAssignments}
               </Badge>
-              <Badge variant={cohortEnded ? "ok" : "default"}>
-                {cohortEnded ? "Cohort ended" : "Cohort live"}
+              <Badge variant={cohortEnded ? "ok" : "danger"}>
+                {cohortEnded ? "Cohort ended" : "Cohort in progress"}
               </Badge>
             </div>
           </div>
@@ -73,7 +72,7 @@ export default async function CertificatePage() {
             </div>
           ) : (
             <CardSub className="mt-6">
-              The certificate unlocks once the cohort ends and you have reached all the milestones above.
+              Complete the workshop to unlock your certificate.
             </CardSub>
           )}
         </div>
