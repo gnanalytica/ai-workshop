@@ -275,11 +275,11 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-name {
   position: absolute;
-  top: 44%;
+  top: 47%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: "Dancing Script", "Brush Script MT", cursive;
-  font-size: clamp(1.2rem, 3.5vw, 2.5rem);
+  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
   font-weight: 700;
   color: hsl(0 72% 45%);
   white-space: nowrap;
