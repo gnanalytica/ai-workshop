@@ -1,21 +1,24 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getProfile } from "@/lib/auth/session";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
 import { getDashboardKpis } from "@/lib/queries/dashboard";
 import { getAssignmentCompletion } from "@/lib/queries/certificate";
+import { getEffectiveUserId } from "@/lib/auth/persona";
+import { getSupabaseServer } from "@/lib/supabase/server";
 import { fmtDate } from "@/lib/format";
 
 const REQUIRED_DAYS = 22;
 const REQUIRED_ATTENDANCE = 18;
 
 export default async function CertificatePage() {
-  const [profile, cohort] = await Promise.all([getProfile(), getMyCurrentCohort()]);
-  if (!cohort) return <Card><CardTitle>No active cohort</CardTitle></Card>;
+  const [userId, cohort] = await Promise.all([getEffectiveUserId(), getMyCurrentCohort()]);
+  if (!cohort || !userId) return <Card><CardTitle>No active cohort</CardTitle></Card>;
 
-  const [kpis, completion] = await Promise.all([
+  const sb = await getSupabaseServer();
+  const [kpis, completion, { data: profile }] = await Promise.all([
     getDashboardKpis(cohort.id),
     getAssignmentCompletion(cohort.id),
+    sb.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
   ]);
 
   const today = todayDayNumber(cohort);
