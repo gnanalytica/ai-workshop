@@ -7,54 +7,18 @@ interface CertificateCardProps {
   endsOn: string;
 }
 
-function fmtCertDate(iso: string) {
-  return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-export function CertificateCard({ name, cohortName, startsOn, endsOn }: CertificateCardProps) {
+export function CertificateCard({ name }: CertificateCardProps) {
   return (
     <div className="space-y-6">
       {/* The printable certificate */}
-      <div
-        id="certificate"
-        className="certificate-outer mx-auto"
-      >
-        <div className="certificate-inner">
-          {/* Logo */}
-          <div className="certificate-logo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.jpg.jpg" alt="Gnanalytica" className="certificate-logo-img" />
-          </div>
-
-          {/* Title */}
-          <h2 className="certificate-title">Certificate of Completion</h2>
-
-          <p className="certificate-certify">This is to certify that</p>
-
-          {/* Student name */}
-          <p className="certificate-name">{name}</p>
-
-          <p className="certificate-body">
-            has successfully completed the
-          </p>
-          <p className="certificate-workshop">30-Day AI Workshop</p>
-
-          {/* Cohort details */}
-          <p className="certificate-cohort">{cohortName}</p>
-          <p className="certificate-dates">
-            {fmtCertDate(startsOn)} &mdash; {fmtCertDate(endsOn)}
-          </p>
-
-          {/* Signature */}
-          <div className="certificate-signature">
-            <div className="certificate-sig-line" />
-            <p className="certificate-sig-label">Director, Gnanalytica</p>
-          </div>
-        </div>
+      <div id="certificate" className="cert-wrap mx-auto">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/CERTIFICATES_AI_WORKSHOP.png"
+          alt="Certificate of Completion"
+          className="cert-bg"
+        />
+        <p className="cert-name">{name}</p>
       </div>
 
       {/* Download button (hidden in print) */}
