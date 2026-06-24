@@ -24,11 +24,12 @@ export default async function CertificatePage() {
 
   const today = todayDayNumber(cohort);
   const cohortEnded = today >= 30;
-  const eligible =
-    cohortEnded &&
-    kpis.daysComplete >= REQUIRED_DAYS &&
-    completion.meetsFiftyPercent;
   const isAdmin = await checkCapability("roster.read", cohort.id);
+  const eligible =
+    isAdmin ||
+    (cohortEnded &&
+    kpis.daysComplete >= REQUIRED_DAYS &&
+    completion.meetsFiftyPercent);
 
   return (
     <div className="space-y-6">
