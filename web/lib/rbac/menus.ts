@@ -41,8 +41,8 @@ export type NavIcon =
 
 export const NAV: readonly NavItem[] = [
   // ----- Student — kept lean: core daily flow on top, one People entry,
-  //                 two reference links. Showcase/Certificate/Teams remain
-  //                 reachable via direct URL but aren't surfaced in the rail.
+  //                 reference links. Showcase/Teams remain reachable via
+  //                 direct URL but aren't surfaced in the rail.
   { label: "Home",        href: "/learn",       cap: null,             group: "student",                       icon: "home" },
   { label: "Lessons",     href: "/day/today",   cap: "content.read",   group: "student",                       icon: "book" },
   { label: "Capstone",    href: "/capstone",    cap: null,             group: "student",                       icon: "milestone" },
@@ -58,6 +58,7 @@ export const NAV: readonly NavItem[] = [
   // Temporarily hidden from student nav — uncomment to restore:
   // { label: "Polls",       href: "/polls",       cap: null,             group: "student", section: "Reference", icon: "vote" },
   { label: "Handbook",    href: "/handbook",    cap: null,             group: "student", section: "Reference", icon: "library" },
+  { label: "Certificate", href: "/certificate", cap: null,            group: "student", section: "Reference", icon: "award" },
 
   // ----- Faculty -----
   { label: "Schedule",     href: "/faculty/schedule",   cap: "roster.read",    group: "faculty", section: "Dashboard", icon: "calendar" },

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { getProfile } from "@/lib/auth/session";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
 import { getDashboardKpis } from "@/lib/queries/dashboard";
+import { getAssignmentCompletion } from "@/lib/queries/certificate";
 import { fmtDate } from "@/lib/format";
 
 const REQUIRED_DAYS = 22;
@@ -11,13 +12,20 @@ const REQUIRED_ATTENDANCE = 18;
 export default async function CertificatePage() {
   const [profile, cohort] = await Promise.all([getProfile(), getMyCurrentCohort()]);
   if (!cohort) return <Card><CardTitle>No active cohort</CardTitle></Card>;
-  const kpis = await getDashboardKpis(cohort.id);
+
+  const [kpis, completion] = await Promise.all([
+    getDashboardKpis(cohort.id),
+    getAssignmentCompletion(cohort.id),
+  ]);
+
   const today = todayDayNumber(cohort);
   const cohortEnded = today >= 30;
+  const requiredAssignments = Math.ceil(completion.totalAssignments * 0.5);
   const eligible =
     cohortEnded &&
     kpis.daysComplete >= REQUIRED_DAYS &&
-    kpis.attendanceCount >= REQUIRED_ATTENDANCE;
+    kpis.attendanceCount >= REQUIRED_ATTENDANCE &&
+    completion.meetsFiftyPercent;
 
   return (
     <div className="space-y-6">
@@ -47,6 +55,9 @@ export default async function CertificatePage() {
               <Badge variant={kpis.attendanceCount >= REQUIRED_ATTENDANCE ? "ok" : "default"}>
                 Attendance {kpis.attendanceCount}/{REQUIRED_ATTENDANCE}
               </Badge>
+              <Badge variant={completion.meetsFiftyPercent ? "ok" : "default"}>
+                Assignments {completion.submittedCount}/{requiredAssignments}
+              </Badge>
               <Badge variant={cohortEnded ? "ok" : "default"}>
                 {cohortEnded ? "Cohort ended" : "Cohort live"}
               </Badge>
@@ -57,12 +68,12 @@ export default async function CertificatePage() {
             <div className="mt-6 space-y-2">
               <p className="text-ok">You&apos;ve graduated. 🎉</p>
               <p className="text-muted text-xs">
-                A signed PDF will be emailed once admin verification is complete.
+                Your certificate will be available for download here soon.
               </p>
             </div>
           ) : (
             <CardSub className="mt-6">
-              The certificate unlocks once the cohort ends and you have reached the milestones above.
+              The certificate unlocks once the cohort ends and you have reached all the milestones above.
             </CardSub>
           )}
         </div>
