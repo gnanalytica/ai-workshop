@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getEffectiveUserId } from "@/lib/auth/persona";
 
 export interface AssignmentCompletion {
   totalAssignments: number;
@@ -14,6 +15,7 @@ export interface AssignmentCompletion {
 export const getAssignmentCompletion = cache(
   async (cohortId: string): Promise<AssignmentCompletion> => {
     const sb = await getSupabaseServer();
+    const userId = await getEffectiveUserId();
 
     const [totalRes, submittedRes] = await Promise.all([
       sb
@@ -27,6 +29,7 @@ export const getAssignmentCompletion = cache(
           head: true,
         })
         .eq("assignments.cohort_id", cohortId)
+        .eq("user_id", userId!)
         .in("status", ["submitted", "graded"]),
     ]);
 
