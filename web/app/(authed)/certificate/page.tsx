@@ -1,9 +1,11 @@
 import { Card, CardSub, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CertificateCard } from "@/components/certificate/CertificateCard";
 import { getMyCurrentCohort, todayDayNumber } from "@/lib/queries/cohort";
 import { getDashboardKpis } from "@/lib/queries/dashboard";
 import { getAssignmentCompletion } from "@/lib/queries/certificate";
 import { getEffectiveUserId } from "@/lib/auth/persona";
+import { checkCapability } from "@/lib/auth/requireCapability";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { fmtDate } from "@/lib/format";
 
@@ -26,6 +28,7 @@ export default async function CertificatePage() {
     cohortEnded &&
     kpis.daysComplete >= REQUIRED_DAYS &&
     completion.meetsFiftyPercent;
+  const isAdmin = await checkCapability("roster.read", cohort.id);
 
   return (
     <div className="space-y-6">
@@ -61,20 +64,27 @@ export default async function CertificatePage() {
             </div>
           </div>
 
-          {eligible ? (
-            <div className="mt-6 space-y-2">
-              <p className="text-ok">You&apos;ve graduated. 🎉</p>
-              <p className="text-muted text-xs">
-                Your certificate will be available for download here soon.
-              </p>
-            </div>
-          ) : (
+          {!eligible && (
             <CardSub className="mt-6">
               Complete the workshop to unlock your certificate.
             </CardSub>
           )}
+          {eligible && !isAdmin && (
+            <CardSub className="mt-6">
+              You&apos;ve graduated! Your certificate is coming soon.
+            </CardSub>
+          )}
         </div>
       </Card>
+
+      {eligible && isAdmin && (
+        <CertificateCard
+          name={profile?.full_name ?? "—"}
+          cohortName={cohort.name}
+          startsOn={cohort.starts_on}
+          endsOn={cohort.ends_on}
+        />
+      )}
     </div>
   );
 }
