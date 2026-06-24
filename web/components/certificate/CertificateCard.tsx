@@ -7,7 +7,14 @@ interface CertificateCardProps {
   endsOn: string;
 }
 
+/** Strip suffixes like "-AI&ML", "-CSE" and title-case each word. */
+function cleanName(raw: string): string {
+  const base = raw.replace(/\s*-\s*[A-Z&]+$/i, "").trim();
+  return base.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function CertificateCard({ name }: CertificateCardProps) {
+  const displayName = cleanName(name);
   return (
     <div className="space-y-6">
       {/* The printable certificate */}
@@ -18,7 +25,7 @@ export function CertificateCard({ name }: CertificateCardProps) {
           alt="Certificate of Completion"
           className="cert-bg"
         />
-        <p className="cert-name">{name}</p>
+        <p className="cert-name">{displayName}</p>
       </div>
 
       {/* Download button (hidden in print) */}
