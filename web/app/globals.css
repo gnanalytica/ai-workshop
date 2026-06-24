@@ -256,3 +256,179 @@ html.present-mode main[data-shell-main] li {
 html.present-mode main[data-shell-main] blockquote {
   font-size: 1.15rem;
 }
+
+/* ─── Certificate ─── */
+
+.certificate-outer {
+  width: 297mm;
+  max-width: 100%;
+  aspect-ratio: 297 / 210;
+  padding: 12mm;
+  background: linear-gradient(135deg, hsl(30 30% 96%), hsl(38 28% 98%));
+  border: 4px solid hsl(12 65% 48%);
+  border-radius: 4px;
+  box-shadow: 0 8px 32px hsl(30 8% 12% / 0.08);
+}
+
+[data-theme="dark"] .certificate-outer {
+  background: linear-gradient(135deg, hsl(30 12% 14%), hsl(30 10% 16%));
+  border-color: hsl(14 70% 60%);
+}
+
+.certificate-inner {
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid hsl(12 65% 48% / 0.35);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8mm 16mm;
+  gap: 0;
+}
+
+[data-theme="dark"] .certificate-inner {
+  border-color: hsl(14 70% 60% / 0.35);
+}
+
+.certificate-logo {
+  margin-bottom: 6mm;
+}
+
+.certificate-logo-img {
+  height: 48px;
+  width: auto;
+}
+
+.certificate-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(12 65% 48%);
+  margin: 0 0 6mm;
+}
+
+[data-theme="dark"] .certificate-title {
+  color: hsl(14 70% 60%);
+}
+
+.certificate-certify {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: hsl(var(--muted));
+  margin: 0 0 2mm;
+}
+
+.certificate-name {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(var(--ink));
+  margin: 0 0 4mm;
+}
+
+.certificate-body {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: hsl(var(--muted));
+  margin: 0 0 1mm;
+}
+
+.certificate-workshop {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: hsl(var(--ink));
+  margin: 0 0 5mm;
+}
+
+.certificate-cohort {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: hsl(var(--muted));
+  margin: 0;
+}
+
+.certificate-dates {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: hsl(var(--muted));
+  margin: 0 0 8mm;
+}
+
+.certificate-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3mm;
+  margin-top: auto;
+}
+
+.certificate-sig-line {
+  width: 160px;
+  height: 1px;
+  background: hsl(var(--ink) / 0.3);
+}
+
+.certificate-sig-label {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: hsl(var(--muted));
+  margin: 0;
+}
+
+/* ─── Print ─── */
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the certificate */
+  #certificate,
+  #certificate * {
+    visibility: visible;
+  }
+
+  #certificate {
+    position: fixed;
+    inset: 0;
+    width: 297mm;
+    height: 210mm;
+    max-width: none;
+    padding: 12mm;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: linear-gradient(135deg, hsl(30 30% 96%), hsl(38 28% 98%)) !important;
+    border: 4px solid hsl(12 65% 48%) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  #certificate .certificate-inner {
+    border: 1.5px solid hsl(12 65% 48% / 0.35) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  #certificate .certificate-title {
+    color: hsl(12 65% 48%) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print-hide {
+    display: none !important;
+  }
+}
