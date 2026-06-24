@@ -278,7 +278,7 @@ html.present-mode main[data-shell-main] blockquote {
   top: 47%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: "Dancing Script", "Brush Script MT", cursive;
+  font-family: "Times New Roman", Times, serif;
   font-size: clamp(1.6rem, 4.5vw, 3.2rem);
   font-weight: 700;
   color: hsl(0 72% 45%);
