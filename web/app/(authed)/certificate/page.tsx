@@ -8,7 +8,6 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 import { fmtDate } from "@/lib/format";
 
 const REQUIRED_DAYS = 22;
-const REQUIRED_ATTENDANCE = 18;
 
 export default async function CertificatePage() {
   const [userId, cohort] = await Promise.all([getEffectiveUserId(), getMyCurrentCohort()]);
@@ -26,7 +25,6 @@ export default async function CertificatePage() {
   const eligible =
     cohortEnded &&
     kpis.daysComplete >= REQUIRED_DAYS &&
-    kpis.attendanceCount >= REQUIRED_ATTENDANCE &&
     completion.meetsFiftyPercent;
 
   return (
@@ -53,9 +51,6 @@ export default async function CertificatePage() {
             <div className="flex flex-wrap justify-center gap-2 text-xs">
               <Badge variant={kpis.daysComplete >= REQUIRED_DAYS ? "ok" : "danger"}>
                 Days completed {kpis.daysComplete}/30
-              </Badge>
-              <Badge variant={kpis.attendanceCount >= REQUIRED_ATTENDANCE ? "ok" : "danger"}>
-                Attendance {kpis.attendanceCount}/30
               </Badge>
               <Badge variant={completion.meetsFiftyPercent ? "ok" : "danger"}>
                 Assignments {completion.submittedCount}/{completion.totalAssignments}
