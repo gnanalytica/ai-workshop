@@ -276,7 +276,7 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-name {
   position: absolute;
-  top: 44%;
+  top: 47%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: "Times New Roman", Times, serif;
@@ -290,14 +290,14 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-body {
   position: absolute;
-  top: 51%;
-  left: 6%;
-  right: 6%;
+  top: 53%;
+  left: 12%;
+  right: 10%;
   bottom: 14%;
   font-family: "Times New Roman", Times, serif;
-  font-size: 1.05cqi;
-  line-height: 1.55;
-  text-align: justify;
+  font-size: 1.5cqi;
+  line-height: 1.45;
+  text-align: left;
   color: #222;
   pointer-events: none;
 }
@@ -307,7 +307,7 @@ html.present-mode main[data-shell-main] blockquote {
 }
 
 .cert-body p + p {
-  margin-top: 0.3em;
+  margin-top: 0.15em;
 }
 
 .cert-body strong {
