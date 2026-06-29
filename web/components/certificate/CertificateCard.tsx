@@ -11,9 +11,14 @@ interface CertificateCardProps {
   endsOn: string;
 }
 
-/** Strip everything after " - " (dept/roll suffixes) and title-case. */
+/** Strip department/branch suffixes and title-case. */
 function cleanName(raw: string): string {
-  const base = raw.replace(/\s+-\s+.+$/, "").trim();
+  const base = raw
+    // "Name - dept" or "Name -SUFFIX" (dash with space before it)
+    .replace(/\s+-\s*.+$/, "")
+    // "Name BSC COMP-1", "Name DS", "Name AI&ML" etc. (space-separated dept)
+    .replace(/\s+(BSC\s+COMP|BSC\s+STAT|BSC\s+DS|BSC|B\.SC|AI\s*&\s*ML|AI|DS|COMP|CSE|STAT|ML)[\s-]*\d*$/i, "")
+    .trim();
   return base.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
