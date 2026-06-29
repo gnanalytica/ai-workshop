@@ -20,19 +20,32 @@ function cleanName(raw: string): string {
 /** Derive department & degree from roll-number prefix. */
 function getDeptAndDegree(roll: string | null) {
   if (!roll) return { department: "___", degree: "___" };
-  const prefix = roll.slice(0, 4);
+  const prefix = roll.trim().slice(0, 4);
   switch (prefix) {
     case "2433":
-      return { department: "Computer Science", degree: "B.Sc. Computer Science" };
+      return { department: "Computer Science", degree: "BSC in Computer Science" };
     case "2435":
-      return { department: "Statistics", degree: "B.Sc. Statistics" };
+      return { department: "Statistics", degree: "BSC in Statistics" };
     case "2452":
-      return { department: "Data Science", degree: "B.Sc. Data Science" };
+      return { department: "Data Science", degree: "BSC in Data Science" };
     case "2459":
-      return { department: "Artificial Intelligence & Machine Learning", degree: "B.Sc. AI & ML" };
+      return { department: "Artificial Intelligence & Machine Learning", degree: "BSC in AI & ML" };
     default:
       return { department: "___", degree: "___" };
   }
+}
+
+/** Title-case a project name with proper acronym handling. */
+function formatProjectTitle(raw: string): string {
+  const acronyms: Record<string, string> = {
+    ai: "AI", ml: "ML", iot: "IoT", api: "API", ui: "UI", ux: "UX",
+    erp: "ERP", cms: "CMS", lms: "LMS", hr: "HR", qa: "QA",
+  };
+  return raw.replace(/\b\w+/g, (word) => {
+    const lower = word.toLowerCase();
+    if (acronyms[lower]) return acronyms[lower];
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
 }
 
 /** Format ISO date as "04 May 2026". */
@@ -91,8 +104,8 @@ export function CertificateCard({
             </strong>
             , has successfully completed the{" "}
             <strong>30-Day BUILD WITH AI Internship</strong> hosted by{" "}
-            <strong>Gnanalytica</strong> with a submission of the final project
-            titled &ldquo;{projectTitle ?? "___"}&rdquo;.
+            <strong>Gnanalytica</strong>{" "}with a submission of the final project
+            titled &ldquo;{projectTitle ? formatProjectTitle(projectTitle) : "___"}&rdquo;.
           </p>
           <p>
             This internship covered the full curriculum in Artificial
