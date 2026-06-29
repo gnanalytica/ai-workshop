@@ -4,6 +4,8 @@ import { useCallback, useRef } from "react";
 
 interface CertificateCardProps {
   name: string;
+  rollNumber: string | null;
+  projectTitle: string | null;
   cohortName: string;
   startsOn: string;
   endsOn: string;
@@ -15,8 +17,43 @@ function cleanName(raw: string): string {
   return base.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function CertificateCard({ name }: CertificateCardProps) {
+/** Derive department & degree from roll-number prefix. */
+function getDeptAndDegree(roll: string | null) {
+  if (!roll) return { department: "___", degree: "___" };
+  const prefix = roll.slice(0, 4);
+  switch (prefix) {
+    case "2433":
+      return { department: "Computer Science", degree: "B.Sc. Computer Science" };
+    case "2435":
+      return { department: "Statistics", degree: "B.Sc. Statistics" };
+    case "2452":
+      return { department: "Data Science", degree: "B.Sc. Data Science" };
+    case "2459":
+      return { department: "Artificial Intelligence & Machine Learning", degree: "B.Sc. AI & ML" };
+    default:
+      return { department: "___", degree: "___" };
+  }
+}
+
+/** Format ISO date as "04 May 2026". */
+function fmtCertDate(iso: string): string {
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export function CertificateCard({
+  name,
+  rollNumber,
+  projectTitle,
+  startsOn,
+  endsOn,
+}: CertificateCardProps) {
   const displayName = cleanName(name);
+  const { department, degree } = getDeptAndDegree(rollNumber);
   const certRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = useCallback(async () => {
@@ -40,7 +77,35 @@ export function CertificateCard({ name }: CertificateCardProps) {
           alt="Certificate of Completion"
           className="cert-bg"
         />
+
+        {/* Dynamic name overlay */}
         <p className="cert-name">{displayName}</p>
+
+        {/* Dynamic body paragraph overlay */}
+        <div className="cert-body">
+          <p>
+            bearing Roll Number <strong>{rollNumber ?? "___"}</strong>, from the
+            Department of <strong>{department}</strong>,{" "}
+            <strong>
+              Kakaraparthi Bhavanarayana College (Autonomous)
+            </strong>
+            , has successfully completed the{" "}
+            <strong>30-Day BUILD WITH AI Internship</strong> hosted by{" "}
+            <strong>Gnanalytica</strong> with a submission of the final project
+            titled &ldquo;{projectTitle ?? "___"}&rdquo;.
+          </p>
+          <p>
+            This internship covered the full curriculum in Artificial
+            Intelligence fundamentals and practical application, carried out from{" "}
+            <strong>{fmtCertDate(startsOn)}</strong> to{" "}
+            <strong>{fmtCertDate(endsOn)}</strong> as a part of the academic
+            curriculum towards the {degree} program.
+          </p>
+          <p>
+            The intern has demonstrated consistent dedication and satisfactory
+            performance throughout the duration of the internship.
+          </p>
+        </div>
       </div>
 
       {/* Action buttons (hidden in print) */}

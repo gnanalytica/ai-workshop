@@ -16,12 +16,34 @@ export default async function CertificatePage() {
   if (!cohort || !userId) return <Card><CardTitle>No active cohort</CardTitle></Card>;
 
   const sb = await getSupabaseServer();
-  const [kpis, completion, { data: profile }] = await Promise.all([
+  const [kpis, completion, { data: profile }, { data: reg }] = await Promise.all([
     getDashboardKpis(cohort.id),
     getAssignmentCompletion(cohort.id),
     sb.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
+    sb.from("registrations").select("roll_number").eq("user_id", userId).eq("cohort_id", cohort.id).maybeSingle(),
   ]);
 
+  // Get team project title for certificate
+  let projectTitle: string | null = null;
+  {
+    const { data: mem } = await sb
+      .from("team_members")
+      .select("team_id, teams!inner(cohort_id)")
+      .eq("user_id", userId)
+      .eq("teams.cohort_id", cohort.id)
+      .maybeSingle();
+    if (mem) {
+      const teamId = (mem as unknown as { team_id: string }).team_id;
+      const { data: sub } = await sb
+        .from("team_submissions")
+        .select("title")
+        .eq("team_id", teamId)
+        .maybeSingle();
+      projectTitle = (sub as { title: string | null } | null)?.title ?? null;
+    }
+  }
+
+  const rollNumber = (reg as { roll_number: string | null } | null)?.roll_number ?? null;
   const today = todayDayNumber(cohort);
   const cohortEnded = today >= 30;
   const isAdmin = await checkCapability("roster.read", cohort.id);
@@ -81,6 +103,8 @@ export default async function CertificatePage() {
       {eligible && isAdmin && (
         <CertificateCard
           name={profile?.full_name ?? "—"}
+          rollNumber={rollNumber}
+          projectTitle={projectTitle}
           cohortName={cohort.name}
           startsOn={cohort.starts_on}
           endsOn={cohort.ends_on}

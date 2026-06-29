@@ -264,6 +264,7 @@ html.present-mode main[data-shell-main] blockquote {
   width: 297mm;
   max-width: 100%;
   aspect-ratio: 4 / 2.83;
+  container-type: inline-size;
 }
 
 .cert-bg {
@@ -275,7 +276,7 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-name {
   position: absolute;
-  top: 47%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: "Times New Roman", Times, serif;
@@ -285,6 +286,32 @@ html.present-mode main[data-shell-main] blockquote {
   white-space: nowrap;
   margin: 0;
   pointer-events: none;
+}
+
+.cert-body {
+  position: absolute;
+  top: 51%;
+  left: 6%;
+  right: 6%;
+  bottom: 14%;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1.05cqi;
+  line-height: 1.55;
+  text-align: justify;
+  color: #222;
+  pointer-events: none;
+}
+
+.cert-body p {
+  margin: 0;
+}
+
+.cert-body p + p {
+  margin-top: 0.3em;
+}
+
+.cert-body strong {
+  font-weight: 700;
 }
 
 /* ─── Print ─── */
@@ -323,6 +350,12 @@ html.present-mode main[data-shell-main] blockquote {
 
   #certificate .cert-name {
     color: hsl(0 72% 45%) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  #certificate .cert-body {
+    color: #222 !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
