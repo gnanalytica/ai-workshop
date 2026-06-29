@@ -11,9 +11,9 @@ interface CertificateCardProps {
   endsOn: string;
 }
 
-/** Strip suffixes like "-AI&ML", "-CSE" and title-case each word. */
+/** Strip everything after " - " (dept/roll suffixes) and title-case. */
 function cleanName(raw: string): string {
-  const base = raw.replace(/\s*-\s*[A-Z&]+$/i, "").trim();
+  const base = raw.replace(/\s+-\s+.+$/, "").trim();
   return base.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
