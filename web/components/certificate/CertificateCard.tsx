@@ -16,6 +16,8 @@ function cleanName(raw: string): string {
   const base = raw
     // "Name - dept" or "Name -SUFFIX" (dash with space before it)
     .replace(/\s+-\s*.+$/, "")
+    // "Name_AIML", "Name_DS" etc. (underscore-separated dept)
+    .replace(/[_](AIML|AI|DS|COMP|CSE|STAT|ML|BSC).*$/i, "")
     // "Name BSC COMP-1", "Name DS", "Name AI&ML" etc. (space-separated dept)
     .replace(/\s+(BSC\s+COMP|BSC\s+STAT|BSC\s+DS|BSC|B\.SC|AI\s*&\s*ML|AI|DS|COMP|CSE|STAT|ML)[\s-]*\d*$/i, "")
     .trim();
