@@ -13,15 +13,27 @@ interface CertificateCardProps {
 
 /** Strip department/branch suffixes and title-case. */
 function cleanName(raw: string): string {
-  const base = raw
-    // "Name - dept" or "Name -SUFFIX" (dash with space before it)
-    .replace(/\s+-\s*.+$/, "")
-    // "Name_AIML", "Name_DS" etc. (underscore-separated dept)
-    .replace(/[_](AIML|AI|DS|COMP|CSE|STAT|ML|BSC).*$/i, "")
-    // "Name BSC COMP-1", "Name DS", "Name AI&ML" etc. (space-separated dept)
-    .replace(/\s+(BSC\s+COMP|BSC\s+STAT|BSC\s+DS|BSC|B\.SC|AI\s*&\s*ML|AI|DS|COMP|CSE|STAT|ML)[\s-]*\d*$/i, "")
-    .trim();
-  return base.replace(/\b\w/g, (c) => c.toUpperCase());
+  let base = raw.trim();
+
+  // 1. Strip parenthesized suffixes: "Name (bsc.ai&ml)"
+  base = base.replace(/\s*\([^)]*\)\s*$/, "");
+
+  // 2. Strip everything after " - " or trailing " -" (dash with leading space)
+  base = base.replace(/\s+-\s*.*$/, "");
+
+  // 3. Strip underscore-separated dept codes: "Name_AIML"
+  base = base.replace(/[_](AIML|AI|DS|COMP|CSE|STAT|ML|BSC).*$/i, "");
+
+  // 4. Strip dash-separated dept keywords (no space before dash): "Name-Bsc..."
+  base = base.replace(/-(BSC|B\.?SC|AIML|AI|DS|COMP|COMPUTERS?|CSE|STAT|ML).*$/i, "");
+
+  // 5. Strip space-separated dept/degree (full words including "computers"):
+  base = base.replace(
+    /\s+(BSC\.?\s*COMP\w*|BSC\.?\s*STAT\w*|BSC\.?\s*DS|BSC\.?\s*AI|BSC|B\.SC|COMPUTERS?\s*\d*|AI\s*&\s*ML|AIML|AI|DS|COMP|CSE|STAT|ML)[\s.\-]*\d*$/i,
+    ""
+  );
+
+  return base.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /** Derive department & degree from roll-number prefix. */
