@@ -123,7 +123,7 @@ export function CertificateCard({
             <strong>30-day BUILD WITH AI Internship</strong> organized by{" "}
             <strong>Gnanalytica</strong>{" "}with a final project submission titled
             &ldquo;
-            {projectTitle ? formatProjectTitle(projectTitle) : "___"}
+            <strong>{projectTitle ? formatProjectTitle(projectTitle) : "___"}</strong>
             &rdquo;.
           </p>
           <p>
@@ -136,7 +136,7 @@ export function CertificateCard({
           </p>
           <p>
             The overall performance of the intern during his/her internship is
-            found to be satisfactory.
+            found to be <strong>satisfactory</strong>.
           </p>
         </div>
       </div>
