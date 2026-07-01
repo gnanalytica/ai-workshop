@@ -257,13 +257,13 @@ html.present-mode main[data-shell-main] blockquote {
   font-size: 1.15rem;
 }
 
-/* ─── Certificate (Canva template overlay) ─── */
+/* ─── Certificate (KBN letterhead overlay) ─── */
 
 .cert-wrap {
   position: relative;
-  width: 297mm;
+  width: 210mm;
   max-width: 100%;
-  aspect-ratio: 4 / 2.83;
+  aspect-ratio: 210 / 297;
   container-type: inline-size;
 }
 
@@ -276,11 +276,11 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-name {
   position: absolute;
-  top: 47%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: "Times New Roman", Times, serif;
-  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
+  font-size: clamp(1.4rem, 4vw, 2.6rem);
   font-weight: 700;
   color: hsl(0 72% 45%);
   white-space: nowrap;
@@ -290,14 +290,14 @@ html.present-mode main[data-shell-main] blockquote {
 
 .cert-body {
   position: absolute;
-  top: 53%;
+  top: 35%;
   left: 12%;
   right: 10%;
-  bottom: 14%;
+  bottom: 48%;
   font-family: "Times New Roman", Times, serif;
-  font-size: 1.5cqi;
-  line-height: 1.45;
-  text-align: left;
+  font-size: 1.8cqi;
+  line-height: 1.5;
+  text-align: justify;
   color: #222;
   pointer-events: none;
 }
@@ -307,7 +307,7 @@ html.present-mode main[data-shell-main] blockquote {
 }
 
 .cert-body p + p {
-  margin-top: 0.15em;
+  margin-top: 0.35em;
 }
 
 .cert-body strong {
@@ -318,7 +318,7 @@ html.present-mode main[data-shell-main] blockquote {
 
 @media print {
   @page {
-    size: A4 landscape;
+    size: A4 portrait;
     margin: 0;
   }
 
@@ -334,8 +334,8 @@ html.present-mode main[data-shell-main] blockquote {
   #certificate {
     position: fixed;
     inset: 0;
-    width: 297mm;
-    height: 210mm;
+    width: 210mm;
+    height: 297mm;
     max-width: none;
     margin: 0;
   }

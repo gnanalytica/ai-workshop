@@ -42,13 +42,13 @@ function getDeptAndDegree(roll: string | null) {
   const prefix = roll.trim().slice(0, 4);
   switch (prefix) {
     case "2433":
-      return { department: "Computer Science", degree: "BSC in Computer Science" };
+      return { department: "Computer Science", degree: "B.Sc Honours Computer Science" };
     case "2435":
-      return { department: "Statistics", degree: "BSC in Statistics" };
+      return { department: "Statistics", degree: "B.Sc Honours Statistics" };
     case "2452":
-      return { department: "Data Science", degree: "BSC in Data Science" };
+      return { department: "Data Science", degree: "B.Sc Honours Data Science" };
     case "2459":
-      return { department: "Artificial Intelligence & Machine Learning", degree: "BSC in AI & ML" };
+      return { department: "Artificial Intelligence", degree: "B.Sc Honours Artificial Intelligence" };
     default:
       return { department: "___", degree: "___" };
   }
@@ -105,7 +105,7 @@ export function CertificateCard({
       <div id="certificate" ref={certRef} className="cert-wrap mx-auto">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/CERTIFICATES_AI_WORKSHOP.png"
+          src="/KBN_Letter_head.jpg"
           alt="Certificate of Completion"
           className="cert-bg"
         />
@@ -116,26 +116,30 @@ export function CertificateCard({
         {/* Dynamic body paragraph overlay */}
         <div className="cert-body">
           <p>
+            This is to certify that Mr./Miss <strong>{displayName}</strong>,
             bearing Roll Number <strong>{rollNumber ?? "___"}</strong>, from the
             Department of <strong>{department}</strong>,{" "}
             <strong>
-              Kakaraparthi Bhavanarayana College (Autonomous)
+              Kakaraparthi Bhavanarayana College (Autonomous), VIJAYAWADA
             </strong>
-            , has successfully completed the{" "}
-            <strong>30-Day BUILD WITH AI Internship</strong> hosted by{" "}
-            <strong>Gnanalytica</strong>{" "}with a submission of the final project
-            titled &ldquo;{projectTitle ? formatProjectTitle(projectTitle) : "___"}&rdquo;.
+            , has successfully completed{" "}
+            <strong>30-day BUILD WITH AI Internship</strong> organized by{" "}
+            <strong>Gnanalytica</strong> with a final project submission titled
+            &ldquo;
+            {projectTitle ? formatProjectTitle(projectTitle) : "___"}
+            &rdquo;.
           </p>
           <p>
-            This internship covered the full curriculum in Artificial
-            Intelligence fundamentals and practical application, carried out from{" "}
+            The duration of the internship was from{" "}
             <strong>{fmtCertDate(startsOn)}</strong> to{" "}
-            <strong>{fmtCertDate(endsOn)}</strong> as a part of the academic
-            curriculum towards the {degree} program.
+            <strong>{fmtCertDate(endsOn)}</strong>, with a total of 180 hours.
+            This internship was carried out as a part of partial fulfillment of
+            the requirements for the award of the degree of{" "}
+            <strong>{degree}</strong>.
           </p>
           <p>
-            The intern has demonstrated consistent dedication and satisfactory
-            performance throughout the duration of the internship.
+            The overall performance of the intern during his/her internship is
+            found to be satisfactory.
           </p>
         </div>
       </div>
