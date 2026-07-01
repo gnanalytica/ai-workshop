@@ -110,9 +110,6 @@ export function CertificateCard({
           className="cert-bg"
         />
 
-        {/* Dynamic name overlay */}
-        <p className="cert-name">{displayName}</p>
-
         {/* Dynamic body paragraph overlay */}
         <div className="cert-body">
           <p>
