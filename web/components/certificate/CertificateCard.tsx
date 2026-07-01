@@ -114,10 +114,9 @@ export function CertificateCard({
         <div className="cert-body">
           <p>
             This is to certify that Mr./Miss <strong>{displayName}</strong>,
-            bearing Roll Number <strong>{rollNumber ?? "___"}</strong>, from the
-            Department of <strong>{department}</strong>,{" "}
+            bearing Roll Number <strong>{rollNumber ?? "___"}</strong>, from the{" "}
             <strong>
-              Kakaraparthi Bhavanarayana College (Autonomous), VIJAYAWADA
+              Department of Computer Science &amp; Applications, Kakaraparthi Bhavanarayana College (Autonomous), VIJAYAWADA
             </strong>
             , has successfully completed{" "}
             <strong>30-day BUILD WITH AI Internship</strong> organized by{" "}
