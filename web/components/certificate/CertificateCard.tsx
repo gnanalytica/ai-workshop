@@ -121,7 +121,7 @@ export function CertificateCard({
             </strong>
             , has successfully completed{" "}
             <strong>30-day BUILD WITH AI Internship</strong> organized by{" "}
-            <strong>Gnanalytica</strong> with a final project submission titled
+            <strong>Gnanalytica</strong>{" "}with a final project submission titled
             &ldquo;
             {projectTitle ? formatProjectTitle(projectTitle) : "___"}
             &rdquo;.
