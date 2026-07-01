@@ -128,8 +128,8 @@ export function CertificateCard({
           </p>
           <p>
             The duration of the internship was from{" "}
-            <strong>{fmtCertDate(startsOn)}</strong> to{" "}
-            <strong>{fmtCertDate(endsOn)}</strong>, with a total of 180 hours.
+            <strong>01 May 2026</strong> to{" "}
+            <strong>09 June 2026</strong>, with a total of 180 hours.
             This internship was carried out as a part of partial fulfillment of
             the requirements for the award of the degree of{" "}
             <strong>{degree}</strong>.
